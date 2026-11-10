@@ -93,7 +93,7 @@ export interface NarrationPolicy {
   /** Require the prose to state the elapsed duration. Default: true for an
    * `elapsed` advance with amount > 0, false for instant/zero advances. */
   requireTime?: boolean;
-  /** Hard floor for a scene. Default 120 characters. */
+  /** Hard floor for a scene. Default 60 characters: the short-scene corpus treats 60–149 as a complete scene; requiring 120 would reject faithful short scenes. */
   minChars?: number;
   /** Target length used by truncated/premature-closure guidance. Default 260. */
   targetChars?: number;

@@ -8,7 +8,7 @@
  */
 import type { ComposePromptArgs, NarrationPolicy } from './types';
 
-const BODY_MARKERS = ['【正文】', '\n正文：', '\n正文:'] as const;
+const BODY_MARKERS = ['【正文】', '\n正文：', '\n正文:', '【叙事】'] as const;
 
 /** The last body marker wins: a serialized input may contain the word 正文 in
  * an earlier field, and the model continues from the final one. */

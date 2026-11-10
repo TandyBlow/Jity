@@ -325,6 +325,15 @@ async function writeBeat(
       ? `${base.replace(/正文：$/u, '')}\n【改写要求】${guidance}\n正文：`
       : base;
     prompts.push(prompt);
+    // A scene/atmosphere beat is optional and must not eat the whole budget:
+    // it is capped to a short paragraph and a short call, so a slow model
+    // reaches the fact beats instead of stalling the point. Fact/time beats
+    // keep the caller's full budget.
+    const isSceneBeat = beat.kind === 'scene';
+    const beatTokens = isSceneBeat
+      ? Math.min(policy.maxTokens ?? 160, 90)
+      : beat.kind === 'time' ? Math.min(policy.maxTokens ?? 160, 48) : (policy.maxTokens ?? 160);
+    const beatRemaining = isSceneBeat ? Math.min(remaining, 45_000) : remaining;
     const result = await runAttempt({
       engine: input.engine,
       prompt,
@@ -333,9 +342,9 @@ async function writeBeat(
       ledger: scopedLedger,
       policy: scopedPolicy,
       priorText: written.at(-1) ?? input.priorText ?? null,
-      maxTokens: policy.maxTokens ?? 160,
+      maxTokens: beatTokens,
       temperature: attempt === 0 ? (policy.temperature ?? 0.7) : (policy.retryTemperature ?? 0.5),
-      remainingMs: remaining,
+      remainingMs: beatRemaining,
       guidance,
       signal: input.signal,
       onProgress: (state) => {
@@ -384,7 +393,7 @@ async function writeBeat(
     };
   }
   if (beat.kind === 'time' && ledger.time) {
-    const text = timeFallbackSentence(ledger.time.duration);
+    const text = timeFallbackSentence(ledger.time.duration, input.priorText ?? null);
     return {
       evidence: {
         beatId: beat.id, kind: beat.kind, directive: beat.directive, text,
@@ -460,7 +469,7 @@ async function generateBeatNarration(
     assembled = deduped.text;
   }
 
-  const finalPolicy: NarrationPolicy = { ...policy, minChars: policy.minChars ?? 120 };
+  const finalPolicy: NarrationPolicy = { ...policy, minChars: policy.minChars ?? 60 };
   const runFinalVerify = (text: string) => verifyNarration({
     text, finishReason: 'stop', committed: input.committed, ledger, policy: finalPolicy,
     priorText, attempt: Math.max(0, attemptCount - 1), promptEchoMarkers: [],
@@ -473,7 +482,9 @@ async function generateBeatNarration(
     const append: string[] = [];
     for (const issue of final.issues) {
       if (issue.severity !== 'hard') continue;
-      if (issue.kind === 'time_missing' && ledger.time) append.push(timeFallbackSentence(ledger.time.duration));
+      if (issue.kind === 'time_missing' && ledger.time) {
+        append.push(timeFallbackSentence(ledger.time.duration, priorText));
+      }
       if (issue.kind === 'fact_omitted') {
         const fact = ledger.mandatory.find((entry) => !issue.detail || issue.detail.includes(factPhrases(entry)[0]));
         if (fact) {
@@ -541,6 +552,13 @@ async function generateBeatNarration(
     } as NarrationDisplayState,
   };
 }
+
+/** Compatible entry named by QUALITY-TEAMS.md: same arguments, same return
+ * shape as `generateCommittedNarration`. Kept as a thin alias so integrators
+ * and candidate runners can use one name without a second implementation. */
+export const generateCandidate = (
+  input: GenerateCommittedNarrationInput,
+): Promise<GeneratedNarration> => generateCommittedNarration(input);
 
 export async function generateCommittedNarration(input: GenerateCommittedNarrationInput): Promise<GeneratedNarration> {
   if (!input.inputText.trim()) throw new Error('narration_input_empty: caller serialization produced no model input');

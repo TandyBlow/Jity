@@ -590,6 +590,19 @@ const beatPolicy: NarrationPolicy = {
   beatAttempts: 2,
 };
 
+describe('trained-shape prompt insertion', () => {
+  test('guidance and instruction go before the body marker', async () => {
+    const { composeNarrationPrompt } = await import('./prompt');
+    const inputText = ['【状态】{}', '【视角】主角视角（周宁）', '【叙事】'].join(String.fromCharCode(10));
+    const guidance = ['【本次写作要求】', '要写出时间过去了约2分钟'].join(String.fromCharCode(10));
+    const prompt = composeNarrationPrompt({
+      inputText, attempt: 1, guidance, previousDraft: null, instruction: null,
+    }, {});
+    expect(prompt.indexOf('【本次写作要求】')).toBeGreaterThan(prompt.indexOf('【视角】'));
+    expect(prompt.endsWith('【叙事】')).toBe(true);
+  });
+});
+
 describe('beat mode', () => {
   test('writes one beat per committed thing and assembles paragraphs', async () => {
     const engine = new ScriptedEngine([
@@ -681,8 +694,8 @@ describe('beat mode', () => {
     });
     expect(result.accepted).toBe(true);
     expect(result.beats[0].source).toBe('fallback');
-    expect(result.beats[0].text).toBe('林川从走廊走到门厅。');
-    expect(result.text).toContain('林川从走廊走到门厅。');
+    expect(result.beats[0].text).toBe('林川从走廊走到了门厅。');
+    expect(result.text).toContain('林川从走廊走到了门厅。');
   });
 
   test('a scene written only from committed sentences is reported, not passed', async () => {
@@ -698,7 +711,7 @@ describe('beat mode', () => {
     });
     expect(result.accepted).toBe(false);
     expect(result.issues.some((issue) => issue.kind === 'all_beats_fell_back')).toBe(true);
-    expect(result.text).toBe('林川从走廊走到门厅。');
+    expect(result.text).toBe('林川从走廊走到了门厅。');
   });
 
   test('drops a duplicate sentence that repeats an earlier beat', async () => {
@@ -770,6 +783,247 @@ describe('beat mode', () => {
     // The cancelled beat never started, so no fake evidence row is added.
     expect(result.beats).toHaveLength(1);
     expect(result.beats[0].source).toBe('model');
+  });
+
+  test('a non-sanity numeral does not hide an invented event in the same sentence', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '周宁的心跳加速，盒子缓缓打开，里面是一张纸条。' },
+      { kind: 'text', text: '林川从走廊走到门厅。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(moved, povAt),
+      inputText: '【正文】',
+      policy: { ...beatPolicy, scene: null, mode: 'beats', minChars: 1, beatAttempts: 1 },
+    });
+    // 一张纸条 reads as sanity 1 to the grader; the false number is dropped,
+    // but 打开 must still be reported instead of disappearing with it.
+    expect(result.beats[0].issues.some((issue) => issue.kind === 'fact_event_added')).toBe(true);
+    expect(result.beats[0].source).toBe('fallback');
+  });
+
+  test('the time sentence changes wording when the previous scene already used it', async () => {
+    const engine = new ScriptedEngine([
+      { kind: 'text', text: '她站在原地。' },
+      { kind: 'text', text: '光从窗缝里进来。' },
+    ]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(),
+      inputText: '【正文】',
+      priorText: '灯灭了一会儿。\n\n约两分钟过去了。',
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 10,
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+        beatAttempts: 1,
+      },
+    });
+    expect(result.text).not.toContain('约两分钟过去了。');
+    expect(result.text).toMatch(/两分钟/);
+    expect(result.issues.some((issue) => issue.kind === 'echo_prior')).toBe(false);
+  });
+
+  test('a sanity drop shown through a reaction is not a fact omission', async () => {
+    const sanityDrop: NarrationFact = {
+      id: 'person_c:sanity_changed', actorId: 'person_c', name: '周宁',
+      kind: 'sanity_changed', from: 10, to: 8,
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁的呼吸比刚才浅，手指在袖口上停了一会儿。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(sanityDrop), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'unverified_sentence' && issue.severity === 'soft')).toBe(true);
+  });
+
+  test('a sanity rise shown with the opposite reaction is still rejected', async () => {
+    const sanityDrop: NarrationFact = {
+      id: 'person_c:sanity_changed', actorId: 'person_c', name: '周宁',
+      kind: 'sanity_changed', from: 10, to: 8,
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁的呼吸稳了下来，手指也松开了。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(sanityDrop), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_wrong_number')).toBe(true);
+  });
+
+  test('a promise inside a committed personality fact is licensed from the fact itself', async () => {
+    const trait: NarrationFact = {
+      id: 'person_c:personality', actorId: 'person_c', name: '周宁',
+      kind: 'personality_changed', changeId: 'chg_trait', text: '答应替林川查那批旧报纸，只是一直没开口',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁这次点了点头，答应明天去查那批旧报纸。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(trait), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'promise_without_fact')).toBe(false);
+  });
+
+  test('a personality change shown through a changed act is a soft review, not an omission', async () => {
+    const trait: NarrationFact = {
+      id: 'person_c:personality', actorId: 'person_c', name: '周宁',
+      kind: 'personality_changed', changeId: 'chg_trait', text: '答应替林川查那批旧报纸，只是一直没开口',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '周宁这次没有把话推回去，只是点了点头。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(trait), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'unverified_sentence')).toBe(true);
+  });
+
+  test('a move to a location whose name extends the origin is accepted', async () => {
+    const move: NarrationFact = {
+      id: 'person_b:position', actorId: 'person_b', name: '黎含英',
+      kind: 'moved', fromId: 'loc_roof', from: '天台', toId: 'loc_stairs', to: '天台楼梯间',
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '黎含英离开天台，走进天台楼梯间。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(move), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10, locations: ['天台', '天台楼梯间'] },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_movement_claimed')).toBe(false);
+  });
+
+  test('a static at fact is scene context, not an actor-swap fact', async () => {
+    const at: NarrationFact = {
+      id: 'person_c:position', actorId: 'person_c', name: '周宁',
+      kind: 'at', locationId: 'loc_hall', location: '走廊',
+    };
+    const engine = new ScriptedEngine([{ kind: 'text', text: '走廊的灯还亮着。周宁站在走廊里，没有动。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(at), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_actor_swap')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_movement_claimed')).toBe(false);
+  });
+
+  test('micro-actions on a visible prop do not count as an invented plot event', async () => {
+    const engine = new ScriptedEngine([{ kind: 'text', text: '他把合订本从桌上拿起来，翻开。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10, visibleEntities: ['合订本'] },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_event_added')).toBe(false);
+  });
+
+  test('a name inside a committed personality text is not an actor swap', async () => {
+    const trait: NarrationFact = {
+      id: 'person_c:personality', actorId: 'person_c', name: '周宁',
+      kind: 'personality_changed', changeId: 'chg_trait', text: '答应陪林川去门厅',
+    };
+    const engine = new ScriptedEngine([{ kind: 'text', text: '周宁答应陪林川去门厅。' }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(trait), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_actor_swap')).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_omitted')).toBe(false);
+  });
+
+  test('a number belonging to another character in the same sentence is not a wrong sanity number', async () => {
+    const task: NarrationFact = {
+      id: 'person_a:task', actorId: 'person_a', name: '林川',
+      kind: 'task_achieved', taskId: 'task_a', goal: '把门修好',
+    };
+    const otherSanity: NarrationFact = {
+      id: 'person_c:sanity', actorId: 'person_c', name: '周宁', kind: 'sanity_changed', from: 41, to: 46,
+    };
+    const staticSanity: NarrationFact = {
+      id: 'person_a:sanity', actorId: 'person_a', name: '林川', kind: 'sanity', value: 79,
+    };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '林川办完了「把门修好」；周宁的精神值从 41 升到 46，呼吸慢慢匀下来。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(task, otherSanity, staticSanity), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10 },
+    });
+    expect(result.issues.some((issue) => issue.kind === 'fact_wrong_number')).toBe(false);
+  });
+
+  test('a correct elapsed duration is not contradicted by a substring or a date', async () => {
+    const time = { boundary: 'elapsed' as const, duration: { amount: 20, unit: 'minute' as const } };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '二十分钟过去，走廊里没有别的声音。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10, time, requireTime: true },
+    });
+    expect(result.accepted).toBe(true);
+    const withDate = new ScriptedEngine([{
+      kind: 'text', text: '九八年秋天，十分钟过去了，走廊里没有别的声音。',
+    }]);
+    const dated = await generateCommittedNarration({
+      engine: withDate, committed: packet(), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10, time: { boundary: 'elapsed', duration: { amount: 10, unit: 'minute' } }, requireTime: true },
+    });
+    expect(dated.accepted).toBe(true);
+  });
+
+  test('a genuinely wrong elapsed duration is still rejected', async () => {
+    const time = { boundary: 'elapsed' as const, duration: { amount: 10, unit: 'minute' as const } };
+    const engine = new ScriptedEngine([{
+      kind: 'text', text: '三十五分钟过去了，走廊里没有别的声音。',
+    }]);
+    const result = await generateCommittedNarration({
+      engine, committed: packet(), inputText: '【正文】',
+      policy: { ...basePolicy, minChars: 10, time, requireTime: true },
+    });
+    expect(result.accepted).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_wrong_time' || issue.kind === 'time_missing')).toBe(true);
+  });
+
+  test('the 1.5B elapsed sample that used to pass is rejected for opening the box', async () => {
+    const atLin: NarrationFact = {
+      id: 'person_a:at', actorId: 'person_a', name: '林川', kind: 'at',
+      locationId: 'hall', location: '门厅',
+    };
+    const atZhou: NarrationFact = {
+      id: 'person_c:at', actorId: 'person_c', name: '周宁', kind: 'at',
+      locationId: 'corridor', location: '走廊',
+    };
+    const text = [
+      '光从盒子缝隙中透出，映在走廊的每一面墙壁上。声音是轻柔的铃声，偶尔几下脚步声在走廊尽头渐行渐远。',
+      '周宁的手指轻轻触碰盒盖，盒子缓缓开启，映入眼帘的是一块精致的古董，上面雕刻着精美的图案。',
+      '约两分钟过去了。',
+    ].join(String.fromCharCode(10, 10));
+    const engine = new ScriptedEngine([{ kind: 'text', text }]);
+    const result = await generateCommittedNarration({
+      engine,
+      committed: packet(atLin, atZhou),
+      inputText: '【正文】',
+      policy: {
+        ...beatPolicy, scene: null, mode: 'beats', minChars: 1, beatAttempts: 1,
+        visibleEntities: ['盒子'],
+        time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
+      },
+    });
+    expect(result.accepted).toBe(false);
+    // The time beat is rejected for opening the box; the final scene is the
+    // explicit time fallback, not the model's invention.
+    expect(result.beats[0].issues.some((issue) => issue.kind === 'fact_event_added')).toBe(true);
+    expect(result.text).not.toContain('盒子缓缓开启');
+    expect(result.text).toContain('两分钟');
   });
 
   test('planBeats orders location before movement and adds a time beat only when required', () => {

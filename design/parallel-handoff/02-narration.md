@@ -9,7 +9,7 @@
 
 - 已实现可执行策略 `generateCommittedNarration(...)`，接入现有
   `InferenceEngine` 与 `CommittedNarration`，不写世界状态、不重建事实序列化。
-- CPU 小测试 29 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/narration-generation.test.ts --maxWorkers=1`），
+- CPU 小测试 57 项通过（`npx vitest run src/lib/world-engine/local/narration-generation/ --maxWorkers=1`），
   `npx tsc -p tsconfig.world-contract.json` 通过，ESLint 本目录无告警。
 - 真实浏览器模型（Edge headless + wllama）：三个叙事检查点各 3 个代表性点，共 18 次真实生成全部被拒（legacy v2 0/3，instruct v1 0/3，1.5B v2 0/3）。模型能写出通顺中文，但仍在编造动作和往事、漏掉已结算移动、不写时间。这是真实模型限制的证据，不是本策略的通过证明；正文质量未达到训练范文水平。
 - 主 agent 需要接线的只有 `game-model.ts` 里的 `narration()` 一处（见下），
@@ -91,6 +91,74 @@
 3. 句子里出现与理智无关的数字（`周宁接过来，是一本旧书`）不再当成理智数字错误；
    真正提到精神/理智/变化的数字错误仍保留。
 
+### 3.5 物品状态词与“假数字吞掉事件”
+
+上游判分器的事件动词表是有限的，模型会用同义词绕开（`盒子缓缓开启` 不在
+`打开/关上` 表里）；而句子里只要出现一个与理智无关的数字（`一张纸条` 的“一”），
+上游会先报 `wrong_number` 并跳过该句，后面的 `打开` 就再也查不到。真实 1.5B
+运行的 elapsed 场景曾因此被接受，正文里盒子被打开、出现古董。
+
+现在的处理：
+
+- 非理智语的 `wrong_number` 不再直接放过整句，而是把该句用**空事实包**重跑一次
+  事件检查；否定的动词（`没有打开`）仍不误报。
+- 调用方给出的可见物品（`policy.scene.objects` / `visibleEntities`）与“打开/开启/
+  掀开/拿出/取出/放进/递给/接过/放下/拿起/合上/锁上……”同句出现时，没有
+  `licensedEvents` 就记 `fact_event_added`。这覆盖了上游词表没有的 `开启`。
+- 新增回归测试直接使用 1.5B 那次被接受的原文；当前代码会把该拍拒掉，最终只剩
+  明确的时间兜底句，而不是模型编的古董。
+
+### 3.6 同义表达：理智/个性不逼模型报数字或复述原句
+
+`alignNarration` 对 `sanity_changed` 要求句子里出现 from/to 数字，对
+`personality_changed` 要求接近原句；真实好场景常用“呼吸比刚才浅”“这次没有把话
+推回去”这类写法。现在：
+
+- 理智变化：句子里有该人物 + 身体反应（呼吸/手指/声音/视线/肩/脚步…）+ 变化标记
+  （比刚才/下来/浅/停…）时，不再直接判 `fact_omitted`；若句子写了方向词，方向与
+  已结算 from→to 相反仍硬拒（如精神值降了却写“稳了下来”）。
+- 个性变化：句子里有该人物 + 一个行为/态度动词 + 变化标记时，不再判遗漏。
+- 两者都返回 `unverified_sentence` 软提示，交人工复核；`metrics` 仍记录上游 coverage
+  的原始 false。移动/任务/时间仍要求可核对内容，不放宽事实。
+
+这样不会因为“没逐字写出精神值/没复述个性原句”把忠实的短场景误拒；但软提示不是
+质量通过，最终仍需用户读评。
+
+### 3.7 对 01 短场景语料的兼容检查（71/71）
+
+新增手工测试 `corpus-compat.test.ts`（默认跳过）：
+
+```bash
+cd frontend
+NARRATION_CORPUS=D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/corpus-short/rows.jsonl NARRATION_CORPUS_REPORT=D:/others/Jity/.local/parallel-local-game/results/quality/corpus-compat-02.json npx vitest run src/lib/world-engine/local/narration-generation/corpus-compat.test.ts
+```
+
+它把 01 的 71 条手工短场景的目标正文送进同一套 `verifyNarration`，用每行的
+`requiredFacts` 组事实包。当前 **71/71 全过**。中途发现的唯一硬矛盾
+`short2-0034-carved-line-worn`（输入把方既白放在天台楼梯间，目标却写「方既白还在
+天台」）已由 01 改成「方既白在楼梯间里」；`requests-02.json` 的 `req-02-06` 已解决。
+71 行共产生 187 条 `unverified_sentence` 软提示（每行约 2.6 条），交人工读评，
+不是硬错误。
+
+为了不把人类金标准误杀，本轮修了以下**表达形式**误判（不放松事实内容）：
+
+- 时间：上游把「二十分钟」里的「十分钟」、把「九八年」的年份当错误时长；
+  当**要求的**时长本身已写出时，不再保留 `wrong_time`。真正写错时长仍由
+  `time_missing`/`wrong_time` 拒绝。
+- 静态 `at` 事实：不再送进对齐器当断言，改由 `knownPositions` 授权站位。否则
+  句子开头的「旧刊堆放区」会被当成 actor，产生假 actor_swap / 假移动。
+- 分号：对齐前把 `；` 归一成句号，两个人物各占一句时不再互相借动作。
+- 多人物/代词：任务目标或个性原文逐字出现时，允许代词主语并返回软提示；
+  多人物并列主语（`A、B和C都办完了「…」`）不再报 actor_swap。
+- 地点前缀：`天台` 是 `天台楼梯间` 的前缀；移动事实到后者时，不再报「移动到
+  天台无事实」。
+- 物品：`打开/开启/拿出/取出/…` 仍是硬事件；`合上/拿起/放下/推开/翻开` 等
+  具体小动作不再当凭空事件（用户要求允许细微动作）。
+- 跨人物数字：同一句里 A 的精神值数字属于 B 时，不再把 B 的数字算到 A 头上。
+- 理智/个性：见 §3.6，反应式表达返回软提示。
+
+这些修复都有单元测试（57 项）；语料兼容测试本身是手工入口，不进入默认 CI。
+
 ### 4. 有界重试
 
 默认 `maxAttempts = 2`（可配 1–4）。第二稿的提示只在正文标记前加入：
@@ -109,6 +177,72 @@
 指标。整体 `timings.totalMs` 从调用开始算到返回，包含所有重试；`attemptsMs` 是各次
 之和。外部 `AbortSignal` 直接转发给 engine；端到端 `deadlineMs` 由本模块自己的
 计时器兜底。取消/超时不会重试，也不会把部分文本标成接受。
+
+## v3：按“已结算的一件事”分拍写（产品路径）
+
+一次生成整段场景在真实小模型上反复失败：模型会把输入里没有的动作、人物、往事写进去，
+同时漏掉本回合唯一真正发生的变化。原因不是中文不通顺，而是“整段场景”这个要求本身
+要求模型自己补连接动作，而连接动作就是编造。
+
+v3 因此改成**按拍写**：`policy.mode = 'beats'`（传了 `policy.scene` 时默认就是它）。
+
+1. `planBeats` 把已结算事实排成有序的拍：场景开场（如有场景上下文）、每个必述事实一拍、
+   需要报时间时加一拍。每拍写明“这一件”是什么、能出现哪些名字。
+2. 每拍只请求一到两句，提示里给视角、地点、在场人物、环境描述、上一句、这一件，
+   并禁止新增人物/物品/事件/往事/承诺/数字。
+3. 每拍单独校验（复用同一套 `verifyNarration`，只是把必述集合缩到这一拍）。不合格
+   只重写这一拍，最多 `beatAttempts` 次；仍不合格时，**事实拍**退回该事实的普通叙述句
+   （如“林川从走廊走到了门厅。”），场景拍直接跳过。整段场景因此不会因为一句坏话全废。
+4. 程序把拍拼成段落（一拍一段，和训练范文的节奏一致），去掉跨拍重复句，补上漏掉的
+   时间句/事实句，然后对整段再做一次完整校验。
+5. 流式是真实的：每拍内部照常转发 engine 的 token 回调，拍与拍之间也推进显示文本，
+   页面在第一个拍完成时就能读到第一段。
+
+如果所有拍都退回了事实句，结果标 `all_beats_fell_back` 并 `accepted: false`——那是
+事实句拼接，不是模型正文，不能当作通过。
+
+### 0.5B 场景候选（10 线 qwen05b-scene-v1）
+
+10 已登记 `D:/others/Jity/.local/models-narration/qwen05b-scene-v1/model-Q4_K_M.gguf`
+（SHA-256 `5a9879f1…`）。它用 Qwen2.5 ChatML：**独立 system 轮** + user=xProse
+（v2 或 legacy），assistant=正文。页面现有的 `WllamaInferenceEngine.complete`
+只发一条 user 消息，无法表达这个 system 轮；脚本里的 `ChatEngine` 可以，页面接线
+需要 08/06 增加 `completeChat(messages)` 或 `system` 选项。请求写在
+`results/quality/integration-02.json` 第 6 步。
+
+### 训练模板核对
+
+之前的真实探针（18 次全拒）喂的是 `legacyNarrationInput`：一行扁平状态加 `【正文】`。
+但浏览器里的两个权重都不是这个形状训练的：
+
+- 无指令臂：`【状态】<x 的 JSON>
+【视角】…
+【叙事】`（`qwen-train/train_qwen.py` 的
+  `INSTRUCTION = None` 分支）；
+- 指令臂：ChatML + `instruction.md` 系统提示 + 三段式用户输入。
+
+`trained-input.ts` 现在能从同一份只读状态重建这两种形状（`trainedSceneView` →
+`renderTrainedRawPrompt` / `renderTrainedInstructUser` / `wrapChatml`），场景模式可用
+`--template trained-raw|trained-instruct` 复现。这样“某个权重不行”的结论才是关于权重的结论。
+
+`probe-template.mjs` 走 `createCompletion`（绕过页面适配器必做的 ChatML 包装），用同一组
+事实喂四种形状，用来确认某个权重到底是哪种训练臂。
+
+### v3 新增 API
+
+```ts
+policy.mode?: 'scene' | 'beats';        // 传 scene 时默认 beats
+policy.scene?: BeatSceneContext | null; // 地点/环境/在场人物/可见物品，只读状态
+policy.beatAttempts?: number;           // 每拍重试次数，默认 2
+policy.beatMaxChars?: number;           // 单拍字数上限，默认 170
+
+// 返回新增：
+// beats: NarrationBeatEvidence[]  // 每拍的指令、文本、来源(model/fallback/skipped)、
+//                                 // 尝试次数、耗时、问题、完整 prompt 与 raw
+// assembly: { droppedSentences, appendedSentences }  // 程序拼装时删除/补上的句子
+
+export const generateCandidate = generateCommittedNarration; // QUALITY-TEAMS.md 的入口名
+```
 
 ## 导出 API
 
@@ -175,7 +309,7 @@ const result = await generateCommittedNarration({
     // 主树当前导出了 EVENT_VERBS；若该导出被撤回，先删掉这一行（更保守）。
     licensedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
     time: data.delta?.timeAdvance ?? null,
-    minChars: 120,
+    minChars: 60,   // 01 的短场景 60–149 字；不要用 120 把忠实的短场景判短
     maxAttempts: 2,
     maxTokens: this.options.narrationMaxTokens ?? 380,
     maxTokensCeiling: 700,
@@ -231,7 +365,7 @@ npx tsc -p tsconfig.world-contract.json
 npx eslint src/lib/world-engine/local/narration-generation
 ```
 
-29 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
+57 项测试覆盖：正确方向的移动被接受；方向反转被拒且第二稿提示带正确方向；必述遗漏；
 整段拒绝返回最佳稿和全部问题；非视角心理泄露；POV 心理合法；隐藏知识；未许可实体；
 句内循环；跨回合回声；提前收尾；截断后提高 token 预算；elapsed 时间必述；玩家
 动作许可事件；复述指令；revise/regenerate 两种修复；外取消（无输出/带部分流式）；

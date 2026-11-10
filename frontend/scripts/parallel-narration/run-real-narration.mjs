@@ -41,11 +41,37 @@ const config = {
   maxAttempts: Number(option('--max-attempts', '2')),
   minChars: Number(option('--min-chars', '80')),
   mode: option('--mode', 'beats'),
+  // scene mode only: which prompt shape the weights were trained on
+  template: option('--template', 'legacy'),
+  // The B-scene candidate was trained with a separate system turn. The page
+  // engine always wraps a single user message, so a fair run needs an engine
+  // that sends the system turn explicitly. This is probe tooling; the page
+  // integration request is in results/quality/integration-02.json.
+  system: option('--system', ''),
+  inputWorktree: option('--input-worktree', 'D:/others/Jity/.local/parallel-local-game/worktrees/01-input'),
+  scenarioFile: option('--scenario-file', ''),
   set: option('--set', 'dev'),
   instruction: option('--instruction', ''),
   gpu: process.argv.includes('--gpu'),
 };
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+if (config.scenarioFile) {
+  config.scenario = JSON.parse(readFileSync(config.scenarioFile, 'utf8'));
+  const scenario = config.scenario;
+  const missing = [];
+  if (!scenario.inputText) missing.push('inputText');
+  if (!scenario.committed?.facts) missing.push('committed.facts');
+  if (!scenario.policy?.viewpoint?.name) missing.push('policy.viewpoint.name');
+  if (!scenario.policy?.knownEntities?.length) missing.push('policy.knownEntities');
+  if (missing.length) {
+    console.error(`scenario file ${config.scenarioFile} is missing: ${missing.join(', ')}`);
+    process.exit(2);
+  }
+  console.log(`[scenario] ${scenario.id}: inputChars=${scenario.inputText.length} `
+    + `facts=${scenario.committed.facts.length} scene=${scenario.scene ? 'yes' : 'no'} `
+    + `viewpoint=${scenario.viewpoint?.name ?? scenario.policy.viewpoint.name}`);
+  if (process.argv.includes('--check-scenario')) process.exit(0);
+}
 const modelFile = resolve(config.modelDir, basename(config.model));
 const evidence = {
   status: 'IN_PROGRESS',
@@ -54,7 +80,8 @@ const evidence = {
   config: {
     model: config.model, modelSha256: existsSync(modelFile) ? sha256(readFileSync(modelFile)) : null,
     modelBytes: existsSync(modelFile) ? statSync(modelFile).size : null,
-    mode: config.mode, set: config.set,
+    mode: config.mode, template: config.template, set: config.set,
+    system: config.system || null,
     threads: config.numThreads, gpu: config.gpu, maxTokens: config.maxTokens,
     maxAttempts: config.maxAttempts, minChars: config.minChars,
     instruction: config.instruction || null,
@@ -114,7 +141,10 @@ function assetMiddleware(vite) {
 
 const server = await createServer({
   root: frontend, configFile: false, logLevel: 'warn',
-  server: { host: '127.0.0.1', port: 0, hmr: false },
+  server: {
+    host: '127.0.0.1', port: 0, hmr: false,
+    fs: { strict: true, allow: [frontend, config.modelDir, config.inputWorktree] },
+  },
   plugins: [{ name: 'narration-strategy-assets', configureServer: assetMiddleware }],
 });
 let browser;
@@ -133,15 +163,104 @@ try {
   const result = await page.evaluate(async (config) => {
     if (!crossOriginIsolated) throw new Error('real narration run requires cross-origin isolation');
     const { WllamaInferenceEngine } = await import('/src/lib/world-engine/runtime/wllama-engine.ts');
+    const { createWllama } = await import('/src/lib/benchmark/wllama-loader.ts');
+    const { IncompleteGenerationError } = await import('/src/lib/world-engine/runtime/engine.ts');
     const { generateCommittedNarration } = await import('/src/lib/world-engine/local/narration-generation/index.ts');
+    const {
+      renderTrainedRawPrompt, renderTrainedInstructUser, trainedSceneView, wrapChatml,
+    } = await import('/src/lib/world-engine/local/narration-generation/trained-input.ts');
     const { projectCommittedNarration } = await import('/src/lib/world-engine/runtime/committed-narration.ts');
     const { legacyNarrationInput } = await import('/src/lib/world-engine/local/prompt.ts');
     const { SHORT_STATE } = await import('/src/lib/world-engine/runtime/b3-short-samples.ts');
 
-    const engine = new WllamaInferenceEngine({
-      modelUrl: config.model, contextSize: 4096, numThreads: config.numThreads,
-      ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
-    });
+    /** System-turn chat engine: the trained shape of the 0.5B scene candidate
+     * (Qwen2.5 ChatML with a separate system message). */
+    class ChatEngine {
+      constructor(modelUrl, system, threads, gpu) {
+        this.info = { backend: 'wllama-chat', modelId: null };
+        this.modelUrl = modelUrl; this.system = system; this.threads = threads; this.gpu = gpu;
+        this.instance = null; this.disposed = false;
+      }
+      async load() {
+        const instance = await createWllama();
+        const response = await fetch(this.modelUrl);
+        if (!response.ok) throw new Error(`model fetch failed: ${response.status} ${this.modelUrl}`);
+        const blob = await response.blob();
+        await instance.loadModel([blob], {
+          n_ctx: 4096, n_gpu_layers: this.gpu ? 99999 : 0, n_threads: this.threads,
+        });
+        if (this.disposed) { await instance.exit(); return; }
+        this.instance = instance;
+        this.info.modelId = this.modelUrl.split('/').pop() ?? this.modelUrl;
+      }
+      async complete(prompt, options = {}) {
+        const instance = this.instance;
+        if (!instance) throw new Error('chat engine is not loaded');
+        if (options.signal?.aborted || this.disposed) throw new DOMException('Aborted', 'AbortError');
+        const timeoutMs = options.timeoutMs ?? 120_000;
+        const controller = new AbortController();
+        const callerAbort = () => controller.abort();
+        options.signal?.addEventListener('abort', callerAbort, { once: true });
+        let timedOut = false;
+        const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
+        const started = performance.now();
+        const evidence = { raw: '', finishReason: null, firstTokenMs: null, wallMs: 0 };
+        try {
+          const messages = [];
+          if (this.system) messages.push({ role: 'system', content: this.system });
+          messages.push({ role: 'user', content: prompt });
+          await instance.createChatCompletion({
+            messages,
+            chat_template_kwargs: { enable_thinking: false },
+            cache_prompt: true, stream: true,
+            max_tokens: options.maxTokens ?? 256,
+            temperature: options.temperature ?? 0,
+            ...(options.seed !== undefined ? { seed: options.seed } : {}),
+            ...(options.stop !== undefined ? { stop: options.stop } : {}),
+            abortSignal: controller.signal,
+            onData: (chunk) => {
+              const choice = chunk.choices?.[0];
+              const text = choice?.delta?.content ?? '';
+              if (text && evidence.firstTokenMs === null) evidence.firstTokenMs = performance.now() - started;
+              evidence.raw += text;
+              if (choice?.finish_reason) evidence.finishReason = choice.finish_reason;
+              if (chunk.usage) evidence.usage = chunk.usage;
+              if (chunk.timings) evidence.timings = chunk.timings;
+              options.onProgress?.({ raw: evidence.raw, elapsedMs: performance.now() - started });
+            },
+          });
+          if (options.signal?.aborted || this.disposed) throw new DOMException('Aborted', 'AbortError');
+          if (timedOut) throw new IncompleteGenerationError(evidence, 'generation deadline exceeded');
+        } catch (error) {
+          if (options.signal?.aborted || this.disposed) throw new DOMException('Aborted', 'AbortError');
+          if (timedOut) {
+            evidence.finishReason = 'timeout';
+            throw new IncompleteGenerationError(evidence, 'generation deadline exceeded');
+          }
+          throw error;
+        } finally {
+          clearTimeout(timer);
+          options.signal?.removeEventListener('abort', callerAbort);
+          evidence.wallMs = performance.now() - started;
+          options.onCompletion?.(evidence);
+        }
+        if (evidence.finishReason !== 'stop') throw new IncompleteGenerationError(evidence);
+        return evidence.raw;
+      }
+      async dispose() {
+        this.disposed = true;
+        const instance = this.instance;
+        this.instance = null;
+        if (instance) await instance.exit();
+      }
+    }
+
+    const engine = config.system
+      ? new ChatEngine(config.model, config.system, config.numThreads, config.gpu)
+      : new WllamaInferenceEngine({
+        modelUrl: config.model, contextSize: 4096, numThreads: config.numThreads,
+        ...(config.gpu ? { nGpuLayers: 99999 } : { nGpuLayers: 0 }),
+      });
     const loadStarted = performance.now();
     await engine.load();
     const loadMs = performance.now() - loadStarted;
@@ -264,16 +383,33 @@ try {
       },
     };
     const unseenRoot = read('u_root', null, 0, unseenState, null, {});
+    // The committed-narration projector in this baseline refuses any change to
+    // state.items / state.locations (only character state may move), so the
+    // unseen point moves a character. Item moves are an upstream limitation,
+    // recorded in the handoff, not something this probe can work around.
     const unseenMove = (() => {
       const state = clone(unseenState);
-      state.items.ledger.position = position('storeroom');
+      state.characters.char_luo.position = position('landing');
       state.time = { ...state.time, dateTime: '2026-11-02T20:11:00' };
       return read('u_point_1', 'u_root', 1, state,
         { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
-        { ledger: { entityId: 'ledger', positionSet: position('storeroom') } });
+        { char_luo: { entityId: 'char_luo', positionSet: position('landing') } });
     })();
 
     const scenarios = [];
+    if (config.scenario) {
+      const s = config.scenario;
+      scenarios.push({
+        id: s.id, note: s.note ?? 'caller-supplied scenario',
+        before: null, after: null,
+        delta: { timeAdvance: s.time ?? null, entityDeltas: {} },
+        time: s.time ?? null,
+        committed: s.committed, inputText: s.inputText,
+        view: s.viewpoint?.id ?? s.policy?.viewpoint?.id,
+        policy: s.policy, scene: s.scene ?? null,
+        continuation: false,
+      });
+    }
     const addDev = () => {
       scenarios.push({
         id: 'root-scene', before: null, after: devReader.root,
@@ -298,7 +434,7 @@ try {
         id: 'unseen-item-move', before: unseenRoot, after: unseenMove,
         delta: { timeAdvance: unseenMove.timeAdvance, entityDeltas: unseenMove.entityDeltas },
         time: unseenMove.timeAdvance,
-        note: 'Unseen world: 账本 moves 二楼平台→二楼库房 in one minute; POV 余晚 stays on the landing, 罗青 is in the storeroom.',
+        note: 'Unseen world: 罗青 moves 二楼库房→二楼平台 in one minute; POV 余晚 stays on the landing.',
       });
     };
     const addContinuation = () => {
@@ -309,16 +445,59 @@ try {
         note: 'Second turn of the dev world: previous accepted prose is passed as priorText.',
       });
     };
-    if (config.set === 'dev' || config.set === 'all') addDev();
-    if (config.set === 'unseen' || config.set === 'all') addUnseen();
-    if (config.set === 'continuation' || config.set === 'all') addContinuation();
+    if (!config.scenario) {
+      if (config.set === 'dev' || config.set === 'all') addDev();
+      if (config.set === 'unseen' || config.set === 'all') addUnseen();
+      if (config.set === 'continuation' || config.set === 'all') addContinuation();
+    }
 
     const runs = [];
-    let priorText = null;
+    // Only a continuation scenario receives the previous scene. Reusing it
+    // across unrelated worlds would compare prose that never shared context
+    // and report a false echo.
+    const priorFor = new Map();
+    for (let index = 1; index < scenarios.length; index += 1) {
+      const previous = scenarios[index - 1];
+      if (scenarios[index].continuation) priorFor.set(scenarios[index].id, previous.text ?? null);
+    }
     for (const scenario of scenarios) {
-      const committed = projectCommittedNarration(scenario.after, scenario.before ?? null);
-      const view = scenario.after.state.protagonistId;
-      const inputText = legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
+      const priorText = priorFor.get(scenario.id) ?? null;
+      const committed = scenario.committed
+        ?? projectCommittedNarration(scenario.after, scenario.before ?? null);
+      const view = scenario.view ?? scenario.after.state.protagonistId;
+      const inputText = scenario.inputText ?? await (async () => {
+        if (config.mode === 'beats' || config.template === 'legacy') {
+          return legacyNarrationInput(scenario.before?.state ?? null, scenario.delta, scenario.after.state, view);
+        }
+        if (config.template === 'v2') {
+          const input = await import(
+            `/@fs/${config.inputWorktree}/frontend/src/lib/world-engine/local/narration-input/index.ts`
+          );
+          const built = input.buildNarrationInput({
+            // Root point: no previous state exists; the settled after-state
+            // is the snapshot, with the empty delta the root already has.
+            before: scenario.before?.state ?? scenario.after.state,
+            after: scenario.after.state,
+            delta: scenario.delta.entityDeltas,
+            timeAdvance: scenario.delta.timeAdvance,
+            viewpointId: view,
+          }, { model: 'result-v2', checkTokenizer: false });
+          return built.rendered.text;
+        }
+        const trained = trainedSceneView({
+          before: scenario.before?.state ?? null,
+          after: scenario.after.state,
+          delta: scenario.delta.entityDeltas,
+          timeAdvance: scenario.delta.timeAdvance,
+          viewpointId: view,
+        });
+        if (config.template === 'trained-instruct') {
+          const system = config.instruction || '你是叙事引擎。根据给定的世界状态写出这一回合的小说正文。'
+            + '只写已结算的事实，不新增人物、物品、事件、往事或承诺；对话用「」；直接输出正文，不写标题或说明。';
+          return wrapChatml(system, renderTrainedInstructUser(trained));
+        }
+        return renderTrainedRawPrompt(trained);
+      })();
       const streamed = [];
       let progressEvents = 0;
       const started = performance.now();
@@ -328,7 +507,13 @@ try {
           progressEvents += 1;
           streamed.push({ status: state.status, chars: [...state.text].length, verified: state.verified });
         },
-        policy: {
+        policy: scenario.policy ? {
+          ...scenario.policy,
+          mode: config.mode,
+          scene: config.mode === 'beats' ? (scenario.scene ?? null) : null,
+          time: scenario.time,
+          ...(config.instruction ? { instruction: config.instruction } : {}),
+        } : {
           mode: config.mode,
           scene: config.mode === 'beats' ? sceneFrom(scenario.after.state, view) : null,
           viewpoint: { id: view, name: scenario.after.state.initial.characters[view].name },
@@ -352,7 +537,7 @@ try {
         },
       });
       const wallMs = performance.now() - started;
-      if (generated.accepted) priorText = generated.text;
+      scenario.text = generated.accepted ? generated.text : null;
       const record = {
         id: scenario.id, note: scenario.note,
         inputChars: inputText.length, inputText,

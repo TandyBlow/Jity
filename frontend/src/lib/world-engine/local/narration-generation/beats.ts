@@ -56,12 +56,39 @@ const cnAmount = (value: number): string =>
 /** The sentence used when the model cannot produce a faithful beat. It is a
  * plain narrative sentence about one committed fact, not a state listing. */
 export function beatFallbackSentence(beat: NarrationBeat): string {
-  if (beat.kind === 'fact' && beat.fact) return `${factPhrases(beat.fact)[0]}。`;
-  return '';
+  const fact = beat.kind === 'fact' ? beat.fact : null;
+  if (!fact) return '';
+  switch (fact.kind) {
+    case 'at': return `${fact.name}在${fact.location}。`;
+    case 'moved': return `${fact.name}从${fact.from}走到了${fact.to}。`;
+    case 'task_achieved': return `${fact.name}把「${fact.goal}」这件事做完了。`;
+    case 'personality_changed': return `${fact.name}${fact.text}。`;
+    case 'sanity': return `${fact.name}的精神值是${fact.value}。`;
+    case 'sanity_changed': return `${fact.name}的精神值从${fact.from}变成了${fact.to}。`;
+    default: return `${factPhrases(fact)[0]}。`;
+  }
 }
 
-export function timeFallbackSentence(duration: TimeAdvance['duration']): string {
-  return `约${cnAmount(duration.amount)}${UNIT_CN[duration.unit]}过去了。`;
+const TIME_PHRASES = [
+  (amount: string, unit: string) => `约${amount}${unit}过去了。`,
+  (amount: string, unit: string) => `${amount}${unit}就这么过去了。`,
+  (amount: string, unit: string) => `等回过神来，${amount}${unit}已经过去。`,
+  (amount: string, unit: string) => `又过了${amount}${unit}。`,
+];
+
+/** A time sentence that does not repeat what the previous scene already said.
+ * The previous accepted prose is part of the point's context; re-using its
+ * exact sentence is an echo, not continuity. */
+export function timeFallbackSentence(
+  duration: TimeAdvance['duration'],
+  priorText?: string | null,
+  offset = 0,
+): string {
+  const amount = cnAmount(duration.amount);
+  const unit = UNIT_CN[duration.unit];
+  const candidates = [...TIME_PHRASES.slice(offset), ...TIME_PHRASES.slice(0, offset)]
+    .map((phrase) => phrase(amount, unit));
+  return candidates.find((sentence) => !priorText || !priorText.includes(sentence)) ?? candidates[0];
 }
 
 function factDirective(fact: NarrationFact, scene: BeatSceneContext | undefined, viewpointName: string | null): string {
@@ -94,8 +121,15 @@ export function planBeats(input: {
   const viewpointName = ledger.viewpoint?.name ?? null;
   const beats: NarrationBeat[] = [];
 
+  const facts = [...ledger.mandatory].sort((a, b) => FACT_ORDER[a.kind] - FACT_ORDER[b.kind]);
+  // A point with nothing settled still needs a readable scene; it gets a
+  // longer opening beat and no fact beats to carry the scene.
+  const quiet = facts.length === 0 && !(ledger.requireTime && ledger.time);
+
   if (scene && (scene.placeNotes?.length || scene.present?.length || scene.location)) {
-    const notes = (scene.placeNotes ?? []).slice(0, 2).join('；');
+    const notes = (scene.placeNotes ?? []).slice(0, 2)
+      .map((note) => note.trim().replace(/[。.]+$/u, ''))
+      .join('；');
     const people = (scene.present ?? []).map((person) => person.name).filter((name) => name !== viewpointName);
     const parts = [scene.location ? `这里是${scene.location}` : null, notes || null, people.length ? `${people.join('、')}也在` : null]
       .filter((part): part is string => Boolean(part));
@@ -103,15 +137,20 @@ export function planBeats(input: {
       id: 'scene-open',
       kind: 'scene',
       fact: null,
-      directive: `${parts.join('。')}。写一到两句眼前的场景：光、声音、手上的动作。不要写任何人走动、开门、递东西或说话。`,
+      directive: quiet
+        ? `${parts.join('。')}。写三到四句眼前的场景：光、声音、手上的东西、${viewpointName ?? '主角'}的一个小动作。不要写任何人走动、开门、递东西、说话或回忆。`
+        : `${parts.join('。')}。写一到两句眼前的场景：光、声音、手上的动作。不要写任何人走动、开门、递东西或说话。`,
       anchors: [],
-      licensed: [...people, ...(scene.location ? [scene.location] : [])],
+      licensed: [
+        ...people,
+        ...(scene.location ? [scene.location] : []),
+        ...(scene.objects ?? []).map((object) => object.name),
+      ],
       fallback: 'skip',
-      mandatory: false,
+      mandatory: quiet,
     });
   }
 
-  const facts = [...ledger.mandatory].sort((a, b) => FACT_ORDER[a.kind] - FACT_ORDER[b.kind]);
   for (const [index, fact] of facts.entries()) {
     beats.push({
       id: `fact-${index}-${fact.kind}`,
@@ -164,12 +203,20 @@ export interface BeatPromptInput {
 export function buildBeatPrompt(input: BeatPromptInput): string {
   const { beat, ledger, policy, scene } = input;
   const lines: string[] = ['你是中文小说作者。只写下面这一件事，用一到两句，直接写正文。', ''];
-  if (ledger.viewpoint) lines.push(`【视角】${ledger.viewpoint.name}（只写${ledger.viewpoint.name}看得见、听得见的东西，不写别人的内心）`);
+  if (ledger.viewpoint) {
+    lines.push(`【视角】${ledger.viewpoint.name}（第三人称；只写${ledger.viewpoint.name}看得见、听得见的东西，不写别人的内心）`);
+  }
   if (scene?.location) lines.push(`【地点】${scene.location}`);
   const present = (scene?.present ?? []).map((person) => person.name).filter((name) => name !== ledger.viewpoint?.name);
   if (present.length) lines.push(`【在场】${present.join('、')}`);
   const notes = (scene?.placeNotes ?? []).slice(0, 2);
   if (notes.length) lines.push(`【环境】${notes.join('；')}`);
+  // Objects in the room are settled state too: naming one gives the model
+  // something concrete to touch instead of inventing a prop.
+  const objects = (scene?.objects ?? [])
+    .slice(0, 3)
+    .map((object) => (object.note ? `${object.name}（${object.note}）` : object.name));
+  if (objects.length) lines.push(`【手边】${objects.join('、')}`);
   const prior = input.written.length ? input.written.at(-1) ?? '' : (input.priorTail ?? '');
   if (prior) lines.push(`【前一句】${prior}`);
   lines.push(`【这一件】${beat.directive}`);
