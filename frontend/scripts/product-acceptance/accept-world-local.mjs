@@ -46,6 +46,7 @@ const turnsFile = flag('--turns', resolve(here, 'turns-10.json'));
 const turnTimeoutMs = Number(flag('--turn-timeout-ms', '330000'));
 const readyTimeoutMs = Number(flag('--ready-timeout-ms', '900000'));
 const intent = flag('--intent', '10-turn');
+const preflightOnly = has('--preflight');
 const keepStorage = has('--keep-storage') || has('--resume');
 const fresh = has('--fresh') || !has('--resume');
 const settleDelayMs = Number(flag('--settle-delay-ms', '120'));
@@ -54,8 +55,8 @@ if (!existsSync(turnsFile)) {
   console.error(`[fail] turns file missing: ${turnsFile}`);
   process.exit(2);
 }
-const turns = JSON.parse(readFileSync(turnsFile, 'utf8'));
-if (!Array.isArray(turns) || turns.length === 0) {
+const turns = preflightOnly ? [] : JSON.parse(readFileSync(turnsFile, 'utf8'));
+if (!preflightOnly && (!Array.isArray(turns) || turns.length === 0)) {
   console.error(`[fail] turns file has no turns: ${turnsFile}`);
   process.exit(2);
 }
@@ -246,6 +247,12 @@ try {
     };
   });
 
+  if (preflightOnly) {
+    evidence.status = 'PREFLIGHT';
+    evidence.finishedAt = new Date().toISOString();
+    save();
+    console.log(`[preflight] ready=${evidence.readyMs}ms isolated=${evidence.environment.crossOriginIsolated} adapter=${JSON.stringify(evidence.environment.adapter)} models=${evidence.modelRequests.filter((r) => /gguf/.test(r.url)).length} -> ${out}`);
+  } else
   for (let index = 0; index < turns.length; index += 1) {
     const turn = typeof turns[index] === 'string' ? { id: `t${index + 1}`, input: turns[index] } : turns[index];
     const beforeCount = await entryCount();
@@ -394,6 +401,7 @@ try {
     if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
   }
 
+  if (!preflightOnly) {
   // Refresh/restore is a product behaviour, not a driver convenience: reload the
   // page and check the entries survive from the browser's own save.
   const entriesBeforeReload = await entryCount();
@@ -441,7 +449,8 @@ try {
   };
   if (!evidence.controls.cancelButton) noteFailure('controls', 'no visible cancel/stop control in the product page');
 
-  evidence.status = evidence.failures.length ? 'FAILED' : 'COMPLETED';
+  }
+  evidence.status = evidence.failures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED');
   evidence.finishedAt = new Date().toISOString();
   evidence.summary = {
     turns: evidence.turns.length,
