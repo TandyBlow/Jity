@@ -101,16 +101,16 @@ describe('ActionExecutionModel port', () => {
     expect(second.evidence.at(-1)!.fallback).toBe(true);
   });
 
-  it('rejects a reaction written in first person and keeps the source action out of it', async () => {
-    const bad = '我把门拉开，冲出去。';
-    const good = '阿宁按住门板，低声让路明非退到柜台后。';
-    const { engine } = fakeEngine({ reaction: [bad, good] });
+  it('rewrites a first-person reaction to the member instead of repairing it', async () => {
+    const { engine } = fakeEngine({ reaction: ['我把门拉开，冲出去。'] });
     const model = createActionExecutionModel(delegate([]), engine, { attempts: 2 });
     const input = { sourceId: 'hero', sourceActionText: '路明非把木门推开，问阿宁还能不能走。', memberId: 'ally', workingState: buildTestWorld() } as unknown as Json;
     const value = await model.generate('reaction', 'hero', input);
-    expect(String(value)).toBe(good);
-    const attempts = model.evidence.at(-1)!.calls;
-    expect(attempts).toHaveLength(2);
+    expect(String(value)).toBe('阿宁把门拉开，冲出去。');
+    const result = model.evidence.at(-1)!;
+    expect(result.calls).toHaveLength(1);
+    expect(result.issues.map((issue) => issue.code)).toContain('first_person_rewritten');
+    expect(result.issues.some((issue) => issue.code === 'reaction_first_person' && issue.severity === 'error')).toBe(false);
   });
 
   it('never lets the model write the protagonist as a reaction target', async () => {
