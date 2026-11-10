@@ -56,6 +56,9 @@ interface WorldTurnRecord {
    * six-stage coverage/stageMs, policy stops). Attached when the submission
    * closes, so one turn record carries both narration and settlement evidence. */
   submission?: unknown;
+  /** Action-family calls for this turn (action/targets/reaction), kept out of
+   * the settlement ledger so its coverage/stage counts stay one defined thing. */
+  actions?: Array<{ task: string; key: string; ms: number; fallback: boolean; error: string | null }>;
   modelId: string | null;
   /** Requested narration variant and prompt shape, copied from window.__worldArm
    * at submit so one evidence file cannot mix two arms unknowingly. */
@@ -365,6 +368,12 @@ export default function WorldLocalPage() {
           narrationTemperature: 0.45,
           onTask: (task, key, detail) => {
             console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}`);
+            if (task === 'action' || task === 'targets' || task === 'reaction') {
+              const live = turnRecordRef.current;
+              if (live) (live.actions ??= []).push({
+                task, key, ms: Math.round(detail.ms), fallback: detail.fallback, error: detail.error ?? null,
+              });
+            }
             setStage(STAGE_LABEL[task] ?? task);
             if (task === 'narration') setStage('');
             if (task !== 'narration') return;
