@@ -201,7 +201,8 @@ chain still passes.
 `snapshotAfterTurn.narrationSources` has the draft label, but the public
 after-reload snapshot and `__worldRestore` are null. 06 `5f8f646b` seeds
 `restoredSources` in the public getter; the 05 bridge restores the live
-snapshot and gets the draft label (10 bridge tests pass). `snapshotForPersist`
+snapshot; 06 415ccbe0 keeps the player entry source `model` and labels the later
+auto point `draft` per point (11 bridge tests pass + 1 expected fail). `snapshotForPersist`
 still reads only the live ref; 05 sent a one-line merge patch
 `patches/06-session-persist-restored-sources.patch` (`3fbe8f77...`). A write
 after restore can otherwise drop older labels.
@@ -217,9 +218,9 @@ public path.
 The saved state is not the failure. The displayed player paragraph is a
 program fallback and `acceptedMs=212874` (>60s); the page joins it with the
 later model paragraph. 05 rejects the program point and the slow accepted
-text; full snapshot chain passes. `restoredEntries` labels the turn `mixed`
-(program player + model auto), which is honest but still exposes program prose
-to the player.
+text; full snapshot chain passes. `restoredEntries` labels the entry by the player point (`program`); the later
+model auto point is kept per point and the note says the turn contains program
+prose, so the player still sees it.
 
 `snapshotForPersist` still reads only the live source ref; 05 patch
 `06-session-persist-restored-sources.patch` (`3fbe8f77...`) is pending; the
