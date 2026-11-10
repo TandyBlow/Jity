@@ -247,6 +247,12 @@ and retry path. The runtime load/worker contract held.
   `window.__worldTurns[i].engines`. The page-level ready time mixes page boot,
   two model loads and StrictMode; 09 needs the per-engine split to separate
   cold load from per-turn prefill/decode.
+- Dev ready was ~142 s twice while per-engine loads summed 102 s then 61 s.
+  That points to StrictMode: the first mount starts both loads, cleanup
+  disposes them, the second mount starts both again, and `__worldTurns` only
+  sees the last engines. Gate the load effect behind a 0 ms timer/ref so the
+  first mount does not start loading, or run acceptance against a production
+  build. Do not report the dev ready as one model load.
 - 06 product page / game-model: construct one engine and call
   `await engine.ensureLoaded()` at session start, `engine.chat(messages, {signal,
   timeoutMs, maxTokens, temperature, onProgress})` per narration call,
