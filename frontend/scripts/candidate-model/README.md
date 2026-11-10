@@ -70,6 +70,18 @@ them to its canonical `model-00001-of-00002.gguf` names and llama.cpp opens the
 siblings. The non-blob `loadModelFromUrl` path rejects a split (wllama's URL
 API only accepts one file).
 
+## `run-a-candidate.mjs --load-only`
+
+Loads the catalog GGUF exactly once (adapter request + fetch + blob + compile)
+and stops before generation. It records the engine's `ModelLoadEvidence` with
+`fetchMs`, `compileMs`, `totalMs`, URL and `fromCache`, plus the adapter and
+ggml line. Use it to reconcile load numbers without a prose run or a new
+runner:
+
+```bash
+node scripts/candidate-model/run-a-candidate.mjs --model qwen3-1.7b-q4km --load-only --out ../.local/candidate-model/load-only.json
+```
+
 ## `probe-two-shards.mjs`
 
 Loads no model and runs no inference. It answers whether the browser can hold
