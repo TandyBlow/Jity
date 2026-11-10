@@ -1,14 +1,14 @@
 /** Read-only audit of 06's page wiring for progress sync.
  *
  * Before 09 spends a browser session on /world-local, the page must satisfy the
- * four preconditions from 07's handoff. This reads 06's source (it never writes
- * it) and prints one line per precondition with the file:line that satisfies or
- * misses it, so both 06 and 09 can see the same gate.
+ * four required preconditions from 07's handoff. This reads 06's source (it
+ * never writes it) and prints one line per precondition with the file:line that
+ * satisfies or misses it, so 06 and 09 can see the same gate.
  *
  *   LANE06_ROOT=../../06-recovery ./node_modules/.bin/jiti \
  *     ./scripts/parallel-sync/page-wiring-audit.ts
  *
- * Exit code 1 when a precondition is missing.
+ * Exit code 1 when a required precondition is missing.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -25,7 +25,7 @@ function find(predicate: (line: string) => boolean): number | null {
 }
 
 function callSite(name: string): { line: number; text: string } | null {
-  // `createProductSync<LocalGameSnapshot>({...})` and the plain form both count;
+  // createProductSync<LocalGameSnapshot>({...}) and the plain form both count;
   // the import line ends with a comma, not a call.
   const line = find((entry) => {
     const index = entry.indexOf(name);
@@ -40,27 +40,40 @@ function callSite(name: string): { line: number; text: string } | null {
 }
 
 const syncCall = callSite('createProductSync');
-const checks: { id: string; required?: boolean; ok: boolean; where: string; fix: string }[] = [
+
+interface Check {
+  id: string;
+  required: boolean;
+  ok: boolean;
+  where: string;
+  fix: string;
+}
+
+const checks: Check[] = [
   {
     id: 'sync-call-exists',
+    required: true,
     ok: Boolean(syncCall),
     where: syncCall ? `page.tsx:${syncCall.line}` : 'missing',
     fix: '01. call createProductSync for the world; nothing else uploads progress',
   },
   {
     id: 'storage-passed',
-    ok: Boolean(syncCall && /storage\s*:/.test(syncCall.text)),
+    required: true,
+    ok: Boolean(syncCall && /storage\s*:/u.test(syncCall.text)),
     where: syncCall ? `page.tsx:${syncCall.line}` : 'missing',
     fix: '02. pass storage: window.localStorage so the offline queue and last known head survive a reload',
   },
   {
     id: 'restore-on-open',
+    required: true,
     ok: /\b(?:sync\.)?restore\s*\(/u.test(source),
     where: find((line) => /\b(?:sync\.)?restore\s*\(/u.test(line))?.toString() ?? 'missing',
     fix: '03. open a local save when there is one; call restore() to pull the remote copy only when there is none',
   },
   {
     id: 'explicit-choice',
+    required: true,
     ok: /\b(?:sync\.)?choose\s*\(/u.test(source),
     where: find((line) => /\b(?:sync\.)?choose\s*\(/u.test(line))?.toString() ?? 'missing',
     fix: '04. when flush() reports a conflict, show both copies and let the player choose(); never pick for them',
@@ -68,20 +81,20 @@ const checks: { id: string; required?: boolean; ok: boolean; where: string; fix:
   {
     id: 'avoid-text-from-transcript',
     // Informational: the product narration arm is 02's model, not 07's
-    // composer, so this does not gate the page. 07's composer uses it whenever
+    // composer, so this does not gate the page. The composer uses it whenever
     // it is the labelled fallback.
     required: false,
     ok: /avoidText/u.test(source),
     where: find((line) => /avoidText/u.test(line))?.toString() ?? 'missing',
-    fix: '05 (info). when 07's composer is the fallback, pass policy.avoidText from the session transcript so it does not restate old texture',
+    fix: '05 (info). when the 07 composer is the fallback, pass policy.avoidText from the session transcript',
   },
 ];
 
 const report = {
   page: pagePath,
   at: new Date().toISOString(),
-  ready: checks.every((check) => check.required === false || check.ok),
-  checks: checks.map(({ id, required, ok, where, fix }) => ({ id, required: required !== false, ok, where, fix })),
+  ready: checks.every((check) => !check.required || check.ok),
+  checks,
 };
 console.log(JSON.stringify(report, null, 2));
 if (!report.ready) {
