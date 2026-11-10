@@ -179,7 +179,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       disposed: this.disposed,
       needsReload: !this.disposed && this.instance === null && this.lastModelUrls !== null,
       lastModelUrl: this.lastModelUrls?.[0] ?? null,
-      lastModelUrls: this.lastModelUrls,
+      lastModelUrls: this.lastModelUrls ? [...this.lastModelUrls] : null,
     };
   }
 

@@ -70,6 +70,22 @@ them to its canonical `model-00001-of-00002.gguf` names and llama.cpp opens the
 siblings. The non-blob `loadModelFromUrl` path rejects a split (wllama's URL
 API only accepts one file).
 
+## `probe-two-shards.mjs`
+
+Loads no model and runs no inference. It answers whether the browser can hold
+the **aggregate** of two shards at once, which is what wllama's Blob loader
+requires. Fresh-page result for the 4B split (2.5 GB total): the first 1.3 GB
+shard became a Blob, the second failed with `TypeError: Failed to fetch`, while
+`navigator.storage.quota` was 10 GiB and the JS heap was ~1 MB — the Blob
+store, not disk or heap, is the limit. The same two shards in `arraybuffer`
+mode fit (2.38 GB of a 4.19 GB heap) but took 142 s + 140 s to fetch, already
+over the whole-point budget before compile. Do not propose a >2 GB total model
+on this loader.
+
+```bash
+node scripts/candidate-model/probe-two-shards.mjs --dir ../.local/models/qwen3-4b-split --mode blob --out ../.local/candidate-model/two-shards-blob.json
+```
+
 ## Honest backend reporting
 
 wllama has no public "which ggml backend ran" flag. The probe therefore
