@@ -143,6 +143,21 @@ def main() -> int:
             detail = f"rows={manifest['rows']} excluded={len(manifest['declaredExcluded'])}"
         check("review input joins 12 outputs and lists 3 declared exclusions", ok, detail)
 
+    preview_path = ROOT / "evidence/template-previews/preview.manifest.json"
+    if preview_path.exists():
+        preview = json.loads(preview_path.read_text(encoding="utf-8"))
+        rendered = [entry for entry in preview["results"] if entry.get("rendered")]
+        ok = len(rendered) == 4 and all(
+            entry.get("hasAssistantTail") and entry.get("containsBodyMarker")
+            and entry.get("containsSystemText") and not entry.get("literalTemplateLeft")
+            for entry in rendered
+        )
+        check("GGUF templates render the frozen system+user with an assistant tail", ok,
+              f"rendered={len(rendered)}")
+    else:
+        check("GGUF templates render the frozen system+user with an assistant tail", False,
+              "run src/preview_templates.py")
+
     plan = run(["src/screen.py", "--dry-run", "--model-id", "qwen25-1.5b-instruct",
                 "--prompts", str(ROOT / "evidence/prompts-dev-v1/prompts.jsonl"),
                 "--prompt-manifest", str(ROOT / "evidence/prompts-dev-v1/prompts.manifest.json")])

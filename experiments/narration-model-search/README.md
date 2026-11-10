@@ -22,6 +22,8 @@
 
 基线（不重复下载）：`qwen3-1.7b-instruct`（本地 sha256 `b139949c…` 等于 unsloth/Qwen3-1.7B-GGUF 的 LFS 哈希）与当前产品叙事 LoRA `product-narr-qwen25-1.5b`（`6ed2268d…`）。08 已实测浏览器 Blob 总容量上限约 2 GB；批次 1 候选都 ≤1.18 GB，和 1.5 GB 单文件门一致。4B 不再排。
 
+**模板可用性预演**：`src/preview_templates.py` 用 Jinja2 把冻结的 system+user 套进每个候选的内嵌模板（`evidence/template-previews/`）。四个候选都能渲染出完整 user 内容和 assistant 开头；Hunyuan 在 `enable_thinking=false` 下输出空 `<think></think>`，GLM 末尾是 `<|assistant|>`。这只是预览：Jinja2 不是 llama.cpp 的 minja，HPC 与 09 浏览器才是权威。
+
 **真实 GGUF 头证据**：`src/remote_gguf_head.py` 用 HTTP Range 只读文件开头（8–16 MB），从 pinned revision 直接读出 `general.architecture`、量化类型、tensor 类型、内嵌 chat template 与哈希；没有下载完整权重，也没有推理。四个候选都是 Q4_K_M（F32/Q4_K/Q6_K），没有未知 tensor 类型。GLM-Edge 的真实架构是 `chatglm`（可加载），Hunyuan 是 `hunyuan-dense`，其模板含 `enable_thinking`，批量执行时必须传 `chat_template_kwargs={enable_thinking:false}`；Qwen2.5 的 GGUF 内嵌模板与 base tokenizer_config 不是同一份（哈希 `d5495a1e…` vs `cd8e9439…`），以 GGUF 为准。
 
 证据位置：`models/candidates.json`（由 `sources/hf/capture.json`、`models/local-inventory.json`、`models/wllama-support.json` 生成），官方卡片/配置/tokenizer 模板/许可证原文在 `sources/hf/<id>/`，每个抓取的 URL、revision、字节数、sha256 在 `sources/hf/capture.json`。
@@ -62,15 +64,17 @@ experiments/narration-model-search/
 ├── src/inventory_local.py          # 已下载 GGUF 的只读清单（sha256 + GGUF 元数据）
 ├── src/wllama_support.py           # 从实际 wasm 提取 llama_model_* 架构表
 ├── src/remote_gguf_head.py         # 远程 GGUF 头/元数据/模板的 Range 读取（不下载整文件）
+├── src/preview_templates.py        # 用 Jinja2 预演每个 GGUF 模板 + 冻结消息（非推理）
 ├── src/build_candidates.py         # 生成 models/candidates.json 并应用预筛门
 ├── src/build_prompts.py            # 校验 01 包哈希 -> 冻结 12 例提示词（subset-declaration.json）
 ├── src/screen.py                   # llama-server --jinja 批量执行器（仅 10 在 HPC 跑）
 ├── src/collect.py                  # 机械汇总：字数/句数/重复/耗时，不判质量
 ├── src/make_review_input.py        # 把一次 run 接成 01 的 batch harness 输入（{id,input,text}）
-├── src/selftest.py                 # 10 项离线自检，无模型推理
+├── src/selftest.py                 # 11 项离线自检，无模型推理
 ├── src/make_requests.py            # 写 10 的 HPC 请求 JSON
 ├── models/candidates.json          # 候选/基线/预筛结论/运行时上限
 ├── models/remote-heads/            # 每个候选的 GGUF 头摘要 + 内嵌 chat template 原文
+├── evidence/template-previews/     # 四个候选的模板预演结果与 manifest（标明非权威）
 ├── evidence/prompts-dev-v1/        # 冻结的 12 例提示词 + 哈希清单 + 空白账本
 ├── subset-declaration.json         # 12/15 子集的预先声明和三个排除原因
 └── preregistration.draft.json      # 比较条件、晋级门、失败退出、资源估计

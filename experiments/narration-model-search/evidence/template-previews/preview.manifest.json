@@ -1,0 +1,81 @@
+{
+ "engine": "jinja2 3.1.4",
+ "warning": "preview only: llama.cpp/minja and browser wllama are authoritative. Whitespace/filter differences are possible.",
+ "sampleCaseId": "dr-0021-no-change-three-people",
+ "promptSha256": "f4861fbf26660249518722f68658f4c078f523347474d8f523689cf214ddcd0f",
+ "results": [
+  {
+   "id": "qwen25-1.5b-instruct",
+   "rendered": true,
+   "chars": 1124,
+   "sha256": "53cae79a6c0bd44c7ad56a48f6d526830a733357bfce7b57d762068f6511873b",
+   "templateKwargs": {},
+   "hasAssistantTail": true,
+   "literalTemplateLeft": false,
+   "containsBodyMarker": true,
+   "containsSystemText": true,
+   "head": "<|im_start|>system\n你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。<|im_end|>\n<|im_start|>user\n【已结算输入】\n【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护",
+   "tail": "能由在场人确认的有效行动后安全离场（未完成）。【物品】赛区路线图（位于西侧服务巷）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路、地下检修通道用虚线标注，未标门闩状态。【变化】时间推进2分钟。这一回合没有结算出变化。【正文】\n请写出这一回合的正文。<|im_end|>\n<|im_start|>assistant\n",
+   "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\template-previews\\qwen25-1.5b-instruct.txt"
+  },
+  {
+   "id": "internlm2_5-1.8b-chat",
+   "rendered": true,
+   "chars": 1127,
+   "sha256": "2f750e6a769f86f524a1650f9d374c8f4f298158f6adbac09754aa4899198d3b",
+   "templateKwargs": {},
+   "hasAssistantTail": true,
+   "literalTemplateLeft": false,
+   "containsBodyMarker": true,
+   "containsSystemText": true,
+   "head": "<s><|im_start|>system\n你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。<|im_end|>\n<|im_start|>user\n【已结算输入】\n【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北",
+   "tail": "能由在场人确认的有效行动后安全离场（未完成）。【物品】赛区路线图（位于西侧服务巷）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路、地下检修通道用虚线标注，未标门闩状态。【变化】时间推进2分钟。这一回合没有结算出变化。【正文】\n请写出这一回合的正文。<|im_end|>\n<|im_start|>assistant\n",
+   "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\template-previews\\internlm2_5-1.8b-chat.txt"
+  },
+  {
+   "id": "glm-edge-1.5b-chat",
+   "rendered": true,
+   "chars": 1078,
+   "sha256": "e1d7e6c406d12d4237587dfc40c6fa37d718e28f1b22a7fef3ac3ee0e4294c7c",
+   "templateKwargs": {},
+   "hasAssistantTail": true,
+   "literalTemplateLeft": false,
+   "containsBodyMarker": true,
+   "containsSystemText": true,
+   "head": "<|system|>\n你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。<|user|>\n【已结算输入】\n【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护通道悬白旗，不属于交火区。场内使用弗里嘉演习弹，实弹与",
+   "tail": "日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场（未完成）。【物品】赛区路线图（位于西侧服务巷）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路、地下检修通道用虚线标注，未标门闩状态。【变化】时间推进2分钟。这一回合没有结算出变化。【正文】\n请写出这一回合的正文。<|assistant|>\n",
+   "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\template-previews\\glm-edge-1.5b-chat.txt"
+  },
+  {
+   "id": "gemma3-1b-it-qat",
+   "rendered": false,
+   "reason": "no captured GGUF template"
+  },
+  {
+   "id": "hunyuan-1.8b-instruct",
+   "rendered": true,
+   "chars": 1116,
+   "sha256": "704cc424c7b3b0d8b50920e048b146586409f5d7b6ea476fde9edcf656f09436",
+   "templateKwargs": {
+    "enable_thinking": false
+   },
+   "hasAssistantTail": true,
+   "literalTemplateLeft": false,
+   "containsBodyMarker": true,
+   "containsSystemText": true,
+   "head": "<s>你是中文叙事作者。只依据已结算事实写玩家可读的正文，不补充未给出的事实。<｜hy_place▁holder▁no▁3｜><｜hy_User｜>【已结算输入】\n【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护通道悬白旗，不属于",
+   "tail": "由在场人确认的有效行动后安全离场（未完成）。【物品】赛区路线图（位于西侧服务巷）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路、地下检修通道用虚线标注，未标门闩状态。【变化】时间推进2分钟。这一回合没有结算出变化。【正文】\n请写出这一回合的正文。<｜hy_Assistant｜><think>\n\n</think>\n",
+   "file": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\11-model-search\\experiments\\narration-model-search\\evidence\\template-previews\\hunyuan-1.8b-instruct.txt"
+  },
+  {
+   "id": "minicpm-2b-dpo",
+   "rendered": false,
+   "reason": "no captured GGUF template"
+  },
+  {
+   "id": "minicpm5-2b",
+   "rendered": false,
+   "reason": "no captured GGUF template"
+  }
+ ]
+}
