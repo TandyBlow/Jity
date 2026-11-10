@@ -606,3 +606,73 @@ describe('real failed-output shapes (09 product run)', () => {
     expect(outcome.value).toMatchObject({ kind: 'continue' });
   });
 });
+
+describe('results group membership (09 one-legal-turn shape)', () => {
+  const memberFact = (text: string) => ({ text, memberIds: ['a', 'b'] });
+
+  it('drops a scene bystander judgment with no effect instead of failing the turn', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推到了。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有反应。', effects: [] },
+        { memberId: 'c', label: 'partial', reason: '丁在旁边问了一句。', effects: [] },
+      ],
+      facts: [memberFact('甲把工具推向乙，丁在旁边看着。')],
+    });
+    const engine = new ScriptedEngine([answer]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('甲把工具推向乙');
+    // The non-member observation is kept as evidence, not committed as a judge.
+    const detail = outcome.evidence.detail as { droppedNonMemberJudgments: { memberId: string; reason: string }[] };
+    expect(detail.droppedNonMemberJudgments).toEqual([{ memberId: 'c', label: 'partial', reason: 'not_a_group_member' }]);
+    // One model call: a harmless bystander observation needs no repair round.
+    expect(engine.prompts).toHaveLength(1);
+  });
+
+  it('still rejects an effect for a non-member and repairs it', async () => {
+    const invalid = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推到了。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有反应。', effects: [] },
+        { memberId: 'c', label: 'partial', reason: '丁被推了。', effects: [{ targetId: 'a', reacted: true }] },
+      ],
+      facts: [memberFact('甲把工具推向乙。')],
+    });
+    const valid = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推到了。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有反应。', effects: [] },
+      ],
+      facts: [memberFact('甲把工具推向乙。')],
+    });
+    const engine = new ScriptedEngine([invalid, valid]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[1]).toContain('未冻结人物不能写 effect');
+  });
+
+  it('rejects a fact attributed to a non-member and repairs it', async () => {
+    const invalid = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推到了。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有反应。', effects: [] },
+      ],
+      facts: [memberFact('甲把工具推向乙。'), { text: '丁在旁边问了一句。', memberIds: ['c'] }],
+    });
+    const valid = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推到了。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有反应。', effects: [] },
+      ],
+      facts: [memberFact('甲把工具推向乙。')],
+    });
+    const engine = new ScriptedEngine([invalid, valid]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts[1]).toContain('facts 的 memberIds 只能填本组成员');
+  });
+});
