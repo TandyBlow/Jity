@@ -123,6 +123,17 @@ export function createRealizerContext(
   return { scene, priorText, used: new Set(), sanityStyle, avoidOpenings: [] };
 }
 
+/** Register already-final text (a retry or another writer's accepted beat) so
+ * later beats do not repeat it and position claims stay consistent. */
+const SENTENCE_ENDS = new RegExp('[' + [0x3002, 0xff01, 0xff1f, 0x0a].map((code) => String.fromCharCode(code)).join('') + ']+', 'u');
+
+export function absorbText(ctx: RealizerContext, text: string): void {
+  for (const part of text.split(SENTENCE_ENDS)) {
+    const core = stripEnd(part);
+    if (core) ctx.used.add(core);
+  }
+}
+
 export function realizeBeat(beat: BeatDirective, ctx: RealizerContext): string {
   const facts = beat.factIds
     .map((id) => ctx.scene.facts.find((fact) => fact.id === id))
@@ -406,18 +417,19 @@ function closeBeat(beat: BeatDirective, ctx: RealizerContext): string {
   const name = scene.viewpoint.name;
   const person = scene.present[0]?.name;
   const place = scene.place.name || scene.viewpoint.location;
+  const alreadyHere = [...ctx.used].some((used) => used.includes(name) && (used.includes('在') || used.includes('留')));
   const variants = [
     `${name}没有马上再动`,
     `${name}把视线收回来`,
-    `${name}在原地站了一会儿`,
+    `${name}待了一会儿`,
     `${name}没有再往前`,
-    `${name}站着没动`,
+    `${name}没有作声`,
   ];
   if (person) {
     variants.push(`${person}也没有动`);
-    variants.push(`${person}还站在那里`);
+    variants.push(`${person}那边没有动静`);
   }
-  if (scene.timeOnly) {
+  if (scene.timeOnly && !alreadyHere) {
     variants.push(`${name}留在${place}`);
   }
   return remember(ctx, choose(ctx, beat.seed, 'close', variants));

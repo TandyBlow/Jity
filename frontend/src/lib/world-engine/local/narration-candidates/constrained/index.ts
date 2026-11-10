@@ -11,7 +11,7 @@ import type { CommittedRead } from '../../../runtime/committed-narration';
 import { isAbortError } from '../../../runtime/engine';
 import { planBeats } from './beats';
 import { composeBeatWithModel } from './compose';
-import { createRealizerContext, realizeBeat } from './realize';
+import { absorbText, createRealizerContext, realizeBeat } from './realize';
 import {
   projectConstrainedScene, projectFromFactsPacket, SceneProjectionError,
 } from './projection';
@@ -21,7 +21,7 @@ import type {
   ComposeBeatResult, GenerateCandidateInput, SceneSkeleton,
 } from './types';
 
-export const STRATEGY_VERSION = 'constrained-candidate-v1';
+export const STRATEGY_VERSION = 'constrained-candidate-v1.1';
 
 const now = (): number => performance.now();
 
@@ -140,6 +140,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
       emit,
       addVerifyMs: (ms) => { verifyMs += ms; },
     });
+    absorbText(ctx, outcome.evidence.text);
     beatsEvidence.push(outcome.evidence);
     composers.push(outcome.composer);
     beatTexts.push({ beat, text: outcome.evidence.text });
@@ -180,6 +181,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
         text = realizeBeat(bumped, retryCtx);
       }
       target.text = text;
+      absorbText(ctx, text);
       const evidence = beatsEvidence.find((entry) => entry.beatId === target.beat.id);
       if (evidence) {
         evidence.text = text;
