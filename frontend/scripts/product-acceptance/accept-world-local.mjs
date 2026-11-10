@@ -274,8 +274,12 @@ try {
     evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
     evidence.productState.pageSha256 = sha256(readFileSync(resolve(productWorktree, 'frontend/src/app/world-local/page.tsx'), 'utf8'));
     evidence.productState.expectedPageSha256 = expectedPageSha;
-    if (expectedPageSha && !evidence.productState.pageSha256.startsWith(expectedPageSha.replace(/\.\.\.$/, ''))) {
+    if (expectedPageSha && !evidence.productState.pageSha256.startsWith(expectedPageSha.replace(/\.\.\.$/, ''))
+        && !process.argv.includes('--allow-page-sha-mismatch')) {
       noteFailure('product', `page source ${evidence.productState.pageSha256.slice(0, 12)} does not match the frozen ${expectedPageSha}`);
+      evidence.status = 'FAILED';
+      save();
+      throw new Error(`page_sha_mismatch:${evidence.productState.pageSha256.slice(0, 12)}!=${expectedPageSha}`);
     }
   } catch (error) {
     evidence.productState.error = String(error).slice(0, 200);
