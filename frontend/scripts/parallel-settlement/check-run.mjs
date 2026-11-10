@@ -113,6 +113,26 @@ export function checkRun(input, options = {}) {
         if (coverage.rejectedTaskIds != null && !Array.isArray(coverage.rejectedTaskIds)) {
           hard.push(`${where} updates/${call.key}: rejectedTaskIds is not an array`);
         }
+        if (coverage.mode === 'affected_projection') {
+          const affected = Number(coverage.affectedCharacters);
+          const unaffected = Array.isArray(coverage.unaffectedCharacters) ? coverage.unaffectedCharacters : null;
+          const affectedTasks = Array.isArray(coverage.affectedTaskIds) ? coverage.affectedTaskIds : null;
+          const unaffectedTasks = Array.isArray(coverage.unaffectedTaskIds) ? coverage.unaffectedTaskIds : null;
+          if (!Number.isFinite(affected)) hard.push(`${where} updates/${call.key}: affectedCharacters missing under affected_projection`);
+          if (!unaffected) hard.push(`${where} updates/${call.key}: unaffectedCharacters missing under affected_projection`);
+          else if (Number.isFinite(affected) && affected + unaffected.length !== coverage.tasks) {
+            hard.push(`${where} updates/${call.key}: affected ${affected} + unaffected ${unaffected.length} != characters ${coverage.tasks}`);
+          }
+          if (!affectedTasks || !unaffectedTasks) hard.push(`${where} updates/${call.key}: affected/unaffected task ids missing under affected_projection`);
+          else {
+            if (affectedTasks.length + unaffectedTasks.length !== Number(coverage.taskRows)) {
+              hard.push(`${where} updates/${call.key}: affected ${affectedTasks.length} + unaffected ${unaffectedTasks.length} task rows != ${coverage.taskRows}`);
+            }
+            const overlap = affectedTasks.filter((id) => unaffectedTasks.includes(id));
+            if (overlap.length) hard.push(`${where} updates/${call.key}: task ids both affected and unaffected: ${overlap.slice(0, 4).join(',')}`);
+          }
+          if (Number.isFinite(affected) && coverage.tasks > 0) soft.push(`${where} updates/${call.key}: projection asked about ${affected}/${coverage.tasks} characters`);
+        }
       }
       if (call.fallback) soft.push(`${where} updates/${call.key}: fell back (${call.error ?? 'no error text'})`);
       if (call.error) soft.push(`${where} updates/${call.key}: error ${call.error}`);

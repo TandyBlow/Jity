@@ -123,20 +123,25 @@ describe('real product world through the real kernel', () => {
     expect(committed.tasks[OFFSCREEN_TASK].status).toBe('achieved');
     expect(committed.personalityChanges.find((change) => change.active)?.text).toBe('把地下门当成必须亲自确认的责任。');
     expect(committed.sanity).toBe(70);
-    // Every registered character and task was actually put in front of the
-    // model for the task stage; a narrowed (in-scene only) prompt would fail.
+    // The dependency projection puts the off-screen fact owner in front of the
+    // model, but does not re-send unrelated owners just to hear "unchanged".
     const taskPrompt = seen.find((prompt) => prompt.includes('任务判定器')) ?? '';
-    for (const id of Object.keys(state.characters)) expect(taskPrompt).toContain(`id=${id}`);
+    expect(taskPrompt).toContain(`id=${OFFSCREEN}`);
+    expect(taskPrompt).not.toContain('id=caesar');
     const taskIds = Object.values(state.characters).flatMap((character) => Object.keys(character.tasks));
     expect(taskIds).toHaveLength(73);
     const keys = taskKeyIndex(state);
     expect(keys.size).toBe(73);
-    for (const key of keys.values()) expect(taskPrompt).toContain(`${key}：`);
-    // And the appearance stage still holds every entity after compression.
+    expect(taskPrompt.length).toBeLessThan(6000);
+    // Same for appearance: the affected scene/fact entities are listed, not
+    // all 114 rows.
     const appearancePrompt = seen.find((prompt) => prompt.includes('外貌结算器')) ?? '';
+    expect(appearancePrompt).toContain(`id=${OFFSCREEN}`);
+    expect(appearancePrompt).not.toContain('id=caesar');
     expect(appearancePrompt.length).toBeLessThan(8000);
-    for (const id of [...Object.keys(state.locations), ...Object.keys(state.items), ...Object.keys(state.characters)]) {
-      expect(appearancePrompt).toContain(`id=${id}`);
-    }
+    const personalityPrompt = seen.find((prompt) => prompt.includes('个性变化判断器')) ?? '';
+    expect(personalityPrompt).toContain(`id=${OFFSCREEN}`);
+    expect(personalityPrompt).not.toContain('id=caesar');
+    expect(personalityPrompt.length).toBeLessThan(6000);
   });
 });

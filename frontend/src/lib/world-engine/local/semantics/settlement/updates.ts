@@ -20,6 +20,7 @@ import {
   isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
   positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson,
 } from './support';
+import { projectPoint, type PointProjection } from './projection';
 import type { SettlementStage } from './support';
 
 interface UpdatesInput {
@@ -40,6 +41,12 @@ interface StageContext {
   personalityOwners: Set<Id>;
   allocator: LocalIdAllocator;
   options: SettlementOptions;
+  /** State before this updates batch, used to diff direct changes when the
+   * projection is built. */
+  baselineState: WorldState;
+  /** Stage changes already applied inside this batch (position before
+   * appearance before tasks). */
+  priorChanges: Partial<Record<SettlementStage, Record<Id, Partial<EntityDelta>>>>;
   /** One merged answer can carry tasks and their new subtasks; the cache keeps
    * the subtasks stage from re-prefilling the same task list. */
   shared?: { pendingSubtasks?: Record<Id, Partial<EntityDelta>> };
@@ -269,6 +276,8 @@ export class UpdatesRunner {
       personalityOwners: splitPersonalityOwners,
       allocator: this.allocator,
       options: this.options,
+      baselineState: parsed.workingState,
+      priorChanges: {},
       shared: {},
     };
     if (stage) {
@@ -281,8 +290,8 @@ export class UpdatesRunner {
         return this.outcomeFailure(key, outcome.error, started, outcome.calls, {
           mode: ctx.mode,
           stage,
-          stageDetail: outcome.detail,
           taskScope: (outcome.detail as { taskScope?: unknown }).taskScope ?? null,
+          stageDetail: outcome.detail,
           sanityBasis,
         });
       }
@@ -298,6 +307,7 @@ export class UpdatesRunner {
         sanityBasis,
         taskCoverageIds: roster(ctx.state),
         taskScope: (outcome.detail as { taskScope?: unknown }).taskScope ?? null,
+        stageDetail: outcome.detail,
         personalityCoverageIds: stage === 'tasks'
           ? (achievedFromChanges(changes).size > 0 ? roster(ctx.state) : [])
           : stage === 'personality' && Object.keys(changes).length > 0
@@ -310,10 +320,12 @@ export class UpdatesRunner {
     let view = ctx.state;
     let newAchieved = new Set<Id>();
     let mergedPersonalityOwners = new Set<Id>();
+    let priorChanges: StageContext['priorChanges'] = {};
     for (const currentStage of SETTLEMENT_STAGES) {
       const stageCtx: StageContext = {
         ...ctx,
         state: view,
+        priorChanges,
         newAchieved,
         recoveredAchieved: new Set<Id>(),
         personalityOwners: mergedPersonalityOwners,
@@ -331,6 +343,7 @@ export class UpdatesRunner {
         outcome.fallback = true;
         calls[calls.length - 1] = { stage: currentStage, changes: {} };
       }
+      priorChanges = { ...priorChanges, [currentStage]: changes };
       if (currentStage === 'tasks') newAchieved = achievedFromChanges(changes);
       if (currentStage === 'personality') mergedPersonalityOwners = new Set(Object.keys(changes));
     }
@@ -551,11 +564,22 @@ function parseUpdatesInput(input: Json): UpdatesInput | { error: string } {
 }
 
 async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
-  const scanned = movableIds(ctx.state);
+  const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
+  const scanned = projection.affectedMovable;
+  const scope = {
+    mode: 'affected_projection',
+    affectedEntityIds: scanned,
+    unaffectedEntityIds: projection.unaffectedMovable.map((row) => row.id),
+    unaffectedBasis: 'not_actor_scene_fact_or_changed',
+    basis: projection.basis,
+  };
   if (ctx.mode === 'time_scan') {
-    return { changes: {}, detail: { scannedEntityIds: scanned, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
+    return { changes: {}, detail: { scannedEntityIds: scanned, positionScope: scope, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
   }
-  const prompt = buildPositionPrompt(ctx.state, ctx.results);
+  if (!scanned.length) {
+    return { changes: {}, detail: { scannedEntityIds: [], positionScope: scope, skipped: 'no_affected_position' }, fallback: false, calls: [] };
+  }
+  const prompt = buildPositionPrompt(ctx.state, ctx.results, scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 240),
@@ -565,25 +589,36 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
       jsonSchema: POSITION_SCHEMA,
       validate: (value) => validatePositionAnswer(value, ctx.state),
     });
-    const changes = readPositionChanges(answer.value, ctx.state);
+    const changes = readPositionChanges(answer.value, ctx.state, new Set(scanned));
     projectStage(ctx.state, 'position', changes);
     return {
       changes,
-      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort() },
+      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), positionScope: scope },
       fallback: false,
       calls: answer.calls,
     };
   } catch (error) {
-    return stageFailure({ scannedEntityIds: scanned }, error);
+    return stageFailure({ scannedEntityIds: scanned, positionScope: scope }, error);
   }
 }
 
 async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
-  const scanned = allEntityIds(ctx.state);
+  const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
+  const scanned = projection.affectedAppearance;
+  const scope = {
+    mode: 'affected_projection',
+    affectedEntityIds: scanned,
+    unaffectedEntityIds: projection.unaffectedAppearance.map((row) => row.id),
+    unaffectedBasis: 'not_actor_scene_fact_or_changed',
+    basis: projection.basis,
+  };
   if (ctx.mode === 'time_scan') {
-    return { changes: {}, detail: { scannedEntityIds: scanned, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
+    return { changes: {}, detail: { scannedEntityIds: scanned, appearanceScope: scope, skipped: 'time_scan_no_action' }, fallback: false, calls: [] };
   }
-  const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance');
+  if (!scanned.length) {
+    return { changes: {}, detail: { scannedEntityIds: [], appearanceScope: scope, skipped: 'no_affected_appearance' }, fallback: false, calls: [] };
+  }
+  const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance', scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 420),
@@ -591,37 +626,55 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned)),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false);
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned));
     projectStage(ctx.state, 'appearance', changes);
     return {
       changes,
-      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort() },
+      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope },
       fallback: false,
       calls: answer.calls,
     };
   } catch (error) {
-    return stageFailure({ scannedEntityIds: scanned }, error);
+    return stageFailure({ scannedEntityIds: scanned, appearanceScope: scope }, error);
   }
 }
 
 async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
   const rows = allTasks(ctx.state);
   const characters = roster(ctx.state);
+  const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
+  const ownerSet = new Set(projection.affectedTaskOwners);
+  const affectedRows = rows.filter((row) => ownerSet.has(row.ownerId));
+  const taskIds = new Set(projection.affectedTasks);
+  const taskScope = taskScopeFor(ctx.state, projection);
+  const decidedIds = affectedRows.map(({ task }) => task.id).sort();
   if (!rows.length) {
-    return { changes: {}, detail: { taskCoverageIds: characters, decidedTaskIds: [], skipped: 'no_tasks' }, fallback: false, calls: [] };
+    return { changes: {}, detail: { taskCoverageIds: characters, taskScope, decidedTaskIds: [], skipped: 'no_tasks' }, fallback: false, calls: [] };
   }
   if (rows.every(({ task }) => task.status === 'achieved')) {
     return {
       changes: {},
-      detail: { taskCoverageIds: characters, decidedTaskIds: [], skipped: 'all_tasks_already_achieved' },
+      detail: { taskCoverageIds: characters, taskScope, decidedTaskIds: [], skipped: 'all_tasks_already_achieved' },
       fallback: false,
       calls: [],
     };
   }
-  const prompt = buildTasksPrompt(ctx);
-  const taskScope = taskScopeFor(ctx.state);
+  if (!affectedRows.length) {
+    return {
+      changes: {},
+      detail: {
+        taskCoverageIds: characters,
+        taskScope: { ...taskScope, assertedUnchanged: 0, achievedByCharacter: [], emptyCharacters: taskScope.affectedCharacters, rejectedTaskIds: [], supports: [] },
+        decidedTaskIds: [],
+        skipped: 'no_affected_tasks',
+      },
+      fallback: false,
+      calls: [],
+    };
+  }
+  const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection);
   const factIds = new Set(resultFacts(ctx.results).map((fact) => fact.id));
   const strictSupport = ctx.options.requireTaskSupport === true;
   try {
@@ -631,9 +684,9 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: TASKS_SCHEMA,
-      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds }),
+      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds, taskIds }),
     });
-    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds });
+    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds, taskIds });
     let changes = read.changes;
     let acceptedSupports = read.supports;
     let rejected = read.rejected;
@@ -689,21 +742,21 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
         taskCoverageIds: characters,
         taskScope: {
           ...taskScope,
-          assertedUnchanged: rows.length - newlyAchieved.length,
+          assertedUnchanged: affectedRows.length - newlyAchieved.length,
           achievedByCharacter,
-          emptyCharacters: taskScope.characters - achievedByCharacter.length,
+          emptyCharacters: taskScope.affectedCharacters - achievedByCharacter.length,
           rejectedTaskIds: rejected,
           supports: acceptedSupports,
           verifier: verifier ?? undefined,
         },
-        decidedTaskIds: rows.map(({ task }) => task.id).sort(),
+        decidedTaskIds: decidedIds,
         newlyAchievedTaskIds: newlyAchieved.sort(),
       },
       fallback: false,
       calls: [...answer.calls, ...verifierCalls],
     };
   } catch (error) {
-    return stageFailure({ taskCoverageIds: characters, taskScope, decidedTaskIds: rows.map(({ task }) => task.id).sort() }, error);
+    return stageFailure({ taskCoverageIds: characters, taskScope, decidedTaskIds: decidedIds }, error);
   }
 }
 
@@ -711,17 +764,26 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
  * it records. Every character with tasks appears in the prompt and must make
  * one decision; that decision covers all of the character's tasks, so silence
  * is an explicit "no task of mine changed", not a program-filled pending row. */
-function taskScopeFor(state: WorldState): {
+function taskScopeFor(state: WorldState, projection: PointProjection): {
   mode: string; characters: number; taskRows: number; excluded: string[];
+  affectedCharacters: number; affectedTaskIds: Id[]; unaffectedTaskIds: Id[];
+  unaffectedCharacters: Id[]; unaffectedBasis: string;
   achievedByCharacter: { characterId: Id; taskIds: Id[] }[];
   rejectedTaskIds: { characterId: Id; taskId: string; reason: string }[];
   supports: { characterId: Id; taskId: Id; basis: string }[];
 } {
   const rows = allTasks(state);
+  const owners = [...new Set(rows.map((row) => row.ownerId))].sort();
+  const affectedOwners = new Set(projection.affectedTaskOwners);
   return {
-    mode: 'per_character_decision',
-    characters: new Set(rows.map((row) => row.ownerId)).size,
+    mode: 'affected_projection',
+    characters: owners.length,
     taskRows: rows.length,
+    affectedCharacters: projection.affectedTaskOwners.length,
+    affectedTaskIds: projection.affectedTasks,
+    unaffectedTaskIds: projection.unaffectedTasks.map((row) => row.id),
+    unaffectedCharacters: owners.filter((id) => !affectedOwners.has(id)),
+    unaffectedBasis: 'owner_and_goal_outside_point',
     excluded: [],
     achievedByCharacter: [],
     rejectedTaskIds: [],
@@ -749,7 +811,21 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
-  const prompt = buildSubtasksPrompt(ctx);
+  const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
+  if (!projection.affectedTaskOwners.length) {
+    return {
+      changes: {},
+      detail: {
+        parentTaskIds: [],
+        characterIds: characters,
+        subtaskScope: { mode: 'affected_projection', affectedTaskIds: [], unaffectedTaskIds: projection.unaffectedTasks.map((row) => row.id) },
+        skipped: 'no_affected_subtasks',
+      },
+      fallback: false,
+      calls: [],
+    };
+  }
+  const prompt = buildSubtasksPrompt(ctx, projection.affectedTaskOwners, projection);
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 260),
@@ -786,7 +862,17 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
-  const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0);
+  const index = taskIndex(ctx.state);
+  const triggerOwners = triggerIds.map((taskId) => index.get(taskId)?.ownerId).filter((id): id is Id => Boolean(id));
+  const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
+  const affected = new Set<Id>([
+    ...triggerOwners,
+    ...projection.actors,
+    ...projection.sceneCharacters,
+    ...projection.factEntities.filter((id) => Boolean(ctx.state.characters[id])),
+  ]);
+  const scanned = characters.filter((id) => affected.has(id));
+  const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0, scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 520),
@@ -794,22 +880,25 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: PERSONALITY_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned)),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true);
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned));
     return {
       changes,
       detail: {
-        scannedCharacterIds: characters,
+        scannedCharacterIds: scanned,
+        allCharacterIds: characters,
+        unaffectedCharacterIds: characters.filter((id) => !affected.has(id)),
         triggeredByTaskIds: triggerIds.sort(),
         triggerBasis: ctx.recoveredAchieved.size > 0 ? 'recovered_achieved_tasks' : 'new_tasks',
         changedCharacterIds: Object.keys(changes).sort(),
+        personalityScope: { mode: 'affected_projection', affectedCharacterIds: scanned, unaffectedCharacterIds: characters.filter((id) => !affected.has(id)) },
       },
       fallback: false,
       calls: answer.calls,
     };
   } catch (error) {
-    return stageFailure({ scannedCharacterIds: characters, triggeredByTaskIds: triggerIds.sort() }, error);
+    return stageFailure({ scannedCharacterIds: scanned, allCharacterIds: characters, triggeredByTaskIds: triggerIds.sort() }, error);
   }
 }
 
@@ -908,16 +997,20 @@ function sharedHeader(state: WorldState, results: Record<Id, string>): string {
   ].join('\n');
 }
 
-function buildPositionPrompt(state: WorldState, results: Record<Id, string>): string {
-  const entities = movableIds(state).map((id) => `- ${positionLineFor(state, id)}`);
-  const sampleId = movableIds(state)[0] ?? '';
+function buildPositionPrompt(state: WorldState, results: Record<Id, string>, onlyIds?: Id[]): string {
+  const allMovable = movableIds(state);
+  const listed = onlyIds ? allMovable.filter((id) => onlyIds.includes(id)) : allMovable;
+  const entities = listed.map((id) => `- ${positionLineFor(state, id)}`);
+  const sampleId = listed[0] ?? '';
   const sampleContainer = state.characters[sampleId]?.position.containerId
     ?? state.items[sampleId]?.position.containerId
     ?? allEntityIds(state)[0] ?? '';
   return [
     sharedHeader(state, results),
     '你是中文跑团游戏的位置结算器。只输出 JSON，不要解释。',
-    '下面列出所有可移动实体（人物和物品）的当前位置。根据本组结算结果，判断哪些实体改变了位置；没有移动就不要列出。',
+    onlyIds
+      ? '下面只列本轮可能受影响的可移动实体（人物和物品）的当前位置；未列出的由程序记录为依赖未触发，不要为它们写判断。根据本组结算结果，判断哪些实体改变了位置；没有移动就不要列出。'
+      : '下面列出所有可移动实体（人物和物品）的当前位置。根据本组结算结果，判断哪些实体改变了位置；没有移动就不要列出。',
     '规则：',
     '- entityId 必须是下面实体之一；containerId 必须是已登记实体 id；slotId 只能填该容器的槽位 id；relativeTo 只能指向同一地点的实体。',
     '- 不要新增地点、物品或人物；不要重复列出同一实体。',
@@ -953,7 +1046,7 @@ function validatePositionAnswer(value: unknown, state: WorldState): void {
   readPositionChanges(value, state);
 }
 
-function readPositionChanges(value: unknown, state: WorldState): Record<Id, Partial<EntityDelta>> {
+function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id>): Record<Id, Partial<EntityDelta>> {
   const rows = asRecord(value).changes;
   if (!Array.isArray(rows)) throw new Error('changes must be an array');
   const movable = new Set(movableIds(state));
@@ -966,6 +1059,7 @@ function readPositionChanges(value: unknown, state: WorldState): Record<Id, Part
     const entityId = resolveEntityId(state, rawEntityId);
     if (!entityId) throw new Error(referenceError(state, rawEntityId, 'entity', movableIds(state)[0]));
     if (!movable.has(entityId)) throw new Error(`position entity is not movable: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
+    if (onlyIds && !onlyIds.has(entityId)) continue;
     if (seen.has(entityId)) throw new Error(`duplicate position change: ${entityId}`);
     seen.add(entityId);
     const position = positionFromRow(raw);
@@ -1005,11 +1099,16 @@ function slotsOf(state: WorldState, containerId: Id): { id: Id; label: string }[
     ?? [];
 }
 
-function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, kind: 'appearance' | 'personality'): string {
-  const ids = kind === 'appearance' ? allEntityIds(state) : roster(state);
-  // The appearance scan covers every entity, so the per-line prose budget is
-  // derived from the cast size: a bigger world gets shorter tails, the line
-  // set itself is never cut. Rules + settled results take roughly 3.5k chars.
+function buildDescriptionPrompt(
+  state: WorldState,
+  results: Record<Id, string>,
+  kind: 'appearance' | 'personality',
+  onlyIds?: Id[],
+): string {
+  const allIds = kind === 'appearance' ? allEntityIds(state) : roster(state);
+  const ids = onlyIds ? allIds.filter((id) => onlyIds.includes(id)) : allIds;
+  // The per-line prose budget is derived from the listed set: a bigger world
+  // gets shorter tails, the line set itself is never cut.
   const tail = kind === 'appearance' ? Math.max(20, Math.min(88, Math.floor(3400 / Math.max(1, ids.length)))) : 0;
   const lines = ids.map((id) => (kind === 'appearance'
     ? appearanceLine(state, id, { compactTail: tail })
@@ -1018,7 +1117,9 @@ function buildDescriptionPrompt(state: WorldState, results: Record<Id, string>, 
   return [
     sharedHeader(state, results),
     `你是中文跑团游戏的${title}结算器。只输出 JSON，不要解释。`,
-    `扫描下面所有${kind === 'appearance' ? '实体（人物、物品、地点）' : '人物（包括不在场人物）'}的${title}。根据结算结果，判断是否需要新增、解除或替换${title}变化。没有变化就返回空操作。`,
+    onlyIds
+      ? `下面只列本轮可能受影响的${kind === 'appearance' ? '实体（人物、物品、地点）' : '人物'}；未列出的由程序记录为依赖未触发，不要为它们写判断。根据结算结果，判断是否需要新增、解除或替换${title}变化。没有变化就返回空操作。`
+      : `扫描下面所有${kind === 'appearance' ? '实体（人物、物品、地点）' : '人物（包括不在场人物）'}的${title}。根据结算结果，判断是否需要新增、解除或替换${title}变化。没有变化就返回空操作。`,
     '规则：',
     `- 不能修改初始${title}；remove/replace 只能用 recordIds 引用该实体已有的有效变化 id。`,
     '- add 的 text 必须非空，recordIds 为空；replace 的 text 必须与旧文本不同；remove 的 text 为 null。',
@@ -1036,6 +1137,7 @@ function readDescriptionOperations(
   kind: 'appearance' | 'personality',
   allocator: LocalIdAllocator,
   requireEveryEntity: boolean,
+  onlyIds?: Set<Id>,
 ): Record<Id, Partial<EntityDelta>> {
   const payload = asRecord(value);
   let rows = payload.operations;
@@ -1047,12 +1149,14 @@ function readDescriptionOperations(
       if (!isRecord(raw)) throw new Error('changes entries must be objects');
       const entityId = resolveCharacterId(state, asString(raw.entityId));
       if (!entityId) throw new Error(referenceError(state, asString(raw.entityId), 'character', roster(state)[0]));
+      if (onlyIds && !onlyIds.has(entityId)) continue;
       changed.add(entityId);
     }
     const keep: Record<string, unknown>[] = [];
     for (const raw of scannedRaw) {
       const entityId = resolveCharacterId(state, raw);
       if (!entityId) throw new Error(referenceError(state, raw, 'character', roster(state)[0]));
+      if (onlyIds && !onlyIds.has(entityId)) continue;
       if (changed.has(entityId)) continue;
       const recordIds = activeRecords(state, 'personality', entityId).filter((record) => record.active).map((record) => record.id);
       keep.push({ entityId: raw, op: 'keep', recordIds, text: null });
@@ -1060,14 +1164,16 @@ function readDescriptionOperations(
     rows = [...keep, ...changesRaw];
   }
   if (!Array.isArray(rows)) throw new Error('operations or scanned/changes must be an array');
-  const targets = kind === 'appearance' ? new Set(allEntityIds(state)) : new Set(roster(state));
+  const allTargets = kind === 'appearance' ? new Set(allEntityIds(state)) : new Set(roster(state));
+  const targets = onlyIds ? new Set([...onlyIds].filter((id) => allTargets.has(id))) : allTargets;
   const byEntity = new Map<Id, OperationRow[]>();
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('operation must be an object');
     const rawEntityId = asString(raw.entityId);
     const entityId = kind === 'appearance' ? resolveEntityId(state, rawEntityId) : resolveCharacterId(state, rawEntityId);
     if (!entityId) throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
-    if (!targets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
+    if (!targets.has(entityId)) continue;
+    if (!allTargets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
     const op = asString(raw.op);
     if (!OPS.has(op)) throw new Error(`invalid operation ${op || '?'} for ${entityId}`);
     const recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
@@ -1140,21 +1246,22 @@ function readDescriptionOperations(
   return changes;
 }
 
-function buildTasksPrompt(ctx: StageContext): string {
+function buildTasksPrompt(ctx: StageContext, ownerIds: Id[], projection: PointProjection): string {
   const keys = taskKeyIndex(ctx.state);
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id, keys));
-  const required = [...new Set(allTasks(ctx.state).map((row) => row.ownerId))].sort();
+  const owners = [...ownerIds].sort();
+  const rows = owners.map((id) => taskLine(ctx.state, id, keys));
+  const required = owners;
   const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
   // A 0.6B copies the example verbatim; a one-row example made it answer for a
   // single character. The skeleton names every required character, so copying
-  // it still produces full coverage.
+  // it still produces coverage for the affected set.
   const unchanged = required.map((id) => `"${id}"`).join(',');
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
-    '下面列出所有人物和他们的全部任务（包括已完成，也包括不在场人物）。请对每个人物给出一条决定。',
+    `下面只列本轮可能受影响的人物和任务（${required.length} 人）；程序已按依赖投影保留其余 ${projection.unaffectedTasks.length} 条任务，未列出的人物/任务不需要判断，也不要为它们写 unchanged。`,
     '规则：',
-    '- 每个有任务的人物必须出现一次：没有变化的放进 unchanged（人物 id 或全名），有变化的放进 achieved；不能只写在场人物，也不能两边都写。',
+    '- 每个列出的人物必须出现一次：没有变化的放进 unchanged（人物 id 或全名），有变化的放进 achieved；不能只写其中一部分，也不能两边都写。',
     '- achieved 只列本轮新达成的任务编号（每行开头的 t1、t2…）；该人物其余任务保持原状，不要逐条输出 pending。',
     '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
     '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
@@ -1192,7 +1299,7 @@ interface TaskDecisionRead {
 function readTaskDecisions(
   value: unknown,
   state: WorldState,
-  options: { strictSupport?: boolean; factIds?: Set<string> } = {},
+  options: { strictSupport?: boolean; factIds?: Set<string>; taskIds?: Set<Id> } = {},
 ): TaskDecisionRead {
   const payload = asRecord(value);
   type Entry = { taskId: string; basis?: string };
@@ -1239,7 +1346,7 @@ function readTaskDecisions(
     }
   }
   if (!decisions) throw new Error('decisions or unchanged/achieved must be an array');
-  const rows = allTasks(state);
+  const rows = allTasks(state).filter((row) => !options.taskIds || options.taskIds.has(row.task.id));
   const byTask = new Map(rows.map((row) => [row.task.id, row]));
   const keys = taskKeyIndex(state);
   const realByKey = new Map([...keys].map(([id, key]) => [key, id]));
@@ -1314,13 +1421,13 @@ function readTaskDecisions(
   return { changes, rejected, supports };
 }
 
-function buildSubtasksPrompt(ctx: StageContext): string {
+function buildSubtasksPrompt(ctx: StageContext, ownerIds: Id[] = roster(ctx.state), projection?: PointProjection): string {
   const keys = taskKeyIndex(ctx.state);
-  const rows = roster(ctx.state).map((id) => taskLine(ctx.state, id, keys));
+  const rows = [...ownerIds].sort().map((id) => taskLine(ctx.state, id, keys));
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
-    '根据本组结算结果和当前任务状态，判断已有任务是否需要新增小任务。',
+    `根据本组结算结果和当前任务状态，判断已有任务是否需要新增小任务。下面只列本轮可能受影响的人物；未列出的由程序记录为依赖未触发${projection ? `（其余 ${projection.unaffectedTasks.length} 条任务）` : ''}。`,
     '规则：',
     '- 小任务必须挂在已有任务下，parentTaskId 用下面行首的任务编号（t1、t2…）；负责人必须是父任务的负责人。',
     '- 新任务一律 pending，不要输出 status 或 ownerId；没有就输出空数组。',
@@ -1375,20 +1482,23 @@ function readSubtaskProposals(
   return changes;
 }
 
-function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: boolean): string {
+function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: boolean, onlyIds?: Id[]): string {
   const index = taskIndex(ctx.state);
   const triggerLines = triggerIds.map((taskId) => {
     const row = index.get(taskId);
     return row ? `- ${row.ownerId}：${row.task.id} ${row.task.goal}` : `- ${taskId}`;
   });
-  const scanned = roster(ctx.state).map((id) => `"${id}"`).join(',');
+  const scannedIds = onlyIds ?? roster(ctx.state);
+  const scanned = scannedIds.map((id) => `"${id}"`).join(',');
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏中的人物个性变化判断器。只输出 JSON，不要解释。',
-    '本轮有新任务达成。请扫描所有人物（包括不在场人物），判断他们的个性是否因这些达成或当前处境发生变化。',
+    onlyIds
+      ? '本轮有新任务达成。下面只列本轮可能受影响的人物；未列出的由程序记录为依赖未触发，不要为它们写判断。判断这些人物是否因达成或当前处境发生变化。'
+      : '本轮有新任务达成。请扫描所有人物（包括不在场人物），判断他们的个性是否因这些达成或当前处境发生变化。',
     '规则：',
     '- 只能新增、解除或替换已有有效个性变化；不能改初始个性；remove/replace 必须用 recordIds 引用该人物已有的有效变化 id。',
-    '- scanned 必须列出所有人物（包括没有变化的）；程序会为 scanned 里没有出现在 changes 的人物补 keep 并带上其全部有效记录。',
+    '- scanned 必须列出上面列出的人物（包括没有变化的）；程序会为 scanned 里没有出现在 changes 的人物补 keep 并带上其全部有效记录。',
     '- changes 只写真的有变化的人物操作；每个有效记录必须被 remove/replace 覆盖一次，不能重复。',
     '- 新个性文本必须与旧文本有实际差异；没有实际变化就 keep。',
     '- 个性变化只由新达成任务触发；不要因为普通动作直接改个性。',
@@ -1396,8 +1506,8 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     '触发任务：',
     ...triggerLines,
     '人物个性：',
-    ...roster(ctx.state).map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"scanned":[${scanned}],"changes":[]}（scanned 必须列出所有人物；没有变化就不要放进 changes；changes 里的 entityId 用真实 id 或人物全名，op 为 add/remove/replace）。`,
+    ...scannedIds.map((id) => `- ${personalityLine(ctx.state, id)}`),
+    `输出 {"scanned":[${scanned}],"changes":[]}（scanned 必须列出上面列出的人物；没有变化就不要放进 changes；changes 里的 entityId 用真实 id 或人物全名，op 为 add/remove/replace）。`,
   ].filter(Boolean).join('\n');
 }
 
