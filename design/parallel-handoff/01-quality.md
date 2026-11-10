@@ -220,3 +220,4 @@
 - 09 run-request：a178 两跑都是 prose-facts 臂，不是 constrained beats；constrained 的 run 尚未产出。a178 结论只对 prose-facts 成立。
 - 02 `audit-frozen-text.mjs` replay：四绑定全中（root 3/quiet 2/move 2/dense 护目镜/continuation 束发/unseen 重复时间）；风/声/新物件/停水/绳被吹起/位置仍未拦。验证器增益真实，覆盖不全。
 - constrained beats 首跑（run 2026-11-10T2306-8c5e，arm=constrained/beats）：第 1 回合 **program** 206 字/169 s；规则牌/路线图整段背诵、状态面板、走/看写成没有动。臂身份正确，无模型正文。
+- constrained beats 首跑 23:11:44Z **FAILED**，仅 1 program 回合；仍无模型正文样本。
