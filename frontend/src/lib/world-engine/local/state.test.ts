@@ -252,6 +252,14 @@ describe('point shape', () => {
       .toBe(canonicalJson(fixture.normal.point));
   });
 
+  it('hashes a normalized group exactly like Python unit_content_hash', async () => {
+    // T01 s10 settledUnits[0].contentHash and T03-collapse's staged group.
+    expect(await canonicalDigest(normalizeSettlementGroup(fixture.normal.groups[0])))
+      .toBe('c7ff254c7e13ad1125d3fe7b3d93ec8cf13930dc4d418e38f3f009773af7f175');
+    expect(await canonicalDigest(normalizeSettlementGroup(fixture.tasks.collapse.groups[0])))
+      .toBe('074d2623815b8341bd8d450d7b89107371aef465722f9c856250a15ffeb80674');
+  });
+
   it('keeps groups normalized for Python-compatible content hashes', () => {
     const normalized = normalizeSettlementGroup({
       groupId: 'g',

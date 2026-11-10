@@ -93,7 +93,7 @@ npx tsc --noEmit -p tsconfig.world-contract.json
 npx tsc --noEmit -p tsconfig.json
 ```
 
-结果：4 个测试文件、82 个测试通过；两个 typecheck 通过。CPU 测试未启动模型/浏览器 GPU。
+结果：4 个测试文件、83 个测试通过；两个 typecheck 通过。CPU 测试未启动模型/浏览器 GPU。
 
 差分来源：`fc60a603c7e0b57805fffea0458192bcfebf6ffc`；具体 Python 文件哈希、世界文件哈希和 fixture 哈希见 `frontend/scripts/parallel-kernel/README.md` 与 fixture 的 `source` 块。
 
