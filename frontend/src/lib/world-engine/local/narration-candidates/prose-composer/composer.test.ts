@@ -313,6 +313,50 @@ describe('validateScene and generateCandidate', () => {
   });
 });
 
+describe('facts about entities outside the visible cast', () => {
+  it('tells a departure with the name instead of dropping the move', () => {
+    const scene = clone(SHORT_MOVE_SCENE);
+    // 林川 walked out of the room, so the cast no longer holds him; the fact
+    // still has to be told, and with a name rather than a pronoun.
+    scene.cast = scene.cast.filter((actor) => actor.id !== 'person_a');
+    scene.beats = [{
+      kind: 'move', actorId: 'person_a', from: '走廊', to: '门厅',
+      entityKind: 'character', actorName: '林川',
+    }];
+    scene.policy = { ...(scene.policy ?? {}), minChars: 12 };
+    const result = composeProse(scene);
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('林川');
+    expect(result.text).toContain('门厅');
+    expect(result.issues.some((issue) => issue.severity === 'hard')).toBe(false);
+  });
+
+  it('tells an item that was taken out of the room', () => {
+    const scene = clone(SHORT_MOVE_SCENE);
+    scene.items = [];
+    scene.beats = [{
+      kind: 'move', actorId: 'box', from: '走廊', to: '储藏室',
+      entityKind: 'item', actorName: '盒子',
+    }];
+    scene.policy = { ...(scene.policy ?? {}), minChars: 12 };
+    const result = composeProse(scene);
+    expect(result.accepted).toBe(true);
+    expect(result.text).toContain('盒子');
+    expect(result.text).toContain('储藏室');
+  });
+
+  it('accepts a turn that settled only the clock, without padding it', () => {
+    const scene = clone(SHORT_MOVE_SCENE);
+    scene.beats = [{ kind: 'time', amount: 1, unit: 'minute' }];
+    scene.policy = { minChars: 60 };
+    const result = composeProse(scene);
+    expect(result.accepted).toBe(true);
+    expect(result.text.length).toBeLessThan(20);
+    expect(result.issues.some((issue) => issue.kind === 'time_only')).toBe(true);
+    expect(result.issues.some((issue) => issue.severity === 'hard')).toBe(false);
+  });
+});
+
 describe('composeProse style mechanics', () => {
   it('keeps paragraphs short and does not repeat the same opening token', () => {
     const result = composeProse(SHED_SCENE);

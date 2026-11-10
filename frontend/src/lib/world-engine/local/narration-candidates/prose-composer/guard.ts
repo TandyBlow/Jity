@@ -66,7 +66,7 @@ export function buildLicense(scene: ProseScene): LicenseBook {
   const beatText = scene.beats.map((beat) => {
     switch (beat.kind) {
       case 'scene': return joinText([beat.detail, beat.factText]);
-      case 'move': return joinText([beat.from, beat.to, beat.manner, beat.factText]);
+      case 'move': return joinText([beat.actorName, beat.from, beat.to, beat.manner, beat.factText]);
       case 'stay': return joinText([beat.location, beat.factText]);
       case 'leave': return joinText([beat.to, beat.factText]);
       case 'arrive': return joinText([beat.location, beat.factText]);

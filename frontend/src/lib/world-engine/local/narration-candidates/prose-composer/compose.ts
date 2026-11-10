@@ -146,10 +146,10 @@ export function validateScene(scene: ProseScene): ProseIssue[] {
     switch (beat.kind) {
       case 'move':
         if (beat.entityKind === 'item') {
-          if (!items.has(beat.actorId)) {
+          if (!items.has(beat.actorId) && !beat.actorName) {
             issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `move item ${beat.actorId} is not in items` });
           }
-        } else if (!actors.has(beat.actorId)) {
+        } else if (!actors.has(beat.actorId) && !beat.actorName) {
           issues.push({ kind: 'unknown_reference', severity: 'hard', detail: `move actor ${beat.actorId} is not in cast` });
         }
         break;
@@ -294,7 +294,11 @@ export function composeProse(scene: ProseScene): ComposedProse {
     .filter((part): part is string => Boolean(part))
     .join(String.fromCharCode(10));
   if (typeof process !== 'undefined' && process.env?.PROSE_DEBUG_BEATS) {
-    console.error('DEBUG scene beats', JSON.stringify(scene.beats.map((b) => ({ k: b.kind, id: (b as { itemId?: string }).itemId, d: (b as { detail?: string }).detail }))));
+    console.error('DEBUG scene beats', JSON.stringify(scene.beats.map((b) => ({
+      k: b.kind, id: (b as { itemId?: string }).itemId, d: (b as { detail?: string }).detail,
+      a: (b as { actorId?: string }).actorId, n: (b as { actorName?: string }).actorName,
+      from: (b as { from?: string }).from, to: (b as { to?: string }).to,
+    }))));
   }
   const anchorScene: ProseScene = { ...scene, priorText: seenText || scene.priorText || null };
   const anchorPool = beatOnly ? [] : chooseAnchor(anchorScene, seenText || null);
@@ -386,12 +390,19 @@ export function composeProse(scene: ProseScene): ComposedProse {
       }
       case 'move': {
         const movingItem = beat.entityKind === 'item' ? itemOf(scene, beat.actorId) : undefined;
-        const actor = movingItem ? undefined : actorOf(scene, beat.actorId);
-        if (!movingItem && !actor) break;
+        // An item or a person who already left this place has no entry in the
+        // cast/items list, but the move still happened and must be told with a
+        // name, never a pronoun.
+        const itemName = movingItem?.name ?? (beat.entityKind === 'item' ? beat.actorName : undefined);
+        const actor = itemName ? undefined : actorOf(scene, beat.actorId);
+        const subjectName = itemName ?? actor?.name ?? beat.actorName;
+        if (!subjectName) break;
         const from = beat.from;
         const to = beat.to;
-        const subject = movingItem ? movingItem.name : refs.subject(actor!.id);
-        const variants = movingItem
+        // Departures name the person; arrivals use the same references as any
+        // other beat so the prose does not read like a report.
+        const subject = actor && itemName === undefined ? refs.subject(actor.id) : subjectName;
+        const variants = itemName
           ? [`${subject}从${from}到了${to}。`, `${subject}被从${from}带到了${to}。`]
           : [
             `${subject}从${from}走到${to}。`,
@@ -649,7 +660,10 @@ export function composeProse(scene: ProseScene): ComposedProse {
         if (!exact && policy.requireTime && beat.amount) {
           const amount = numberToChinese(beat.amount);
           const unit = unitName(beat.unit ?? 'minute');
-          const forms = [`过了${amount}${unit}。`, `${amount}${unit}过去。`, `${amount}${unit}之后。`];
+          const forms = [
+            `过了${amount}${unit}。`, `${amount}${unit}过去。`, `${amount}${unit}之后。`,
+            `又过了${amount}${unit}。`, `${amount}${unit}过去了。`, `再过${amount}${unit}。`,
+          ];
           exact = forms[hash32(`${scene.seed ?? 0}|${scene.pointId ?? ''}|time|${beat.amount}|${beat.unit ?? 'minute'}`) % forms.length];
         }
         pushBeat(exact ?? '过了一会儿。', beat);
@@ -761,7 +775,15 @@ export function composeProse(scene: ProseScene): ComposedProse {
   issues.push(...factIssues);
   const quiet = (scene.beats ?? []).every((beat) => beat.kind === 'noChange' || beat.kind === 'time'
     || beat.kind === 'stay' || beat.kind === 'silence');
-  const minChars = clampInt(policy.minChars ?? 60, quiet ? 8 : 12, 4000);
+  // A turn that settled nothing but the clock has nothing else to say. Telling
+  // it in one short sentence is complete, not padded; a length target must not
+  // push the composer into inventing an action.
+  const spoken = rendered.filter((entry) => entry.paragraph >= 0);
+  const timeOnly = !beatOnly && spoken.length > 0 && spoken.every((entry) => entry.beat.kind === 'time');
+  const minChars = timeOnly ? 4 : clampInt(policy.minChars ?? 60, quiet ? 8 : 12, 4000);
+  if (timeOnly) {
+    issues.push({ kind: 'time_only', severity: 'soft', detail: 'the turn settled only elapsed time' });
+  }
   if (!beatOnly && charCount(text) < minChars) {
     issues.push({ kind: 'too_short', severity: 'hard', detail: `${charCount(text)} < ${minChars}` });
   }
@@ -917,7 +939,11 @@ function verifyBeats(
     const checks: Array<{ token: string; label: string }> = [];
     switch (beat.kind) {
       case 'move':
-        checks.push({ token: names.get(beat.actorId) ?? itemOf(scene, beat.actorId)?.name ?? beat.actorId, label: 'actor' });
+        checks.push({
+          token: names.get(beat.actorId) ?? itemOf(scene, beat.actorId)?.name
+            ?? beat.actorName ?? beat.actorId,
+          label: 'actor',
+        });
         checks.push({ token: beat.to, label: 'destination' });
         if (!sentence.includes(beat.to) && !sentence.includes(beat.factText ?? '\u0000')) {
           issues.push({ kind: 'fact_token_missing', severity: 'hard', detail: `move destination ${beat.to} missing`, sentence });

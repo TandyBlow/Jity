@@ -282,14 +282,56 @@ function mentionedByBeats(beats: ProseBeat[], scene: ProseScene): { ids: Set<str
   return { ids, names };
 }
 
-function beatsFromFacts(facts: CommittedFactLike[], protagonistId: string): ProseBeat[] {
+interface FactLookup {
+  itemIds: Set<string>;
+  names: Map<string, string>;
+}
+
+/** Facts identify entities by id only. Items and people who already left the
+ * visible scene are still in the fact list, so their kind and name have to come
+ * from the world read, not from the current cast. */
+function factLookup(scene: ProseScene, state: WorldStateLike | null): FactLookup {
+  const itemIds = new Set((scene.items ?? []).map((item) => item.id));
+  const names = new Map<string, string>();
+  for (const actor of scene.cast ?? []) names.set(actor.id, actor.name);
+  type Entities = Record<string, { id?: string; name?: string } | undefined> | undefined;
+  const initial = state?.initial as { characters?: unknown; items?: unknown } | undefined;
+  // The live read carries positions; the immutable world table is where the
+  // names live. Both are consulted so a departed entity keeps its name.
+  for (const table of [initial?.characters, state?.characters] as Entities[]) {
+    for (const [id, entity] of Object.entries(table ?? {})) {
+      if (!entity) continue;
+      if (entity.name) names.set(entity.id ?? id, entity.name);
+    }
+  }
+  for (const table of [initial?.items, state?.items] as Entities[]) {
+    for (const [id, entity] of Object.entries(table ?? {})) {
+      if (!entity) continue;
+      itemIds.add(entity.id ?? id);
+      if (entity.name) names.set(entity.id ?? id, entity.name);
+    }
+  }
+  return { itemIds, names };
+}
+
+function beatsFromFacts(facts: CommittedFactLike[], protagonistId: string, lookup: FactLookup): ProseBeat[] {
   const beats: ProseBeat[] = [];
   for (const fact of facts) {
     if (fact.actorId === protagonistId && fact.kind === 'at') continue;
     switch (fact.kind) {
-      case 'moved':
-        beats.push({ kind: 'move', actorId: fact.actorId, from: fact.from ?? '原来的位置', to: fact.to ?? '别处' });
+      case 'moved': {
+        const isItem = lookup.itemIds.has(fact.actorId);
+        const name = lookup.names.get(fact.actorId);
+        const inCast = lookup.names.has(fact.actorId) && !isItem;
+        beats.push({
+          kind: 'move', actorId: fact.actorId,
+          from: fact.from ?? '原来的位置', to: fact.to ?? '别处',
+          ...(isItem ? { entityKind: 'item' as const } : {}),
+          ...(name ? { actorName: name } : {}),
+          ...(!inCast && !isItem && !name ? {} : {}),
+        });
         break;
+      }
       case 'task_achieved':
         beats.push({ kind: 'task', actorId: fact.actorId, label: fact.goal ?? '手头的事', scope: 'sub' });
         break;
@@ -325,7 +367,7 @@ export function sceneFromCommitted(
   const enriched = stateRead ? sceneFromState(committed, stateRead, policy) : null;
   if (enriched) {
     const advance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
-    const beats = beatsFromFacts(facts, enriched.scene.protagonistId);
+    const beats = beatsFromFacts(facts, enriched.scene.protagonistId, factLookup(enriched.scene, stateRead));
     if (advance?.duration && advance.duration.amount > 0) {
       beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });
     }
@@ -470,7 +512,7 @@ export function sceneFromGrounding(
     policy: { minChars: policy.minChars ?? 12, requireTime: true },
     seed: policy.seed,
   };
-  const beats = beatsFromFacts(committed.facts ?? [], protagonistId);
+  const beats = beatsFromFacts(committed.facts ?? [], protagonistId, factLookup(scene, null));
   const advance = policy.timeAdvance ?? policy.delta?.timeAdvance ?? committed.timeAdvance ?? null;
   if (advance?.duration && advance.duration.amount > 0) {
     beats.unshift({ kind: 'time', amount: advance.duration.amount, unit: advance.duration.unit });

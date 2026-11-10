@@ -52,6 +52,9 @@ export type ProseBeat =
     kind: 'move'; actorId: string; from: string; to: string; manner?: string; factText?: string;
     /** Items move too; they are not cast members. */
     entityKind?: 'character' | 'item';
+    /** Name for an actor who has already left the visible cast (a departure
+     * still has to be told); never used for pronouns. */
+    actorName?: string;
   }
   /** An actor keeps their position while others move. */
   | { kind: 'stay'; actorId: string; location?: string; factText?: string }
@@ -145,6 +148,7 @@ export type ProseIssueKind =
   | 'stock_phrase'
   | 'echo_prior'
   | 'too_short'
+  | 'time_only'
   | 'unknown_reference'
   | 'unmapped_fact'
   | 'empty_scene';
