@@ -238,6 +238,13 @@ internal "未成功触发骰点" field language and repeated scene text. 06 415c
 keeps the player point source and labels both program points per point; 05
 rejects the turn. This is not a state-kernel failure.
 
+## dfde has no committed head
+
+06 `12175c21` describes dfde as a committed point with pending narration. The
+dfde evidence has no point (`updatesCalls=0`, `committedEntries=0`,
+`headPointId=root`); it is the results completion abort. The load-narration
+repair does not address it; 04 `b2e1dab2`/`59bc749f` must be merged.
+
 ## dfde: the 2603 results failure repeats
 
 Run `2026-11-10T2210-414a` at 06 `dfdedb18`: results returned only a completion
