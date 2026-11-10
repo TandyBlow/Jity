@@ -53,6 +53,7 @@ The package is public development regression material, never a final holdout.
 | `preregistration.sha256` | hash of the exact preregistration bytes |
 | `preregistration.v2.json` / `.sha256` | v2 template-test preregistration, frozen before any v2 output |
 | `cause-analysis-b01.md` | b01 evidence, hypotheses and next step |
+| `v2-analysis-plan.md` | how v2 will be interpreted, written before any v2 output |
 | `analysis-addendum-arms.md` / `.sha256` | all-subset N-arm definition, frozen before any arm result |
 | `configs/b01.json` | first batch: one long dialogue case, 6 seeds |
 | `configs/b01-template-v2.json` | same batch with the fixed writing instruction only |
