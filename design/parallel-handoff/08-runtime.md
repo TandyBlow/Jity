@@ -223,3 +223,9 @@ cancel (which still stops in ~5 ms and keeps the model loaded).
   through game-model/controller later).
 - `RuntimeWorldModelPort` still reloads per generation by design; the engine
   memo makes it cheap, but queue events will show a `load:` entry per call.
+- Context use is recorded as `contextSize` plus the actual prompt/cache token
+  counts (41 prompt tokens against 2048 in the cited runs). wllama 3.8.1 has no
+  public tokenizer, so the engine cannot preflight an over-long prompt; it never
+  truncates the prompt itself and leaves overflow handling to llama.cpp. The
+  real runs only produced `finishReason: 'stop'`; length/missing-finish
+  rejection is covered by the fake-runner tests.
