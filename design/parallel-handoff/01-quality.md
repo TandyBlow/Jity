@@ -258,3 +258,4 @@
 - 926e（head 926e5c98，02 beat 补丁）：`mixed` 103 字，时间/注视已写、短可读；硬缺陷=胸前护目镜被「摘下」、面板仍在、走只部分（`review.action_partial`）。checker 99 锚点；同时修掉本线三个误报（对象取「墙」、规则牌误当规则豁免、目标词序导致 human-71 误报一行）。
 - 5810（head 5810ae87）：判定过滤生效，面板消失、护目镜矛盾不再；但 53 字，规则牌与走都不在正文（`fact.action_omitted`），result beat 仍逐字绑定。
 - 02 `3b48fb10`/06 `b44c2397` 再次只接到 scene 路径（`narration-generation/verify.ts:424`）；`constrained/verify.ts` 仍无任何 settled/item 调用，故 926e 的「摘下护目镜」在该 build 仍会通过 beat 校验。已在该请求追加证据。
+- 更正（root 复核 5810 raw + 代码后）：11a7/926e 的 `fact_missing time` 属失败模型尝试，最终 fallback coverage 为 `expressed:true`；我此前「scoping 丢了时间事实」的写法撤回。模型为何失败（matcher 拒了合法说法 or 真没写）在 `rejected: []` 下无法判定。result 的逐字 `fact.text` 冲突经 root 确认属实。
