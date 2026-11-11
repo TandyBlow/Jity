@@ -21,6 +21,8 @@ export type NarrationIssueKind =
   /** A settled change that the prose never expresses. */
   | 'fact_omitted'
   | 'time_missing'
+  /** A deterministic wording repair of the viewpoint's own reference. */
+  | 'self_reference_repaired'
   /** The same elapsed time written twice in one passage. */
   | 'time_duplicate'
   /** Fabricated continuity: a promise or a past event with no committed or

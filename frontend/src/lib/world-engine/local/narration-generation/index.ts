@@ -19,7 +19,7 @@ import { buildLedger } from './ledger';
 import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
 import { renderProseFactsPrompt } from './scene-prompt';
-import { appearanceViolations, senseViolations } from './licensed-sense';
+import { appearanceViolations, selfPossessiveRepair, selfReferenceRepair, senseViolations } from './licensed-sense';
 import { actionViolations } from './licensed-action';
 import { stripBeatLabel } from './beats';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
@@ -186,8 +186,17 @@ async function runAttempt(args: RunAttemptArgs): Promise<RunAttemptResult> {
     external?.removeEventListener('abort', forwardAbort);
   }
 
-  const cleaned = sanitizeNarration(raw);
+  // Two wording defects are deterministic and safe to repair before the fact
+  // checks: the viewpoint's own name used after 他/她 («他望着路明非的背心»,
+  // quiet-90) and «自己+物品» without 的 («看着自己护目镜», e9a5). Neither
+  // changes a fact; both read as mistakes in otherwise correct prose.
+  const selfPossessive = selfPossessiveRepair(sanitizeNarration(raw), args.policy.knownEntities ?? []);
+  const selfReference = selfReferenceRepair(selfPossessive.text, args.policy.viewpoint?.name);
+  const cleaned = selfReference.text;
   const issueList: NarrationIssue[] = [];
+  for (const repair of [...selfPossessive.repaired, ...selfReference.repaired]) {
+    issueList.push({ kind: 'self_reference_repaired', severity: 'soft', attempt: args.attempt, detail: repair });
+  }
   if (cancelled) issueList.push({ kind: 'cancelled', severity: 'hard', attempt: args.attempt, detail: error ?? 'aborted' });
   if (timedOut) issueList.push({ kind: 'timeout', severity: 'hard', attempt: args.attempt, detail: 'generation deadline exceeded' });
   const verified = verifyNarration({

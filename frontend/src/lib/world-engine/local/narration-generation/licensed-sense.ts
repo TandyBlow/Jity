@@ -120,7 +120,8 @@ function licensedSources(inputText: string): string[] {
 /** Verbs that make a thing a speaker: something is heard, or it tells someone
  * something. A sign or a sheet of paper in a scene is not a speaker. */
 const SPEAKING_VERBS = /(传来|响起|发出|飘来|回荡|作响|响了|响着|提醒|告诉|说道|喊道)/u;
-const SOUND_NOUNS = /(声|响|动静)/u;
+// 嗡鸣/轰鸣 are sounds too; 11a7-class runs made a wall sign «传来…的嗡鸣».
+const SOUND_NOUNS = /(声|响|动静|鸣)/u;
 
 export interface SenseOptions {
   /** People with a committed move this point. Their own footsteps are a
@@ -364,4 +365,53 @@ export function settledViolationsFromScene(
     ...settledStateViolations(text, settled, null),
     ...objectActorViolations(text, settled),
   ];
+}
+
+/** The viewpoint's own name used as if it were another person, after a third
+ * person pronoun in the same sentence: «他望着路明非的演习背心» (real quiet-90
+ * run), «他低头看着自己护目镜» (09 e9a5). The 71-row reference never does this
+ * (its 9 uses of 自己 are all possessive or reflexive: 自己手里/自己的呼吸…).
+ * This is a wording defect, not a fact error, so the caller repairs the wording
+ * instead of rejecting the passage. */
+export function selfReferenceRepair(text: string, viewpointName: string | undefined): { text: string; repaired: string[] } {
+  if (!viewpointName || viewpointName.length < 2) return { text, repaired: [] };
+  const repaired: string[] = [];
+  const SENT = new RegExp('(?<=[。！？!?])|' + String.fromCharCode(92) + 'n+', 'u');
+  const sentences = text.split(SENT);
+  const out = sentences.map((sentence) => {
+    // A pronoun subject followed later by the viewpoint's full name.
+    if (!/(^|[，,；;])\s*[他她]/u.test(sentence)) return sentence;
+    const pattern = new RegExp(`([他她][^。！？]{0,12}?)${viewpointName}的`, 'u');
+    const match = pattern.exec(sentence);
+    if (!match) return sentence;
+    // Only when the pronoun is the subject of that clause, not when it is another
+    // character acting on the viewpoint.
+    if (/[他她][^。！？]{0,4}(看见|望着|看着|看向|盯着|朝|向|对|给|替|帮)/u.test(match[0]) === false) return sentence;
+    repaired.push(`${match[0]}…`);
+    return sentence.replace(pattern, `$1自己的`);
+  });
+  return { text: out.join(''), repaired };
+}
+
+/** «自己+物品» without 的 is ungrammatical: «看着自己护目镜». Insert 的 when the
+ * next characters are a known item or person name. */
+export function selfPossessiveRepair(text: string, names: readonly string[]): { text: string; repaired: string[] } {
+  const repaired: string[] = [];
+  let out = text;
+  // «自己护目镜» uses the bare noun, while the registered name is
+  // «路明非的护目镜»; both forms need the 的.
+  const forms = new Set<string>();
+  for (const name of names) {
+    if (!name || name.length < 2) continue;
+    forms.add(name);
+    const own = name.split('的');
+    if (own.length === 2 && own[1].length >= 2) forms.add(own[1]);
+  }
+  for (const name of forms) {
+    const pattern = new RegExp(`自己${name}`, 'gu');
+    if (!pattern.test(out)) continue;
+    out = out.replace(new RegExp(`自己${name}`, 'gu'), `自己的${name}`);
+    repaired.push(`自己${name}→自己的${name}`);
+  }
+  return { text: out, repaired };
 }

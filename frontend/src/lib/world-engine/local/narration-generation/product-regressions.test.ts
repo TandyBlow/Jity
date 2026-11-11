@@ -20,7 +20,7 @@ import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
 import { contradictionTarget, generateCommittedNarration, stateRepairLines } from './index';
-import { settledViolationsFromScene } from './licensed-sense';
+import { selfPossessiveRepair, selfReferenceRepair, settledViolationsFromScene } from './licensed-sense';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -585,5 +585,35 @@ describe('product regressions: the per-beat packet carries the same settled line
   test('a correct beat sentence has no settled violation', () => {
     const found = settledViolationsFromScene('一分钟过去，路明非还站在西侧服务巷。', packet);
     expect(found).toHaveLength(0);
+  });
+});
+
+describe('product regressions: the quiet-90 run', () => {
+  // results/02-narration/real-qwen3-quiet-90.json, accepted at 77 chars:
+  // «远处传来演习规则牌的嗡鸣» (a wall sign makes a sound) and
+  // «他望着路明非的演习背心» (the viewpoint's own name as if another person).
+  test('a wall sign that hums is an invented sound', async () => {
+    const { kinds } = await issuesOf('一分钟过去，远处传来演习规则牌的嗡鸣。');
+    expect(kinds).toContain('hard:unlicensed_sense');
+  });
+
+  test("the viewpoint's own name after 他 is rewritten to 自己的", async () => {
+    const text = '一分钟过去，他望着路明非的演习背心，心里泛起一丝不安。';
+    const repaired = selfReferenceRepair(text, '路明非');
+    expect(repaired.text).toContain('他望着自己的演习背心');
+    expect(repaired.repaired.length).toBe(1);
+  });
+
+  test('自己+物品 without 的 is repaired, not rejected', () => {
+    const repaired = selfPossessiveRepair('他低头看着自己护目镜，镜片依旧清晰。', ['路明非的护目镜']);
+    expect(repaired.text).toContain('自己的护目镜');
+  });
+
+  test('ordinary 自己 uses are untouched', () => {
+    for (const sentence of ['她把答案攥在自己手里。', '他听见自己的呼吸越来越浅。', '诺诺先护住人，再自己探头。']) {
+      const repaired = selfReferenceRepair(selfPossessiveRepair(sentence, ['路明非的护目镜']).text, '诺诺');
+      expect(repaired.text).toBe(sentence);
+      expect(repaired.repaired).toHaveLength(0);
+    }
   });
 });
