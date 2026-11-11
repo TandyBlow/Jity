@@ -673,15 +673,119 @@ describe('product regressions: result semantics accept paraphrase, reject flips'
     const ok = resultSemantics('路明非把登记簿合上，没找到那处差额。', '对差额',
       { actor: '路明非', target: '登记簿', outcome: 'failed' }, names);
     expect(ok.ok).toBe(true);
+    // The failure is readable even though the target is not named: a review
+    // note, not a rejection — the prose is not required to broadcast state.
     const missingTarget = resultSemantics('路明非没找到那处差额。', '对差额',
       { actor: '路明非', target: '登记簿', outcome: 'failed' }, names);
-    expect(missingTarget.ok).toBe(false);
+    expect(missingTarget.ok).toBe(true);
+    expect(missingTarget.unverified).toBe(true);
     expect(missingTarget.detail).toMatch(/登记簿/u);
+
+    // No failure at all: the player never learns the outcome.
+    const silent = resultSemantics('路明非把护目镜推到额头上。', '对差额',
+      { actor: '路明非', target: '登记簿', outcome: 'failed' }, names);
+    expect(silent.ok).toBe(false);
   });
 
   test('undecidable free text is marked for review, not passed silently', () => {
     const check = resultSemantics('路明非站着。', '场面安静。', undefined, names);
     expect(check.ok).toBe(true);
     expect(check.unverified).toBe(true);
+  });
+});
+
+describe('product regressions: a result claim must be about that result', () => {
+  // Found while wiring 04's structured fields: «路明非看清了规则牌» carries a
+  // completion cue, so an unrelated failed result on 登记簿 was read as a
+  // success claim. A claim is bound to the settled target, else the settled
+  // action, else the actor.
+  const names = ['路明非', '诺诺', '登记簿', '规则牌'];
+
+  test('an unrelated completion does not become the result claim', () => {
+    const check = resultSemantics('路明非看清了墙上的规则牌，却没能找到人问路。',
+      '路明非比对了登记簿，三处差额对不上。',
+      { actor: '路明非', action: '比对登记簿', target: '登记簿', outcome: 'failed' }, names);
+    expect(check.ok).toBe(true);
+    expect(check.unverified).toBe(true);
+  });
+
+  test('a success claimed on the settled target is still rejected', () => {
+    const check = resultSemantics('路明非把登记簿翻完，三处差额都对上了。',
+      '路明非比对了登记簿，三处差额对不上。',
+      { actor: '路明非', action: '比对登记簿', target: '登记簿', outcome: 'failed' }, names);
+    expect(check.ok).toBe(false);
+    expect(check.sentence).toContain('登记簿');
+  });
+
+  test('a result whose actor is never named is a swap', () => {
+    // 诺诺 was the one who answered; the prose gives the answer to 路明非 and
+    // never names her.
+    const check = resultSemantics('路明非自己把答案想明白了。',
+      '诺诺答了路明非的问题。',
+      { actor: '诺诺', action: '回答', target: '路明非', viewpoint: '路明非', outcome: 'completed' }, names);
+    expect(check.ok).toBe(false);
+    expect(check.detail).toMatch(/诺诺/u);
+  });
+
+  test('the viewpoint may drop its own subject', () => {
+    const check = resultSemantics('他站在桌边，把登记簿翻完，三处差额都对上了。',
+      '路明非比对了登记簿，三处差额对上了。',
+      { actor: '路明非', action: '比对登记簿', target: '登记簿', viewpoint: '路明非', outcome: 'completed' }, names);
+    // The actor is never named, but he is the viewpoint, and the target appears.
+    expect(check.detail).not.toMatch(/never names/u);
+  });
+});
+
+describe('product regressions: the settled line names its actor before the colon', () => {
+  // 09's 3-turn run (bed9de41) rejected a correct paraphrase three times because
+  // «诺诺：蹲下，掀开路明非的袖口查看伤口» was read with 路明非 as the actor.
+  const names = ['路明非', '诺诺', '演习规则牌'];
+
+  test('an actor prefix is the actor, not the first roster name in the sentence', () => {
+    const check = resultSemantics(
+      '路明非沿着服务巷往里走，先看清墙上的演习规则牌。诺诺蹲下，掀开路明非的袖口查看伤口。',
+      '诺诺：蹲下，掀开路明非的袖口查看伤口', undefined, names);
+    expect(check.ok).toBe(true);
+    expect(check.detail).not.toMatch(/never names/u);
+  });
+
+  test('a prose that drops that actor is still a swap', () => {
+    const check = resultSemantics('有人蹲下查看伤口。', '诺诺：蹲下，掀开路明非的袖口查看伤口',
+      undefined, names);
+    expect(check.ok).toBe(false);
+    expect(check.detail).toMatch(/诺诺/u);
+  });
+});
+
+describe('product regressions: possession and tied hair from 09 35ad', () => {
+  // Four lines from the 35ad run. The item names are world names, so the
+  // licence check lets them through; what is wrong is where they are.
+  const scene = {
+    inputText: null,
+    viewpoint: { name: '路明非', note: '护目镜挂在胸前' },
+    place: { name: '服务巷', note: '墙上挂着演习规则牌' },
+    present: [{ name: '诺诺', note: '红发用发圈束在脑后，红色识别带缠在左臂' }],
+    objects: [{ name: '弗里嘉演习弹', note: '在器材棚的箱子里' }, { name: '护目镜', note: '挂在胸前' }],
+    inventory: [],
+  };
+
+  test('an item in the equipment shed is not in his hand', () => {
+    const found = settledViolationsFromScene('弗里嘉演习弹在手中发烫。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('弗里嘉演习弹'))).toBe(true);
+  });
+
+  test('the same item named in its settled place passes', () => {
+    const found = settledViolationsFromScene('弗里嘉演习弹还在器材棚的箱子里。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('弗里嘉演习弹'))).toBe(false);
+  });
+
+  test('tied hair written as falling on the shoulder is caught', () => {
+    const found = settledViolationsFromScene('诺诺的红发垂在肩上。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('tied'))).toBe(true);
+  });
+
+  test('goggles on the chest stay on the chest', () => {
+    const found = settledViolationsFromScene('护目镜挂在他胸前，镜带松着。', scene, ['路明非', '诺诺']);
+    expect(found.length).toBe(0);
   });
 });

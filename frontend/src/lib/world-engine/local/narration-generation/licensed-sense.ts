@@ -226,7 +226,7 @@ export function settledAppearanceViolations(
     }
     // The settled hair is tied: rewriting it loose changes how the person looks.
     if (settledText.includes('束在脑后')) {
-      const loose = /(发圈|红发|发丝|长发)[^。！？]{0,6}(垂落|垂下|轻垂|散开|披散)/u.exec(sentence);
+      const loose = /(发圈|红发|发丝|长发)[^。！？]{0,8}(垂落|垂下|轻垂|垂在肩|垂到肩|散开|散落|散在肩|披散|披在肩)/u.exec(sentence);
       if (loose) found.push({ sentence, detail: `the settled hair is tied (${loose[0]})` });
     }
     // Goggles settled on the chest are not worn over the eyes.
@@ -236,6 +236,39 @@ export function settledAppearanceViolations(
       // when they are over the eyes, and the settled line says they hang on the chest.
       if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在|泛着雾气|蒙着雾|起雾|浮着雾气|边缘的雾气|上的雾气)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
         found.push({ sentence, detail: 'the goggles hang on the chest, not over the eyes' });
+      }
+    }
+  }
+  return found;
+}
+
+/** An item that the settlement/local scene places somewhere other than the actor's
+ * hand, written as if it were being held. 09's 35ad run: «弗里嘉演习弹在手中发烫»
+ * while the round was in the equipment shed. This is a possession transfer, one of
+ * the classes the product keeps: it changes what the player may do next. */
+const HELD = /(手中|手里|手上|掌心|攥着|握着|握着|拎着|拿着|捧着|按在手里)/u;
+const HELD_BEFORE = /(把|将)[^。！？]{0,6}$/u;
+
+export function possessionViolations(
+  text: string,
+  inventory: readonly { name: string; note?: string }[],
+): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  for (const item of inventory) {
+    const name = item.name?.trim();
+    if (!name || name.length < 2) continue;
+    const note = item.note ?? '';
+    // Already in hand in the settled line: nothing to check.
+    if (HELD.test(note)) continue;
+    for (const sentence of sentencesOf(text)) {
+      if (!sentence.includes(name)) continue;
+      const after = sentence.slice(sentence.indexOf(name) + name.length);
+      const before = sentence.slice(0, sentence.indexOf(name));
+      const held = HELD.test(after.slice(0, 12));
+      const heldByBa = HELD_BEFORE.test(before) && /(拿起|抓起|掏出|取出|递|塞)/u.test(before + name);
+      if (held || heldByBa) {
+        found.push({ sentence, detail: `${name} is written as held, but the settled line does not put it in hand` });
+        break;
       }
     }
   }
@@ -365,6 +398,10 @@ export function settledViolationsFromScene(
     ...settledStateViolations(text, settled, null),
     ...objectActorViolations(text, settled),
     ...itemStateViolations(text, settled),
+    ...possessionViolations(text, [
+      ...(scene.objects ?? []).map((object) => ({ name: object.name, note: object.note ?? '' })),
+      ...(scene.inventory ?? []).map((item) => ({ name: item.name, note: item.note ?? '' })),
+    ]),
   ];
 }
 
@@ -493,6 +530,8 @@ export interface StructuredResult {
   actor?: string;
   action?: string;
   target?: string;
+  /** The viewpoint character's name; only their subject may be omitted. */
+  viewpoint?: string;
   /** 04's settled labels: completed | failed | blocked | unaffected. */
   outcome?: 'completed' | 'failed' | 'blocked' | 'unaffected';
 }
@@ -524,9 +563,18 @@ export function resultSemantics(
   structured: StructuredResult | undefined,
   names: readonly string[] = [],
 ): ResultCheck {
-  const actor = structured?.actor ?? names.find((name) => name.length >= 2 && resultText.includes(name)) ?? null;
+  // The settled line often arrives as «诺诺：蹲下，掀开路明非的袖口查看伤口»:
+  // the name before the colon is the actor, not the first roster name that
+  // happens to appear in the sentence. Guessing by list order swapped the
+  // actor and the target on 09's 3-turn run and rejected a correct paraphrase.
+  const LEADING_NAME = /^\s*([^：:，,。]{2,6})[：:]/u;
+  const leading = resultText.match(LEADING_NAME);
+  const leadingName = leading && names.includes(leading[1].trim()) ? leading[1].trim() : null;
+  const body = leadingName && leading ? resultText.slice(leading[0].length) : resultText;
+  const actor = structured?.actor ?? leadingName
+    ?? names.find((name) => name.length >= 2 && body.includes(name)) ?? null;
   const target = structured?.target
-    ?? names.find((name) => name.length >= 2 && resultText.includes(name) && name !== actor)
+    ?? names.find((name) => name.length >= 2 && body.includes(name) && name !== actor)
     ?? null;
   const outcome = structured?.outcome;
   // Settlement polarity. A negative cue wins over a positive one: «未能完成»
@@ -538,13 +586,30 @@ export function resultSemantics(
     ? outcome === 'completed'
     : cuesIn(resultText, DONE_CUES).length > 0;
 
-  const claims = sentencesMentioning(text, actor);
-  // A claim is a sentence that says something was completed and does not itself
-  // carry a negation; wording is free.
   // A structured record names the performed action. Saying that action in the
   // actor's own sentence («诺诺回答了他») is the completion, even when the verb
   // is not in the generic cue list; the cue list alone missed dialogue answers.
   const actionPhrase = structured?.action?.trim() ?? '';
+  // A claim must be about THIS result. Without a binding, any completion verb in
+  // the actor's sentence would count — «路明非看清了规则牌» would be read as a
+  // success for an unrelated failed result. Bind on the target when the record
+  // names one, otherwise on the settled action, otherwise on the actor alone.
+  const aboutBinding = (sentence: string): boolean => {
+    if (structured?.target) return sentence.includes(structured.target);
+    if (actionPhrase.length >= 2) return sentence.includes(actionPhrase);
+    return true;
+  };
+  const claims = sentencesMentioning(text, actor).filter(aboutBinding);
+  // A settled result belongs to a named actor. If the prose never names that
+  // actor and the actor is not the viewpoint (whose subject may be omitted),
+  // the result was given to someone else — a swap, not a paraphrase.
+  const actorNamed = !actor || text.includes(actor);
+  const actorMayBeOmitted = !actor || actor === structured?.viewpoint;
+  if (actor && !actorNamed && !actorMayBeOmitted) {
+    return { ok: false, detail: `settled result belongs to ${actor}; the prose never names them` };
+  }
+  // A claim is a sentence that says something was completed and does not itself
+  // carry a negation; wording is free.
   const actionSentence = actionPhrase.length >= 2
     ? claims.find((sentence) => sentence.includes(actionPhrase)
       && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? ''
@@ -553,13 +618,20 @@ export function resultSemantics(
     ? actionSentence
     : claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
       && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
-  const failure = claims.find((sentence) => cuesIn(sentence, NEGATIVE_CUES).length > 0) ?? '';
+  // A failure counts anywhere in the actor's sentences: the turn can show the
+  // setback in one clause and other business in another.
+  const failure = sentencesMentioning(text, actor)
+    .find((sentence) => cuesIn(sentence, NEGATIVE_CUES).length > 0) ?? '';
 
   if (settledNegative) {
     if (claim) {
       return { ok: false, sentence: claim, detail: `settled result is a failure/block (${structured?.outcome ?? 'negative wording'}); the prose claims it was completed` };
     }
     if (target && !text.includes(target)) {
+      // The target is absent. If the prose still shows a failure of this actor,
+      // the turn is readable and the missing name is a review note; if it shows
+      // no failure at all, the player never learns the outcome.
+      if (failure) return { ok: true, unverified: true, detail: `failure shown without naming ${target}` };
       return { ok: false, detail: `settled result names ${target}; the prose does not` };
     }
     return { ok: true, detail: failure ? 'failure kept' : 'no success claimed' };
