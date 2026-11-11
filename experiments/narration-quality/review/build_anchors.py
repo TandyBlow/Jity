@@ -1561,6 +1561,25 @@ anchors.append({
                "notes": "The model recites settled lines (goggles, vest, hair, band, gun, radio) and never walks in or reads the 规则牌; the walk/read is the declared action."},
 })
 
+
+# 05e7: the same root walk/read point on the merged build; mixed provenance,
+# but the text still never walks in or reads the board.
+run5e7 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-05e7.json", encoding="utf-8"))
+t5e7 = run5e7["turns"][0]
+anchors.append({
+    "id": "neg/route/05e7-mixed-recital",
+    "source": "09 constrained-beats 2026-11-11T0002-6075 (head 05e7f4ce): mixed 2 model + 2 program, 323 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t5e7["text"],
+    "options": {"minChars": 1, "action": t5e7["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": [],
+               "notes": "mixed (2 model + 2 program); the text recites settled lines and says 路明非也没有动, so the declared walk/read is missing."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

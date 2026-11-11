@@ -235,3 +235,4 @@
 - constrained 05e7（2026-11-11T0002-6075，head 05e7f4ce）：mixed 出处已诚实（2 model+2 program）；`no_accepted_model_text`；323 字状态复述+`路明非也没有动`+状态面板。非通过。
 - 05e7 per-beat：open+scene model，result（缺 result fact）+ close（跨 beat 重复）program = 2/4+2/4；`路明非也没有动` 与 `诺诺：因此未被阻止或达成目标。` 属 fallback。
 - 01 checker 第五遍：`影子/身影` 入可新造物；`红方集结点影子`=review.object_added。
+- 05e7 锚点（93 总数）：`neg/route/05e7-mixed-recital`；`action_omitted` 仍命中。
