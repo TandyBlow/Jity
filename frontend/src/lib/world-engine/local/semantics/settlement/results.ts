@@ -637,6 +637,17 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         throw new Error(`outcome blocked contradicts the reason for ${actorId}: ${reason}`);
       }
     }
+    // A fact that is the member's declared action restated is not a result:
+    // 35ad turn 3 answered the player's own sentence (我请诺诺带我走…路线)
+    // verbatim with outcome completed, so the “result” asserted the player's
+    // declaration had already succeeded.
+    // Only the player's typed sentence is written in the first person, so a
+    // fact about the protagonist that still says “我” is that sentence copied,
+    // not a description of what happened.
+    const actorIdForFact = recipientIds[0];
+    if (actorIdForFact === state.protagonistId && /[我咱]/u.test(cleaned.text)) {
+      throw new Error(`fact is the player's own “我” sentence, not a third-person result: ${original}。用第三人称写实际发生的执行、尝试、受阻或失败（${actionHint}）。`);
+    }
     // “甲未能。” is what is left after a stripped task clause: a dangling
     // negation is not a result. The 60-char action hint tells the repair what to
     // write instead.

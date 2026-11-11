@@ -344,6 +344,32 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.droppedFacts[0].original).toContain('路明非未被判定为反应');
   });
 
+  it('rejects a protagonist fact that copied the player’s “我” sentence', async () => {
+    // 35ad turn 3: the player wrote 我请诺诺带我走一条有掩护、能到钟楼西侧的路线。and
+    // the results answer repeated it verbatim with outcome completed.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'achieved', reason: '路明非请求诺诺。', effects: [{ targetId: 'nono', reacted: true }] }],
+      facts: [{ text: '路明非请诺诺带我走一条有掩护、能到钟楼西侧的路线', memberIds: ['lu'], actorId: 'lu', outcome: 'completed' }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_49', {
+      groupId: 'group_49',
+      members: [
+        {
+          memberId: 'lu',
+          actionText: '我请诺诺带我走一条有掩护、能到钟楼西侧的路线。',
+          rollRefs: [{ targetId: 'nono', rollId: 'r1', result: 11, eligible: true, admitted: true }],
+        },
+        { memberId: 'nono', actionText: '诺诺考虑路线。', rollRefs: [] },
+      ],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('third-person result');
+    expect(outcome.error).toContain('我请诺诺带我走');
+  });
+
   it('keeps the real d101 pending task goal out of the results prompt', async () => {
     const { state } = loadWorld();
     const seen: string[] = [];
