@@ -66,6 +66,17 @@ function loadVocabulary() {
   return { actionToGroup, sha256: sha256(text) };
 }
 
+/** The 48 TRAIN goal ids. A row carrying a VALIDATION/TEST goal would leak
+ * the held-out split, so it is rejected. */
+function loadTrainGoals() {
+  const url = new URL('../../../../../results/action-dataset-20261111/01-train-goals-for-13.json', import.meta.url);
+  const data = JSON.parse(readFileSync(url, 'utf8'));
+  const ids = new Set(data.goalIds ?? []);
+  if (ids.size !== (data.count ?? ids.size)) throw new Error(`TRAIN goal list has ${ids.size} ids but count says ${data.count}`);
+  if (!ids.size) throw new Error('TRAIN goal list is empty');
+  return ids;
+}
+
 /** Packets may be a JSON array, a {rows:[...]} object or JSONL. A JSONL packet
  * has no wrapper for metadata; the frozen criterion hash is enforced by this
  * tool regardless. */
@@ -117,11 +128,13 @@ function classOf(row) {
 }
 
 /** Blind, provenance and Y-shape gates shared by every command. */
-export function checkPacket(packet, vocabulary = null) {
+export function checkPacket(packet, vocabulary = null, trainGoals = null) {
   const rows = rowsOf(packet);
   const vocab = vocabulary ?? loadVocabulary();
+  const train = trainGoals ?? loadTrainGoals();
   const problems = [];
   const warnings = [];
+  const rationaleSeen = new Map();
   if (!rows.length) problems.push('packet has no rows');
   const declaredTotal = Number(packet?.totalRows ?? packet?.datasetRows ?? 0);
   const declaredRate = Number(packet?.sampleRate ?? 0);
@@ -149,6 +162,47 @@ export function checkPacket(packet, vocabulary = null) {
     if (badKeys.length) problems.push(`row ${id} carries 01-side fields (${badKeys.join(',')}): not blind`);
     for (const field of ['source', 'worldId', 'characterId', 'x', 'yRationale', 'labelSource']) {
       if (row[field] == null) problems.push(`row ${id} is missing ${field}`);
+    }
+    // 01's actual row shape: x.actor/goals/present/objects/justNow/candidates.
+    // The legacy shape is still accepted for old fixtures, but a row that
+    // carries x.actor must carry the whole 01 shape.
+    if (row.x && typeof row.x === 'object' && row.x.actor != null) {
+      if (!row.x.actor.id) problems.push(`row ${id} x.actor has no id`);
+      else if (row.x.actor.id !== row.characterId) problems.push(`row ${id} characterId != x.actor.id`);
+      for (const field of ['goals', 'present', 'objects', 'candidates']) {
+        if (!Array.isArray(row.x[field])) problems.push(`row ${id} x.${field} is not an array`);
+      }
+      if (typeof row.x.justNow !== 'string' && row.x.justNow != null) problems.push(`row ${id} x.justNow is not a string`);
+      for (const goal of Array.isArray(row.x.goals) ? row.x.goals : []) {
+        const goalId = goal?.id;
+        if (goalId && !train.has(goalId)) {
+          problems.push(`row ${id} goal ${goalId} is not a TRAIN goal (held-out leak)`);
+        }
+      }
+    }
+    const rationale = row.yRationale;
+    if (typeof rationale === 'string' && rationale.trim()) {
+      if (rationaleSeen.has(rationale)) problems.push(`row ${id} yRationale copied from ${rationaleSeen.get(rationale)}`);
+      else rationaleSeen.set(rationale, id);
+    }
+    // A skip must be argued; a non-skip must not carry a skipReason.
+    let rowStepsForReason = [];
+    try {
+      rowStepsForReason = stepsOf(row);
+    } catch {
+      rowStepsForReason = [];
+    }
+    if (rowStepsForReason.length === 0) {
+      const reason = row.skipReason;
+      if (typeof reason !== 'string' || reason.trim().length < 8) {
+        problems.push(`row ${id} skip row has no written skipReason`);
+      } else {
+        for (const banned of ['不知道', '不明', '随便', '无理由', '无关']) {
+          if (reason.includes(banned)) problems.push(`row ${id} skipReason uses uninformative wording: ${banned}`);
+        }
+      }
+    } else if (row.skipReason != null) {
+      problems.push(`row ${id} non-skip row has a skipReason`);
     }
     // 03 may not review rows it produced or first-labelled.
     for (const field of ['generatedBy', 'constructedBy', 'firstLabeller', 'annotator']) {
@@ -293,11 +347,13 @@ function cmdRender(file, mode = 'packet') {
       `### ${index + 1}/${review.ids.length}  rowId=${id}`,
       `source=${row.source} world=${row.worldId} character=${row.characterId} labelSource=${row.labelSource}`,
       xText ? `X=${xText}` : '',
-      !xText ? `X.character=${x.character ?? ''}  sanity=${x.sanity ?? ''}  personality=${(x.personality ?? []).join('/')}` : '',
-      !xText ? `X.goal=${x.goal ?? ''}` : '',
-      !xText ? `X.location=${x.location ?? ''}  present=${(x.present ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
-      !xText ? `X.items=${(x.items ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
-      !xText ? `X.justHappened=${x.justHappened ?? x.recent ?? ''}` : '',
+      !xText && x.actor ? `X.actor=${x.actor.name ?? ''}(${x.actor.id ?? ''})  精神=${x.actor.sanity ?? ''}  个性=${(x.actor.personality ?? []).join('/')}  位置=${x.actor.location ?? x.actor.position ?? ''}` : '',
+      !xText && x.actor ? `X.goals=${(x.goals ?? []).map((g) => `${g?.id}(${g?.text ?? g?.goal ?? g?.description ?? ''})`).join('、') || '（无）'}` : '',
+      !xText && !x.actor ? `X.character=${x.character ?? ''}  sanity=${x.sanity ?? ''}  personality=${(x.personality ?? []).join('/')}` : '',
+      !xText && !x.actor ? `X.goal=${x.goal ?? ''}` : '',
+      !xText ? `X.location=${x.location ?? x.actor?.location ?? x.actor?.position ?? ''}  present=${(x.present ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
+      !xText ? `X.objects=${(x.objects ?? x.items ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
+      !xText ? `X.justNow=${x.justNow ?? x.justHappened ?? x.recent ?? ''}` : '',
       !xText ? `X.candidates=${(x.candidates ?? []).map((c) => `${c?.id}(${c?.name ?? ''})`).join('、') || '（无）'}` : '',
       `Y.steps=${JSON.stringify(steps)}`,
       `Y.group=${JSON.stringify(row.yGroup ?? null)}  firstStepGroup=${steps.length ? (vocabulary.actionToGroup.get(steps[0].action) ?? '?') : 'skip'}  Y.rationale=${row.yRationale}`,
@@ -415,10 +471,18 @@ function selfTest() {
   if (sha256(criterion) !== CRITERION_SHA256) throw new Error('criterion file hash drifted');
 
   const row = (id, steps, extra = {}) => ({
-    rowId: id, source: 'constructed', worldId: 'w1', characterId: 'c1', labelSource: 'construct',
-    x: { character: '甲', goal: '到钟楼', location: '巷口', present: [], items: [],
-      justHappened: '无', sanity: 50, personality: [], candidates: [{ id: 'door', name: '门' }] },
-    y: { steps }, yGroup: steps.length ? ['移动'] : [], yRationale: '去钟楼要先出门', ...extra,
+    rowId: id, source: 'constructed', worldId: 'w1', characterId: 'c1', labelSource: 'builder-judgment',
+    x: {
+      actor: { id: 'c1', name: '甲', sanity: 50, personality: [], location: '巷口' },
+      goals: [{ id: 'task_caesar_bridge', text: '到钟楼' }],
+      present: [], objects: [{ id: 'door', name: '门' }], justNow: '无',
+      candidates: [{ id: 'door', name: '门' }],
+    },
+    y: { steps },
+    yGroup: steps.length ? (steps[0].action === '观察' ? '感知' : '移动') : 'skip',
+    yRationale: `去钟楼要先出门（${id}）`,
+    skipReason: steps.length ? null : '当前没有可执行的下一步',
+    ...extra,
   });
   const expectProblem = (packet, fragment, label) => {
     if (!checkPacket(packet).problems.some((problem) => problem.includes(fragment))) {
@@ -439,6 +503,11 @@ function selfTest() {
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '飞升', object: null }])] }, 'not one of the 115', 'predicate outside the vocabulary');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { yGroup: ['战斗'] })] }, 'does not contain the first step', 'yGroup mismatch');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }])], vocabularySha256: 'deadbeef' }, 'vocabularySha256', 'vocabulary drift');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [{ ...row('r1', []), characterId: 'other' }] }, 'characterId != x.actor.id', 'actor mismatch');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { x: { ...row('r1', []).x, goals: [{ id: 'task_heldout_test' }] } })] }, 'not a TRAIN goal', 'held-out goal leak');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { skipReason: null })] }, 'skip row has no written skipReason', 'skip without reason');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { skipReason: '有理由' })] }, 'non-skip row has a skipReason', 'non-skip with skipReason');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', []), row('r2', [], { yRationale: '去钟楼要先出门（r1）' })] }, 'yRationale copied', 'copied rationale');
 
   // 2. Packet is the 10% sample: review every row, never a 10% of 10%.
   const packet30 = { totalRows: 300, sampleRate: 0.1, criterionSha256: CRITERION_SHA256,
