@@ -1898,7 +1898,11 @@ export function reviewNarration(args: {
   // The narration never names the viewpoint and follows another person
   // (21c3/b7cd program fallback: «凯撒还在红方集结点…凯撒没有马上再动» with
   // the player at 西侧服务巷).
-  if (projection.viewpoint && !text.includes(projection.viewpoint)) {
+  // A panel line or a quote naming the viewpoint is not narration following it.
+  const narrativeText = text
+    .replace(/^[^：\n]{1,8}：.*$/gmu, '')
+    .replace(/[“"「『][^”"」』]*[”"」』]/gu, '');
+  if (projection.viewpoint && !narrativeText.includes(projection.viewpoint)) {
     const allHits = sentences
       .flatMap((sentence) => nameHits(sentence.narration, names, Object.keys(projection.people)))
       .map((hit) => ({ ...hit, at: text.indexOf(hit.name) }))

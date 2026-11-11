@@ -1618,6 +1618,25 @@ anchors.append({
                "notes": "the board is «在地面闪烁» and «在右墙贴着» in the same text; the player walk/read is still missing."},
 })
 
+
+# cf3d: program fallback at 06 cf3d027e; viewpoint/place mismatch (凯撒/红方
+# 集结点 instead of 路明非/西侧服务巷) is 06/04 scene assembly, not the composer.
+run_cf3d = json.load(io.open(ROOT + "/results/product/evidence/09-one-legal-turn-cf3d-8a50.json", encoding="utf-8"))
+t_cf3d = run_cf3d["turns"][0]
+anchors.append({
+    "id": "neg/route/cf3d-panel-and-missing-action",
+    "source": "09 one-legal-turn 2026-11-10T1812-fd15 (head cf3d027e): program 122 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_cf3d["text"],
+    "options": {"minChars": 1, "action": t_cf3d["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"],
+               "notes": "the panel `诺诺：未成功触发…因此未达成目标。`; the 凯撒/红方集结点 viewpoint is a scene-assembly defect, not caught by an in-cast rule."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

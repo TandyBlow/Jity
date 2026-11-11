@@ -244,3 +244,4 @@
 - constrained 6565（head 6565dc0f）：首次 `mixed` 502 字（部分句子按已结算事实），但无 accepted model text；走/看未落地、裸状态列表、面板、规则牌同文两处。checker 补：面板词表、同物两处 `review.self_contradiction`、`诺诺红发` 合词不误判（95 锚点）。
 - human-71 复核：71 条人写行仍 0 fact，`review.self_contradiction` 0，style/review 计数与旧报告一致（31/105），新增规则未污染人工材料。
 - 6565 逐 beat：`3/4 beats model`，只剩 result beat `fact_missing result:facts:result`；程序兜底即 `诺诺：…` 面板。请求 04 结果事实自然句 + 02 表达接受（`results/quality/requests-01-to-04-02-result-beat.md`）。
+- cf3d（head cf3d027e，program 122 字）：checker 命中 `action_omitted` + `status_panel`；视点/地点错（凯撒/红方集结点）因 凯撒 不在投影内未自动判，记为已知限制（07 同结论，归 06/04 组装）。锚点 96。
