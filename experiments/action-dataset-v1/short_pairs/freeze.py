@@ -82,6 +82,13 @@ def main(argv: list[str] | None = None) -> int:
             "same-label indistinguishable duplicates are listed in build-report.json",
             "this is a training-input freeze, not a model result",
         ],
+        "knownDeviations": [
+            "the user wrote 'add 已做 in front of the same short X'; the serializer puts it after 刚见 and before 动作, "
+            "which changes token order only; 01 reviewed and passed this exact text (pairs sha 124fc0eb)",
+            "the second step keeps the original X and only adds 已做; it is teacher-forced, not a settled next state",
+            "four groups have no positive rows (胁迫/算计/情绪/身体); they are training-set gaps, not model failures",
+            "pairwise count is 4225, not the 4290 the coordinator measured, because 01 excluded five label-conflict rows",
+        ],
     }
     (out / "freeze.json").write_text(
         json.dumps(freeze, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
