@@ -817,7 +817,7 @@ describe('common-group results', () => {
     } as unknown as Json);
     const prompt = engine.prompts.find((row) => row.includes('位置结算器')) ?? '';
     const from = prompt.indexOf('地点和容器');
-    const to = prompt.indexOf('输出 {', from);
+    const to = prompt.indexOf('第二部分：外貌', from);
     const catalog = prompt.slice(from, to > from ? to : undefined);
     const ids = [...Object.keys(state.initial.locations), ...Object.keys(state.initial.characters),
       ...Object.keys(state.initial.items).filter((id) => (state.initial.items[id]?.slots ?? []).length)];
@@ -1271,6 +1271,60 @@ describe('six-stage updates', () => {
     const subtasks = stages.find((row) => row.stage === 'subtasks');
     expect(subtasks?.skipped).toBe('no_facts_to_ground');
     expect(engine.prompts.filter((prompt) => prompt.includes('新增小任务'))).toEqual([]);
+  });
+
+  it('asks position and appearance in one call and reports them as two stages', async () => {
+    // Both questions read the same facts and the same entity lines; the real 0.6B
+    // spent 10.4 s + 9.1 s on two prefills of that material. One answer now
+    // carries both halves, and the appearance stage reports the same changes
+    // without a second call.
+    const engine = new ScriptedEngine([
+      JSON.stringify({
+        positions: [{ entityId: 'a', containerId: 'hall' }],
+        appearances: [{ entityId: 'a', op: 'add', recordIds: [], text: '袖口湿了一片。' }],
+      }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    // A quiet third room, so the walk does not pull another character into view
+    // (that case is covered by the leftover call below).
+    const base = world();
+    const withHall = buildInitialState({
+      ...base.initial,
+      locations: { ...base.initial.locations, hall: { id: 'hall', name: '门厅', parentLocationId: null, initialAppearance: '空着。' } },
+    });
+    const outcome = await createSettlementHandlers({ engine }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '甲走进门厅，袖口被雨打湿。', b: '乙留在房间。' },
+      workingState: withHall,
+    } as unknown as Json);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; mergedWithPosition?: boolean; changedEntityIds?: string[] }[] }).stages ?? [];
+    expect(stages.find((row) => row.stage === 'position')?.changedEntityIds).toEqual(['a']);
+    const appearance = stages.find((row) => row.stage === 'appearance');
+    expect(appearance?.mergedWithPosition).toBe(true);
+    expect(appearance?.changedEntityIds).toEqual(['a']);
+    // One prompt for both halves, and no second appearance question.
+    expect(engine.prompts.filter((prompt) => prompt.includes('位置结算器'))).toHaveLength(1);
+    expect(engine.prompts.filter((prompt) => prompt.includes('外貌结算器'))).toHaveLength(0);
+    expect(engine.prompts[0]).toContain('第二部分：外貌');
+    expect(engine.prompts[0]).toContain('袖口');
+
+    // A legacy answer without an appearances key does not silently mean "no
+    // change": the appearance stage asks its own question.
+    const legacy = new ScriptedEngine([
+      JSON.stringify({ changes: [{ entityId: 'a', containerId: 'far' }] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    const legacyOutcome = await createSettlementHandlers({ engine: legacy }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '甲退到远处。', b: '乙留在房间。' },
+      workingState: world(),
+    } as unknown as Json);
+    const legacyStages = (legacyOutcome.evidence.detail as { stages?: { stage: string; mergedWithPosition?: boolean }[] }).stages ?? [];
+    expect(legacyStages.find((row) => row.stage === 'appearance')?.mergedWithPosition).toBeUndefined();
+    expect(legacy.prompts.filter((prompt) => prompt.includes('外貌结算器'))).toHaveLength(1);
   });
 
   it('does not ask the tasks stage on a time-scan point whose goals are not about the clock', async () => {
