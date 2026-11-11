@@ -141,6 +141,7 @@ const report = {
   world: 'public/worlds/dragon-raja-free-day.world.json',
   cases: [],
   runs: [],
+  calls: [],
 };
 const save = () => { mkdirSync(dirname(output), { recursive: true }); writeFileSync(output, `${JSON.stringify(report, null, 1)}\n`); };
 save();
@@ -204,6 +205,12 @@ try {
       }, { prompt, opts });
       if (!result.ok) throw new Error(result.error);
       lastCompletion = result;
+      report.calls.push({
+        at: new Date().toISOString(), wallMs: result.wallMs, promptChars: prompt.length,
+        maxTokens: opts.maxTokens ?? null, finishReason: result.finishReason,
+        usage: result.usage ?? null,
+      });
+      save();
       return result.content;
     },
   };
