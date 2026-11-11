@@ -160,6 +160,8 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 普通回合的 narration 正文目标为 125 字（含标点，不计空白），"
         "对话 dialogue 和行动选项 options 不计入正文字数；输出前自行检查并调整篇幅。\n"
         "- 必须回应玩家刚才的行动，描述直接后果、NPC 反应和新的可行动局面。\n"
+        "- narration 每段不超过 200 词（中文约 200–300 字）。超长时优先删环境铺陈，"
+        "保留动作、对话和推进线索；不得删掉玩家行动的结果。\n"
         "- 不要复述原文长段落，不要突然跳到无关任务。\n"
         "- 普通失败也应推动故事继续，而不是直接结束。\n"
         "- 状态变化要能从剧情中解释。\n"
@@ -190,7 +192,7 @@ def _style_and_rules(input: PromptInput) -> str:
         "\n"
         "严格返回纯 JSON，不要包含 Markdown、解释或额外文本：\n"
         "{\n"
-        '  "narration": "第二人称沉浸叙事，20句左右",\n'
+        '  "narration": "第二人称沉浸叙事，200–300 字",\n'
         '  "dialogue": [{"speaker": "角色名", "text": "对话内容"}],\n'
         '  "scene_prompt": "English scene description, max 30 words",\n'
         '  "sanity_delta": 0,\n'

@@ -56,3 +56,11 @@ def test_final_turns_contract_separates_local_hard_cap_from_global_budget():
     assert "不代表整局回合预算耗尽" in FINAL_TURNS_OPTION_CONTRACT
     assert "原样包含下方某条结局触发短语" in FINAL_TURNS_OPTION_CONTRACT
     assert "真正到达整局回合上限" in FINAL_TURNS_OPTION_CONTRACT
+
+
+def test_narrator_prompt_bounds_narration_length():
+    """The 200-word budget is the server-side half of the typewriter contract."""
+    rules = _narrator_rules()
+    assert "200 词" in rules
+    assert "200–300 字" in rules
+    assert "优先删环境铺陈" in rules

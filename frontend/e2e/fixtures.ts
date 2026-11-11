@@ -436,13 +436,17 @@ export async function installApiMocks(page: Page): Promise<void> {
 }
 
 /** Seed the session id before app code runs, so the console does not create one. */
-export async function seedSession(page: Page): Promise<void> {
-  await page.addInitScript((sessionId) => {
-    window.localStorage.setItem("jity_active_session_id", sessionId);
-    if (window.location.pathname === "/") {
-      const url = new URL(window.location.href);
-      url.searchParams.set("session", sessionId);
-      window.history.replaceState(null, "", url);
-    }
-  }, SESSION_ID);
+export async function seedSession(page: Page, options: { typewriter?: boolean } = {}): Promise<void> {
+  await page.addInitScript(
+    ({ sessionId, typewriter }) => {
+      window.localStorage.setItem("jity_active_session_id", sessionId);
+      window.localStorage.setItem("jity_typewriter", typewriter ? "on" : "off");
+      if (window.location.pathname === "/") {
+        const url = new URL(window.location.href);
+        url.searchParams.set("session", sessionId);
+        window.history.replaceState(null, "", url);
+      }
+    },
+    { sessionId: SESSION_ID, typewriter: options.typewriter === true },
+  );
 }

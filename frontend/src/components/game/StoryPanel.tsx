@@ -11,6 +11,10 @@ import type { CampaignProgressSummary } from "@/types";
 import type { CheckSpec, Outcome } from "@/lib/dice/rules";
 import { outcomeTone, toActionCheckSubmission, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, formatEndingTitle, quoteDialogue } from "@/lib/game/format";
+import { useTypewriter } from "@/lib/game/useTypewriter";
+
+/** Mirrors the narrator prompt budget: ~200 words ≈ 200–300 Chinese characters. */
+const NARRATION_CHAR_BUDGET = 300;
 
 type PendingCheck = {
   action: string;
@@ -83,12 +87,23 @@ export function StoryPanel({
   const hasAction = action.trim().length > 0;
   const busy = isLoading || isPreparingCheck || !!session.pendingGenerate;
 
+  // Narration is revealed one character at a time. `narrationReady` gates the
+  // option list and dialogue so they land only after the text has finished.
+  const typewriter = useTypewriter(output.narration);
+  const narrationText = typewriter.text;
+  const narrationReady = typewriter.done;
+  const isTyping = typewriter.isTyping;
+
   // The scene clips silently: scrollbars are hidden app-wide and a single turn
   // can run past the viewport, so the options at the end are off-screen with
-  // nothing saying so.
+  // nothing saying so. While typing, "at the bottom" also means "keep following
+  // the cursor"; scrolling up by hand stops the follow until the user returns.
+  const followSceneRef = useRef(true);
+  const didTypeRef = useRef(false);
   const updateOverflow = useCallback(() => {
     const scene = sceneRef.current;
     if (!scene) return;
+    followSceneRef.current = scene.scrollTop + scene.clientHeight >= scene.scrollHeight - 40;
     setHasMoreBelow(scene.scrollTop + scene.clientHeight < scene.scrollHeight - 8);
   }, []);
 
@@ -96,13 +111,52 @@ export function StoryPanel({
   // carries over, so the next turn opens part-way through its own narration.
   useEffect(() => {
     sceneRef.current?.scrollTo({ top: 0 });
+    followSceneRef.current = true;
+    didTypeRef.current = false;
     // Measure once the new scene has been laid out, not before it is painted.
     const frame = requestAnimationFrame(updateOverflow);
     return () => cancelAnimationFrame(frame);
   }, [output, updateOverflow]);
 
+  // Follow the growing text only while it is actually being typed, and only
+  // while the reader has not scrolled away from the bottom.
+  useEffect(() => {
+    if (isTyping) didTypeRef.current = true;
+  }, [isTyping]);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene || !isTyping || !followSceneRef.current) return;
+    scene.scrollTop = scene.scrollHeight;
+  }, [narrationText, isTyping]);
+
+  // Once the text is complete, reveal the options and dialogue, then keep them
+  // in view. Skipped when the text was never animated (reduced motion, tests),
+  // so the old "open at the top" behaviour is preserved there.
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene || !narrationReady || !didTypeRef.current) return;
+    didTypeRef.current = false;
+    if (followSceneRef.current) {
+      scene.scrollTop = scene.scrollHeight;
+      updateOverflow();
+    }
+  }, [narrationReady, updateOverflow]);
+
+  // Server-side budget safety net. The prompt already asks for 200 words; when
+  // a turn still overruns we record it and keep the whole text — cutting a
+  // sentence in half would be worse than a slightly long scene.
+  useEffect(() => {
+    const chars = Array.from(output.narration).length;
+    if (chars > NARRATION_CHAR_BUDGET) {
+      console.warn(
+        `[jity] 旁白 ${chars} 字，超过 ${NARRATION_CHAR_BUDGET} 字预算；仅记录告警，不截断。`,
+      );
+    }
+  }, [output.narration]);
+
   async function prepareAction(nextAction: string, optionIndex?: number) {
-    if (!sessionId || busy || checkingAction || preparingAction.current || !nextAction.trim() || output.game_over) return;
+    if (!sessionId || busy || isTyping || checkingAction || preparingAction.current || !nextAction.trim() || output.game_over) return;
     checkTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     preparingAction.current = true;
     setIsPreparingCheck(true);
@@ -261,26 +315,39 @@ export function StoryPanel({
             ) : <span className="autoplay-complete">已完成</span>}
           </div>
         ) : null}
-        <div className="narration">
-          {narrationParagraphs(output.narration).map((paragraph, index) => (
-            <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
-          ))}
+        <div
+          aria-busy={isTyping || undefined}
+          className={`narration${isTyping ? " is-typing" : ""}`}
+        >
+          {narrationText ? (
+            narrationParagraphs(narrationText).map((paragraph, index) => (
+              // Stable key: the paragraph list is append-only while typing, so
+              // a text-derived key would remount (and flicker) every frame.
+              <p key={index}>{paragraph}</p>
+            ))
+          ) : (
+            // Keeps one line reserved before the first character lands, so the
+            // scene does not collapse the moment the turn starts.
+            <p className="narration-pending" aria-hidden="true">&nbsp;</p>
+          )}
         </div>
-        {output.game_over ? (
+        {narrationReady && output.game_over ? (
           <div className="ending-card" role="status">
             <strong>终章</strong>
             <span>{formatEndingTitle(output.game_over_reason)}</span>
           </div>
         ) : null}
-        <div className="dialogue-list">
-          {output.dialogue.map((line, index) => (
-            <div className="dialogue-line" key={`${line.speaker}-${index}`}>
-              <span className="speaker">{line.speaker}：</span>
-              <span className="dialogue-text">{quoteDialogue(line.text)}</span>
-            </div>
-          ))}
-        </div>
-        {statusDeltaHints.length ? (
+        {narrationReady ? (
+          <div className="dialogue-list">
+            {output.dialogue.map((line, index) => (
+              <div className="dialogue-line" key={`${line.speaker}-${index}`}>
+                <span className="speaker">{line.speaker}：</span>
+                <span className="dialogue-text">{quoteDialogue(line.text)}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {narrationReady && statusDeltaHints.length ? (
           <div className="status-hint-list" aria-label="状态变化提示">
             {statusDeltaHints.map((hint) => (
               <div className={`status-hint ${hint.kind}`} key={hint.label}>
@@ -291,36 +358,38 @@ export function StoryPanel({
             ))}
           </div>
         ) : null}
-        <div className="option-list">
-          {output.options.map((option, index) => {
-            const metadata = output.option_checks?.[index];
-            const check = metadata ? toCheckSpec(metadata) : null;
-            const sweeping = sweep?.index === index ? sweep : null;
+        {narrationReady ? (
+          <div className="option-list">
+            {output.options.map((option, index) => {
+              const metadata = output.option_checks?.[index];
+              const check = metadata ? toCheckSpec(metadata) : null;
+              const sweeping = sweep?.index === index ? sweep : null;
 
-            return (
-              <button
-                className="option-button"
-                disabled={output.game_over || busy || !!checkingAction || !sessionId}
-                key={`${option}-${index}`}
-                onClick={() => void prepareAction(option, index)}
-                type="button"
-              >
-                <span className="option-button-label">{option}</span>
-                {check ? (
-                  <span className="option-check-badge">
-                    <Dices size={14} />需判定
-                  </span>
-                ) : null}
-                {sweeping ? (
-                  <span
-                    className={`option-sweep ${outcomeTone(sweeping.outcome)}`}
-                    aria-hidden="true"
-                  />
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <button
+                  className="option-button"
+                  disabled={output.game_over || busy || !!checkingAction || !sessionId}
+                  key={`${option}-${index}`}
+                  onClick={() => void prepareAction(option, index)}
+                  type="button"
+                >
+                  <span className="option-button-label">{option}</span>
+                  {check ? (
+                    <span className="option-check-badge">
+                      <Dices size={14} />需判定
+                    </span>
+                  ) : null}
+                  {sweeping ? (
+                    <span
+                      className={`option-sweep ${outcomeTone(sweeping.outcome)}`}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
       </article>
 
       <div className={`player-controls${output.game_over ? " is-ended" : ""}`}>
@@ -328,7 +397,7 @@ export function StoryPanel({
         <div className="player-controls-row">
           <textarea
             id="action"
-            disabled={output.game_over || busy || !!checkingAction}
+            disabled={output.game_over || busy || isTyping || !!checkingAction}
             value={action}
             onChange={(event) => setAction(event.target.value)}
             onKeyDown={(event) => {
@@ -339,14 +408,14 @@ export function StoryPanel({
             }}
             placeholder={output.game_over ? "该战役已经结束" : "输入玩家行动、当前场景或 GM 限制"}
           />
-          <button disabled={output.game_over || busy || !!checkingAction || !sessionId || !hasAction} onClick={() => void prepareAction(action)} type="button">
+          <button disabled={output.game_over || busy || isTyping || !!checkingAction || !sessionId || !hasAction} onClick={() => void prepareAction(action)} type="button">
             {busy ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
-            <span>{output.game_over ? "战役已结束" : isPreparingCheck ? "检查行动中" : isLoading ? "生成中" : "生成下一幕"}</span>
+            <span>{output.game_over ? "战役已结束" : isTyping ? "叙述中" : isPreparingCheck ? "检查行动中" : isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
         </div>
         {error ? <div className="error">{error}</div> : null}
         <div className="player-controls-hint">
-          {hasAction ? "Ctrl / ⌘ + Enter 快速生成" : "先输入行动，或直接点上方选项"}
+          {isTyping ? "叙述中，完成后可继续行动" : hasAction ? "Ctrl / ⌘ + Enter 快速生成" : "先输入行动，或直接点上方选项"}
         </div>
       </div>
       {checkingAction ? (
