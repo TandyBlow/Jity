@@ -88,6 +88,9 @@ interface ResultsAnswer {
    * the result. Removed claims stay in evidence so the fallback composer can
    * never turn a pending task row into "行动成功完成". */
   sanitized?: SanitizedFact[];
+  /** Repeated rows for a member already judged. The first row stands; the
+   * rest are evidence that the model repeated itself, never a failed turn. */
+  duplicateJudgments?: { memberId: Id; label: string; reason: string }[];
   /** Extra judgments for people outside the frozen group. They may describe
    * what the model saw, but they never settle a non-member; they are kept in
    * evidence and dropped from the committed result. */
@@ -227,6 +230,7 @@ export async function runResults(
         factCount: parsedAnswer.facts.filter((fact) => fact.memberIds.includes(member.memberId)).length,
       })),
       labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
+      duplicateJudgments: parsedAnswer.duplicateJudgments ?? [],
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
@@ -433,6 +437,7 @@ function readResultsAnswer(
   const memberById = new Map(members.map((member) => [member.memberId, member]));
   const seen = new Set<Id>();
   const judgments: Judgment[] = [];
+  const duplicateJudgments: NonNullable<ResultsAnswer['duplicateJudgments']> = [];
   const dropped: NonNullable<ResultsAnswer['dropped']> = [];
   const effectsAdjusted: NonNullable<ResultsAnswer['effectsAdjusted']> = [];
   for (const rawJudgment of answer.judgments) {
@@ -454,7 +459,19 @@ function readResultsAnswer(
       dropped.push({ memberId, label: asString(rawJudgment.label), reason: 'not_a_group_member' });
       continue;
     }
-    if (seen.has(memberId)) throw new Error(`duplicate judgment for ${memberId}`);
+    if (seen.has(memberId)) {
+      // 10turn turn 5: a single-member group answered with three rows for the
+      // same player (no_change / partial / not_achieved) on all three attempts
+      // and the turn died on «duplicate judgment for lu». Repeating a member is
+      // a format slip, not an impossible world: the first row is the model's
+      // primary judgement, later rows are kept as evidence and ignored.
+      duplicateJudgments.push({
+        memberId,
+        label: asString(rawJudgment.label),
+        reason: typeof rawJudgment.reason === 'string' ? rawJudgment.reason : '',
+      });
+      continue;
+    }
     seen.add(memberId);
     const label = asString(rawJudgment.label);
     if (!LABELS.has(label)) throw new Error(`invalid label for ${memberId}: ${label}`);
@@ -857,6 +874,7 @@ function readResultsAnswer(
   }
   return {
     judgments, facts, dropped,
+    ...(duplicateJudgments.length ? { duplicateJudgments } : {}),
     ...(sanitized.length ? { sanitized } : {}),
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),

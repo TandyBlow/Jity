@@ -170,6 +170,9 @@ export function checkRun(input, options = {}) {
           }
         }
       }
+      if (Array.isArray(call.duplicateJudgments) && call.duplicateJudgments.length) {
+        soft.push(`${where}: ${call.duplicateJudgments.length} repeated judgement(s) dropped (${call.duplicateJudgments.map((row) => `${row.memberId}:${row.label}`).join(',')})`);
+      }
       if (Array.isArray(call.droppedFacts) && call.droppedFacts.length) {
         soft.push(`${where} results/${call.key}: ${call.droppedFacts.length} fact(s) dropped (${[...new Set(call.droppedFacts.map((row) => row.reason))].join(',')})`);
       }

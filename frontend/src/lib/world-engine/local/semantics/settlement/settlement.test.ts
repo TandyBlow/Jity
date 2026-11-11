@@ -543,6 +543,33 @@ describe('common-group results', () => {
     expect(settled.evidence.calls[0]?.error).toContain('甲把工具推向乙');
   });
 
+  it('keeps the first judgement when a member is repeated instead of failing the turn', async () => {
+    // 10turn turn 5: a single-member group answered with three rows for lu
+    // (no_change / partial / not_achieved) on every attempt, and
+    // «duplicate judgment for lu» ended the turn with no paragraph. The first
+    // row is the primary judgement; the repeats are recorded, not fatal.
+    const repeated = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'no_change', reason: '行动未被阻止。' },
+        { memberId: 'a', label: 'partial', reason: '部分成功。' },
+        { memberId: 'a', label: 'not_achieved', reason: '未完成目标。' },
+      ],
+      facts: [{ text: '甲把工具推向乙。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    })]);
+    const soloInput = {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '甲把工具推向乙。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: repeated }).results('g1', soloInput);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('甲把工具推向乙');
+    expect(outcome.evidence.calls[0]?.error).toBeUndefined();
+    const detail = outcome.evidence.detail as { labels: string[]; duplicateJudgments: { memberId: string; label: string }[] };
+    expect(detail.labels).toEqual(['a:no_change']);
+    expect(detail.duplicateJudgments.map((row) => `${row.memberId}:${row.label}`)).toEqual(['a:partial', 'a:not_achieved']);
+  });
+
   it('retries a length-truncated results answer with a shorter-answer instruction and the member list', async () => {
     const truncated = new IncompleteGenerationError({
       raw: '{"judgments":[{"memberId":"a","label":"achieved","reason":"甲把工具推向乙',
