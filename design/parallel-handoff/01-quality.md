@@ -247,3 +247,4 @@
 - cf3d（head cf3d027e，program 122 字）：checker 命中 `action_omitted` + `status_panel`；视点/地点错（凯撒/红方集结点）因 凯撒 不在投影内未自动判，记为已知限制（07 同结论，归 06/04 组装）。锚点 96。
 - 11a7（head 11a78afb）：视点已回 路明非/西侧服务巷，但 `诺诺红发垂落` 与已结算束发矛盾（fact），面板/物品晃动/走看缺失仍在；已向 06 提 beat prompt 保留已结算外貌（`results/quality/requests-01-to-06-11a7-hair.md`）。
 - 11a7 逐 beat（09 index）：`open fact_missing time:facts:time (scoping regression)`、`result fact_missing result:facts:result`，scene/close 为 model——同一处 scoping 同时丢了时间事实与已结算外貌。
+- 已向 02 提记录修正（`results/quality/requests-01-to-02-arm-name.md`）：`314d9e03` 把 86 字「accepted model beat」写成 constrained，但该页运行是 prose-facts，且与 a178 正文的实际缺陷（time_missing、无据微光、新增袖口细节）冲突；要求写明 candidate/mode、文件、fixture，并区分 verifier 接受与独立复核。
