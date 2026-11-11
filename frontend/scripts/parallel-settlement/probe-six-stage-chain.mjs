@@ -117,6 +117,9 @@ const CHAIN = [
   { id: 'p3-battery', results: CASE_SUBTASK.results },
   { id: 'p4-personality', results: CASE_PERSONALITY.results },
   { id: 'p5-quiet', results: { lu: '路明非站在原地等诺诺回话。', nono: '诺诺没有动。' } },
+  // An automatic round: no member action, only time passing. This is the other
+  // half of a real turn's points and the only place `basis: "time"` applies.
+  { id: 'p6-timescan', mode: 'time_scan', results: {} },
 ];
 
 const report = {
@@ -234,8 +237,9 @@ try {
       save();
     };
     const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved', onTask } });
+    const mode = spec.mode ?? 'group';
     const outcome = await handlers.updates(`chain_${index}`, {
-      groupId: `chain_${index}`, mode: 'group', workingState: state, results: spec.results,
+      ...(mode === 'group' ? { groupId: `chain_${index}` } : {}), mode, workingState: state, results: spec.results,
     });
     const detail = outcome.evidence.detail ?? {};
     const stages = (detail.stages ?? []).map((row) => ({
@@ -257,8 +261,8 @@ try {
     let commit = null;
     try {
       const merged = mergeUpdatesStages(outcome.value);
-      const pointDeltas = pointEntityDeltas([{
-        groupId: `chain_${index}`, actorIds: Object.keys(spec.results),
+      const unit = {
+        groupId: mode === 'group' ? `chain_${index}` : null, actorIds: Object.keys(spec.results),
         taskCoverageIds: Object.keys(spec.results), personalityCoverageIds: Object.keys(spec.results),
         positions: Object.fromEntries(Object.entries(merged).filter(([, d]) => d.positionSet !== undefined).map(([id, d]) => [id, d.positionSet])),
         appearances: Object.fromEntries(Object.entries(merged).filter(([, d]) => d.appearanceChanges !== undefined).map(([id, d]) => [id, d.appearanceChanges])),
@@ -266,7 +270,8 @@ try {
         subtasksAdded: Object.fromEntries(Object.entries(merged).filter(([, d]) => d.subtasksAdded !== undefined).map(([id, d]) => [id, d.subtasksAdded])),
         personalities: Object.fromEntries(Object.entries(merged).filter(([, d]) => d.personalityChanges !== undefined).map(([id, d]) => [id, d.personalityChanges])),
         sanities: Object.fromEntries(Object.entries(merged).filter(([, d]) => d.sanitySet !== undefined).map(([id, d]) => [id, d.sanitySet])),
-      }], null);
+      };
+      const pointDeltas = pointEntityDeltas(mode === 'group' ? [unit] : [], mode === 'group' ? null : unit);
       const timeAdvance = { boundary: 'elapsed', duration: { amount: 3, unit: 'minute' } };
       state = applyPoint(state, {
         worldId: world.worldId, id: `chain_${index}`, sequence: index + 1, kind: 'normal',

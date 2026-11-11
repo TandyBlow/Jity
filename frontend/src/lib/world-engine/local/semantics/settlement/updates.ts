@@ -923,6 +923,20 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
     };
   }
   const facts = resultFacts(ctx.results).map((fact) => fact.text);
+  if (!facts.length) {
+    // A new goal has to come from this point (subtask_not_grounded). A time-scan
+    // point has no settled result at all, so the only thing the model could add
+    // there is an invention: with no facts the grounding check had nothing to
+    // compare against and accepted whatever came back. The automatic point is
+    // half of every turn, and the real 0.6B returned an empty answer in the
+    // measured one, so the stage is not asked without a fact to stand on.
+    return {
+      changes: {},
+      detail: { parentTaskIds: [], characterIds: characters, skipped: 'no_facts_to_ground' },
+      fallback: false,
+      calls: [],
+    };
+  }
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   if (!projection.affectedTaskOwners.length) {
     return {

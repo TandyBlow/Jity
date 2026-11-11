@@ -1195,6 +1195,22 @@ describe('six-stage updates', () => {
       .toEqual([{ entityId: 'a', reason: 'personality_names_entity' }]);
   });
 
+  it('does not ask the subtask stage on a time-scan point with no settled fact', async () => {
+    // With no facts the grounding check had nothing to compare against, so the
+    // only possible outcome on an automatic point was an invented goal. The
+    // stage is skipped instead of spending 17 s on it (measured on the real 0.6B).
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine })
+      .updates('time_scan_1', { mode: 'time_scan', workingState: world(), results: {} } as never);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    const subtasks = stages.find((row) => row.stage === 'subtasks');
+    expect(subtasks?.skipped).toBe('no_facts_to_ground');
+    expect(engine.prompts.filter((prompt) => prompt.includes('新增小任务'))).toEqual([]);
+  });
+
   it('drops the redundant text on a keep/remove row instead of failing the point', async () => {
     // 09's open request: "keep cannot add text for spare_mag1" refused a turn
     // 88.5 s in. The op is unambiguous; the text is redundant and never applied.
