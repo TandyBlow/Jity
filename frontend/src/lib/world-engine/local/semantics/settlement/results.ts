@@ -283,6 +283,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
     '- facts 只写这次行动的直接结果；不得写“任务完成/任务达成/目标达成/行动成功完成/成功完成/成功执行行动/任务要求/奖励”这类任务或成功结论。',
+    '- facts 写本组成员自己的行动结果；不要写其他人物正在做什么，也不要把判定理由（未触发/未成功/被阻止/未达成）抄成事实。',
     '- 例：行动是“沿着服务巷走，看清墙上的演习规则牌”，事实写“路明非走到服务巷，看见墙上的规则牌”；不要写“完成参赛选择/任务”。',
     `本组：${groupId}`,
     '成员：',
@@ -293,6 +294,21 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     `{"judgments":[{"memberId":"${exampleMember.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${exampleEffects}}],"facts":[{"text":"结果事实","memberIds":["${exampleMember.memberId}"]}]}`,
     '现在输出 JSON：',
   ].join('\n');
+}
+
+/** Character ids the text actually names. Used to keep a results fact on this
+ * group's own action: a fact that names nobody (an empty room, a door) is
+ * allowed, but a fact whose only subject is a character outside the group is
+ * the judgement's explanation of that character's action, not this group's
+ * result. */
+function mentionedCharacterIds(state: WorldState, text: string): Id[] {
+  const found: Id[] = [];
+  for (const id of Object.keys(state.initial.characters).sort()) {
+    const name = state.initial.characters[id]?.name;
+    if (!name) continue;
+    if (text.includes(String(name)) || (id.length > 3 && text.includes(id))) found.push(id);
+  }
+  return found;
 }
 
 /** Read the answer into ids. A unique full name resolves to its id; an unknown
@@ -387,13 +403,27 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       return id;
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    // The fact must be this group's own action result. 736a's reaction group
+    // answered with 路明非未被掀开袖口，未看到规则牌… — the judgement's
+    // explanation of 路明非, who the other group already settled as walking in
+    // and reading the sign. Committing it would hand the narrator a fact that
+    // contradicts the point and no result for the reacting member.
+    const mentioned = mentionedCharacterIds(state, cleaned.text);
+    if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
+      const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
+      throw new Error(`fact names only ${names}, who ${names.length > 1 ? 'are' : 'is'} not in this group; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+    }
     // A mechanics clause can take the subject with it. If the remaining result
     // is a continuation (“且未被允许反应”), prefix the recipient's display name
     // so the fact is still a natural action result.
     const mechanicsRemoved = cleaned.removed.some((label) => MECHANIC_TERMS.some((term) => term.label === label));
     if (mechanicsRemoved) {
       const recipientName = state.initial.characters[recipientIds[0]]?.name;
-      if (recipientName && !cleaned.text.includes(String(recipientName))) {
+      // Never prepend a name in front of another character's name: that build
+      // produced “诺诺路明非未被掀开袖口”.
+      const startsWithCharacter = Object.values(state.initial.characters)
+        .some((character) => character.name && cleaned.text.startsWith(String(character.name)));
+      if (recipientName && !startsWithCharacter && !cleaned.text.includes(String(recipientName))) {
         const continuation = cleaned.text.replace(/^(?:且|并且|并|但|却|而)/u, '');
         cleaned.text = `${recipientName}${continuation}`;
       }
