@@ -1,0 +1,49 @@
+diff --git a/frontend/src/lib/world-engine/local/session.ts b/frontend/src/lib/world-engine/local/session.ts
+index f1e3a400..73678f01 100644
+--- a/frontend/src/lib/world-engine/local/session.ts
++++ b/frontend/src/lib/world-engine/local/session.ts
+@@ -63,6 +63,9 @@ export interface LocalGameOptions {
+   autoSave?: boolean;
+   /** Require the held writer lease on every save (default true with storage). */
+   requireLease?: boolean;
++  /** Run a committed point's narration while the next point settles
++   * (default true in the product session). */
++  narrationOverlap?: boolean;
+   /** Evidence sink for the exact commit_point request (see ControllerIo). */
+   onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
+   onEvent?: (event: LocalSessionEvent) => void;
+@@ -167,10 +170,16 @@ export class LocalGameSession {
+     // New worlds carry the template; restored worlds are seeded from context.
+     if (initial) seed.initialTemplate = structuredClone(initial);
+     const durable = new CheckpointingTransport(transport, () => this.flushPersistence());
++    const productModel = model;
+     this.driver = new ControllerDriver({
+       transport: durable, model: this.gate,
+-      ...(options.onCommit ? { onCommit: options.onCommit } : {}),
+-    }, seed, state ?? { world: null });
++      onCommit: (event) => {
++        options.onCommit?.(event);
++        if (event.phase !== 'committed') return;
++        const pointId = (event.request as { pointId?: Id }).pointId;
++        if (pointId) productModel.onPointCommitted?.(pointId);
++      },
++    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true });
+     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
+   }
+ 
+@@ -313,7 +322,14 @@ export class LocalGameSession {
+     return snapshot;
+   }
+ 
+-  async start(): Promise<DriverStatus> { return this.drive(); }
++  async start(): Promise<DriverStatus> {
++    // A failed/empty head narration is the one point a fresh drive may retry
++    // explicitly (the page's existing failed-turn recovery). The queue itself
++    // never retries a failed point on its own.
++    const record = this.transport.snapshot();
++    if (record.narrations[record.headPointId]?.status === 'failed') this.driver.retryNarration();
++    return this.drive();
++  }
+ 
+   /** A player command starts a new advance. The caller must await the result;
+    * the promise resolves at handback/await, never mid-point. A second submit

@@ -806,6 +806,10 @@ export class LocalWorldTransport implements WorldTransport {
   private record: PersistedRecord;
   private readonly options: LocalOptions;
   private readonly roll: () => number;
+  /** Writes are serialized: the narration queue and the settlement loop are
+   * independent callers, and both clone/apply the same record. Reads stay
+   * synchronous and see a consistent committed record. */
+  private writeTail: Promise<void> = Promise.resolve();
 
   private constructor(record: PersistedRecord, options: LocalOptions = {}) {
     this.record = record;
@@ -844,6 +848,7 @@ export class LocalWorldTransport implements WorldTransport {
       return { ...versionBlock(), operation, world, control, work, data } as unknown as Success<K>;
     }
 
+    const runWrite = async () => {
     const write = request as unknown as { requestId?: Id };
     const requestId = write.requestId;
     if (!requestId) throw new Error(`${operation} requires requestId`);
@@ -889,6 +894,16 @@ export class LocalWorldTransport implements WorldTransport {
     if (keys.length > 200) for (const key of keys.slice(0, keys.length - 200)) delete this.record.idempotency[key];
     this.options.onPersist?.(clone(this.record));
     return response as unknown as Success<K>;
+    };
+    const previous = this.writeTail;
+    let release!: () => void;
+    this.writeTail = new Promise<void>((resolve) => { release = resolve; });
+    await previous;
+    try {
+      return await runWrite();
+    } finally {
+      release();
+    }
   }
 
   // The write request union is narrowed by `operation` at each call site; a
