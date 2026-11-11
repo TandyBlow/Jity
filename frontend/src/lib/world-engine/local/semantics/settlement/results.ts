@@ -549,6 +549,30 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // and reading the sign. Committing it would hand the narrator a fact that
     // contradicts the point and no result for the reacting member.
     const mentioned = mentionedCharacterIds(state, cleaned.text);
+    // “路明非的红色识别带” when the band belongs to 诺诺 is an item-ownership
+    // flip: d531 turn 2 wrote exactly that. Only an explicit possessive whose
+    // item resolves in the frozen state is checked, so ordinary prose is not
+    // touched.
+    if (mentioned.length) {
+      for (const ownerId of mentioned) {
+        const ownerName = state.initial.characters[ownerId]?.name;
+        if (!ownerName) continue;
+        for (const item of Object.values(state.initial.items)) {
+          const itemName = item.name;
+          // Item names often start with the owner's name ("诺诺的红色识别带");
+          // the possessive to check is that noun without the leading owner.
+          const bare = String(itemName ?? '').replace(/^[^的]{1,6}的/u, '');
+          const named = itemName && cleaned.text.includes(`${ownerName}的${itemName}`);
+          const namedBare = bare && bare !== itemName && cleaned.text.includes(`${ownerName}的${bare}`);
+          if (!named && !namedBare) continue;
+          const itemName2 = namedBare ? bare : itemName;
+          const holderId = state.items[item.id]?.position.containerId;
+          if (holderId && state.characters[holderId] && holderId !== ownerId) {
+            throw new Error(`fact gives ${itemName2} to ${ownerName}, but it belongs to ${state.initial.characters[holderId]?.name ?? holderId}: ${original}`);
+          }
+        }
+      }
+    }
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -558,7 +582,8 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         continue;
       }
       const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
-      throw new Error(`fact names only ${names}, who ${names.length > 1 ? 'are' : 'is'} not in this group; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+      const inGroup = mentioned.some((id) => memberById.has(id));
+      throw new Error(`fact names only ${names}, who ${inGroup ? 'belong to another group of this turn' : `${names.length > 1 ? 'are' : 'is'} not in this group`}; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
     }
     // A mechanics clause can take the subject with it. If the remaining result
     // is a continuation (“且未被允许反应”), prefix the recipient's display name

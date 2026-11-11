@@ -344,6 +344,33 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.droppedFacts[0].original).toContain('路明非未被判定为反应');
   });
 
+  it('rejects a fact that gives one character’s item to another', async () => {
+    // d531 turn 2 wrote 路明非的红色识别带… although the band is 诺诺's.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [
+        { memberId: 'nono', label: 'partial', reason: '诺诺低声说话。', effects: [{ targetId: 'lu', reacted: true }] },
+        { memberId: 'lu', label: 'achieved', reason: '路明非听着。', effects: [] },
+      ],
+      facts: [
+        { text: '路明非的红色识别带在胸前微微发烫，她低声说出一条路线。', memberIds: ['nono'], actorId: 'nono', outcome: 'completed' },
+        { text: '路明非听着诺诺说的路线。', memberIds: ['lu'], actorId: 'lu', outcome: 'completed' },
+      ],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_29', {
+      groupId: 'group_29',
+      members: [
+        { memberId: 'nono', actionText: '诺诺低声说出路线。', rollRefs: [{ targetId: 'lu', rollId: 'r1', result: 9, eligible: true, admitted: true }] },
+        { memberId: 'lu', actionText: '我听诺诺说。', rollRefs: [] },
+      ],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('红色识别带');
+    expect(outcome.error).toContain('belongs to 诺诺');
+  });
+
   it('rejects a protagonist fact that copied the player’s “我” sentence', async () => {
     // 35ad turn 3: the player wrote 我请诺诺带我走一条有掩护、能到钟楼西侧的路线。and
     // the results answer repeated it verbatim with outcome completed.
