@@ -477,26 +477,35 @@ describe('21c3 trace replay (CPU)', () => {
       facts: [{ text: '路明非未被掀开袖口，未看到规则牌，骰点未触发准入条件。行动未成功或被阻止。', memberIds: ['nono'] }],
     });
     const rolls = [{ targetId: 'lu', rollId: 'r1', result: 12, eligible: false, admitted: false }];
+    // nono's action provably did not happen (not_achieved + denied roll), so the
+    // group has no result to narrate: the explanation is dropped, not repaired
+    // and not committed. This keeps the point free of a contradiction and costs
+    // no extra model call.
     const reaction = await createSettlementHandlers({ engine: scriptedEngine([explanation, explanation]) }).results('group_12', {
       groupId: 'group_12',
       members: [{ memberId: 'nono', actionText: '诺诺确认路明非的袖口。', rollRefs: rolls }],
       workingState: state,
     } as unknown as Json);
-    expect(reaction.value).toBeNull();
-    expect(reaction.error).toContain('fact names only 路明非');
-    expect(reaction.error).toContain('诺诺确认路明非的袖口');
+    expect(reaction.value).toEqual({ nono: '' });
+    expect(reaction.evidence.calls).toHaveLength(1);
+    const dropped = reaction.evidence.detail as { droppedFacts: { reason: string; original: string }[] };
+    expect(dropped.droppedFacts?.[0]?.reason).toBe('explains_another_character');
+    expect(dropped.droppedFacts?.[0]?.original).toContain('未看到规则牌');
 
-    const named = JSON.stringify({
-      judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '诺诺看清路明非的袖口没有被动过。', effects: [{ targetId: 'lu', reacted: false }] }],
-      facts: [{ text: '诺诺看清路明非的袖口没有被动过，没有开口。', memberIds: ['nono'] }],
+    // A member whose action may have happened still needs its own result; the
+    // explanation is repaired, not dropped.
+    const partial = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'partial', reason: '诺诺看了一眼路明非的袖口。', effects: [{ targetId: 'lu', reacted: false }] }],
+      facts: [{ text: '路明非未被掀开袖口，未看到规则牌。', memberIds: ['nono'] }],
     });
-    const repaired = await createSettlementHandlers({ engine: scriptedEngine([explanation, named]) }).results('group_12', {
+    const repaired = await createSettlementHandlers({ engine: scriptedEngine([partial, partial]) }).results('group_12', {
       groupId: 'group_12',
       members: [{ memberId: 'nono', actionText: '诺诺确认路明非的袖口。', rollRefs: rolls }],
       workingState: state,
     } as unknown as Json);
-    expect(repaired.value!.nono).toBe('诺诺看清路明非的袖口没有被动过，没有开口。');
-    expect(repaired.evidence.calls).toHaveLength(2);
+    expect(repaired.value).toBeNull();
+    expect(repaired.error).toContain('fact names only 路明非');
+    expect(repaired.error).toContain('诺诺确认路明非的袖口');
   });
 
   it('drops the b7cd auto1 position answer that only echoed lu lane', async () => {

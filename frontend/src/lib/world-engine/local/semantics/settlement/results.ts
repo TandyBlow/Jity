@@ -68,6 +68,9 @@ interface ResultsAnswer {
    * what the model saw, but they never settle a non-member; they are kept in
    * evidence and dropped from the committed result. */
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
+  /** Facts dropped because they explain another character's action for a
+   * member whose own action provably did not happen (all rolls denied). */
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -153,6 +156,7 @@ export async function runResults(
       })),
       labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
+      droppedFacts: parsedAnswer.droppedFacts ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -376,10 +380,21 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
   for (const member of members) if (!seen.has(member.memberId)) throw new Error(`missing judgment for ${member.memberId}`);
+  // A member whose action provably did not happen — the group judged it
+  // not_achieved and every one of its rolls was denied — has no result to
+  // narrate. Requiring a fact for it made the model copy its judgement reason
+  // into facts (736a/9623: 路明非未被掀开袖口，未看到规则牌…), which then
+  // contradicted the player group's settled walk/read.
+  const inactive = new Set<Id>(judgments
+    .filter((judgment) => judgment.label === 'not_achieved'
+      && memberById.get(judgment.memberId)!.rolls.length > 0
+      && memberById.get(judgment.memberId)!.rolls.every((roll) => !roll.admitted))
+    .map((judgment) => judgment.memberId));
   const factRecipients = new Set<Id>();
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
+  const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
     .join('；');
@@ -410,6 +425,13 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // contradicts the point and no result for the reacting member.
     const mentioned = mentionedCharacterIds(state, cleaned.text);
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
+      // When the recipients provably did nothing, the fact is the judgement's
+      // explanation of somebody else's action: drop it instead of spending a
+      // repair call or committing a contradiction.
+      if (recipientIds.every((id) => inactive.has(id))) {
+        droppedFacts.push({ memberIds: recipientIds, original, reason: 'explains_another_character' });
+        continue;
+      }
       const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
       throw new Error(`fact names only ${names}, who ${names.length > 1 ? 'are' : 'is'} not in this group; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
     }
@@ -439,10 +461,15 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     facts.push({ text: cleaned.text, memberIds: recipientIds });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
-  for (const member of members) if (!factRecipients.has(member.memberId)) throw new Error(`no fact attributed to ${member.memberId}`);
+  for (const member of members) {
+    if (factRecipients.has(member.memberId)) continue;
+    if (inactive.has(member.memberId)) continue;
+    throw new Error(`no fact attributed to ${member.memberId}`);
+  }
   return {
     judgments, facts, dropped,
     ...(sanitized.length ? { sanitized } : {}),
+    ...(droppedFacts.length ? { droppedFacts } : {}),
   };
 }
 
