@@ -27,17 +27,23 @@ describe('policy stop waits for the committed point prose', () => {
     const actor = order[0]!;
     const p1NarrationStarted = deferred<void>();
     const p1Committed = deferred<void>();
+    const allCommitted = deferred<void>();
+    const committed: string[] = [];
     const cancelSeen = deferred<void>();
     const releaseP1 = deferred<string>();
     let cancelSignalled = false;
     let commits = 0;
+    let p1Finished = false;
 
     const model: WorldModelPort = {
       async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
         if (task === 'pointPlan') {
-          return [{ pointId: 'p1', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: [actor] }];
+          return [
+            { pointId: 'p1', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: [actor] },
+            { pointId: 'p2', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: [order[1]!] },
+          ];
         }
-        if (task === 'action') return { kind: 'act', text: '我走进门厅。' };
+        if (task === 'action') return { kind: 'act', text: '我继续走向门厅。' };
         if (task === 'targets') return { targets: [] };
         if (task === 'results') return { [key]: '门厅里没有人回应。' };
         if (task === 'updates') return [];
@@ -48,6 +54,7 @@ describe('policy stop waits for the committed point prose', () => {
             p1NarrationStarted.resolve();
             return releaseP1.promise;
           }
+          if (key === 'p2') return '第二点的正文。';
           throw new Error(`unexpected narration ${key}`);
         }
         throw new Error(`unexpected task ${task}`);
@@ -80,9 +87,11 @@ describe('policy stop waits for the committed point prose', () => {
       onCommit: (event) => {
         if (event.phase !== 'committed') return;
         const request = event.request as { pointId?: string };
-        if (request.pointId === 'p1') {
+        if (request.pointId) {
           commits += 1;
-          p1Committed.resolve();
+          committed.push(request.pointId);
+          if (request.pointId === 'p1') p1Committed.resolve();
+          if (committed.length === 2) allCommitted.resolve();
         }
       },
     }, memory, undefined, { narrationOverlap: true });
@@ -90,6 +99,8 @@ describe('policy stop waits for the committed point prose', () => {
     const run = driver.run();
     await p1Committed.promise;
     await p1NarrationStarted.promise;
+    await allCommitted.promise;
+    expect(p1Finished).toBe(false);
     await cancelSeen.promise;
     // The cancel reached the server while p1 prose was still pending. Old
     // inline narration retried this refusal without waiting and stalled.
@@ -99,9 +110,11 @@ describe('policy stop waits for the committed point prose', () => {
 
     expect(status.kind).not.toBe('error');
     if (status.kind === 'stop') expect(status.reason).not.toContain('stalled');
-    expect(commits).toBe(1);
+    expect(commits).toBe(2);
+    expect(committed).toEqual(['p1', 'p2']);
     const record = transport.snapshot();
     expect(record.narrations.p1).toMatchObject({ status: 'ready', text: '门厅里只剩下一盏灯。' });
+    expect(record.narrations.p2).toMatchObject({ status: 'ready', text: '第二点的正文。' });
     expect(record.advance).toBeNull();
     expect(record.round?.conclusion).toMatchObject({ kind: 'handback', closedBy: 'cancel', cancelReason: 'test_policy_stop' });
   }, 30000);
