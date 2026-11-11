@@ -98,6 +98,9 @@ interface ResultsAnswer {
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
+  /** A written outcome that disagreed with the judgement or the sentence and was
+   * replaced by the judgement-derived direction. */
+  outcomeAdjusted?: { actorId: Id; original: string; written: ResultOutcome; derived: ResultOutcome; why: string }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -203,6 +206,7 @@ export async function runResults(
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
+      outcomeAdjusted: parsedAnswer.outcomeAdjusted ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -485,6 +489,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
+  const adjustments: NonNullable<ResultsAnswer['outcomeAdjusted']> = [];
   const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
@@ -649,29 +654,38 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         : label === 'blocked' ? 'blocked'
           : label === 'not_achieved' ? 'failed' : 'unaffected';
     }
-    // A written outcome may not contradict the judgement it belongs to: a denied
-    // action is failed, not completed.
+    // A written outcome can disagree with the group's own judgement or with the
+    // sentence (d531's reacted=true re-ask, bed9's blocked while 未被阻止, 9eae's
+    // blocked on an answer, 08f4's not_achieved + completed). Aborting the point
+    // kills the whole turn for a direction word, so the written direction is
+    // dropped and re-derived from the model's own judgement label; the fact text
+    // — the part the six stages and next-turn knowledge read — is kept. This is
+    // still the model's judgement, not an invented result.
     if (outcomeSource === 'model') {
-      const label = judgments.find((judgment) => judgment.memberId === actorId)?.label;
-      if (label === 'blocked' && outcome === 'completed') throw new Error(`outcome completed contradicts blocked judgement for ${actorId}`);
-      if (label === 'not_achieved' && outcome === 'completed') throw new Error(`outcome completed contradicts not_achieved judgement for ${actorId}`);
-      if (label === 'achieved' && (outcome === 'blocked' || outcome === 'unaffected')) {
-        throw new Error(`outcome ${outcome} contradicts achieved judgement for ${actorId}`);
+      const judgment = judgments.find((row) => row.memberId === actorId);
+      const label = judgment?.label;
+      const derived: ResultOutcome = label === 'achieved' || label === 'partial' ? 'completed'
+        : label === 'blocked' ? 'blocked'
+          : label === 'not_achieved' ? 'failed' : 'unaffected';
+      const reason = judgment?.reason ?? '';
+      const obstruction = /被(?:阻止|拦住|拦下|拦|挡|按|拽|推|制住)|无法|没能|不能|阻止|拦住|拦下|挡住/u.test(cleaned.text);
+      const contradictsLabel = (label === 'blocked' && outcome === 'completed')
+        || (label === 'not_achieved' && outcome === 'completed')
+        || (label === 'achieved' && (outcome === 'blocked' || outcome === 'unaffected'))
+        || (label === 'no_change' && outcome === 'completed');
+      const contradictsReason = outcome === 'blocked' && /未被(?:阻止|拦住|拦下)|没有被(?:阻止|拦住)/u.test(reason);
+      const blockedWithoutCue = outcome === 'blocked' && !obstruction;
+      if (contradictsLabel || contradictsReason || blockedWithoutCue) {
+        adjustments.push({
+          actorId,
+          original,
+          written: outcome,
+          derived,
+          why: contradictsReason ? 'reason_says_not_blocked' : blockedWithoutCue ? 'blocked_without_cue' : 'judgement_direction',
+        });
+        outcome = derived;
+        outcomeSource = 'derived';
       }
-      if (label === 'no_change' && outcome === 'completed') throw new Error(`outcome completed contradicts no_change judgement for ${actorId}`);
-      // The model's own reason can contradict the outcome it wrote (bed9's
-      // 路明非行动未成功完成目标，因此未被阻止 + outcome blocked).
-      const reason = judgments.find((judgment) => judgment.memberId === actorId)?.reason ?? '';
-      if (outcome === 'blocked' && /未被(?:阻止|拦住|拦下)|没有被(?:阻止|拦住)/u.test(reason)) {
-        throw new Error(`outcome blocked contradicts the reason for ${actorId}: ${reason}`);
-      }
-    }
-    // blocked is a claim that something stopped the action; a sentence that
-    // shows no obstruction (9eae turn 2: 诺诺摇头说不知道 written as blocked) must
-    // say failed/unaffected instead, or it teaches the composer the wrong
-    // direction.
-    if (outcome === 'blocked' && !/被(?:阻止|拦住|拦下|拦|挡|按|拽|推|制住)|无法|没能|不能|阻止|拦住|拦下|挡住/u.test(cleaned.text)) {
-      throw new Error(`outcome blocked needs the obstruction in the fact: ${original}。写清被什么阻止，或改成 failed/unaffected。`);
     }
     // A fact that is the member's declared action restated is not a result:
     // 35ad turn 3 answered the player's own sentence (我请诺诺带我走…路线)
@@ -721,6 +735,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(sanitized.length ? { sanitized } : {}),
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),
+    ...(adjustments.length ? { outcomeAdjusted: adjustments } : {}),
   };
 }
 

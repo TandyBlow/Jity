@@ -209,24 +209,37 @@ describe('common-group results', () => {
     expect(facts[1]).toMatchObject({ actorId: 'b', outcome: 'unaffected' });
   });
 
-  it('rejects an outcome that contradicts the judgement, a non-member actor and a task claim', async () => {
+  it('re-derives a contradictory outcome instead of killing the point, and still rejects protocol errors', async () => {
+    // A direction word is repaired from the model's own judgement; the fact text
+    // — what the six stages and next-turn knowledge read — is kept.
     const contradicting = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没推动。', effects: [{ targetId: 'b', reacted: true }] }],
-      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+      facts: [
+        { text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙站在原地。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
     });
-    const engine = new ScriptedEngine([contradicting, contradicting]);
-    const failed = await createSettlementHandlers({ engine }).results('g1', resultsInput());
-    expect(failed.value).toBeNull();
-    expect(failed.error).toContain('contradicts not_achieved');
+    const engine = new ScriptedEngine([contradicting]);
+    const adjusted = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(adjusted.value).not.toBeNull();
+    const adjustedDetail = adjusted.evidence.detail as {
+      facts: { outcome: string; outcomeSource: string }[];
+      outcomeAdjusted: { why: string; written: string; derived: string }[];
+    };
+    expect(adjustedDetail.facts[0]).toMatchObject({ outcome: 'failed', outcomeSource: 'derived' });
+    expect(adjustedDetail.outcomeAdjusted[0]).toMatchObject({ why: 'judgement_direction', written: 'completed', derived: 'failed' });
 
     const achievedBlocked = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
-      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+      facts: [
+        { text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' },
+        { text: '乙站在原地。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
     });
-    const achievedEngine = new ScriptedEngine([achievedBlocked, achievedBlocked]);
+    const achievedEngine = new ScriptedEngine([achievedBlocked]);
     const achievedOutcome = await createSettlementHandlers({ engine: achievedEngine }).results('g1', resultsInput());
-    expect(achievedOutcome.value).toBeNull();
-    expect(achievedOutcome.error).toContain('contradicts achieved');
+    expect(achievedOutcome.value).not.toBeNull();
+    expect((achievedOutcome.evidence.detail as { facts: { outcome: string }[] }).facts[0].outcome).toBe('completed');
 
     const foreign = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
@@ -318,16 +331,21 @@ describe('common-group results', () => {
     expect(present.prompts[0]).toMatch(/characterId":"(?:b|off)"/u);
   });
 
-  it('rejects an outcome that contradicts the model’s own reason', async () => {
+  it('re-derives an outcome that contradicts the model’s own reason', async () => {
     // bed9 turn 2 answered “…未被阻止” with outcome blocked.
     const raw = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲的行动未成功完成目标，因此未被阻止。', effects: [{ targetId: 'b', reacted: true }] }],
-      facts: [{ text: '甲问乙局势，乙摇头说不知道', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+      facts: [
+        { text: '甲问乙局势，乙摇头说不知道', memberIds: ['a'], actorId: 'a', outcome: 'blocked' },
+        { text: '乙站在原地。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
     });
-    const engine = new ScriptedEngine([raw, raw]);
+    const engine = new ScriptedEngine([raw]);
     const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
-    expect(outcome.value).toBeNull();
-    expect(outcome.error).toContain('outcome blocked contradicts the reason');
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { outcomeAdjusted: { why: string; derived: string }[]; facts: { outcome: string; outcomeSource: string }[] };
+    expect(detail.facts[0]).toMatchObject({ outcome: 'failed', outcomeSource: 'derived' });
+    expect(detail.outcomeAdjusted[0]).toMatchObject({ why: 'reason_says_not_blocked', derived: 'failed' });
   });
 
   it('keeps a negative action result instead of stripping the negation as a task claim', async () => {

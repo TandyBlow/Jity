@@ -344,7 +344,7 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.droppedFacts[0].original).toContain('路明非未被判定为反应');
   });
 
-  it('rejects blocked without an obstruction in the fact', async () => {
+  it('re-derives a blocked outcome that the sentence does not support', async () => {
     // 9eae turn 2: 诺诺摇头说不知道 was committed as outcome blocked.
     const { state } = loadWorld();
     const raw = JSON.stringify({
@@ -361,9 +361,13 @@ describe('21c3 trace replay (CPU)', () => {
       }],
       workingState: state,
     } as unknown as Json);
-    expect(outcome.value).toBeNull();
-    expect(outcome.error).toContain('needs the obstruction');
-    // A real obstruction keeps the blocked outcome.
+    // The turn no longer dies on a direction word: the fact stays, the outcome
+    // follows the model's own not_achieved judgement.
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { outcome: string; outcomeSource: string }[]; outcomeAdjusted: { why: string; written: string; derived: string }[] };
+    expect(detail.facts[0]).toMatchObject({ outcome: 'failed', outcomeSource: 'derived' });
+    expect(detail.outcomeAdjusted[0]).toMatchObject({ why: 'blocked_without_cue', written: 'blocked', derived: 'failed' });
+    // A real obstruction keeps the written blocked outcome.
     const blocked = JSON.stringify({
       judgments: [{ memberId: 'lu', label: 'not_achieved', reason: '门被顶住。', effects: [] }],
       facts: [{ text: '路明非被门板挡住，没有挤进器材棚。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
@@ -374,6 +378,7 @@ describe('21c3 trace replay (CPU)', () => {
       workingState: state,
     } as unknown as Json);
     expect(ok.value).not.toBeNull();
+    expect((ok.evidence.detail as { facts: { outcome: string; outcomeSource: string }[] }).facts[0]).toMatchObject({ outcome: 'blocked', outcomeSource: 'model' });
   });
 
   it('rejects a fact that gives one character’s item to another', async () => {
