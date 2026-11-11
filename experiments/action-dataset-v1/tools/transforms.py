@@ -185,9 +185,14 @@ def apply_transforms(base_state: dict[str, Any], transforms: list[dict[str, Any]
 
 
 def _destination_label(state: dict[str, Any], entity_id: str) -> str:
+    """Where the entity ended up, as a scene phrase (slot label preferred)."""
     entity = state["characters"].get(entity_id) or state["items"][entity_id]
     container_id = entity["position"]["containerId"]
+    slot_id = entity["position"].get("slotId")
     location = state["initial"]["locations"].get(container_id)
+    slot = state_view.slot_label(state, container_id, slot_id) if slot_id else None
+    if slot:
+        return str(slot)
     if location:
         return str(location["name"])
     return state_view.position_label(state, entity_id)
@@ -216,9 +221,13 @@ def events_from_transforms(state: dict[str, Any], records: list[dict[str, Any]])
             label = _destination_label(state, entity_id)
             text = str(record.get("perceived") or f"{name}到了{label}")
             anchor = str(record.get("perceivedAnchor") or label)
-            if anchor != label and anchor not in label:
+            entity = state["characters"].get(entity_id) or state["items"][entity_id]
+            container_id = entity["position"]["containerId"]
+            room_name = state_view.location_name(state, state_view.room_of(state, entity_id))
+            if anchor != label and anchor not in label and anchor != room_name and anchor not in room_name:
                 raise TransformError(
-                    f"transform {record['index']}: perceived anchor {anchor!r} is not part of the destination {label!r}"
+                    f"transform {record['index']}: perceived anchor {anchor!r} names neither the destination "
+                    f"slot {label!r} nor the room {room_name!r}"
                 )
             if name not in text or anchor not in text:
                 raise TransformError(f"transform {record['index']}: perceived move line must name {name} and {anchor}")
