@@ -72,7 +72,7 @@ design/parallel-handoff/05-point-pipeline-06-game-model.patch
 - 新增 `LocalGameOptions.narrationOverlap`，产品 session 默认 true；
 - 把 `ControllerDriver` 的 `narrationOverlap` 打开；
 - controller 的 `onCommit` 包装成：先调用页面原有 `options.onCommit`，再在 `committed` 阶段调用 `productModel.onPointCommitted(pointId)`；
-- `start()` 对当前 head 的 failed 或 pending 状态调 `driver.retryNarration()`：failed 是页面已有的恢复重试，pending 是模型 abort 后对同一点的恢复；都不重新结算。
+- `start()` 对当前 head 的 failed，或回合内（`round`/`advance` 存在）的 pending 状态调 `driver.retryNarration()`：failed 是页面已有的恢复重试，pending 是模型 abort 后对同一点的恢复；都不重新结算。新建世界的 root 仍走正常 bootstrap。
 
 ### `05-point-pipeline-06-game-model.patch`
 
