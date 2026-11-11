@@ -100,11 +100,16 @@ export interface SettlementPortSummary {
 }
 
 export interface SettlementModelPort extends WorldModelPort {
-  /** Every fact settled so far for the current point, formatted `名字：事实`,
-   * with the protagonist's own group first. A reaction group answers after the
-   * player's group and used to overwrite the player's result in the caller's
-   * single `lastResultsText` slot, so the walk/read outcome never reached
-   * narration and the result beat was composed from nothing. */
+  /** Every fact settled so far for the current point, verbatim, with the
+   * protagonist's own group first. A reaction group answers after the player's
+   * group and used to overwrite the player's result in the caller's single
+   * `lastResultsText` slot, so the walk/read outcome never reached narration
+   * and the result beat was composed from nothing.
+   *
+   * No `名字：` prefix: the constrained result fact is verified as a sentence
+   * that must appear in the prose verbatim, and a label turns it into
+   * `路明非：路明非沿着…` — the same speaker-label leak that reached the page
+   * from the labeled results lines. */
   settledFactLines(): string[];
   /** Start a new player-submission account. Called by the page right before it
    * hands the text to the session; the port does not consume the text. */
@@ -266,11 +271,10 @@ export function createSettlementModelPort(
           .filter((id): id is string => typeof id === 'string')
         : [];
       const playerGroup = Boolean(player && groupIds.includes(player));
-      for (const [memberId, fact] of Object.entries(value as Record<string, unknown>)) {
+      for (const fact of Object.values(value as Record<string, unknown>)) {
         if (typeof fact !== 'string' || !fact.trim()) continue;
         roundFacts.push(fact.trim());
-        const name = state?.initial.characters[memberId]?.name ?? memberId;
-        settledLines.push({ playerGroup, line: `${name}：${fact.trim()}` });
+        settledLines.push({ playerGroup, line: fact.trim() });
       }
     }
   }

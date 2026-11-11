@@ -502,8 +502,8 @@ describe('settled facts for narration', () => {
       workingState: state,
     } as unknown as Json);
     const lines = port.settledFactLines();
-    expect(lines[0]).toBe('周宁：周宁推开走廊的门，看清门后的台阶。');
-    expect(lines[1]).toBe('林川：林川停在原地，没有跟着进去。');
+    expect(lines[0]).toBe('周宁推开走廊的门，看清门后的台阶。');
+    expect(lines[1]).toBe('林川停在原地，没有跟着进去。');
     port.endSubmission();
   });
 
@@ -544,8 +544,8 @@ describe('settled facts for narration', () => {
       workingState: state,
     } as unknown as Json);
     expect(port.settledFactLines()).toEqual([
-      '周宁：周宁推开走廊的门。',
-      '林川：林川停在原地，没有跟着进去。',
+      '周宁推开走廊的门。',
+      '林川停在原地，没有跟着进去。',
     ]);
   });
 
