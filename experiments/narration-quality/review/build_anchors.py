@@ -1838,6 +1838,55 @@ anchors.append({
                "notes": "«我请诺诺带我走…» but 诺诺 never appears; the accepted prose is also an inventory recital."},
 })
 
+
+# 08f4 t1: the accepted model prose puts the goggles on even though the settled
+# look hangs them on the chest and the update stage kept them there.
+run_08f4 = json.load(io.open(ROOT + "/results/product/evidence/09-product-03turn-08f4.json", encoding="utf-8"))
+t_08f4_1 = run_08f4["turns"][0]
+t_08f4_2 = run_08f4["turns"][1]
+t_08f4_3 = run_08f4["turns"][2]
+anchors.append({
+    "id": "neg/route/08f4-goggles-worn-without-settle",
+    "source": "09 product 3-turn 2026-11-11T0457-4f6f (head 08f4): model 70 chars turn 1",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_08f4_1["text"],
+    "options": {"minChars": 1, "action": t_08f4_1["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.state_contradiction"], "style": [],
+               "review": ["review.micro_action", "review.tone"],
+               "notes": "«他掏出护目镜，戴上后继续向前» contradicts the chest-settled look; the board's «护目镜必须戴好» is a quote and must not itself trigger."},
+})
+anchors.append({
+    "id": "neg/route/08f4-question-left-unanswered",
+    "source": "09 product 3-turn 2026-11-11T0457-4f6f (head 08f4): model 63 chars turn 2",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_08f4_2["text"],
+    "options": {"minChars": 1, "action": t_08f4_2["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": [], "style": ["style.perspective"],
+               "review": ["review.pronoun", "review.tone"],
+               "notes": "the question is restated and never answered, but no fact is contradicted; the missing answer is a product read, not a hard finding yet."},
+})
+anchors.append({
+    "id": "neg/route/08f4-nono-absent-again",
+    "source": "09 product 3-turn 2026-11-11T0457-4f6f (head 08f4): draft 59 chars turn 3",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_08f4_3["text"],
+    "options": {"minChars": 1, "action": t_08f4_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": ["review.tone"],
+               "notes": "asked 诺诺 to lead, she never appears; the item note is recited again."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

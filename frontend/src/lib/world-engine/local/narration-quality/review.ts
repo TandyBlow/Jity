@@ -1658,7 +1658,7 @@ export function reviewNarration(args: {
           // A board quote only: 「规则牌」 as the object of the sentence is not
           // a rule about wearing them (926e: «路明非摘下护目镜，目光落在规则牌上»).
           if (/(牌面|写明|规定|必须|禁止|要求)/u.test(sentence.text)) continue;
-          if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(sentence.text)) continue;
+          if (!/(戴在|戴好|戴上|戴起|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(sentence.text)) continue;
           // Taking them off the chest is the settled transfer, not wearing them.
           if (/(从|由)(胸前|身上|颈上|脖子上|怀里)/u.test(sentence.text)) continue;
           // A sentence that puts them back where they are settled (hanging on
