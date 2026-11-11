@@ -1028,7 +1028,10 @@ export default function WorldLocalPage() {
       // then give the sentence back to the player.
       const committedNow = Object.values(session.snapshot.transport.points ?? {}).filter((point) => point.trigger === 'player').length;
       if (status.kind === 'stop' && committedNow === playerPointsAtStart) {
-        setEntries((list) => list.filter((entry) => entry.key !== key));
+        // A stop that committed no player point must not leave an empty turn.
+        // If the model did write prose for a committed automatic point, that
+        // prose stays on screen: a later stop never erases what was shown.
+        setEntries((list) => list.filter((entry) => entry.key !== key || Boolean(entry.text.trim()) || Boolean(entry.points?.some((part) => part.text.trim()))));
         setInput((current) => current || text);
         if (/narration|gate/i.test(status.reason)) {
           setMessage('上一回合的正文还没写完；正在补写，完成后可以再提交这一句。');
