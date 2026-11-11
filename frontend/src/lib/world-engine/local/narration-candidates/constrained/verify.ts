@@ -248,6 +248,9 @@ export function verifyText(text: string, options: VerifyOptions): {
     } else if (fact.kind === 'item_present' || fact.kind === 'item_discovered') {
       expressed = parts.some((sentence) => sentence.includes(fact.name));
     } else if (fact.kind === 'result') {
+      // Free-text fact: the settled sentence itself must appear. No overlap
+      // ratio, no keyword match — a paraphrase is not evidence that the settled
+      // result was written. The prompt asks for the same thing (compose.ts).
       expressed = text.includes(fact.text);
     } else if (fact.kind === 'at') {
       expressed = parts.some((sentence) => sentence.includes(fact.name) && sentence.includes(fact.location));
@@ -256,7 +259,9 @@ export function verifyText(text: string, options: VerifyOptions): {
     if (fact.mandatory && !expressed) {
       issues.push({
         kind: 'fact_missing', severity: 'hard', beatId: null,
-        detail: `${fact.kind}:${fact.id}`,
+        // The retry has to know what was required; «result:facts:result» alone
+        // cannot be acted on. The settled sentence is short and already licensed.
+        detail: fact.kind === 'result' ? `result:${fact.id}:「${fact.text}」` : `${fact.kind}:${fact.id}`,
       });
     }
   }

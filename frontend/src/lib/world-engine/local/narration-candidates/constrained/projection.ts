@@ -653,10 +653,13 @@ export function projectFromFactsPacket(
   // the prose; it is quoted, not paraphrased. Judgment/mechanics clauses are
   // not prose and are dropped here too (926e printed 诺诺：…未被阻止… from this
   // packet path while the scene path already filtered it).
-  if (options.resultsText && options.resultsText.trim()) {
-    const settled = options.resultsText.split(/[；;]/u).map((part) => part.trim())
+  const settledQuote = options.resultsText && options.resultsText.trim()
+    ? options.resultsText.split(/[；;]/u).map((part) => part.trim())
       .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
-      .join('；');
+      .join('；') || null
+    : null;
+  if (options.resultsText && options.resultsText.trim()) {
+    const settled = settledQuote;
     if (settled) {
       facts.push({
         id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
@@ -739,7 +742,8 @@ export function projectFromFactsPacket(
       ].filter(Boolean)))],
       quotes: [...new Set([
         ...packet.facts.flatMap((fact) => fact.kind === 'task_achieved' ? [fact.goal] : []),
-        ...(options.resultsText ? [clampSentences(options.resultsText, 2, 130)] : []),
+        // The quotes list must not re-admit a judgment clause the fact filter dropped.
+        ...(settledQuote ? [clampSentences(settledQuote, 2, 130)] : []),
       ])],
     },
     knowledge: { ...emptyKnowledge(), ...(options.knowledge ?? {}) },

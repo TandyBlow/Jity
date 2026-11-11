@@ -51,7 +51,13 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
     case 'item_discovered':
       return `${fact.name}现在在${fact.container}，视角人物此前没有留意（不要写成他早已知晓）`;
     case 'result':
-      return `结算原话：「${fact.text}」（可以换措辞，但不能改变其中的人和事）`;
+      // A result fact carries free text and nothing else: no actor field, no
+      // outcome field. The verifier can only check «this sentence is in the
+      // prose» (verify.ts: text.includes(fact.text)), so the prompt must ask for
+      // exactly that. It used to say «可以换措辞», which invited a paraphrase the
+      // checker then rejected — every result beat fell back to the program line
+      // («诺诺：因此未被阻止或达成目标。» / «诺诺：…未被掀开袖口…»).
+      return `结算原话：「${fact.text}」（正文要原样写出这一句，可以前后加动作或环境，但这句里的人、事、措辞都不要改）`;
     case 'at':
       return `${fact.name}在${fact.location}`;
     default:
@@ -93,14 +99,16 @@ export function buildBeatPrompt(
     '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
     ...(facts.length ? [] : ['本段只写视角人物此刻的一个动作或一处注意，一到两句就够，不要把场景材料清点一遍。']),
-    // The first beat carries the player's declared action. It is an instruction:
-    // the beats may write the attempt, never a settled success the facts do not
-    // have (09 page turns write the walk as «路明非也没有动» or omit it).
+    ...facts.map((fact) => `- ${fact}`),
+    // The declared action comes after the facts. With the one-beat plan a single
+    // call carries the time fact and this instruction; when the instruction was
+    // printed first (926e/5810), the model wrote the action and dropped the time.
+    // It is still an instruction, not an outcome: the attempt may be written, a
+    // settled success may not.
     ...(beat.index === 0 && scene.previousAction
       ? [`玩家这一回合的指令：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
          '正文要写出他做了或试着做了这件事；结果只按上面已结算的事实写，没有结算成功的事不要写成成功。']
       : []),
-    ...facts.map((fact) => `- ${fact}`),
     '',
     '场景材料（只可使用这些）：',
     `- 视角人物：${scene.viewpoint.name}`,
@@ -115,6 +123,7 @@ export function buildBeatPrompt(
     '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
     '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
+    '- 「结算原话」要原样放进正文；不要换同义词，也不要把它拆成两句话。',
     '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
     '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
     '- 把它写成一幕，不是写成清单：只挑一处此刻最显眼的细节，用视角人物的注意力带出来；不要把「可见物品」「已登记细节」逐条抄进正文。',

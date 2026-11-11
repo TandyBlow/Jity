@@ -281,6 +281,12 @@ function feedbackFor(issueList: CandidateIssue[]): string {
     else if (kind === 'personality_changed') hints.push('这一段必须写出人物的个性变化原句');
     else if (kind === 'sanity_changed') hints.push('这一段必须写出精神变化的方向');
     else if (kind === 'appearance_changed') hints.push('这一段必须写出已经结算的外貌变化');
+    // A result fact is free text and the checker requires the sentence itself;
+    // the retry gets the exact sentence, not «漏掉了已结算的事实».
+    else if (kind === 'result') {
+      const quoted = /「(.+?)」/u.exec(String(detail))?.[1];
+      hints.push(quoted ? `这一段要原样写出结算原话：「${quoted}」` : '这一段要原样写出结算原话');
+    }
     else hints.push('这一段漏掉了已结算的事实');
   }
   if (issueList.some((issue) => issue.kind === 'unlicensed_event' || issue.kind === 'movement_without_fact' || issue.kind === 'task_without_fact')) {
