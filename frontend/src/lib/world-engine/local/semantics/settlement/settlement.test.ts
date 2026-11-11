@@ -219,6 +219,15 @@ describe('common-group results', () => {
     expect(failed.value).toBeNull();
     expect(failed.error).toContain('contradicts not_achieved');
 
+    const achievedBlocked = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+    });
+    const achievedEngine = new ScriptedEngine([achievedBlocked, achievedBlocked]);
+    const achievedOutcome = await createSettlementHandlers({ engine: achievedEngine }).results('g1', resultsInput());
+    expect(achievedOutcome.value).toBeNull();
+    expect(achievedOutcome.error).toContain('contradicts achieved');
+
     const foreign = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
       facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'off', outcome: 'completed' }],
@@ -239,7 +248,10 @@ describe('common-group results', () => {
 
     // A task word inside a real action is not a task claim.
     const taskWord = JSON.stringify({
-      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲拿起任务单。', effects: [{ targetId: 'b', reacted: true }] }],
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲拿起任务单。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙接过单子。', effects: [] },
+      ],
       facts: [
         { text: '甲拿起任务单，走到乙面前。', memberIds: ['a'], actorId: 'a', action: '拿起任务单', outcome: 'completed' },
         { text: '乙接过单子。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },

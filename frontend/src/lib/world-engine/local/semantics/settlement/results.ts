@@ -592,6 +592,10 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       const label = judgments.find((judgment) => judgment.memberId === actorId)?.label;
       if (label === 'blocked' && outcome === 'completed') throw new Error(`outcome completed contradicts blocked judgement for ${actorId}`);
       if (label === 'not_achieved' && outcome === 'completed') throw new Error(`outcome completed contradicts not_achieved judgement for ${actorId}`);
+      if (label === 'achieved' && (outcome === 'blocked' || outcome === 'unaffected')) {
+        throw new Error(`outcome ${outcome} contradicts achieved judgement for ${actorId}`);
+      }
+      if (label === 'no_change' && outcome === 'completed') throw new Error(`outcome completed contradicts no_change judgement for ${actorId}`);
     }
     // “甲未能。” is what is left after a stripped task clause: a dangling
     // negation is not a result. The 60-char action hint tells the repair what to
