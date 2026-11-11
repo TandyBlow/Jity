@@ -33,6 +33,14 @@ function submissionsOf(input) {
   return [];
 }
 
+/** The turn record that owns a submission ledger, so the checker can see what
+ * the player actually got (text, problems) next to the settlement. */
+function turnsOf(input) {
+  if (Array.isArray(input?.turns)) return input.turns;
+  if (Array.isArray(input)) return input;
+  return [];
+}
+
 /** A time-scan round has no actor action, so position/appearance are skipped by
  * design; every other round must start at position. */
 function stageProblems(call, where) {
@@ -57,6 +65,7 @@ export function checkRun(input, options = {}) {
   const collectTimings = options.timings === true;
   const timingRows = [];
   const subs = submissionsOf(input);
+  const turns = turnsOf(input);
   const hard = [];
   const soft = [];
   if (!subs.length) hard.push('no submission found in the input');
@@ -191,6 +200,16 @@ export function checkRun(input, options = {}) {
         hard.push(`${where}: policy stop ${policyStops.join(';')} was recorded as a model handback`);
       }
       soft.push(`${where}: policy stop ${policyStops.join(';')} (visible failure, no state rewrite expected)`);
+      // A policy stop ends the automatic chain; it must not take the player's
+      // paragraph with it. 09-frozen-raw-a38d: the model text was accepted at
+      // 85 s, a normal continuation stop followed, the page cancelled the turn,
+      // rebuilt the entry empty from the store and the harness timed out at
+      // 330 s with no prose.
+      const turn = turns[index] ?? turns.find((row) => row?.submission === sub) ?? null;
+      const text = typeof turn?.text === 'string' ? turn.text.trim() : null;
+      if (text === '' || (text == null && turn && turn.problems?.includes('no_readable_prose'))) {
+        hard.push(`${where}: policy stop ${policyStops.join(';')} ended the turn with no visible prose`);
+      }
     }
     if (collectTimings) {
       const stages = {};
@@ -248,6 +267,8 @@ function selfTest() {
     ['fact actor outside its members', { ...base, calls: base.calls.map((call) => (
       call.task === 'results' ? { ...call, facts: [{ text: '甲推开门。', actorId: 'zz', memberIds: ['a'], outcome: 'completed' }] } : call
     )) }, false],
+    ['policy stop kept the paragraph', { turns: [{ text: '路明非走进服务巷。', submission: { ...base, continuationDecision: 'policy_stop', stops: ['continuation:continuation_policy_abstract_task_goal'] } }] }, true],
+    ['policy stop lost the paragraph', { turns: [{ text: '', problems: ['no_readable_prose'], submission: { ...base, continuationDecision: 'policy_stop', stops: ['continuation:continuation_policy_no_progress'] } }] }, false],
   ];
   let failed = 0;
   for (const [name, input, expected] of cases) {
