@@ -154,7 +154,7 @@ def test_build_refuses_short_texts_shared_by_two_decisions(tmp_path: Path) -> No
             "--serializer", str(stub),
             "--out-dir", str(tmp_path / "out"),
         ])
-    assert "shared by more than one decision" in str(error.value)
+    assert "short X strings" in str(error.value)
 
 
 def test_build_and_check_roundtrip_with_a_stub_serializer(tmp_path: Path) -> None:
