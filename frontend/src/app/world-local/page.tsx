@@ -95,8 +95,10 @@ interface WorldTurnRecord {
    * model saw, every raw attempt, why it was rejected and the echo ratio. 02
    * needs the raw text to fix wrong_person/low_support, and the turn record must
    * carry it without reading worker internals. Capped; no prompt. */
-  /** Per-point narration clocks, keyed by pointId. Evidence only. */
-  narrationStarts?: Record<string, number>;
+  /** Per-point narration clocks, keyed by pointId. Evidence only: with the
+   * per-point queue, a later point may settle while an earlier point's text is
+   * still being written, so the overlap has to be visible per point. */
+  pointNarration?: Record<string, { startedAtMs: number; firstTextAtMs: number | null; completedAtMs: number | null }>;
   narration?: {
     pointId: string; rawAttempts: string[];
     raw: string; text: string; prompt: string;
@@ -455,6 +457,18 @@ export default function WorldLocalPage() {
    * per-group positions/appearances. Evidence only: a rejected commit is the
    * one a diagnosis needs. */
   const commitEventsRef = useRef<{ phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }[]>([]);
+  /** The exact commit request/answer, plus the clock the turn record needs:
+   * pointCommittedAtMs is set from the controller's committed event, because
+   * the page's transport snapshot carries no commit timestamp and copying the
+   * narration start would fake the scheduling gap that clock exists to show. */
+  const recordCommitEvent = (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => {
+    commitEventsRef.current.push(event);
+    if (event.phase !== 'committed') return;
+    const record = turnRecordRef.current;
+    if (!record?.clocks || record.clocks.pointCommittedAtMs != null) return;
+    record.clocks.pointCommittedAtMs = Math.round(performance.now() - submittedAtRef.current);
+  };
+
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
@@ -706,14 +720,11 @@ export default function WorldLocalPage() {
             const at = Math.round(performance.now() - submittedAtRef.current);
             if (startRecord?.clocks && startRecord.clocks.narrationStartedAtMs == null) {
               startRecord.clocks.narrationStartedAtMs = at;
-              // pointCommittedAtMs stays null: the transport snapshot the page
-              // sees carries no commit timestamp, and copying the narration
-              // start here would fake the scheduling gap this clock exists to
-              // measure.
             }
             if (startRecord) {
-              startRecord.narrationStarts ??= {};
-              if (startRecord.narrationStarts[progress.pointId] == null) startRecord.narrationStarts[progress.pointId] = at;
+              startRecord.pointNarration ??= {};
+              const slot = (startRecord.pointNarration[progress.pointId] ??= { startedAtMs: at, firstTextAtMs: null, completedAtMs: null });
+              if (slot.firstTextAtMs == null && progress.raw.trim()) slot.firstTextAtMs = at;
             }
             setPhase('streaming');
             // Exactly what the model returned. No character substitution: the
@@ -757,6 +768,11 @@ export default function WorldLocalPage() {
               return;
             }
             narrationSourcesRef.current[progress.pointId] = { source };
+            const pointSlot = turnRecordRef.current?.pointNarration?.[progress.pointId];
+            if (pointSlot) {
+              pointSlot.completedAtMs = atMs;
+              if (pointSlot.firstTextAtMs == null) pointSlot.firstTextAtMs = atMs;
+            }
             const clocks = turnRecordRef.current?.clocks;
             if (clocks && clocks.firstReadableAtMs == null) {
               clocks.firstReadableAtMs = atMs;
@@ -810,7 +826,7 @@ export default function WorldLocalPage() {
         let session: LocalGameSession;
         let restored = false;
         try {
-          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, (event) => commitEventsRef.current.push(event));
+          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent);
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           // A save can carry an advance left open by a failed turn. The next
           // submit would be refused as turn_in_progress (2603 run: ready, then
@@ -870,7 +886,7 @@ export default function WorldLocalPage() {
           if (!archived) throw openError;
           await store.delete(world.worldId, { force: true });
           setWarning('旧存档无法恢复，已保留原始副本并开始新的一局。');
-          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store, onCommit: (event) => commitEventsRef.current.push(event) });
+          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store, onCommit: recordCommitEvent });
           await session.start();
         }
         sessionRef.current = session;
