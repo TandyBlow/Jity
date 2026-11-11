@@ -609,15 +609,22 @@ try {
       const afterInfo = await page.evaluate((count) => {
         const articles = [...document.querySelectorAll('article')];
         const last = articles.at(-1);
-        // The prose container used to carry an inline white-space:pre-wrap style;
-        // 06 moved it into a CSS module, so read the last article's direct children
-        // instead of matching a style string. The first child is the player's line.
-        const children = last ? [...last.children] : [];
-        const isPlayerLine = (node) => (node.textContent ?? '').trim().startsWith('你：');
-        const proseNode = children.find((node) => String(node.className ?? '').includes('partText'))
-          ?? children.filter((node) => !isPlayerLine(node) && (node.textContent ?? '').trim().length > 0).at(-1)
-          ?? null;
-        const text = proseNode?.textContent ?? '';
+        // Production CSS-module class names are hashed, so the prose container
+        // cannot be found by name and the article also holds UI labels. Clone the
+        // article, drop the label nodes and the player's own line, keep the rest
+        // verbatim.
+        const clone = last ? last.cloneNode(true) : null;
+        let text = '';
+        if (clone) {
+          const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+          const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
+          for (const node of [...clone.querySelectorAll('div,span,p')]) {
+            const value = (node.textContent ?? '').trim();
+            if (!value) continue;
+            if (labels.test(value) || badge.test(value)) node.remove();
+          }
+          text = (clone.textContent ?? '').trim();
+        }
         const input = last?.querySelector('div')?.textContent ?? '';
         const noteNode = [...(last?.querySelectorAll('div') ?? [])].find((node) => /^(正文已按已结算事实修正|本回合没有完成：)/.test(node.textContent ?? ''));
         return {
