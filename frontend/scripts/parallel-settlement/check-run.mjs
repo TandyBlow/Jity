@@ -197,6 +197,10 @@ export function checkRun(input, options = {}) {
     if (decision === 'failed' && continuation.length) soft.push(`${where}: continuation failed (no candidate; not a normal handback)`);
     const stops = Array.isArray(sub.stops) ? sub.stops : [];
     const policyStops = stops.filter((stop) => String(stop).includes('continuation_policy_'));
+    const unsettled = (sub.calls ?? []).filter((call) => call.roundProgress?.reason === 'action_not_settled');
+    if (unsettled.length) {
+      soft.push(`${where}: ${unsettled.length} automatic point(s) settled something other than their proposal (${unsettled.map((call) => call.key).join(',')})`);
+    }
     if (policyStops.length) {
       const conclusion = sub.conclusion ?? sub.roundConclusion ?? null;
       if (conclusion?.kind === 'handback' || sub.closedBy === 'model') {
