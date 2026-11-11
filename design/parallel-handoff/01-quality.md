@@ -259,3 +259,4 @@
 - 5810（head 5810ae87）：判定过滤生效，面板消失、护目镜矛盾不再；但 53 字，规则牌与走都不在正文（`fact.action_omitted`），result beat 仍逐字绑定。
 - 02 `3b48fb10`/06 `b44c2397` 再次只接到 scene 路径（`narration-generation/verify.ts:424`）；`constrained/verify.ts` 仍无任何 settled/item 调用，故 926e 的「摘下护目镜」在该 build 仍会通过 beat 校验。已在该请求追加证据。
 - 更正（root 复核 5810 raw + 代码后）：11a7/926e 的 `fact_missing time` 属失败模型尝试，最终 fallback coverage 为 `expressed:true`；我此前「scoping 丢了时间事实」的写法撤回。模型为何失败（matcher 拒了合法说法 or 真没写）在 `rejected: []` 下无法判定。result 的逐字 `fact.text` 冲突经 root 确认属实。
+- 5810 逐 beat：open=program（两次模型尝试 `fact_missing time`，fallback 写成）、scene 与 close 文本完全相同（`路明非低头检查护目镜的镜片。`），合成后只留一句；`beatCounts` 仍与 `composers` 矛盾。长度不作判据，缺陷是走/规则牌缺失与 close 无新内容。
