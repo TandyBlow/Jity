@@ -52,7 +52,7 @@ export function buildRevisionGuidance(
     lines.push(`删掉没有来源的声音和气味（${named}）；不要用别的声音或气味替换。`);
   }
   if (kinds.has('echo_prior') || kinds.has('loop_repeated_sentence') || kinds.has('loop_repeated_clause')) {
-    lines.push('不要重复上一段或本段已经出现的句子，用新的写法。');
+    lines.push('不要重复本段已经出现的句子，用新的写法。');
   }
   if (kinds.has('too_short') || kinds.has('premature_closure')) {
     lines.push(`篇幅写到约${policy.targetChars ?? 260}字，不要提前收尾。`);

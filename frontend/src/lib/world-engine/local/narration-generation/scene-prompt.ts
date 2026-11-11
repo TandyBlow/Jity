@@ -100,9 +100,11 @@ export const NARRATOR_SYSTEM_PROMPT = [
   // accepted scene opened sentence after sentence with a perception verb
   // (100% vs 14%) and used a simile (100% vs 1%). Direct description instead.
   '句子直接写东西在动、在响、在什么位置，不要每句都用「他看见」「他注意到」「他望着」开头；比喻最多用一个。',
-  '结尾停在这一刻，不要总结、不要陈词滥调的收束，也不要重复上一回合最后一句。',
+  '结尾停在这一刻，不要总结，也不要“这一天就这样过去”这类收束。',
   ...BACKGROUND_RULES,
 ].join('\n');
+
+import { genderLine } from './character-gender';
 
 const UNIT_CN: Record<TimeAdvance['duration']['unit'], string> = {
   second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年',
@@ -142,6 +144,8 @@ export interface ProseUserArgs {
   scene?: BeatSceneContext | null;
   /** Last sentence of the previous accepted scene; used only as an anti-repeat
    * hint, never as material to continue. */
+  /** Deprecated: no previous-turn prose reaches a prompt (2026-11-11). Kept
+   * optional so older callers type-check; nothing reads it. */
   priorTail?: string | null;
   priorOpen?: string | null;
 }
@@ -211,28 +215,25 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   if (time && time.boundary === 'elapsed' && time.duration.amount > 0) {
     const amount = cnAmount(time.duration.amount);
     const unit = UNIT_CN[time.duration.unit];
-    // Time is the first thing the passage says: it was the one fact the page's
-    // trained candidate missed in 09's 2324 run (time_missing twice), while the
-    // model had been told further down the prompt. Put it at the top with the
-    // spine, as a sentence shape rather than a reminder.
-    lines.push(`【时间】这一回合过去了${amount}${unit}。开头一两句里要写出「${amount}${unit}过去」，不要含糊成「过了一会儿」。`);
-    lines.push(`本回合经过的时间：${time.duration.amount}${unit}。正文里要明确写出「${amount}${unit}」这句话。`);
+    // One line, context only. The old pair demanded a clock sentence twice and
+    // the prompt still said time may be omitted; the model did both and the
+    // passage opened on a stopwatch. Elapsed time is background now.
+    lines.push(`【时间】这一回合经过${amount}${unit}。可以不写；写到时不得写成别的时长，也不要写日期。`);
   }
-  // Pronoun policy: the world file carries no gender, and a 1.7B model wrote
-  // 她 for a male character in prose the grader accepted. `names` avoids that;
-  // `model` keeps ordinary Chinese pronouns (53 of lane 01's 71 gold scenes
-  // use 他/她), at the cost of that gender risk.
-  const pronouns = policy.pronouns ?? 'names';
+  // Pronoun policy: print the gender the project has evidence for and leave the
+  // rest open. The old ban («不要用「他」「她」») is gone — it produced name-only
+  // prose and the model still guessed. `names` stays available for a caller that
+  // wants it; `map` (now the default) uses the sourced table in character-gender.
+  const pronouns = policy.pronouns ?? 'map';
   if (pronouns === 'names') {
-    lines.push('称呼人物时用名字或省略主语，不要用「他」「她」指代人物（这些人物没有给出性别）。');
+    lines.push('称呼人物时用名字或省略主语，读起来更稳。');
   } else if (pronouns === 'map') {
-    // Gender comes from an explicit map, never from a name. Only listed
-    // characters may be referred to by pronoun; the rest keep the safe rule.
-    const known = Object.entries(policy.genders ?? {})
-      .map(([name, gender]) => `${name}（${gender === 'male' ? '男' : '女'}）`);
-    lines.push(known.length
-      ? `已知性别：${known.join('、')}。可以用「他」「她」指代这些人；没有列出性别的人仍然只用名字或省略主语。`
-      : '称呼人物时用名字或省略主语，不要用「他」「她」指代人物（这些人物没有给出性别）。');
+    const people = [
+      ...(scene?.present ?? []).map((person) => person.name),
+      view ?? '',
+    ].filter(Boolean);
+    const line = genderLine(people, policy.genders);
+    if (line) lines.push(line);
   }
   // Minimal background: one short clause per place/person/object. The real
   // runs used long static notes as material for new events, so the default
@@ -340,15 +341,6 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   lines.push('写明已经发生的事（谁到了哪里、过去了多久、什么办完了），但不要把它们排成一串「A在…，B在…」；'
     + '用视角人物的注意力把它们带出来。对话可以写，措辞由你定，但不要让别人说出没发生过的消息。');
   lines.push('视角人物只动自己的东西；别人的物品、别人的身体保持原样。');
-  // Continuity before anti-repeat: with only "do not repeat" and no material,
-  // a 1.7B model invented a war memory and children's laughter to fill the
-  // turn. The previous accepted ending is the one thing it may build on.
-  if (args.priorTail) {
-    lines.push(`上一回合的最后一句是「…${args.priorTail}」。接着这个时刻往下写，不要重复它的句子。`);
-  }
-  // The opening is as reusable as the ending: a model that starts every scene
-  // the same way reads as a template even when every sentence is true.
-  if (args.priorOpen) lines.push(`上一回合的开头是「${args.priorOpen}…」，不要用同样的开头或句式。`);
   if (policy.instruction?.trim()) lines.push(`补充要求：${policy.instruction.trim()}`);
   return lines.join('\n');
 }

@@ -325,7 +325,7 @@ describe('committed narration strategy: repetition and length', () => {
     expect(result.rawAttempts[0].issues).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'loop_repeated_sentence', severity: 'hard' }),
     ]));
-    expect(engine.calls[1].prompt).toContain('不要重复上一段或本段已经出现的句子');
+    expect(engine.calls[1].prompt).toContain('不要重复本段已经出现的句子');
   });
 
   test('echoing the previous accepted narration is rejected', async () => {
@@ -1075,7 +1075,9 @@ describe('scene prompt: contract and prose-facts shape', () => {
     });
     const prompt = engine.calls[0].prompt;
     expect(prompt).toContain('【写法】');
-    expect(prompt).toContain('不要用他/她指代人物');
+    // The pronoun ban is gone (2026-11-11); the contract now prints the
+    // sourced gender for known characters instead.
+    expect(prompt).not.toContain('不要用他/她指代人物');
     expect(prompt).toContain('不要写日期');
     expect(prompt.endsWith('【正文】')).toBe(true);
   });
@@ -1217,7 +1219,8 @@ describe('beat prompt: settled detail instead of invention', () => {
     });
     expect(prompt).toContain('林川（袖口沾了墨，右手空着）');
     expect(prompt).toContain('林川的护目镜（属于林川；镜带松着）');
-    expect(prompt).toContain('不要用他/她指代');
+    // 2026-11-11: no pronoun ban in the prompt.
+    expect(prompt).not.toContain('不要用他/她指代');
   });
 });
 
@@ -1237,9 +1240,8 @@ describe('beat prompt: allowed polish is not forbidden', () => {
     expect(prompt).not.toContain('不写“他心想”');
     expect(prompt).not.toContain('仿佛');
     // The gender-safe rule is "use names", not "everyone is 他".
-    /** The gender-safe rule is to use names, so the prompt never states a pronoun for a character. */
-    expect(prompt).toContain('不要用他/她指代');
-    expect(prompt).not.toContain('他是');
+    /** 2026-11-11: the ban is gone; gender is printed where the project has it. */
+    expect(prompt).not.toContain('不要用他/她指代');
   });
 });
 
@@ -1268,8 +1270,13 @@ describe('pronoun policy: names by default, model pronouns on request', () => {
     committed: packet(moved, povAt), policy: basePolicy, scene: { location: '走廊' }, priorTail: null,
   });
 
-  test('names: the prompt asks for names instead of 他/她', () => {
-    expect(facts()).toContain('不要用「他」「她」指代人物');
+  test('names: the prompt suggests names without banning pronouns', () => {
+    const text = renderProseFactsPrompt({
+      committed: packet(moved, povAt), policy: { ...basePolicy, pronouns: 'names', genders: {} },
+      scene: { location: '走廊' }, priorTail: null,
+    });
+    expect(text).toContain('用名字或省略主语');
+    expect(text).not.toContain('不要用「他」「她」');
   });
 
   test('model: the pronoun line is gone, everything else stays', () => {
@@ -1359,33 +1366,44 @@ describe('time beat: the duration must be named, not just implied', () => {
 });
 
 describe('pronouns come from evidence, not from the shape of a name', () => {
+  // The gender line names people who are actually in the scene, so the test
+  // supplies them; a name that is not present is not printed.
   const prompt = (policy: Record<string, unknown>) => renderProseFactsPrompt({
     committed: packet(moved, povAt), policy: { ...basePolicy, ...policy },
-    scene: { location: '走廊' }, priorTail: null,
+    scene: { location: '走廊', present: [{ name: '诺诺' }, { name: '路明非' }] }, priorTail: null,
   });
 
-  test('map mode lists only the characters whose gender is given', () => {
-    const text = prompt({ pronouns: 'map', genders: { 林川: 'male' } });
-    expect(text).toContain('已知性别：林川（男）');
-    expect(text).toContain('没有列出性别的人仍然只用名字');
-    expect(text).not.toContain('周宁（');
+  test('map mode prints the sourced gender and never bans pronouns', () => {
+    const text = prompt({ pronouns: 'map', genders: { 诺诺: 'female', 路明非: 'male' } });
+    expect(text).toContain('诺诺（女）');
+    expect(text).toContain('路明非（男）');
+    expect(text).toContain('可以用「他」「她」');
+    expect(text).not.toContain('不要用「他」「她」');
   });
 
-  test('map mode with no evidence falls back to the names-only rule', () => {
-    const text = prompt({ pronouns: 'map', genders: {} });
-    expect(text).toContain('不要用「他」「她」指代人物');
+  test('nobody with evidence means no gender line at all', () => {
+    // 诺诺 and 路明非 are present but the caller explicitly passes an empty
+    // map; the sourced table would still know them, so this test uses people
+    // the table does not list.
+    const text = renderProseFactsPrompt({
+      committed: packet(moved, povAt), policy: { ...basePolicy, pronouns: 'map', genders: {} },
+      scene: { location: '走廊', present: [{ name: '周宁' }] }, priorTail: null,
+    });
+    expect(text).not.toContain('已知性别');
+    expect(text).not.toContain('不要用「他」「她」');
   });
 });
 
-describe('cross-turn echo: the previous opening is as reusable as its ending', () => {
-  test('the prompt shows both the previous opening and ending', () => {
+describe('cross-turn echo: no previous prose reaches the prompt', () => {
+  test('the prompt carries neither the previous opening nor its ending', () => {
     const text = renderProseFactsPrompt({
       committed: packet(moved, povAt), policy: basePolicy, scene: { location: '走廊' },
       priorOpen: '走廊的灯还亮着', priorTail: '他没有再说话',
     });
-    expect(text).toContain('上一回合的开头是「走廊的灯还亮着…」');
-    expect(text).toContain('上一回合的最后一句是「…他没有再说话」');
-    expect(text).toContain('接着这个时刻往下写');
+    // 2026-11-11: no previous-turn prose in any form, not even a tail.
+    expect(text).not.toContain('上一回合');
+    expect(text).not.toContain('他没有再说话');
+    expect(text).not.toContain('走廊的灯还亮着');
   });
 
   test('a scene-mode retry keeps both lines', async () => {
@@ -1398,7 +1416,7 @@ describe('cross-turn echo: the previous opening is as reusable as its ending', (
       priorText: '走廊的灯还亮着。他站着。他没有再说话。',
       policy: { ...basePolicy, mode: 'scene', promptShape: 'prose-facts', writingContract: false },
     });
-    expect(engine.calls[1].prompt).toContain('上一回合的开头是');
+    expect(engine.calls[1].prompt).not.toContain('上一回合');
   });
 });
 

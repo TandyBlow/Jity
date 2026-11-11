@@ -514,9 +514,10 @@ describe('product regressions: one writing contract in prose-facts', () => {
     expect(prompt).toContain('细微动作、神态、对话、环境氛围都可以写');
     expect(prompt).not.toContain('【写法】');
     expect(prompt).not.toContain('不要写上面没有给出的姿势');
-    // The pronoun rule appears once, not twice.
-    const pronoun = prompt.match(/称呼人物时用名字或省略主语/gu) ?? [];
-    expect(pronoun).toHaveLength(1);
+    // No pronoun ban, and no duplicated rule text: the gender line is data.
+    expect(prompt).not.toContain('不要用「他」「她」');
+    expect(prompt.match(/称呼人物时用名字或省略主语/gu) ?? []).toHaveLength(0);
+    expect((prompt.match(/已知性别/gu) ?? []).length).toBeLessThanOrEqual(1);
   });
 
   test('the serialized shape still gets the writing contract', async () => {
