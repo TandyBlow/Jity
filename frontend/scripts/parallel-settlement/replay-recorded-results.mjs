@@ -111,6 +111,14 @@ try {
           error: outcome.error ?? null, runError: call.error ?? null, runSettled: !call.error,
           facts: Array.isArray(detail.facts) ? detail.facts.length : 0,
           dropped: Array.isArray(detail.droppedFacts) ? detail.droppedFacts.map((row) => row.reason) : [],
+          // The exact sentence and its reason, so a false drop can be argued
+          // from the model's own words instead of from a counter.
+          droppedDetail: Array.isArray(detail.droppedFacts)
+            ? detail.droppedFacts.map((row) => ({ reason: row.reason, original: row.original, memberIds: row.memberIds }))
+            : [],
+          keptTexts: Array.isArray(detail.facts) ? detail.facts.map((row) => row.text) : [],
+          subjectRestored: Array.isArray(detail.subjectRestored) ? detail.subjectRestored : [],
+          answerActions: members.map((member) => member.actionText),
           adjusted: {
             outcome: Array.isArray(detail.outcomeAdjusted) ? detail.outcomeAdjusted.length : 0,
             effects: Array.isArray(detail.effectsAdjusted) ? detail.effectsAdjusted.length : 0,
