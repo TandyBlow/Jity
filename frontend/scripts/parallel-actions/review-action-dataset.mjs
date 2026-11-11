@@ -38,6 +38,24 @@ const FORBIDDEN_ROW_KEYS = new Set([
   'passfail', 'judgement01', 'reason01', 'decision01',
 ]);
 
+const VOCAB_URL = new URL('../../../../../results/action-dataset-20261111/labels-v1.json', import.meta.url);
+
+/** The 115 fine-grained predicates and their coarse groups, from 01's frozen
+ * vocabulary file. Reading it is not reading 01's verdicts. */
+function loadVocabulary() {
+  const text = readFileSync(VOCAB_URL, 'utf8');
+  const data = JSON.parse(text);
+  const actionToGroup = new Map();
+  for (const group of data.groups ?? []) {
+    for (const predicate of group.predicates ?? []) {
+      if (actionToGroup.has(predicate)) throw new Error(`predicate ${predicate} appears in two groups`);
+      actionToGroup.set(predicate, group.group);
+    }
+  }
+  if (actionToGroup.size !== 115) throw new Error(`vocabulary has ${actionToGroup.size} predicates, expected 115`);
+  return { actionToGroup, sha256: sha256(text) };
+}
+
 const sha256 = (text) => createHash('sha256').update(text, 'utf8').digest('hex');
 const canonical = (value) => JSON.stringify(value, Object.keys(value ?? {}).sort());
 
@@ -72,8 +90,9 @@ function classOf(row) {
 }
 
 /** Blinding and provenance gates shared by every command. */
-export function checkPacket(packet) {
+export function checkPacket(packet, vocabulary = null) {
   const rows = rowsOf(packet);
+  const vocab = vocabulary ?? loadVocabulary();
   const problems = [];
   if (!rows.length) problems.push('packet has no rows');
   if (packet?.criterionSha256 && packet.criterionSha256 !== CRITERION_SHA256) {
@@ -96,10 +115,24 @@ export function checkPacket(packet) {
         problems.push(`row ${id} was generated/first-labelled by 03 (${field}=${row[field]})`);
       }
     }
+    let steps = [];
     try {
-      stepsOf(row);
+      steps = stepsOf(row);
     } catch (error) {
       problems.push(error.message);
+    }
+    for (const step of steps) {
+      const group = vocab.actionToGroup.get(step.action);
+      if (!group) problems.push(`row ${id} step.action ${step.action} is not one of the 115 predicates`);
+      else if (steps.length && row.yGroup != null) {
+        const declared = Array.isArray(row.yGroup) ? row.yGroup : [row.yGroup];
+        if (!declared.includes(group) && !declared.some((entry) => String(entry).includes(group))) {
+          problems.push(`row ${id} yGroup ${JSON.stringify(row.yGroup)} does not contain the first step's group ${group}`);
+        }
+      }
+    }
+    if (packet?.vocabularySha256 && packet.vocabularySha256 !== vocab.sha256) {
+      problems.push(`packet vocabularySha256 ${packet.vocabularySha256} is not the frozen ${vocab.sha256}`);
     }
     const ids = new Set((row.x?.candidates ?? []).map((candidate) => candidate?.id ?? candidate));
     for (const step of Array.isArray(row.y?.steps ?? row.y) ? (row.y?.steps ?? row.y) : []) {
@@ -177,7 +210,8 @@ function cmdPacketCheck(file) {
 function cmdRender(file) {
   const text = readFileSync(file, 'utf8');
   const packet = JSON.parse(text);
-  const { rows, problems } = checkPacket(packet);
+  const vocab = loadVocabulary();
+  const { rows, problems } = checkPacket(packet, vocab);
   if (problems.length) throw new Error(`packet rejected: ${problems.join('; ')}`);
   const ids = rows.map((row, index) => stableRowId(row, index));
   const { sampled } = sampleRows(sha256(text), ids);
@@ -196,7 +230,7 @@ function cmdRender(file) {
       `X.justHappened=${x.justHappened ?? x.recent ?? ''}`,
       `X.candidates=${(x.candidates ?? []).map((c) => `${c?.id}(${c?.name ?? ''})`).join('、') || '（无）'}`,
       `Y.steps=${JSON.stringify(steps)}`,
-      `Y.group=${JSON.stringify(row.yGroup ?? null)}  Y.rationale=${row.yRationale}`,
+      `Y.group=${JSON.stringify(row.yGroup ?? null)}  firstStepGroup=${steps.length ? (loadVocabulary().actionToGroup.get(steps[0].action) ?? '?') : 'skip'}  Y.rationale=${row.yRationale}`,
       row.skipReason ? `Y.skipReason=${row.skipReason}` : null,
       '',
     ].filter(Boolean).join('\n');
@@ -209,7 +243,8 @@ function cmdRender(file) {
 function cmdSeal(packetFile, verdictsFile, outFile) {
   const text = readFileSync(packetFile, 'utf8');
   const packet = JSON.parse(text);
-  const { rows, problems } = checkPacket(packet);
+  const vocab = loadVocabulary();
+  const { rows, problems } = checkPacket(packet, vocab);
   if (problems.length) throw new Error(`packet rejected: ${problems.join('; ')}`);
   const ids = rows.map((row, index) => stableRowId(row, index));
   const packetSha256 = sha256(text);
@@ -221,6 +256,7 @@ function cmdSeal(packetFile, verdictsFile, outFile) {
   const sealed = {
     lane: '03-actions', role: 'independent blind second reviewer',
     criterionSha256: CRITERION_SHA256,
+    vocabularySha256: vocab.sha256,
     packet: packetFile, packetSha256,
     sampleSeed: packetSha256, sampleRate: SAMPLE_RATE,
     sampledCount: sampled.length, rowCount: ids.length,
@@ -269,7 +305,8 @@ function cmdUnblind(packetFile, sealedFile, labelsFile, outFile) {
   const { sealSha256, ...rest } = sealed;
   const actual = sha256(canonical(rest));
   const packet = JSON.parse(text);
-  const { rows } = checkPacket(packet);
+  const vocab = loadVocabulary();
+  const { rows } = checkPacket(packet, vocab);
   const byId = new Map(rows.map((row, index) => [stableRowId(row, index), row]));
   const labels = readLabels(labelsFile);
   const compared = sealed.verdicts.filter((row) => labels.has(row.rowId));
@@ -330,15 +367,15 @@ function selfTest() {
     rowId: id, source: 'constructed', worldId: 'w1', characterId: 'c1', labelSource: 'construct',
     x: { character: '甲', goal: '到钟楼', location: '巷口', present: [], items: [],
       justHappened: '无', sanity: 50, personality: [], candidates: [{ id: 'door', name: '门' }] },
-    y: { steps }, yGroup: steps.length ? ['move'] : [], yRationale: '去钟楼要先出门', ...extra,
+    y: { steps }, yGroup: steps.length ? ['移动'] : [], yRationale: '去钟楼要先出门', ...extra,
   });
 
   // 1. Schema, classes and every rejection gate.
-  const good = { criterionSha256: CRITERION_SHA256, rows: [row('r1', []), row('r2', [{ action: 'move', object: null }])] };
+  const good = { criterionSha256: CRITERION_SHA256, rows: [row('r1', []), row('r2', [{ action: '移动', object: null }])] };
   const checked = checkPacket(good);
   if (checked.problems.length) throw new Error(`valid packet rejected: ${checked.problems.join('; ')}`);
   if (classOf({ rowId: 'x', y: { steps: [] } }) !== 'skip') throw new Error('skip class wrong');
-  if (classOf({ rowId: 'x', y: { steps: [{ action: 'move' }, { action: 'open' }] } }) !== '2step') throw new Error('2step class wrong');
+  if (classOf({ rowId: 'x', y: { steps: [{ action: '移动' }, { action: '观察' }] } }) !== '2step') throw new Error('2step class wrong');
   const expectProblem = (packet, fragment, label) => {
     if (!checkPacket(packet).problems.some((problem) => problem.includes(fragment))) {
       throw new Error(`${label} not caught`);
@@ -348,7 +385,10 @@ function selfTest() {
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { reviewNote: 'ok' })] }, 'not blind', 'review field leak');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { generatedBy: '03-actions' })] }, 'generated/first-labelled', 'own row');
   expectProblem({ criterionSha256: 'deadbeef', rows: [row('r1', [])] }, 'not the frozen', 'criterion drift');
-  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: 'open', object: 'nope' }])] }, 'not a candidate id', 'unknown object');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '观察', object: 'nope' }])] }, 'not a candidate id', 'unknown object');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '飞升', object: null }])] }, 'not one of the 115', 'predicate outside the vocabulary');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { yGroup: ['战斗'] })] }, 'does not contain the first step', 'yGroup mismatch');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }])], vocabularySha256: 'deadbeef' }, 'vocabularySha256', 'vocabulary drift');
 
   // 2. Sampling is exactly 10% and deterministic per packet.
   const ids = Array.from({ length: 30 }, (_, index) => `r${index}`);
@@ -361,7 +401,7 @@ function selfTest() {
   const dir = mkdtempSync(join(tmpdir(), 'action-review-'));
   const at = (name) => join(dir, name);
   try {
-    const rows = Array.from({ length: 40 }, (_, index) => row(`s${index}`, index % 3 === 0 ? [] : [{ action: 'move', object: null }]));
+    const rows = Array.from({ length: 40 }, (_, index) => row(`s${index}`, index % 3 === 0 ? [] : [{ action: '移动', object: null }]));
     const packet = { criterionSha256: CRITERION_SHA256, rows };
     writeFileSync(at('packet.json'), JSON.stringify(packet, null, 2));
     const packetText = readFileSync(at('packet.json'), 'utf8');
