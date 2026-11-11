@@ -6,7 +6,7 @@ import type { TimeAdvance } from '../../../types';
 
 const TIME: TimeAdvance = { boundary: 'elapsed', duration: { amount: 3, unit: 'minute' } };
 
-function point(priorText?: string): NarrationPoint {
+function point(): NarrationPoint {
   const before = tinyWorld();
   const delta = { hero: { entityId: 'hero', positionSet: { containerId: 'cellar', slotId: null, relativeTo: null } } };
   const after = applyDelta(before, delta, TIME);
