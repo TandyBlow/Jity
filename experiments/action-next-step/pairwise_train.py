@@ -353,8 +353,13 @@ def main(argv: List[str] | None = None) -> int:
             optimizer = torch.optim.AdamW(head_params, lr=training["lrHead"],
                                           weight_decay=training["weightDecay"])
         else:
-            optimizer = torch.optim.AdamW(model.parameters(), lr=training["lrEncoder"],
-                                          weight_decay=training["weightDecay"])
+            # Lane 10's HPC run measured that one lr for both groups keeps the
+            # head at 1e-5 and the loss flat; the head uses the frozen lrHead.
+            optimizer = torch.optim.AdamW([
+                {"params": [p for p in model.encoder.parameters() if p.requires_grad],
+                 "lr": training["lrEncoder"]},
+                {"params": list(model.head.parameters()), "lr": training["lrHead"]},
+            ], weight_decay=training["weightDecay"])
         best = {"loss": float("inf"), "state": None, "epoch": 0, "metrics": None}
         best_score = -1.0
         history: List[Dict[str, Any]] = []
@@ -367,7 +372,9 @@ def main(argv: List[str] | None = None) -> int:
             history.append({"epoch": epoch, "train": train_stats, "validRowHit": score})
             print(f"[{arm}] epoch {epoch} loss {train_stats['loss']:.4f} validRowHit {score:.3f}",
                   flush=True)
-            if score > best_score:
+            better = score > best_score or (
+                score == best_score and train_stats["loss"] < best["loss"])
+            if better:
                 best_score = score
                 best = {"loss": train_stats["loss"], "epoch": epoch, "metrics": valid_metrics,
                         "state": {key: value.detach().clone() for key, value in model.state_dict().items()}}
