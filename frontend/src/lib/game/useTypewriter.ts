@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { animationsSuppressed } from "@/lib/game/motion";
 import {
   DEFAULT_CHARS_PER_SECOND,
   TypewriterEngine,
@@ -25,20 +26,8 @@ export type TypewriterState = {
   done: boolean;
 };
 
-/** Automation override used by the e2e fixtures; also reachable via ?typing=off. */
-const SUPPRESS_KEY = "jity_typewriter";
-
 function shouldAnimate(enabled: boolean): boolean {
-  if (!enabled || typeof window === "undefined") return false;
-  // Accessibility: honour the OS "reduce motion" setting.
-  if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return false;
-  try {
-    if (window.localStorage.getItem(SUPPRESS_KEY) === "off") return false;
-  } catch {
-    // Storage can throw in private modes; animation is still safe there.
-  }
-  const param = new URLSearchParams(window.location.search).get("typing");
-  return param !== "off";
+  return enabled && !animationsSuppressed();
 }
 
 const EMPTY: TypewriterState = { text: "", isTyping: false, done: false };
