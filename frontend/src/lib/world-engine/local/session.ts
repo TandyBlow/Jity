@@ -328,9 +328,13 @@ export class LocalGameSession {
   async start(): Promise<DriverStatus> {
     // A failed/empty head narration is the one point a fresh drive may retry
     // explicitly (the page's existing failed-turn recovery). The queue itself
-    // never retries a failed point on its own.
+    // never retries a failed point on its own. A pending head inside a turn is
+    // resumed through that same point (a model abort left it pending); a fresh
+    // root before create_world stays on the normal bootstrap path.
     const record = this.transport.snapshot();
-    if (record.narrations[record.headPointId]?.status === 'failed') this.driver.retryNarration();
+    const head = record.narrations[record.headPointId];
+    const inTurn = record.round != null || record.advance != null;
+    if (head?.status === 'failed' || (head?.status === 'pending' && inTurn)) this.driver.retryNarration();
     return this.drive();
   }
 
