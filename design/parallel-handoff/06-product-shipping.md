@@ -330,3 +330,46 @@ chunk `page-19ac6488c8da198a.js`，PID 41180，`:3241`。页面默认 `auto`；�
 3. failed head 正文时 cancel 被拒仍会让该回合无法继续（已交 05 的具体边界，见
    `results/product/ownership-requests/06-to-05-pipeline-merged.json`）。
 4. 60 s 首段仍取决于结算耗时；重叠只能把正文藏进结算，不能加快结算。
+
+## 12. Goal-copy comparison and the 40-call turn (2026-11-11 late)
+
+The user authorized one comparison: remove the 85% common-subsequence branch of
+`action_is_task_goal` for a run and compare rejection counts. It was removed in
+`2ed75b21`, which also started saving every action attempt (`raw`,
+`calls[].raw`, final `value`, `issueDetails`, `recordKind`).
+
+Run `09-overlap-move-DO2C` (build `2ed75b21`): 11 actors, 4 model-judged, 6
+fallback, 18 action calls, 109.2 s, turn cut at 330 s with no commit. Every
+rejection detail is the goal string itself — caesar, doctor, manstein, nono, qin
+and shen answered with their task goal verbatim on both attempts. The removed
+branch was never involved. Per the rule agreed before the run, the branch was
+restored unchanged in `3585a2c3` and the evidence capture stayed. The verdict is
+`results/product/evidence/06-goal-copy-ab-verdict.{json,md}`.
+
+The real defect the run exposes is that the small model copies a standing goal
+even when the repair line forbids it. `c47a725a` retries such an attempt with a
+prompt rebuilt without the task block and without the goal text (the goal stays
+in the issue detail for evidence). Run `09-overlap-move-CTYY` (build `c47a725a`)
+shows the retry works per actor: four actors that used to fall back now act after
+one repair (caesar, chu, doctor, manstein); fingel still fails on a different
+goal. Their actions are thin: 「查看周围环境并确认撤离路线」, 「拦下广播」,
+「检查手套是否需要使用」. Quality belongs to 01; this is recorded, not judged.
+
+The same run measures the timing ceiling: 40 semantic generations, 322 s of
+model wall time, 330 s turn, first commit never reached. The calls are serial —
+their wall times add up to the turn — so no scheduling inside the point can put
+the first readable prose inside 60 s while one point holds every actor and every
+settlement group. Handed to 05 with the call timeline
+(`results/product/handoffs/06-to-05-first-commit-timing.json`), to 04 with the
+call-cost numbers (`06-to-04-action-cost.json`), and to 02 with the verbatim goal
+copies and the actual offscreen prompt (`06-to-02-action-goal-copies.json`).
+
+The user rules that still hold: no prescreen by task or location, no
+action/targets/results protocol migration pending the classifier experiment, no
+narration inspection, Python alone applies state.
+
+Builds published this segment (each frozen with identity in
+`results/product/integration.json` and `06-integration-status.json`):
+`2ed75b21` / `DO2Ci7GwohpEMPj6Vg7eo` / PID 41180, `5214e8ec` /
+`CT3YiXG-jVAYPR19kJsGE` / PID 76540, `c47a725a` /
+`CTYYWFABtS_jgyzCq6s2G` / PID 18912.
