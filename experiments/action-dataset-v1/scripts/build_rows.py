@@ -74,7 +74,12 @@ def build_row(case: dict, built: dict, row_id: str, labels: dict) -> dict:
     group = schema.SKIP_GROUP if not steps else labels["groupOf"].get(steps[0]["action"])
     return {
         "rowId": row_id,
-        "source": "constructed" if case["base"].startswith("s0") or case.get("transforms") else "evidence-snapshot",
+        # One source value per row, equal to the provenance `source`: a row built
+        # on a committed evidence snapshot stays "evidence-snapshot" even when we
+        # add visible events; the provenance `derivation` says which transforms
+        # were applied. "constructed" means the base is world s0, never fabricated
+        # evidence.
+        "source": "constructed" if case["base"].startswith("s0") else "evidence-snapshot",
         "worldId": built["state"]["worldId"],
         "characterId": case["actor"],
         "x": x,

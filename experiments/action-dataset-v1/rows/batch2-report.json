@@ -335,7 +335,6 @@
   "rowsWritten": 32,
   "skipRatio": 0.1875,
   "sources": {
-    "constructed": 25,
-    "evidence-snapshot": 7
+    "evidence-snapshot": 32
   }
 }

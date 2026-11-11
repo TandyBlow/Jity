@@ -158,10 +158,10 @@
   },
   "skipRatio": 0.2,
   "skipRatioBySource": {
-    "constructed": 0.2
+    "evidence-snapshot": 0.2
   },
   "sources": {
-    "constructed": 40
+    "evidence-snapshot": 40
   },
   "uniqueX": 40
 }

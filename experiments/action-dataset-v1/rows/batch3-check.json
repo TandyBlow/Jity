@@ -24,8 +24,7 @@
   "groups": {
     "skip": 6,
     "感知": 14,
-    "物品": 3,
-    "移动": 1,
+    "物品": 4,
     "立场": 1,
     "言语": 3,
     "请求": 2
@@ -147,8 +146,8 @@
   "predicatesUsed": 13,
   "replayedRows": 30,
   "rowClasses": {
-    "A": 18,
-    "B": 6,
+    "A": 19,
+    "B": 5,
     "skip": 6
   },
   "rows": {
@@ -159,10 +158,10 @@
   },
   "skipRatio": 0.2,
   "skipRatioBySource": {
-    "constructed": 0.2
+    "evidence-snapshot": 0.2
   },
   "sources": {
-    "constructed": 30
+    "evidence-snapshot": 30
   },
   "uniqueX": 30
 }

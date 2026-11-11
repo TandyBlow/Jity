@@ -33,7 +33,7 @@
   "loader": {
     "chars": {
       "max": 1458,
-      "min": 453,
+      "min": 477,
       "p50": 692,
       "p95": 1430
     },
@@ -161,12 +161,12 @@
   },
   "skipRatio": 0.1667,
   "skipRatioBySource": {
-    "constructed": 0.1739,
+    "constructed": 0.8,
     "evidence-snapshot": 0.0
   },
   "sources": {
-    "constructed": 23,
-    "evidence-snapshot": 1
+    "constructed": 5,
+    "evidence-snapshot": 19
   },
   "uniqueX": 24
 }

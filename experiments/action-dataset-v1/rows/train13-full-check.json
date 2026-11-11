@@ -149,12 +149,12 @@
   },
   "skipRatio": 0.0867,
   "skipRatioBySource": {
-    "constructed": 0.0783,
-    "evidence-snapshot": 0.2105
+    "constructed": 0.8,
+    "evidence-snapshot": 0.0746
   },
   "sources": {
-    "constructed": 281,
-    "evidence-snapshot": 19
+    "constructed": 5,
+    "evidence-snapshot": 295
   },
   "uniqueX": 300
 }
