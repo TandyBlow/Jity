@@ -681,6 +681,7 @@ function stripMechanicClauses(text: string): { text: string; removed: string[] }
   const removed: string[] = [];
   let out = '';
   const clauses = text.match(/[^，。；！？.,;!?]+[，。；！？.,;!?]?/gu) ?? [];
+  let tailOfRemoved = false;
   for (const clause of clauses) {
     const labels = MECHANIC_TERMS.filter(({ pattern }) => {
       pattern.lastIndex = 0;
@@ -688,8 +689,18 @@ function stripMechanicClauses(text: string): { text: string; removed: string[] }
     }).map(({ label }) => label);
     if (labels.length) {
       removed.push(...labels);
+      tailOfRemoved = true;
       continue;
     }
+    // The tail of a removed mechanics clause (“骰点未被触发，因此未被接纳”) is
+    // still the judgement's explanation, not an action result.
+    // Only a causal tail is the judgement's conclusion; an additive tail
+    // (“且未被允许反应”) carries a distinct result and stays.
+    if (tailOfRemoved && /^(?:因此|所以|因而)/u.test(clause.trim())) {
+      removed.push('判定尾句');
+      continue;
+    }
+    tailOfRemoved = false;
     out += clause;
   }
   return { text: out, removed };

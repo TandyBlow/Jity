@@ -280,6 +280,28 @@ describe('common-group results', () => {
     expect(taskOutcome.error).toContain('no action result left');
   });
 
+  it('drops the tail of a mechanics clause so a judgement explanation cannot become a fact', async () => {
+    // 3turn aa30 turn 2's second answer: 路明非的骰点未被触发，因此未被接纳。
+    // Removing only the dice clause left 因此未被接纳 as if it were a result.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没被接纳。', effects: [] }],
+      facts: [{ text: '甲的骰点未被触发，因此未被接纳。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    }), JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没翻过去。', effects: [] }],
+      facts: [{ text: '甲被拦在墙下，没有翻过去。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    // First answer is a pure mechanics tail and is rejected; the repair writes
+    // an actual visible result and is accepted.
+    expect(outcome.evidence.calls).toHaveLength(2);
+    expect(outcome.evidence.calls[0]?.error).toContain('no action result left');
+    expect(outcome.value!.a).toContain('没有翻过去');
+  });
+
   it('keeps a negative blocked result instead of stripping it as a mechanic', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [{ memberId: 'a', label: 'blocked', reason: '甲被拦住。', effects: [] }],
