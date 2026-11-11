@@ -1273,6 +1273,36 @@ describe('six-stage updates', () => {
     expect(engine.prompts.filter((prompt) => prompt.includes('新增小任务'))).toEqual([]);
   });
 
+  it('does not ask the tasks stage on a time-scan point whose goals are not about the clock', async () => {
+    // The time-scan tasks prompt printed no task id (the fact shortlist is empty
+    // without facts), so the stage could only answer "nothing changed" and still
+    // cost 11.4 s on every automatic point. This world's goals are all actions
+    // ("拿到工具"), so the point records the skip instead of paying for it.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine })
+      .updates('time_scan_1', { mode: 'time_scan', workingState: world(), results: {} } as never);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    // This fixture's clock touches no owner at all; a world that does list
+    // owners records no_time_triggered_task instead (probe 04-timescan-skip).
+    expect(['no_affected_tasks', 'no_time_triggered_task']).toContain(stages.find((row) => row.stage === 'tasks')?.skipped);
+    expect(engine.prompts.filter((prompt) => prompt.includes('任务判定器'))).toEqual([]);
+
+    // A goal that is about time passing still gets its call.
+    const clocked = world();
+    clocked.characters.a.tasks.a1 = { ...clocked.characters.a.tasks.a1, goal: '等到午夜' };
+    const clockEngine = new ScriptedEngine([
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    const clockOutcome = await createSettlementHandlers({ engine: clockEngine })
+      .updates('time_scan_2', { mode: 'time_scan', workingState: clocked, results: {} } as never);
+    const clockStages = (clockOutcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    expect(clockStages.find((row) => row.stage === 'tasks')?.skipped).toBeUndefined();
+  });
+
   it('drops the redundant text on a keep/remove row instead of failing the point', async () => {
     // 09's open request: "keep cannot add text for spare_mag1" refused a turn
     // 88.5 s in. The op is unambiguous; the text is redundant and never applied.

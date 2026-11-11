@@ -769,6 +769,10 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
   }
 }
 
+/** A goal whose completion is the clock itself, not an action. Kept lexical on
+ * purpose: it only decides whether the time-scan tasks stage is worth a call. */
+const TIME_GOAL_WORDS = ['等到', '午夜', '天亮', '天黑', '明天', '次日', '黄昏', '清晨', '小时后', '分钟后', '入夜'] as const;
+
 async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
   const rows = allTasks(ctx.state);
   const characters = roster(ctx.state);
@@ -799,6 +803,26 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
         taskScope: { ...taskScope, assertedUnchanged: 0, achievedByCharacter: [], emptyCharacters: taskScope.affectedCharacters, rejectedTaskIds: [], supports: [] },
         decidedTaskIds: [],
         skipped: 'no_affected_tasks',
+      },
+      fallback: false,
+      calls: [],
+    };
+  }
+  // A time-scan point has no settled facts, so the fact shortlist is empty and
+  // the prompt printed no task ids at all: the stage could only answer "nothing
+  // changed" and still cost 11.4 s on every automatic point (probe
+  // 04-six-stage-timescan-3: 1862-char prompt, 1177 tokens, 17 completion
+  // tokens). It now runs only when a pending goal is itself about time passing
+  // ("等到午夜"), which is the sole case a clock can achieve a task without a
+  // fact; otherwise the point records why the stage was skipped.
+  if (ctx.mode === 'time_scan' && !affectedRows.some(({ task }) => task.status !== 'achieved' && TIME_GOAL_WORDS.some((word) => task.goal.includes(word)))) {
+    return {
+      changes: {},
+      detail: {
+        taskCoverageIds: characters,
+        taskScope: { ...taskScope, assertedUnchanged: 0, achievedByCharacter: [], emptyCharacters: taskScope.affectedCharacters, rejectedTaskIds: [], supports: [] },
+        decidedTaskIds: [],
+        skipped: 'no_time_triggered_task',
       },
       fallback: false,
       calls: [],
