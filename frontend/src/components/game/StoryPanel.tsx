@@ -5,10 +5,13 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
+import { ActionGateTrack } from "@/components/game/ActionGateTrack";
+import { useActionGate } from "@/components/game/useActionGate";
 import type { GameSession } from "@/components/game/useGameSession";
 import { fetchCampaignProgress, hasCampaignTurnBudget } from "@/lib/api";
 import type { CampaignProgressSummary } from "@/types";
 import type { CheckSpec, Outcome } from "@/lib/dice/rules";
+import { selectGateCast } from "@/lib/game/actionGate";
 import { outcomeTone, toActionCheckSubmission, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, formatEndingTitle, quoteDialogue } from "@/lib/game/format";
 import { useTypewriter } from "@/lib/game/useTypewriter";
@@ -86,12 +89,81 @@ export function StoryPanel({
   const hasAction = action.trim().length > 0;
   const busy = isLoading || isPreparingCheck || !!session.pendingGenerate;
 
-  // Narration is revealed one character at a time. `narrationReady` gates the
-  // option list and dialogue so they land only after the text has finished.
-  const typewriter = useTypewriter(output.narration);
+  // Turn order: the previous scene stays on screen while the request is in
+  // flight, the freshly generated text is held back, the gate walks the cast,
+  // and only then does the typewriter reveal the new narration.
+  const gate = useActionGate();
+  const gateBlocking = gate.blocking;
+
+  const [committedNarration, setCommittedNarration] = useState(output.narration);
+  const commitNarration = useCallback((next: string) => {
+    setCommittedNarration((previous) => (previous === next ? previous : next));
+  }, []);
+
+  const typewriter = useTypewriter(committedNarration);
   const narrationText = typewriter.text;
-  const narrationReady = typewriter.done;
-  const isTyping = typewriter.isTyping;
+  const narrationReady = !gateBlocking && typewriter.done;
+  const isTyping = !gateBlocking && typewriter.isTyping;
+
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const gateCastRef = useRef<string[]>([]);
+  const gatePendingRef = useRef(false);
+  const lastOutputRef = useRef(output);
+  // The text the gate is holding back. Kept in a ref so a "done" phase left
+  // over from a previous turn can never commit the turn that is still running.
+  const heldNarrationRef = useRef<string | null>(null);
+
+  // A new output is either a finished user turn (hold it, run the track) or a
+  // restore/initial load (commit straight away, no track).
+  useEffect(() => {
+    if (lastOutputRef.current === output) return;
+    lastOutputRef.current = output;
+
+    if (!gatePendingRef.current) {
+      commitNarration(output.narration);
+      return;
+    }
+    gatePendingRef.current = false;
+
+    const animated = gate.begin(gateCastRef.current);
+    if (animated) {
+      // The check runs on a cleared stage: no story text while the chips walk.
+      heldNarrationRef.current = output.narration;
+      commitNarration("");
+      // Silent correction only: trim bodies the new turn no longer has. Chips
+      // that already walked stay, and nothing is inserted mid-animation.
+      gate.noteOutput(selectGateCast(stateRef.current?.npcs, output));
+    } else {
+      heldNarrationRef.current = null;
+      commitNarration(output.narration);
+    }
+  }, [output, gate.begin, gate.noteOutput, commitNarration]);
+
+  // The track finished → release the held text and retire the track at once,
+  // so the chips are never parked on the left while the scene types.
+  useEffect(() => {
+    if (gate.phase !== "done") return;
+    const held = heldNarrationRef.current;
+    heldNarrationRef.current = null;
+    if (held !== null) commitNarration(held);
+    gate.finishNarration();
+  }, [gate.phase, gate.finishNarration, commitNarration]);
+
+  // A failed request must never leave the hold active.
+  useEffect(() => {
+    if (!error) return;
+    gatePendingRef.current = false;
+    heldNarrationRef.current = null;
+    gate.reset();
+  }, [error, gate.reset]);
+
+  // Loading another save/turn is not a new check: end the track immediately
+  // instead of making the restored scene wait for a stale animation.
+  useEffect(() => {
+    gatePendingRef.current = false;
+    gate.reset();
+  }, [selectedSlot, gate.reset]);
 
   // The scene clips silently: scrollbars are hidden app-wide and a single turn
   // can run past the viewport, so the options at the end are off-screen with
@@ -155,7 +227,7 @@ export function StoryPanel({
   }, [output.narration]);
 
   async function prepareAction(nextAction: string, optionIndex?: number) {
-    if (!sessionId || busy || isTyping || checkingAction || preparingAction.current || !nextAction.trim() || output.game_over) return;
+    if (!sessionId || busy || gateBlocking || isTyping || checkingAction || preparingAction.current || !nextAction.trim() || output.game_over) return;
     checkTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     preparingAction.current = true;
     setIsPreparingCheck(true);
@@ -166,6 +238,8 @@ export function StoryPanel({
       if (check) {
         setCheckingAction({ action: nextAction, index: preview.option_index, check });
       } else {
+        gateCastRef.current = selectGateCast(stateRef.current?.npcs, output);
+        gatePendingRef.current = true;
         await handleGenerate(nextAction, undefined, undefined, preview.option_index ?? undefined);
       }
     } finally {
@@ -185,6 +259,8 @@ export function StoryPanel({
     if (!checkingAction) return;
     const { action, index } = checkingAction;
     if (index !== null) setSweep({ index, outcome: result.outcome });
+    gateCastRef.current = selectGateCast(stateRef.current?.npcs, output);
+    gatePendingRef.current = true;
     await handleGenerate(action, undefined, toActionCheckSubmission(result.roll, index), index ?? undefined);
   }
 
@@ -291,6 +367,13 @@ export function StoryPanel({
         <div className={`source-pill ${outputSource}`}>{outputSource === "scripted" ? "Scripted opening" : "LLM generated"}</div>
       </div>
 
+      <ActionGateTrack
+        activeIndex={gate.activeIndex}
+        chips={gate.chips}
+        phase={gate.phase}
+        revealedCount={gate.revealedCount}
+      />
+
       <article
         className="scene-output"
         data-more={hasMoreBelow ? "true" : "false"}
@@ -394,7 +477,7 @@ export function StoryPanel({
         <div className="player-controls-row">
           <textarea
             id="action"
-            disabled={output.game_over || busy || isTyping || !!checkingAction}
+            disabled={output.game_over || busy || isTyping || gateBlocking || !!checkingAction}
             value={action}
             onChange={(event) => setAction(event.target.value)}
             onKeyDown={(event) => {
@@ -405,14 +488,14 @@ export function StoryPanel({
             }}
             placeholder={output.game_over ? "该战役已经结束" : "输入玩家行动、当前场景或 GM 限制"}
           />
-          <button disabled={output.game_over || busy || isTyping || !!checkingAction || !sessionId || !hasAction} onClick={() => void prepareAction(action)} type="button">
+          <button disabled={output.game_over || busy || isTyping || gateBlocking || !!checkingAction || !sessionId || !hasAction} onClick={() => void prepareAction(action)} type="button">
             {busy ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
             <span>{output.game_over ? "战役已结束" : isTyping ? "叙述中" : isPreparingCheck ? "检查行动中" : isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
         </div>
         {error ? <div className="error">{error}</div> : null}
         <div className="player-controls-hint">
-          {isTyping ? "叙述中，完成后可继续行动" : hasAction ? "Ctrl / ⌘ + Enter 快速生成" : "先输入行动，或直接点上方选项"}
+          {gateBlocking ? "行动检查中，请稍候" : isTyping ? "叙述中，完成后可继续行动" : hasAction ? "Ctrl / ⌘ + Enter 快速生成" : "先输入行动，或直接点上方选项"}
         </div>
       </div>
       {checkingAction ? (

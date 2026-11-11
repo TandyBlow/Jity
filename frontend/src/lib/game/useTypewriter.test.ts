@@ -41,12 +41,12 @@ function installMatchMedia(matches: boolean): void {
 }
 
 function installFrames(): void {
-  let handle = 0;
-  vi.stubGlobal("requestAnimationFrame", (callback: (time: number) => void) => {
-    handle += 1;
-    setTimeout(() => callback(Date.now()), 16);
-    return handle;
-  });
+  // Return the real timeout id: cancelAnimationFrame must be able to stop the
+  // pending frame, otherwise a reset() would still be overwritten by a stale
+  // tick and the cancellation test would silently pass.
+  vi.stubGlobal("requestAnimationFrame", (callback: (time: number) => void) =>
+    setTimeout(() => callback(Date.now()), 16) as unknown as number,
+  );
   vi.stubGlobal("cancelAnimationFrame", (id: number) => clearTimeout(id));
 }
 

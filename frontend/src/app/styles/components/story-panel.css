@@ -327,3 +327,180 @@
 .player-controls.is-ended {
   opacity: 0.72;
 }
+
+/* ── Action gate track ─────────────────────────────────────────────
+   A fixed 64px rail between the toolbar and the scene: the cast walks
+   through the door one body per second, then the narration starts.
+   Chips are positioned from --gate-i / --gate-n, so the hook only
+   advances state and never computes layout. */
+.action-gate {
+  --gate-slot: 78px;
+  --gate-gap: 34px;
+  /* Defaults for the per-chip inline values, so the stylesheet is valid on
+     its own and the custom-property invariant test can resolve every var(). */
+  --gate-i: 0;
+  --gate-n: 0;
+  position: relative;
+  flex: 0 0 auto;
+  height: 64px;
+  width: min(960px, 100%);
+  margin: 0 auto var(--space-2);
+  overflow: hidden;
+  pointer-events: none;
+  text-shadow: none;
+}
+
+.gate-baseline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-border) 80%, transparent) 18%,
+    color-mix(in srgb, var(--color-accent) 42%, transparent) 50%,
+    color-mix(in srgb, var(--color-border) 80%, transparent) 82%,
+    transparent
+  );
+}
+
+.gate-door {
+  position: absolute;
+  left: 50%;
+  top: 15px;
+  bottom: 5px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, transparent, var(--color-accent), transparent);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--color-accent) 45%, transparent),
+    0 0 32px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  opacity: .7;
+}
+
+.action-gate.is-idle .gate-door { opacity: .16; }
+.action-gate.is-idle .gate-label { opacity: 0; }
+.action-gate.is-running .gate-door { opacity: 1; }
+.action-gate.is-waiting .gate-door {
+  opacity: 1;
+  animation: gate-breathe 1400ms ease-in-out infinite;
+}
+.action-gate.is-closing .gate-door { animation: gate-settle 200ms ease-out forwards; }
+
+.gate-label {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-accent);
+  font-size: var(--fs-xs);
+  letter-spacing: .08em;
+  white-space: nowrap;
+  opacity: .9;
+}
+
+.gate-chips {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gate-chip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--color-fg);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  opacity: 0;
+  /* Parked just outside the right edge until revealed. */
+  transform: translate(
+    calc(-50% + var(--gate-gap) + var(--gate-i) * var(--gate-slot) + 26px),
+    -50%
+  ) scale(.92);
+  transition: transform 240ms ease-out, opacity 240ms ease,
+    border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.gate-chip.is-revealed {
+  opacity: .92;
+  transform: translate(
+    calc(-50% + var(--gate-gap) + var(--gate-i) * var(--gate-slot)),
+    -50%
+  ) scale(1);
+}
+
+/* A passing chip and a passed chip share the same resting place on the left,
+   so the one-second walk is a plain transform transition and the change from
+   passing to passed only dims the chip. */
+.gate-chip.is-passing,
+.gate-chip.is-passed {
+  transform: translate(
+    calc(-50% - var(--gate-gap) - (var(--gate-n) - 1 - var(--gate-i)) * var(--gate-slot)),
+    -50%
+  ) scale(1);
+  transition: transform 1000ms ease-in-out, opacity 300ms ease,
+    border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.gate-chip.is-passing {
+  opacity: 1;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.gate-chip.is-passed { opacity: .38; }
+
+.action-gate.is-leaving .gate-chip {
+  opacity: 0;
+  transition: opacity 260ms ease;
+  transition-delay: calc(var(--gate-i) * 55ms);
+}
+
+.gate-chip-initial {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  color: var(--color-accent);
+  font-size: 10px;
+  line-height: 1;
+}
+
+@keyframes gate-breathe {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+
+@keyframes gate-settle {
+  from { opacity: 1; }
+  to { opacity: .3; }
+}
+
+@media (max-width: 760px) {
+  .action-gate { --gate-slot: 46px; --gate-gap: 18px; }
+  .gate-chip { padding: 0 8px; }
+  .gate-chip-initial { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gate-chip { transition: none; }
+  .action-gate.is-waiting .gate-door,
+  .action-gate.is-closing .gate-door { animation: none; }
+  .action-gate.is-leaving .gate-chip { transition: none; transition-delay: 0s; }
+}
