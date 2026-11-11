@@ -40,7 +40,16 @@ const NL = String.fromCharCode(10);
 const NL_RE = new RegExp(String.fromCharCode(13) + '?' + NL);
 
 const sha256 = (text) => createHash('sha256').update(text, 'utf8').digest('hex');
-const canonical = (value) => JSON.stringify(value, Object.keys(value ?? {}).sort());
+/** Deep, key-sorted serialization. A top-level key list would silently drop
+ * nested keys (seal verdicts, justNow events), weakening the seal and the
+ * duplicate-X check. */
+function canonical(value) {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  if (value && typeof value === 'object') {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;
+  }
+  return JSON.stringify(value);
+}
 
 /** Keys that would break the blind: 01's verdicts, reasons or review notes. */
 const FORBIDDEN_ROW_KEYS = new Set([
@@ -173,7 +182,9 @@ export function checkPacket(packet, vocabulary = null, trainGoals = null) {
       for (const field of ['goals', 'present', 'objects', 'candidates']) {
         if (!Array.isArray(row.x[field])) problems.push(`row ${id} x.${field} is not an array`);
       }
-      if (typeof row.x.justNow !== 'string' && row.x.justNow != null) problems.push(`row ${id} x.justNow is not a string`);
+      if (row.x.justNow != null && !Array.isArray(row.x.justNow) && typeof row.x.justNow !== 'string') {
+        problems.push(`row ${id} x.justNow is neither an event list nor a string`);
+      }
       for (const goal of Array.isArray(row.x.goals) ? row.x.goals : []) {
         const goalId = goal?.id;
         if (goalId && !train.has(goalId)) {
@@ -305,7 +316,17 @@ function readLabels(file) {
   } catch {
     data = text.split(NL_RE).filter((line) => line.trim()).map((line) => JSON.parse(line));
   }
-  const rows = Array.isArray(data) ? data : data.rows ?? data.verdicts ?? data.labels ?? [];
+  let rows = Array.isArray(data) ? data
+    : Array.isArray(data?.rows) ? data.rows
+      : Array.isArray(data?.verdicts) ? data.verdicts
+        : Array.isArray(data?.labels) ? data.labels : null;
+  // 01 may write a map keyed by rowId: { "row-1": {"verdict":"pass",...} }.
+  if (!rows && data && typeof data === 'object') {
+    const meta = new Set(['version', 'packet', 'packetSha256', 'criterionSha256', 'reviewedAt', 'note', 'labels', 'verdicts', 'rows']);
+    rows = Object.entries(data)
+      .filter(([key, value]) => !meta.has(key) && (typeof value === 'string' || (value && typeof value === 'object')))
+      .map(([key, value]) => (typeof value === 'string' ? { rowId: key, verdict: value } : { rowId: key, ...value }));
+  }
   const map = new Map();
   for (const row of rows) {
     const id = row.rowId ?? row.id;
@@ -367,7 +388,9 @@ function cmdRender(file, mode = 'packet') {
       !xText && !x.actor ? `X.goal=${x.goal ?? ''}` : '',
       !xText ? `X.location=${x.location ?? x.actor?.location ?? x.actor?.position ?? ''}  present=${(x.present ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
       !xText ? `X.objects=${(x.objects ?? x.items ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
-      !xText ? `X.justNow=${x.justNow ?? x.justHappened ?? x.recent ?? ''}` : '',
+      !xText ? `X.justNow=${Array.isArray(x.justNow)
+        ? x.justNow.map((ev) => (typeof ev === 'string' ? ev : ev?.text ?? JSON.stringify(ev))).join(' / ')
+        : x.justNow ?? x.justHappened ?? x.recent ?? ''}` : '',
       !xText ? `X.candidates=${(x.candidates ?? []).map((c) => `${c?.id}(${c?.name ?? ''})`).join('、') || '（无）'}` : '',
       !xText && x && typeof x === 'object' ? `X.json=${JSON.stringify(x)}` : '',
       `Y.steps=${JSON.stringify(steps)}`,
@@ -426,6 +449,7 @@ function cmdUnblind(packetFile, sealedFile, labelsFile, outFile) {
   if (sealed.criterionSha256 !== CRITERION_SHA256) throw new Error('sealed file used a different criterion');
   const { sealSha256, ...rest } = sealed;
   const actual = sha256(canonical(rest));
+  if (actual !== sealSha256) throw new Error('seal hash mismatch: the sealed file changed after sealing');
   const packet = parsePacket(text, packetFile);
   const vocabulary = loadVocabulary();
   const { rows } = checkPacket(packet, vocabulary);
@@ -490,7 +514,7 @@ function selfTest() {
     x: {
       actor: { id: 'c1', name: '甲', sanity: 50, personality: [], location: '巷口' },
       goals: [{ id: 'task_caesar_bridge', text: '到钟楼' }],
-      present: [], objects: [{ id: 'door', name: '门' }], justNow: `无（${id}）`,
+      present: [], objects: [{ id: 'door', name: '门' }], justNow: [{ text: `无（${id}）` }],
       candidates: [{ id: 'door', name: '门' }],
     },
     y: { steps },
@@ -521,6 +545,7 @@ function selfTest() {
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [{ ...row('r1', []), characterId: 'other' }] }, 'characterId != x.actor.id', 'actor mismatch');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { x: { ...row('r1', []).x, goals: [{ id: 'task_heldout_test' }] } })] }, 'not a TRAIN goal', 'held-out goal leak');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { skipReason: null })] }, 'skip row has no written skipReason', 'skip without reason');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { x: { ...row('r1', []).x, justNow: 42 } })] }, 'justNow is neither', 'bad justNow type');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { skipReason: '有理由' })] }, 'non-skip row has a skipReason', 'non-skip with skipReason');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', []), row('r2', [], { yRationale: '去钟楼要先出门（r1）' })] }, 'yRationale copied', 'copied rationale');
 
@@ -588,6 +613,19 @@ function selfTest() {
       noSeal = true;
     }
     if (!noSeal) throw new Error('unblind ran without a seal');
+    const tampered = JSON.parse(readFileSync(at('sealed.json'), 'utf8'));
+    tampered.verdicts[0].verdict = 'fail';
+    writeFileSync(at('sealed-tampered.json'), JSON.stringify(tampered));
+    let tamperRefused = false;
+    try {
+      cmdUnblind(at('packet.json'), at('sealed-tampered.json'), at('labels.json'), null);
+    } catch {
+      tamperRefused = true;
+    }
+    if (!tamperRefused) throw new Error('tampered seal was accepted');
+    writeFileSync(at('labels-map.json'), JSON.stringify({ [sampled[0]]: { verdict: 'pass', reason: 'map form' } }));
+    const mapped = readLabels(at('labels-map.json'));
+    if (mapped.get(sampled[0])?.verdict !== 'pass') throw new Error('rowId-keyed labels map not parsed');
     writeFileSync(at('packet2.json'), JSON.stringify({ ...packet, note: 'v2' }));
     let wrongPacket = false;
     try {
