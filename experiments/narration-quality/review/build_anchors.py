@@ -1656,6 +1656,27 @@ anchors.append({
                "notes": "诺诺红发垂落 vs settled 束在脑后; panel; walk/see missing."},
 })
 
+
+# 4794 positive case: the walk and the look ARE narrated («路明非向前走»,
+# «他低头看着演习规则牌»), so action_omitted must not fire; the rope and the
+# held board remain.
+t_4794 = t_11a7  # placeholder replaced below
+run_4794 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-4794.json", encoding="utf-8"))
+t_4794 = run_4794["turns"][0]
+anchors.append({
+    "id": "pos/route/4794-action-narrated",
+    "source": "09 constrained-beats 2026-11-11T0105-6174 (head 479421a5): mixed 256 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_4794["text"],
+    "options": {"minChars": 1, "action": t_4794["input"]},
+    "expect": {"fact": ["fact.state_contradiction"], "style": ["style.status_panel"], "forbid": ["fact.action_omitted"],
+               "notes": "walk + look are present, so no action_omitted; the rope is lowered again (settled down)."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

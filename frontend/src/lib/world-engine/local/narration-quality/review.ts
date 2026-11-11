@@ -1556,11 +1556,26 @@ export function reviewNarration(args: {
     if (options.action) {
       const ACTION_VERBS = ['走', '跑', '看', '读', '找', '问', '说', '听', '拿', '放', '推', '拉', '扶', '翻', '摸', '闻', '蹲', '坐', '躺', '爬', '跳', '转身', '伸手', '点头', '摇头', '开口', '叫', '喊'];
       const verbs = ACTION_VERBS.filter((verb) => options.action!.includes(verb));
-      const actionObject = /[一-龥]{1,2}(?:规则牌|登记簿|牌|簿|册|图|枪|绳|带|镜|门|墙|桌|台|架|箱|包|杯|书|纸|信|灯|钟|窗|柜)/u.exec(options.action)?.[0];
+      // The object noun alone, never the leading particle: «墙上的…» used to
+      // yield «的墙», which no prose contains, so 4794 was wrongly reported as
+      // omitting an action it did narrate.
+      const actionObject = /(规则牌|登记簿|牌|簿|册|图|枪|绳|带|镜|门|墙|桌|台|架|箱|包|杯|书|纸|信|灯|钟|窗|柜)/u.exec(options.action)?.[1];
       const objectSeen = !actionObject || text.includes(actionObject);
-      if (verbs.length && (!verbs.some((verb) => text.includes(verb)) || !objectSeen) && !findings.some((f) => f.kind === 'fact.action_omitted')) {
+      // A denied verb is not the action: «未看到规则牌» says the look failed.
+      const positive = (verb: string) => {
+        let at = text.indexOf(verb);
+        while (at >= 0) {
+          const before = text.slice(Math.max(0, at - 3), at);
+          if (!/(未|没|没有|不|无法|未能)$/u.test(before)) return true;
+          at = text.indexOf(verb, at + 1);
+        }
+        return false;
+      };
+      const verbSeen = !verbs.length || verbs.some(positive);
+      if (verbs.length && (!verbSeen || !objectSeen) && !findings.some((f) => f.kind === 'fact.action_omitted')) {
+        const missing = !verbSeen ? `none of its verbs (${verbs.join('/')}) is narrated` : `its object «${actionObject}» is not in the text`;
         findings.push(finding(ctx, 'fact.action_omitted', sentences[0]?.text ?? text,
-          `the input action «${options.action.slice(0, 40)}» is not narrated; none of its verbs (${verbs.join('/')}) appears`, [options.action.slice(0, 60)], []));
+          `the input action «${options.action.slice(0, 40)}» is not narrated; ${missing}`, [options.action.slice(0, 60)], []));
       }
     }
     // Hair settled tied up (束在脑后) cannot hang loose (垂落/披散) in the

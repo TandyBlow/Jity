@@ -254,3 +254,4 @@
 - 02 `7922d197`/06 `181c527a` 的 `settledViolationsFromScene` 只有测试调用，beat 路径（`narration-candidates/constrained/verify.ts`）没有接；11a7 `诺诺红发垂落`、4794 `黄黑绳在巷口放下` 都是在 beat 层通过的。已提 `results/quality/requests-01-to-02-06-settled-scene-wiring.md`。
 - 代码确认：`constrained/verify.ts` 对 `result` 事实用 `text.includes(fact.text)`（4794 为 130 字），模型句必须逐字含整段结算结果，否则 `fact_missing` → 程序面板；已在 `requests-01-to-04-02-result-beat.md` 附代码与三个选项。
 - registry 现索引本线复核过的全部真实页面回合（20 条 page runs + 24 条逐回合 reviewedOutputs + 1 条 12 b01 外部样本集）；基础设施无效/中止（lease、错误服务器、runtime-08、10turn 旧记录）不计产品证据，仍在原文件保留。门仍 `not_ready`/`blocked`。
+- 更正：4794 的 `action_omitted` 是本线 checker 误报（对象取成「的墙」），已修并加 `pos/route/4794-action-narrated` 负向锚点（98）；4794 只剩绳子重复放下的两处矛盾。
