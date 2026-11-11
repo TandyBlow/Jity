@@ -668,3 +668,17 @@ QUALITY-PRIORITY 之后，主线从「加检查」改为「产出可读正文」
   **Correction (01's records request, 2026-11-11):** the earlier «86 chars accepted, no violations, 9.5 s» line came from the **constrained beats** harness/runner record (`results/product/evidence/09-constrained-beats-a178-2.json`, turn 1, `narrationDebug.attempts=[86]`), not from the prose-facts page turn and not from independent review. It is a *verifier-accepted beat*, not a quality pass. The only prose-facts page turn at a178ef78 is `09-one-legal-turn-a178.json` (95 chars, `textSource: model`), and 01's per-sentence review (`results/quality/findings-09-a178.md`) records time_missing, an unsupported 阳光 detail, an invented 袖口 detail and a 墙面/弹痕 slip in it. Arm names matter: `candidate=prose-facts` is the arm the route screen retired; `candidate=constrained&mode=beats` appears from 448e1dd0 onward.
 - **Patches handed to 06**: vendor head `205fd1f0` (applies), `02-narration-judgment-filter-all-entries.patch` (game-model, prompt, constrained projection; 60 lines, applies at a178ef78), no-checklist note, page-fallback and constrained-diagnosis notes.
 - **02 next**: only support the integrated candidate — review the model beat text when 06/09 export it, keep the verifier honest, no new prompt arms.
+
+### 3.20 Beat path: what 02 handed over (2026-11-11)
+
+The page now runs 06's constrained beats. 02's module is merged (05e7f4ce, 181c527a) but the beat verifier is not wired to it yet. Four patches, each applying at `11a78afb`/`181c527a`, none changing an acceptance threshold:
+
+| patch | effect | why |
+| --- | --- | --- |
+| `02-narration-beat-gate-settled-check.patch` | beat verify calls `settledViolationsFromScene` + a retry hint | 11a7 accepted «诺诺红发垂落» (settled 束在脑后), «护目镜泛着雾气» (settled 挂在胸前) |
+| `02-narration-judgment-filter-all-entries.patch` | drops judgment clauses in game-model, prompt, constrained projection | the result fact is `诺诺：因此未被阻止或达成目标。`; 01/09: the beat verifier wants it verbatim (130 chars), the model cannot write it, the program prints the panel every run |
+| `02-narration-beat-declared-action.patch` | skeleton keeps `previousAction`; the first beat renders 【玩家这一回合的指令】 with "attempt, not result" | 01: `fact.action_omitted` on every page turn; 4794 wrote «路明非向前走» with no settled move, and the walk/read is never narrated |
+| `02-narration-beat-budget-follows-material.patch` | 0-fact beat ≤32 chars, 1-fact ≈82, 3+ unchanged | page model beats: 214 chars / 8 sentences median vs the reference 97 / 3; the quiet turn's four beats share one time fact |
+| `02-narration-beat-prompt-scene-not-list.patch` | one anti-list line + "one action or one attention" for fact-less beats | 4794 recites place note + present notes + objects even with maxDetails 2 |
+
+Measurements behind the budget line: `results/02-narration/beat-style-samples.json` through `style-compare.mjs` against the 71-row reference (dialogue 0% vs 42%, simile 0% vs 1%, perception 14% vs 14%). Dialogue is not bundled: a required-dialogue push on the scene prompt produced 0/3 and new errors (batch-5), and a quiet minute may legitimately have no speech.
