@@ -593,6 +593,30 @@ describe('common-group results', () => {
     expect(settled.evidence.calls[0]?.error).toContain('甲把工具推向乙');
   });
 
+  it('keeps every entity id and every slot id in the compact container catalog', async () => {
+    // The catalog is the largest block in the position prompt (3.4k chars). The
+    // compaction drops empty brackets and prints the 14 identical character slot
+    // sets once; it must not drop an id or a slot.
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const state = world();
+    await createSettlementHandlers({ engine }).updates('g1', {
+      groupId: 'g1',
+      mode: 'group',
+      results: { a: '甲把盒子推到桌边。' },
+      workingState: state,
+    } as unknown as Json);
+    const prompt = engine.prompts.find((row) => row.includes('位置结算器')) ?? '';
+    const from = prompt.indexOf('地点和容器');
+    const to = prompt.indexOf('输出 {', from);
+    const catalog = prompt.slice(from, to > from ? to : undefined);
+    const ids = [...Object.keys(state.initial.locations), ...Object.keys(state.initial.items), ...Object.keys(state.initial.characters)];
+    for (const id of ids) expect(catalog).toContain(`${id}=`);
+    for (const entity of [...Object.values(state.initial.locations), ...Object.values(state.initial.items), ...Object.values(state.initial.characters)]) {
+      for (const slot of entity.slots ?? []) expect(catalog).toContain(slot.id);
+    }
+    expect(catalog).not.toContain('[]');
+  });
+
   it('keeps the first judgement when a member is repeated instead of failing the turn', async () => {
     // 10turn turn 5: a single-member group answered with three rows for lu
     // (no_change / partial / not_achieved) on every attempt, and
