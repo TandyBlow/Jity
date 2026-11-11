@@ -271,6 +271,10 @@ export interface RoundProgressEvidence {
   /** Automatic rounds only: did the settled facts cover the proposed action? A
    * proposal that settled something else made no progress toward itself. */
   actionSettled?: boolean;
+  /** The after state with the clock pinned. A candidate accepted at this world
+   * digest that is proposed again while the digest is unchanged is a repeat,
+   * not a new event (the clock alone advancing is not a change). */
+  worldDigest?: string;
 }
 
 export interface RoundProgressComputation {
@@ -289,6 +293,15 @@ export interface RoundProgressComputation {
    * action it proposed. Time passing is not progress toward that action, and
    * counting it made a chain repeat the same beat for five points. */
   actionSettled?: boolean;
+}
+
+/** Digest of everything except the clock, so "the world moved" and "a minute
+ * passed" are different questions. */
+export async function worldDigestOf(state: WorldState | null): Promise<string | undefined> {
+  if (!state) return undefined;
+  const pinned = JSON.parse(JSON.stringify(state)) as WorldState;
+  pinned.time = { ...pinned.time, dateTime: '1970-01-01T00:00:00' };
+  return stateDigest(pinned);
 }
 
 export async function roundProgressFromState(input: RoundProgressComputation): Promise<{
@@ -320,10 +333,12 @@ export async function roundProgressFromState(input: RoundProgressComputation): P
           : newFacts.length
             ? 'new_settled_fact'
             : 'no_change';
+  const worldDigest = await worldDigestOf(after);
   return {
     evidence: {
       progress,
       reason,
+      ...(worldDigest ? { worldDigest } : {}),
       stateChanged,
       timeAdvanced,
       newActionCount: newActions.length,

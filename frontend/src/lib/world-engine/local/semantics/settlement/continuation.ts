@@ -44,6 +44,10 @@ interface ContinuationPolicyState {
    * round cannot replay it even if a different candidate was accepted in
    * between; this is the consumed-action identity, not a call cap. */
   consumed: Set<string>;
+  /** Signatures accepted in this session with the world digest they left
+   * behind. Survives `reset()`: a new player turn does not make the same
+   * automatic action new again. */
+  remembered: Map<string, string>;
 }
 
 export interface ContinuationPolicyDecision {
@@ -69,7 +73,7 @@ export const continuationPolicy: Required<ContinuationPolicyOptions> = {
 export class ContinuationPolicy {
   private readonly options: Required<ContinuationPolicyOptions>;
   private state: ContinuationPolicyState = {
-    noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(),
+    noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(), remembered: new Map(),
   };
 
   constructor(options: ContinuationPolicyOptions = {}) {
@@ -84,8 +88,12 @@ export class ContinuationPolicy {
   get maxCandidates(): number { return this.options.maxCandidates; }
 
   reset(): void {
+    // `remembered` deliberately survives: the 10turn run proposed the same
+    // automatic beat in three consecutive turns because a new submission
+    // cleared every identity the previous one had consumed.
     this.state = {
       noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(),
+      remembered: this.state.remembered,
     };
   }
 
@@ -124,6 +132,9 @@ export class ContinuationPolicy {
       .sort();
     const signature = signatures.join('|');
     const consumedRepeat = signatures.some((row) => this.state.consumed.has(row));
+    const worldDigest = progressEvidence?.worldDigest ?? '';
+    const repeatedEarlierTurn = Boolean(worldDigest)
+      && signatures.some((row) => this.state.remembered.get(row) === worldDigest);
     this.state.repeatStreak = consumedRepeat
       ? this.state.repeatStreak + 1
       : signature && signature === this.state.lastAccepted
@@ -145,6 +156,13 @@ export class ContinuationPolicy {
     if (consumedRepeat) {
       return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
     }
+    // The same automatic action, proposed in an earlier turn, with the world
+    // byte-identical apart from the clock: nothing happened since it ran, so
+    // running it again would settle the same thing. A real world change
+    // releases the signature.
+    if (repeatedEarlierTurn) {
+      return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
+    }
     if (this.state.noProgressStreak >= this.options.noProgressRounds) {
       return { allow: false, reason: 'no_progress', anomaly: false, ...base };
     }
@@ -152,6 +170,14 @@ export class ContinuationPolicy {
       return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
     }
     for (const row of signatures) this.state.consumed.add(row);
+    if (worldDigest) {
+      for (const row of signatures) this.state.remembered.set(row, worldDigest);
+      // Bound the memory: a long session must not grow without limit.
+      if (this.state.remembered.size > 200) {
+        const oldest = this.state.remembered.keys().next().value;
+        if (oldest != null) this.state.remembered.delete(oldest);
+      }
+    }
     return { allow: true, reason: 'progress', anomaly: false, ...base, consumedCount: this.state.consumed.size };
   }
 }

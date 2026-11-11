@@ -305,6 +305,28 @@ describe('common-group results', () => {
     expect(answered?.targetId).toBeUndefined();
   });
 
+  it('stops an automatic action that was already accepted in an earlier turn', async () => {
+    // 10turn: turns 8, 9 and 10 each proposed «在器材棚内寻找并确认可用的护目镜与
+    // 演习装备» in a new submission. Every reset cleared the consumed set, so the
+    // same beat ran again and again while the world did not move.
+    const { ContinuationPolicy } = await import('./continuation');
+    const policy = new ContinuationPolicy();
+    const accepted = [{ characterId: 'b', text: '在器材棚内寻找并确认可用的护目镜。' }];
+    const evidence = (digest: string) => ({
+      progress: true, reason: 'new_settled_fact' as const, stateChanged: false, timeAdvanced: true,
+      newActionCount: 1, newSettledFactCount: 1, worldDigest: digest,
+    });
+    expect(policy.observe([], accepted, evidence('digest-a'), 'automatic').allow).toBe(true);
+    policy.reset();
+    // Same world (clock aside): the proposal is a repeat.
+    const repeat = policy.observe([], accepted, evidence('digest-a'), 'automatic');
+    expect(repeat.allow).toBe(false);
+    expect(repeat.reason).toBe('repeated_candidate');
+    // The world moved: the same action is new again.
+    policy.reset();
+    expect(policy.observe([], accepted, evidence('digest-b'), 'automatic').allow).toBe(true);
+  });
+
   it('never shows a literal placeholder id in the continuation format example', async () => {
     // 35ad turn 3: nobody else in the room, the example said characterId
     // "人物id", the model copied it four times and the fatal placeholder check
