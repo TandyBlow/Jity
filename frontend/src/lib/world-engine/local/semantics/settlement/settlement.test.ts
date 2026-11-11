@@ -390,6 +390,8 @@ describe('common-group results', () => {
     // 3turn 9623 group_29 copied the judgement reason as its fact; a walk/read
     // example alone does not teach a question group what its result looks like.
     expect(prompt).toContain('我向诺诺问现在的局势');
+    // 73f3 kept the read but dropped the walk from the result.
+    expect(prompt).toContain('行动里有走/进入就先写走到哪');
     expect(prompt).toContain('诺诺摇头说不知道');
     expect(prompt).not.toContain('待办=');
   });
