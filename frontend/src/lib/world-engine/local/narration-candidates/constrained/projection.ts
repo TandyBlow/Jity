@@ -649,12 +649,19 @@ export function projectFromFactsPacket(
     facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
   }
   // The caller's settled answer (a question answered, a hand-off) must stay in
-  // the prose; it is quoted, not paraphrased.
+  // the prose; it is quoted, not paraphrased. Judgment/mechanics clauses are
+  // not prose and are dropped here too (926e printed 诺诺：…未被阻止… from this
+  // packet path while the scene path already filtered it).
   if (options.resultsText && options.resultsText.trim()) {
-    facts.push({
-      id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
-      text: clampSentences(options.resultsText, 2, 130),
-    });
+    const settled = options.resultsText.split(/[；;]/u).map((part) => part.trim())
+      .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
+      .join('；');
+    if (settled) {
+      facts.push({
+        id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
+        text: clampSentences(settled, 2, 130),
+      });
+    }
   }
   // The viewpoint's own position is a licensed fact, not a change: without it
   // the opening cannot say where the player is.
