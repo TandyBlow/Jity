@@ -130,6 +130,12 @@
   margin: 0;
 }
 
+/* Reserves one line before the typewriter reveals its first character, so the
+   scene does not collapse and the options below do not jump on turn start. */
+.narration-pending {
+  min-height: 1.6em;
+}
+
 .dialogue-list {
   display: grid;
   gap: var(--space-3);

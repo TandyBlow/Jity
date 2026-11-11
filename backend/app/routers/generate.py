@@ -4,6 +4,7 @@ import asyncio
 import json
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 
 from app.dependencies import (
     db,
@@ -71,3 +72,80 @@ async def generate(session_id: str, request: GenerateRequest) -> GenerateRespons
 @router.post("/evaluate")
 def evaluate(output: StoryOutput) -> dict[str, int]:
     return evaluation_module.score(output)
+
+
+# ── Optional SSE companion ────────────────────────────────────────────
+#
+# The block below is additive: /generate keeps its exact response shape and
+# remains the only path the current frontend uses. This route reuses the same
+# single generation call, so Examiner/Director/Narrator, campaign progress and
+# memory writes are identical; it only changes how the finished result is
+# delivered (narration slices first, then the complete GenerateResponse).
+
+def _sse_event(event: str, data: object) -> str:
+    """Format one server-sent event. `data` must be JSON-serialisable."""
+    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+def _narration_slices(text: str, size: int = 48) -> list[str]:
+    return [text[index:index + size] for index in range(0, len(text), size)]
+
+
+@router.post("/sessions/{session_id}/generate/stream")
+async def generate_stream(session_id: str, request: GenerateRequest) -> StreamingResponse:
+    """SSE view of one turn: `open` → `narration` deltas → `done` (full JSON).
+
+    Errors are delivered as an `error` event instead of an HTTP status, because
+    the response headers are already on the wire by then.
+
+    Note: the LLM call itself is not token-streamed here. The narrator returns
+    a JSON object, so slicing it server-side keeps the campaign/memory contract
+    untouched; a真·token stream would need incremental JSON parsing inside the
+    narrator, which is deliberately out of scope.
+    """
+
+    async def events():
+        # Flush headers immediately: generation can take tens of seconds.
+        yield _sse_event("open", {"session_id": session_id})
+
+        try:
+            response = await knowledge_service.scenario_generator.generate(session_id, request)
+        except MissingAPIKeyError as exc:
+            yield _sse_event("error", {"status": 503, "detail": str(exc)})
+            return
+        except CampaignRequiredError as exc:
+            yield _sse_event("error", {"status": 422, "detail": str(exc)})
+            return
+        except ActionCheckError as exc:
+            yield _sse_event("error", {"status": 422, "detail": str(exc)})
+            return
+        except ScenarioGenerationError as exc:
+            yield _sse_event("error", {"status": 502, "detail": str(exc)})
+            return
+        except ConcurrentModificationError as exc:
+            yield _sse_event("error", {"status": 409, "detail": str(exc)})
+            return
+        except Exception as exc:  # keep the stream well-formed for the client
+            yield _sse_event("error", {"status": 500, "detail": f"{type(exc).__name__}: {exc}"})
+            return
+
+        if response is None:
+            yield _sse_event("error", {"status": 404, "detail": "Session not found"})
+            return
+
+        payload = response.model_dump(mode="json")
+        narration = ((payload.get("output") or {}).get("narration")) or ""
+        yield _sse_event("start", {
+            "session_id": session_id,
+            "turn": (payload.get("state") or {}).get("turn"),
+        })
+        for delta in _narration_slices(narration):
+            yield _sse_event("narration", {"delta": delta})
+            await asyncio.sleep(0)
+        yield _sse_event("done", payload)
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )

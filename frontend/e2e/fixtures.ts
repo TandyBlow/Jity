@@ -436,8 +436,15 @@ export async function installApiMocks(page: Page): Promise<void> {
 }
 
 /** Seed the session id before app code runs, so the console does not create one. */
-export async function seedSession(page: Page): Promise<void> {
-  await page.addInitScript((sessionId) => {
-    window.localStorage.setItem("jity_active_session_id", sessionId);
-  }, SESSION_ID);
+export async function seedSession(page: Page, options: { typewriter?: boolean } = {}): Promise<void> {
+  await page.addInitScript(
+    ({ sessionId, typewriter }) => {
+      window.localStorage.setItem("jity_active_session_id", sessionId);
+      // Typing is disabled by default: every existing spec asserts on the
+      // finished scene, and a 10-second reveal would turn them into timing
+      // tests. typewriter.spec.ts opts in explicitly.
+      window.localStorage.setItem("jity_typewriter", typewriter ? "on" : "off");
+    },
+    { sessionId: SESSION_ID, typewriter: options.typewriter === true },
+  );
 }
