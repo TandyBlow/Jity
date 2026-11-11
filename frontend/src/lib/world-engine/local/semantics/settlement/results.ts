@@ -67,6 +67,7 @@ interface Fact {
    * member list and judgement label. Kept so the page can show a derived row. */
   actorSource: 'model' | 'derived';
   outcomeSource: 'model' | 'derived';
+  targetSource?: 'model' | 'derived';
   /** The model omitted this actor's judgement row, so a derived outcome is not a
    * claim about direction: 02/06 must treat `text` as the only result content
    * for such a fact. */
@@ -590,11 +591,23 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       actorSource = 'model';
     }
     let targetId: Id | undefined;
+    let targetSource: Fact['targetSource'];
     if (rawTarget) {
       const resolved = resolveCharacterId(state, rawTarget) ?? resolveEntityId(state, rawTarget);
       if (!resolved) throw new Error(referenceError(state, rawTarget, 'entity', recipientIds[0]));
       if (resolved === actorId) throw new Error(`target ${rawTarget} is the actor itself; 受事/目标不能是执行者`);
       targetId = resolved;
+      targetSource = 'model';
+    } else {
+      // A question/hand-off often omits targetId while the sentence names the
+      // declared target (bed9: 路明非问诺诺… with a frozen lu→nono roll). The
+      // declared target is frozen state, so deriving it invents nothing.
+      const declaredTargets = [...new Set(memberById.get(actorId)?.rolls.map((roll) => roll.targetId) ?? [])]
+        .filter((id) => mentioned.includes(id) && id !== actorId);
+      if (declaredTargets.length === 1) {
+        targetId = declaredTargets[0];
+        targetSource = 'derived';
+      }
     }
     let outcome: ResultOutcome;
     let outcomeSource: Fact['outcomeSource'] = 'derived';
@@ -617,6 +630,12 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         throw new Error(`outcome ${outcome} contradicts achieved judgement for ${actorId}`);
       }
       if (label === 'no_change' && outcome === 'completed') throw new Error(`outcome completed contradicts no_change judgement for ${actorId}`);
+      // The model's own reason can contradict the outcome it wrote (bed9's
+      // 路明非行动未成功完成目标，因此未被阻止 + outcome blocked).
+      const reason = judgments.find((judgment) => judgment.memberId === actorId)?.reason ?? '';
+      if (outcome === 'blocked' && /未被(?:阻止|拦住|拦下)|没有被(?:阻止|拦住)/u.test(reason)) {
+        throw new Error(`outcome blocked contradicts the reason for ${actorId}: ${reason}`);
+      }
     }
     // “甲未能。” is what is left after a stripped task clause: a dangling
     // negation is not a result. The 60-char action hint tells the repair what to
@@ -638,6 +657,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       outcome,
       actorSource,
       outcomeSource,
+      ...(targetSource ? { targetSource } : {}),
       ...(implicit.includes(actorId) ? { implicit: true as const } : {}),
     });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });

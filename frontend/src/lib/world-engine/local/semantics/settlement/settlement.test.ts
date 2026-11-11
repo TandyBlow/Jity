@@ -262,6 +262,48 @@ describe('common-group results', () => {
     expect(taskWordOutcome.value).not.toBeNull();
   });
 
+  it('derives the declared target from the sentence when targetId is omitted', async () => {
+    // bed9 turn 2: 路明非问诺诺… with a frozen lu→nono roll but no targetId.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲问了乙。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙回答。', effects: [] },
+      ],
+      facts: [
+        { text: '甲问乙红蓝两方现在在哪，乙摇头说不知道', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙摇头说不清楚局势', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '我问乙现在的局势。', rollRefs: [{ targetId: 'b', rollId: 'r1', result: 12, eligible: true, admitted: true }] },
+        { memberId: 'b', actionText: '乙回答。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    const facts = (outcome.evidence.detail as { facts: { actorId: string; targetId?: string; targetSource?: string }[] }).facts;
+    const asked = facts.find((fact) => fact.actorId === 'a');
+    expect(asked?.targetId).toBe('b');
+    expect(asked?.targetSource).toBe('derived');
+    // The other member's sentence names no declared target -> no invented one.
+    const answered = facts.find((fact) => fact.actorId === 'b');
+    expect(answered?.targetId).toBeUndefined();
+  });
+
+  it('rejects an outcome that contradicts the model’s own reason', async () => {
+    // bed9 turn 2 answered “…未被阻止” with outcome blocked.
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲的行动未成功完成目标，因此未被阻止。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲问乙局势，乙摇头说不知道', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+    });
+    const engine = new ScriptedEngine([raw, raw]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('outcome blocked contradicts the reason');
+  });
+
   it('keeps a negative action result instead of stripping the negation as a task claim', async () => {
     // The old list stripped the bare phrase 未能完成, turning “未能完成翻越，落回
     // 巷口” into “翻越，落回巷口” — a reversed result. Only task/goal wording may
