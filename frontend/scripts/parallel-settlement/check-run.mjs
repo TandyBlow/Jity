@@ -207,6 +207,14 @@ export function checkRun(input, options = {}) {
       // 330 s with no prose.
       const turn = turns[index] ?? turns.find((row) => row?.submission === sub) ?? null;
       const text = typeof turn?.text === 'string' ? turn.text.trim() : null;
+      // UI provenance is not prose: 06's page renders a source label next to the
+      // paragraph, and an acceptance record must not count it as model text.
+      if (text && /原样显示|未经核对|未做内容核对/u.test(text)) {
+        soft.push(`${where}: displayed text carries the page's source label`);
+      }
+      if (text && typeof sub.inputText === 'string' && sub.inputText.trim() && text === sub.inputText.trim()) {
+        soft.push(`${where}: displayed text equals the player's input`);
+      }
       if (text === '' || (text == null && turn && turn.problems?.includes('no_readable_prose'))) {
         hard.push(`${where}: policy stop ${policyStops.join(';')} ended the turn with no visible prose`);
       }
