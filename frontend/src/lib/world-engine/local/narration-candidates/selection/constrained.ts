@@ -105,10 +105,10 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         viewpointId: prepared.viewpointId,
         scene: sceneHints(prepared),
         resultsText: point.settledResults?.length ? point.settledResults.join('；') : null,
-        // The program realizer states one sentence per settled fact; a thin
-        // point (time + presence) is short on purpose. 40 keeps it readable
-        // without padding it with invented detail.
-        minChars: 40,
+        // Near-empty only: length alone never rejects a complete scene. The
+        // earlier 40-char floor rejected semantically complete short paragraphs
+        // and the 30/36+ floor inside the candidate was the same rule twice.
+        minChars: 20,
         // Variable length: a rich turn must not be rejected for being long
         // (6e3a: four model beats composed >500 chars and the whole candidate
         // was rejected as too_long, falling back to program). The cap only

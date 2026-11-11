@@ -649,24 +649,33 @@ export class LocalGameModel implements WorldModelPort {
         // The candidate's own gate accepted this text; the independent gate
         // refuses a sentence it cannot ground. The prose is kept and labelled
         // as an unverified draft instead of being replaced by program text.
-        const segments = result.segments?.map((segment) => ({
-          id: segment.id, kind: segment.kind, source: segment.source, text: segment.text,
-        }));
+        const kept = refusedCandidateDraft({
+          text: result.text,
+          segments: result.segments,
+          candidateId: result.candidateId,
+          route: result.route,
+          strategyVersion: result.strategyVersion,
+          beatCounts: result.beatCounts,
+          issues: result.issues,
+          timings: result.timings,
+          promptChars: result.promptChars,
+          rejectedBy: 'independent_fact_gate',
+          reasons,
+        });
         this.options.onTask?.('narration', pointId, {
-          ms: result.timings.totalMs, fallback: true,
-          error: `独立事实门拒绝：${reasons.join(',')}`, raw: result.text, promptChars: result.promptChars,
+          ms: kept.ms, fallback: true, error: kept.error, raw: kept.text, promptChars: kept.promptChars,
         });
         this.options.onNarrationEvidence?.({
-          pointId, candidateId: result.candidateId, route: result.route, grade: 'candidate_unverified',
-          strategyVersion: result.strategyVersion, segments, beatCounts: result.beatCounts,
-          issues: result.issues, timings: result.timings, detail: result.detail ?? null, rejectedBy: 'independent_fact_gate',
+          pointId, candidateId: kept.candidateId, route: kept.route, grade: 'candidate_unverified',
+          strategyVersion: kept.strategyVersion, segments: kept.segments, beatCounts: kept.beatCounts,
+          issues: kept.issues, timings: kept.timings, detail: result.detail ?? null, rejectedBy: kept.rejectedBy,
         });
         this.options.onNarrationComplete?.({
-          pointId, raw: result.text,
-          completion: { raw: result.text, finishReason: 'stop', firstTokenMs: result.timings.firstTokenMs, wallMs: result.timings.totalMs },
-          fallback: true, source: 'draft', segments,
+          pointId, raw: kept.text,
+          completion: { raw: kept.text, finishReason: 'stop', firstTokenMs: kept.timings.firstTokenMs, wallMs: kept.timings.totalMs },
+          fallback: true, source: 'draft', segments: kept.segments,
         });
-        return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: true };
+        return { value: kept.text as unknown as Json, raw: kept.text, ms: kept.ms, fallback: true };
       }
     }
     const program = result.grade === 'program';
@@ -720,8 +729,70 @@ function cleanNarration(raw: string): string {
     .trim();
 }
 
-function validateNarration(text: string, facts: string, after: WorldState, view: Id): { ok: boolean; reason: string } {
-  if ([...text].length < 40) return { ok: false, reason: 'too_short' };
+/** Names the viewpoint can legitimately see or know in this scene: the ones the
+ * brief already lists, plus people in the same container and what they (or the
+ * viewpoint) wear or hold. A known name outside this set is offscreen and may
+ * not appear; a worn item (aa30's red band) is visible even when the brief does
+ * not spell it out. */
+export function visibleEntityNames(after: WorldState, view: Id, facts: string): Set<string> {
+  const names = new Set<string>();
+  const add = (name?: string | null) => { if (name && name.length >= 2) names.add(name); };
+  const viewpoint = after.characters[view];
+  const container = viewpoint?.position?.containerId ?? null;
+  add(after.initial.characters[view]?.name);
+  const containers = new Set<string>([view]);
+  if (container) containers.add(container);
+  for (const [id, character] of Object.entries(after.characters)) {
+    const inside = character.position?.containerId;
+    if (inside && containers.has(inside)) {
+      add(after.initial.characters[id]?.name);
+      containers.add(id);
+    }
+  }
+  for (const [id, item] of Object.entries(after.items)) {
+    const inside = item.position?.containerId;
+    if (inside && containers.has(inside)) add(after.initial.items[id]?.name);
+  }
+  for (const name of names) if (!facts.includes(name)) names.add(name);
+  return names;
+}
+
+/** A candidate whose text the independent gate refused keeps that text as a
+ * labelled draft: same words, per-segment provenance, no accepted timing, and
+ * the gate's own reasons. Never used as prior text and never a pass. */
+export function refusedCandidateDraft(input: {
+  text: string;
+  segments?: Array<{ id: string; kind: string; source: string; text: string }>;
+  candidateId: string;
+  route: string;
+  strategyVersion: string;
+  beatCounts: unknown;
+  issues: unknown;
+  timings: { totalMs: number; firstTokenMs: number | null };
+  promptChars: number;
+  rejectedBy: string;
+  reasons: string[];
+}) {
+  return {
+    text: input.text,
+    segments: input.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text })),
+    candidateId: input.candidateId,
+    route: input.route,
+    strategyVersion: input.strategyVersion,
+    beatCounts: input.beatCounts,
+    issues: input.issues,
+    timings: input.timings,
+    promptChars: input.promptChars,
+    rejectedBy: input.rejectedBy,
+    error: `独立事实门拒绝：${input.reasons.join(',')}`,
+    ms: input.timings.totalMs,
+  };
+}
+
+export function validateNarration(text: string, facts: string, after: WorldState, view: Id): { ok: boolean; reason: string } {
+  // Only near-empty text is empty. Length alone never rejects a complete scene:
+  // a settled point can be said in one short paragraph (NARRATION-BOUNDARY-20261111).
+  if ([...text].length < 20) return { ok: false, reason: 'too_short' };
   // Third-person prose may use “他/她” for a whole paragraph without naming
   // the protagonist; absence of the literal name is not a fact error.
 
@@ -737,13 +808,14 @@ function validateNarration(text: string, facts: string, after: WorldState, view:
   // must not appear by name. This catches the common small-model failure of
   // pulling a familiar name from its pretraining into a scene where that
   // character is not present.
+  const visible = visibleEntityNames(after, view, facts);
   const known = [
     ...Object.values(after.initial.characters).map((entity) => entity.name),
     ...Object.values(after.initial.locations).map((entity) => entity.name),
     ...Object.values(after.initial.items).map((entity) => entity.name),
   ];
   for (const name of known) {
-    if (name.length < 2 || facts.includes(name)) continue;
+    if (name.length < 2 || facts.includes(name) || visible.has(name)) continue;
     if (text.includes(name)) return { ok: false, reason: `unprojected_entity:${name}` };
   }
   return { ok: true, reason: '' };

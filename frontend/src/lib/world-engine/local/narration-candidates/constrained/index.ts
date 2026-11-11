@@ -69,13 +69,10 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
 
   const projectMs = now() - projectStarted;
   const requireTime = false;
-  // The length floor scales with the settled content of the point, not with
-  // the clock: an elapsed-time-only point has nothing to say beyond the time
-  // and the room, so demanding a complex-scene budget would force invented
-  // business. A point with several settled changes must not shrink into a
-  // two-sentence summary.
-  const changeCount = scene.facts.filter((fact) => fact.visibility === 'scene' && fact.mandatory && fact.kind !== 'time').length;
-  const minChars = policy.minChars ?? (changeCount === 0 ? 30 : Math.min(100, 36 + changeCount * 8));
+  // Length alone is not a rejection reason: a semantically complete short
+  // paragraph is valid (NARRATION-BOUNDARY-20261111). Only near-empty text is
+  // treated as empty, and truncation is caught by the sentence/ending checks.
+  const minChars = policy.minChars ?? 18;
   const maxChars = policy.maxChars ?? 1400;
   // Program is the default: a caller that did not ask for model writing gets
   // deterministic prose and no model calls. Model/auto must be explicit.
