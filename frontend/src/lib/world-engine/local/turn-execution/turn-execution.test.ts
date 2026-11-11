@@ -504,7 +504,20 @@ describe('settled facts for narration', () => {
     const lines = port.settledFactLines();
     expect(lines[0]).toBe('周宁推开走廊的门，看清门后的台阶。');
     expect(lines[1]).toBe('林川停在原地，没有跟着进去。');
-    port.endSubmission();
+    // The structured view keeps the executor and outcome direction so 02 can
+    // rewrite the sentence and 01 can check who acted and what happened.
+    const facts = port.settledFacts();
+    expect(facts.map((fact) => ({ text: fact.text, actor: fact.actorId, outcome: fact.outcome }))).toEqual([
+      { text: '周宁推开走廊的门，看清门后的台阶。', actor: 'person_c', outcome: 'completed' },
+      { text: '林川停在原地，没有跟着进去。', actor: 'person_a', outcome: 'failed' },
+    ]);
+    const submission = port.endSubmission();
+    expect(submission?.settledFacts?.map((fact) => fact.actorId)).toEqual(['person_c', 'person_a']);
+    // A new submission starts empty: the same words in the next turn are a new
+    // result, not a replayed one.
+    port.beginSubmission('我再看一眼。');
+    expect(port.settledFacts()).toEqual([]);
+    expect(port.settledFactLines()).toEqual([]);
   });
 
   it('puts the protagonist group first even when it settles after a reaction group', async () => {

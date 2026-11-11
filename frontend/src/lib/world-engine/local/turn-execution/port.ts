@@ -29,6 +29,7 @@ import type { InferenceEngine } from '../../runtime/engine';
 import type { ModelTask } from '../../schedule';
 import type { WorldModelPort } from '../../controller';
 import { runResults } from '../semantics/settlement/results';
+import type { ResultOutcome } from '../semantics/settlement/results';
 import { createUpdatesRunner, type UpdatesRunner } from '../semantics/settlement/updates';
 import { ContinuationRunner } from '../semantics/settlement/continuation';
 import { roundProgressFromState, type RoundProgressEvidence } from '../semantics/settlement/support';
@@ -90,6 +91,9 @@ export interface PortSubmission {
   continuationCalls: number;
   continuationDecision: string | null;
   stops: string[];
+  /** Structured settled results of this submission, protagonist group first.
+   * 06 shows them per point; 02 writes the result sentence from them. */
+  settledFacts?: SettledFact[];
 }
 
 export interface SettlementPortSummary {
@@ -111,6 +115,11 @@ export interface SettlementModelPort extends WorldModelPort {
    * `路明非：路明非沿着…` — the same speaker-label leak that reached the page
    * from the labeled results lines. */
   settledFactLines(): string[];
+  /** Structured settled results for the same point, protagonist group first.
+   * Each record names the executor, the recipient (when any), the performed
+   * action and one of the four outcome directions. The page/02 use these to
+   * describe what happened without parsing the prose sentence. */
+  settledFacts(): SettledFact[];
   /** Start a new player-submission account. Called by the page right before it
    * hands the text to the session; the port does not consume the text. */
   beginSubmission(inputText: string): void;
@@ -118,6 +127,19 @@ export interface SettlementModelPort extends WorldModelPort {
   endSubmission(): PortSubmission | null;
   summary(): SettlementPortSummary;
   reset(): void;
+}
+
+/** One settled result record, as committed by the results stage. */
+export interface SettledFact {
+  text: string;
+  memberIds: string[];
+  actorId: string;
+  targetId?: string;
+  action?: string;
+  outcome: ResultOutcome;
+  actorSource: 'model' | 'derived';
+  outcomeSource: 'model' | 'derived';
+  playerGroup: boolean;
 }
 
 export interface SettlementPortOptions extends SettlementOptions {
@@ -138,6 +160,7 @@ export function createSettlementModelPort(
   /** Per-point settled facts, in settlement order. Cleared when the round ends
    * (continuation) and when a submission starts. */
   let settledLines: { playerGroup: boolean; line: string }[] = [];
+  let settledRecords: SettledFact[] = [];
   const portOptions: SettlementPortOptions = { ...options, requireTaskSupport: true };
   const updates: UpdatesRunner = createUpdatesRunner(engine, portOptions);
   const continuation = new ContinuationRunner(engine, options);
@@ -242,7 +265,7 @@ export function createSettlementModelPort(
     if (state) roundStartState = structuredClone(state);
   }
 
-  function captureResults(input: Json, value: unknown): void {
+  function captureResults(input: Json, value: unknown, detail?: Json): void {
     captureRoundStart(input);
     if (input != null && typeof input === 'object' && !Array.isArray(input)) {
       const members = (input as { members?: unknown }).members;
@@ -276,7 +299,42 @@ export function createSettlementModelPort(
         roundFacts.push(fact.trim());
         settledLines.push({ playerGroup, line: fact.trim() });
       }
+      const detailRecord = detail != null && typeof detail === 'object' && !Array.isArray(detail)
+        ? detail as Record<string, unknown> : {};
+      const structured = Array.isArray(detailRecord.facts) ? detailRecord.facts : [];
+      for (const row of structured) {
+        if (row == null || typeof row !== 'object') continue;
+        const fact = row as Partial<SettledFact>;
+        if (typeof fact.text !== 'string' || !fact.text.trim()) continue;
+        if (!Array.isArray(fact.memberIds) || !fact.memberIds.length) continue;
+        if (typeof fact.actorId !== 'string' || !fact.actorId) continue;
+        if (typeof fact.outcome !== 'string') continue;
+        settledRecords.push({
+          text: fact.text.trim(),
+          memberIds: fact.memberIds.map(String),
+          actorId: fact.actorId,
+          ...(typeof fact.targetId === 'string' && fact.targetId ? { targetId: fact.targetId } : {}),
+          ...(typeof fact.action === 'string' && fact.action ? { action: fact.action } : {}),
+          outcome: fact.outcome as ResultOutcome,
+          actorSource: fact.actorSource === 'model' ? 'model' : 'derived',
+          outcomeSource: fact.outcomeSource === 'model' ? 'model' : 'derived',
+          playerGroup,
+        });
+      }
     }
+  }
+
+  function settledFacts(): SettledFact[] {
+    const ordered = [
+      ...settledRecords.filter((entry) => entry.playerGroup),
+      ...settledRecords.filter((entry) => !entry.playerGroup),
+    ];
+    const seen = new Set<string>();
+    return ordered.filter((entry) => {
+      if (seen.has(entry.text)) return false;
+      seen.add(entry.text);
+      return true;
+    });
   }
 
   return {
@@ -284,7 +342,7 @@ export function createSettlementModelPort(
       if (task === 'results') {
         const outcome = await runResults(engine, key, input, options);
         const value = unwrap('results', key, null, outcome);
-        captureResults(input, value);
+        captureResults(input, value, outcome.evidence.detail);
         return value as unknown as Json;
       }
       if (task === 'updates') {
@@ -328,11 +386,14 @@ export function createSettlementModelPort(
           roundFacts = [];
           // The round's point is over; the next results call starts a new one.
           settledLines = [];
+          settledRecords = [];
         }
       }
       if (options.fallback) return options.fallback.generate(task, key, input);
       throw new Error(`settlement_port_has_no_handler:${task}`);
     },
+
+    settledFacts,
 
     settledFactLines(): string[] {
       const ordered = [
@@ -359,6 +420,7 @@ export function createSettlementModelPort(
       consumedActions.clear();
       consumedFacts.clear();
       settledLines = [];
+      settledRecords = [];
       submission = {
         inputText,
         startedAtMs: now(),
@@ -375,6 +437,8 @@ export function createSettlementModelPort(
     endSubmission(): PortSubmission | null {
       if (!submission) return null;
       submission.endedAtMs = now();
+      const facts = settledFacts();
+      if (facts.length) submission.settledFacts = facts;
       const done = submission;
       submission = null;
       return done;
@@ -402,6 +466,7 @@ export function createSettlementModelPort(
       calls.length = 0;
       submission = null;
       settledLines = [];
+      settledRecords = [];
       roundStartState = null;
       roundActionTexts = [];
       roundFacts = [];

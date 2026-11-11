@@ -45,9 +45,28 @@ interface Judgment {
   effects: { targetId: Id; reacted: boolean }[];
 }
 
+/** What the settled result actually was. The four directions are the product's
+ * vocabulary for a player-visible outcome; 「未受影响」 covers a legitimate
+ * no-change result and is not a mechanic word. */
+export type ResultOutcome = 'completed' | 'failed' | 'blocked' | 'unaffected';
+export const RESULT_OUTCOMES: ResultOutcome[] = ['completed', 'failed', 'blocked', 'unaffected'];
+
 interface Fact {
   text: string;
   memberIds: Id[];
+  /** Executor of this result. Required by the product contract: a fact must say
+   * who acted, not only who received the sentence. */
+  actorId: Id;
+  /** Recipient/target when the action had one. */
+  targetId?: Id;
+  /** The action actually performed, in the model's own words (never the pending
+   * task goal, never the player's declared text copied as a success). */
+  action?: string;
+  outcome: ResultOutcome;
+  /** Whether actor/outcome came from the answer or were derived from the
+   * member list and judgement label. Kept so the page can show a derived row. */
+  actorSource: 'model' | 'derived';
+  outcomeSource: 'model' | 'derived';
 }
 
 interface SanitizedFact {
@@ -115,6 +134,12 @@ const RESULTS_SCHEMA = {
         properties: {
           text: { type: 'string' },
           memberIds: { type: 'array', minItems: 1, items: { type: 'string' } },
+          // Structured result fields (04 contract): who acted, on whom, what
+          // was actually done, and which of the four outcome directions holds.
+          actorId: { type: 'string' },
+          targetId: { type: 'string' },
+          action: { type: 'string' },
+          outcome: { enum: [...RESULT_OUTCOMES] },
         },
       },
     },
@@ -156,6 +181,9 @@ export async function runResults(
       memberIds: members.map((member) => member.memberId),
       rollReceiptCount: members.reduce((sum, member) => sum + member.rolls.length, 0),
       factCount: parsedAnswer.facts.length,
+      // Structured result records for the narration composer and the reviewer:
+      // executor, recipient, performed action and outcome direction.
+      facts: parsedAnswer.facts,
       sanitizedFacts: parsedAnswer.sanitized ?? [],
       memberFactCoverage: members.map((member) => ({
         memberId: member.memberId,
@@ -279,9 +307,16 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
   }
   const scene = [...sceneIds].filter((id) => state.characters[id] || state.items[id])
     .map((id) => state.characters[id] ? describeResultCharacter(state, id) : describeItem(state, id));
-  const exampleMember = members[0];
-  const exampleTarget = exampleMember.rolls[0]?.targetId;
-  const exampleEffects = exampleTarget ? `[{"targetId":"${exampleTarget}","reacted":true或false}]` : '[]';
+  // Show one row per member, not one row in total: with a single-row example a
+  // 2-member dialogue group (9623 turn 2, lu+nono) answered one member's row per
+  // attempt, twice in a row.
+  const exampleRows = members.slice(0, 2).map((member) => {
+    const target = member.rolls[0]?.targetId;
+    const effects = target ? `[{"targetId":"${target}","reacted":true或false}]` : '[]';
+    return `{"memberId":"${member.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${effects}}`;
+  });
+  const exampleFacts = members.slice(0, 4)
+    .map((member) => `{"text":"${state.initial.characters[member.memberId]?.name ?? member.memberId}做了什么/看到什么","memberIds":["${member.memberId}"],"actorId":"${member.memberId}","outcome":"completed"}`);
   return [
     '你是中文跑团游戏的共同结算器。只输出 JSON，不要解释。',
     '下面是一个已经冻结的结算组：行动已经确认，骰点已经落定。请统一结算全组行动，写清实际发生了什么。',
@@ -294,18 +329,19 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- reason 一句话，20 字以内；facts 每人一句，短句即可。',
-    '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
-    '- facts 只写这次行动的直接结果；不得写“任务完成/任务达成/目标达成/行动成功完成/成功完成/成功执行行动/任务要求/奖励”这类任务或成功结论。',
-    '- facts 写本组成员自己的行动结果；不要写其他人物正在做什么，也不要把判定理由（未触发/未成功/被阻止/未达成）抄成事实。',
+    '- facts 每个成员一条自己的行动结果（共同的可以归多人），memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
+    '- 不写“任务完成/任务达成/目标达成/成功完成/奖励”这类结论；failed/blocked 照实写，保留“没有/未/被阻止”。',
     '- 例：行动是“沿着服务巷走，看清墙上的演习规则牌”，事实写“路明非走到服务巷，看见墙上的规则牌”；不要写“完成参赛选择/任务”。',
     '- 例：行动是“我向诺诺问现在的局势”，事实写“路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道”；不要写“骰点未获取，因此未能达成目标”。',
+    '- fact 带字段：actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
+    '- failed/blocked 照实写，保留“没有/未/被阻止”；任务目标、骰点资格、判定理由都不是事实。',
     `本组：${groupId}`,
     '成员：',
     ...memberLines,
     '场景（只用于写事实；不是本组成员，不要给场景人物写 judgment 或 effect）：',
     ...scene,
-    '输出格式（示例里的 id 都是本组真实 id；没有判定目标的成员 effects 写 []）：',
-    `{"judgments":[{"memberId":"${exampleMember.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${exampleEffects}}],"facts":[{"text":"结果事实","memberIds":["${exampleMember.memberId}"]}]}`,
+    '输出格式（示例里的 id 都是本组真实 id；judgments 和 facts 都要每人一条）：',
+    `{"judgments":[${exampleRows.join(',')}],"facts":[${exampleFacts.join(',')}]}`,
     '现在输出 JSON：',
   ].join('\n');
 }
@@ -389,21 +425,23 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     }
     judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
-  // A member with no declared roll target carries no effect to settle: its
-  // judgement row is evidence, not state (the six stages read facts, never
-  // labels). 3turn 9623's turn 2 spent 59 s and failed the whole point because
-  // the model omitted the player's row in a lu+nono question group. Such a row
-  // is recorded as an explicit no_change and listed in evidence; a member whose
-  // roll target must be settled still has to answer for itself.
+  // A judgement row is evidence, not state: the six stages read facts, never
+  // labels, and nothing downstream consumes effects[].reacted (the reaction lane
+  // already decided from the frozen rolls). 3turn 9623's turn 2 (a lu+nono
+  // question group) failed twice in a row because the model wrote one row per
+  // attempt; the missing row is now recorded and the only hard requirement left
+  // is that every member's result is described in facts.
   const implicit: Id[] = [];
   for (const member of members) {
     if (seen.has(member.memberId)) continue;
-    if (member.rolls.length) throw new Error(`missing judgment for ${member.memberId}`);
+    // effects follow the same rule the validator enforces on a written row:
+    // a target reacts exactly when its roll was admitted.
+    const effects = member.rolls.map((roll) => ({ targetId: roll.targetId, reacted: roll.admitted }));
     judgments.push({
       memberId: member.memberId,
       label: 'no_change',
-      reason: '模型漏写这一行；该成员没有判定目标，按无变化记录',
-      effects: [],
+      reason: '模型漏写这一行；按无变化记录，effects 由已冻结的准入结果补齐',
+      effects,
     });
     implicit.push(member.memberId);
   }
@@ -435,6 +473,26 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
+    }
+    // Structured fields: actor is the executor, target the recipient, outcome
+    // the direction. An old answer without them is still accepted (derived),
+    // but a field the model did write must be right.
+    const rawActor = asString(rawFact.actorId);
+    const rawTarget = asString(rawFact.targetId);
+    const rawAction = asString(rawFact.action);
+    const rawOutcome = asString(rawFact.outcome);
+    if (rawOutcome && !RESULT_OUTCOMES.includes(rawOutcome as ResultOutcome)) {
+      throw new Error(`unknown outcome ${rawOutcome}; outcome 只能是 ${RESULT_OUTCOMES.join('/')}`);
+    }
+    if (rawAction && rawAction.replace(FACT_PUNCTUATION, '').length > 60) {
+      throw new Error(`action too long for a result: ${rawAction}`);
+    }
+    if (rawAction) {
+      for (const { pattern, label } of COMPLETION_CLAIMS) {
+        pattern.lastIndex = 0;
+        if (pattern.test(rawAction)) throw new Error(`action is a task/goal claim (${label}), not what the actor did: ${rawAction}`);
+      }
+      if (/任务|目标/u.test(rawAction)) throw new Error(`action must be the performed action, not a task or goal: ${rawAction}`);
     }
     const rawRecipients = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
     if (!rawRecipients.length) throw new Error('fact must name at least one member');
@@ -484,14 +542,62 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       const name = state.initial.characters[recipient]?.name;
       return Boolean(name) && nameOnly === String(name).replace(FACT_PUNCTUATION, '');
     })) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
+    // Actor: the model may name it, but only a group member can be the executor
+    // of this group's result. Absent, the first attributed member is used and
+    // the fact is marked derived.
+    let actorId = recipientIds[0];
+    let actorSource: Fact['actorSource'] = 'derived';
+    if (rawActor) {
+      const resolved = resolveCharacterId(state, rawActor);
+      if (!resolved) throw new Error(referenceError(state, rawActor, 'character', recipientIds[0]));
+      if (!memberById.has(resolved)) throw new Error(`actor ${rawActor} is not a group member; 本组只有 ${members.map((row) => row.memberId).join(',')}`);
+      actorId = resolved;
+      actorSource = 'model';
+    }
+    let targetId: Id | undefined;
+    if (rawTarget) {
+      const resolved = resolveCharacterId(state, rawTarget) ?? resolveEntityId(state, rawTarget);
+      if (!resolved) throw new Error(referenceError(state, rawTarget, 'entity', recipientIds[0]));
+      if (resolved === actorId) throw new Error(`target ${rawTarget} is the actor itself; 受事/目标不能是执行者`);
+      targetId = resolved;
+    }
+    let outcome: ResultOutcome;
+    let outcomeSource: Fact['outcomeSource'] = 'derived';
+    if (rawOutcome) {
+      outcome = rawOutcome as ResultOutcome;
+      outcomeSource = 'model';
+    } else {
+      const label = judgments.find((judgment) => judgment.memberId === actorId)?.label ?? 'no_change';
+      outcome = label === 'achieved' || label === 'partial' ? 'completed'
+        : label === 'blocked' ? 'blocked'
+          : label === 'not_achieved' ? 'failed' : 'unaffected';
+    }
+    // A written outcome may not contradict the judgement it belongs to: a denied
+    // action is failed, not completed.
+    if (outcomeSource === 'model') {
+      const label = judgments.find((judgment) => judgment.memberId === actorId)?.label;
+      if (label === 'blocked' && outcome === 'completed') throw new Error(`outcome completed contradicts blocked judgement for ${actorId}`);
+      if (label === 'not_achieved' && outcome === 'completed') throw new Error(`outcome completed contradicts not_achieved judgement for ${actorId}`);
+    }
     for (const recipient of recipientIds) factRecipients.add(recipient);
-    facts.push({ text: cleaned.text, memberIds: recipientIds });
+    facts.push({
+      text: cleaned.text,
+      memberIds: recipientIds,
+      actorId,
+      ...(targetId ? { targetId } : {}),
+      ...(rawAction ? { action: rawAction } : {}),
+      outcome,
+      actorSource,
+      outcomeSource,
+    });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
   for (const member of members) {
     if (factRecipients.has(member.memberId)) continue;
     if (inactive.has(member.memberId)) continue;
-    throw new Error(`no fact attributed to ${member.memberId}`);
+    const names = members.map((row) => `${state.initial.characters[row.memberId]?.name ?? row.memberId}(${row.memberId})`).join('、');
+    const missing = state.initial.characters[member.memberId]?.name ?? member.memberId;
+    throw new Error(`no fact attributed to ${member.memberId}（${missing}）; facts 必须给本组每个成员各一条自己的结果（本组：${names}），例：${missing}做了什么、看到或听到什么。已冻结的行动：${actionHint}`);
   }
   return {
     judgments, facts, dropped,
