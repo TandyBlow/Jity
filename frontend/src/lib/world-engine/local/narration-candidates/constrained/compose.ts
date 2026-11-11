@@ -191,6 +191,9 @@ export async function composeBeatWithModel(
   const prompt = buildBeatPrompt(beat, scene, prior, {
     instruction: [options.instruction, options.feedback].filter(Boolean).join(' ') || null,
     sanityStyle: options.sanityStyle,
+    // The 05e7 beats catalogued every licensed detail ("弹匣内剩3发…", "电量灯不亮…").
+    // A beat needs the details its own facts name, not the whole scene inventory.
+    maxDetails: 2,
   });
   const raw = await engine.complete(prompt, {
     maxTokens: options.maxTokens,
