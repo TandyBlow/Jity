@@ -1,54 +1,62 @@
-# lane 13 handoff — action dataset (batch1 repair checkpoint)
+# lane 13 handoff — action dataset (300 rows frozen and reviewed)
 
-Status: **not complete**. 01's audit of the first 220 rows returned 132 pass / 88 fail, and 01 required a small diverse repair batch (20–30 rows) to be reviewed **before** the remaining rows are built. This handoff records the repair batch and the open decisions; the 300-row deliverable is still pending.
+Status: **delivered and frozen**. 300 training candidates are built, replayed and reviewed; 01 passed them 300/300 at the label level and asked for no further edits. This is a reviewed label set, not a model-effect result: the effect still needs 04's training + holdout and 09's real runs.
 
-## What 01 found
+## Frozen object
 
-| Cause | Rows | Disposition |
-|---|---|---|
-| skip built by marking every task achieved, then calling it skip | 82 | retired; `cases/02-skip.jsonl` is history only, `build_rows.py` refuses rows whose actor has no pending goal |
-| actor placed inside the locked equipment cage (unreachable) | 3 (`0132/0149/0182` = `d-043`, `d-061`, `e-012`) | deleted: there is no unlock transform, and moving the actor outside the cage removes the very item the label points at, so no honest repair exists |
-| identical X with two different labels | 2 pairs (`0106/0172`, `0125/0186`) | one row of each pair already deleted (`d-013`, `d-035`); the surviving rows are unique |
-| `刚才` written as an engine log line | 1 (`0011`, later corrected to pass by the user) | `刚才` is now restricted to perceivable scene lines |
+- Branch `goal/local-13-action-dataset`, commit `b49b16c1`, pushed to origin.
+- Delivery file `experiments/action-dataset-v1/rows/train13-full-candidates.jsonl`, 300 rows, sha256 `cb4676b3…b02ef188`.
+- Provenance `train13-full-provenance.jsonl` sha256 `41e55dfd…78bd6c2`; independent replay `train13-full-check.json` sha256 `0cdaafa2…cb58176a` (300/300).
+- Freeze record `rows/freeze-300.json` (also `results/action-dataset-20261111/13/freeze-300.json`): counts, hashes of the criterion/labels/goal list, serializer version and sha256, known gaps, review reference.
+- Do not edit the frozen files. A change means a new freeze record and a fresh 01 review.
 
-The other 122 constructed rows and 11 real rows pass; 133 rows remain (11 real + 73 direct + 49 condition), all with a 01 pass verdict, and are rebuilt under the new X shape after the batch verdict.
+## What the 300 rows are
 
-## What changed in the code
+| Dimension | Value |
+|---|---|
+| Rows | 300: A 176 (condition present), B 98 (first create the condition), skip 26 |
+| Steps | 244 one-step, 30 two-step, 26 skip |
+| Skip ratio | 8.7%; 01 waived the ~30% target because every skip is derivable from X |
+| Unique X | 300 of 300; cross-file duplicates are refused by `scripts/assemble.py` |
+| Sources | 19 committed snapshots untouched, 276 snapshot + transforms, 5 built from world s0 |
+| Goals | 45/48 TRAIN goals have an A row, 36/48 have a B row; 3 goals are achieved at S0 and can only be A |
+| Groups | 感知 145 / 言语 51 / 移动 41 / 物品 31 / 请求 18 / 立场 12 / 援助 4 / 战斗 2; 胁迫/算计/情绪/身体 absent by 01's decision |
+| X length | min 400 / p50 629 / p95 1207 / max 1460 chars (04's frozen serializer) |
 
-1. **X uses 04's frozen loader shape.** `tools/loader.py` imports `worktrees/04-settlement/experiments/action-next-step/serialize.py` read-only; every row records its version and sha256. There is no second serializer. `check_dataset.py` renders each row through that file and resolves each step's `object` through `object_index`.
-2. **`刚才` is perceivable only.** Position changes become `X 到了<目的地>`, appearance changes become `X：<可见描述>`; authored `perceived` sentences must name the entity and the destination anchor. Task/sanity/personality changes stay in provenance. Engine phrasing (`移动到/任务/已完成`) is rejected by the projection.
-3. **skip has a written blocking fact** and rows without a pending goal are refused. The batch's 5 skip rows cover: waiting for someone (injured, alone), time gate + observer post, pinned by fire, holding a window, holding the flag base.
-4. **Provenance** records each evidence run's `status`; the primary pointer prefers a non-`FAILED` run and `copies` lists every location of the same state with its status.
+## How the rows were built
 
-## Batch 1 (delivered for review)
+1. **X is rendered by 04's frozen serializer only.** `tools/loader.py` imports `worktrees/04-settlement/experiments/action-next-step/serialize.py` read-only; each row records the serializer version and sha256. There is no second serializer.
+2. **`刚才` is perceivable only.** Position changes become `X 到了<目的地>`, appearance changes become `X：<可见描述>`; an authored `perceived` sentence must name the entity and the destination anchor, and engine phrasing (`移动到/任务/已完成`) is rejected. Perception is limited to the actor's innermost room.
+3. **One row per unique X.** `build_rows.py` refuses duplicate X inside a build, `assemble.py` refuses duplicates across the seven batch files.
+4. **Provenance honesty.** `row.source == provenance.source`; `derivation` says `committed-snapshot`, `committed-snapshot+transforms` or `world-s0+transforms`; evidence pointers prefer a non-`FAILED` run and list every copy with its run status.
+5. **skip needs a blocking fact in X** (waiting, blocked, duty, time gate, injury) and the actor must still have a pending goal. The "finish every task then skip" recipe is retired and refused by the builder.
+6. **Independent replay.** `check_dataset.py` rebuilds every X from base + transforms, compares it, re-renders through 04's serializer, resolves every `object` through `object_index`, re-checks the frozen input hashes and the skip ratio.
 
-- 24 rows: 9 A (condition present), 10 B (create the condition), 5 skip; 18 one-step, 1 two-step; 3 from real committed snapshots, 21 constructed; 21 rows carry `刚才`; 9 actors; 11 predicates; 23 of 48 TRAIN goals; 0 duplicate X.
-- Replay: 24/24 rows rebuilt from base + transforms with exact X equality; frozen input hashes re-checked; 0 held-out goals.
-- Rows `experiments/action-dataset-v1/rows/batch1-candidates.jsonl` (sha256 `d23bbbf4…93487a`), provenance `batch1-provenance.jsonl` (`a0974e73…0656a7`), check `batch1-check.json` (`21c03921…4390a3`).
-- Branch `goal/local-13-action-dataset`, head `2b283d04`, pushed to origin.
-- Shared notes: `results/action-dataset-20261111/13-to-01-repair-batch1.md` (review request + questions), `13-to-04-x-shape.md` (X shape proof + two renderer requests + length measurements), `13/completion.json`.
+## Review trail
 
-## Open decisions (not mine to make)
+- `results/action-dataset-20261111/01-audit-v1.jsonl` / `-v1b.jsonl` / `-combined-v1.json`: the first 220 rows, 132 pass / 88 fail; the fail causes were repaired, not waved through.
+- `01-audit-batch1*.jsonl`, `-batch2.jsonl`, `-batch3.jsonl`, `-batch4.jsonl`, `-batch5.jsonl`: per-batch reviews of the repair batches; every cited fail was fixed and re-cited in `13-to-01-batch4-6*.md`.
+- `01-audit-full300.jsonl` + `01-to-13-full300-r2.md`: the final read of the frozen file, **300/300 pass**, with the note that this is a label-level verdict.
 
-1. skip vs `等待`/`观察` for the 5 boundary rows.
-2. whether a cross-room move destination may become a candidate (2 rows use `object: null`).
-3. whether states that only exist in `FAILED` runs are excluded outright (2 of 9).
-4. where time lives in X (currently appended to the 地点 slot text).
-5. X length: 04's `maxLen` cap 384 truncates 24/24 rows, and truncation cuts the last slot (候选, which `object` points into). Options measured: id-only candidates → p50 611, + no item place → 591, + goals 1–2 → 445, + personality 60 → 420/max 821.
-6. whether 03's blind re-review covers only the 11 real rows or also the 122 passing constructed rows.
+## Open items for later work (not blockers for this lane)
 
-## 01 verdict on batch1 (round 1) and the fixes
+1. X length: p50 629 exceeds the frozen `maxLen` 384, and truncation would cut `候选` (the slot `object` points into). 04 owns the projection decision (`results/action-dataset-20261111/04-x-length-decision.md`).
+2. Cross-room `移动` rows carry `object: null` until the contract has a destination slot.
+3. Time is appended to the 地点 slot; there is no dedicated time slot.
+4. The four absent groups (胁迫/算计/情绪/身体) are deferred to the next data version, pending the first model's confusion matrix.
+5. 03's blind re-review of a random 10% is 01's process; 13 does not see test answers.
 
-01 reviewed the 24 rows: 20 pass, 4 fail. All four fails were skip rows whose rationale used facts absent from X (a shout that never appears in `刚才`, fire that pinned the actor, other characters' remote rooms). Two batch-level problems: batch rowIds restarted at `train13-0001` (colliding with the 220-row set) and 01 asked not to expand before the batch is stable. 01 also reported a provenance mismatch where `row.source` said `evidence-snapshot` while provenance said `constructed`.
+## Reproduce
 
-Fixes in round 2:
-
-- three skip rationales rewritten to use only X-visible facts, with the evidence added as perceivable `刚才` lines (林亦舟's swollen ankle and sent help message, 周映's flag stuck in the lock); the 唐骁 skip became an A-class reload row because the empty magazine was in reach;
-- batch rows now use `b1-####` and `build_rows.py --row-prefix/--row-start`; old ids are never reused;
-- provenance `source` is derived from the same value as the row, plus a `derivation` field (`committed-snapshot`, `committed-snapshot+transforms`, `world-s0+transforms`).
-
-Regenerated batch: 24 rows (A 10, B 10, skip 4), 22 rows with `刚才`, 24/24 replay, 0 failures.
-
-## Next
-
-After 01's verdict on this batch: fix the failed rows only, rebuild the 122 passing rows under the new X shape, add the remaining rows to 300 with A/B coverage per TRAIN goal, re-run `build_rows.py` + `check_dataset.py` + tests, and hand the full set to 01 for 100% review.
+```bash
+cd experiments/action-dataset-v1
+python -X utf8 scripts/build_rows.py --catalog cases/01-real.jsonl cases/03-direct.jsonl cases/04-condition.jsonl \
+  --class-defaults cases/classes-v1.json --allowed-goals <01-train-goals-for-13.json> --row-prefix train13r \
+  --out rows/train13r-candidates.jsonl --provenance-out rows/train13r-provenance.jsonl --report-out rows/train13r-report.json
+python -X utf8 scripts/build_rows.py --catalog cases/batch1 --row-prefix b1 ...   # batch2…batch6 likewise
+python -X utf8 scripts/assemble.py --rows-dir rows --out rows/train13-full-candidates.jsonl \
+  --provenance-out rows/train13-full-provenance.jsonl --report-out rows/train13-full-report.json
+python -X utf8 scripts/check_dataset.py --rows rows/train13-full-candidates.jsonl \
+  --provenance rows/train13-full-provenance.jsonl --allowed-goals <01-train-goals-for-13.json> --out rows/train13-full-check.json
+python -X utf8 -m pytest tests -q   # 41 passed
+```
