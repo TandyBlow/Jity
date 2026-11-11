@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { LocalGameSession } from './session';
-import type { InitialTemplate } from './session';
-import type { Json, WorldModelPort } from './transport';
+import type { WorldModelPort } from '../controller';
+import type { ModelTask } from '../schedule';
+import type { InitialTemplate, Json } from '../types';
 
 /** The page's recovery after a failed settlement that committed a point whose
  * narration never ran: cancel is refused while the head narration is pending,
@@ -24,7 +25,7 @@ describe('failed-turn recovery', () => {
     let narrationCalls = 0;
     let failNarration = 0;
     const model: WorldModelPort = {
-      async generate(task, key): Promise<Json> {
+      async generate(task: ModelTask): Promise<Json> {
         if (task === 'pointPlan') return [{ pointId: 'p_0', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order }];
         if (task === 'action') return { kind: 'act', text: '我沿着巷子走。' };
         if (task === 'targets') return { targets: [] };
