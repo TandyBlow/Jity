@@ -457,6 +457,20 @@ export default function WorldLocalPage() {
    * per-group positions/appearances. Evidence only: a rejected commit is the
    * one a diagnosis needs. */
   const commitEventsRef = useRef<{ phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }[]>([]);
+  /** Points in committed order. The narration queue already submits in commit
+   * order; sorting by the saved point sequence keeps the display honest even
+   * when a point is retried after a later one has already produced text. */
+  const inPointOrder = <T extends { pointId: string }>(parts: T[]): T[] => {
+    const record = sessionRef.current?.snapshot.transport as unknown as {
+      points?: Record<string, { sequence?: number }>;
+    } | undefined;
+    const sequence = (pointId: string) => record?.points?.[pointId]?.sequence ?? Number.MAX_SAFE_INTEGER;
+    return parts
+      .map((part, index) => ({ part, index }))
+      .sort((left, right) => sequence(left.part.pointId) - sequence(right.part.pointId) || left.index - right.index)
+      .map((row) => row.part);
+  };
+
   /** The exact commit request/answer, plus the clock the turn record needs:
    * pointCommittedAtMs is set from the controller's committed event, because
    * the page's transport snapshot carries no commit timestamp and copying the
@@ -747,6 +761,7 @@ export default function WorldLocalPage() {
               // until the call finishes, but it is not a draft to be replaced.
               if (index < 0) points.push({ pointId: progress.pointId, text, source: 'model' });
               else if (points[index].source !== 'program') points[index] = { ...points[index], text };
+              points.splice(0, points.length, ...inPointOrder(points));
               return { ...entry, points, text: points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10)), draftMs: entry.draftMs ?? draftMs };
             }));
           },
@@ -794,7 +809,8 @@ export default function WorldLocalPage() {
               const index = points.findIndex((part) => part.pointId === progress.pointId);
               const segments = progress.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }));
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
-              else points[index] = { pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
+              else points[index] = { ...points[index], pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
+              points.splice(0, points.length, ...inPointOrder(points));
               const joined = points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10));
               return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
             }));
