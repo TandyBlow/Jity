@@ -256,3 +256,4 @@
 - registry 现索引本线复核过的全部真实页面回合（20 条 page runs + 24 条逐回合 reviewedOutputs + 1 条 12 b01 外部样本集）；基础设施无效/中止（lease、错误服务器、runtime-08、10turn 旧记录）不计产品证据，仍在原文件保留。门仍 `not_ready`/`blocked`。
 - 更正：4794 的 `action_omitted` 是本线 checker 误报（对象取成「的墙」），已修并加 `pos/route/4794-action-narrated` 负向锚点（98）；4794 只剩绳子重复放下的两处矛盾。
 - 926e（head 926e5c98，02 beat 补丁）：`mixed` 103 字，时间/注视已写、短可读；硬缺陷=胸前护目镜被「摘下」、面板仍在、走只部分（`review.action_partial`）。checker 99 锚点；同时修掉本线三个误报（对象取「墙」、规则牌误当规则豁免、目标词序导致 human-71 误报一行）。
+- 5810（head 5810ae87）：判定过滤生效，面板消失、护目镜矛盾不再；但 53 字，规则牌与走都不在正文（`fact.action_omitted`），result beat 仍逐字绑定。
