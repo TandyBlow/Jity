@@ -66,8 +66,15 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
         const who = fact.structured.actor ? `由${fact.structured.actor}` : '';
         const on = fact.structured.target ? `，对象是${fact.structured.target}` : '';
         const what = fact.structured.action ? `，动作是${fact.structured.action}` : '';
+        // «行动失败» alone reads as "he was stopped". Three runs wrote a blocked
+        // gesture instead of the exchange the record carries («他伸手想触碰她，却在
+        // 她转身时被挡住»). The word stays true to the settlement; the note says
+        // what it does not mean.
+        const failedNote = fact.structured.outcome === 'failed'
+          ? '（失败指他要的结果没得到；按结算记录写对方实际怎么回应，不要改写成被拦住、被推开或被打断）'
+          : '';
         const detail = fact.text && fact.text !== fact.structured.action ? `。结算记录：「${fact.text}」` : '';
-        return `结算结果：${who}${what}${on}，${outcome}${detail}`;
+        return `结算结果：${who}${what}${on}，${outcome}${failedNote}${detail}`;
       }
       return `结算内容：「${fact.text}」`;
     }
@@ -139,6 +146,15 @@ export function buildBeatPrompt(
   // prompt and the model led with it every time. An item's note is printed only
   // when this beat's fact names that item; otherwise the bare name is enough.
   const factsText = facts.join('\n');
+  // A question that the record answers is the whole beat: the player asked and
+  // the other character replied. Runs wrote only the approach («他缓缓走近，低声
+  // 问…» with no answer) or a blocked gesture. When the record carries a question
+  // and a reply, say so in the fact block instead of leaving it to be inferred.
+  const asksAndAnswers = beat.factIds
+    .map((id) => scene.facts.find((fact) => fact.id === id))
+    .some((fact) => fact?.kind === 'result'
+      && /问|盘问|追问/u.test(fact.text)
+      && /(摇头|点头|回答|答|说|不知道|没有说)/u.test(fact.text));
   const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${
     object.note && factsText.includes(object.name) ? `（${clip(object.note, 22)}）` : ''
   }`);
@@ -157,6 +173,7 @@ export function buildBeatPrompt(
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
     ...(facts.length ? [] : ['本段只写视角人物此刻的一个动作或一处注意，一到两句就够，不要把场景材料清点一遍。']),
     ...facts.map((fact) => `- ${fact}`),
+    ...(asksAndAnswers ? ['- 这一回合是他问、对方答：他问的那句话和对方的回答都要写出来；不要只写走近、伸手或环境。'] : []),
     ...(scene.time && !beat.factIds.some((id) => scene.facts.find((fact) => fact.id === id)?.kind === 'time')
       ? [factDirective({ id: 'time-context', kind: 'time', mandatory: false, visibility: 'scene', advance: scene.time }, options.sanityStyle)]
       : []),
