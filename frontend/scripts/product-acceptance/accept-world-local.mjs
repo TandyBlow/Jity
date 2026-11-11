@@ -564,8 +564,21 @@ try {
           const last = articles.at(-1);
           const stage = [...document.querySelectorAll('span')]
             .map((node) => (node.textContent ?? '').trim())
-            .find((label) => /^(结算中|正在写正文|本轮完成|本轮已交还|本轮停止)/.test(label)) ?? '';
-          const text = last?.querySelector('div[style*="pre-wrap"]')?.textContent ?? '';
+            .find((label) => /^(结算中|正在写正文|本轮完成|本轮已交还|本轮已到|本轮停止)/.test(label)) ?? '';
+          // Read prose by stripping the article's UI labels instead of matching an
+          // inline style; 06 moved the prose container into a CSS module.
+          const clone = last ? last.cloneNode(true) : null;
+          let text = '';
+          if (clone) {
+            const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+            const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
+            for (const node of [...clone.querySelectorAll('div,span,p')]) {
+              const value = (node.textContent ?? '').trim();
+              if (!value) continue;
+              if (labels.test(value) || badge.test(value)) node.remove();
+            }
+            text = (clone.textContent ?? '').trim();
+          }
           const bodyText = document.body.innerText;
           const record = Array.isArray(globalThis.__worldTurns) ? globalThis.__worldTurns.at(-1) : null;
           return {
@@ -578,8 +591,8 @@ try {
             stage,
             text,
             busy: /结算中|正在写正文/.test(bodyText),
-            done: /本轮完成|本轮已交还|本轮停止/.test(bodyText),
-            doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮完成|本轮已交还|本轮停止/.test(line)) ?? ''),
+            done: /本轮(完成|已交还|已到|停止)/.test(bodyText),
+            doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮(完成|已交还|已到|停止)/.test(line)) ?? ''),
             failed: /Error|加载失败/.test(bodyText),
             cancelVisible: [...document.querySelectorAll('button')].some((node) => /取消|停止|中断/.test(node.textContent ?? '')),
             failureNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('这一回合的结算没有完成')) ?? ''),
@@ -672,7 +685,9 @@ try {
           input,
           note: noteNode ? noteNode.textContent : null,
           body: document.body.innerText.slice(-4000),
-          message: /本轮完成|本轮已交还|本轮停止|Error|加载失败/.exec(document.body.innerText)?.[0] ?? null,
+          // Any 本轮… line is a hand-back signal, including the 295 s deadline.
+          message: (document.body.innerText.split(String.fromCharCode(10))
+            .find((line) => /^本轮(完成|已交还|已到|停止)/.test(line.trim())) ?? null),
         };
       }, beforeCount);
       entry.text = afterInfo.text || null;
