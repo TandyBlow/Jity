@@ -10,6 +10,7 @@
  * so a pause survives a lease detour. */
 import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
 import { readControllerRecovery, recoverPoint, RecoveryStopped, type RecoveryLease } from './recovery';
+import { PointNarrationQueue } from './local/point-narration/queue';
 import {
   assembleCandidates, errorReaction, foldIdentity, initialNarrationAssembly, mergeUpdatesStages, PROGRAM_ROLL_RULE, scheduleNext, timeScanCandidates, workingStateKey,
   type AllocationPlan, type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
@@ -19,7 +20,15 @@ import type {
   PointRecovery, SettlementGroup, TimeAdvance, WorldContext, WorldOperation,
 } from './types';
 
-export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
+export interface WorldModelPort {
+  generate(task: ModelTask, key: string, input: Json): Promise<Json>;
+  /** Optional product hook: the controller committed this point, so per-point
+   * settlement material may be frozen before the next point overwrites it.
+   * Narration's own input is already point-scoped; this hook only keeps the
+   * model port's mutable result cache from leaking later facts into an older
+   * point's prose. Implementations without a cache may omit it. */
+  onPointCommitted?(pointId: Id): void;
+}
 export interface ControllerIo {
   transport: WorldTransport;
   model: WorldModelPort;
@@ -49,6 +58,10 @@ export interface DriverOptions {
    * 'group:person_a' → 'group'). Applied when allocation responses land, so
    * scenario keying stays config, never mid-flight memory steering. */
   identityAliases?: Record<string, string>;
+  /** Overlap one committed point's narration with the next point's
+   * settlement. The product session enables it; direct controller callers
+   * keep the historical serial behaviour unless they opt in. */
+  narrationOverlap?: boolean;
 }
 
 export type DriverStatus =
@@ -106,6 +119,11 @@ export class ControllerDriver {
   private readonly retryLimit: number;
   private readonly identityAliases: Record<string, string>;
   private readonly identityGate: boolean;
+  private readonly narration: PointNarrationQueue | null;
+  private narrationBootstrapped = false;
+  private narrationDirty = false;
+  private narrationRequestSeq = 0;
+  private lastNarrationError: string | null = null;
   private recoveryPromise: Promise<DriverStatus | undefined> | null = null;
   private recoveryBarrier: string | null = null;
   private recoveredSuccessor: PointRecovery | null = null;
@@ -118,9 +136,99 @@ export class ControllerDriver {
     this.retryLimit = options?.retryLimit ?? 3;
     this.identityAliases = options?.identityAliases ?? {};
     this.identityGate = options?.identityGate ?? false;
+    this.narration = options?.narrationOverlap
+      ? new PointNarrationQueue({
+        transport: io.transport,
+        model: io.model,
+        worldId: state?.world?.worldId ?? '',
+        requestId: () => `${this.memory.requestId.replace(/_\d+$/, '')}_narration_${++this.narrationRequestSeq}`,
+        lease: () => {
+          const lease = this.state.world?.lease;
+          return lease && this.memory.leaseToken ? { leaseToken: this.memory.leaseToken, fenceEpoch: lease.fenceEpoch } : null;
+        },
+        onOutcome: (outcome) => {
+          this.narrationDirty = true;
+          if (outcome.status === 'failed') this.lastNarrationError = outcome.reason;
+        },
+      })
+      : null;
   }
 
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
+  /** True while a committed point is still producing/displaying narration.
+   * The settlement loop uses this only to skip its serial narration branch;
+   * the queue owns the point identity. */
+  get narrationBusy(): boolean { return this.narration?.busy ?? false; }
+  get narrationError(): string | null { return this.lastNarrationError; }
+
+  /** Enqueue every pending point after a cold start or restore. Points are
+   * discovered through the read-only point list, never inferred from the
+   * current head, so a pending older point is not lost when a newer head has
+   * already committed. */
+  private async bootstrapNarration(): Promise<void> {
+    const narration = this.narration;
+    const world = this.state.world;
+    if (!narration || !world || this.narrationBootstrapped) return;
+    // The queue's head claim is lease-bound. Wait for the controller's
+    // first lease acquisition instead of marking a job that cannot claim.
+    if (!world.lease || !this.memory.leaseToken) return;
+    this.narrationBootstrapped = true;
+    narration.setWorldId(world.worldId);
+    try {
+      const listed = await this.io.transport.execute('list_points', {}, { worldId: world.worldId });
+      const points = [...listed.data.points].sort((a, b) => a.sequence - b.sequence);
+      for (const point of points) {
+        const entry = await this.io.transport.execute('narration_get', {} as RequestMap['narration_get'],
+          { worldId: world.worldId, pointId: point.pointId });
+        if (entry.data.narrationStatus === 'pending') {
+          narration.enqueue(point.pointId);
+        }
+      }
+    } catch (error) {
+      // Reads did not establish the pending set; do not pretend it is empty.
+      // The serial scheduler remains available, and the next drive retries.
+      this.narrationBootstrapped = false;
+      this.lastNarrationError = `narration_bootstrap_failed:${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
+
+  /** Explicit player retry for a failed/empty point narration. Never settles
+   * or replays the point's state. */
+  retryNarration(pointId?: Id): void {
+    const target = pointId ?? this.state.world?.head.pointId;
+    if (this.narration && target) this.narration.retry(target);
+  }
+
+  private scheduleView(narrationBusy: boolean, command?: HarnessCommand) {
+    return { world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, ...(command ? { command } : {}), activeInput: this.state.activeInput, identityGate: this.identityGate, narrationBusy, narrationOverlap: this.narration != null };
+  }
+
+  /** Refresh the controller's served head/control after the queue wrote a
+   * narration response. Without this the scheduler keeps the stale pending
+   * gate and could claim the same point again. */
+  private async refreshNarrationState(): Promise<void> {
+    if (!this.narrationDirty || !this.state.world) return;
+    this.narrationDirty = false;
+    try {
+      const response = await this.io.transport.execute('get_context', {}, { worldId: this.state.world.worldId });
+      this.adoptState(response);
+    } catch {
+      this.narrationDirty = true;
+    }
+  }
+
+  /** Terminal statuses wait for already-committed narration to land, but the
+   * wait starts only after settlement has reached its end: the overlap is in
+   * the middle of the turn, not a second serial phase. */
+  private async settleNarration(status: DriverStatus): Promise<DriverStatus> {
+    if (!this.narration) return status;
+    await this.narration.settled();
+    await this.refreshNarrationState();
+    if (status.kind === 'await' && this.state.world?.head.narrationStatus === 'failed') {
+      return { kind: 'stop', reason: 'narration_failed' };
+    }
+    return status;
+  }
   /** Program-owned per-round identity allocation (①b, review 20): when the
    * server confirms a continue conclusion, the NEW round needs fresh point/
    * group identities that the controller cannot derive (the advance plan
@@ -270,7 +378,7 @@ export class ControllerDriver {
   /** Read-only scheduler introspection for declared scenario boundaries. */
   pendingDecision(): Decision {
     if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
-    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, activeInput: this.state.activeInput, identityGate: this.identityGate });
+    return scheduleNext(this.scheduleView(this.narrationBusy));
   }
 
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
@@ -317,17 +425,34 @@ export class ControllerDriver {
   async step(): Promise<DriverStatus | undefined> {
     this.hasStepped = true;
     if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
+    if (this.narration) await this.bootstrapNarration();
+    if (this.narration) {
+      // The queue may have submitted while this step was awaiting the lease or
+      // bootstrap reads. Drain its served-state update before choosing a
+      // decision; otherwise the stale pending head could be claimed a second
+      // time by the serial narration branch.
+      for (let refresh = 0; refresh < 4 && this.narrationDirty; refresh++) {
+        await this.refreshNarrationState();
+      }
+    }
+    if (this.narration && this.state.world?.lease && this.memory.leaseToken && this.state.world?.head.narrationStatus === 'pending') {
+      this.narration.enqueue(this.state.world.head.pointId);
+    }
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
-    const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined, activeInput: this.state.activeInput, identityGate: this.identityGate });
+    const decision = scheduleNext(this.scheduleView(this.narrationBusy, command && command.kind !== 'player_input' ? command : undefined));
     switch (decision.kind) {
-      case 'await_command':
+      case 'await_command': {
         if (this.command === command) this.command = null;
+        const settled = await this.settleNarration({ kind: 'await', reason: decision.reason });
+        if (settled.kind === 'stop') return settled;
+        if (decision.reason === 'gate_pending' && this.state.world?.head.narrationStatus === 'ready') return undefined;
         return { kind: 'await', reason: decision.reason };
+      }
       case 'stop':
         if (this.command === command) this.command = null;
-        return { kind: 'stop', reason: decision.reason };
+        return this.settleNarration({ kind: 'stop', reason: decision.reason });
       case 'model': {
         const output = await this.io.model.generate(decision.task, decision.key, decision.input);
         if (this.command === command) this.command = null;
@@ -336,7 +461,10 @@ export class ControllerDriver {
       }
       case 'read_working_state':
         if (this.command === command) this.command = null;
-        return this.preview();
+        {
+          const status = await this.preview();
+          return status ? this.settleNarration(status) : undefined;
+        }
       case 'transport': {
         const executesCommand = command != null && this.commandOperation(command) === decision.operation;
         const commit = decision.operation === 'commit_point';
@@ -351,6 +479,10 @@ export class ControllerDriver {
         if (outcome.ok) {
           if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);
+          if (decision.operation === 'commit_point') {
+            const head = this.state.world?.head;
+            if (head?.narrationStatus === 'pending') this.narration?.enqueue(head.pointId);
+          }
           if (decision.operation === 'round_conclusion_conclude') {
             const confirmed = (outcome.response as { data?: { kind?: string; nextRoundId?: Id | null } }).data ?? {};
             if (confirmed.kind === 'continue') {
@@ -363,7 +495,7 @@ export class ControllerDriver {
           this.nextRequestId();
           return undefined;
         }
-        return outcome.terminal; // definitive rejection: the command survives; state was refreshed, re-schedule
+        return outcome.terminal ? this.settleNarration(outcome.terminal) : undefined;
       }
     }
   }
@@ -748,6 +880,7 @@ export class ControllerDriver {
       const previousEpoch = this.state.world?.lease?.fenceEpoch ?? null;
       const nextEpoch = envelope.world?.lease?.fenceEpoch ?? null;
       this.state.world = envelope.world;
+      if (envelope.world?.worldId) this.narration?.setWorldId(envelope.world.worldId);
       // A lease-generation change — including losing the lease entirely —
       // fences every held narration claim.
       if (previousEpoch != null && previousEpoch !== nextEpoch && this.memory.narration) {

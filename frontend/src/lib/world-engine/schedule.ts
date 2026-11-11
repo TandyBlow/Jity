@@ -272,6 +272,14 @@ export type Decision =
   | { kind: 'stop'; reason: string };
 
 export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand; activeInput: { advanceId: Id; inputId: Id; text: string } | null;
+  /** True while the point-narration queue owns the current head. The serial
+   * narration branch is then skipped; committed narration and the next
+   * point's settlement overlap without letting the gate block state work. */
+  narrationBusy?: boolean;
+  /** Product overlap mode: the results input adds the current pointId so the
+   * model port can freeze per-point result material. Scenario harnesses keep
+   * their historical input fixtures without this field. */
+  narrationOverlap?: boolean;
   /** G5 产品门：自动轮身份就绪屏障（DriverOptions.identityGate）。缺省
    * 关闭——B3 harness 的自动轮身份走自己的预分配队列，不受此门约束。 */
   identityGate?: boolean }
@@ -437,12 +445,24 @@ function roundIdOf(world: WorldContext): Id {
   return world.activeRoundId ?? world.round?.roundId ?? '';
 }
 
+/** A pending gate whose only blocked reason is the head narration. With an
+ * active advance, a committed point's narration may run while the next point
+ * settles; settlement writes remain serial and bind the new head. */
+function settlementOverlapsNarration(view: ScheduleView): boolean {
+  const { world, control } = view;
+  return view.narrationBusy === true
+    && world?.advance.advanceId != null
+    && control.gate.status === 'pending'
+    && control.blockedReasons.length > 0
+    && control.blockedReasons.every((reason) => reason === 'narration_pending');
+}
+
 function modelBlocked(view: ScheduleView, task: ModelTask): Decision | null {
   // Narration, pointPlan and time are never budget- or compute-blocked: the
   // narration pipeline must run through pause (T05) and a budget pause must
   // not deadlock a pending narration.
   if (!STATE_COMPUTATION_TASKS.includes(task)) return null;
-  if (!view.control.canCompute) return { kind: 'await_command', reason: 'phase_not_computable' };
+  if (!view.control.canCompute && !settlementOverlapsNarration(view)) return { kind: 'await_command', reason: 'phase_not_computable' };
   const { max, used } = view.memory.budget;
   if (max != null && used >= max) {
     const bind = writeBind(view);
@@ -469,13 +489,17 @@ export function scheduleNext(view: ScheduleView): Decision {
   }
   // Narration first: it runs through pause (T05 s7/s8), pending gates and the
   // complete phase (T01 s1–s3: phase=complete, gate=pending, narration pending).
-  const narration = narrationDecision(view);
-  if (narration) return narration;
+  // While the per-point queue owns the head, the serial narration branch is
+  // skipped; the queue submits the same point independently.
+  if (!view.narrationBusy) {
+    const narration = narrationDecision(view);
+    if (narration) return narration;
+  }
 
   if (!world.lease || !memory.leaseToken) {
     return { kind: 'transport', operation: 'lease_acquire', request: { protocolVersion: 2, requestId: memory.requestId, worldId: world.worldId, holderId: memory.holderId }, scope: worldScope(view) };
   }
-  if (control.gate.status !== 'none') return { kind: 'await_command', reason: `gate_${control.gate.status}` };
+  if (control.gate.status !== 'none' && !settlementOverlapsNarration(view)) return { kind: 'await_command', reason: `gate_${control.gate.status}` };
   if (control.paused) return { kind: 'await_command', reason: memory.localPause ? 'local_budget_pause' : 'paused_externally' };
   // complete = no settlement work; starting a pending advance stays legal
   // (T01 s4–s5 allocate/start under phase=complete).
@@ -1031,6 +1055,7 @@ function settleDecision(view: ScheduleView): Decision {
     return {
       kind: 'model', task: 'results', key: pending.groupId,
       input: {
+        ...(view.narrationOverlap ? { pointId: work!.pointId } : {}),
         groupId: pending.groupId,
         members: memory.groupActions.map((member) => ({ memberId: member.memberId, actionText: member.actionText, rollRefs: member.rolls })),
         workingState: asJson(memory.workingState!.state),
