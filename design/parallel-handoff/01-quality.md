@@ -251,3 +251,4 @@
 - 4794（head 479421a5）：open/scene/close 已 model；result beat 仍要求逐字 130 字 `fact.text`（09 index），与 prompt 允许改写冲突；绳再次被放下（fact）、面板、编造演习弹声；06 的 per-beat `rejected` 未进 09 导出（`results/quality/requests-01-to-09-beat-rejects-export.md`）。
 - 三个 dev 样本按当前 checker（`f68f9305`，含面板词表/同物两处/束发合词/仅面板视点四条）重放：findings 与上次完全一致（`dev-02-free-day-task` 0 fact/2 style/3 review；`dev-02-short-root` 2 fact；`dev-08-free-day-root` 0 fact/5 review），`parseLegacyInput` 往返 true；registry 已按新字节重绑并记 `checkerDrift`。验收门仍 `not_ready`/`blocked`（dev 分区 + 未冻结 + 维度未全过 + 有未解项 + 缺目标/用户签名）。
 - 12 b01 六样本独立复核（`results/quality/review-01-12-b01.md`）：0/6 合格；共性缺口=时间推进、黎知微新个性全缺；s43/s97 已解除外貌复现；s61 个性张冠李戴；s97 第一人称；五份外貌罗列。第一人称守卫可读（`perspective.qualified`）。
+- 02 `7922d197`/06 `181c527a` 的 `settledViolationsFromScene` 只有测试调用，beat 路径（`narration-candidates/constrained/verify.ts`）没有接；11a7 `诺诺红发垂落`、4794 `黄黑绳在巷口放下` 都是在 beat 层通过的。已提 `results/quality/requests-01-to-02-06-settled-scene-wiring.md`。
