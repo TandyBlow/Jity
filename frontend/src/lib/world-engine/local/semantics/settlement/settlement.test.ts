@@ -154,6 +154,32 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('shows a dialogue-group example so a question is not answered with a judgement reason', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲问乙。', effects: [] },
+        { memberId: 'b', label: 'achieved', reason: '乙回答。', effects: [] },
+      ],
+      facts: [
+        { text: '甲问乙红蓝两方现在在哪，乙摇头说不知道。', memberIds: ['a', 'b'] },
+      ],
+    })]);
+    await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '我问乙现在的局势。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙回答问题。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json);
+    const prompt = engine.prompts[0];
+    // 3turn 9623 group_29 copied the judgement reason as its fact; a walk/read
+    // example alone does not teach a question group what its result looks like.
+    expect(prompt).toContain('我向诺诺问现在的局势');
+    expect(prompt).toContain('诺诺摇头说不知道');
+    expect(prompt).not.toContain('待办=');
+  });
+
   it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
     // 3turn 9623 group_29: lu asked nono a question, the answer judged nono only
     // and facts were attributed to both. lu had no roll target, so the row is
