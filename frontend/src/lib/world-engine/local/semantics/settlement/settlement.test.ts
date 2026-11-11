@@ -1153,6 +1153,25 @@ describe('six-stage updates', () => {
     expect(engine.prompts.some((prompt) => prompt.includes('新增小任务判断器'))).toBe(true);
   });
 
+  it('never invents a position for an actor whose fact has no destination', async () => {
+    // 09's open request (4b1e turn 10): the lu fact is "路明非离开演习场" with no
+    // destination. The position stage only reads the answer's own changes array;
+    // a fact never becomes a position here, and an empty answer yields none.
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲离开演习场。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#position', input);
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes).toEqual({});
+    const prompt = engine.prompts[0];
+    // The fact is input to the judgement, but the stage cannot derive a place
+    // from it: nothing in the prompt offers a destination for 离开.
+    expect(prompt).toContain('甲离开演习场');
+    expect(prompt).not.toContain('离开→');
+  });
+
   it('does not re-achieve an already achieved task', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),
