@@ -1696,6 +1696,24 @@ anchors.append({
                "notes": "摘下护目镜 while settled on the chest; walk not narrated (gaze only); panel remains."},
 })
 
+
+# 5810: the panel is gone but the declared action (walk + board) is absent.
+run_5810 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-5810.json", encoding="utf-8"))
+t_5810 = run_5810["turns"][0]
+anchors.append({
+    "id": "neg/route/5810-action-absent",
+    "source": "09 constrained-beats 2026-11-11T0200-d7b1 (head 5810ae87): mixed 53 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_5810["text"],
+    "options": {"minChars": 40, "action": t_5810["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"],
+               "notes": "no panel and no goggles contradiction; the board and the walk are absent."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
