@@ -19,12 +19,13 @@ function clip(text: string, max: number): string {
   return chars.length <= max ? text.trim() : `${chars.slice(0, max).join('')}…`;
 }
 
-function characterLine(character: SceneCharacter, detailed: boolean): string {
+function characterLine(character: SceneCharacter, detailed: boolean, omitTasks = false): string {
   const pending = character.tasks.filter((task) => task.status === 'pending');
   const tasks = (pending.length ? pending : character.tasks).slice(0, 2)
     .map((task) => `${task.id}=${clip(task.goal, 40)}`).join('；') || '无';
-  if (!detailed) return `- ${character.name}（id=${character.id}）位置=${character.position}；精神=${character.sanity}；待办=${tasks}`;
-  return `- ${character.name}（id=${character.id}）位置=${character.position}；精神=${character.sanity}/100；个性=${character.personality.map((part) => clip(part, 60)).join('；')}；待办=${tasks}`;
+  const tail = omitTasks ? '' : `；待办=${tasks}`;
+  if (!detailed) return `- ${character.name}（id=${character.id}）位置=${character.position}；精神=${character.sanity}${tail}`;
+  return `- ${character.name}（id=${character.id}）位置=${character.position}；精神=${character.sanity}/100；个性=${character.personality.map((part) => clip(part, 60)).join('；')}${tail}`;
 }
 
 function taskLines(scene: ActionScene): string {
@@ -52,7 +53,14 @@ function placeLine(scene: ActionScene): string {
   return `${scene.roomName}（${scene.roomChain.slice(1).join(' < ') || '最高层'}）；时间 ${scene.time}`;
 }
 
-export function actionPrompt(scene: ActionScene): string {
+export interface ActionPromptOptions {
+  /** The previous attempt answered with the task goal itself. The goal text is
+   * the attractor the small model keeps copying, so a repair call leaves the
+   * task block out instead of repeating it under a "do not copy" line. */
+  omitTasks?: boolean;
+}
+
+export function actionPrompt(scene: ActionScene, options: ActionPromptOptions = {}): string {
   const playerLine = scene.isProtagonist
     ? `主角上一步的命令（已经执行过；只判断这件事是否还需要主角继续做下一步，不能改做别的事，不能复述原话）：${scene.playerInput ?? '（无）'}`
     : scene.sameRoomAsProtagonist
@@ -68,13 +76,15 @@ export function actionPrompt(scene: ActionScene): string {
     '你要独立判断：下面这个角色此刻会不会自行行动、做什么。被玩家点名不是行动前提——角色会按自己的待办任务、职责、个性、精神状态和现场变化决定；没有理由的角色可以不行动，也没有必要人人都动。',
     '判断依据按优先级：1) 待办任务里有没有现在就该做的一步；2) 现场刚发生的事是否逼他表态、自保或阻止别人；3) 他能看见的人和物；4) 精神值和个性让他积极、犹豫还是只顾眼前。',
     '行动写成第三人称一句话，只写这个角色自己做的事，不写结果成败（结算层会判定）。不要替主角做决定，不要复述或改写玩家原话，不要用“我”自称，不要新增未登记的人物、地点、物品、往事、线索。',
-    '待办任务只是方向，不是行动句：不要照抄，也不要复述目标里的连续 8 个字；写这个角色此刻具体做的这一步。不要复述或改写主角做过的事；写这个角色自己的行动。',
+    options.omitTasks
+      ? '上一次输出被拒，因为它就是任务目标本身。这次不要写任何任务目标，也不要总结计划；只写这个角色此刻具体做的、一步就能完成的事（拿、走、问、看、拦、让路这类），用第三人称一句话。'
+      : '待办任务只是方向，不是行动句：不要照抄，也不要复述目标里的连续 8 个字；写这个角色此刻具体做的这一步。不要复述或改写主角做过的事；写这个角色自己的行动。',
     scene.isProtagonist
       ? '只写主角下一步的具体动作或一句对白，不要写任务目标、计划或心理总结。输出只能是 {"kind":"act","text":"一句话行动"}（延续同一件事）或 {"kind":"skip"}（这件事不需要主角再动）。'
       : '输出只能是 {"kind":"act","text":"一句话行动"} 或 {"kind":"skip"}（这个角色此刻不行动）。',
     '',
-    `【本次判断的角色】${characterLine(scene.actor, true)}`,
-    `【角色待办任务】\n${taskLines(scene)}`,
+    `【本次判断的角色】${characterLine(scene.actor, true, options.omitTasks)}`,
+    ...(options.omitTasks ? [] : [`【角色待办任务】\n${taskLines(scene)}`]),
     `【同地点可见人物】\n${scene.visible.length ? scene.visible.slice(0, 8).map((character) => characterLine(character, false)).join('\n') : '（只有他自己）'}`,
     `【同地点可见物品（含各人身上物品）】\n${itemLines(scene)}`,
     ...(scene.offscreen ? [] : [`【不在场角色（不能当作现场人物）】\n${absentLines(scene)}`]),

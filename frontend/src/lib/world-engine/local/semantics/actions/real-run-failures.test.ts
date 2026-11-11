@@ -204,6 +204,29 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '诺诺把故障短讯机举到耳边，试了试信号。' });
   });
 
+  it('a goal-copy repair leaves the task block off the second prompt', async () => {
+    // Real turn 2026-11-11T1541: six actors answered with their task goal on
+    // both attempts (caesar, doctor, manstein, nono, qin, shen). The repair used
+    // to repeat the whole prompt, goal included. The retry now rebuilds the
+    // prompt without the task block, so the copied sentence is not there.
+    const goal = base.characters.nono.tasks
+      ? Object.values(base.characters.nono.tasks)[0]!.goal
+      : '';
+    const engine = new ScriptedEngine([
+      JSON.stringify({ kind: 'act', text: goal }),
+      '{"kind":"act","text":"诺诺走到廊柱边，抬手示意后面的人停下。"}',
+    ]);
+    const result = await createActionHandlers({ engine }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
+    expect(result.attempts).toBe(2);
+    expect(engine.prompts).toHaveLength(2);
+    expect(engine.prompts[0]).toContain('【角色待办任务】');
+    expect(engine.prompts[1]).not.toContain('【角色待办任务】');
+    expect(engine.prompts[1]).not.toContain(goal);
+    expect(engine.prompts[1]).toContain('上一次输出被拒，因为它就是任务目标本身');
+    expect(result.value).toEqual({ kind: 'act', text: '诺诺走到廊柱边，抬手示意后面的人停下。' });
+    expect(codes(result)).not.toContain('repair_failed');
+  });
+
   it('A6: a verbatim goal and a long paraphrase of it are both rejected', async () => {
     // run-5: the model produced Nono's goal as the protagonist's next step.
     // The consumed-protagonist rule above closes the path from a goal string to

@@ -71,6 +71,9 @@ interface GenerateArgs<T> {
   task: ActionTask;
   key: string;
   prompt: string;
+  /** Prompt for the retry after a rejection. A goal-copy rejection rebuilds it
+   * without the task block so the copied sentence is not on the page again. */
+  repairPrompt?: (issues: ActionIssue[]) => string | null;
   maxTokens: number;
   schema?: unknown;
   decode: (raw: string) => T;
@@ -145,7 +148,10 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
           message: `第 ${attempt} 次输出被拒：${describeFailure(checked.issues)}`,
         });
         if (attempt < attempts) {
-          prompt = `${args.prompt}\n\n【上一次输出不能采用】${checked.repairs.join('；')}。请重新判断，只输出规定格式。`;
+          const base = args.repairPrompt?.(checked.issues) ?? args.prompt;
+          prompt = `${base}
+
+【上一次输出不能采用】${checked.repairs.join('；')}。请重新判断，只输出规定格式。`;
         }
       } catch (caught) {
         const incomplete = caught as { completion?: { raw?: string } };
@@ -250,6 +256,9 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
 
     const generated = await generate<{ kind: 'act'; text?: string } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
+      repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')
+        ? actionPrompt(scene, { omitTasks: true })
+        : null),
       schema: taskOutputSchema('action', asJson({})),
       decode: (raw) => decodeTaskOutput('action', raw) as unknown as { kind: 'act'; text?: string } | { kind: 'skip' },
       check: (value) => {
