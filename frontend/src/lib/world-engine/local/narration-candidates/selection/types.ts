@@ -31,6 +31,9 @@ export interface NarrationPoint {
   playerInput?: string;
   /** Settled result lines of this point, used only as visible scene material. */
   settledResults?: string[];
+  /** 04's structured settled records: who acted, on whom, what action and which
+   * outcome direction. Meaning is checked against these, not against wording. */
+  settledFacts?: StructuredSettledFact[];
   /** Previous narration the candidate accepted for this world, if any. */
   priorText?: string | null;
   /** Recent accepted events, newest last. Scene material, never new facts. */
@@ -129,6 +132,17 @@ export interface NarrationCandidate {
   productDefault: boolean;
   availability(point: NarrationPoint, prepared: PreparedNarration): CandidateAvailability;
   run(args: CandidateRunArgs): Promise<CandidateNarrationResult>;
+}
+
+/** One settled result record as committed by the settlement (04). */
+export interface StructuredSettledFact {
+  text: string;
+  actorId: string;
+  targetId?: string;
+  action?: string;
+  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected';
+  /** The actor's judgement row was missing: the outcome is not asserted. */
+  implicit?: true;
 }
 
 export type NarrationRunResult =

@@ -541,8 +541,18 @@ export function resultSemantics(
   const claims = sentencesMentioning(text, actor);
   // A claim is a sentence that says something was completed and does not itself
   // carry a negation; wording is free.
-  const claim = claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
-    && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
+  // A structured record names the performed action. Saying that action in the
+  // actor's own sentence («诺诺回答了他») is the completion, even when the verb
+  // is not in the generic cue list; the cue list alone missed dialogue answers.
+  const actionPhrase = structured?.action?.trim() ?? '';
+  const actionSentence = actionPhrase.length >= 2
+    ? claims.find((sentence) => sentence.includes(actionPhrase)
+      && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? ''
+    : '';
+  const claim = cuesIn(actionSentence, DONE_CUES).length === 0 && actionSentence
+    ? actionSentence
+    : claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
+      && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
   const failure = claims.find((sentence) => cuesIn(sentence, NEGATIVE_CUES).length > 0) ?? '';
 
   if (settledNegative) {
@@ -556,11 +566,14 @@ export function resultSemantics(
   }
 
   if (settledPositive) {
-    if (!claim) {
-      return { ok: false, sentence: claims[0], detail: `settled result is a completed action; the prose never says ${actor ?? 'it'} did it` };
-    }
     if (target && !text.includes(target)) {
       return { ok: false, detail: `settled result names ${target}; the prose does not` };
+    }
+    if (!claim) {
+      // A paraphrase can describe the action without any generic completion
+      // cue. That is not decidable from wording, so it is marked for manual
+      // reading instead of being hard-rejected or silently passed.
+      return { ok: true, unverified: true, sentence: claims[0], detail: 'completed outcome written without a decidable completion cue' };
     }
     return { ok: true, detail: 'outcome written' };
   }

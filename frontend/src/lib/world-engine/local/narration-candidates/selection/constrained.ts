@@ -105,6 +105,10 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         viewpointId: prepared.viewpointId,
         scene: sceneHints(prepared),
         resultsText: point.settledResults?.length ? point.settledResults.join('；') : null,
+        // Structured settlement records let the candidate check meaning
+        // (actor/action/target/outcome direction) instead of requiring the
+        // settled wording verbatim.
+        settledFacts: point.settledFacts ?? null,
         // Near-empty only: length alone never rejects a complete scene. The
         // earlier 40-char floor rejected semantically complete short paragraphs
         // and the 30/36+ floor inside the candidate was the same rule twice.

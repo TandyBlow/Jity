@@ -29,6 +29,8 @@ export interface ProjectSceneOptions {
   scene?: import('./types').SceneHints;
   knowledge?: Partial<SceneKnowledge>;
   resultsText?: string | null;
+  /** Structured settled records (04); preferred over `resultsText` when present. */
+  settledFacts?: import('./types').StructuredSettledFact[] | null;
   priorText?: string | null;
   inputText?: string | null;
   /** Facts-only packets still carry the point's time advance. */
@@ -432,14 +434,39 @@ export function projectConstrainedScene(
   // The settlement's own result line is a fact-bearing description, not a
   // model free-write: it is licensed verbatim so a question/answer or a
   // hand-off does not disappear from the prose.
-  if (options.resultsText && options.resultsText.trim()) {
-    // The settlement's result line carries the concrete outcome. A judgment
-    // about a member («诺诺：因此未被阻止或达成目标。») is mechanics; the program
-    // realizer printed it verbatim in the 2026-11-10 constrained page run
-    // (09-constrained-beats-a178.json). Drop judgment clauses, keep the outcome.
+  // Structured settled records are the fact source: each names the executor,
+  // the recipient, the action and the outcome direction. They keep a negative
+  // outcome («未能…», «被拦住») instead of a wording filter deciding what
+  // counts as a result (that filter dropped real failures and kept mechanics).
+  const structuredResults = (options.settledFacts ?? []).filter((record) => (record.text ?? '').trim());
+  if (structuredResults.length) {
+    structuredResults.forEach((record, index) => {
+      const actorName = entityName(state, record.actorId);
+      const targetName = record.targetId ? entityName(state, record.targetId) : undefined;
+      const text = clampSentences(record.text.trim(), 2, 130);
+      facts.push({
+        id: `${prefix}:result:${index}`, kind: 'result', mandatory: true, visibility: 'scene', text,
+        structured: {
+          actorId: record.actorId,
+          actor: actorName,
+          ...(record.action ? { action: record.action } : {}),
+          ...(record.targetId ? { targetId: record.targetId } : {}),
+          ...(targetName ? { target: targetName } : {}),
+          outcome: record.outcome,
+          ...(record.implicit ? { implicit: true as const } : {}),
+        },
+      });
+      // Names the settlement used are licensed material: the prose may name the
+      // executor and the recipient even when the brief does not repeat them.
+      names.add(actorName);
+      if (targetName) names.add(targetName);
+    });
+  } else if (options.resultsText && options.resultsText.trim()) {
+    // Free-text only (an older caller or a point with no structured record).
+    // Keep the outcome sentence as licensed material; the verifier decides the
+    // polarity from its own cues and says `unverified` when it cannot.
     const settledResult = options.resultsText.split(/[；;]/u).map((part) => part.trim())
-      .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
-      .join('；');
+      .filter(Boolean).join('；');
     if (settledResult) {
       facts.push({
         id: `${prefix}:result`, kind: 'result', mandatory: true, visibility: 'scene',
@@ -653,19 +680,39 @@ export function projectFromFactsPacket(
   // the prose; it is quoted, not paraphrased. Judgment/mechanics clauses are
   // not prose and are dropped here too (926e printed 诺诺：…未被阻止… from this
   // packet path while the scene path already filtered it).
-  const settledQuote = options.resultsText && options.resultsText.trim()
-    ? options.resultsText.split(/[；;]/u).map((part) => part.trim())
-      .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
-      .join('；') || null
-    : null;
-  if (options.resultsText && options.resultsText.trim()) {
-    const settled = settledQuote;
-    if (settled) {
+  // Structured records first: they carry the actor/target/outcome direction,
+  // so a faithful paraphrase is checkable and a negative outcome is not lost.
+  const structuredResults = (options.settledFacts ?? []).filter((record) => (record.text ?? '').trim());
+  const nameOf = (id: string) => packet.facts.find((fact) => fact.actorId === id)?.name ?? id;
+  const settledQuote = structuredResults.length
+    ? structuredResults.map((record) => clampSentences(record.text.trim(), 2, 130)).join('；')
+    : options.resultsText && options.resultsText.trim()
+      ? options.resultsText.split(/[；;]/u).map((part) => part.trim())
+        .filter(Boolean).join('；') || null
+      : null;
+  if (structuredResults.length) {
+    structuredResults.forEach((record, index) => {
+      const actorName = nameOf(record.actorId);
+      const targetName = record.targetId ? nameOf(record.targetId) : undefined;
       facts.push({
-        id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
-        text: clampSentences(settled, 2, 130),
+        id: `${options.idPrefix ?? 'facts'}:result:${index}`, kind: 'result', mandatory: true, visibility: 'scene',
+        text: clampSentences(record.text.trim(), 2, 130),
+        structured: {
+          actorId: record.actorId,
+          actor: actorName,
+          ...(record.action ? { action: record.action } : {}),
+          ...(record.targetId ? { targetId: record.targetId } : {}),
+          ...(targetName ? { target: targetName } : {}),
+          outcome: record.outcome,
+          ...(record.implicit ? { implicit: true as const } : {}),
+        },
       });
-    }
+    });
+  } else if (settledQuote) {
+    facts.push({
+      id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
+      text: clampSentences(settledQuote, 2, 130),
+    });
   }
   // The viewpoint's own position is a licensed fact, not a change: without it
   // the opening cannot say where the player is.
@@ -732,7 +779,14 @@ export function projectFromFactsPacket(
     objects,
     facts,
     licensed: {
-      names: [...new Set([...packet.facts.map((fact) => fact.name), ...present.map((person) => person.name)])],
+      names: [...new Set([
+        ...packet.facts.map((fact) => fact.name),
+        ...present.map((person) => person.name),
+        ...structuredResults.flatMap((record) => [
+          nameOf(record.actorId),
+          ...(record.targetId ? [nameOf(record.targetId)] : []),
+        ]),
+      ])],
       locations: [...new Set(packet.facts.flatMap((fact) => fact.kind === 'moved' ? [fact.from, fact.to] : fact.kind === 'at' ? [fact.location] : []))],
       items: objects.map((object) => object.name),
       details: [...expandedDetails(new Set([

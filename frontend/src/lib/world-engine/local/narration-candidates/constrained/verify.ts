@@ -12,6 +12,7 @@
  * beat level and re-verifies.
  */
 import type { EntityDelta, Id, TimeAdvance } from '../../../types';
+import { resultSemantics } from '../../narration-generation/licensed-sense';
 import { alignNarration, mentionsTime, numbersIn, repetitionAgainst } from '../../../runtime/narration-alignment';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import type { CandidateIssue, FactVisibility, SceneFact, SceneSkeleton } from './types';
@@ -252,10 +253,32 @@ export function verifyText(text: string, options: VerifyOptions): {
     } else if (fact.kind === 'item_present' || fact.kind === 'item_discovered') {
       expressed = parts.some((sentence) => sentence.includes(fact.name));
     } else if (fact.kind === 'result') {
-      // Free-text fact: the settled sentence itself must appear. No overlap
-      // ratio, no keyword match — a paraphrase is not evidence that the settled
-      // result was written. The prompt asks for the same thing (compose.ts).
-      expressed = text.includes(fact.text);
+      if (fact.structured) {
+        // Structured record: compare meaning, not wording. Actor, target and
+        // outcome direction must agree; a faithful paraphrase is accepted and
+        // a dropped negation / swapped actor / reversed outcome is not.
+        const check = resultSemantics(text, fact.text, {
+          actor: fact.structured.actor,
+          action: fact.structured.action,
+          target: fact.structured.target,
+          outcome: fact.structured.outcome,
+        }, [fact.structured.actor, fact.structured.target].filter(Boolean) as string[]);
+        expressed = check.ok;
+        if (!check.ok) {
+          issues.push({
+            kind: 'result_semantics', severity: 'hard', beatId: null,
+            detail: `result:${fact.id}:${check.detail}${check.sentence ? ` | ${check.sentence}` : ''}`,
+          });
+        } else if (check.unverified) {
+          // A record with no decidable direction cannot be automatically passed:
+          // keep it visible for manual reading instead of calling it verified.
+          issues.push({ kind: 'result_unverified', severity: 'soft', beatId: null, detail: `result:${fact.id}:${check.detail}` });
+        }
+      } else {
+        // Free-text only: the settled sentence itself must appear, because there
+        // is nothing structured to compare. Callers with 04 records avoid this.
+        expressed = text.includes(fact.text);
+      }
     } else if (fact.kind === 'at') {
       expressed = parts.some((sentence) => sentence.includes(fact.name) && sentence.includes(fact.location));
     }

@@ -50,14 +50,20 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
       return `${fact.name}现在在${fact.container}`;
     case 'item_discovered':
       return `${fact.name}现在在${fact.container}，视角人物此前没有留意（不要写成他早已知晓）`;
-    case 'result':
-      // A result fact carries free text and nothing else: no actor field, no
-      // outcome field. The verifier can only check «this sentence is in the
-      // prose» (verify.ts: text.includes(fact.text)), so the prompt must ask for
-      // exactly that. It used to say «可以换措辞», which invited a paraphrase the
-      // checker then rejected — every result beat fell back to the program line
-      // («诺诺：因此未被阻止或达成目标。» / «诺诺：…未被掀开袖口…»).
+    case 'result': {
+      // With a structured record the verifier compares meaning (executor,
+      // recipient, outcome direction), so the prompt asks for the outcome in
+      // the model's own words instead of a verbatim copy. Free-text-only results
+      // still need their sentence because there is nothing else to check.
+      if (fact.structured) {
+        const outcome = { completed: '行动完成', failed: '行动失败', blocked: '行动被阻止', unaffected: '目标没有受到影响' }[fact.structured.outcome];
+        const who = fact.structured.actor ? `由${fact.structured.actor}` : '';
+        const on = fact.structured.target ? `，对象是${fact.structured.target}` : '';
+        const what = fact.structured.action ? `，动作是${fact.structured.action}` : '';
+        return `结算结果：${who}${what}${on}，${outcome}（用自己的话写清谁做了什么、结果朝哪个方向；人、对象和方向不能改，措辞可以改）`;
+      }
       return `结算原话：「${fact.text}」（正文要原样写出这一句，可以前后加动作或环境，但这句里的人、事、措辞都不要改）`;
+    }
     case 'at':
       return `${fact.name}在${fact.location}`;
     default:

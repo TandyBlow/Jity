@@ -109,6 +109,9 @@ export class LocalGameModel implements WorldModelPort {
   private roundCounter = 0;
   private lastPlayerInput = '';
   private lastResultsText = '';
+  /** Structured settled results for the current point (04's actor/action/target/
+   * outcome records), used by the candidate so it checks meaning, not wording. */
+  private lastSettledFacts: Array<{ text: string; actorId: string; targetId?: string; action?: string; outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true }> = [];
   private recentEvents: string[] = [];
   private readonly narrationRunner: NarrationRunner | null;
   /** Last accepted prose (model or candidate). Only real prose is fed back as
@@ -276,6 +279,16 @@ export class LocalGameModel implements WorldModelPort {
     const internal = /本组结算未能确认|未能确认新的结果|无判定|没有产生新的结果|完成了刚才的动作/u;
     const story = lines.filter((line) => !internal.test(line));
     this.lastResultsText = internal.test(lines.join('；')) ? '' : story.join('；');
+    // 04's structured records are the authoritative description of what the
+    // settlement produced; the free-text line above is only its rendering.
+    this.lastSettledFacts = this.settlement.settledFacts().map((fact) => ({
+      text: fact.text,
+      actorId: fact.actorId,
+      ...(fact.targetId ? { targetId: fact.targetId } : {}),
+      ...(fact.action ? { action: fact.action } : {}),
+      outcome: fact.outcome,
+      ...(fact.implicit ? { implicit: true as const } : {}),
+    }));
     for (const line of story) this.recentEvents.push(line);
     if (this.recentEvents.length > 4) this.recentEvents = this.recentEvents.slice(-4);
     return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
@@ -548,6 +561,7 @@ export class LocalGameModel implements WorldModelPort {
         pointId, before, delta, after,
         playerInput: this.lastPlayerInput,
         settledResults: this.lastResultsText ? [this.lastResultsText] : [],
+        settledFacts: this.lastSettledFacts,
         priorText: this.lastAcceptedNarration,
         recentEvents: this.recentEvents,
       });

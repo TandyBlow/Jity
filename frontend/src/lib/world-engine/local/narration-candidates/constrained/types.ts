@@ -61,8 +61,24 @@ export type SceneFact =
     id: string; kind: 'item_discovered'; mandatory: boolean; visibility: FactVisibility;
     itemId: Id; name: string; containerId: Id; container: string; note: string;
   }
-  /** The settlement's own result wording; narrated as one short paragraph. */
-  | { id: string; kind: 'result'; mandatory: boolean; visibility: FactVisibility; text: string };
+  /** The settlement's own result wording; narrated as one short paragraph.
+   * `structured` carries who acted, on whom, what action, and the outcome
+   * direction, so verification can accept a faithful paraphrase. */
+  | {
+    id: string; kind: 'result'; mandatory: boolean; visibility: FactVisibility; text: string;
+    structured?: { actorId: string; actor?: string; action?: string; targetId?: string; target?: string;
+      outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true };
+  };
+
+/** One settled result record as committed by the settlement (04). */
+export interface StructuredSettledFact {
+  text: string;
+  actorId: string;
+  targetId?: string;
+  action?: string;
+  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected';
+  implicit?: true;
+}
 
 /** Whether the viewpoint could perceive the fact. Hidden facts are kept in the
  * skeleton for evidence but are not narrated by default (`R11/R12`: the prose
@@ -194,7 +210,8 @@ export type CandidateIssueKind =
   | 'unlicensed_entity' | 'unlicensed_event' | 'rediscovery_claim'
   | 'perspective_leak' | 'prompt_echo' | 'fact_list' | 'off_language' | 'empty_text' | 'too_short' | 'too_long'
   | 'repeated_sentence' | 'echo_prior' | 'opening_repeat' | 'engine_error' | 'cancelled'
-  | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing';
+  | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing'
+  | 'result_semantics' | 'result_unverified';
 
 export interface CandidateIssue {
   kind: CandidateIssueKind;
@@ -261,6 +278,9 @@ export interface ConstrainedPolicy {
   /** Settlement result text for this point, if the caller has it. Used only as
    * extra licensed material for item/scene selection, never as a fact source. */
   resultsText?: string | null;
+  /** Structured settled records (04): actor, action, target, outcome direction.
+   * When present they become the result facts; the wording above is ignored. */
+  settledFacts?: StructuredSettledFact[] | null;
   /** Whether hidden (out-of-scene) facts may be narrated. Default false. */
   narrateHiddenDeltas?: boolean;
   /** 'program' never calls a model; 'model' uses the engine per beat;

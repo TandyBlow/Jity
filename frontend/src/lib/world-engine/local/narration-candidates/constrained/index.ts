@@ -46,6 +46,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
       scene: policy.scene,
       knowledge: policy.knowledge,
       resultsText: policy.resultsText,
+      settledFacts: policy.settledFacts ?? null,
       priorText,
       inputText,
     });
