@@ -284,3 +284,4 @@
 - 1e59 三回合（head 61869637，`results/quality/review-09-1e59-3turn.md`）：t1 24 字准确但薄；t2 问出口无回答；t3 214 字、诺诺只在护目镜反光里出现、结尾又出现陈述式路线朗读。关键：t2/t3 路明非那条事实就是玩家原话（含「我」）却标 `completed`，`421431b2` 守卫未拦住；红带/短讯机错句在三份证据里反复出现。
 - 09 `09-frozen-raw-6186.json`（run `2026-11-11T0647-98bb`）是**基础设施无效**：`page_sha_mismatch:28ea13ac5681!=65d4852e`，未产生任何回合，不作质量数据点（已记 registry `artifactsNote.infrastructureInvalid`）。
 - 查清「…」来源（`requests-01-to-06-empty-entry-ellipsis.md`）：`page.tsx:1247` `{entry.text || (entry.failed||… ? '' : '…')}` —— 空正文且未标 failed 的条目就显示「…」；9623/aa30/frozen-6186 的 t3 均属此列（t3 167 ms、无模型调用）。属 06 页面空状态缺陷，不是模型输出。
+- a38d 首回合（`09-frozen-raw-a38d.json`，head a38d8564）：模型 9.1 s 写出正文，但 `continuation_policy_abstract_task_goal` 被 `unwrap` 当失败抛出（`settlement_failed:continuation:…`），整回合 330 s 超时、正文为 null；页面记录 `acceptedMs 85286` 却没有文本、`firstReadableAtMs` 为 null。已提 06（policy stop 不应致命、空状态要显示说明）与 04（policy_stop 应返回值）。
