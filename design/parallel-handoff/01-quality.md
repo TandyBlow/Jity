@@ -326,3 +326,4 @@
 - 新增 `results/quality/prereg-10turn-20261111.md`：在下一份十回合证据出现前预先登记七个维度与判定口径（动作/事实/连续/时空/文体/交还/等待），避免看完再定标准。
 - 09 move sW5U（`2026-11-11T1708-4d84`，head `f4302b6d`）：先提交玩家点的第一次真实运行，18.1 s 交还、12.7 s 首段，但 `resultsCalls 0`、只有 `time_scan` 说 lu 未变、正文 27 字原地静止，随后 `world_complete` 取消其余角色点——快而空。已登记 53 条并写 `browser-requests/01-input-first-point-action.json`。
 - 09 move 9QTZ（`2026-11-11T1745-0ce3`，head `aae32d88`）：玩家点 65 s 提交、69.9–93.7 s 出正文且第一段就是真实移动（槽位修复生效）；但名册 group_6/7/8 继续跑到 330 s，回合未交还、历史 0、无账本。第 2 段仍是护目镜记录句，第 3 段有玩家没做的蹲下/拨蓝布带（脚踝肿胀有世界初始外貌依据，已更正）。已写 `browser-requests/01-input-9QTZ-handback.json`，registry 54 条。
+- 新增 `requests-01-to-04-reaction-mismatch.md`：9QTZ 里玩家只是选路行走，诺诺的反应却被写成“警惕+威胁+拉住她的手”，且“她”指代不明；请 04 查反应提示的敌意默认和性别/人称。
