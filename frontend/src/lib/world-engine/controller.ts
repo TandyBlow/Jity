@@ -64,7 +64,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
     narration: null, workingState: null, sources: [], staged: [], restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
     lastRoundIdentityError: null, roundIdentityBlocked: null,
-    continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
+    continuation: null, continuationStop: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
 }
 
@@ -500,9 +500,18 @@ export class ControllerDriver {
       case 'time':
         this.memory.successorTime = structuredClone(output) as unknown as TimeAdvance;
         break;
-      case 'continuation':
+      case 'continuation': {
+        const value = output as { kind?: string; reason?: string };
+        if (value?.kind === 'policy_stop') {
+          // Lane 04's policy stop is a real turn ending. It has no model
+          // conclusion value, so it closes the round as a cancel with the
+          // reason; the narration of committed points still runs.
+          this.memory.continuationStop = { reason: String(value.reason ?? 'continuation_policy') };
+          break;
+        }
         this.memory.continuation = structuredClone(output) as unknown as Conclusion;
         break;
+      }
       case 'initial':
         this.memory.initialTemplate = structuredClone(output) as unknown as InitialTemplate;
         break;
@@ -970,6 +979,8 @@ export class ControllerDriver {
         break;
       }
       case 'round_conclusion_cancel':
+        this.memory.continuationStop = null;
+        this.memory.continuation = null;
         this.clearRoundWork();
         break;
       case 'checkpoint_pause':
@@ -997,7 +1008,7 @@ export class ControllerDriver {
       workingState: null, sources: [], staged: [], stagedTimeScan: null,
       restoredUnit: null,
       groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-      continuation: null, successorTime: null, commitPayload: null, narration: null, roundIdentityBlocked: null,
+      continuation: null, continuationStop: null, successorTime: null, commitPayload: null, narration: null, roundIdentityBlocked: null,
     });
   }
 }

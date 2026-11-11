@@ -364,11 +364,25 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async continuation(key: Id, input: Json): Promise<Generated> {
-    // The continuation judgement is lane 04's port. A policy stop comes back as
-    // an explicit stop conclusion, never as a fabricated handback.
+    // The continuation judgement is lane 04's port. A policy stop has no model
+    // conclusion value; it is passed to the controller as a typed stop so the
+    // round closes as a visible cancel (never a fabricated model handback) and
+    // the narration of the committed points still runs.
     const started = performance.now();
-    const value = await this.settlement.generate('continuation', key, input);
-    return { value, raw: '', ms: performance.now() - started, fallback: false };
+    try {
+      const value = await this.settlement.generate('continuation', key, input);
+      return { value, raw: '', ms: performance.now() - started, fallback: false };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const marker = 'settlement_failed:continuation:continuation_policy_';
+      if (message.startsWith(marker)) {
+        return {
+          value: { kind: 'policy_stop', reason: message.slice('settlement_failed:continuation:'.length) },
+          raw: '', ms: performance.now() - started, fallback: false,
+        };
+      }
+      throw error;
+    }
   }
 
   private async narration(key: Id, input: Json): Promise<Generated> {

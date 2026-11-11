@@ -250,6 +250,10 @@ export interface ControllerMemory {
    * 阻塞」，后续通知补齐入口时清空。gate 关闭的驱动（B3 harness）不写。 */
   roundIdentityBlocked: string | null;
   continuation: Conclusion | null;
+  /** A continuation judgement that ended on lane-04's policy rule (no model
+   * conclusion value). It closes the round as a visible cancel, never as a
+   * fabricated model handback; the narration pipeline still runs. */
+  continuationStop: { reason: string } | null;
   /** This round's committed point Δs in commit order — the continuation
    * input's 「本轮状态变化」 (§7.1). Built from the client's own committed
    * point projections (no extra read). null until this driver commits a point
@@ -598,6 +602,18 @@ function advanceDecision(view: ScheduleView): Decision {
 
 function continuationDecision(view: ScheduleView): Decision {
   const { world, memory } = view;
+  if (memory.continuationStop) {
+    const bind = writeBind(view);
+    return {
+      kind: 'transport', operation: 'round_conclusion_cancel',
+      request: {
+        protocolVersion: 2, requestId: memory.requestId, ...bind,
+        operation: 'cancel', advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!),
+        cancelReason: memory.continuationStop.reason,
+      } as RequestMap['round_conclusion_cancel'],
+      scope: worldScope(view),
+    };
+  }
   if (memory.continuation) {
     const bind = writeBind(view);
     return {
