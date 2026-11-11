@@ -871,11 +871,15 @@ export default function WorldLocalPage() {
         });
         releaseLoadGate = null;
         if (!alive) return;
-        setMessage('正在加载语义模型（Qwen3-0.6B）…');
+        // Both weights are needed before a turn; loading them one after the
+        // other cost 17.8 s + 46.2 s in the 5810 run. Start the narration load
+        // together with the semantic one so the page is ready after the slower
+        // of the two, not their sum. No turn can start before both are done.
+        setMessage(`正在加载本地模型（Qwen3-0.6B + ${narrationKey}）…`);
+        const narrationLoading = narration.load();
         await semantic.load();
-        if (!alive) { await semantic.dispose(); return; }
-        setMessage(`正在加载叙事模型（${narrationKey}）…`);
-        await narration.load();
+        if (!alive) { await semantic.dispose(); await narrationLoading.catch(() => undefined); return; }
+        await narrationLoading;
         if (!alive) { await narration.dispose(); return; }
         await refresh();
         if (!alive) return;
