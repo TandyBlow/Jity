@@ -242,6 +242,11 @@ export function checkPacket(packet, vocabulary = null, trainGoals = null) {
       if (!vocab.actionToGroup.get(step.action)) problems.push(`row ${id} step.action ${step.action} is not one of the 115 predicates`);
       if (step.object === row.characterId) problems.push(`row ${id} step.object is the actor`);
     }
+    const manifest = packet?.manifest ?? packet?.sourceManifest ?? packet?.sources ?? null;
+    if (row.source === 'evidence-snapshot' && !row.sourceRef && !row.evidence && !row.snapshot
+      && !(manifest && (manifest[row.rowId] ?? manifest[row.id]))) {
+      warnings.push(`row ${id} claims evidence-snapshot but has no source pointer and the packet has no manifest entry`);
+    }
     if (row.x && typeof row.x === 'object') {
       const xKey = canonical(row.x);
       if (xSeen.has(xKey)) problems.push(`row ${id} X duplicates ${xSeen.get(xKey)}`);
@@ -400,6 +405,8 @@ function cmdRender(file, mode = 'packet') {
     ].filter(Boolean).join(NL);
   });
   console.log(`criterion (frozen sha256 ${CRITERION_SHA256}):${NL}${readFileSync(new URL('../../../../../results/action-dataset-20261111/criterion.txt', import.meta.url), 'utf8').trim()}${NL}`);
+  const manifest = packet?.manifest ?? packet?.sourceManifest ?? packet?.sources ?? null;
+  if (manifest) console.log(`packet source manifest:${NL}${JSON.stringify(manifest, null, 2)}${NL}`);
   console.log(blocks.join(NL));
   return 0;
 }
@@ -544,6 +551,8 @@ function selfTest() {
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }])], vocabularySha256: 'deadbeef' }, 'vocabularySha256', 'vocabulary drift');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [{ ...row('r1', []), characterId: 'other' }] }, 'characterId != x.actor.id', 'actor mismatch');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { x: { ...row('r1', []).x, goals: [{ id: 'task_heldout_test' }] } })] }, 'not a TRAIN goal', 'held-out goal leak');
+  const evidence = checkPacket({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { source: 'evidence-snapshot' })] });
+  if (!evidence.warnings.some((warning) => warning.includes('no source pointer'))) throw new Error('missing evidence pointer not warned');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { skipReason: null })] }, 'skip row has no written skipReason', 'skip without reason');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { x: { ...row('r1', []).x, justNow: 42 } })] }, 'justNow is neither', 'bad justNow type');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { skipReason: '有理由' })] }, 'non-skip row has a skipReason', 'non-skip with skipReason');
