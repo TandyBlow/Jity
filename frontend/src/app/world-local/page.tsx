@@ -115,7 +115,8 @@ interface WorldTurnRecord {
   promptShape: string | null;
   engines: Array<{
     label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number;
-    contextSize?: number; lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
+    contextSize?: number; backend?: string; gpuLayers?: number;
+    lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
     lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
     /** Full runtime record of the last generation (engine.runtime().lastGeneration):
      * outcome, first token/readable, stream chunks/gap, prompt+completion tokens,
@@ -292,6 +293,11 @@ function engineCounters(label: string, engine: ProductEnginePort | null): WorldT
   return {
     label, loadCount: runtime.loadCount, workersCreated: runtime.workersCreated, workersExited: runtime.workersExited,
     generations: runtime.generations, contextSize: runtime.contextSize,
+    // Which runtime actually ran: `backend` is the engine's own label and
+    // `gpuLayers` the layer count handed to wllama. A CPU fallback or an
+    // ignored n_gpu_layers otherwise looks identical to a slow GPU in the
+    // timings, and the 2026-11-11 turns ran at 7 decode tokens/s.
+    backend: runtime.backend, gpuLayers: runtime.gpuLayers,
     lastLoadMs: runtime.lastLoadMs ?? null, lastLoadFetchMs: runtime.lastLoadFetchMs ?? null,
     lastLoadCompileMs: runtime.lastLoadCompileMs ?? null, lastLoadFromCache: runtime.lastLoadFromCache ?? null,
     // Full engine record for the last generation: prefill (timings.prompt_ms/
@@ -309,7 +315,7 @@ interface ProductEnginePort extends InferenceEngine {
   cancelActive(): number;
   runtime(): {
     needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number;
-    contextSize?: number; modelId?: string | null;
+    contextSize?: number; modelId?: string | null; backend?: string; gpuLayers?: number;
     lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
     lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
     lastGeneration?: WorldTurnRecord['engines'][number]['lastGeneration'];
