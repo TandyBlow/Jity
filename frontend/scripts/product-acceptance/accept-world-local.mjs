@@ -207,13 +207,29 @@ try {
   }
 
 
+    const retryEvaluate = async (fn, attempts = 4) => {
+      let lastError = null;
+      for (let i = 0; i < attempts; i += 1) {
+        try {
+          return await fn();
+        } catch (error) {
+          lastError = error;
+          if (!/Execution context was destroyed|navigation|Target closed|detached/i.test(String(error))) throw error;
+          await page.waitForLoadState('domcontentloaded').catch(() => undefined);
+          await page.waitForTimeout(600);
+        }
+      }
+      throw lastError;
+    };
   // A fresh player must not inherit anything from an earlier run. The product
   // persists in IndexedDB (writer lease + revision), so clearing localStorage
   // alone leaves a stale lease/revision and the first save conflicts. Clear all
   // origin storage on a same-origin blank document before the product boots.
   if (!keepStorage) {
     await page.goto(`${base}/`, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => undefined);
-    evidence.freshReset = await page.evaluate(async () => {
+    // The home document may hand off (client navigation or a reload) while the
+    // storage wipe is running; retry on a destroyed context instead of dying.
+    const wipe = async () => page.evaluate(async () => {
       const result = { localStorageKeys: 0, databases: [], caches: [], errors: [] };
       try { result.localStorageKeys = localStorage.length; localStorage.clear(); } catch (error) { result.errors.push(`localStorage:${String(error)}`); }
       try {
@@ -234,10 +250,11 @@ try {
       try { await navigator.storage?.getDirectory?.().then((root) => root?.remove?.()).catch(() => undefined); } catch { /* OPFS optional */ }
       return result;
     });
-    evidence.freshReset.after = await page.evaluate(async () => ({
+    evidence.freshReset = await retryEvaluate(wipe);
+    evidence.freshReset.after = await retryEvaluate(() => page.evaluate(async () => ({
       localStorageKeys: localStorage.length,
       databases: ((await indexedDB.databases?.()) ?? []).map((db) => db.name),
-    }));
+    })));
     if (evidence.freshReset.after.databases.length > 0) {
       noteFailure('fresh-reset', 'IndexedDB still has databases after delete', evidence.freshReset.after.databases);
     }
@@ -246,7 +263,7 @@ try {
   // WebGPU identity is read from the page itself, before any model load.
   const query = flag('--query', '');
   await page.goto(`${base}/world-local${query ? `?${query.replace(/^\?/, '')}` : ''}`, { waitUntil: 'domcontentloaded', timeout: 120000 });
-  evidence.environment.crossOriginIsolated = await page.evaluate(() => globalThis.crossOriginIsolated === true);
+  evidence.environment.crossOriginIsolated = await retryEvaluate(() => page.evaluate(() => globalThis.crossOriginIsolated === true));
   evidence.environment.adapter = await page.evaluate(async () => {
     try {
       const adapter = await navigator.gpu?.requestAdapter?.({ powerPreference: 'high-performance' });
