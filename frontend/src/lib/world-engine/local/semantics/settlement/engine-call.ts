@@ -89,10 +89,23 @@ export async function callJson(
     } catch (error) {
       const ms = performance.now() - started;
       lastError = errorText(error);
-      if (/ended with (?:length|no finish reason)/iu.test(lastError) || /IncompleteGenerationError/u.test(lastError)) {
-        truncated = true;
-      }
-      calls.push({ prompt: attemptPrompt, raw: '', ms, attempt, error: lastError });
+      const completion = (error as { completion?: { raw?: unknown; finishReason?: unknown } }).completion;
+      const partial = typeof completion?.raw === 'string' ? completion.raw : '';
+      const finishReason = typeof completion?.finishReason === 'string' ? completion.finishReason : null;
+      const cut = /ended with (?:length|no finish reason)/iu.test(lastError)
+        || /IncompleteGenerationError/u.test(lastError);
+      if (cut) truncated = true;
+      // Keep what the model actually produced before the cap: without it the
+      // page can only say "length" and cannot tell a runaway answer from a
+      // genuinely long one.
+      calls.push({
+        prompt: attemptPrompt,
+        raw: partial.slice(0, 2000),
+        ms,
+        attempt,
+        error: lastError,
+        ...(cut ? { truncated: true, finishReason } : {}),
+      });
     }
   }
   throw new JsonCallError(`model_output_invalid: ${lastError}`, calls);

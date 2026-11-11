@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { IncompleteGenerationError } from '../../../runtime/engine';
 import type { InferenceEngine } from '../../../runtime/engine';
 import type { InitialState, Json, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
@@ -154,7 +155,10 @@ describe('common-group results', () => {
   });
 
   it('retries a length-truncated results answer with a shorter-answer instruction and the member list', async () => {
-    const truncated = new Error('IncompleteGenerationError: generation ended with length');
+    const truncated = new IncompleteGenerationError({
+      raw: '{"judgments":[{"memberId":"a","label":"achieved","reason":"甲把工具推向乙',
+      finishReason: 'length', firstTokenMs: 20, wallMs: 49_866,
+    });
     const complete = JSON.stringify({
       judgments: [
         { memberId: 'a', label: 'achieved', reason: '甲把工具推向乙。', effects: [{ targetId: 'b', reacted: true }] },
@@ -170,6 +174,11 @@ describe('common-group results', () => {
     expect(outcome.value!.a).toContain('乙伸手接住');
     expect(outcome.evidence.calls).toHaveLength(2);
     expect(outcome.evidence.calls[0]?.error).toContain('ended with length');
+    // The paid partial output is evidence, not discarded: the page has to show
+    // what the model wrote before the cap.
+    expect(outcome.evidence.calls[0]?.truncated).toBe(true);
+    expect(outcome.evidence.calls[0]?.finishReason).toBe('length');
+    expect(outcome.evidence.calls[0]?.raw).toContain('甲把工具推向乙');
     const retry = engine.prompts[1];
     // A capacity failure must not be retried with the same request.
     expect(retry).toContain('因长度上限被截断');
