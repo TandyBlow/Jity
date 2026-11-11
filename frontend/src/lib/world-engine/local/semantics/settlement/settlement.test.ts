@@ -1364,29 +1364,38 @@ describe('real failed-output shapes (09 product run)', () => {
     expect(outcome.evidence.detail).toMatchObject({ reason: 'point_aborted_after_repair' });
   });
 
-  it('prints the admitted-derived effects row so the model can copy it', async () => {
-    // 35ad turn 3 wrote reacted=true for a target whose 准入=false and the whole
-    // group was re-asked (23.6 s).
+  it('derives the effects row from the frozen admission and does not ask for it', async () => {
+    // 35ad turn 3 wrote reacted=true for a target whose 准入=false and the group
+    // was re-asked (23.6 s); 09-frozen-raw-6186 turn 2 lost the whole turn to the
+    // same shape. The row is frozen state, so the prompt stops asking for it.
     const engine = new ScriptedEngine([JSON.stringify({
-      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推过去。', effects: [{ targetId: 'b', reacted: true }] }],
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推过去。' }],
       facts: [
         { text: '甲把工具推向乙。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
         { text: '乙伸手接住工具。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
       ],
     })]);
-    await createSettlementHandlers({ engine }).results('g1', resultsInput());
-    expect(engine.prompts[0]).toContain('准入=true → effects 写 {"targetId":"b","reacted":true}');
-
-    const denied = new ScriptedEngine([JSON.stringify({ judgments: [], facts: [] })]);
-    await createSettlementHandlers({ engine: denied }).results('g1', {
-      groupId: 'g1',
-      members: [{
-        memberId: 'a', actionText: '甲推门。',
-        rollRefs: [{ targetId: 'b', rollId: 'r1', result: 3, eligible: true, admitted: false }],
-      }],
-      workingState: world(),
-    } as unknown as Json).catch(() => null);
-    expect(denied.prompts[0]).toContain('准入=false → effects 写 {"targetId":"b","reacted":false}');
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.error ?? null).toBeNull();
+    expect(engine.prompts[0]).toContain('准入=true');
+    expect(engine.prompts[0]).not.toContain('effects 写');
+    expect(engine.prompts[0]).not.toContain('"reacted"');
+    const detail = outcome.evidence.detail as { judgments?: unknown };
+    expect(detail).toBeTruthy();
+    // A written row is still accepted; a contradicting value is recorded, not
+    // re-asked.
+    const written = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推过去。', effects: [{ targetId: 'b', reacted: false }] }],
+      facts: [
+        { text: '甲把工具推向乙。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙伸手接住工具。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    })]);
+    const corrected = await createSettlementHandlers({ engine: written }).results('g1', resultsInput());
+    expect(corrected.error ?? null).toBeNull();
+    expect(written.prompts).toHaveLength(1);
+    const correctedDetail = corrected.evidence.detail as { effectsAdjusted?: { written: boolean; frozen: boolean }[] };
+    expect(correctedDetail.effectsAdjusted?.[0]).toMatchObject({ written: false, frozen: true });
   });
 
   it('repairs an effect for an undeclared target and resolves full names', async () => {

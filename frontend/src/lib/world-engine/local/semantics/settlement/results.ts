@@ -124,7 +124,7 @@ const RESULTS_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['memberId', 'label', 'reason', 'effects'],
+        required: ['memberId', 'label', 'reason'],
         properties: {
           memberId: { type: 'string' },
           label: { enum: [...LABELS] },
@@ -324,7 +324,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     const rolls = member.rolls.length
       ? member.rolls.map((roll) => {
         const targetName = state.initial.characters[roll.targetId]?.name ?? roll.targetId;
-        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted} → effects 写 {"targetId":"${roll.targetId}","reacted":${roll.admitted}}`;
+        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted}`;
       }).join('；')
       : '无判定';
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;
@@ -340,11 +340,9 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
   // Show one row per member, not one row in total: with a single-row example a
   // 2-member dialogue group (9623 turn 2, lu+nono) answered one member's row per
   // attempt, twice in a row.
-  const exampleRows = members.slice(0, 2).map((member) => {
-    const target = member.rolls[0]?.targetId;
-    const effects = target ? `[{"targetId":"${target}","reacted":true或false}]` : '[]';
-    return `{"memberId":"${member.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${effects}}`;
-  });
+  const exampleRows = members.slice(0, 2).map((member) => (
+    `{"memberId":"${member.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由"}`
+  ));
   const exampleFacts = members.slice(0, 4)
     .map((member) => `{"text":"${state.initial.characters[member.memberId]?.name ?? member.memberId}做了什么/看到什么","memberIds":["${member.memberId}"],"actorId":"${member.memberId}","outcome":"completed"}`);
   return [
@@ -353,8 +351,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '规则：',
     '- 只能使用下面出现的人物、地点、物品；不得新增人物、地点、物品、往事、线索或任务。',
     '- 一个成员的行动可以成功、部分成功、失败或被制止；行动被接纳不等于目标达成。',
-    '- 骰点 准入=false 表示该目标这次没有被迫反应；effects 中该 target 的 reacted 必须为 false。已行动人物不会再次反应。',
-    '- effects 必须恰好覆盖该成员判定里列出的每个目标各一条，不多不少；不要把判定之外的人物写进 effects。',
+    '- 骰点 准入=false 表示该目标这次没有被迫反应；已行动人物不会再次反应。不要写 effects：谁反应了由程序按冻结的准入值填写。',
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
@@ -423,12 +420,14 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     const memberId = resolveCharacterId(state, rawMemberId);
     if (!memberId) throw new Error(referenceError(state, rawMemberId, 'character', members[0]?.memberId));
     const member = memberById.get(memberId);
-    if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${rawMemberId || memberId}`);
+    if (rawJudgment.effects != null && !Array.isArray(rawJudgment.effects)) {
+      throw new Error(`effects must be an array for ${rawMemberId || memberId}`);
+    }
     if (!member) {
       // A scene bystander is not part of the freeze. An observation with no
       // effect is noise that must not fail the turn; an effect would settle a
       // person the dice never covered, so that stays an error.
-      if (rawJudgment.effects.length) {
+      if (Array.isArray(rawJudgment.effects) && rawJudgment.effects.length) {
         throw new Error(`judgment for non-member ${rawMemberId}${memberId !== rawMemberId ? ` (${memberId})` : ''}; 未冻结人物不能写 effect；本组只有 ${members.map((row) => row.memberId).join(',')}`);
       }
       dropped.push({ memberId, label: asString(rawJudgment.label), reason: 'not_a_group_member' });
@@ -439,39 +438,31 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     const label = asString(rawJudgment.label);
     if (!LABELS.has(label)) throw new Error(`invalid label for ${memberId}: ${label}`);
     if (typeof rawJudgment.reason !== 'string') throw new Error(`missing reason for ${memberId}`);
-    const expected = new Map(member.rolls.map((roll) => [roll.targetId, roll.admitted]));
-    const effectIds = new Set<Id>();
-    const effects: Judgment['effects'] = [];
-    for (const rawEffect of rawJudgment.effects) {
-      if (!isRecord(rawEffect)) throw new Error(`effect must be an object for ${memberId}`);
-      const rawTargetId = asString(rawEffect.targetId);
-      const targetId = resolveCharacterId(state, rawTargetId);
-      if (!targetId) {
-        // A known entity that is not a rolled target is the real "undeclared
-        // target" shape; only a value that names nothing is an unknown id.
-        if (resolveEntityId(state, rawTargetId)) {
-          throw new Error(`effect for undeclared target ${rawTargetId}; ${memberId} 的判定目标只有 ${[...expected.keys()].join(',') || '无'}`);
+    // Who reacted is frozen, not judged: the reaction lane already decided it
+    // from the rolls, and nothing downstream reads effects[].reacted. The model
+    // no longer writes effects (06-to-04-effects-actor-row: asking the actor's
+    // row to describe the reaction it caused is what produced
+    // reacted=true for an admitted=false target twice). A written row is kept
+    // only as evidence of what the model said.
+    const effects: Judgment['effects'] = member.rolls.map((roll) => ({
+      targetId: roll.targetId,
+      reacted: roll.admitted,
+    }));
+    const frozenByTarget = new Map(effects.map((row) => [row.targetId, row.reacted]));
+    if (Array.isArray(rawJudgment.effects)) {
+      for (const rawEffect of rawJudgment.effects) {
+        if (!isRecord(rawEffect)) continue;
+        const rawTarget = asString(rawEffect.targetId);
+        const targetId = rawTarget ? resolveCharacterId(state, rawTarget) : null;
+        if (!targetId || !frozenByTarget.has(targetId)) {
+          // A target the freeze never covered is still worth reporting: it means
+          // the model settled somebody the dice did not.
+          throw new Error(`effect for undeclared target ${rawTarget ?? ''}; ${memberId} 的判定目标只有 ${[...frozenByTarget.keys()].join(',') || '无'}`);
         }
-        throw new Error(referenceError(state, rawTargetId, 'character', member.rolls[0]?.targetId));
+        if (typeof rawEffect.reacted === 'boolean' && rawEffect.reacted !== frozenByTarget.get(targetId)) {
+          effectsAdjusted.push({ memberId, targetId, written: rawEffect.reacted, frozen: frozenByTarget.get(targetId) === true });
+        }
       }
-      if (!expected.has(targetId)) {
-        throw new Error(`effect for undeclared target ${rawTargetId}${targetId !== rawTargetId ? ` (${targetId})` : ''}; ${memberId} 的判定目标只有 ${[...expected.keys()].join(',') || '无'}`);
-      }
-      if (effectIds.has(targetId)) throw new Error(`duplicate effect target ${targetId}`);
-      effectIds.add(targetId);
-      if (typeof rawEffect.reacted !== 'boolean') throw new Error(`reacted must be boolean for ${targetId}`);
-      const frozen = expected.get(targetId) === true;
-      if (rawEffect.reacted !== frozen) {
-        // The admission is frozen state; the model copying the opposite value
-        // is a slip. 09-frozen-raw-6186 turn 2 lost the whole turn to exactly
-        // this (two 22 s attempts, empty prose, 世界没有完成). The value is
-        // corrected from the frozen roll and recorded, not re-asked.
-        effectsAdjusted.push({ memberId, targetId, written: rawEffect.reacted, frozen });
-      }
-      effects.push({ targetId, reacted: frozen });
-    }
-    for (const targetId of expected.keys()) {
-      if (!effectIds.has(targetId)) throw new Error(`missing effect for ${memberId}->${targetId}`);
     }
     judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
