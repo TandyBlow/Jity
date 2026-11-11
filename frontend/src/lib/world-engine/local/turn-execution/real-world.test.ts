@@ -344,6 +344,38 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.droppedFacts[0].original).toContain('路明非未被判定为反应');
   });
 
+  it('rejects blocked without an obstruction in the fact', async () => {
+    // 9eae turn 2: 诺诺摇头说不知道 was committed as outcome blocked.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'not_achieved', reason: '诺诺没有被迫反应。', effects: [{ targetId: 'nono', reacted: false }] }],
+      facts: [{ text: '路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_29', {
+      groupId: 'group_29',
+      members: [{
+        memberId: 'lu',
+        actionText: '我向诺诺问现在的局势。',
+        rollRefs: [{ targetId: 'nono', rollId: 'r1', result: 12, eligible: true, admitted: false }],
+      }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('needs the obstruction');
+    // A real obstruction keeps the blocked outcome.
+    const blocked = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'not_achieved', reason: '门被顶住。', effects: [] }],
+      facts: [{ text: '路明非被门板挡住，没有挤进器材棚。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
+    });
+    const ok = await createSettlementHandlers({ engine: scriptedEngine([blocked]) }).results('group_29', {
+      groupId: 'group_29',
+      members: [{ memberId: 'lu', actionText: '我挤进器材棚。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(ok.value).not.toBeNull();
+  });
+
   it('rejects a fact that gives one character’s item to another', async () => {
     // d531 turn 2 wrote 路明非的红色识别带… although the band is 诺诺's.
     const { state } = loadWorld();

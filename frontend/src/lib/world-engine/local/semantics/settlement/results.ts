@@ -666,6 +666,13 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         throw new Error(`outcome blocked contradicts the reason for ${actorId}: ${reason}`);
       }
     }
+    // blocked is a claim that something stopped the action; a sentence that
+    // shows no obstruction (9eae turn 2: 诺诺摇头说不知道 written as blocked) must
+    // say failed/unaffected instead, or it teaches the composer the wrong
+    // direction.
+    if (outcome === 'blocked' && !/被(?:阻止|拦住|拦下|拦|挡|按|拽|推|制住)|无法|没能|不能|阻止|拦住|拦下|挡住/u.test(cleaned.text)) {
+      throw new Error(`outcome blocked needs the obstruction in the fact: ${original}。写清被什么阻止，或改成 failed/unaffected。`);
+    }
     // A fact that is the member's declared action restated is not a result:
     // 35ad turn 3 answered the player's own sentence (我请诺诺带我走…路线)
     // verbatim with outcome completed, so the “result” asserted the player's
