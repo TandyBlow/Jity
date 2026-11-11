@@ -1031,13 +1031,26 @@ export default function WorldLocalPage() {
         // A stop that committed no player point must not leave an empty turn.
         // If the model did write prose for a committed automatic point, that
         // prose stays on screen: a later stop never erases what was shown.
-        setEntries((list) => list.filter((entry) => entry.key !== key || Boolean(entry.text.trim()) || Boolean(entry.points?.some((part) => part.text.trim()))));
+        setEntries((list) => list.filter((entry) => entry.key !== key
+          || Boolean(entry.text.trim())
+          || Boolean(entry.points?.some((part) => part.text.trim()))));
         setInput((current) => current || text);
         if (/narration|gate/i.test(status.reason)) {
           setMessage('上一回合的正文还没写完；正在补写，完成后可以再提交这一句。');
           void session.start().catch((narrationError) => console.warn('[world-local] finishing narration after a blocked submit failed', narrationError));
         }
       }
+      // A command that produced neither a committed point nor prose is a
+      // placeholder, whatever the stop reason. Drop it and give the sentence
+      // back instead of leaving an empty turn that looks like a failure.
+      setEntries((list) => {
+        const mine = list.find((entry) => entry.key === key);
+        const hasProse = Boolean(mine?.text.trim()) || Boolean(mine?.points?.some((part) => part.text.trim()));
+        if (!mine || hasProse || mine.failed || mine.cancelled || mine.restored) return list;
+        if (committedNow > playerPointsAtStart) return list;
+        setInput((current) => current || text);
+        return list.filter((entry) => entry.key !== key);
+      });
       if (status.kind === 'stop' && status.reason === 'progress_conflict') {
         // The stored record was written by another writer/session. Play cannot
         // continue on a record whose revision the session does not own; the
