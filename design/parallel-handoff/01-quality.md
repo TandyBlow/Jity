@@ -249,3 +249,4 @@
 - 11a7 逐 beat（09 index）：`open fact_missing time:facts:time (scoping regression)`、`result fact_missing result:facts:result`，scene/close 为 model——同一处 scoping 同时丢了时间事实与已结算外貌。
 - 已向 02 提记录修正（`results/quality/requests-01-to-02-arm-name.md`）：`314d9e03` 把 86 字「accepted model beat」写成 constrained，但该页运行是 prose-facts，且与 a178 正文的实际缺陷（time_missing、无据微光、新增袖口细节）冲突；要求写明 candidate/mode、文件、fixture，并区分 verifier 接受与独立复核。
 - 4794（head 479421a5）：open/scene/close 已 model；result beat 仍要求逐字 130 字 `fact.text`（09 index），与 prompt 允许改写冲突；绳再次被放下（fact）、面板、编造演习弹声；06 的 per-beat `rejected` 未进 09 导出（`results/quality/requests-01-to-09-beat-rejects-export.md`）。
+- 三个 dev 样本按当前 checker（`f68f9305`，含面板词表/同物两处/束发合词/仅面板视点四条）重放：findings 与上次完全一致（`dev-02-free-day-task` 0 fact/2 style/3 review；`dev-02-short-root` 2 fact；`dev-08-free-day-root` 0 fact/5 review），`parseLegacyInput` 往返 true；registry 已按新字节重绑并记 `checkerDrift`。验收门仍 `not_ready`/`blocked`（dev 分区 + 未冻结 + 维度未全过 + 有未解项 + 缺目标/用户签名）。
