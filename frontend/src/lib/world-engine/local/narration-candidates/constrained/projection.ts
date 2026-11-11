@@ -637,12 +637,13 @@ export function projectFromFactsPacket(
 ): ProjectedScene {
   // The viewpoint is either standing (at) or arriving (moved) this point; a
   // facts-only packet with a pure move still knows who moved and where to.
-  const atFact = packet.facts.find((fact) => fact.kind === 'at');
-  const movedFact = packet.facts.find((fact) => fact.kind === 'moved');
-  const anchorFact = atFact ?? movedFact;
+  const positions = packet.facts.filter((fact) => fact.kind === 'at' || fact.kind === 'moved');
+  const anchorFact = options.viewpointId
+    ? positions.find((fact) => fact.actorId === options.viewpointId)
+    : positions.find((fact) => fact.kind === 'at') ?? positions[0];
   const viewpointName = anchorFact?.name ?? '主角';
-  const location = atFact?.kind === 'at' ? atFact.location : movedFact?.kind === 'moved' ? movedFact.to : '';
-  if (!location) throw new SceneProjectionError('facts_packet_without_scene', 'needs an at-fact or a moved-fact for the viewpoint');
+  const location = anchorFact?.kind === 'at' ? anchorFact.location : anchorFact?.kind === 'moved' ? anchorFact.to : '';
+  if (!anchorFact || !location) throw new SceneProjectionError('facts_packet_without_scene', 'needs an at-fact or a moved-fact for the viewpoint');
   const facts: SceneFact[] = [];
   const advance = options.timeAdvance ?? null;
   if (advance && advance.duration.amount > 0) {
@@ -698,6 +699,7 @@ export function projectFromFactsPacket(
   const present: ScenePerson[] = [];
   for (const fact of packet.facts) {
     if (fact.kind !== 'at' || fact.name === viewpointName) continue;
+    if (hints?.objectNotes && Object.hasOwn(hints.objectNotes, fact.name)) continue;
     if (present.some((person) => person.id === fact.actorId)) continue;
     present.push({
       id: fact.actorId, name: fact.name,
@@ -715,8 +717,10 @@ export function projectFromFactsPacket(
   const scene: SceneSkeleton = {
     anchor: packet.anchor,
     viewpoint: {
-      id: anchorFact?.kind === 'at' ? anchorFact.actorId : 'viewpoint',
-      name: viewpointName, locationId: anchorFact?.kind === 'at' ? anchorFact.locationId : '', location,
+      id: anchorFact.actorId,
+      name: viewpointName,
+      locationId: anchorFact.kind === 'at' ? anchorFact.locationId : anchorFact.toId,
+      location,
       note: '', personality: '', sanity: 0,
     },
     time: advance,
