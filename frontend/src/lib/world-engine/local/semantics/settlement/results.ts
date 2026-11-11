@@ -93,7 +93,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -465,6 +465,17 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       && memberById.get(judgment.memberId)!.rolls.every((roll) => !roll.admitted))
     .map((judgment) => judgment.memberId));
   const factRecipients = new Set<Id>();
+  // Resolve a fact's member list before its text is judged: an inactive member's
+  // mechanics-only line is dropped, a live member's line is repaired.
+  const recipientsFor = (rawFact: unknown): Id[] => {
+    const raw = isRecord(rawFact) && Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
+    const ids: Id[] = [];
+    for (const value of raw) {
+      const id = resolveCharacterId(state, value);
+      if (id && memberById.has(id) && !ids.includes(id)) ids.push(id);
+    }
+    return ids;
+  };
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
@@ -478,6 +489,15 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     if (!original) throw new Error('fact text must be non-empty');
     const cleaned = sanitizeFactText(original);
     if (!cleaned.text || !cleaned.text.replace(FACT_PUNCTUATION, '')) {
+      // A member who provably did nothing (all rolls denied, judged
+      // not_achieved) has no observable result to narrate: 09-product-03turn-73f3's
+      // reaction group answered 路明非未被判定为反应 for nono and the whole turn
+      // died on a mechanics-only fact. Drop it and let the point settle with no
+      // fact for that member instead of inventing one.
+      if (recipientsFor(rawFact).every((id) => inactive.has(id))) {
+        droppedFacts.push({ memberIds: recipientsFor(rawFact), original, reason: 'inactive_no_result' });
+        continue;
+      }
       throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {

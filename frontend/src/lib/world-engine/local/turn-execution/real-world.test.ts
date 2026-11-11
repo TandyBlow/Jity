@@ -317,6 +317,33 @@ describe('21c3 trace replay (CPU)', () => {
     expect(outcome.error).not.toContain('missing judgment');
   });
 
+  it('settles the 73f3 reaction group with no invented fact when the model only writes a mechanics line', async () => {
+    // 09-product-03turn-73f3.json turn 1, group_12: nono's reaction was denied
+    // (reacted=false) and the model answered 路明非未被判定为反应 for her. The
+    // old path aborted the point after two repairs and killed the turn.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '路明非未被判定为反应', effects: [{ targetId: 'lu', reacted: false }] }],
+      facts: [{ text: '路明非未被判定为反应。', memberIds: ['nono'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_12', {
+      groupId: 'group_12',
+      members: [{
+        memberId: 'nono',
+        actionText: '诺诺蹲下，掀开路明非的袖口看伤口。',
+        rollRefs: [{ targetId: 'lu', rollId: 'r1', result: 4, eligible: true, admitted: false }],
+      }],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.nono).toBe('');
+    expect(outcome.evidence.calls).toHaveLength(1);
+    const detail = outcome.evidence.detail as { droppedFacts: { reason: string; original: string }[] };
+    expect(detail.droppedFacts[0]).toMatchObject({ reason: 'inactive_no_result' });
+    expect(detail.droppedFacts[0].original).toContain('路明非未被判定为反应');
+  });
+
   it('keeps the real d101 pending task goal out of the results prompt', async () => {
     const { state } = loadWorld();
     const seen: string[] = [];
