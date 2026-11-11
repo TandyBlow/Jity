@@ -126,4 +126,26 @@ describe('point narration queue empty/error outcomes', () => {
     expect(fake.submits).toEqual([{ pointId: 'p1', outcome: 'ready', text: 'p1 的正文。', reason: null }]);
     expect(fake.submitModes).toEqual(['head', 'history']);
   });
+
+  it('records an inference error on p1 and still finishes p2', async () => {
+    const fake = fakeTransport();
+    const model: WorldModelPort = {
+      async generate(_task, key) {
+        if (key === 'p1') throw new Error('inference exploded');
+        return '第二点仍然有正文。';
+      },
+    };
+    let seq = 0;
+    const queue = new PointNarrationQueue({
+      transport: fake.transport, model, worldId: 'w', requestId: () => `q_${++seq}`,
+      lease: () => ({ leaseToken: 'lease', fenceEpoch: 1 }),
+    });
+    queue.enqueue('p1');
+    queue.enqueue('p2');
+    await queue.settled();
+    expect(fake.entries.p1).toMatchObject({ status: 'failed', text: null });
+    expect(fake.entries.p2).toMatchObject({ status: 'ready', text: '第二点仍然有正文。' });
+    expect(fake.submits[0]).toMatchObject({ pointId: 'p1', outcome: 'failed', text: null });
+    expect(fake.submits[0]?.reason).toContain('inference exploded');
+  });
 });
