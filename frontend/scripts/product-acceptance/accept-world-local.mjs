@@ -25,7 +25,7 @@
 // labelled `shimmed` so it can never be mistaken for a product pass.
 
 import { createRequire } from 'node:module';
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -295,6 +295,26 @@ try {
       : resolve(rootDir, declared);
     evidence.productState.worktree = productWorktree;
     evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
+    // The served bundle is whatever .next-prod was built from, not whatever the
+    // worktree head says. Record the build id file's mtime and the head commit's
+    // time so a run cannot silently claim code that was never compiled in.
+    try {
+      const buildIdPath = resolve(productWorktree, 'frontend/.next-prod/BUILD_ID');
+      if (existsSync(buildIdPath)) {
+        const stat = statSync(buildIdPath);
+        evidence.productState.buildId = readFileSync(buildIdPath, 'utf8').trim();
+        evidence.productState.buildIdMtime = stat.mtime.toISOString();
+        const headTime = Number(execSync(`git -C "${productWorktree}" log -1 --format=%ct`, { encoding: 'utf8' }).trim()) * 1000;
+        evidence.productState.headCommittedAt = new Date(headTime).toISOString();
+        const lagSeconds = Math.round((headTime - stat.mtime.getTime()) / 1000);
+        evidence.productState.headNewerThanBuildSeconds = lagSeconds;
+        if (lagSeconds > 60) {
+          evidence.warnings = [...(evidence.warnings ?? []), `head ${evidence.productState.gitHead.slice(0, 8)} is ${lagSeconds}s newer than the served build (${evidence.productState.buildId}); the bundle may not contain the head's code`];
+        }
+      }
+    } catch (error) {
+      evidence.productState.buildIdentityError = String(error).slice(0, 200);
+    }
     // Hash the source with LF endings: 06 publishes the git blob sha (LF), while a
     // Windows checkout is CRLF on disk. Hashing the checkout bytes made the same
     // build look like a different one; keep both so the raw value is auditable.
