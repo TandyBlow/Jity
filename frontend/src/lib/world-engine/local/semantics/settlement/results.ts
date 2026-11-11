@@ -94,13 +94,22 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
   /** A written outcome that disagreed with the judgement or the sentence and was
    * replaced by the judgement-derived direction. */
   outcomeAdjusted?: { actorId: Id; original: string; written: ResultOutcome; derived: ResultOutcome; why: string }[];
+  /** An effects row that contradicted the frozen admission; the frozen value
+   * was written instead of re-asking the group. */
+  effectsAdjusted?: { memberId: Id; targetId: Id; written: boolean; frozen: boolean }[];
+  /** An item possessive that named the wrong character; the frozen owner was
+   * written instead so the observation survives. */
+  ownershipAdjusted?: { original: string; from: string; to: string; item: string }[];
+  /** The player's own first-person sentence rewritten to the protagonist's
+   * name outside dialogue. */
+  firstPersonAdjusted?: { original: string; text: string }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -115,7 +124,7 @@ const RESULTS_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['memberId', 'label', 'reason', 'effects'],
+        required: ['memberId', 'label', 'reason'],
         properties: {
           memberId: { type: 'string' },
           label: { enum: [...LABELS] },
@@ -207,6 +216,9 @@ export async function runResults(
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
       outcomeAdjusted: parsedAnswer.outcomeAdjusted ?? [],
+      effectsAdjusted: parsedAnswer.effectsAdjusted ?? [],
+      ownershipAdjusted: parsedAnswer.ownershipAdjusted ?? [],
+      firstPersonAdjusted: parsedAnswer.firstPersonAdjusted ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -312,7 +324,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     const rolls = member.rolls.length
       ? member.rolls.map((roll) => {
         const targetName = state.initial.characters[roll.targetId]?.name ?? roll.targetId;
-        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted} → effects 写 {"targetId":"${roll.targetId}","reacted":${roll.admitted}}`;
+        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted}`;
       }).join('；')
       : '无判定';
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;
@@ -328,11 +340,9 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
   // Show one row per member, not one row in total: with a single-row example a
   // 2-member dialogue group (9623 turn 2, lu+nono) answered one member's row per
   // attempt, twice in a row.
-  const exampleRows = members.slice(0, 2).map((member) => {
-    const target = member.rolls[0]?.targetId;
-    const effects = target ? `[{"targetId":"${target}","reacted":true或false}]` : '[]';
-    return `{"memberId":"${member.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${effects}}`;
-  });
+  const exampleRows = members.slice(0, 2).map((member) => (
+    `{"memberId":"${member.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由"}`
+  ));
   const exampleFacts = members.slice(0, 4)
     .map((member) => `{"text":"${state.initial.characters[member.memberId]?.name ?? member.memberId}做了什么/看到什么","memberIds":["${member.memberId}"],"actorId":"${member.memberId}","outcome":"completed"}`);
   return [
@@ -341,8 +351,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '规则：',
     '- 只能使用下面出现的人物、地点、物品；不得新增人物、地点、物品、往事、线索或任务。',
     '- 一个成员的行动可以成功、部分成功、失败或被制止；行动被接纳不等于目标达成。',
-    '- 骰点 准入=false 表示该目标这次没有被迫反应；effects 中该 target 的 reacted 必须为 false。已行动人物不会再次反应。',
-    '- effects 必须恰好覆盖该成员判定里列出的每个目标各一条，不多不少；不要把判定之外的人物写进 effects。',
+    '- 骰点 准入=false 表示该目标这次没有被迫反应；已行动人物不会再次反应。不要写 effects：谁反应了由程序按冻结的准入值填写。',
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
@@ -370,6 +379,19 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
  * allowed, but a fact whose only subject is a character outside the group is
  * the judgement's explanation of that character's action, not this group's
  * result. */
+/** Replace 我/咱 outside Chinese quotation marks. Speech inside quotes is the
+ * character's own words and must not be rewritten. */
+function replaceFirstPersonOutsideQuotes(text: string, name: string): string {
+  let out = '';
+  let quoted = 0;
+  for (const char of text) {
+    if (char === '“' || char === '‘' || char === '「') quoted += 1;
+    if ((char === '”' || char === '’' || char === '」') && quoted > 0) quoted -= 1;
+    out += quoted === 0 && (char === '我' || char === '咱') ? name : char;
+  }
+  return out;
+}
+
 function mentionedCharacterIds(state: WorldState, text: string): Id[] {
   const found: Id[] = [];
   for (const id of Object.keys(state.initial.characters).sort()) {
@@ -391,18 +413,21 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const seen = new Set<Id>();
   const judgments: Judgment[] = [];
   const dropped: NonNullable<ResultsAnswer['dropped']> = [];
+  const effectsAdjusted: NonNullable<ResultsAnswer['effectsAdjusted']> = [];
   for (const rawJudgment of answer.judgments) {
     if (!isRecord(rawJudgment)) throw new Error('judgment must be an object');
     const rawMemberId = asString(rawJudgment.memberId);
     const memberId = resolveCharacterId(state, rawMemberId);
     if (!memberId) throw new Error(referenceError(state, rawMemberId, 'character', members[0]?.memberId));
     const member = memberById.get(memberId);
-    if (!Array.isArray(rawJudgment.effects)) throw new Error(`effects must be an array for ${rawMemberId || memberId}`);
+    if (rawJudgment.effects != null && !Array.isArray(rawJudgment.effects)) {
+      throw new Error(`effects must be an array for ${rawMemberId || memberId}`);
+    }
     if (!member) {
       // A scene bystander is not part of the freeze. An observation with no
       // effect is noise that must not fail the turn; an effect would settle a
       // person the dice never covered, so that stays an error.
-      if (rawJudgment.effects.length) {
+      if (Array.isArray(rawJudgment.effects) && rawJudgment.effects.length) {
         throw new Error(`judgment for non-member ${rawMemberId}${memberId !== rawMemberId ? ` (${memberId})` : ''}; 未冻结人物不能写 effect；本组只有 ${members.map((row) => row.memberId).join(',')}`);
       }
       dropped.push({ memberId, label: asString(rawJudgment.label), reason: 'not_a_group_member' });
@@ -413,34 +438,31 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     const label = asString(rawJudgment.label);
     if (!LABELS.has(label)) throw new Error(`invalid label for ${memberId}: ${label}`);
     if (typeof rawJudgment.reason !== 'string') throw new Error(`missing reason for ${memberId}`);
-    const expected = new Map(member.rolls.map((roll) => [roll.targetId, roll.admitted]));
-    const effectIds = new Set<Id>();
-    const effects: Judgment['effects'] = [];
-    for (const rawEffect of rawJudgment.effects) {
-      if (!isRecord(rawEffect)) throw new Error(`effect must be an object for ${memberId}`);
-      const rawTargetId = asString(rawEffect.targetId);
-      const targetId = resolveCharacterId(state, rawTargetId);
-      if (!targetId) {
-        // A known entity that is not a rolled target is the real "undeclared
-        // target" shape; only a value that names nothing is an unknown id.
-        if (resolveEntityId(state, rawTargetId)) {
-          throw new Error(`effect for undeclared target ${rawTargetId}; ${memberId} 的判定目标只有 ${[...expected.keys()].join(',') || '无'}`);
+    // Who reacted is frozen, not judged: the reaction lane already decided it
+    // from the rolls, and nothing downstream reads effects[].reacted. The model
+    // no longer writes effects (06-to-04-effects-actor-row: asking the actor's
+    // row to describe the reaction it caused is what produced
+    // reacted=true for an admitted=false target twice). A written row is kept
+    // only as evidence of what the model said.
+    const effects: Judgment['effects'] = member.rolls.map((roll) => ({
+      targetId: roll.targetId,
+      reacted: roll.admitted,
+    }));
+    const frozenByTarget = new Map(effects.map((row) => [row.targetId, row.reacted]));
+    if (Array.isArray(rawJudgment.effects)) {
+      for (const rawEffect of rawJudgment.effects) {
+        if (!isRecord(rawEffect)) continue;
+        const rawTarget = asString(rawEffect.targetId);
+        const targetId = rawTarget ? resolveCharacterId(state, rawTarget) : null;
+        if (!targetId || !frozenByTarget.has(targetId)) {
+          // A target the freeze never covered is still worth reporting: it means
+          // the model settled somebody the dice did not.
+          throw new Error(`effect for undeclared target ${rawTarget ?? ''}; ${memberId} 的判定目标只有 ${[...frozenByTarget.keys()].join(',') || '无'}`);
         }
-        throw new Error(referenceError(state, rawTargetId, 'character', member.rolls[0]?.targetId));
+        if (typeof rawEffect.reacted === 'boolean' && rawEffect.reacted !== frozenByTarget.get(targetId)) {
+          effectsAdjusted.push({ memberId, targetId, written: rawEffect.reacted, frozen: frozenByTarget.get(targetId) === true });
+        }
       }
-      if (!expected.has(targetId)) {
-        throw new Error(`effect for undeclared target ${rawTargetId}${targetId !== rawTargetId ? ` (${targetId})` : ''}; ${memberId} 的判定目标只有 ${[...expected.keys()].join(',') || '无'}`);
-      }
-      if (effectIds.has(targetId)) throw new Error(`duplicate effect target ${targetId}`);
-      effectIds.add(targetId);
-      if (typeof rawEffect.reacted !== 'boolean') throw new Error(`reacted must be boolean for ${targetId}`);
-      if (rawEffect.reacted !== expected.get(targetId)) {
-        throw new Error(`reacted=${rawEffect.reacted} contradicts admitted=${expected.get(targetId)} for ${memberId}->${targetId}`);
-      }
-      effects.push({ targetId, reacted: rawEffect.reacted });
-    }
-    for (const targetId of expected.keys()) {
-      if (!effectIds.has(targetId)) throw new Error(`missing effect for ${memberId}->${targetId}`);
     }
     judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
@@ -490,6 +512,8 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
   const adjustments: NonNullable<ResultsAnswer['outcomeAdjusted']> = [];
+  const ownershipAdjusted: NonNullable<ResultsAnswer['ownershipAdjusted']> = [];
+  const firstPersonAdjusted: NonNullable<ResultsAnswer['firstPersonAdjusted']> = [];
   const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
@@ -553,7 +577,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // explanation of 路明非, who the other group already settled as walking in
     // and reading the sign. Committing it would hand the narrator a fact that
     // contradicts the point and no result for the reacting member.
-    const mentioned = mentionedCharacterIds(state, cleaned.text);
+    let mentioned = mentionedCharacterIds(state, cleaned.text);
     // “路明非的红色识别带” when the band belongs to 诺诺 is an item-ownership
     // flip: d531 turn 2 wrote exactly that. Only an explicit possessive whose
     // item resolves in the frozen state is checked, so ordinary prose is not
@@ -562,22 +586,48 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       for (const ownerId of mentioned) {
         const ownerName = state.initial.characters[ownerId]?.name;
         if (!ownerName) continue;
-        for (const item of Object.values(state.initial.items)) {
-          const itemName = item.name;
-          // Item names often start with the owner's name ("诺诺的红色识别带");
-          // the possessive to check is that noun without the leading owner.
-          const bare = String(itemName ?? '').replace(/^[^的]{1,6}的/u, '');
-          const named = itemName && cleaned.text.includes(`${ownerName}的${itemName}`);
-          const namedBare = bare && bare !== itemName && cleaned.text.includes(`${ownerName}的${bare}`);
-          if (!named && !namedBare) continue;
-          const itemName2 = namedBare ? bare : itemName;
+        const items = Object.values(state.initial.items);
+        // Prefer the item whose full name is in the sentence: 诺诺的红色识别带 is
+        // the precise band, while several items share the bare 红色识别带.
+        const full = items.filter((item) => {
+          const name = String(item.name ?? '');
+          return name.startsWith(`${ownerName}的`) && cleaned.text.includes(name);
+        });
+        const candidates = full.length
+          ? full.map((item) => ({ item, itemName: String(item.name ?? '') }))
+          // A wrong possessive (路明非的红色识别带 when the band is 诺诺's) has no
+          // full-name match. Only a bare name whose holder is another mentioned
+          // character is the band the sentence means; without that it would
+          // match 凯撒的红色识别带 as well (the 1e59 replay caught this).
+          : items
+            .map((item) => ({ item, bare: String(item.name ?? '').replace(/^[^的]{1,6}的/u, '') }))
+            .filter(({ item, bare }) => {
+              const holderId = state.items[item.id]?.position.containerId;
+              return bare && bare !== String(item.name ?? '')
+                && cleaned.text.includes(`${ownerName}的${bare}`)
+                && holderId != null && holderId !== ownerId
+                && (memberById.has(holderId) || mentioned.includes(holderId));
+            })
+            .map(({ item, bare }) => ({ item, itemName: bare }));
+        for (const { item, itemName } of candidates) {
           const holderId = state.items[item.id]?.position.containerId;
-          if (holderId && state.characters[holderId] && holderId !== ownerId) {
-            throw new Error(`fact gives ${itemName2} to ${ownerName}, but it belongs to ${state.initial.characters[holderId]?.name ?? holderId}: ${original}`);
-          }
+          const holder = holderId ? state.initial.characters[holderId]?.name : undefined;
+          if (!holderId || !holder || holderId === ownerId) continue;
+          // The frozen state says whose item it is; a possessive that names
+          // another character is a slip, not a new fact (d531 turn 2 and 1e59
+          // turn 3 both wrote 路明非的红色识别带 while the band is 诺诺's).
+          // Rewriting the owner keeps the fact (the six stages and next-turn
+          // knowledge need the observation) instead of spending a retry on it.
+          const swapped = cleaned.text.split(`${ownerName}的${itemName}`).join(`${holder}的${itemName}`);
+          if (swapped === cleaned.text) continue;
+          cleaned.text = swapped;
+          ownershipAdjusted.push({ original, from: ownerName, to: holder, item: itemName });
         }
       }
     }
+    // An ownership swap can remove the only mention of the wrong owner; the
+    // “another character's action” check must read the corrected sentence.
+    if (ownershipAdjusted.length) mentioned = mentionedCharacterIds(state, cleaned.text);
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -696,7 +746,19 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // not a description of what happened.
     const actorIdForFact = recipientIds[0];
     if (actorIdForFact === state.protagonistId && /[我咱]/u.test(cleaned.text)) {
-      throw new Error(`fact is the player's own “我” sentence, not a third-person result: ${original}。用第三人称写实际发生的执行、尝试、受阻或失败（${actionHint}）。`);
+      // 1e59 turn 3: 路明非请诺诺带我走一条… is the player's typed sentence, not
+      // a description. The subject is frozen (protagonist), so the pronoun is
+      // rewritten to the character's name outside dialogue; a line whose only
+      // “我” is quoted speech keeps it.
+      const name = state.initial.characters[actorIdForFact]?.name;
+      const swapped = name ? replaceFirstPersonOutsideQuotes(cleaned.text, String(name)) : cleaned.text;
+      if (swapped !== cleaned.text) {
+        cleaned.text = swapped;
+        firstPersonAdjusted.push({ original, text: swapped });
+      }
+      if (name && /[我咱]/u.test(cleaned.text) && !/[“'‘「]/.test(cleaned.text)) {
+        throw new Error(`fact is the player's own “我” sentence, not a third-person result: ${original}。用第三人称写实际发生的执行、尝试、受阻或失败（${actionHint}）。`);
+      }
     }
     // “甲未能。” is what is left after a stripped task clause: a dangling
     // negation is not a result. The 60-char action hint tells the repair what to
@@ -723,9 +785,22 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
+  // A combined group prompt makes the small model repeat one member's whole
+  // sentence inside another member's fact (1e59 turn 3: nono's line appeared
+  // verbatim inside lu's result). The other member's own fact already carries
+  // it, so the wrapper is dropped instead of attributing her action to him.
+  const coveredByDrop = new Set<Id>();
+  dropDuplicatedFacts(facts, droppedFacts, coveredByDrop);
+  if (facts.length) {
+    factRecipients.clear();
+    for (const fact of facts) for (const id of fact.memberIds) factRecipients.add(id);
+  }
   for (const member of members) {
     if (factRecipients.has(member.memberId)) continue;
     if (inactive.has(member.memberId)) continue;
+    // The member's only answer was another member's sentence repeated: it is
+    // in droppedFacts, so the point settles without inventing a result for him.
+    if (coveredByDrop.has(member.memberId)) continue;
     const names = members.map((row) => `${state.initial.characters[row.memberId]?.name ?? row.memberId}(${row.memberId})`).join('、');
     const missing = state.initial.characters[member.memberId]?.name ?? member.memberId;
     throw new Error(`no fact attributed to ${member.memberId}（${missing}）; facts 必须给本组每个成员各一条自己的结果（本组：${names}），例：${missing}做了什么、看到或听到什么。已冻结的行动：${actionHint}`);
@@ -736,7 +811,38 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),
     ...(adjustments.length ? { outcomeAdjusted: adjustments } : {}),
+    ...(effectsAdjusted.length ? { effectsAdjusted } : {}),
+    ...(ownershipAdjusted.length ? { ownershipAdjusted } : {}),
+    ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
   };
+}
+
+/** Remove a fact that only wraps another member's fact text. The wrapper must
+ * be short (a prefix like “路明非请诺诺带我走…，”), and the contained fact must
+ * be a full sentence of at least 12 punctuation-free characters, so ordinary
+ * overlap between two genuine results is untouched. */
+function dropDuplicatedFacts(
+  facts: Fact[],
+  dropped: NonNullable<ResultsAnswer['droppedFacts']>,
+  coveredByDrop: Set<Id>,
+): void {
+  if (facts.length < 2) return;
+  const bare = facts.map((fact) => fact.text.replace(FACT_PUNCTUATION, ''));
+  for (let i = facts.length - 1; i >= 0; i -= 1) {
+    for (let j = 0; j < facts.length; j += 1) {
+      if (i === j) continue;
+      const inner = bare[j];
+      if (!inner || inner.length < 12) continue;
+      if (facts[i].actorId === facts[j].actorId) continue;
+      if (!bare[i].includes(inner)) continue;
+      const wrapper = bare[i].replace(inner, '');
+      if (wrapper.length > 40) continue;
+      dropped.push({ memberIds: facts[i].memberIds, original: facts[i].text, reason: 'duplicates_another_member' });
+      for (const id of facts[i].memberIds) coveredByDrop.add(id);
+      facts.splice(i, 1);
+      break;
+    }
+  }
 }
 
 const FACT_PUNCTUATION = /[\s，、；。！？.,;!?]/gu;

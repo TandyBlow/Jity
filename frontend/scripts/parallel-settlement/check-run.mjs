@@ -170,6 +170,15 @@ export function checkRun(input, options = {}) {
       if (Array.isArray(call.implicitJudgments) && call.implicitJudgments.length) {
         soft.push(`${where} results/${call.key}: judgement row missing for ${call.implicitJudgments.join(',')} (outcome derived)`);
       }
+      if (Array.isArray(call.effectsAdjusted) && call.effectsAdjusted.length) {
+        soft.push(`${where} results/${call.key}: ${call.effectsAdjusted.length} effects row(s) corrected from the frozen admission (${call.effectsAdjusted.map((row) => `${row.memberId}->${row.targetId} ${row.written}->${row.frozen}`).join(',')})`);
+      }
+      if (Array.isArray(call.ownershipAdjusted) && call.ownershipAdjusted.length) {
+        soft.push(`${where} results/${call.key}: item owner corrected (${call.ownershipAdjusted.map((row) => `${row.from}->${row.to} ${row.item}`).join(',')})`);
+      }
+      if (Array.isArray(call.firstPersonAdjusted) && call.firstPersonAdjusted.length) {
+        soft.push(`${where} results/${call.key}: ${call.firstPersonAdjusted.length} first-person sentence(s) rewritten to the protagonist's name`);
+      }
     }
     const decision = sub.continuationDecision ?? 'handback';
     if (decision === 'continue' && !continuation.length) hard.push(`${where}: decision is continue but no continuation call ran`);

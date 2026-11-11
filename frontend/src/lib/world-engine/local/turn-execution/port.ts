@@ -68,6 +68,15 @@ export interface PortCallRecord {
   /** Members whose judgement row the model omitted; their outcome is derived,
    * not asserted. */
   implicitJudgments?: string[];
+  /** An effects row that contradicted the frozen admission and was corrected
+   * from it (09-frozen-raw-6186 turn 2 aborted the turn on this). */
+  effectsAdjusted?: { memberId: string; targetId: string; written: boolean; frozen: boolean }[];
+  /** An item possessive that named the wrong character and was rewritten to the
+   * frozen owner. */
+  ownershipAdjusted?: { from: string; to: string; item: string }[];
+  /** The player's own first-person sentence rewritten to the protagonist's name
+   * outside dialogue. */
+  firstPersonAdjusted?: string[];
   /** How many characters the stage answers covered. The full cast is a product
    * requirement, and this is the lightweight proof 09 can read from the page.
    * `taskRows` is the full-world task-row count, never a scene-only subset. */
@@ -250,6 +259,9 @@ export function createSettlementModelPort(
         droppedFacts?: { memberIds?: string[]; reason?: string; original?: string }[];
         outcomeAdjusted?: { actorId?: string; written?: string; derived?: string; why?: string }[];
         implicitJudgments?: string[];
+        effectsAdjusted?: { memberId?: string; targetId?: string; written?: boolean; frozen?: boolean }[];
+        ownershipAdjusted?: { from?: string; to?: string; item?: string }[];
+        firstPersonAdjusted?: { original?: string; text?: string }[];
       } | null;
       if (Array.isArray(settled?.facts)) {
         record.facts = settled.facts.map((fact) => ({
@@ -281,6 +293,22 @@ export function createSettlementModelPort(
       }
       if (Array.isArray(settled?.implicitJudgments) && settled.implicitJudgments.length) {
         record.implicitJudgments = settled.implicitJudgments.map(String);
+      }
+      if (Array.isArray(settled?.effectsAdjusted) && settled.effectsAdjusted.length) {
+        record.effectsAdjusted = settled.effectsAdjusted.map((row) => ({
+          memberId: String(row.memberId ?? ''),
+          targetId: String(row.targetId ?? ''),
+          written: row.written === true,
+          frozen: row.frozen === true,
+        }));
+      }
+      if (Array.isArray(settled?.ownershipAdjusted) && settled.ownershipAdjusted.length) {
+        record.ownershipAdjusted = settled.ownershipAdjusted.map((row) => ({
+          from: String(row.from ?? ''), to: String(row.to ?? ''), item: String(row.item ?? ''),
+        }));
+      }
+      if (Array.isArray(settled?.firstPersonAdjusted) && settled.firstPersonAdjusted.length) {
+        record.firstPersonAdjusted = settled.firstPersonAdjusted.map((row) => String(row.text ?? ''));
       }
     }
     const progress = (outcome.evidence.detail as { roundProgress?: RoundProgressEvidence } | null)?.roundProgress;
