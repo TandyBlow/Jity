@@ -179,8 +179,7 @@
         "A"
       ],
       "task_zhou_warn": [
-        "A",
-        "B"
+        "A"
       ]
     },
     "referenced": 41,
@@ -218,7 +217,8 @@
       "task_tang_ammo",
       "task_tang_fallback",
       "task_zhou_latch",
-      "task_zhou_rope"
+      "task_zhou_rope",
+      "task_zhou_warn"
     ]
   },
   "groups": {
@@ -226,9 +226,9 @@
     "战斗": 1,
     "援助": 2,
     "物品": 7,
-    "移动": 11,
+    "移动": 10,
     "立场": 1,
-    "言语": 24,
+    "言语": 25,
     "请求": 8
   },
   "labelVocabulary": {
@@ -337,8 +337,8 @@
   "predicatesUsed": 18,
   "problems": [],
   "rowClasses": {
-    "A": 84,
-    "B": 49,
+    "A": 85,
+    "B": 48,
     "skip": 0
   },
   "rowsWritten": 133,
