@@ -555,6 +555,46 @@ describe('automatic round progress', () => {
     expect(automatic?.roundProgress?.reason).toBe('action_not_settled');
   });
 
+  it('hands the accepted proposal to the action lane and drops it once used', async () => {
+    // The action lane freezes an automatic point's action. It has no idea what
+    // the continuation proposed unless the port tells it; 9711 turn 4 and
+    // 10turn-4b1e turn 6 both froze the previous point's result sentence.
+    const outputs = [
+      JSON.stringify({
+        judgments: [{ memberId: 'person_c', label: 'achieved', reason: '周宁推门。' }],
+        facts: [{ text: '周宁推开走廊的门。', memberIds: ['person_c'] }],
+      }),
+      JSON.stringify({ candidates: [{ characterId: 'person_a', text: '向周宁问清走廊里的脚步声' }] }),
+      JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: '相关。' }] }),
+      JSON.stringify({ candidates: [] }),
+    ];
+    let call = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'proposal-handoff' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        const value = outputs[Math.min(call, outputs.length - 1)];
+        call += 1;
+        return value;
+      },
+    };
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const port = createSettlementModelPort(engine);
+    port.beginSubmission('我推门进去。');
+    expect(port.acceptedProposal()).toEqual([]);
+    await port.generate('results', 'group_1', {
+      groupId: 'group_1', members: [{ memberId: 'person_c', actionText: '我推门进去。', rollRefs: [] }], workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_1', {
+      round: { roundId: 'round_1', trigger: 'player', conclusion: null }, head: { pointId: 'p1' }, workingState: state,
+      roundChanges: [{ pointId: 'p1', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, entityDeltas: {} }],
+    } as unknown as Json);
+    expect(port.acceptedProposal()).toEqual([{ characterId: 'person_a', text: '向周宁问清走廊里的脚步声' }]);
+    port.consumeProposal('person_a');
+    expect(port.acceptedProposal()).toEqual([]);
+  });
+
   it('does not count a second automatic point that settles the same sentence again', async () => {
     // 9711 turn 4: two automatic points in one submission settled
     // «芬格尔蹲下并掀开路明非的袖口查看伤口» and «芬格尔掀开路明非的袖口查看伤口».
