@@ -1261,6 +1261,11 @@ export default function WorldLocalPage() {
       // that no longer exists while the harness waits for done.
       setStage('');
       setBusy(false);
+      // A turn stopped by the deadline or by a failure never reaches refresh(),
+      // so the "已行动" counter kept the previous value even though the command
+      // was consumed and its point committed (run 09-overlap-move-9QTZ: prose
+      // on screen, counter 0). The command list is the durable record.
+      if (sessionRef.current) setHistory(sessionRef.current.commandsPlayed);
     }
   }, [busy, input, refresh, save]);
 
