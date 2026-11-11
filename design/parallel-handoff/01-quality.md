@@ -266,3 +266,4 @@
 - 9623（head d17d6534）：**首份真实模型正文经独立复核 0 fact/0 style/0 review**（69 字，走/时间/看牌/诺诺在场各落地）；仍非产品通过——首读 103.7 s、无结果后果、`program_fallback_labelled` 误标与 `textSource:model` 冲突。`results/quality/review-09-9623.md`。第一稿 `rejected` 含「摘下护目镜」，被打回原因是别的 fact_missing，说明摘戴检查仍未接 beat 路径。
 - 已向 09/06 提 provenance 误标：9623 `textSource:model`、`composers:["model"]`，却带 `program_fallback_labelled`（`results/quality/requests-01-to-09-9623-provenance.md`）。
 - 3turn 9623（head d17d6534）：turn1 模型 103 字可读（0 fact，2 review=场地注记复述）；turn2 提问回合结算被拒 0 字；turn3 只显示 `…`。1/3 可读、0/3 有结果。归属：04 纯对话结果路径、06/09 失败不得展示占位符、02 场地注记复述降权。`results/quality/review-09-3turn-9623.md`
+- 已向 04/06 提「提问回合」请求（`results/quality/requests-01-to-04-06-question-turn.md`）：纯对话行动需要结果路径（能答就给答案事实，不能答也要完成并写「没答」），不能 `submit_refused` 整回合；失败时页面不得把 `…` 当正文。
