@@ -169,6 +169,10 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
           ms: Math.round(beat.ms),
           text: beat.text,
           issues: beat.issues.map((issue) => `${issue.kind}/${issue.severity}: ${issue.detail ?? ''}${issue.sentence ? ` | ${issue.sentence}` : ''}`),
+          // Rejected model drafts: the final text is the program fallback, so
+          // without these the evidence cannot say why the model beat failed.
+          rejected: (beat.rejected ?? []).map((attempt: { attempt: number; text: string; issues: { kind: string; severity: string }[] }) =>
+            `#${attempt.attempt} ${attempt.text.slice(0, 300)} | ${attempt.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind).join('+')}`),
         })),
       },
     };
