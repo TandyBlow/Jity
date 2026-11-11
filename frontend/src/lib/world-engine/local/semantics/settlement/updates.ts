@@ -829,6 +829,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     if (ctx.shared && Array.isArray(asRecord(answer.value).subtasks)) {
       const parsed = readSubtaskProposals(
         answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
+        { facts: resultFacts(ctx.results).map((fact) => fact.text) },
       );
       // Only a non-empty merged answer short-circuits the subtask stage; an
       // empty array (which the schema always produces) used to count as an
@@ -916,6 +917,7 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
+  const facts = resultFacts(ctx.results).map((fact) => fact.text);
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   if (!projection.affectedTaskOwners.length) {
     return {
@@ -938,15 +940,17 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: SUBTASKS_SCHEMA,
-      validate: (value) => readSubtaskProposals(value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8),
+      validate: (value) => readSubtaskProposals(value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8, { facts }),
     });
-    const changes = readSubtaskProposals(answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8);
+    const subtaskRejections: { parentTaskId: string; goal: string; reason: string }[] = [];
+    const changes = readSubtaskProposals(answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8, { facts, rejections: subtaskRejections });
     return {
       changes,
       detail: {
         parentTaskIds: rows.map(({ task }) => task.id).sort(),
         characterIds: characters,
         addedTaskIds: Object.values(changes).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort(),
+        rejectedSubtasks: subtaskRejections,
       },
       fallback: false,
       calls: answer.calls,
@@ -1743,6 +1747,7 @@ function readSubtaskProposals(
   state: WorldState,
   allocator: LocalIdAllocator,
   maxNewTasks: number,
+  options: { facts?: string[]; rejections?: { parentTaskId: string; goal: string; reason: string }[] } = {},
 ): Record<Id, Partial<EntityDelta>> {
   const rows = asRecord(value).subtasks;
   if (!Array.isArray(rows)) throw new Error('subtasks must be an array');
@@ -1764,6 +1769,13 @@ function readSubtaskProposals(
     if (!parent) throw new Error(referenceError(state, parentTaskId, 'task', allTasks(state)[0]?.task.id));
     const goal = asString(raw.goal);
     if (!goal) throw new Error(`subtask for ${parentTaskId} has an empty goal`);
+    // A new goal has to come from this point: the 0.6B invented one unrelated
+    // subtask ("红方确认可溪小桥的通行权") under t1 in all four probe cases,
+    // including the point where nothing happened at all.
+    if (options.facts && options.facts.length && !options.facts.some((fact) => sharesGoalWording(fact, goal))) {
+      options.rejections?.push({ parentTaskId, goal, reason: 'subtask_not_grounded' });
+      continue;
+    }
     const key = `${parentTaskId}:${normalizeChangeText(goal)}`;
     if (usedGoals.has(key)) throw new Error(`duplicate subtask under ${parentTaskId}`);
     usedGoals.add(key);

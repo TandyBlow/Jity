@@ -1948,7 +1948,12 @@ describe('compact subtask parent keys', () => {
       { parentTaskId: 't1', goal: '查看工具上的刻痕' },
     ] })]);
     const handlers = createSettlementHandlers({ engine });
-    const outcome = await handlers.updates('g1#subtasks', updatesInput(world(), 'subtasks'));
+    // A new goal must come from this point's facts, so the fact mentions 刻痕.
+    const input = {
+      ...(updatesInput(world(), 'subtasks') as Record<string, unknown>),
+      results: { a: '甲把工具翻过来，工具上的刻痕很清楚。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await handlers.updates('g1#subtasks', input);
     expect(outcome.value).not.toBeNull();
     const call = outcome.value as UpdatesCall;
     expect(call.changes.a?.subtasksAdded?.[0]?.parentTaskId).toBe('a1');
