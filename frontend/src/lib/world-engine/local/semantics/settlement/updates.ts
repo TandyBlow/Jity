@@ -727,7 +727,9 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   const ownerSet = new Set(projection.affectedTaskOwners);
   const affectedRows = rows.filter((row) => ownerSet.has(row.ownerId));
-  const taskIds = new Set(projection.affectedTasks);
+  // The reader may only require what the prompt printed: the owners of the
+  // affected rows, not every task id that the family closure pulled in.
+  const taskIds = new Set(affectedRows.map(({ task }) => task.id));
   const taskScope = taskScopeFor(ctx.state, projection);
   const decidedIds = affectedRows.map(({ task }) => task.id).sort();
   if (!rows.length) {
@@ -754,7 +756,22 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
-  const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection);
+  const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection, ctx.options.tasksContract ?? 'achieved');
+  // Under the 'achieved' contract, a character the prompt listed but the model
+  // did not name is unchanged by default; the roster contract still requires the
+  // model to name everyone.
+  const defaultUnchangedFor = (ctx.options.tasksContract ?? 'achieved') === 'achieved'
+    ? new Set<Id>(projection.affectedTaskOwners)
+    : undefined;
+  // A fact belongs to the member whose result it is; crediting another
+  // character's task to it is the actor swap the real 0.6B makes (probe
+  // 2026-11-11: lu's goggles fact was used to achieve caesar's bridge task).
+  const factOwnerFor = new Map<string, Id>();
+  const factTextFor = new Map<string, string>();
+  for (const fact of resultFacts(ctx.results)) {
+    factOwnerFor.set(fact.id, fact.memberId);
+    factTextFor.set(fact.id, fact.text);
+  }
   const factIds = new Set(resultFacts(ctx.results).map((fact) => fact.id));
   const strictSupport = ctx.options.requireTaskSupport === true;
   try {
@@ -764,9 +781,9 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: TASKS_SCHEMA,
-      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds, taskIds }),
+      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds, taskIds, defaultUnchangedFor, factOwnerFor, factTextFor }),
     });
-    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds, taskIds });
+    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds, taskIds, defaultUnchangedFor, factOwnerFor, factTextFor });
     let changes = read.changes;
     let acceptedSupports = read.supports;
     let rejected = read.rejected;
@@ -828,6 +845,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           rejectedTaskIds: rejected,
           supports: acceptedSupports,
           verifier: verifier ?? undefined,
+          defaultedUnchanged: read.defaultedUnchanged,
         },
         decidedTaskIds: decidedIds,
         newlyAchievedTaskIds: newlyAchieved.sort(),
@@ -1073,7 +1091,14 @@ function sharedHeader(state: WorldState, results: Record<Id, string>): string {
   return [
     `当前世界时间：${state.time.dateTime}`,
     '本组结算结果（任务达成必须引用其中的编号）：',
-    facts.length ? facts.map((fact) => `${fact.id} [${fact.memberId}] ${fact.text}`).join(String.fromCharCode(10)) : '（无）',
+    // The fact text names characters by display name; printing only the raw id
+    // made the 0.6B credit a fact to whichever character was listed first.
+    facts.length
+      ? facts.map((fact) => {
+        const name = state.initial.characters[fact.memberId]?.name ?? '';
+        return `${fact.id} [${fact.memberId}${name ? ` ${name}` : ''}] ${fact.text}`;
+      }).join(String.fromCharCode(10))
+      : '（无）',
   ].join('\n');
 }
 
@@ -1365,16 +1390,66 @@ function readDescriptionOperations(
   return changes;
 }
 
-function buildTasksPrompt(ctx: StageContext, ownerIds: Id[], projection: PointProjection): string {
+function buildTasksPrompt(
+  ctx: StageContext,
+  ownerIds: Id[],
+  projection: PointProjection,
+  contract: 'roster' | 'achieved' = 'roster',
+): string {
   const keys = taskKeyIndex(ctx.state);
-  const owners = [...ownerIds].sort();
-  const rows = owners.map((id) => taskLine(ctx.state, id, keys));
+  // Characters who produced a result come first: the 0.6B anchors on the first
+  // row it reads, and sorted ids put an uninvolved character (caesar) there.
+  const factOwners = new Set(resultFacts(ctx.results).map((fact) => fact.memberId));
+  const owners = [...ownerIds].sort((left, right) => {
+    const rank = (id: Id) => (factOwners.has(id) ? 0 : 1);
+    return rank(left) - rank(right) || left.localeCompare(right);
+  });
+  // Under the 'achieved' contract a character's row lists only the tasks whose
+  // goal wording the settled facts mention. With six tasks per character the
+  // 0.6B achieved the first id it read (lu's match task for a goggles fact); the
+  // shortlist is a deterministic necessary condition, and the model still decides
+  // which shortlisted task (if any) is met.
+  const factTexts = resultFacts(ctx.results).map((fact) => fact.text);
+  const rows = owners.map((id) => {
+    if (contract !== 'achieved') return taskLine(ctx.state, id, keys);
+    const shortlisted = Object.values(ctx.state.characters[id]?.tasks ?? {})
+      .filter((task) => task.status !== 'achieved'
+        && factTexts.some((text) => sharesGoalWording(text, task.goal)))
+      .map((task) => task.id);
+    return taskLine(ctx.state, id, keys, new Set(shortlisted));
+  });
   const required = owners;
   const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
   // A 0.6B copies the example verbatim; a one-row example made it answer for a
   // single character. The skeleton names every required character, so copying
   // it still produces coverage for the affected set.
   const unchanged = required.map((id) => `"${id}"`).join(',');
+  if (contract === 'achieved') {
+    // The model asserts changes only. Listing the roster under `unchanged` made
+    // a 0.6B copy the skeleton: 171/171 recorded answers named every character
+    // as unchanged, no task ever became achieved, and the personality, sanity and
+    // task-verifier stages therefore never ran.
+    return [
+      sharedHeader(ctx.state, ctx.results),
+      '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
+      `下面只列本轮可能受影响的人物和任务（${required.length} 人）；程序已按依赖投影保留其余 ${projection.unaffectedTasks.length} 条任务，未列出的人物/任务不需要判断。`,
+      '规则：',
+      '- achieved 只列本轮**新达成**的任务；没有达成任何任务就输出空数组。没有变化的人物不要写，程序默认他们不变。',
+      '- 每个任务写成 {"characterId":"人物id","tasks":[{"taskId":"t1","basis":"f1"}]}：taskId 逐字复制该人物行开头的编号，basis 引用本轮结算结果里的 f1、f2…；只有目标确实由时间推移直接触发时才可写 basis: "time"。',
+      '- 只有结算结果明确表明目标条件已经满足，才列入 achieved；尝试、接近、部分完成、被制止、行动成功但目标未满足，都留空。',
+      '- 一条事实只能用来达成它自己那位人物的任务：f1 是第一个人物的结果，只能写那个人物；除非事实正文里明确写了另一个人的名字，才可以写那个人。',
+      '- 只有结算结果里明确提到该人物的事实，才可列入 achieved；不能因为时间过去就替不在场人物完成任务。',
+      '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
+      '- 已完成的任务保持 achieved，不要重复列出；任务编号必须逐字复制，不能自己造编号。',
+      '如果本组结算结果产生了新的具体目标，也可以在同一答案里给出 subtasks：',
+      '- 小任务必须挂在已有任务下，parentTaskId 用行首任务编号；负责人必须是父任务的负责人；新任务一律 pending。',
+      '- 没有新的具体目标就输出空数组，不要为了凑数量新增。',
+      '人物和任务：',
+      ...rows,
+      '输出格式（尖括号里换成真实值；没有达成就是空数组）：',
+      '{"achieved":[{"characterId":"<人物id>","tasks":[{"taskId":"<任务编号，如 t1>","basis":"<依据，如 f1>"}]}],"subtasks":[]}',
+    ].join(String.fromCharCode(10));
+  }
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
@@ -1407,6 +1482,11 @@ interface TaskDecisionRead {
   changes: Record<Id, Partial<EntityDelta>>;
   rejected: { characterId: Id; taskId: string; reason: string }[];
   supports: { characterId: Id; taskId: Id; basis: string }[];
+  /** Characters the prompt presented, for which the answer asserted nothing.
+   * Under the 'achieved' contract that is the intended "unchanged" default; the
+   * list is kept in evidence so a model that answered nothing at all is visible
+   * instead of looking like a well-judged no-change point. */
+  defaultedUnchanged: Id[];
 }
 
 /** One decision per character covers all of that character's tasks. Character
@@ -1418,7 +1498,20 @@ interface TaskDecisionRead {
 function readTaskDecisions(
   value: unknown,
   state: WorldState,
-  options: { strictSupport?: boolean; factIds?: Set<string>; taskIds?: Set<Id> } = {},
+  options: {
+    strictSupport?: boolean;
+    factIds?: Set<string>;
+    taskIds?: Set<Id>;
+    /** Present under the 'achieved' contract: characters the prompt listed, for
+     * which an omitted answer means unchanged. */
+    defaultUnchangedFor?: Set<Id>;
+    /** Which member produced each result fact. A fact has an owner; crediting
+     * another character's task to it without the fact naming that character is
+     * the actor-swap error the real 0.6B makes. */
+    factOwnerFor?: Map<string, Id>;
+    /** The frozen fact text, for the name lookup above. */
+    factTextFor?: Map<string, string>;
+  } = {},
 ): TaskDecisionRead {
   const payload = asRecord(value);
   type Entry = { taskId: string; basis?: string };
@@ -1516,6 +1609,25 @@ function readTaskDecisions(
           rejected.push({ characterId, taskId, reason: 'unknown_support' });
           continue;
         }
+        if (entry.basis !== 'time' && options.factOwnerFor && options.factTextFor) {
+          const owner = options.factOwnerFor.get(entry.basis);
+          const text = options.factTextFor.get(entry.basis) ?? '';
+          const name = state.initial.characters[characterId]?.name ?? '';
+          const named = (name.length > 0 && text.includes(name)) || text.includes(characterId);
+          if (owner && owner !== characterId && !named) {
+            rejected.push({ characterId, taskId, reason: `support_belongs_to_${owner}` });
+            continue;
+          }
+          // Necessary condition only: the cited fact must mention something the
+          // goal is about. The 0.6B verifier approves any pairing (real probe
+          // 2026-11-11: lu's goggles fact "satisfied" lu's match task), so a fact
+          // that shares no wording with the goal never reaches the verifier.
+          // Paraphrased true achievements may be dropped; false ones may not pass.
+          if (text && !sharesGoalWording(text, row.task.goal)) {
+            rejected.push({ characterId, taskId, reason: 'support_does_not_mention_goal' });
+            continue;
+          }
+        }
       }
       list.push(taskId);
       if (options.strictSupport && entry.basis) supports.push({ characterId, taskId, basis: entry.basis });
@@ -1523,8 +1635,19 @@ function readTaskDecisions(
     byCharacter.set(characterId, list);
   }
   const missing = required.filter((id) => !byCharacter.has(id));
+  const defaultedUnchanged: Id[] = [];
   if (missing.length) {
-    throw new Error(`task character coverage incomplete: ${byCharacter.size}/${required.length}; missing ${missing.join(',')}`);
+    const defaultFor = options.defaultUnchangedFor;
+    const undeclared = defaultFor ? missing.filter((id) => !defaultFor.has(id)) : missing;
+    if (undeclared.length) {
+      throw new Error(`task character coverage incomplete: ${byCharacter.size}/${required.length}; missing ${undeclared.join(',')}`);
+    }
+    // The 'achieved' contract: the model asserts changes, the program applies
+    // "unchanged" to every character it presented but the model did not name.
+    for (const id of missing) {
+      byCharacter.set(id, []);
+      defaultedUnchanged.push(id);
+    }
   }
   if (options.strictSupport) {
     const unsupported = rejected.filter((row) => row.reason === 'missing_support' || row.reason === 'unknown_support');
@@ -1537,7 +1660,33 @@ function readTaskDecisions(
   for (const [ownerId, taskIds] of byCharacter) {
     if (taskIds.length) changes[ownerId] = { tasksAchieved: taskIds.sort() };
   }
-  return { changes, rejected, supports };
+  return { changes, rejected, supports, defaultedUnchanged };
+}
+
+/** How much of a task goal's wording the settled fact repeats. A deterministic
+ * necessary condition, never a decision: the model verifier still decides
+ * whether the goal is met. Measured pairs (2026-11-11): lu's goggles fact vs the
+ * goggles goal 0.50+; the same fact vs lu's match goal 0.07. */
+export function goalWordingOverlap(factText: string, goal: string): number {
+  const clean = (text: string) => text.replace(/[^一-鿿A-Za-z0-9]/g, '');
+  const left = clean(factText);
+  const right = clean(goal);
+  if (!left || !right) return 0;
+  if (left.includes(right) || right.includes(left)) return 1;
+  const grams = (text: string) => {
+    const set = new Set<string>();
+    for (let index = 0; index + 2 <= text.length; index += 1) set.add(text.slice(index, index + 2));
+    return set;
+  };
+  const goalGrams = grams(right);
+  if (!goalGrams.size) return 0;
+  let shared = 0;
+  for (const gram of grams(left)) if (goalGrams.has(gram)) shared += 1;
+  return shared / goalGrams.size;
+}
+const GOAL_WORDING_MIN = 0.2;
+export function sharesGoalWording(factText: string, goal: string): boolean {
+  return goalWordingOverlap(factText, goal) >= GOAL_WORDING_MIN;
 }
 
 function buildSubtasksPrompt(ctx: StageContext, ownerIds: Id[] = roster(ctx.state), projection?: PointProjection): string {

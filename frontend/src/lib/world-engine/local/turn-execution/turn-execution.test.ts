@@ -85,9 +85,14 @@ function scriptedEngine(brain: Brain): InferenceEngine {
             effects: [],
           })),
           facts: unique.map((memberId) => ({
+            // A fact that achieves task_watch ("留在走廊守门，不碰盒子") has to be
+            // about standing watch; the earlier "打开了盒盖" was a mechanism-only
+            // fixture that the goal-wording gate now (correctly) refuses.
             text: memberId === 'person_c'
               ? (brain.taskAchieved ? '周宁把盒盖打开了。' : '周宁向盒盖伸了手，但没有打开。')
-              : NPC_FACTS[npcFactRound++ % NPC_FACTS.length],
+              : memberId === 'person_a' && brain.taskAchieved
+                ? '林川留在走廊守着门，没有去碰盒子。'
+                : NPC_FACTS[npcFactRound++ % NPC_FACTS.length],
             memberIds: [memberId],
           })),
         });

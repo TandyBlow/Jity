@@ -607,6 +607,86 @@ describe('common-group results', () => {
     expect(detail.subjectRestored ?? []).toEqual([]);
   });
 
+  it('asks for achieved-only task answers and defaults the rest to unchanged', async () => {
+    // 171 recorded task-stage answers (532 updates answers, 44 evidence files)
+    // named every character under `unchanged` and never achieved a task: the
+    // roster skeleton was copied. Under the 'achieved' contract the model names
+    // only what changed, and the program applies unchanged to the rest.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      // The verifier is a second model call: the cited fact must satisfy the goal.
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved' } }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲把工具拿到手，放进自己的口袋。', b: '' }, workingState: world(),
+    } as unknown as Json);
+    const prompt = engine.prompts[0];
+    expect(prompt).toContain('没有变化的人物不要写');
+    expect(prompt).not.toContain('"unchanged":[');
+    expect(prompt).toContain('"achieved":[{"characterId":"<人物id>"');
+    // The model asserted one change and said nothing about the other owner; the
+    // reader must apply unchanged instead of failing coverage, and record it.
+    const detail = outcome.evidence.detail as {
+      stageDetail?: {
+        newlyAchievedTaskIds?: string[];
+        taskScope?: { defaultedUnchanged?: string[]; supports?: { taskId: string }[]; verifier?: { satisfied: string }[] };
+      };
+    };
+    expect(detail.stageDetail?.newlyAchievedTaskIds).toEqual(['a1']);
+    expect(detail.stageDetail?.taskScope?.supports?.map((row) => row.taskId)).toEqual(['a1']);
+    expect(detail.stageDetail?.taskScope?.verifier?.[0]?.satisfied).toBe('yes');
+    expect(detail.stageDetail?.taskScope?.defaultedUnchanged ?? []).toContain('b');
+  });
+
+  it('refuses an achievement credited to another member fact unless it names them', async () => {
+    // Real 0.6B probe 2026-11-11: with the 'achieved' contract the model marked
+    // caesar's bridge task achieved on lu's goggles fact, and the verifier said
+    // yes. The fact's owner is structural, so the reader rejects the swap; a fact
+    // that names the other character still counts.
+    const answer = (characterId: string, taskKey: string) => JSON.stringify({
+      achieved: [{ characterId, tasks: [{ taskId: taskKey, basis: 'f1' }] }], subtasks: [],
+    });
+    const engine = new ScriptedEngine([answer('b', 't3')]);
+    const swapped = await createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved' } })
+      .updates('group_1#tasks', {
+        groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+        results: { a: '甲把工具拿到手，放进自己的口袋。' }, workingState: world(),
+      } as unknown as Json);
+    const swappedDetail = swapped.evidence.detail as {
+      stageDetail?: { newlyAchievedTaskIds?: string[]; taskScope?: { rejectedTaskIds?: { characterId: string; reason: string }[] } };
+    };
+    expect(swappedDetail.stageDetail?.newlyAchievedTaskIds ?? []).toEqual([]);
+    expect((swappedDetail.stageDetail?.taskScope?.rejectedTaskIds ?? []).map((row) => `${row.characterId}:${row.reason}`))
+      .toEqual(['b:support_belongs_to_a']);
+
+    const naming = new ScriptedEngine([
+      answer('b', 't3'),
+      JSON.stringify({ judgments: [{ characterId: 'b', taskId: 'b1', satisfied: 'yes', reason: '乙的条件成立。' }] }),
+    ]);
+    const named = await createSettlementHandlers({ engine: naming, options: { requireTaskSupport: true, tasksContract: 'achieved' } })
+      .updates('group_1#tasks', {
+        groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+        results: { a: '甲把工具交给乙，乙协助甲把工具拿稳。' }, workingState: world(),
+      } as unknown as Json);
+    const namedDetail = named.evidence.detail as { stageDetail?: { newlyAchievedTaskIds?: string[] } };
+    expect(namedDetail.stageDetail?.newlyAchievedTaskIds ?? []).toEqual(['b1']);
+  });
+
+  it('still refuses an achieved entry whose fact basis is not in this point', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f9' }] }],
+      subtasks: [],
+    })]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved' } }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲把工具拿到手，放进自己的口袋。' }, workingState: world(),
+    } as unknown as Json);
+    const detail = outcome.evidence.detail as { stageDetail?: { changes?: Record<string, unknown>; reason?: string } };
+    expect(Object.keys(detail.stageDetail?.changes ?? {})).toEqual([]);
+    expect(detail.stageDetail?.reason ?? '').toContain('unknown_support');
+  });
+
   it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
     // 3turn 9623 group_29: lu asked nono a question, the answer judged nono only
     // and facts were attributed to both. lu had no roll target, so the row is
@@ -1489,7 +1569,9 @@ describe('real failed-output shapes (09 product run)', () => {
       { characterId: 'off', achieved: ['off1'] },
     ] });
     const engine = new ScriptedEngine([partial, full]);
-    const handlers = createSettlementHandlers({ engine });
+    // Roster-contract arm: this is the policy that requires every character to
+    // be named. The product default ('achieved') applies unchanged instead.
+    const handlers = createSettlementHandlers({ engine, options: { tasksContract: 'roster' } });
     const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
     expect(outcome.value).not.toBeNull();
     const call = outcome.value as UpdatesCall;
@@ -1743,7 +1825,7 @@ describe('bounded task-id contract', () => {
       JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }] }),
       JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }] }),
     ]);
-    const handlers = createSettlementHandlers({ engine });
+    const handlers = createSettlementHandlers({ engine, options: { tasksContract: 'roster' } });
     const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
     expect(outcome.value).toBeNull();
     expect(outcome.error).toContain('task character coverage incomplete: 2/3; missing off');
@@ -1805,9 +1887,11 @@ describe('grounded task transitions', () => {
   });
 
   it('accepts an achievement that cites a settled fact', async () => {
+    // Each achievement cites the fact of the member who produced it: f1 is 甲's
+    // result, f3 is 丙's own ("丙仍在远处"), so neither is an actor swap.
     const grounded = JSON.stringify({ unchanged: ['b'], achieved: [
       { characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] },
-      { characterId: 'off', tasks: [{ taskId: 't4', basis: 'f1' }] },
+      { characterId: 'off', tasks: [{ taskId: 't4', basis: 'f3' }] },
     ] });
     const engine = new ScriptedEngine([grounded, JSON.stringify({ judgments: [
       { characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '甲拿到工具，目标条件成立。' },
@@ -1825,7 +1909,7 @@ describe('grounded task transitions', () => {
     } }).taskScope;
     expect(scope.supports).toEqual([
       { characterId: 'a', taskId: 'a1', basis: 'f1' },
-      { characterId: 'off', taskId: 'off1', basis: 'f1' },
+      { characterId: 'off', taskId: 'off1', basis: 'f3' },
     ]);
     expect(scope.rejectedTaskIds).toEqual([]);
     expect(scope.verifier?.map((row) => row.satisfied)).toEqual(['yes', 'yes']);

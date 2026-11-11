@@ -41,6 +41,20 @@ export interface SettlementOptions {
    * (or a time basis). Unit fixtures may leave this off, but the page port
    * never does. */
   requireTaskSupport?: boolean;
+  /** How the tasks stage asks for its answer.
+   *
+   * 'roster': the prompt prints a complete answer that names every affected
+   * character under `unchanged`, and the model must reproduce the roster. A 0.6B
+   * copies that skeleton: across 171 recorded task-stage answers it never once
+   * moved a character out of `unchanged`, and no real 0.6B run produced an
+   * achievement either (2/2 probes, 2026-11-11).
+   *
+   * 'achieved' (default): the model asserts only the characters whose task
+   * condition is now met (with a fact basis); the program applies "everyone else
+   * unchanged", which is the conservative default it already knows. The same
+   * probes achieve the right task under this contract; keep 'roster' only as a
+   * comparison arm. */
+  tasksContract?: 'roster' | 'achieved';
 }
 
 export interface ModelTaskDetail {

@@ -174,7 +174,7 @@ export function appearanceLine(state: WorldState, entityId: Id, options: { compa
   return `- ${name}（id=${entityId}，${kind}）初始外貌=${initial}；有效变化=[${records.join('；')}]${position}`;
 }
 
-export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>): string {
+export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>, onlyTaskIds?: Set<Id>): string {
   const name = state.initial.characters[ownerId]?.name ?? ownerId;
   const position = containerLabel(state, ownerId);
   const initial = state.initial.characters[ownerId];
@@ -182,9 +182,11 @@ export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>)
     .filter(Boolean).join('；');
   const personality = [initial?.initialPersonality ?? '', ...activeRecordText(activeRecords(state, 'personality', ownerId))]
     .filter(Boolean).join('；');
-  const tasks = Object.values(state.characters[ownerId]?.tasks ?? {});
+  const all = Object.values(state.characters[ownerId]?.tasks ?? {});
+  const tasks = onlyTaskIds ? all.filter((task) => onlyTaskIds.has(task.id)) : all;
   const prefix = `- ${name}（id=${ownerId}）位置=${position}；外貌=${appearance}；个性=${personality}`;
-  if (!tasks.length) return `${prefix}：无任务`;
+  if (!all.length) return `${prefix}：无任务`;
+  if (!tasks.length) return `${prefix}：本组事实与这些任务的目标无关，保持原状`;
   const rows = tasks.map((task) => `${keys?.get(task.id) ?? task.id}：${task.goal}（${task.status === 'achieved' ? '已完成' : '待办'}）`);
   return `${prefix}：${rows.join('；')}`;
 }
