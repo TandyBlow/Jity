@@ -493,6 +493,64 @@ describe('beat provenance and cross-turn phrasing', () => {
 });
 
 describe('generateCandidate model mode', () => {
+  it('keeps the player as viewpoint when an item position precedes the player fact', async () => {
+    const action = '我沿着服务巷往里走，先看清墙上的演习规则牌。';
+    const { engine, prompts } = scriptedEngine(() => '一分钟过去，路明非沿着服务巷往里走，在墙上的演习规则牌前停下。');
+    const result = await generateCandidate({
+      engine,
+      committed: {
+        anchor: { worldId: 'world_test', pointId: 'p1', version: 1, stateDigest: '', previousPointId: 'root' },
+        facts: [
+          { id: 'goggles:position', kind: 'at', actorId: 'goggles', name: '路明非的护目镜', locationId: 'lane', location: '西侧服务巷' },
+          { id: 'lu:position', kind: 'at', actorId: 'lu', name: '路明非', locationId: 'lane', location: '西侧服务巷' },
+        ],
+        timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+      },
+      policy: {
+        mode: 'model', viewpointId: 'lu',
+        scene: { previousAction: action, objectNotes: { '路明非的护目镜': '挂在胸前。' } },
+      },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.skeleton?.viewpoint.id).toBe('lu');
+    expect(result.skeleton?.viewpoint.name).toBe('路明非');
+    expect(result.skeleton?.present.some((person) => person.name === '路明非的护目镜')).toBe(false);
+    expect(prompts[0]).toContain('视角人物：路明非\n');
+    expect(prompts[0]).toContain('玩家这一回合的指令：路明非沿着服务巷往里走');
+    expect(prompts[0]).not.toContain('玩家这一回合的指令：路明非的护目镜');
+  });
+
+  it('uses the moving viewpoint destination even when another actor has an earlier at-fact', async () => {
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: {
+        anchor: { worldId: 'world_test', pointId: 'p1', version: 1, stateDigest: '', previousPointId: 'root' },
+        facts: [
+          { id: 'nono:position', kind: 'at', actorId: 'nono', name: '诺诺', locationId: 'room', location: '值班室' },
+          { id: 'lu:position', kind: 'moved', actorId: 'lu', name: '路明非', fromId: 'room', from: '值班室', toId: 'yard', to: '后院' },
+        ],
+      },
+      policy: { mode: 'program', viewpointId: 'lu' },
+    });
+    expect(result.skeleton?.viewpoint.id).toBe('lu');
+    expect(result.skeleton?.viewpoint.name).toBe('路明非');
+    expect(result.skeleton?.viewpoint.location).toBe('后院');
+    expect(result.skeleton?.viewpoint.locationId).toBe('yard');
+  });
+
+  it('rejects an explicit viewpoint with no position instead of borrowing another entity', async () => {
+    const result = await generateCandidate({
+      engine: scriptedEngine(() => '').engine,
+      committed: {
+        anchor: { worldId: 'world_test', pointId: 'p1', version: 1, stateDigest: '', previousPointId: 'root' },
+        facts: [{ id: 'nono:position', kind: 'at', actorId: 'nono', name: '诺诺', locationId: 'room', location: '值班室' }],
+      },
+      policy: { mode: 'program', viewpointId: 'lu' },
+    });
+    expect(result.status).toBe('error');
+    expect(result.issues[0].detail).toContain('facts_packet_without_scene');
+  });
+
   it('writes the time and declared action in one scene instead of three empty beats', async () => {
     const { packet } = await productWorldFixture();
     const action = '我沿着服务巷往里走，先看清墙上的演习规则牌。';
