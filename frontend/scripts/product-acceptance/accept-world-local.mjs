@@ -460,6 +460,8 @@ try {
     const consoleStart = evidence.environment.ggmlConsole.length;
 
     try {
+      const candidateBefore = await page.evaluate(() => (Array.isArray(globalThis.__worldCandidate) ? globalThis.__worldCandidate.length : 0))
+        .catch(() => 0);
       await page.fill('textarea', turn.input);
       const submitAt = Date.now();
       // If the submit control is not actionable, record what the page shows
@@ -807,9 +809,13 @@ try {
           supportedChars: typeof debug.supported === 'string' ? debug.supported.length : null,
         };
       }).catch(() => null);
-      entry.candidate = await page.evaluate(() => {
+      entry.candidate = await page.evaluate((from) => {
         const list = globalThis.__worldCandidate;
         if (!Array.isArray(list)) return null;
+        // __worldCandidate is a session-long list; keep only the records this
+        // turn appended, otherwise a later turn's text is compared against
+        // every earlier round's raw output.
+        const mine = list.slice(Number(from) || 0);
         const trim = (value, depth = 0) => {
           if (typeof value === 'string') return value.slice(0, 1500);
           if (Array.isArray(value)) return depth > 3 ? `[${value.length} items]` : value.slice(0, 24).map((item) => trim(item, depth + 1));
@@ -821,12 +827,13 @@ try {
         };
         return {
           count: list.length,
-          tail: list.slice(-6).map((record) => ({
+          added: mine.length,
+          tail: mine.map((record) => ({
             ...trim({ ...record, detail: undefined }),
             detail: record?.detail ? JSON.stringify(record.detail).slice(0, 16000) : null,
           })),
         };
-      }).catch(() => null);
+      }, candidateBefore).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
       entry.narrationRejections = entry.console
         .filter((line) => /\[narration\] (in-model rejected|candidate fallback rejected)/.test(line))
