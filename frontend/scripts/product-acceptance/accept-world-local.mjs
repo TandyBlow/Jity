@@ -278,9 +278,22 @@ try {
       : resolve(rootDir, declared);
     evidence.productState.worktree = productWorktree;
     evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
-    evidence.productState.pageSha256 = sha256(readFileSync(resolve(productWorktree, 'frontend/src/app/world-local/page.tsx'), 'utf8'));
+    // Hash the source with LF endings: 06 publishes the git blob sha (LF), while a
+    // Windows checkout is CRLF on disk. Hashing the checkout bytes made the same
+    // build look like a different one; keep both so the raw value is auditable.
+    const pageSource = readFileSync(resolve(productWorktree, 'frontend/src/app/world-local/page.tsx'), 'utf8');
+    evidence.productState.pageSha256 = sha256(pageSource.replaceAll(String.fromCharCode(13), ''));
+    evidence.productState.pageSha256Raw = sha256(pageSource);
     evidence.productState.expectedPageSha256 = expectedPageSha;
-    if (expectedPageSha && !evidence.productState.pageSha256.startsWith(expectedPageSha.replace(/\.\.\.$/, ''))
+    // Match either the LF-normalized sha (06 publishes this) or the on-disk bytes,
+    // so a checkout's line endings cannot abort a valid build.
+    const expectedPrefix = expectedPageSha
+      ? (expectedPageSha.endsWith('...') ? expectedPageSha.slice(0, -3) : expectedPageSha)
+      : null;
+    const pageShaMatches = Boolean(expectedPrefix)
+      && (evidence.productState.pageSha256.startsWith(expectedPrefix)
+        || evidence.productState.pageSha256Raw.startsWith(expectedPrefix));
+    if (expectedPageSha && !pageShaMatches
         && !process.argv.includes('--allow-page-sha-mismatch')) {
       noteFailure('product', `page source ${evidence.productState.pageSha256.slice(0, 12)} does not match the frozen ${expectedPageSha}`);
       evidence.status = 'FAILED';
