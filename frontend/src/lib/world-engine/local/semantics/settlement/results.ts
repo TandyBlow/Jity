@@ -584,6 +584,16 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       if (label === 'blocked' && outcome === 'completed') throw new Error(`outcome completed contradicts blocked judgement for ${actorId}`);
       if (label === 'not_achieved' && outcome === 'completed') throw new Error(`outcome completed contradicts not_achieved judgement for ${actorId}`);
     }
+    // “甲未能。” is what is left after a stripped task clause: a dangling
+    // negation is not a result. The 60-char action hint tells the repair what to
+    // write instead.
+    const residue = recipientIds
+      .reduce((text, recipient) => {
+        const name = state.initial.characters[recipient]?.name;
+        return name ? text.replace(String(name), '') : text;
+      }, cleaned.text.replace(FACT_PUNCTUATION, ''))
+      .replace(/(?:未能|没能|没有|未|无法|不)/gu, '');
+    if (!residue) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}）。`);
     for (const recipient of recipientIds) factRecipients.add(recipient);
     facts.push({
       text: cleaned.text,
@@ -643,8 +653,10 @@ const COMPLETION_CLAIMS: { pattern: RegExp; label: string }[] = [
   { pattern: /未达成目标/g, label: '未达成目标' },
   { pattern: /未完成任务/g, label: '未完成任务' },
   { pattern: /任务未完成/g, label: '任务未完成' },
-  { pattern: /未能完成/g, label: '未能完成' },
-  { pattern: /未达成/g, label: '未达成' },
+  // A negative result is an outcome, not a completion claim: “未能完成翻越”
+  // must stay negative. Only the task/goal wording is stripped.
+  { pattern: /未能完成(?:任务|目标|参赛选择)/g, label: '未能完成任务' },
+  { pattern: /未达成(?:任务|目标)/g, label: '未达成任务' },
   { pattern: /完成目标/g, label: '完成目标' },
   { pattern: /目标完成/g, label: '目标完成' },
   { pattern: /符合规则要求/g, label: '符合规则要求' },

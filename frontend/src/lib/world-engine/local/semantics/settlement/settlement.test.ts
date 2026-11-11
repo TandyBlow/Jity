@@ -225,6 +225,36 @@ describe('common-group results', () => {
     expect(goalOutcome.error).toContain('not what the actor did');
   });
 
+  it('keeps a negative action result instead of stripping the negation as a task claim', async () => {
+    // The old list stripped the bare phrase 未能完成, turning “未能完成翻越，落回
+    // 巷口” into “翻越，落回巷口” — a reversed result. Only task/goal wording may
+    // be stripped now.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没翻过去。', effects: [] }],
+      facts: [{ text: '甲未能完成翻越，落回巷口。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('未能完成翻越');
+    expect(outcome.value!.a).toContain('落回巷口');
+    // A task/goal claim is still not an action result.
+    const taskEngine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没完成。', effects: [] }],
+      facts: [{ text: '甲未能完成任务。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    })]);
+    const taskOutcome = await createSettlementHandlers({ engine: taskEngine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(taskOutcome.value).toBeNull();
+    expect(taskOutcome.error).toContain('no action result left');
+  });
+
   it('keeps a negative blocked result instead of stripping it as a mechanic', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [{ memberId: 'a', label: 'blocked', reason: '甲被拦住。', effects: [] }],
