@@ -365,6 +365,8 @@ def main(argv: List[str] | None = None) -> int:
             valid_metrics = evaluate(model, valid_set, tokenizer, device)
             score = valid_metrics["step1"]["rowHit"]
             history.append({"epoch": epoch, "train": train_stats, "validRowHit": score})
+            print(f"[{arm}] epoch {epoch} loss {train_stats['loss']:.4f} validRowHit {score:.3f}",
+                  flush=True)
             if score > best_score:
                 best_score = score
                 best = {"loss": train_stats["loss"], "epoch": epoch, "metrics": valid_metrics,
