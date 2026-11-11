@@ -482,7 +482,13 @@ function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): 
     `同地点人物：\n${visible.map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
     `本轮状态变化：\n${changes}`,
     `当前时间：${state.time.dateTime}`,
-    `输出 {"candidates":[{"characterId":"${visible[0] ?? '人物id'}","text":"一句话行动"}]}，最多 ${maxCandidates} 条；characterId 用括号里的真实 id 或人物全名，不要写占位符；没有合适的人就返回空数组。`,
+    // A literal placeholder in the format example is copied verbatim: 35ad turn
+    // 3 answered four candidates with characterId "人物id" and died on the fatal
+    // placeholder check after two calls. Show a real id, and when nobody is in
+    // the room say so instead of offering an example.
+    visible.length
+      ? `输出 {"candidates":[{"characterId":"${visible[0]}","text":"一句话行动"}]}，最多 ${maxCandidates} 条；characterId 只能用上面人物的真实 id（如 ${visible[0]}）或全名；没有合适的人就返回空数组。`
+      : '同地点没有其他人物：返回 {"candidates":[]}，不要写任何 characterId。',
   ].join('\n');
 }
 

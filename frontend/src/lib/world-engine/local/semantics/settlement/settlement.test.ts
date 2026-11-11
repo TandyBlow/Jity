@@ -292,6 +292,32 @@ describe('common-group results', () => {
     expect(answered?.targetId).toBeUndefined();
   });
 
+  it('never shows a literal placeholder id in the continuation format example', async () => {
+    // 35ad turn 3: nobody else in the room, the example said characterId
+    // "人物id", the model copied it four times and the fatal placeholder check
+    // ended the chain after two calls.
+    const empty = new ScriptedEngine([JSON.stringify({ candidates: [] })]);
+    // a is alone in the room: b, c and off are all elsewhere.
+    const lonely = world({ farOnly: true });
+    lonely.characters.c!.position = { containerId: 'far' } as typeof lonely.characters.c.position;
+    await createSettlementHandlers({ engine: empty }).continuation('round_1', {
+      round: { roundId: 'round_1', trigger: 'automatic', conclusion: null },
+      head: { pointId: 'p1' },
+      workingState: lonely,
+      roundChanges: [],
+      roundProgress: progressEvidence(false, 'no_change'),
+    } as unknown as Json);
+    const lonelyPrompt = empty.prompts[0];
+    expect(lonelyPrompt).not.toContain('人物id');
+    expect(lonelyPrompt).toContain('同地点没有其他人物');
+
+    // With someone present the example uses that character's real id.
+    const present = new ScriptedEngine([JSON.stringify({ candidates: [] })]);
+    await createSettlementHandlers({ engine: present }).continuation('round_1', continuationInput([]));
+    expect(present.prompts[0]).not.toContain('人物id');
+    expect(present.prompts[0]).toMatch(/characterId":"(?:b|off)"/u);
+  });
+
   it('rejects an outcome that contradicts the model’s own reason', async () => {
     // bed9 turn 2 answered “…未被阻止” with outcome blocked.
     const raw = JSON.stringify({
