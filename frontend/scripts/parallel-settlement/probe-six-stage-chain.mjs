@@ -297,6 +297,52 @@ try {
     const achievedCount = stages.reduce((sum, stageRow) => sum + (stageRow.newlyAchieved?.length ?? 0), 0);
     console.log(`[chain] ${spec.id}: achieved=${achievedCount} personality=${JSON.stringify(stages.find((r) => r.stage === 'personality')?.personalityChanged ?? null)} sanity=${JSON.stringify(stages.find((r) => r.stage === 'sanity')?.sanityValues ?? null)} commit=${commit.ok ? 'ok' : commit.error} wallMs=${Date.now() - started}`);
   }
+  if (process.argv.includes('--cont')) {
+    // The turn-ending stage: what the real model proposes as the automatic
+    // round, and what the policy does with it. Two calls on the same state:
+    // once with no committed change, once with the goggles achievement.
+    const { createContinuationPolicy } = await server.ssrLoadModule('/src/lib/world-engine/local/semantics/settlement/index.ts');
+    const contCases = [
+      { id: 'cont-no-change', roundChanges: [] },
+      {
+        id: 'cont-goggles',
+        roundChanges: [{
+          pointId: 'cont_p1',
+          timeAdvance: { boundary: 'elapsed', duration: { amount: 3, unit: 'minute' } },
+          entityDeltas: { lu: { entityId: 'lu', tasksAchieved: ['task_lu_goggles'] } },
+        }],
+        head: 'cont_p1',
+      },
+    ];
+    for (const spec of contCases) {
+      const started = Date.now();
+      const runner = createSettlementHandlers({
+        engine,
+        options: { onTask: (task, key, detail) => {
+          report.runs.push({ case: spec.id, task, key, ms: Math.round(detail.ms ?? 0), raw: detail.raw ?? null, at: new Date().toISOString() });
+          save();
+        } },
+      });
+      const outcome = await runner.continuation(spec.id, {
+        workingState: baseState,
+        round: { roundId: 'round_cont', trigger: 'player' },
+        roundChanges: spec.roundChanges,
+        head: { pointId: spec.head ?? 'cont_p0' },
+        roundProgress: { progress: spec.roundChanges.length > 0 },
+      });
+      const ev = outcome.evidence;
+      report.cases.push({
+        id: spec.id, continuation: true,
+        finished: {
+          wallMs: Date.now() - started, value: outcome.value, error: outcome.error ?? null,
+          detail: ev.detail ?? null, fallback: outcome.fallback,
+        },
+      });
+      save();
+      console.log(`[cont] ${spec.id}: value=${JSON.stringify(outcome.value)} wallMs=${Date.now() - started} error=${outcome.error ?? '-'}`);
+    }
+    void createContinuationPolicy;
+  }
   report.pageLog = pageLog;
   report.status = 'COMPLETED';
   report.completedAt = new Date().toISOString();
