@@ -849,6 +849,21 @@ export class ControllerDriver {
           // round-trip must claim afresh (claim_expired/cache_missing).
           this.memory.narration = { pointId, claim: null, input };
           this.memory.lastModel = null;
+          if (this.narration) {
+            // The refusal asked us to finish the head narration. The queue
+            // owns that point, so wait for the already committed job instead
+            // of resending the refused operation every idle step. This is
+            // what keeps an automatic continuation-stop cancel from stalling
+            // while the point prose is still streaming. A failed head is
+            // terminal here; it must not be retried as a fresh narration.
+            this.narration.enqueue(pointId);
+            await this.narration.settled();
+            this.narrationDirty = true;
+            await this.refreshNarrationState();
+            if (this.state.world?.head.narrationStatus === 'failed') {
+              return { kind: 'stop', reason: 'narration_failed' };
+            }
+          }
         }
         return undefined;
       }
