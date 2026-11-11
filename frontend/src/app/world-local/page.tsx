@@ -661,6 +661,10 @@ export default function WorldLocalPage() {
         };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
+          // The static world names the player's character; the first point of
+          // a player round holds only that character so its settlement can
+          // commit and be narrated before the rest of the roster is judged.
+          protagonistId: world.state.protagonistId,
           narrationMode: 'instruct',
           narrationCandidate: candidate as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin',
           ...(arm.mode ? { trainedMode: arm.mode } : {}),

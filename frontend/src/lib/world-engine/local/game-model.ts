@@ -31,6 +31,11 @@ export interface GameModelOptions {
   /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
    * 'instruct' states the task for an instruction-tuned narration model. */
   narrationMode?: 'legacy' | 'instruct';
+  /** The player's character id. The point plan puts that character alone in
+   * the round's first point so the player's own settlement can commit and be
+   * narrated before the rest of the roster is judged (the 2026-11-11 turns
+   * spent 280 s settling one point that held every actor). */
+  protagonistId?: Id;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -118,6 +123,9 @@ export class LocalGameModel implements WorldModelPort {
   private turnAbort: AbortController | null = null;
   private readonly options: GameModelOptions;
   private roundCounter = 0;
+  /** The player's character. Taken from the options (the page knows the static
+   * world) and refreshed from any working state a settlement handler sees. */
+  private protagonistId: Id | null = null;
   private lastPlayerInput = '';
   private lastResultsText = '';
   /** Structured settled results for the current point (04's actor/action/target/
@@ -154,6 +162,7 @@ export class LocalGameModel implements WorldModelPort {
     this.engine = semanticEngine;
     this.narrationEngine = narrationPort;
     this.options = options;
+    this.protagonistId = options.protagonistId ?? null;
     // Lane 04's settlement port owns results/updates (six stages) and the
     // continuation judgement. A policy stop is a visible stop; there is no
     // product-side "one action per round" switch and no fabricated handback.
@@ -250,17 +259,45 @@ export class LocalGameModel implements WorldModelPort {
     }
   }
 
-  /** One point per round covering the full frozen roster. Point segmentation
-   * is program-owned here; the model owns the semantic action/results work. */
+  /** Point segmentation is program-owned; the model owns the semantic
+   * action/results work.
+   *
+   * A player round becomes two points. The first holds only the player's own
+   * character, so its settlement group (the player's action, its targets and
+   * their reactions) commits and goes to narration as soon as it is done; the
+   * remaining roster is judged in a zero-duration instant point after it. The
+   * 2026-11-11 runs put all fourteen actors in one point: the first commit
+   * waited 248-280 s for six settlement groups, far past the 60 s target. No
+   * settlement group is split — the player's group keeps its targets and
+   * reactions, and every other actor's own group is settled in the second
+   * point, which is where it was already settled before.
+   *
+   * Automatic (continuation) rounds keep one point: their order is the
+   * model's candidate list and has no player slot to isolate. */
   private planPoints(input: Json): Json {
-    const round = (input as { round?: { roundId?: Id; order?: Id[] } }).round;
+    const round = (input as { round?: { roundId?: Id; order?: Id[]; trigger?: string } }).round;
     const order = round?.order ?? [];
-    return [{ pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal',
-      timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order }];
+    const roundId = round?.roundId ?? 'round';
+    const single = { pointId: `point_${roundId}_1`, kind: 'normal',
+      timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order };
+    const protagonist = this.protagonistId;
+    if (round?.trigger !== 'player' || protagonist === null || order.length < 2 || !order.includes(protagonist)) {
+      return [single];
+    }
+    const rest = order.filter((actor) => actor !== protagonist);
+    if (rest.length === 0) return [single];
+    return [
+      { ...single, actorIds: [protagonist] },
+      { pointId: `point_${roundId}_2`, kind: 'instant',
+        // An instant point must carry a zero duration; the round's time already
+        // advanced with the first point.
+        timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: rest },
+    ];
   }
 
   private async action(key: Id, input: Json): Promise<Generated> {
     const data = input as { actor?: Id; advance?: { inputText?: string | null; intentStatus?: string } | null; workingState?: WorldState };
+    this.noteProtagonist(data.workingState);
     if (data.workingState && data.actor === data.workingState.protagonistId) {
       const text = data.advance?.inputText?.trim();
       if (text) this.lastPlayerInput = text;
@@ -277,6 +314,13 @@ export class LocalGameModel implements WorldModelPort {
 
   private async reaction(key: Id, input: Json): Promise<Generated> {
     return this.reportAction(await this.actionHandlers.reaction(key, input));
+  }
+
+  /** Any settlement input carries the working state; remember the player's id
+   * so the next round's plan can isolate the player's point even if the page
+   * did not pass one. */
+  private noteProtagonist(state: WorldState | undefined): void {
+    if (state?.protagonistId) this.protagonistId = state.protagonistId;
   }
 
   private reportAction(result: HandlerResult): Generated {
