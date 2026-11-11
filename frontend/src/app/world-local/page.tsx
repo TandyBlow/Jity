@@ -83,7 +83,14 @@ interface WorldTurnRecord {
   submission?: unknown;
   /** Action-family calls for this turn (action/targets/reaction), kept out of
    * the settlement ledger so its coverage/stage counts stay one defined thing. */
-  actions?: Array<{ task: string; key: string; ms: number; fallback: boolean; error: string | null }>;
+  actions?: Array<{ task: string; key: string; ms: number; fallback: boolean; error: string | null;
+    /** program = the program answered without a model call (frozen player
+     * action, scope skip); model = the model answered; fallback = generation
+     * failed. */
+    source?: string | null;
+    /** Guard codes, so a model-chosen skip (`model_skip`) stays distinct from a
+     * program scope skip (`actor_out_of_scene`). */
+    issues?: string[] }>;
   /** Narration attempt evidence for the last point of this turn: the draft the
    * model saw, every raw attempt, why it was rejected and the echo ratio. 02
    * needs the raw text to fix wrong_person/low_support, and the turn record must
@@ -642,6 +649,10 @@ export default function WorldLocalPage() {
               const live = turnRecordRef.current;
               if (live) (live.actions ??= []).push({
                 task, key, ms: Math.round(detail.ms), fallback: detail.fallback, error: detail.error ?? null,
+                // A program skip (no model call) and a skip the model chose
+                // itself are different facts about the run; keep both.
+                source: detail.source ?? null,
+                issues: (detail.issues ?? []).map((issue) => issue.code),
               });
             }
             setStage(STAGE_LABEL[task] ?? task);

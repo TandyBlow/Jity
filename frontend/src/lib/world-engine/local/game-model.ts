@@ -71,6 +71,12 @@ export interface GameModelOptions {
   onNarrationEvidence?: (record: Record<string, unknown>) => void;
   onTask?: (task: ModelTask, key: string, detail: {
     ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number;
+    /** Who produced this answer: the program (no model call), the model, or a
+     * fallback after a failed generation. Action-family only. */
+    source?: 'program' | 'model' | 'fallback';
+    /** Guard conclusions, so a program skip and a model-chosen skip stay
+     * distinguishable in the run evidence. */
+    issues?: { code: string; severity: string }[];
     /** Per-stage milliseconds for a multi-stage (updates) call. */
     stageMs?: Record<string, number>;
     stages?: string[];
@@ -239,6 +245,8 @@ export class LocalGameModel implements WorldModelPort {
     const error = result.issues.filter((issue) => issue.severity === 'error').map((issue) => issue.code).join(',') || undefined;
     this.options.onTask?.(result.task, result.key, {
       ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw,
+      source: result.source,
+      issues: result.issues.map((issue) => ({ code: issue.code, severity: issue.severity })),
     });
     return {
       value: result.value, raw: result.raw, ms: result.elapsedMs,
