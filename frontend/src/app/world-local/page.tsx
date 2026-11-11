@@ -1247,11 +1247,20 @@ export default function WorldLocalPage() {
     // During the cold load there is no session yet, but the stop button must
     // still cancel the model load. The device work is stopped either way.
     setMessage(session ? '正在取消本轮…' : '正在取消加载…');
+    // A committed point whose prose is still being written cannot be cancelled
+    // yet: the transport refuses to conclude a round while the head narration
+    // is pending (checkHeadReady). Aborting that generation would leave the
+    // point pending forever and the turn open, so in that state only the
+    // settlement engine is stopped; the prose is allowed to finish, then the
+    // round is cancelled. The text is the model's own, kept as written.
+    const record = session?.snapshot.transport;
+    const headEntry = record ? record.narrations[record.headPointId] : undefined;
+    const waitingForProse = Boolean(record?.advance) && headEntry?.status === 'pending';
     // Stop the device work first (including a cold load), then let the
     // controller conclude the round. The cancel gate discards any answer that
     // still arrives; the engine stays usable for the next turn.
-    modelRef.current?.abortTurn();
-    for (const engine of [semanticRef.current, narrationRef.current]) {
+    if (!waitingForProse) modelRef.current?.abortTurn();
+    for (const engine of [semanticRef.current, ...(waitingForProse ? [] : [narrationRef.current])]) {
       const typed = engine as unknown as { cancelActive?: () => number } | null;
       try { typed?.cancelActive?.(); } catch { /* best effort: signal already aborts */ }
     }
@@ -1278,8 +1287,36 @@ export default function WorldLocalPage() {
       await refresh();
       setMessage('本轮已取消。可以重新输入行动。');
     } catch (e) {
-      console.error(e);
-      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+      // The one refusal that is not an error: the head point's prose was still
+      // being written when cancel was asked. Wait for that text (it belongs to
+      // the point the player already saw settle), then cancel again.
+      const stillOpen = Boolean(session.snapshot.transport.advance);
+      const headStatus = (() => {
+        const now = session.snapshot.transport;
+        return now.narrations[now.headPointId]?.status;
+      })();
+      if (stillOpen && headStatus === 'pending') {
+        const deadline = performance.now() + 90_000;
+        while (performance.now() < deadline) {
+          await new Promise((resolve) => setTimeout(resolve, 1_000));
+          const now = session.snapshot.transport;
+          if (!now.advance) break;
+          // ready or failed: both end the wait. A failed text is labelled by the
+          // turn status; it is never replaced with program prose.
+          if (now.narrations[now.headPointId]?.status !== 'pending') break;
+        }
+        try {
+          await session.cancel('player_cancelled');
+          await refresh();
+          setMessage('本轮已取消。已经写出的正文保留。');
+        } catch (second) {
+          console.error(second);
+          setError(second instanceof Error ? `${second.name}: ${second.message}` : String(second));
+        }
+      } else {
+        console.error(e);
+        setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+      }
     } finally {
       setPhase('ready');
       setBusy(false);
