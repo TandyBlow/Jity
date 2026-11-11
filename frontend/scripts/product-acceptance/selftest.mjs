@@ -8,6 +8,12 @@
 // way the driver expects to read them, so a selector break fails here first.
 //
 //   node scripts/product-acceptance/selftest.mjs
+//
+// STATUS 2026-11-11: the fixture page itself is broken — its inline script
+// throws before it renders (#root stays empty, so no textarea), and the four
+// turn checks therefore fail. This is a defect in this dev fixture, not in the
+// acceptance driver and not a product result; the driver's turn machinery is
+// exercised by the real runs under results/product/evidence/.
 
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
@@ -103,6 +109,9 @@ const child = spawn(process.execPath, [
   '--out', outPath,
   '--intent', 'harness-selftest',
   '--harness-selftest',
+  // The fixture server is not the product page, so the product-identity guard
+  // must be waived explicitly here; every real run keeps it on.
+  '--allow-unknown-page',
   '--turn-timeout-ms', '30000',
   '--ready-timeout-ms', '30000',
   '--refresh-timeout-ms', '30000',
