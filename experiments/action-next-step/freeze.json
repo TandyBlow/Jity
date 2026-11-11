@@ -22,7 +22,7 @@
   "serialize.py": "4f1403fb6ec982169dbb7a3a98176032a4f0999091c85fa967c1a7fb083ee496",
   "dataset.py": "5a3ee1f3d3f5c324250aaeb0138fcc9ddbbce45c6b3a8db26f5feb1d915f766f",
   "model.py": "a8f412906abe4a9e6ceaa53eb69583a08048e720158771636bd18099272fbfe2",
-  "train.py": "9a78cce72204e7fb0bdd2cb27526ba74e2f0a9294b9f116afcffc9a25aa7489c",
+  "train.py": "96f8e8f56c93a8829213ba5e568a88c2c8b8be6871fbf11b0e698e674fc0bab1",
   "evaluate.py": "dfef59bfd00d2f6172877ed0235d7019986cc58b0a50298c30b39cfba0bf5dc2",
   "measure_tokens.py": "3849950320b9c39d69a2f1f38a8dc604b39ea10d0946519d05a755bdd33be78d"
  },
@@ -95,7 +95,7 @@
   "one 300-row version is not proof that the task is unlearnable",
   "an experimental classifier is not a product protocol change"
  ],
- "frozenAt": "2026-11-11T12:31:49.346382+00:00",
- "supersedes": "a4514a993ac9e7096b21b9ba24d477430b855927eded1014fb1d89381f17deb7",
- "freezeId": "9fb32ba6b5c555ce980cc08587fae7b3eea4c15b4eeef8b6386dd1eda28ef873"
+ "frozenAt": "2026-11-11T12:52:46.512387+00:00",
+ "supersedes": "9fb32ba6b5c555ce980cc08587fae7b3eea4c15b4eeef8b6386dd1eda28ef873",
+ "freezeId": "c3e53f8be482d902b200ec0b5757deec53120c8c8140e4216e4e2b37601ab286"
 }

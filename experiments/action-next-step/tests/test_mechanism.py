@@ -364,3 +364,45 @@ def test_train_refuses_a_test_row_and_a_bad_max_len(tmp_path):
     )
     assert result.returncode != 0
     assert "truncation" in (result.stdout + result.stderr)
+
+
+def test_rows_without_a_split_field_take_the_file_role(tmp_path):
+    """Lane 13's delivered rows carry no `split` (the file is the role). The
+    corpus above is copied without the field to prove the trainer still refuses
+    a misplaced row and accepts an honest one."""
+    import copy as _copy
+
+    train = fixture_rows()
+    validation = fixture_rows("validation")
+    for row in train + validation:
+        row.pop("split", None)
+    train_path = tmp_path / "train.jsonl"
+    validation_path = tmp_path / "validation.jsonl"
+    train_path.write_text("\n".join(json.dumps(row, ensure_ascii=False) for row in train) + "\n", encoding="utf-8")
+    validation_path.write_text("\n".join(json.dumps(row, ensure_ascii=False) for row in validation) + "\n", encoding="utf-8")
+    token_lengths = tmp_path / "token-lengths.json"
+    subprocess.run(
+        [sys.executable, str(EXP / "measure_tokens.py"), "--stub-tokenizer",
+         "--rows", str(train_path), str(validation_path), "--out", str(token_lengths)],
+        check=True, capture_output=True, text=True, encoding="utf-8",
+    )
+    ok = subprocess.run(
+        [sys.executable, str(EXP / "train.py"), "--base", str(tmp_path), "--train", str(train_path),
+         "--validation", str(validation_path), "--token-lengths", str(token_lengths),
+         "--out", str(tmp_path / "run"), "--dry-run-tiny", "--epochs", "1"],
+        capture_output=True, text=True, encoding="utf-8",
+    )
+    assert ok.returncode == 0, ok.stdout + ok.stderr
+    report = json.loads((tmp_path / "run" / "report.json").read_text(encoding="utf-8"))
+    assert report["data"]["train"] == 6 and report["data"]["validation"] == 4
+    # a validation row inside the train file is still refused
+    misplaced = _copy.deepcopy(train)
+    misplaced[0]["split"] = "validation"
+    train_path.write_text("\n".join(json.dumps(row, ensure_ascii=False) for row in misplaced) + "\n", encoding="utf-8")
+    bad = subprocess.run(
+        [sys.executable, str(EXP / "train.py"), "--base", str(tmp_path), "--train", str(train_path),
+         "--validation", str(validation_path), "--token-lengths", str(token_lengths),
+         "--out", str(tmp_path / "run2"), "--dry-run-tiny", "--epochs", "1"],
+        capture_output=True, text=True, encoding="utf-8",
+    )
+    assert bad.returncode != 0 and "declares split" in (bad.stdout + bad.stderr)
