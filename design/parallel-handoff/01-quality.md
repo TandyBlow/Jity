@@ -283,3 +283,4 @@
 - 1e59 两回合（`results/quality/review-09-1e59.md`）：分段已从四段变为单 result 段，重复问题消失；t1 仅 24 字「走+看清牌」，准确但只是一句确认、丢了诺诺结算动作；t2 结算本身错乱（同一句挂两人、红带在胸前发烫、短讯机、反问），正文忠实复现，玩家的提问仍无答案。证据仍缺提示原文，09 `ff738c8e` 起会保留。
 - 1e59 三回合（head 61869637，`results/quality/review-09-1e59-3turn.md`）：t1 24 字准确但薄；t2 问出口无回答；t3 214 字、诺诺只在护目镜反光里出现、结尾又出现陈述式路线朗读。关键：t2/t3 路明非那条事实就是玩家原话（含「我」）却标 `completed`，`421431b2` 守卫未拦住；红带/短讯机错句在三份证据里反复出现。
 - 09 `09-frozen-raw-6186.json`（run `2026-11-11T0647-98bb`）是**基础设施无效**：`page_sha_mismatch:28ea13ac5681!=65d4852e`，未产生任何回合，不作质量数据点（已记 registry `artifactsNote.infrastructureInvalid`）。
+- 查清「…」来源（`requests-01-to-06-empty-entry-ellipsis.md`）：`page.tsx:1247` `{entry.text || (entry.failed||… ? '' : '…')}` —— 空正文且未标 failed 的条目就显示「…」；9623/aa30/frozen-6186 的 t3 均属此列（t3 167 ms、无模型调用）。属 06 页面空状态缺陷，不是模型输出。
