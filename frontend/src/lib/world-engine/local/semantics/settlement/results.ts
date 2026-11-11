@@ -301,10 +301,14 @@ function parseResultsInput(input: Json): ResultsInput | { error: string } {
 function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState): string {
   const memberLines = members.map((member) => {
     const name = state.initial.characters[member.memberId]?.name ?? member.memberId;
+    // The effects row is fully determined by the frozen admission: printing it
+    // as a value to copy removes the 35ad failure where the model wrote
+    // reacted=true for an admitted=false target and the whole group was re-asked
+    // (23.6 s for nothing).
     const rolls = member.rolls.length
       ? member.rolls.map((roll) => {
         const targetName = state.initial.characters[roll.targetId]?.name ?? roll.targetId;
-        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted}`;
+        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted} → effects 写 {"targetId":"${roll.targetId}","reacted":${roll.admitted}}`;
       }).join('；')
       : '无判定';
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;

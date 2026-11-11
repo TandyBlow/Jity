@@ -1342,6 +1342,31 @@ describe('real failed-output shapes (09 product run)', () => {
     expect(outcome.evidence.detail).toMatchObject({ reason: 'point_aborted_after_repair' });
   });
 
+  it('prints the admitted-derived effects row so the model can copy it', async () => {
+    // 35ad turn 3 wrote reacted=true for a target whose 准入=false and the whole
+    // group was re-asked (23.6 s).
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推过去。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [
+        { text: '甲把工具推向乙。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙伸手接住工具。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    })]);
+    await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(engine.prompts[0]).toContain('准入=true → effects 写 {"targetId":"b","reacted":true}');
+
+    const denied = new ScriptedEngine([JSON.stringify({ judgments: [], facts: [] })]);
+    await createSettlementHandlers({ engine: denied }).results('g1', {
+      groupId: 'g1',
+      members: [{
+        memberId: 'a', actionText: '甲推门。',
+        rollRefs: [{ targetId: 'b', rollId: 'r1', result: 3, eligible: true, admitted: false }],
+      }],
+      workingState: world(),
+    } as unknown as Json).catch(() => null);
+    expect(denied.prompts[0]).toContain('准入=false → effects 写 {"targetId":"b","reacted":false}');
+  });
+
   it('repairs an effect for an undeclared target and resolves full names', async () => {
     const invalid = JSON.stringify({
       judgments: [
