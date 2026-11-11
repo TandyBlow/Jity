@@ -104,16 +104,14 @@ export interface SettlementPortSummary {
 }
 
 export interface SettlementModelPort extends WorldModelPort {
-  /** Every fact settled so far for the current point, verbatim, with the
-   * protagonist's own group first. A reaction group answers after the player's
-   * group and used to overwrite the player's result in the caller's single
-   * `lastResultsText` slot, so the walk/read outcome never reached narration
-   * and the result beat was composed from nothing.
+  /** Every fact settled so far for the current point, with the protagonist's
+   * own group first. This is settlement input (six stages, next-turn world
+   * knowledge), NOT a prose contract: the runtime shows the model's own prose
+   * unchanged and never verifies or rewrites it against these sentences
+   * (2026-11-11 raw-output decision).
    *
-   * No `名字：` prefix: the constrained result fact is verified as a sentence
-   * that must appear in the prose verbatim, and a label turns it into
-   * `路明非：路明非沿着…` — the same speaker-label leak that reached the page
-   * from the labeled results lines. */
+   * No `名字：` prefix: a label turns a fact into `路明非：路明非沿着…`, a
+   * speaker-label leak that is not a fact about the world. */
   settledFactLines(): string[];
   /** Structured settled results for the same point, protagonist group first.
    * Each record names the executor, the recipient (when any), the performed
