@@ -22,7 +22,9 @@
 | 战斗 | 2 |
 | 不动 | 22 |
 
-Groups with zero positives (negatives only, unlearnable in this set): none.
+9 groups have positives (感知 144, 移动 36, 战斗 2, 援助 4, 请求 19, 言语 53, 物品 31, 立场 14, 不动 22); 4 groups (胁迫/算计/情绪/身体) have zero training rows and are reported as `no_training_rows`, not as model failure.
+
+Second step: 30 decisions, 8 with the same group as 已做 and 22 with a different one; report them apart.
 
 ## Omission totals
 
@@ -38,7 +40,7 @@ Groups with zero positives (negatives only, unlearnable in this set): none.
 - `pairs.jsonl` sha256 `124fc0ebadc1a31190d03132bf9e74c2480fb5973bddbe53c235d38d3f85e627`
 - `pairs-index.jsonl` sha256 `9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59`
 - `rows-meta.jsonl` sha256 `919bfe201d7905968ddbb8e2cfbc6a3979d035228bd68dec52b002069310f764`
-- `build-report.json` sha256 `47acbc90aa36adc79a83689fc6417f3e2ec9f33fc25fcd90cb2ca473e9d9f9ee`
+- `build-report.json` sha256 `55a93484995d764b70b2c7df4f93516019457941709dda5039eb53b34eaba3f6`
 - `check.json` sha256 `9d661c81c549fc59a142193c5ab944f43d1cfec758401e26f72f81ce8e3e1df6`
 - `index-report.json` sha256 `b5e5ff032c768e7bca1ff59111c4e22786539dd89dd4edc678504be28c5023c6`
 

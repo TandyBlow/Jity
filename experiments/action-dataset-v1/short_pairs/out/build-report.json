@@ -152,5 +152,11 @@
     }
   ],
   "indistinguishableTexts": 13,
+  "secondStep": {
+    "decisions": 30,
+    "sameGroupAsDone": 8,
+    "differentGroupFromDone": 22,
+    "note": "a same-group second step already sees its own group in the 已做 line; report it apart"
+  },
   "pairsSha256": "124fc0ebadc1a31190d03132bf9e74c2480fb5973bddbe53c235d38d3f85e627"
 }

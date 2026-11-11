@@ -23,7 +23,9 @@ def main(argv: list[str] | None = None) -> int:
     index = json.loads((out / "index-report.json").read_text(encoding="utf-8"))
 
     positives = build["perGroupPositive"]
-    zero = [group for group, count in positives.items() if count == 0]
+    candidates = ["感知", "移动", "战斗", "援助", "请求", "胁迫", "言语", "算计", "情绪", "物品", "身体", "立场", "不动"]
+    zero = [group for group in candidates if positives.get(group, 0) == 0]
+    second = build.get("secondStep") or {}
     lines = [
         "# Short-pair delivery (13-way action-group judgement)",
         "",
@@ -46,7 +48,18 @@ def main(argv: list[str] | None = None) -> int:
         lines.append(f"| {group} | {count} |")
     lines += [
         "",
-        f"Groups with zero positives (negatives only, unlearnable in this set): {', '.join(zero) or 'none'}.",
+        (
+            f"{len(candidates) - len(zero)} groups have positives "
+            f"({', '.join(f'{group} {positives[group]}' for group in candidates if positives.get(group))}); "
+            f"{len(zero)} groups ({'/'.join(zero)}) have zero training rows and are reported as `no_training_rows`, "
+            "not as model failure."
+            if zero
+            else "All 13 candidates have positives."
+        ),
+        "",
+        f"Second step: {second.get('decisions', 0)} decisions, "
+        f"{second.get('sameGroupAsDone', 0)} with the same group as 已做 and "
+        f"{second.get('differentGroupFromDone', 0)} with a different one; report them apart.",
         "",
         "## Omission totals",
         "",

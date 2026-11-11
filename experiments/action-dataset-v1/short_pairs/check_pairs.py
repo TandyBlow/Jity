@@ -112,7 +112,35 @@ def main(argv: list[str] | None = None) -> int:
     if clock_missing:
         problems.append(f"{len(clock_missing)} clock-dependent rows do not show the time: {clock_missing}")
 
-    # 6. object resolution on positives
+    # 6. the derived positives must repeat the frozen Y, not a rewritten one
+    labels = json.loads(
+        Path("D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    predicate_to_group = {predicate: group["group"] for group in labels["groups"] for predicate in group["predicates"]}
+    for pair in pairs:
+        if not pair["positive"]:
+            continue
+        row = rows[pair["rowId"]]
+        steps = row["y"]["steps"]
+        if not steps:
+            expected_group = "不动"
+            expected_action = None
+            expected_object = None
+        else:
+            step = steps[pair["stepIndex"]]
+            expected_group = predicate_to_group[step["action"]]
+            expected_action = step["action"]
+            expected_object = step["object"]
+        if pair["labelGroup"] != expected_group:
+            problems.append(f"{pair['pairId']}: positive group {pair['labelGroup']} != frozen {expected_group}")
+        if pair["action"] != expected_action:
+            problems.append(f"{pair['pairId']}: action {pair['action']} != frozen {expected_action}")
+        if pair["objectId"] != expected_object:
+            problems.append(f"{pair['pairId']}: object {pair['objectId']} != frozen {expected_object}")
+
+    # 7. object resolution on positives
     for pair in pairs:
         if not pair["positive"]:
             continue

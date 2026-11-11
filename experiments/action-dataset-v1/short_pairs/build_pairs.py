@@ -152,6 +152,16 @@ def main(argv: list[str] | None = None) -> int:
         "omittedTotals": omitted_totals,
         "indistinguishable": indistinguishable,
         "indistinguishableTexts": len(indistinguishable),
+        "secondStep": {
+            "decisions": sum(1 for pair in pairs if pair["stepIndex"] == 1 and pair["positive"]),
+            "sameGroupAsDone": sum(
+                1 for pair in pairs if pair["stepIndex"] == 1 and pair["positive"] and pair["doneGroup"] == pair["labelGroup"]
+            ),
+            "differentGroupFromDone": sum(
+                1 for pair in pairs if pair["stepIndex"] == 1 and pair["positive"] and pair["doneGroup"] != pair["labelGroup"]
+            ),
+            "note": "a same-group second step already sees its own group in the 已做 line; report it apart",
+        },
         "pairsSha256": hashlib.sha256(_jsonl_bytes(pairs)).hexdigest(),
     }
     (out_dir / "build-report.json").write_text(
