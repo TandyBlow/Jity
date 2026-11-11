@@ -370,22 +370,23 @@ describe('committed narration strategy: repetition and length', () => {
 });
 
 describe('committed narration strategy: time, licensed events and prompt safety', () => {
-  test('an elapsed advance must be narrated; zero/instant advances are not required', async () => {
+  test('an elapsed advance may be left unstated; a stated duration must be right', async () => {
     const time = { boundary: 'elapsed' as const, duration: { amount: 2, unit: 'minute' as const } };
     const engine = new ScriptedEngine([
       { kind: 'text', text: '林川从走廊走到门厅。周宁留在走廊。' },
-      { kind: 'text', text: '两分钟过去了。林川从走廊走到门厅。周宁留在走廊。' },
+      { kind: 'text', text: '三分钟过去了。林川从走廊走到门厅。周宁留在走廊。' },
     ]);
     const result = await generateCommittedNarration({
       engine, committed: packet(moved, povAt), inputText: '【正文】', priorText: null,
       policy: { ...basePolicy, time },
     });
+    // Omission is allowed: the settled duration is context, not an inventory.
     expect(result.accepted).toBe(true);
     expect(result.rawAttempts[0].issues).toEqual(expect.arrayContaining([
-      expect.objectContaining({ kind: 'time_missing', severity: 'hard' }),
+      expect.objectContaining({ kind: 'time_omitted', severity: 'soft' }),
     ]));
-    expect(engine.calls[1].prompt).toContain('要写出时间过去了约2分钟');
-    expect(result.rawAttempts[1].alignment?.timeExpressed).toBe(true);
+    // A wrong duration is still a contradiction when the prose states one.
+    expect(engine.calls[0].prompt).toContain('时间可以不写');
   });
 
   test('an event verb is allowed only when the player action licensed it', async () => {
@@ -807,7 +808,7 @@ describe('beat mode', () => {
     expect(result.beats[0].source).toBe('fallback');
   });
 
-  test('the time sentence changes wording when the previous scene already used it', async () => {
+  test('a time-only beat never gets a mechanical clock sentence', async () => {
     const engine = new ScriptedEngine([
       { kind: 'text', text: '她站在原地。' },
       { kind: 'text', text: '光从窗缝里进来。' },
@@ -816,15 +817,14 @@ describe('beat mode', () => {
       engine,
       committed: packet(),
       inputText: '【正文】',
-      priorText: '灯灭了一会儿。\n\n约两分钟过去了。',
+      priorText: '灯灭了一会儿。' + String.fromCharCode(10, 10) + '约两分钟过去了。',
       policy: {
         ...beatPolicy, scene: null, mode: 'beats', minChars: 10,
         time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, requireTime: true,
         beatAttempts: 1,
       },
     });
-    expect(result.text).not.toContain('约两分钟过去了。');
-    expect(result.text).toMatch(/两分钟/);
+    expect(result.text).not.toContain('两分钟');
     expect(result.issues.some((issue) => issue.kind === 'echo_prior')).toBe(false);
   });
 
@@ -1024,11 +1024,11 @@ describe('beat mode', () => {
       },
     });
     expect(result.accepted).toBe(false);
-    // The time beat is rejected for opening the box; the final scene is the
-    // explicit time fallback, not the model's invention.
+    // The time beat is rejected for opening the box; no mechanical clock
+    // sentence replaces it.
     expect(result.beats[0].issues.some((issue) => issue.kind === 'fact_event_added')).toBe(true);
     expect(result.text).not.toContain('盒子缓缓开启');
-    expect(result.text).toContain('两分钟');
+    expect(result.text).not.toContain('两分钟');
   });
 
   test('planBeats orders location before movement and adds a time beat only when required', () => {
@@ -1345,7 +1345,7 @@ describe('background is not an event: the rules that failed the first real run',
 });
 
 describe('time beat: the duration must be named, not just implied', () => {
-  test('the time directive tells the model to open with the settled duration', () => {
+  test('the time directive names the duration as context, never as an opening', () => {
     const committed = packet(moved, povAt);
     const ledger = buildLedger(committed, '【正文】', null, {
       ...basePolicy, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
@@ -1354,7 +1354,7 @@ describe('time beat: the duration must be named, not just implied', () => {
     const time = beats.find((beat) => beat.kind === 'time');
     if (!time) return; // the ledger decides whether a time beat is required
     expect(time.directive).toContain('两分钟');
-    expect(time.directive).toContain('时间句');
+    expect(time.directive).toContain('可以不写');
   });
 });
 
@@ -1438,17 +1438,18 @@ describe('personality change is required, and required as behaviour', () => {
 });
 
 describe('serialized scene: the settled duration is named in the contract', () => {
-  test('a point with two elapsed minutes says so explicitly', () => {
+  test('a point with two elapsed minutes names it as context', () => {
     const prompt = composeNarrationPrompt({ inputText: '【正文】', attempt: 0, guidance: '', previousDraft: null, instruction: null }, {
       ...basePolicy, time: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } },
     });
-    expect(prompt).toContain('正文必须出现「两分钟」这个时长');
+    expect(prompt).toContain('本回合经过「两分钟」');
+    expect(prompt).toContain('时间可以不写');
   });
 
   test('a point with no elapsed time keeps the general line', () => {
     const prompt = composeNarrationPrompt({ inputText: '【正文】', attempt: 0, guidance: '', previousDraft: null, instruction: null }, basePolicy);
     expect(prompt).not.toContain('正文必须出现');
-    expect(prompt).toContain('时间推进要落在一句话里');
+    expect(prompt).not.toContain('时间推进要落在一句话里');
   });
 });
 

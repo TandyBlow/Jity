@@ -342,8 +342,12 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     issues.push(hard('fact_omitted', attempt, factPhrases(fact)[0], undefined));
   }
 
-  if (ledger.requireTime && duration && (alignment === null || alignment.timeExpressed === false)) {
-    issues.push(hard('time_missing', attempt, `required ${duration.amount} ${duration.unit}`));
+  // Elapsed time is context, not an inventory item (NARRATION-BOUNDARY-20261111).
+  // A scene that never states the duration is complete; a scene that states a
+  // wrong duration is still caught by the alignment check above. Kept as a soft
+  // observation so the evidence shows the choice without failing the draft.
+  if (duration && (alignment === null || alignment.timeExpressed === false)) {
+    issues.push(soft('time_omitted', attempt, `settled ${duration.amount} ${duration.unit} not stated`));
   }
 
   // Fabricated continuity: a promise or a strong past reference that is not

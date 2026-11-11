@@ -76,8 +76,8 @@ export function writingContract(policy: NarrationPolicy): string {
       const unit = time ? UNIT[time.unit] ?? time.unit : null;
       const amount = time && Number.isInteger(time.amount) ? CN_DIGITS[time.amount] ?? String(time.amount) : null;
       return time && unit && amount
-        ? `时间推进要写在一句话里：正文必须出现「${amount}${unit}」这个时长（例如「${amount}${unit}过去」），不要写日期，不要写别的时长。`
-        : '时间推进要落在一句话里（例如“十分钟过去”），不要写日期，不要写别的时长。';
+        ? `本回合经过「${amount}${unit}」。时间可以不写；写到时长时不得改错，也不要写日期或别的时长。`
+        : '本回合经过一段时间。可以不写；写到时不要写成别的时长，也不要写日期。';
     })(),
     '结尾停在这一刻，不要总结、不要“这一天就这样过去”这类收束，最后一句要与上一回合的结尾不同。',
     '不写标题，不解释写法，直接写正文。',

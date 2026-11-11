@@ -520,13 +520,15 @@ async function writeBeat(
     };
   }
   if (beat.kind === 'time' && ledger.time) {
-    const text = timeFallbackSentence(ledger.time.duration, input.priorText ?? null);
+    // No mechanical clock sentence: a beat that only carries elapsed time is
+    // either folded into the scene by the model or left out, and the caller
+    // labels the beat as having no prose rather than printing a template.
     return {
       evidence: {
-        beatId: beat.id, kind: beat.kind, directive: beat.directive, text,
+        beatId: beat.id, kind: beat.kind, directive: beat.directive, text: '',
         source: 'fallback', attempts: attemptNumber, durationMs: nowMs() - started, issues, prompts, raws,
       },
-      text,
+      text: '',
       source: 'fallback',
     };
   }
@@ -621,9 +623,6 @@ async function generateBeatNarration(
     const append: string[] = [];
     for (const issue of final.issues) {
       if (issue.severity !== 'hard') continue;
-      if (issue.kind === 'time_missing' && ledger.time) {
-        append.push(timeFallbackSentence(ledger.time.duration, priorText));
-      }
       if (issue.kind === 'fact_omitted') {
         const fact = ledger.mandatory.find((entry) => !issue.detail || issue.detail.includes(factPhrases(entry)[0]));
         if (fact) {
@@ -1107,7 +1106,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
       || issue.kind === 'unlicensed_action' || issue.kind === 'too_short'
       || issue.kind === 'loop_repeated_clause' || issue.kind === 'self_contradiction'
-      || issue.kind === 'unlicensed_appearance' || issue.kind === 'time_missing');
+      || issue.kind === 'unlicensed_appearance');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,

@@ -120,13 +120,13 @@ describe('product regressions: the sounds and hands of the f15d turn', () => {
     expect(kinds).toContain('hard:self_contradiction');
   });
 
-  test('a quiet minute keeps the time sentence, even when the draft leaves it out', async () => {
+  test('a quiet minute is accepted without a time sentence', async () => {
     const draft = '路明非站在西侧服务巷，看着诺诺用发圈束住红发。他没说话，只是望着巷口。';
     const { result } = await issuesOf(draft, [
       { kind: 'text', text: draft },
       { kind: 'text', text: '一分钟过去。' },
     ]);
-    expect(result.text).toContain('一分钟过去');
+    expect(result.text).not.toContain('一分钟过去');
     expect(result.accepted).toBe(true);
   });
 });
