@@ -355,6 +355,19 @@ describe('common-group results', () => {
     expect(policy.observe([], accepted, evidence('digest-b'), 'automatic').allow).toBe(true);
   });
 
+  it('does not print a visible character’s pending task goal in the proposal prompt', async () => {
+    // Real 0.6B, both measured cases: the only concrete sentence on the page was
+    // nono's pending goal ("让红方的旗台行动有可执行的掩护…"), the model copied it
+    // as the follow-up, and the policy had to stop the chain as
+    // abstract_task_goal — every turn ended after its first automatic round.
+    const engine = new ScriptedEngine([JSON.stringify({ candidates: [] })]);
+    await createSettlementHandlers({ engine }).continuation('round_1', continuationInput([]));
+    const prompt = engine.prompts[0];
+    expect(prompt).not.toContain('待办=');
+    expect(prompt).not.toContain('任务=');
+    expect(prompt).toMatch(/同地点人物：/u);
+  });
+
   it('never shows a literal placeholder id in the continuation format example', async () => {
     // 35ad turn 3: nobody else in the room, the example said characterId
     // "人物id", the model copied it four times and the fatal placeholder check
