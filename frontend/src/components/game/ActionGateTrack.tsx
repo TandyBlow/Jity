@@ -32,13 +32,16 @@ export function ActionGateTrack({
   activeIndex: number;
   revealedCount: number;
 }) {
-  const visible = chips.filter((chip) => !chip.dropped);
-  const active = activeIndex >= 0 ? chips[activeIndex] ?? null : null;
+  // Preserve timeline indices when removing chips from the visual layout.
+  const visible = chips.map((chip, timelineIndex) => ({ chip, timelineIndex }))
+    .filter(({ chip }) => !chip.dropped);
+  const candidate = activeIndex >= 0 ? chips[activeIndex] ?? null : null;
+  const active = candidate?.dropped ? null : candidate;
   const allPassed = PASSED_PHASES.includes(phase);
 
   return (
     <section
-      aria-label={`行动检查：${visible.map((chip) => chip.label).join(" → ")}`}
+      aria-label={`行动检查：${visible.map(({ chip }) => chip.label).join(" → ")}`}
       aria-live="polite"
       className={`action-gate is-${phase}`}
       data-testid="action-gate"
@@ -48,10 +51,10 @@ export function ActionGateTrack({
       <div aria-hidden="true" className="gate-door" />
       <div className="gate-label" data-testid="gate-label">{gateLabel(phase, active)}</div>
       <ol className="gate-chips">
-        {visible.map((chip, index) => {
-          const passed = allPassed || (phase === "running" && index < activeIndex);
-          const passing = phase === "running" && index === activeIndex;
-          const revealed = allPassed || index < revealedCount;
+        {visible.map(({ chip, timelineIndex }, index) => {
+          const passed = allPassed || (phase === "running" && timelineIndex < activeIndex);
+          const passing = phase === "running" && timelineIndex === activeIndex;
+          const revealed = allPassed || timelineIndex < revealedCount;
           const className = [
             "gate-chip",
             revealed ? "is-revealed" : "",

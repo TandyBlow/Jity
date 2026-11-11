@@ -59,8 +59,11 @@ def test_final_turns_contract_separates_local_hard_cap_from_global_budget():
 
 
 def test_narrator_prompt_bounds_narration_length():
-    """The 200-word budget is the server-side half of the typewriter contract."""
+    """Ordinary narration uses one consistent target across rules and JSON example."""
     rules = _narrator_rules()
-    assert "200 词" in rules
-    assert "200–300 字" in rules
+    assert "正文目标为 125 字" in rules
+    assert "普通回合目标 125 字" in rules
+    assert "200 词" not in rules
+    assert "200–300 字" not in rules
+    assert "20句左右" not in rules
     assert "优先删环境铺陈" in rules

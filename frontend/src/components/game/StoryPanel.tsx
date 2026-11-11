@@ -16,8 +16,8 @@ import { outcomeTone, toActionCheckSubmission, toCheckSpec } from "@/lib/game/ch
 import { formatDelta, formatEndingTitle, quoteDialogue } from "@/lib/game/format";
 import { useTypewriter } from "@/lib/game/useTypewriter";
 
-/** Mirrors the narrator prompt budget: ~200 words ≈ 200–300 Chinese characters. */
-const NARRATION_CHAR_BUDGET = 300;
+/** Ordinary-turn target, including punctuation but excluding whitespace. */
+const NARRATION_CHAR_BUDGET = 125;
 
 type PendingCheck = {
   action: string;
@@ -215,17 +215,18 @@ export function StoryPanel({
     }
   }, [narrationReady, updateOverflow]);
 
-  // Server-side budget safety net. The prompt already asks for 200 words; when
+  // Advisory only. The prompt targets 125 characters for ordinary turns; when
   // a turn still overruns we record it and keep the whole text — cutting a
   // sentence in half would be worse than a slightly long scene.
   useEffect(() => {
-    const chars = Array.from(output.narration).length;
+    if (output.game_over || outputSource !== "llm") return;
+    const chars = Array.from(output.narration.replace(/\s/g, "")).length;
     if (chars > NARRATION_CHAR_BUDGET) {
       console.warn(
         `[jity] 旁白 ${chars} 字，超过 ${NARRATION_CHAR_BUDGET} 字预算；仅记录告警，不截断。`,
       );
     }
-  }, [output.narration]);
+  }, [output.narration, output.game_over, outputSource]);
 
   async function prepareAction(nextAction: string, optionIndex?: number) {
     if (!sessionId || busy || gateBlocking || isTyping || checkingAction || preparingAction.current || !nextAction.trim() || output.game_over) return;
