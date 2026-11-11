@@ -253,3 +253,4 @@
 - 12 b01 六样本独立复核（`results/quality/review-01-12-b01.md`）：0/6 合格；共性缺口=时间推进、黎知微新个性全缺；s43/s97 已解除外貌复现；s61 个性张冠李戴；s97 第一人称；五份外貌罗列。第一人称守卫可读（`perspective.qualified`）。
 - 02 `7922d197`/06 `181c527a` 的 `settledViolationsFromScene` 只有测试调用，beat 路径（`narration-candidates/constrained/verify.ts`）没有接；11a7 `诺诺红发垂落`、4794 `黄黑绳在巷口放下` 都是在 beat 层通过的。已提 `results/quality/requests-01-to-02-06-settled-scene-wiring.md`。
 - 代码确认：`constrained/verify.ts` 对 `result` 事实用 `text.includes(fact.text)`（4794 为 130 字），模型句必须逐字含整段结算结果，否则 `fact_missing` → 程序面板；已在 `requests-01-to-04-02-result-beat.md` 附代码与三个选项。
+- registry 现索引本线复核过的全部真实页面回合（20 条 page runs + 24 条逐回合 reviewedOutputs + 1 条 12 b01 外部样本集）；基础设施无效/中止（lease、错误服务器、runtime-08、10turn 旧记录）不计产品证据，仍在原文件保留。门仍 `not_ready`/`blocked`。
