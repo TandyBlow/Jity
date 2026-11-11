@@ -20,6 +20,8 @@ export type NarrationIssueKind =
   | 'fact_task_claimed' | 'fact_movement_claimed' | 'fact_position_claimed' | 'fact_event_added'
   /** A settled change that the prose never expresses. */
   | 'fact_omitted'
+  /** Elapsed time left unstated: an observation, not a defect. */
+  | 'time_omitted'
   | 'time_missing'
   /** A deterministic wording repair of the viewpoint's own reference. */
   | 'self_reference_repaired'

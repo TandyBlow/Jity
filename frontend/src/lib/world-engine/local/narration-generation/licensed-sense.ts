@@ -476,3 +476,94 @@ export function itemStateViolations(text: string, settledText: string): SettledV
   }
   return found;
 }
+
+/** Did the prose keep the settled result's actor, target and polarity?
+ *
+ * The product rule (NARRATION-BOUNDARY-20261111): do not demand a verbatim copy
+ * of the settlement line, but the player must still read what the action did.
+ * A paraphrase is accepted when it keeps the same actor, the same target and the
+ * same direction (done / failed / blocked / unchanged). This is a binding check,
+ * not a similarity score: names and polarity are compared, wording is not.
+ *
+ * Free-text-only results (no structured fields yet) can only be checked for the
+ * polarity and for the names the sentence carries. When the check cannot decide,
+ * it says so (`unverified`) instead of passing the text silently.
+ */
+export interface StructuredResult {
+  actor?: string;
+  action?: string;
+  target?: string;
+  /** 04's settled labels: completed | failed | blocked | unaffected. */
+  outcome?: 'completed' | 'failed' | 'blocked' | 'unaffected';
+}
+
+export interface ResultCheck {
+  ok: boolean;
+  /** Why it failed, in the retry's words. */
+  detail: string;
+  /** The sentence that carries the wrong claim, when there is one. */
+  sentence?: string;
+  /** True when the free text carries nothing this check can decide. */
+  unverified?: boolean;
+}
+
+const DONE_CUES = ['完成', '做完', '办完', '办成', '成功', '搞定', '达成', '结束', '办好', '办妥', '查到', '查清', '比对完', '核完', '翻完', '看清', '找到', '对上', '谈成', '确认'];
+const NEGATIVE_CUES = ['未', '没能', '没有', '没', '无法', '不能', '受阻', '失败', '不成', '对不上', '进不去', '被拦', '拦住', '挡住', '空手'];
+
+const cuesIn = (value: string, cues: readonly string[]): string[] => cues.filter((cue) => value.includes(cue));
+
+/** The sentence that reports this actor doing something. When the actor is the
+ * viewpoint and the subject is omitted, every sentence is a candidate. */
+function sentencesMentioning(text: string, name: string | null | undefined): string[] {
+  return sentencesOf(text).filter((sentence) => (name ? sentence.includes(name) : true));
+}
+
+export function resultSemantics(
+  text: string,
+  resultText: string,
+  structured: StructuredResult | undefined,
+  names: readonly string[] = [],
+): ResultCheck {
+  const actor = structured?.actor ?? names.find((name) => name.length >= 2 && resultText.includes(name)) ?? null;
+  const target = structured?.target
+    ?? names.find((name) => name.length >= 2 && resultText.includes(name) && name !== actor)
+    ?? null;
+  const outcome = structured?.outcome;
+  // Settlement polarity. A negative cue wins over a positive one: «未能完成»
+  // is a failure, «比对了，但对不上」 is a failure.
+  const settledNegative = outcome
+    ? outcome === 'failed' || outcome === 'blocked' || outcome === 'unaffected'
+    : cuesIn(resultText, NEGATIVE_CUES).length > 0;
+  const settledPositive = outcome
+    ? outcome === 'completed'
+    : cuesIn(resultText, DONE_CUES).length > 0;
+
+  const claims = sentencesMentioning(text, actor);
+  // A claim is a sentence that says something was completed and does not itself
+  // carry a negation; wording is free.
+  const claim = claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
+    && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
+  const failure = claims.find((sentence) => cuesIn(sentence, NEGATIVE_CUES).length > 0) ?? '';
+
+  if (settledNegative) {
+    if (claim) {
+      return { ok: false, sentence: claim, detail: `settled result is a failure/block (${structured?.outcome ?? 'negative wording'}); the prose claims it was completed` };
+    }
+    if (target && !text.includes(target)) {
+      return { ok: false, detail: `settled result names ${target}; the prose does not` };
+    }
+    return { ok: true, detail: failure ? 'failure kept' : 'no success claimed' };
+  }
+
+  if (settledPositive) {
+    if (!claim) {
+      return { ok: false, sentence: claims[0], detail: `settled result is a completed action; the prose never says ${actor ?? 'it'} did it` };
+    }
+    if (target && !text.includes(target)) {
+      return { ok: false, detail: `settled result names ${target}; the prose does not` };
+    }
+    return { ok: true, detail: 'outcome written' };
+  }
+
+  return { ok: true, unverified: true, detail: 'result text carries no decidable outcome' };
+}
