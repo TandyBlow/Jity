@@ -694,7 +694,9 @@ export class LocalGameModel implements WorldModelPort {
     }
     const program = result.grade === 'program';
     const mixed = result.grade === 'mixed';
-    if (!program) this.lastAcceptedNarration = result.text;
+    // Only fully model-accepted prose becomes the prior text a later turn
+    // continues from: mixed (part program) and drafts are not confirmed prose.
+    if (!program && !mixed) this.lastAcceptedNarration = result.text;
     this.options.onTask?.('narration', pointId, {
       ms: result.timings.totalMs,
       fallback: program,
