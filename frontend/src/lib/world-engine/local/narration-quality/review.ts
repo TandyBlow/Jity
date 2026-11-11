@@ -1593,6 +1593,19 @@ export function reviewNarration(args: {
       // player asked for that object (d101: «看清…规则牌», the text never
       // mentions the board).
       const judged = findings.some((f) => f.kind === 'fact.action_omitted' || f.kind === 'review.action_partial');
+      // A player who asks a settled person to act («我请诺诺带我走…») needs that
+      // person in the prose: 35ad/d531 t3 send 路明非 alone and never mention
+      // 诺诺, so the request silently became a solo walk.
+      if (options.action) {
+        const asked = [...new Set([...Object.keys(projection.people), ...names])]
+          .filter((name) => new RegExp(`(请|让|叫|托|拜托|向|对|和|跟)${escapeRegExp(name)}`, 'u').test(options.action!));
+        const missingActor = asked.find((name) => !text.includes(name));
+        if (missingActor && !findings.some((f) => f.kind === 'fact.action_omitted')) {
+          findings.push(finding(ctx, 'fact.action_omitted', sentences[0]?.text ?? text,
+            `the action asks ${missingActor} to act, but ${missingActor} never appears in the prose`,
+            [options.action.slice(0, 60)], []));
+        }
+      }
       if (verbs.length && (!objectSeen || (!VERB_SEEN && !perceived)) && !judged) {
         const missing = !objectSeen ? `its object «${actionObject}» is not in the text`
           : `none of its verbs (${verbs.join('/')}) is narrated`;
@@ -1740,15 +1753,38 @@ export function reviewNarration(args: {
         // The first phrase whose sole owner is absent from the sentence is the
         // misattribution; a phrase owned by someone the sentence does name
         // («红蓝识别带» denied to 路明非) must not mask a later one (09 35ad t1).
-        const hit = [...phrases.entries()].find(([phrase, owners]) =>
-          owners.size === 1 && narration.includes(phrase) && !boardGoverns(phrase)
-          && !named.includes([...owners][0]));
+        // The binding is per clause: a band hung on a body part belongs to its
+        // owner even when the sentence names her elsewhere
+        // (09 d531 t2: «路明非站在西侧服务巷口，红色识别带缠在左臂，他向诺诺问…»).
+        // The owner binds if she is named anywhere earlier in the same sentence
+        // («诺诺在巷口等待，…红色识别带缠在左臂»); a band hung on a body part
+        // before anyone else is named goes to the sentence's subject
+        // (09 d531 t2: «路明非站在…，红色识别带缠在左臂，他向诺诺问…»).
+        const ownerNamedBefore = (phrase: string, owner: string): boolean => {
+          const index = narration.indexOf(phrase);
+          if (index < 0) return false;
+          const before = narration.slice(0, index);
+          const start = Math.max(before.lastIndexOf('。'), before.lastIndexOf('！'), before.lastIndexOf('？')) + 1;
+          return before.slice(start).includes(owner);
+        };
+        const sentencePerson = pronounPerson(sentence.text, sentences.indexOf(sentence));
+        const hit = [...phrases.entries()].find(([phrase, owners]) => {
+          if (owners.size !== 1 || !narration.includes(phrase) || boardGoverns(phrase)) return false;
+          const owner = [...owners][0];
+          // The owner owns it when she is named earlier in the sentence
+          // («诺诺在巷口等待，…红色识别带缠在左臂») or when the sentence's
+          // subject is her («他摘下护目镜…»).
+          const index = narration.indexOf(phrase);
+          const clause = index < 0 ? '' : clauseAt(narration, index).text;
+          // «护目镜挂在路明非胸前» names the owner inside the clause.
+          return !clause.includes(owner) && !ownerNamedBefore(phrase, owner) && sentencePerson !== owner;
+        });
 
         if (hit) {
           const [phrase, owners] = hit;
           const owner = [...owners][0];
           findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
-            `${phrase} belongs to ${owner}, but the sentence names ${named.join('/')} only`,
+            `${phrase} belongs to ${owner}, but the clause hangs it on the sentence's subject (${sentencePerson ?? named.join('/')})`,
             [phrase], [`accessory:${owner}:${phrase}`]));
         }
       }

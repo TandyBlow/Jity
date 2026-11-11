@@ -1774,7 +1774,7 @@ anchors.append({
                "notes": "the settled look says «右手还空着» and denies a band; the prose puts hot blank rounds in the hand and Nono's band on his arm."},
 })
 anchors.append({
-    "id": "pos/route/35ad-goggles-off-to-chest",
+    "id": "neg/route/35ad-route-list-and-absent-nono",
     "source": "09 product 3-turn 2026-11-11T0419-e25a (head 35ad30e3): model 110 chars turn 3",
     "input": {
         "视角": "主角视角（路明非）",
@@ -1783,9 +1783,59 @@ anchors.append({
     },
     "text": t_35ad_3["text"],
     "options": {"minChars": 1, "action": t_35ad_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
-    "expect": {"fact": [], "style": [],
+    "expect": {"fact": ["fact.action_omitted"], "style": [],
                "review": ["review.tone", "review.micro_action"],
-               "notes": "«他摘下护目镜…挂在胸前» restores the settled chest look and must not be a contradiction; the route list is list-like prose, not a fact error."},
+               "notes": "«他摘下护目镜…挂在胸前» restores the settled chest look and must not be a contradiction; the real defect is that 诺诺 was asked to lead and never appears."},
+})
+
+
+# d531 t2 (draft): the band is hung on the viewpoint's arm in a clause that does
+# not name its owner, and the rule board speaks by itself. The same run's t1
+# still puts blank rounds in the empty hand.
+run_d531 = json.load(io.open(ROOT + "/results/product/evidence/09-product-03turn-d531.json", encoding="utf-8"))
+t_d531_1 = run_d531["turns"][0]
+t_d531_2 = run_d531["turns"][1]
+t_d531_3 = run_d531["turns"][2]
+anchors.append({
+    "id": "neg/route/d531-band-on-wrong-arm",
+    "source": "09 product 3-turn 2026-11-11T0441-17e3 (head d531040a): model 58 chars turn 1",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_d531_1["text"],
+    "options": {"minChars": 1, "action": t_d531_1["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.state_contradiction"], "style": [],
+               "review": ["review.tone"],
+               "notes": "the empty-hand rule holds; the boards's «护目镜必须戴好» is a rule quote, not worn goggles."},
+})
+anchors.append({
+    "id": "neg/route/d531-band-clause-and-speaking-board",
+    "source": "09 product 3-turn 2026-11-11T0441-17e3 (head d531040a): draft 201 chars turn 2",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_d531_2["text"],
+    "options": {"minChars": 1, "action": t_d531_2["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.item_misattribution", "fact.object_speaks"], "style": ["style.perspective"],
+               "review": ["review.pronoun", "review.micro_action"],
+               "notes": "«红色识别带缠在左臂» is in a clause that never names its owner and follows 路明非; the rule board makes a sound by itself."},
+})
+anchors.append({
+    "id": "neg/route/d531-nono-absent-when-asked-to-lead",
+    "source": "09 product 3-turn 2026-11-11T0441-17e3 (head d531040a): model 68 chars turn 3",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_d531_3["text"],
+    "options": {"minChars": 1, "action": t_d531_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": [],
+               "notes": "«我请诺诺带我走…» but 诺诺 never appears; the accepted prose is also an inventory recital."},
 })
 
 os.makedirs(OUT, exist_ok=True)
