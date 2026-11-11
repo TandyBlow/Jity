@@ -617,3 +617,23 @@ describe('product regressions: the quiet-90 run', () => {
     }
   });
 });
+
+describe('product regressions: 926e model beats', () => {
+  // Close beat «路明非摘下护目镜，目光落在规则牌上»: the goggles are settled on
+  // the chest and no fact changes that. Taking them off is a world change.
+  test('taking off a settled item is an invented action', async () => {
+    const { kinds } = await issuesOf('路明非摘下护目镜，目光落在规则牌上。');
+    expect(kinds).toContain('hard:unlicensed_action');
+  });
+
+  test('pushing an object on the desk stays a micro-action', async () => {
+    const { kinds } = await issuesOf('他把裁纸刀推到桌边，又推回来。');
+    expect(kinds).not.toContain('hard:unlicensed_action');
+  });
+
+  // Scene beat «路明非低头检查护目镜边缘的雾气»: lenses fog only when worn.
+  test('fog on the edge of chest-hung goggles is worn-goggles wording', async () => {
+    const { kinds } = await issuesOf('路明非低头检查护目镜边缘的雾气。');
+    expect(kinds).toContain('hard:self_contradiction');
+  });
+});

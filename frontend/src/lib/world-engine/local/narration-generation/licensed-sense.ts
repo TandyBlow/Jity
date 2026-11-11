@@ -234,7 +234,7 @@ export function settledAppearanceViolations(
     if (chest && settledText.includes('护目镜')) {
       // «护目镜泛着雾气» (11a7) also treats the goggles as worn: lenses only fog
       // when they are over the eyes, and the settled line says they hang on the chest.
-      if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在|泛着雾气|蒙着雾|起雾|浮着雾气)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
+      if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在|泛着雾气|蒙着雾|起雾|浮着雾气|边缘的雾气|上的雾气)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
         found.push({ sentence, detail: 'the goggles hang on the chest, not over the eyes' });
       }
     }
@@ -364,6 +364,7 @@ export function settledViolationsFromScene(
     ...settledAppearanceViolations(text, settled, roster, []),
     ...settledStateViolations(text, settled, null),
     ...objectActorViolations(text, settled),
+    ...itemStateViolations(text, settled),
   ];
 }
 
@@ -414,4 +415,64 @@ export function selfPossessiveRepair(text: string, names: readonly string[]): { 
     repaired.push(`自己${name}→自己的${name}`);
   }
   return { text: out, repaired };
+}
+
+/** A settled item cannot be put on, taken off or stowed unless the point says so.
+ * 926e close beat: «路明非摘下护目镜，目光落在规则牌上» — the goggles are settled
+ * on the chest and no fact changes that. Pushing an object on a desk (the reference's
+ * «把裁纸刀推到桌边») is a micro-action and stays allowed; only wear-state and
+ * stowing verbs are world changes. */
+const ITEM_STATE_VERBS = ['摘下', '取下', '戴上', '系上', '解开', '收起', '装进', '塞进', '揣进', '放回', '收起'] as const;
+
+/** Item names a settled line carries, both full («路明非的护目镜») and bare («护目镜»). */
+function settledItemNames(settledText: string): string[] {
+  const names = new Set<string>();
+  for (const line of settledText.split(new RegExp(String.fromCharCode(10) + '|。', 'u'))) {
+    let head = line.split(/[：:（(]/u)[0]?.trim() ?? '';
+    if (!head) continue;
+    // The serialized input prefixes item lines; a character or place line is not
+    // an item, and 「某人的某物」 in a character note names an owned item only.
+    const prefix = /^【([^】]+)】/u.exec(head);
+    if (prefix) {
+      if (!/物品|物件|随身/u.test(prefix[1])) continue;
+      head = head.slice(prefix[0].length).trim();
+    }
+    if (!head) continue;
+    for (const part of head.split('、')) {
+      const clean = part.trim();
+      if (clean.length < 2 || clean.length > 14) continue;
+      names.add(clean);
+      const own = clean.split('的');
+      if (own.length === 2 && own[1].length >= 2) names.add(own[1]);
+    }
+  }
+  return [...names].sort((a, b) => b.length - a.length);
+}
+
+export function itemStateViolations(text: string, settledText: string): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  if (!settledText.trim()) return found;
+  const items = settledItemNames(settledText);
+  for (const sentence of sentencesOf(text)) {
+    for (const verb of ITEM_STATE_VERBS) {
+      let from = 0;
+      for (;;) {
+        const at = sentence.indexOf(verb, from);
+        if (at < 0) break;
+        from = at + verb.length;
+        // The object of the verb is the noun right after it («摘下护目镜»), or the
+        // 把-object before it («把护目镜戴上»).
+        const after = sentence.slice(at + verb.length, at + verb.length + 12).replace(/^(了|下|掉)/u, '');
+        const before = sentence.slice(Math.max(0, at - 10), at);
+        const item = items.find((name) => after.startsWith(name))
+          ?? items.find((name) => new RegExp(`把${name}$`, 'u').test(before));
+        if (!item) continue;
+        // The point itself may settle this verb for this item.
+        const here = new RegExp(`${verb}[^。！？]{0,6}${item}|${item}[^。！？]{0,6}${verb}`, 'u').test(settledText);
+        if (here) continue;
+        found.push({ sentence, detail: `${verb}${item} changes a settled item state the point does not have` });
+      }
+    }
+  }
+  return found;
 }

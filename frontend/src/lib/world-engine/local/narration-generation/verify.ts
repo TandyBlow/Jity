@@ -18,7 +18,7 @@ import { factPhrases } from '../../runtime/committed-narration';
 import { alignNarration, numbersIn, type AlignmentResult } from '../../runtime/narration-alignment';
 import type { NarrationIssue, NarrationIssueKind, NarrationLedger, NarrationMetrics, NarrationPolicy } from './types';
 import { PAST_MARKERS, PROMISE_VERBS } from './ledger';
-import { objectActorViolations, settledAppearanceViolations, settledStateViolations } from './licensed-sense';
+import { itemStateViolations, objectActorViolations, settledAppearanceViolations, settledStateViolations } from './licensed-sense';
 
 const ALIGNMENT_KINDS: Record<string, NarrationIssueKind> = {
   actor_swap: 'fact_actor_swap',
@@ -420,6 +420,9 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
     for (const violation of objectActorViolations(text, inputText)) {
       issues.push(hard('self_contradiction', attempt, violation.detail, violation.sentence));
+    }
+    for (const violation of itemStateViolations(text, inputText)) {
+      issues.push(hard('unlicensed_action', attempt, violation.detail, violation.sentence));
     }
   }
 
