@@ -1734,6 +1734,25 @@ anchors.append({
                "notes": "the goggles walk the alley repeatedly; the player's walk/read is gone."},
 })
 
+
+# 9623: the first real model turn that reads cleanly; a positive anchor so the
+# checker stays able to say "no findings" on faithful short prose.
+run_9623 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-9623.json", encoding="utf-8"))
+t_9623 = run_9623["turns"][0]
+anchors.append({
+    "id": "pos/route/9623-faithful-short-turn",
+    "source": "09 constrained-beats 2026-11-11T0239-f203 (head d17d6534): model 69 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_9623["text"],
+    "options": {"minChars": 40, "action": t_9623["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": [], "style": [], "review": [],
+               "notes": "walk, time, board reading and Nono's settled look; the board quote is a rule, not worn goggles."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
