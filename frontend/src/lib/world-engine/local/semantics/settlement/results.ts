@@ -88,13 +88,16 @@ interface ResultsAnswer {
    * the result. Removed claims stay in evidence so the fallback composer can
    * never turn a pending task row into "行动成功完成". */
   sanitized?: SanitizedFact[];
+  /** Repeated rows for a member already judged. The first row stands; the
+   * rest are evidence that the model repeated itself, never a failed turn. */
+  duplicateJudgments?: { memberId: Id; label: string; reason: string }[];
   /** Extra judgments for people outside the frozen group. They may describe
    * what the model saw, but they never settle a non-member; they are kept in
    * evidence and dropped from the committed result. */
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -110,6 +113,9 @@ interface ResultsAnswer {
   /** The player's own first-person sentence rewritten to the protagonist's
    * name outside dialogue. */
   firstPersonAdjusted?: { original: string; text: string }[];
+  /** Members with no result sentence after the last repair; the point settles
+   * without inventing one. */
+  missingFactMembers?: Id[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -177,6 +183,14 @@ export async function runResults(
   const { groupId, members, workingState } = parsed;
   const prompt = buildResultsPrompt(groupId, members, workingState);
   let calls: ModelCallEvidence[] = [];
+  // The last attempt drops a fact that has no visible result instead of failing
+  // the point: old runs (95dc, 415c, d101, a178) answered only
+  // 路明非成功完成自己的参赛选择… and the old product accepted that as a result.
+  // Today it is repaired once (the repair often writes the real walk/read), and
+  // if the repair repeats the claim the fact is dropped and recorded so the
+  // turn still settles instead of ending with 世界没有完成.
+  let attempts = 0;
+  const lenient = () => attempts >= 3;
   try {
     const answer = await callJson(engine, prompt, {
       maxTokens: options.maxTokens?.results ?? 420,
@@ -189,14 +203,18 @@ export async function runResults(
       // no prose). The repair now names the missing facts, not just the row.
       maxAttempts: 3,
       jsonSchema: RESULTS_SCHEMA,
-      validate: (value) => { readResultsAnswer(value, members, workingState); },
+      validate: (value) => {
+        attempts += 1;
+        readResultsAnswer(value, members, workingState, { dropEmptyResults: lenient() });
+      },
       // A retry has to name the frozen members: the 3turn 9623 repair answered
       // nono only while the group was lu+nono, so «missing judgment for lu» alone
       // did not stop it from omitting the player again.
       feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条；不要给场景里的其他人写 judgment。`,
     });
     calls = answer.calls;
-    const parsedAnswer = readResultsAnswer(answer.value, members, workingState);
+    // The accepted answer settled under the same rule the last attempt used.
+    const parsedAnswer = readResultsAnswer(answer.value, members, workingState, { dropEmptyResults: lenient() });
     const value = normalizeResults(parsedAnswer, members);
     const evidence = makeEvidence(key, answer.calls, false, undefined, {
       groupId,
@@ -212,6 +230,7 @@ export async function runResults(
         factCount: parsedAnswer.facts.filter((fact) => fact.memberIds.includes(member.memberId)).length,
       })),
       labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
+      duplicateJudgments: parsedAnswer.duplicateJudgments ?? [],
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
@@ -219,6 +238,7 @@ export async function runResults(
       effectsAdjusted: parsedAnswer.effectsAdjusted ?? [],
       ownershipAdjusted: parsedAnswer.ownershipAdjusted ?? [],
       firstPersonAdjusted: parsedAnswer.firstPersonAdjusted ?? [],
+      missingFactMembers: parsedAnswer.missingFactMembers ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -405,13 +425,19 @@ function mentionedCharacterIds(state: WorldState, text: string): Id[] {
 /** Read the answer into ids. A unique full name resolves to its id; an unknown
  * or placeholder reference is a named error so the retry prompt can fix it, and
  * is never defaulted to some entity. */
-function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldState): ResultsAnswer {
+function readResultsAnswer(
+  value: unknown,
+  members: GroupMember[],
+  state: WorldState,
+  options: { dropEmptyResults?: boolean } = {},
+): ResultsAnswer {
   const answer = asRecord(value);
   if (!Array.isArray(answer.judgments)) throw new Error('judgments must be an array');
   if (!Array.isArray(answer.facts) || answer.facts.length === 0) throw new Error('facts must be a non-empty array');
   const memberById = new Map(members.map((member) => [member.memberId, member]));
   const seen = new Set<Id>();
   const judgments: Judgment[] = [];
+  const duplicateJudgments: NonNullable<ResultsAnswer['duplicateJudgments']> = [];
   const dropped: NonNullable<ResultsAnswer['dropped']> = [];
   const effectsAdjusted: NonNullable<ResultsAnswer['effectsAdjusted']> = [];
   for (const rawJudgment of answer.judgments) {
@@ -433,7 +459,19 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       dropped.push({ memberId, label: asString(rawJudgment.label), reason: 'not_a_group_member' });
       continue;
     }
-    if (seen.has(memberId)) throw new Error(`duplicate judgment for ${memberId}`);
+    if (seen.has(memberId)) {
+      // 10turn turn 5: a single-member group answered with three rows for the
+      // same player (no_change / partial / not_achieved) on all three attempts
+      // and the turn died on «duplicate judgment for lu». Repeating a member is
+      // a format slip, not an impossible world: the first row is the model's
+      // primary judgement, later rows are kept as evidence and ignored.
+      duplicateJudgments.push({
+        memberId,
+        label: asString(rawJudgment.label),
+        reason: typeof rawJudgment.reason === 'string' ? rawJudgment.reason : '',
+      });
+      continue;
+    }
     seen.add(memberId);
     const label = asString(rawJudgment.label);
     if (!LABELS.has(label)) throw new Error(`invalid label for ${memberId}: ${label}`);
@@ -514,7 +552,12 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const adjustments: NonNullable<ResultsAnswer['outcomeAdjusted']> = [];
   const ownershipAdjusted: NonNullable<ResultsAnswer['ownershipAdjusted']> = [];
   const firstPersonAdjusted: NonNullable<ResultsAnswer['firstPersonAdjusted']> = [];
+  const missingFactMembers: Id[] = [];
   const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
+  /** Members whose only answer was dropped (a wrapper duplicate or an empty
+   * result), so the per-member “must have a fact” check does not turn a
+   * recorded drop into an abort. */
+  const coveredByDrop = new Set<Id>();
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
     .join('；');
@@ -533,7 +576,13 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         droppedFacts.push({ memberIds: recipientsFor(rawFact), original, reason: 'inactive_no_result' });
         continue;
       }
-      throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
+      if (!options.dropEmptyResults) {
+        throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
+      }
+      const droppedIds = recipientsFor(rawFact);
+      droppedFacts.push({ memberIds: droppedIds, original, reason: 'no_result_text' });
+      for (const id of droppedIds) coveredByDrop.add(id);
+      continue;
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
@@ -661,7 +710,14 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     if (recipientIds.some((recipient) => {
       const name = state.initial.characters[recipient]?.name;
       return Boolean(name) && nameOnly === String(name).replace(FACT_PUNCTUATION, '');
-    })) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
+    })) {
+      if (!options.dropEmptyResults) {
+        throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
+      }
+      droppedFacts.push({ memberIds: recipientIds, original, reason: 'no_result_text' });
+      for (const id of recipientIds) coveredByDrop.add(id);
+      continue;
+    }
     // Actor: the model may name it, but only a group member can be the executor
     // of this group's result. Absent, the first attributed member is used and
     // the fact is marked derived.
@@ -769,7 +825,14 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         return name ? text.replace(String(name), '') : text;
       }, cleaned.text.replace(FACT_PUNCTUATION, ''))
       .replace(/(?:未能|没能|没有|未|无法|不)/gu, '');
-    if (!residue) throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}）。`);
+    if (!residue) {
+      if (!options.dropEmptyResults) {
+        throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}）。`);
+      }
+      droppedFacts.push({ memberIds: recipientIds, original, reason: 'no_result_text' });
+      for (const id of recipientIds) coveredByDrop.add(id);
+      continue;
+    }
     for (const recipient of recipientIds) factRecipients.add(recipient);
     facts.push({
       text: cleaned.text,
@@ -789,7 +852,6 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   // sentence inside another member's fact (1e59 turn 3: nono's line appeared
   // verbatim inside lu's result). The other member's own fact already carries
   // it, so the wrapper is dropped instead of attributing her action to him.
-  const coveredByDrop = new Set<Id>();
   dropDuplicatedFacts(facts, droppedFacts, coveredByDrop);
   if (facts.length) {
     factRecipients.clear();
@@ -798,15 +860,21 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   for (const member of members) {
     if (factRecipients.has(member.memberId)) continue;
     if (inactive.has(member.memberId)) continue;
-    // The member's only answer was another member's sentence repeated: it is
-    // in droppedFacts, so the point settles without inventing a result for him.
     if (coveredByDrop.has(member.memberId)) continue;
+    // The repair named the member twice and the answer still has no sentence for
+    // it. Killing the point leaves the player with a stop and no prose; settling
+    // with the facts that exist and recording the gap invents nothing.
+    if (options.dropEmptyResults) {
+      missingFactMembers.push(member.memberId);
+      continue;
+    }
     const names = members.map((row) => `${state.initial.characters[row.memberId]?.name ?? row.memberId}(${row.memberId})`).join('、');
     const missing = state.initial.characters[member.memberId]?.name ?? member.memberId;
     throw new Error(`no fact attributed to ${member.memberId}（${missing}）; facts 必须给本组每个成员各一条自己的结果（本组：${names}），例：${missing}做了什么、看到或听到什么。已冻结的行动：${actionHint}`);
   }
   return {
     judgments, facts, dropped,
+    ...(duplicateJudgments.length ? { duplicateJudgments } : {}),
     ...(sanitized.length ? { sanitized } : {}),
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),
@@ -814,6 +882,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(effectsAdjusted.length ? { effectsAdjusted } : {}),
     ...(ownershipAdjusted.length ? { ownershipAdjusted } : {}),
     ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
+    ...(missingFactMembers.length ? { missingFactMembers } : {}),
   };
 }
 

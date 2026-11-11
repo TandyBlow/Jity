@@ -68,6 +68,8 @@ export interface PortCallRecord {
   /** Members whose judgement row the model omitted; their outcome is derived,
    * not asserted. */
   implicitJudgments?: string[];
+  /** Rows the model repeated for a member already judged; the first row stood. */
+  duplicateJudgments?: { memberId: string; label: string; reason: string }[];
   /** An effects row that contradicted the frozen admission and was corrected
    * from it (09-frozen-raw-6186 turn 2 aborted the turn on this). */
   effectsAdjusted?: { memberId: string; targetId: string; written: boolean; frozen: boolean }[];
@@ -259,6 +261,7 @@ export function createSettlementModelPort(
         droppedFacts?: { memberIds?: string[]; reason?: string; original?: string }[];
         outcomeAdjusted?: { actorId?: string; written?: string; derived?: string; why?: string }[];
         implicitJudgments?: string[];
+        duplicateJudgments?: { memberId: string; label: string; reason: string }[];
         effectsAdjusted?: { memberId?: string; targetId?: string; written?: boolean; frozen?: boolean }[];
         ownershipAdjusted?: { from?: string; to?: string; item?: string }[];
         firstPersonAdjusted?: { original?: string; text?: string }[];
@@ -290,6 +293,9 @@ export function createSettlementModelPort(
           derived: String(row.derived ?? ''),
           why: String(row.why ?? ''),
         }));
+      }
+      if (Array.isArray(settled?.duplicateJudgments) && settled.duplicateJudgments.length) {
+        record.duplicateJudgments = settled.duplicateJudgments;
       }
       if (Array.isArray(settled?.implicitJudgments) && settled.implicitJudgments.length) {
         record.implicitJudgments = settled.implicitJudgments.map(String);
