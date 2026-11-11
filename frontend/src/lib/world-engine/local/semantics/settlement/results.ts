@@ -140,6 +140,10 @@ export async function runResults(
       maxPromptChars: options.maxPromptChars,
       jsonSchema: RESULTS_SCHEMA,
       validate: (value) => { readResultsAnswer(value, members, workingState); },
+      // A retry has to name the frozen members: the 3turn 9623 repair answered
+      // nono only while the group was lu+nono, so «missing judgment for lu» alone
+      // did not stop it from omitting the player again.
+      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条；不要给场景里的其他人写 judgment。`,
     });
     calls = answer.calls;
     const parsedAnswer = readResultsAnswer(answer.value, members, workingState);
