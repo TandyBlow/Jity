@@ -899,6 +899,38 @@ try {
     if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
   }
 
+  // Two mechanical checks over the whole run, so every later run carries its own
+  // proof instead of relying on a one-off script:
+  //   displayedEqualsRaw - each displayed text is exactly the raw beat text
+  //   priorProseLeaks    - no later prompt contains an earlier displayed text or
+  //                        any sentence of it (>=10 chars)
+  const rawOf = (turn) => {
+    const tail = turn.candidate?.tail;
+    if (!Array.isArray(tail) || tail.length === 0) return null;
+    const beats = tail[tail.length - 1]?.beats;
+    if (!Array.isArray(beats)) return null;
+    return beats.map((beat) => beat?.raw ?? '').filter(Boolean).join(String.fromCharCode(10, 10));
+  };
+  const sentences = (text) => String(text).split(String.fromCharCode(10)).flatMap((line) => line.split(/[。！？；]/u)).map((part) => part.trim()).filter((part) => part.length >= 10);
+  const leaks = [];
+  for (let i = 0; i < evidence.turns.length; i += 1) {
+    const turn = evidence.turns[i];
+    turn.displayedEqualsRaw = turn.text ? turn.text === rawOf(turn) : null;
+    const later = evidence.turns.slice(i + 1);
+    const earlierText = turn.text || '';
+    if (!earlierText) continue;
+    for (const other of later) {
+      const prompts = other.candidate?.tail?.flatMap((item) => (item.beats || []).map((beat) => beat?.prompt || '')) ?? [];
+      for (const prompt of prompts) {
+        if (prompt.includes(earlierText)) leaks.push({ from: turn.id, into: other.id, kind: 'full' });
+        for (const sentence of sentences(earlierText)) {
+          if (prompt.includes(sentence)) leaks.push({ from: turn.id, into: other.id, kind: 'sentence', sentence: sentence.slice(0, 30) });
+        }
+      }
+    }
+  }
+  evidence.priorProseLeaks = leaks;
+
   if (!preflightOnly) {
   // Refresh/restore is a product behaviour, not a driver convenience: reload the
   // page and check the entries survive from the browser's own save.
