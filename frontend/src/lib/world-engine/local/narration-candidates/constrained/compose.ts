@@ -26,7 +26,7 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
     case 'time': {
       const { amount, unit } = fact.advance.duration;
       const label = unit === 'hour' ? `${amount}小时` : unit === 'month' ? `${amount}个月` : `${amount}${UNIT_LABEL[unit]}`;
-      return `时间过去 ${label}（正文必须写出这个时长）`;
+      return `本回合经过${label}（时间背景，不必写进正文；写到时长时不得改错）`;
     }
     case 'move':
       return `${fact.name}从${fact.from}到${fact.to}（方向必须是从到；${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
@@ -100,6 +100,9 @@ export function buildBeatPrompt(
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
     ...(facts.length ? [] : ['本段只写视角人物此刻的一个动作或一处注意，一到两句就够，不要把场景材料清点一遍。']),
     ...facts.map((fact) => `- ${fact}`),
+    ...(scene.time && !beat.factIds.some((id) => scene.facts.find((fact) => fact.id === id)?.kind === 'time')
+      ? [factDirective({ id: 'time-context', kind: 'time', mandatory: false, visibility: 'scene', advance: scene.time }, options.sanityStyle)]
+      : []),
     // The declared action comes after the facts. With the one-beat plan a single
     // call carries the time fact and this instruction; when the instruction was
     // printed first (926e/5810), the model wrote the action and dropped the time.

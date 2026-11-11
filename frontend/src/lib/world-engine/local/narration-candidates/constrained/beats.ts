@@ -52,7 +52,9 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
 
   const mandatory = visible.filter((fact) => fact.mandatory);
   const optional = visible.filter((fact) => !fact.mandatory);
-  const time = mandatory.find((fact) => fact.kind === 'time') ?? null;
+  // A deterministic no-model rendering can still choose to state elapsed
+  // time. Model prose does not need a separate opening just to say the clock.
+  const time = (combineSceneMaterial ? mandatory : visible).find((fact) => fact.kind === 'time') ?? null;
   const moves = mandatory.filter((fact) => fact.kind === 'move') as Extract<SceneFact, { kind: 'move' }>[];
   const rest = mandatory.filter((fact) => fact.kind !== 'time' && fact.kind !== 'move');
 

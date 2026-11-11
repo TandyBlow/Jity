@@ -288,7 +288,7 @@ export function projectConstrainedScene(
   const advance = after.timeAdvance ?? null;
   const hasElapsed = advance != null && advance.duration.amount > 0;
   if (hasElapsed) {
-    facts.push({ id: `${prefix}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
+    facts.push({ id: `${prefix}:time`, kind: 'time', mandatory: false, visibility: 'scene', advance });
   }
 
   // ---- moves ---------------------------------------------------------------
@@ -647,7 +647,7 @@ export function projectFromFactsPacket(
   const facts: SceneFact[] = [];
   const advance = options.timeAdvance ?? null;
   if (advance && advance.duration.amount > 0) {
-    facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
+    facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: false, visibility: 'scene', advance });
   }
   // The caller's settled answer (a question answered, a hand-off) must stay in
   // the prose; it is quoted, not paraphrased. Judgment/mechanics clauses are

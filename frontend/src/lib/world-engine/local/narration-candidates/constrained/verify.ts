@@ -25,6 +25,7 @@ export interface VerifyOptions {
   /** Skip length rules (beat verification). */
   minChars?: number;
   maxChars?: number;
+  /** Deprecated compatibility field; omission of elapsed time is allowed. */
   requireTime?: boolean;
   sanityStyle?: 'direction' | 'number';
   forbiddenKnowledge?: string[];
@@ -121,7 +122,10 @@ export function verifyText(text: string, options: VerifyOptions): {
   const roster = new Set([...scene.licensed.names, ...scene.worldNames.characters]);
   const parts = sentences(text);
   const chars = [...text].length;
-  const requireTime = options.requireTime === true;
+  // Elapsed time constrains chronology, not the prose's inventory. Keep wrong
+  // durations checked by alignNarration, but never require an elapsed-time line,
+  // including when an older caller still passes requireTime: true.
+  const requireTime = false;
   const sanityStyle = options.sanityStyle ?? 'direction';
 
   if (!parts.length) {
@@ -255,8 +259,9 @@ export function verifyText(text: string, options: VerifyOptions): {
     } else if (fact.kind === 'at') {
       expressed = parts.some((sentence) => sentence.includes(fact.name) && sentence.includes(fact.location));
     }
-    coverage.push({ factId: fact.id, kind: fact.kind, expressed, mandatory: fact.mandatory });
-    if (fact.mandatory && !expressed) {
+    const mandatory = fact.kind !== 'time' && fact.mandatory;
+    coverage.push({ factId: fact.id, kind: fact.kind, expressed, mandatory });
+    if (mandatory && !expressed) {
       issues.push({
         kind: 'fact_missing', severity: 'hard', beatId: null,
         // The retry has to know what was required; «result:facts:result» alone

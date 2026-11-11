@@ -21,7 +21,7 @@ import type {
   ComposeBeatResult, GenerateCandidateInput, SceneSkeleton,
 } from './types';
 
-export const STRATEGY_VERSION = 'constrained-candidate-v1.3';
+export const STRATEGY_VERSION = 'constrained-candidate-v1.4-time-optional';
 
 const now = (): number => performance.now();
 
@@ -68,7 +68,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   }
 
   const projectMs = now() - projectStarted;
-  const requireTime = policy.requireTime ?? scene.facts.some((fact) => fact.kind === 'time');
+  const requireTime = false;
   // The length floor scales with the settled content of the point, not with
   // the clock: an elapsed-time-only point has nothing to say beyond the time
   // and the room, so demanding a complex-scene budget would force invented
