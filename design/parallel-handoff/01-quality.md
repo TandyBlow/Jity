@@ -238,3 +238,4 @@
 - 05e7 锚点（93 总数）：`neg/route/05e7-mixed-recital`；`action_omitted` 仍命中。
 - 10 dev 双臂（f2135824）独立复核：0/8×2；page-v3 加人/物/伤/往事，shipped 整段自造对白+假完成面板；harness 未计契约禁止项。
 - registry 复核：3 个 dev 样本用当前 checker 重读同批冻结文本；hash/binding 漂移清零，剩余阻断项均为实情（dev 分区、未预冻结、维度 fail、findings、无 goal/user 签字）；`quality_acceptance.py` 输出存 `results/quality/registry-check-2026-11-11.json`。
+- 跨回合分析（两个 3-turn 真实页运行）：玩家动作/问题/路线请求均未落地；状态面板三回合退化；护目镜连续当行动者；d101 第 2 回合=第 1 回合逐字，`history_delta_0`。见 `results/quality/cross-turn-3turn.md`。
