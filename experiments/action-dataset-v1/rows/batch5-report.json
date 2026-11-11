@@ -93,7 +93,7 @@
         "skip"
       ],
       "task_manstein_log": [
-        "B"
+        "A"
       ],
       "task_manstein_order": [
         "skip"
@@ -153,7 +153,6 @@
       "task_lu_match",
       "task_lu_rules",
       "task_manstein_injury",
-      "task_manstein_log",
       "task_manstein_order",
       "task_nono_lu",
       "task_nono_signal",
@@ -190,6 +189,7 @@
       "task_lu_rules",
       "task_manstein_clock",
       "task_manstein_injury",
+      "task_manstein_log",
       "task_manstein_order",
       "task_manstein_radio",
       "task_nono_battery",
@@ -213,7 +213,8 @@
     "skip": 8,
     "感知": 14,
     "物品": 6,
-    "移动": 8,
+    "移动": 7,
+    "立场": 1,
     "言语": 3,
     "请求": 1
   },
@@ -327,8 +328,8 @@
   "predicatesUsed": 14,
   "problems": [],
   "rowClasses": {
-    "A": 21,
-    "B": 11,
+    "A": 22,
+    "B": 10,
     "skip": 8
   },
   "rowsWritten": 40,

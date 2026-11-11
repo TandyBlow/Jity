@@ -63,7 +63,7 @@
         "A"
       ],
       "task_lu_ally": [
-        "B"
+        "A"
       ],
       "task_lu_choice": [
         "A"
@@ -81,8 +81,7 @@
         "A"
       ],
       "task_manstein_log": [
-        "A",
-        "B"
+        "A"
       ],
       "task_nono_battery": [
         "A",
@@ -131,7 +130,6 @@
       "task_lin_carry",
       "task_lin_leave",
       "task_lin_sent",
-      "task_lu_ally",
       "task_lu_kit",
       "task_lu_route",
       "task_lu_rules",
@@ -165,6 +163,7 @@
       "task_lin_leave",
       "task_lin_safe",
       "task_lin_sent",
+      "task_lu_ally",
       "task_lu_choice",
       "task_lu_goggles",
       "task_lu_match",
@@ -172,6 +171,7 @@
       "task_lu_rules",
       "task_manstein_clock",
       "task_manstein_injury",
+      "task_manstein_log",
       "task_manstein_order",
       "task_manstein_radio",
       "task_nono_lu",
@@ -194,10 +194,10 @@
   "groups": {
     "感知": 8,
     "物品": 3,
-    "移动": 9,
-    "立场": 1,
+    "移动": 7,
+    "立场": 2,
     "言语": 8,
-    "请求": 1
+    "请求": 2
   },
   "labelVocabulary": {
     "file": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\labels-v1.json",
@@ -306,8 +306,8 @@
   "predicatesUsed": 17,
   "problems": [],
   "rowClasses": {
-    "A": 20,
-    "B": 10,
+    "A": 22,
+    "B": 8,
     "skip": 0
   },
   "rowsWritten": 30,
