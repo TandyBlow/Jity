@@ -322,3 +322,4 @@
 - 已向 09/06 发单次成篇对照请求：同输入（CT3Y）、当前构建、`trained/scene/prose-facts` 一次调用，并要求抓两个 arm 的完整提示与原始正文（`results/product/browser-requests/01-input-single-pass-CT3Y.json`）。原因是 CT3Y 三段是并列节拍，符合 RAW-OUTPUT 的触发条件；且现有证据没存提示，逐段归因只能读代码推断。
 - 新增 `results/quality/prompt-material-rules.md`：从真实产品正文反推“材料形状→正文症状”，核心结论是 CT3Y 三段来自三个 beat（一拍一段），beat 应按“可见场景单元”切而不是按状态差量切；附物品 move、外观清单、判定句、玩家原句、重复事实五类材料规则。
 - 定位 `position_invalid`：4b1e 第十回合三组 updates 都没有给 lu 写位置，唯一的额外写入者是 06 `game-model.ts:injectMovement`（输入命中「退/离开」，每组各调一次 `movementJudgement`，从相邻地点硬选去处）。已写 `results/quality/requests-01-to-06-inject-movement.md`，并向 09/06 请求 `__worldSubmission.commits` + 两个 unit id（`browser-requests/01-input-turn10-commits-dump.json`）。
+- 09 move CTYY（run `2026-11-11T1635-24da`，head `c47a725a`，build CTYY）：330 s、`…` 占位符、无提交账本、无历史增量——同一输入的最新构建比 CT3Y 更差，登记为回归（`review-09-move-CTYY.md`）。
