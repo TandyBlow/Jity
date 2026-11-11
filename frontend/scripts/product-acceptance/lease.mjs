@@ -31,14 +31,18 @@ export function acquireLease({ lane = '09-ui', purpose = 'local inference', ttlS
     throw error;
   }
   let released = false;
-  return {
-    token,
-    record: parsed,
-    release() {
-      if (released) return { status: 'free' };
-      released = true;
-      const out = spawnSync('python', ['-X', 'utf8', leaseScript, 'release', '--lane', lane, '--token', token], { encoding: 'utf8' });
-      return out.stdout?.trim() ?? '';
-    },
+  const release = () => {
+    if (released) return { status: 'free' };
+    released = true;
+    const out = spawnSync('python', ['-X', 'utf8', leaseScript, 'release', '--lane', lane, '--token', token], { encoding: 'utf8' });
+    return out.stdout?.trim() ?? '';
   };
+  // A killed driver would otherwise leave a lock that only the dead-pid
+  // takeover can clear. Release on normal termination signals too; the token
+  // check still stops this process from freeing someone else's lock.
+  const onSignal = (signal) => { release(); process.exit(signal === 'SIGINT' ? 130 : 143); };
+  process.once('SIGINT', onSignal);
+  process.once('SIGTERM', onSignal);
+  process.once('exit', release);
+  return { token, record: parsed, release };
 }
