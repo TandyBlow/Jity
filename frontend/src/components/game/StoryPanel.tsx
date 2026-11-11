@@ -2,7 +2,7 @@
 
 import { Dices, GitBranch, Image as ImageIcon, Loader2, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import { ActionGateTrack } from "@/components/game/ActionGateTrack";
@@ -423,7 +423,11 @@ export function StoryPanel({
         {narrationReady ? (
           <div className="dialogue-list">
             {output.dialogue.map((line, index) => (
-              <div className="dialogue-line" key={`${line.speaker}-${index}`}>
+              <div
+                className="dialogue-line"
+                key={`${line.speaker}-${index}`}
+                style={{ "--i": index } as CSSProperties}
+              >
                 <span className="speaker">{line.speaker}：</span>
                 <span className="dialogue-text">{quoteDialogue(line.text)}</span>
               </div>
@@ -454,6 +458,7 @@ export function StoryPanel({
                   disabled={output.game_over || busy || !!checkingAction || !sessionId}
                   key={`${option}-${index}`}
                   onClick={() => void prepareAction(option, index)}
+                  style={{ "--i": index } as CSSProperties}
                   type="button"
                 >
                   <span className="option-button-label">{option}</span>

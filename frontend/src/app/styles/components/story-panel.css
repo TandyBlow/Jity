@@ -137,6 +137,7 @@
 }
 
 .dialogue-list {
+  --i: 0;
   display: grid;
   gap: var(--space-3);
   margin-bottom: var(--space-7);
@@ -149,6 +150,9 @@
   font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
   line-height: var(--lh-relaxed);
   white-space: pre-line;
+  /* Staggered entrance: the dialogue reads in top-down instead of popping. */
+  animation: story-rise-in 260ms cubic-bezier(.22, .61, .36, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
 }
 
 .speaker {
@@ -203,6 +207,7 @@
 }
 
 .option-list {
+  --i: 0;
   display: grid;
   gap: var(--space-3);
 }
@@ -218,6 +223,20 @@
   overflow: hidden;
   background: color-mix(in srgb, var(--color-panel) 90%, transparent);
   text-align: left;
+  /* Options follow the dialogue: a short lead-in, then 60 ms per button. */
+  animation: story-rise-in 260ms cubic-bezier(.22, .61, .36, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms + 140ms);
+}
+
+@keyframes story-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .option-button-label {
@@ -499,6 +518,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .dialogue-line,
+  .option-button { animation: none; }
   .gate-chip { transition: none; }
   .action-gate.is-waiting .gate-door,
   .action-gate.is-closing .gate-door { animation: none; }
