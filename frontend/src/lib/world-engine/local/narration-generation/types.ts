@@ -20,6 +20,8 @@ export type NarrationIssueKind =
   | 'fact_task_claimed' | 'fact_movement_claimed' | 'fact_position_claimed' | 'fact_event_added'
   /** A settled change that the prose never expresses. */
   | 'fact_omitted'
+  /** The prose reports a state check («…而非戴在眼前», «没有演习弹痕») instead of telling what happened. */
+  | 'state_report'
   /** Elapsed time left unstated: an observation, not a defect. */
   | 'time_omitted'
   | 'time_missing'

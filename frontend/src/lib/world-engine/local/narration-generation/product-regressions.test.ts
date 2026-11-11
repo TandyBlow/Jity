@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 /** Public development regressions taken from real product runs.
  *
  * Each case is a sentence or a passage that the product actually produced or
@@ -20,7 +21,7 @@ import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
 import { contradictionTarget, generateCommittedNarration, stateRepairLines } from './index';
-import { resultSemantics, selfPossessiveRepair, selfReferenceRepair, settledViolationsFromScene } from './licensed-sense';
+import { resultSemantics, selfPossessiveRepair, selfReferenceRepair, settledViolationsFromScene, stateReportViolations } from './licensed-sense';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -787,5 +788,31 @@ describe('product regressions: possession and tied hair from 09 35ad', () => {
   test('goggles on the chest stay on the chest', () => {
     const found = settledViolationsFromScene('护目镜挂在他胸前，镜带松着。', scene, ['路明非', '诺诺']);
     expect(found.length).toBe(0);
+  });
+});
+
+describe('product regressions: prose tells what happened, not a state check', () => {
+  // 09 d531 turn 3: the model answered the settled-state constraints with a
+  // checklist — «镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。演习背心前襟完好，
+  // 没有演习弹痕。» Nothing happens in that passage.
+  test('a compliance recital is flagged', () => {
+    const found = stateReportViolations('他摘下护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。演习背心前襟完好，没有演习弹痕。');
+    expect(found.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test('a failed action is not a compliance recital', () => {
+    expect(stateReportViolations('诺诺没有回答，只是把发圈收紧了一点。')).toHaveLength(0);
+    expect(stateReportViolations('路明非没能走进巷子，被黄黑绳拦在外面。')).toHaveLength(0);
+  });
+
+  test('an ordinary scene is untouched', () => {
+    expect(stateReportViolations('他站在墙边，看着赛区图上的红蓝标记。')).toHaveLength(0);
+  });
+
+  test('an elapsed-time sentence is no longer repaired into the passage', () => {
+    // Time is context (NARRATION-BOUNDARY-20261111); the repair path must not
+    // append «一分钟过去。» when the model left it out.
+    const source = readFileSync(new URL('./index.ts', import.meta.url), 'utf8');
+    expect(source).not.toContain('timePhrase.phrase');
   });
 });

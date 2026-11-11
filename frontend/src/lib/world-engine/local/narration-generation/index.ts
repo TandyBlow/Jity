@@ -19,7 +19,7 @@ import { buildLedger } from './ledger';
 import { buildRevisionGuidance } from './guidance';
 import { composeNarrationPrompt } from './prompt';
 import { renderProseFactsPrompt } from './scene-prompt';
-import { appearanceViolations, selfPossessiveRepair, selfReferenceRepair, senseViolations } from './licensed-sense';
+import { appearanceViolations, selfPossessiveRepair, selfReferenceRepair, senseViolations, stateReportViolations } from './licensed-sense';
 import { actionViolations } from './licensed-action';
 import { stripBeatLabel } from './beats';
 import { beatFallbackSentence, buildBeatPrompt, planBeats, timeFallbackSentence } from './beats';
@@ -814,22 +814,16 @@ async function repairSentences(args: {
     const senses = senseViolations(text, args.inputText, { movedNames, staticNames: staticNamesOf(args.policy) });
     const marks = senses.length ? [] : appearanceViolations(text, args.inputText);
     const acts = senses.length || marks.length ? [] : actionViolations(text, args.inputText);
+    // Compliance prose («…而非戴在眼前», «没有演习弹痕») is repaired too: the
+    // sentence reports a state check instead of telling what happened.
+    const reports = senses.length || marks.length || acts.length ? [] : stateReportViolations(text);
     const echo = senses.length || marks.length || acts.length ? null : repeatTarget(text);
     // A self-contradiction is repaired first even when the same passage also
     // invents a sense: two clauses of the draft cannot both be true, while the
     // sense may be an ambient detail. The order is the one the outer loop
     // documents (contradiction > marks > senses > acts > echo).
     const contradiction = contradictionTarget(text);
-    const timePhrase = (() => {
-      if (!args.ledger.requireTime || !args.ledger.time) return null;
-      const duration = args.ledger.time.duration;
-      const units: Record<string, string> = { minute: '分钟', second: '秒', hour: '小时', day: '天', month: '个月', year: '年' };
-      const unit = units[duration.unit] ?? duration.unit;
-      const amount = duration.amount === 1 ? '一' : duration.amount === 2 ? '两' : String(duration.amount);
-      return { duration, unit, amount, phrase: `${amount}${unit}过去` };
-    })();
-    const missingTime = Boolean(timePhrase && !text.includes(timePhrase.phrase));
-    if (!senses.length && !marks.length && !acts.length && !echo && !missingTime) return text;
+    if (!senses.length && !marks.length && !acts.length && !echo && !reports.length) return text;
     // Priority: a world-fact error (contradiction, invented appearance) is
     // repaired before a style echo; repairing the echo first made the two
     // defects take turns and both survived.
@@ -862,14 +856,14 @@ async function repairSentences(args: {
         '只输出重写后的这一句，不要解释。',
       ] };
     }
-    if (!target && missingTime && timePhrase) {
-      // The model keeps leaving the elapsed time out of a quiet turn. Ask for
-      // that one sentence and append it; the rest of the passage stays as it
-      // was written.
-      target = { sentence: '', lines: [
-        `这一段没有写时间过去了多久。这一回合过去了${timePhrase.duration.amount}${timePhrase.unit}。`,
-        '', `只写一句「${timePhrase.phrase}。」，不要改写别的句子，不要解释。`,
-      ], append: timePhrase.phrase } as never;
+    if (!target && reports.length) {
+      target = { sentence: reports[0].sentence, lines: [
+        '下面这句在报告状态检查，而不是写发生了什么：',
+        `原句：${reports[0].sentence}`,
+        '',
+        '只重写这一句：写成这一回合真实发生的事或真实的感受，不要写「没有…」「…而非…」「完好」这类检查语句，也不要新增人物、物品或事件。',
+        '只输出重写后的这一句，不要解释。',
+      ] };
     }
     if (!target) target = echo;
     if (!target) return text;
@@ -1106,7 +1100,7 @@ export async function generateCommittedNarration(input: GenerateCommittedNarrati
     const repairable = hard.every((issue) => issue.kind === 'unlicensed_sense'
       || issue.kind === 'unlicensed_action' || issue.kind === 'too_short'
       || issue.kind === 'loop_repeated_clause' || issue.kind === 'self_contradiction'
-      || issue.kind === 'unlicensed_appearance');
+      || issue.kind === 'unlicensed_appearance' || issue.kind === 'state_report');
     if (!hard.length || !repairable) continue;
     const repaired = await repairSentences({
       engine: input.engine, text: attempt.cleaned, inputText: input.inputText,

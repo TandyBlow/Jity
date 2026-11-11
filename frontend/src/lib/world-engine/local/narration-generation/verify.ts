@@ -18,7 +18,7 @@ import { factPhrases } from '../../runtime/committed-narration';
 import { alignNarration, numbersIn, type AlignmentResult } from '../../runtime/narration-alignment';
 import type { NarrationIssue, NarrationIssueKind, NarrationLedger, NarrationMetrics, NarrationPolicy } from './types';
 import { PAST_MARKERS, PROMISE_VERBS } from './ledger';
-import { itemStateViolations, objectActorViolations, settledAppearanceViolations, settledStateViolations } from './licensed-sense';
+import { itemStateViolations, objectActorViolations, settledAppearanceViolations, settledStateViolations, stateReportViolations } from './licensed-sense';
 
 const ALIGNMENT_KINDS: Record<string, NarrationIssueKind> = {
   actor_swap: 'fact_actor_swap',
@@ -427,6 +427,15 @@ export function verifyNarration(input: VerifyInput): VerifyOutput {
     }
     for (const violation of itemStateViolations(text, inputText)) {
       issues.push(hard('unlicensed_action', attempt, violation.detail, violation.sentence));
+    }
+  }
+
+  // Compliance prose: 09's d531 turn 3 answered the settled-state constraints with
+  // «镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。演习背心前襟完好，没有演习弹痕。»
+  // That is a checklist, not a scene. It is repairable: say what happened instead.
+  {
+    for (const violation of stateReportViolations(text)) {
+      issues.push(hard('state_report', attempt, violation.detail, violation.sentence));
     }
   }
 
