@@ -231,7 +231,9 @@ export function settledAppearanceViolations(
     // Goggles settled on the chest are not worn over the eyes.
     const chest = new RegExp('(挂在胸前|胸前挂着|胸前[^\\n]{0,6}护目镜|护目镜[^\\n]{0,6}胸前)', 'u').test(settledText);
     if (chest && settledText.includes('护目镜')) {
-      if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
+      // «护目镜泛着雾气» (11a7) also treats the goggles as worn: lenses only fog
+      // when they are over the eyes, and the settled line says they hang on the chest.
+      if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在|泛着雾气|蒙着雾|起雾|浮着雾气)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
         found.push({ sentence, detail: 'the goggles hang on the chest, not over the eyes' });
       }
     }
@@ -313,4 +315,53 @@ export function objectActorViolations(text: string, inputText: string): SettledV
     }
   }
   return found;
+}
+
+/** The settled lines a scene packet carries, in one string.
+ *
+ * The scene-mode verifier reads the serialized input. The per-beat candidate is
+ * not given that string directly; it carries the same material as
+ * SceneSkeleton fields (inputText, place note, present notes, object notes,
+ * inventory). Building the settled text from whichever is present lets both
+ * paths run the same comparisons instead of the beat path having none.
+ */
+export interface SettledSceneLike {
+  inputText?: string | null;
+  place?: { name?: string; note?: string } | null;
+  present?: readonly { name: string; note?: string }[];
+  objects?: readonly { name: string; note?: string }[];
+  inventory?: readonly { name: string; note?: string }[];
+  viewpoint?: { name?: string; note?: string } | null;
+}
+
+export function settledTextOf(scene: SettledSceneLike): string {
+  const NL = String.fromCharCode(10);
+  const lines: string[] = [];
+  if (scene.inputText) lines.push(scene.inputText);
+  if (scene.place?.name) lines.push(`${scene.place.name}：${scene.place.note ?? ''}`);
+  for (const person of scene.present ?? []) lines.push(`${person.name}：${person.note ?? ''}`);
+  for (const object of scene.objects ?? []) lines.push(`${object.name}：${object.note ?? ''}`);
+  for (const item of scene.inventory ?? []) lines.push(`${item.name}：${item.note ?? ''}`);
+  if (scene.viewpoint?.name) lines.push(`${scene.viewpoint.name}：${scene.viewpoint.note ?? ''}`);
+  return lines.join(NL);
+}
+
+/** All settled comparisons in one call, for a caller that has a scene packet
+ * rather than the serialized input. Names come from the packet when the caller
+ * does not pass them. Returns hard-worthy violations only. */
+export function settledViolationsFromScene(
+  text: string,
+  scene: SettledSceneLike,
+  names: readonly string[] = [],
+): SettledViolation[] {
+  const settled = settledTextOf(scene);
+  if (!settled.trim()) return [];
+  const roster = names.length
+    ? names
+    : [...(scene.present ?? []).map((person) => person.name), scene.viewpoint?.name ?? ''].filter(Boolean);
+  return [
+    ...settledAppearanceViolations(text, settled, roster, []),
+    ...settledStateViolations(text, settled, null),
+    ...objectActorViolations(text, settled),
+  ];
 }

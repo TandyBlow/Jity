@@ -20,6 +20,7 @@ import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
 import { contradictionTarget, generateCommittedNarration, stateRepairLines } from './index';
+import { settledViolationsFromScene } from './licensed-sense';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -552,5 +553,37 @@ describe('product regressions: the 2026-11-10 route batch (01 review)', () => {
   test('a Chinese-only duration is not a duplicate', async () => {
     const { kinds } = await issuesOf('一分钟过去，他翻完登记簿。他站在原地。');
     expect(kinds).not.toContain('hard:time_duplicate');
+  });
+});
+
+describe('product regressions: the per-beat packet carries the same settled lines', () => {
+  // 09-constrained-beats-11a7 accepted these two model beat sentences. The
+  // scene path rejects them from the serialized input; the beat path had no
+  // comparison at all. The adapter builds the settled text from the packet.
+  const packet = {
+    inputText: null,
+    place: { name: '西侧服务巷', note: '巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图。' },
+    present: [
+      { name: '路明非', note: '护目镜挂在胸前，右手还空着。' },
+      { name: '诺诺', note: '红发用发圈束在脑后，红色识别带缠在左臂。' },
+    ],
+    objects: [{ name: '演习规则牌', note: '牌面写明：使用弗里嘉演习弹。' }],
+    inventory: [{ name: '路明非的护目镜', note: '镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。' }],
+    viewpoint: { name: '路明非', note: '护目镜挂在胸前' },
+  };
+
+  test('the tied hair written loose is caught from the packet notes', () => {
+    const found = settledViolationsFromScene('诺诺红发垂落，红色识别带缠在左臂。', packet);
+    expect(found.some((violation) => /hair is tied/u.test(violation.detail))).toBe(true);
+  });
+
+  test('goggles fogged while settled on the chest are caught from the packet', () => {
+    const found = settledViolationsFromScene('路明非的护目镜泛着雾气，演习规则牌在器材棚门口晃动。', packet);
+    expect(found.some((violation) => /goggles hang on the chest/u.test(violation.detail))).toBe(true);
+  });
+
+  test('a correct beat sentence has no settled violation', () => {
+    const found = settledViolationsFromScene('一分钟过去，路明非还站在西侧服务巷。', packet);
+    expect(found).toHaveLength(0);
   });
 });
