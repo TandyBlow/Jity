@@ -6,6 +6,7 @@
  * missing facts named, then the caller falls back to `realizeBeat` — never to
  * a fact list.
  */
+import { genderLine } from '../../narration-generation/character-gender';
 import type { InferenceEngine } from '../../../runtime/engine';
 import { isAbortError } from '../../../runtime/engine';
 import type { BeatDirective, SceneFact, SceneSkeleton } from './types';
@@ -85,6 +86,28 @@ function clip(text: string, max: number): string {
   return `${(punctuation > max * 0.5 ? cut.slice(0, punctuation) : cut).replace(/[，、；]+$/u, '')}…`;
 }
 
+/** Drop a settled clause that repeats another: same text with different
+ * punctuation, a clause already inside a longer one, or a clause already printed
+ * next to the person/object. Order is kept. */
+function dedupeClauses(details: readonly string[], alreadyPrinted: string): string[] {
+  const norm = (value: string): string => value.replace(/[…。；;，,、\s]+/gu, '');
+  const printed = norm(alreadyPrinted);
+  const kept: string[] = [];
+  const keptNorm: string[] = [];
+  for (const detail of details) {
+    const text = detail.trim();
+    const key = norm(text);
+    if ([...text].length < 2 || !key) continue;
+    if (printed.includes(key)) continue;
+    if (keptNorm.some((other) => other.includes(key))) continue;
+    const shorter = keptNorm.findIndex((other) => key.includes(other) && other.length < key.length);
+    if (shorter >= 0) { kept.splice(shorter, 1); keptNorm.splice(shorter, 1); }
+    kept.push(text);
+    keptNorm.push(key);
+  }
+  return kept;
+}
+
 export function buildBeatPrompt(
   beat: BeatDirective,
   scene: SceneSkeleton,
@@ -95,14 +118,29 @@ export function buildBeatPrompt(
     .filter((fact): fact is SceneFact => Boolean(fact))
     .map((fact) => factDirective(fact, options.sanityStyle))
     .filter(Boolean);
-  const details = scene.licensed.details
+  // The same settled clause arrives three times: the whole note, its
+  // clause-split parts (projection's expandedDetails) and another source that
+  // repeats it. 09's captured prompt carried «红发用发圈束在脑后；红色识别带缠在
+  // 左臂» twice in one list. Dedupe before clipping: drop a clause already inside
+  // a longer one, or already printed in 地点/在场/可见物品.
+  const alreadyPrinted = [
+    scene.place.note ?? '',
+    ...scene.present.map((person) => person.note ?? ''),
+    ...scene.objects.map((object) => object.note ?? ''),
+  ].join('；');
+  const details = dedupeClauses(scene.licensed.details, alreadyPrinted)
     .map((detail) => clip(detail, 44))
-    .filter((detail) => detail.length > 1)
     .slice(0, options.maxDetails ?? 10);
   // Keep the beat prompt scoped: 8 objects + 10 details made the 1.7B writer
   // enumerate the scene inventory instead of writing the beat's fact.
   const present = scene.present.slice(0, 3).map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
   const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
+  // Gender is data, not a ban: print the sourced gender for the people in this
+  // scene and say nothing about anyone else.
+  const genderNote = genderLine([
+    scene.viewpoint.name,
+    ...scene.present.map((person) => person.name),
+  ]);
   const lines = [
     '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
@@ -116,32 +154,53 @@ export function buildBeatPrompt(
     // printed first (926e/5810), the model wrote the action and dropped the time.
     // It is still an instruction, not an outcome: the attempt may be written, a
     // settled success may not.
-    ...(beat.index === 0 && scene.previousAction
+    ...(beat.index === 0 && scene.previousAction && !facts.some((fact) => {
+      // The player's own sentence comes back as the settled record on a plain
+      // action («我沿着服务巷往里走…»). Printing it twice is the duplication the
+      // prompt cleanup is for; the fact line already carries it.
+      const said = String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name).replace(/[。！？]+$/u, '');
+      return fact.includes(said);
+    })
       ? [`玩家这一回合的指令：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
          '正文要写出他做了或试着做了这件事；结果只按上面已结算的事实写，没有结算成功的事不要写成成功。']
       : []),
     '',
     '场景材料（只可使用这些）：',
-    `- 视角人物：${scene.viewpoint.name}`,
+    `- 视角人物：${scene.viewpoint.name}（这一段写的就是他本人；不要把他写成另一个人，也不要用他的名字指别人）`,
     `- 地点：${scene.place.name}${scene.place.note ? `；${clip(scene.place.note, 60)}` : ''}`,
     ...(present.length ? [`- 在场：${present.join('；')}`] : []),
     ...(objects.length ? [`- 可见物品：${objects.join('；')}`] : []),
     ...(details.length ? [`- 已登记细节：${details.join('；')}`] : []),
     '',
     '要求：',
-    `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
+    `- 只写 ${lengthHint(facts.length).sentences} 句，约 ${lengthHint(facts.length).chars} 字，短句，用句号收尾。`,
     '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
     '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
     '- 结算记录的措辞可以自己写；人物、对象和结果方向不能改。',
-    '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
-    '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
+    ...(genderNote
+      ? [`- 可以写细微动作和措辞润色。${genderNote}`]
+      : ['- 可以写细微动作和措辞润色。']),
+    '- 不要重复本段已经写过的句子；不要写解释性的总结。',
     '- 把它写成一幕，不是写成清单：只挑一处此刻最显眼的细节，用视角人物的注意力带出来；不要把「可见物品」「已登记细节」逐条抄进正文。',
     options.instruction ? `- ${options.instruction}` : '',
     '',
     '只输出正文：',
   ].filter((line) => line !== '');
   return lines.join('\n');
+}
+
+/** How long one segment should be, by how much it has to carry.
+ *
+ * The captured prompt on 09's 0frozen run said «只写 1-27 句，18-380 字» — a
+ * twentyfold range, and the model wrote one 24-char sentence that only repeated
+ * the settled record. A segment with one fact needs a scene around it; a
+ * transition needs a line. These are prompt suggestions, not runtime limits.
+ */
+function lengthHint(facts: number): { sentences: string; chars: string } {
+  if (facts <= 0) return { sentences: '1-2', chars: '20-60' };
+  if (facts === 1) return { sentences: '2-4', chars: '60-120' };
+  return { sentences: '3-6', chars: '100-200' };
 }
 
 export interface ModelBeatResult {
