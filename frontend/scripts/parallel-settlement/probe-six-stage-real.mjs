@@ -226,6 +226,8 @@ try {
       supports: row.taskScope?.supports ?? null,
       rejected: row.taskScope?.rejectedTaskIds ?? null,
       verifier: row.taskScope?.verifier ?? null,
+      rejectedPersonality: row.rejectedPersonality ?? null,
+      sanityValues: row.values ?? null,
       personalityChanged: row.changedCharacterIds ?? row.changes?.length ?? null,
       sanityOwners: row.owners ?? null,
       subtasksAdded: row.addedTaskIds ?? null,

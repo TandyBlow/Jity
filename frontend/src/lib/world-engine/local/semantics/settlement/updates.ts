@@ -18,7 +18,7 @@ import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
   isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
-  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson,
+  positionFromRow, projectStage, referenceError, repeatsText, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson, unwrapIdBrackets,
 } from './support';
 import { projectPoint, type PointProjection } from './projection';
 import type { SettlementStage } from './support';
@@ -973,6 +973,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
     ...projection.factEntities.filter((id) => Boolean(ctx.state.characters[id])),
   ]);
   const scanned = characters.filter((id) => affected.has(id));
+  const echoFacts = resultFacts(ctx.results).map((fact) => fact.text);
   const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0, scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
@@ -981,9 +982,10 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: PERSONALITY_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned)),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, []),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned));
+    const personalityRejections: { entityId: string; reason: string }[] = [];
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, personalityRejections);
     return {
       changes,
       detail: {
@@ -993,6 +995,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
         triggeredByTaskIds: triggerIds.sort(),
         triggerBasis: ctx.recoveredAchieved.size > 0 ? 'recovered_achieved_tasks' : 'new_tasks',
         changedCharacterIds: Object.keys(changes).sort(),
+        rejectedPersonality: personalityRejections.sort((left, right) => left.entityId.localeCompare(right.entityId)),
         personalityScope: { mode: 'affected_projection', affectedCharacterIds: scanned, unaffectedCharacterIds: characters.filter((id) => !affected.has(id)) },
       },
       fallback: false,
@@ -1285,6 +1288,11 @@ function readDescriptionOperations(
   allocator: LocalIdAllocator,
   requireEveryEntity: boolean,
   onlyIds?: Set<Id>,
+  /** Personality text must be a tendency, not the settled fact again; a text
+   * that repeats a fact is dropped and reported instead of becoming a permanent
+   * trait. */
+  echoFacts: string[] = [],
+  rejections?: { entityId: string; reason: string }[],
 ): Record<Id, Partial<EntityDelta>> {
   const payload = asRecord(value);
   let rows = payload.operations;
@@ -1322,13 +1330,21 @@ function readDescriptionOperations(
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('operation must be an object');
     const rawEntityId = asString(raw.entityId);
-    const entityId = kind === 'appearance' ? resolveEntityId(state, rawEntityId) : resolveCharacterId(state, rawEntityId);
+    const bareEntityId = unwrapIdBrackets(rawEntityId);
+    const entityId = kind === 'appearance' ? resolveEntityId(state, bareEntityId) : resolveCharacterId(state, bareEntityId);
     if (!entityId) throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
     if (!targets.has(entityId)) continue;
     if (!allTargets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
     const op = asString(raw.op);
     if (!OPS.has(op)) throw new Error(`invalid operation ${op || '?'} for ${entityId}`);
-    const recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
+    let recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
+    if (recordIds && op === 'add') {
+      // The 0.6B copies the shape's id field into recordIds ("<lu>"). An `add`
+      // cannot supersede anything, and an id that does not exist cannot be a
+      // record: drop those copies; a real record id on `add` is still an error.
+      const known = new Set(activeRecords(state, kind, entityId).filter((record) => record.active).map((record) => record.id));
+      recordIds = recordIds.filter((id) => known.has(unwrapIdBrackets(id)));
+    }
     if (!recordIds) throw new Error(`recordIds must be an array for ${entityId}`);
     const text = raw.text == null ? null : asString(raw.text);
     if (op === 'keep' && text != null && text !== '') throw new Error(`keep cannot add text for ${entityId}`);
@@ -1359,6 +1375,10 @@ function readDescriptionOperations(
         covered.add(recordId);
       }
       if (op.op === 'keep') continue;
+      if (kind === 'personality' && op.text && echoFacts.some((fact) => repeatsText(op.text as string, fact))) {
+        rejections?.push({ entityId, reason: 'personality_echoes_fact' });
+        continue;
+      }
       const supersedes = op.op === 'remove' || op.op === 'replace' ? [...op.recordIds] : [];
       const change: Change = {
         id: allocator.changeId(kind, entityId, used),
@@ -1582,7 +1602,7 @@ function readTaskDecisions(
   const supports: TaskDecisionRead['supports'] = [];
   for (const raw of decisions) {
     const rawCharacterId = asString(raw.characterId);
-    const characterId = resolveCharacterId(state, rawCharacterId);
+    const characterId = resolveCharacterId(state, unwrapIdBrackets(rawCharacterId));
     if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
     if (!state.characters[characterId]) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
     if (!ownerTasks.has(characterId)) {
@@ -1783,6 +1803,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...scannedIds.map((id) => `- ${personalityLine(ctx.state, id)}`),
+    '- 个性变化写成长期倾向（例如「更愿意主动照顾同伴」），不要复述本轮发生了什么；照抄结算事实会被程序丢弃。',
     '输出格式（尖括号里换成真实值；没有变化就输出空数组）：',
     '{"changes":[{"entityId":"<人物id>","op":"add","text":"<新的个性变化>"}]}',
     '没有变化的人物不要写，程序默认他们保持原样。',
@@ -1790,7 +1811,9 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
 }
 
 function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
-  const skeleton = owners.map((id) => `{"characterId":"${id}","value":${ctx.state.characters[id]?.sanity ?? 50}}`).join(',');
+  // No filled skeleton: printing each owner with the current value made the
+  // answer a copyable "everyone unchanged".
+  const skeleton = '{"sanity":[{"characterId":"<人物id>","value":<0-100 的新理智值>}]}';
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏中的人物理智重算器。只输出 JSON，不要解释。',
@@ -1800,7 +1823,8 @@ function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
     '- 理智必须是 0 到 100 的整数；不要用小数、布尔或字符串。',
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
     ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"sanity":[${skeleton}]}（只为上面每个人物各一条，value 为 0-100 整数；characterId 用真实 id 或人物全名）。`,
+    '输出格式（尖括号里换成真实值；只为上面列出的人物各写一条）：',
+    skeleton,
   ].join('\n');
 }
 
@@ -1813,7 +1837,7 @@ function readSanityValues(value: unknown, owners: Id[], state: WorldState): Reco
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('sanity row must be an object');
     const rawCharacterId = asString(raw.characterId);
-    const characterId = resolveCharacterId(state, rawCharacterId);
+    const characterId = resolveCharacterId(state, unwrapIdBrackets(rawCharacterId));
     if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', owners[0]));
     if (!expected.has(characterId)) throw new Error(`sanity for a character without a personality change: ${rawCharacterId}${characterId !== rawCharacterId ? ` (${characterId})` : ''}`);
     if (seen.has(characterId)) throw new Error(`duplicate sanity for ${characterId}`);

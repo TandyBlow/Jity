@@ -4,7 +4,7 @@ import type { InferenceEngine } from '../../../runtime/engine';
 import type { InitialState, Json, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import { buildInitialState } from '../../state';
-import { projectStage } from './support';
+import { projectStage, unwrapIdBrackets } from './support';
 import type { RoundProgressEvidence } from './support';
 import { createContinuationPolicy, createSettlementHandlers, continuationPolicy } from './index';
 
@@ -1084,6 +1084,54 @@ describe('six-stage updates', () => {
     const sanity = calls.find((call) => call.stage === 'sanity')!;
     expect(sanity.changes.a?.sanitySet).toBe(61);
     expect(engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))).not.toContain('"scanned":[');
+  });
+
+  it('unwraps one layer of brackets around a real id but not a shape placeholder', async () => {
+    // The real 0.6B answered entityId "<lu>" (it kept the shape's brackets) and
+    // the point aborted as "unknown character <lu>"; "<人物id>" must still fail.
+    expect(unwrapIdBrackets('<lu>')).toBe('lu');
+    expect(unwrapIdBrackets('（路明非）')).toBe('路明非');
+    expect(unwrapIdBrackets('人物id')).toBe('人物id');
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: '<a>', op: 'add', recordIds: [], text: '更愿意先动手。' }] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'personality')!.changes.a?.personalityChanges?.[0]?.text).toBe('更愿意先动手。');
+  });
+
+  it('drops a personality text that just repeats the settled fact', async () => {
+    // Real 0.6B (probe 04-six-stage-real-8): the personality answer for both lu
+    // and nono was the settled fact verbatim. A permanent trait made of the
+    // event sentence is state pollution, so the text is dropped and reported.
+    const echo = '甲退到远处，工具被放进盒子。';
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: 'a', op: 'add', recordIds: [], text: echo }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const personality = calls.find((call) => call.stage === 'personality')!;
+    expect(Object.keys(personality.changes)).toEqual([]);
+    const detail = outcome.evidence.detail as {
+      stages?: { stage: string; rejectedPersonality?: { entityId: string; reason: string }[] }[];
+    };
+    const personalityDetail = detail.stages?.find((row) => row.stage === 'personality');
+    expect(personalityDetail?.rejectedPersonality ?? []).toEqual([{ entityId: 'a', reason: 'personality_echoes_fact' }]);
+    // No personality change means no sanity rewrite.
+    expect(calls.find((call) => call.stage === 'sanity')!.changes).toEqual({});
   });
 
   it('does not re-achieve an already achieved task', async () => {
