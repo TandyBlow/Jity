@@ -764,6 +764,37 @@ try {
         };
       }).catch(() => null);
       entry.submission = entry.product?.submission ?? null;
+      // Offscreen judge record: one row per actor the action lane looked at.
+      // A call with zero model calls is a program skip (the lane decided without
+      // the model); a call with at least one model call was judged by the model,
+      // whether it answered act or skip. The page's ledger does not carry the
+      // lane's 'source' yet, so the model-call count is the discriminator and the
+      // raw/attempts are kept alongside for review.
+      {
+        const calls = entry.product?.submission?.calls ?? [];
+        const actions = calls.filter((call) => call.task === 'action');
+        const rows = actions.map((call) => ({
+          actorId: call.key ?? null,
+          modelCalls: call.calls ?? 0,
+          judgedByModel: (call.calls ?? 0) > 0,
+          fallback: call.fallback ?? null,
+          ms: Math.round(call.ms ?? 0),
+          attempts: call.attempts ?? null,
+          raw: call.raw ?? null,
+        }));
+        const model = rows.filter((row) => row.judgedByModel);
+        const program = rows.filter((row) => !row.judgedByModel);
+        const mean = (list) => (list.length ? Math.round(list.reduce((sum, row) => sum + row.ms, 0) / list.length) : null);
+        entry.offscreenJudge = {
+          actors: rows.length,
+          modelJudged: model.length,
+          programSkipped: program.length,
+          modelSkipMs: mean(model),
+          programSkipMs: mean(program),
+          deltaMs: (mean(model) != null && mean(program) != null) ? mean(model) - mean(program) : null,
+          rows,
+        };
+      }
       entry.narrationDebug = await page.evaluate(() => {
         const debug = globalThis.__worldDebug;
         if (!debug || typeof debug !== 'object') return null;
