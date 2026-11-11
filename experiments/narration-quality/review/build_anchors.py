@@ -1557,7 +1557,7 @@ anchors.append({
     },
     "text": t448["text"],
     "options": {"minChars": 1, "action": t448["input"]},
-    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": [],
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"], "review": [],
                "notes": "The model recites settled lines (goggles, vest, hair, band, gun, radio) and never walks in or reads the 规则牌; the walk/read is the declared action."},
 })
 
@@ -1576,8 +1576,27 @@ anchors.append({
     },
     "text": t5e7["text"],
     "options": {"minChars": 1, "action": t5e7["input"]},
-    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": [],
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"], "review": [],
                "notes": "mixed (2 model + 2 program); the text recites settled lines and says 路明非也没有动, so the declared walk/read is missing."},
+})
+
+
+# 6e3a: the newest constrained run; the program text is a recital and its
+# result-panel wording is «诺诺：因此未被阻止或反应。».
+run6e3 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-6e3a.json", encoding="utf-8"))
+t6e3 = run6e3["turns"][0]
+anchors.append({
+    "id": "neg/route/6e3a-panel-and-item-actor",
+    "source": "09 constrained-beats 2026-11-11T0028-ccaa (head 6e3ac5e0): program 112 chars, too_long rejection",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t6e3["text"],
+    "options": {"minChars": 1, "action": t6e3["input"]},
+    "expect": {"fact": ["fact.action_omitted", "fact.item_actor"], "style": ["style.status_panel"], "review": [],
+               "notes": "program recital; the goggles act; the result panel «诺诺：因此未被阻止或反应» is a status line."},
 })
 
 os.makedirs(OUT, exist_ok=True)

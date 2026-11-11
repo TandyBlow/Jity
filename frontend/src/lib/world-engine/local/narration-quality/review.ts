@@ -1852,7 +1852,7 @@ export function reviewNarration(args: {
     }
     // A program/result line «诺诺：未成功触发…» is a field sentence, not prose.
     if (/^[一-龥]{2,4}：(?!.*[「『“"])/u.test(sentence.text.trim())
-      && /(确认|未成功|成功|触发|完成|行动|结果)/u.test(sentence.text)) {
+      && /(确认|未成功|成功|触发|完成|行动|结果|未被|未获得|未达成|阻止|达成目标)/u.test(sentence.text)) {
       findings.push(finding(ctx, 'style.status_panel', sentence.text,
         'a speaker-name colon line carries an internal result', []));
     }

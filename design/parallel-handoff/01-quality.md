@@ -240,3 +240,4 @@
 - registry 复核：3 个 dev 样本用当前 checker 重读同批冻结文本；hash/binding 漂移清零，剩余阻断项均为实情（dev 分区、未预冻结、维度 fail、findings、无 goal/user 签字）；`quality_acceptance.py` 输出存 `results/quality/registry-check-2026-11-11.json`。
 - 跨回合分析（两个 3-turn 真实页运行）：玩家动作/问题/路线请求均未落地；状态面板三回合退化；护目镜连续当行动者；d101 第 2 回合=第 1 回合逐字，`history_delta_0`。见 `results/quality/cross-turn-3turn.md`。
 - constrained 6e3a（head 6e3ac5e0）：第 1 回合程序 112 字；`too_long`（480-token 预算 vs 170 字默认 beatMaxChars）+ `ungrounded,low_support`；状态面板第三种措辞；FAILED 1 回合。请求见 `results/quality/requests-01-to-06-6e3a-too-long.md`。
+- 01 checker 第六遍：`name：` 面板规则补 `未被/未获得/未达成/阻止/达成目标`；448e/05e7/6e3a 三处真实面板判 `style.status_panel`；新增 6e3a 锚点（94 总数）。
