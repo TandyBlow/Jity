@@ -68,6 +68,9 @@ interface ResultsAnswer {
    * what the model saw, but they never settle a non-member; they are kept in
    * evidence and dropped from the committed result. */
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
+  /** Facts dropped because they explain another character's action for a
+   * member whose own action provably did not happen (all rolls denied). */
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -137,6 +140,10 @@ export async function runResults(
       maxPromptChars: options.maxPromptChars,
       jsonSchema: RESULTS_SCHEMA,
       validate: (value) => { readResultsAnswer(value, members, workingState); },
+      // A retry has to name the frozen members: the 3turn 9623 repair answered
+      // nono only while the group was lu+nono, so «missing judgment for lu» alone
+      // did not stop it from omitting the player again.
+      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条；不要给场景里的其他人写 judgment。`,
     });
     calls = answer.calls;
     const parsedAnswer = readResultsAnswer(answer.value, members, workingState);
@@ -153,6 +160,7 @@ export async function runResults(
       })),
       labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
+      droppedFacts: parsedAnswer.droppedFacts ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -281,8 +289,10 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
+    '- reason 一句话，20 字以内；facts 每人一句，短句即可。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
     '- facts 只写这次行动的直接结果；不得写“任务完成/任务达成/目标达成/行动成功完成/成功完成/成功执行行动/任务要求/奖励”这类任务或成功结论。',
+    '- facts 写本组成员自己的行动结果；不要写其他人物正在做什么，也不要把判定理由（未触发/未成功/被阻止/未达成）抄成事实。',
     '- 例：行动是“沿着服务巷走，看清墙上的演习规则牌”，事实写“路明非走到服务巷，看见墙上的规则牌”；不要写“完成参赛选择/任务”。',
     `本组：${groupId}`,
     '成员：',
@@ -293,6 +303,21 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     `{"judgments":[{"memberId":"${exampleMember.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由","effects":${exampleEffects}}],"facts":[{"text":"结果事实","memberIds":["${exampleMember.memberId}"]}]}`,
     '现在输出 JSON：',
   ].join('\n');
+}
+
+/** Character ids the text actually names. Used to keep a results fact on this
+ * group's own action: a fact that names nobody (an empty room, a door) is
+ * allowed, but a fact whose only subject is a character outside the group is
+ * the judgement's explanation of that character's action, not this group's
+ * result. */
+function mentionedCharacterIds(state: WorldState, text: string): Id[] {
+  const found: Id[] = [];
+  for (const id of Object.keys(state.initial.characters).sort()) {
+    const name = state.initial.characters[id]?.name;
+    if (!name) continue;
+    if (text.includes(String(name)) || (id.length > 3 && text.includes(id))) found.push(id);
+  }
+  return found;
 }
 
 /** Read the answer into ids. A unique full name resolves to its id; an unknown
@@ -360,10 +385,21 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
   for (const member of members) if (!seen.has(member.memberId)) throw new Error(`missing judgment for ${member.memberId}`);
+  // A member whose action provably did not happen — the group judged it
+  // not_achieved and every one of its rolls was denied — has no result to
+  // narrate. Requiring a fact for it made the model copy its judgement reason
+  // into facts (736a/9623: 路明非未被掀开袖口，未看到规则牌…), which then
+  // contradicted the player group's settled walk/read.
+  const inactive = new Set<Id>(judgments
+    .filter((judgment) => judgment.label === 'not_achieved'
+      && memberById.get(judgment.memberId)!.rolls.length > 0
+      && memberById.get(judgment.memberId)!.rolls.every((roll) => !roll.admitted))
+    .map((judgment) => judgment.memberId));
   const factRecipients = new Set<Id>();
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
+  const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
     .join('；');
@@ -387,13 +423,34 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       return id;
     });
     if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    // The fact must be this group's own action result. 736a's reaction group
+    // answered with 路明非未被掀开袖口，未看到规则牌… — the judgement's
+    // explanation of 路明非, who the other group already settled as walking in
+    // and reading the sign. Committing it would hand the narrator a fact that
+    // contradicts the point and no result for the reacting member.
+    const mentioned = mentionedCharacterIds(state, cleaned.text);
+    if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
+      // When the recipients provably did nothing, the fact is the judgement's
+      // explanation of somebody else's action: drop it instead of spending a
+      // repair call or committing a contradiction.
+      if (recipientIds.every((id) => inactive.has(id))) {
+        droppedFacts.push({ memberIds: recipientIds, original, reason: 'explains_another_character' });
+        continue;
+      }
+      const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
+      throw new Error(`fact names only ${names}, who ${names.length > 1 ? 'are' : 'is'} not in this group; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+    }
     // A mechanics clause can take the subject with it. If the remaining result
     // is a continuation (“且未被允许反应”), prefix the recipient's display name
     // so the fact is still a natural action result.
     const mechanicsRemoved = cleaned.removed.some((label) => MECHANIC_TERMS.some((term) => term.label === label));
     if (mechanicsRemoved) {
       const recipientName = state.initial.characters[recipientIds[0]]?.name;
-      if (recipientName && !cleaned.text.includes(String(recipientName))) {
+      // Never prepend a name in front of another character's name: that build
+      // produced “诺诺路明非未被掀开袖口”.
+      const startsWithCharacter = Object.values(state.initial.characters)
+        .some((character) => character.name && cleaned.text.startsWith(String(character.name)));
+      if (recipientName && !startsWithCharacter && !cleaned.text.includes(String(recipientName))) {
         const continuation = cleaned.text.replace(/^(?:且|并且|并|但|却|而)/u, '');
         cleaned.text = `${recipientName}${continuation}`;
       }
@@ -409,10 +466,15 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     facts.push({ text: cleaned.text, memberIds: recipientIds });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
-  for (const member of members) if (!factRecipients.has(member.memberId)) throw new Error(`no fact attributed to ${member.memberId}`);
+  for (const member of members) {
+    if (factRecipients.has(member.memberId)) continue;
+    if (inactive.has(member.memberId)) continue;
+    throw new Error(`no fact attributed to ${member.memberId}`);
+  }
   return {
     judgments, facts, dropped,
     ...(sanitized.length ? { sanitized } : {}),
+    ...(droppedFacts.length ? { droppedFacts } : {}),
   };
 }
 

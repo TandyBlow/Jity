@@ -63,6 +63,11 @@ export interface ModelCallEvidence {
   ms: number;
   attempt: number;
   error?: string;
+  /** A truncated/interrupted call keeps its partial text here instead of
+   * throwing the paid output away (the task book requires every truncation to
+   * be explicit in evidence). */
+  truncated?: boolean;
+  finishReason?: string | null;
 }
 
 export interface SettlementEvidence {

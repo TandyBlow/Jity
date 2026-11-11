@@ -104,6 +104,17 @@ export interface SettlementPortSummary {
 }
 
 export interface SettlementModelPort extends WorldModelPort {
+  /** Every fact settled so far for the current point, verbatim, with the
+   * protagonist's own group first. A reaction group answers after the player's
+   * group and used to overwrite the player's result in the caller's single
+   * `lastResultsText` slot, so the walk/read outcome never reached narration
+   * and the result beat was composed from nothing.
+   *
+   * No `名字：` prefix: the constrained result fact is verified as a sentence
+   * that must appear in the prose verbatim, and a label turns it into
+   * `路明非：路明非沿着…` — the same speaker-label leak that reached the page
+   * from the labeled results lines. */
+  settledFactLines(): string[];
   /** Start a new player-submission account. Called by the page right before it
    * hands the text to the session; the port does not consume the text. */
   beginSubmission(inputText: string): void;
@@ -128,6 +139,9 @@ export function createSettlementModelPort(
   options: SettlementPortOptions = {},
 ): SettlementModelPort {
   const now = options.now ?? (() => (typeof performance === 'undefined' ? Date.now() : performance.now()));
+  /** Per-point settled facts, in settlement order. Cleared when the round ends
+   * (continuation) and when a submission starts. */
+  let settledLines: { playerGroup: boolean; line: string }[] = [];
   const portOptions: SettlementPortOptions = { ...options, requireTaskSupport: true };
   const updates: UpdatesRunner = createUpdatesRunner(engine, portOptions);
   const continuation = new ContinuationRunner(engine, options);
@@ -265,8 +279,18 @@ export function createSettlementModelPort(
       }
     }
     if (value != null && typeof value === 'object' && !Array.isArray(value)) {
+      const state = (input as { workingState?: WorldState }).workingState;
+      const player = state?.protagonistId ?? null;
+      const members = (input as { members?: unknown }).members;
+      const groupIds = Array.isArray(members)
+        ? members.map((member) => (member != null && typeof member === 'object' ? (member as { memberId?: unknown }).memberId : null))
+          .filter((id): id is string => typeof id === 'string')
+        : [];
+      const playerGroup = Boolean(player && groupIds.includes(player));
       for (const fact of Object.values(value as Record<string, unknown>)) {
-        if (typeof fact === 'string' && fact.trim()) roundFacts.push(fact.trim());
+        if (typeof fact !== 'string' || !fact.trim()) continue;
+        roundFacts.push(fact.trim());
+        settledLines.push({ playerGroup, line: fact.trim() });
       }
     }
   }
@@ -318,10 +342,25 @@ export function createSettlementModelPort(
           roundStartState = null;
           roundActionTexts = [];
           roundFacts = [];
+          // The round's point is over; the next results call starts a new one.
+          settledLines = [];
         }
       }
       if (options.fallback) return options.fallback.generate(task, key, input);
       throw new Error(`settlement_port_has_no_handler:${task}`);
+    },
+
+    settledFactLines(): string[] {
+      const ordered = [
+        ...settledLines.filter((entry) => entry.playerGroup),
+        ...settledLines.filter((entry) => !entry.playerGroup),
+      ];
+      const seen = new Set<string>();
+      return ordered.map((entry) => entry.line).filter((line) => {
+        if (seen.has(line)) return false;
+        seen.add(line);
+        return true;
+      });
     },
 
     beginSubmission(inputText: string): void {
@@ -335,6 +374,7 @@ export function createSettlementModelPort(
       roundFacts = [];
       consumedActions.clear();
       consumedFacts.clear();
+      settledLines = [];
       submission = {
         inputText,
         startedAtMs: now(),
@@ -377,6 +417,7 @@ export function createSettlementModelPort(
     reset(): void {
       calls.length = 0;
       submission = null;
+      settledLines = [];
       roundStartState = null;
       roundActionTexts = [];
       roundFacts = [];

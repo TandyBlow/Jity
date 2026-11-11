@@ -52,10 +52,19 @@ export async function callJson(
   }
   const calls: ModelCallEvidence[] = [];
   let lastError = '';
+  // A length-truncated answer needs a different retry, not the same request.
+  let truncated = false;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    // A truncated answer is a capacity problem, not a format mistake: repeating
+    // the same cap and the same request (3turn 9623 group_29: 49.9 s of output cut
+    // at the limit, then a repair that dropped a member) fails again. The retry
+    // asks for a shorter answer and keeps the caller's own correction.
+    const retryNote = truncated
+      ? '上一次输出因长度上限被截断：每条 reason 压到 20 字以内，facts 每人一句，不要解释，不要加代码块。'
+      : '请只输出符合格式的 JSON，不要解释，不要加代码块。';
     const attemptPrompt = attempt === 1
       ? prompt
-      : `${prompt}\n\n上一次输出无效：${lastError}\n请只输出符合格式的 JSON，不要解释，不要加代码块。`;
+      : [prompt, '', `上一次输出无效：${lastError}`, retryNote, ...(options.feedback ? [options.feedback] : [])].join('\n');
     if (attemptPrompt.length > maxPromptChars) {
       throw new JsonCallError(`context_capacity_exceeded: retry prompt=${attemptPrompt.length} max=${maxPromptChars}`, calls);
     }
@@ -80,7 +89,23 @@ export async function callJson(
     } catch (error) {
       const ms = performance.now() - started;
       lastError = errorText(error);
-      calls.push({ prompt: attemptPrompt, raw: '', ms, attempt, error: lastError });
+      const completion = (error as { completion?: { raw?: unknown; finishReason?: unknown } }).completion;
+      const partial = typeof completion?.raw === 'string' ? completion.raw : '';
+      const finishReason = typeof completion?.finishReason === 'string' ? completion.finishReason : null;
+      const cut = /ended with (?:length|no finish reason)/iu.test(lastError)
+        || /IncompleteGenerationError/u.test(lastError);
+      if (cut) truncated = true;
+      // Keep what the model actually produced before the cap: without it the
+      // page can only say "length" and cannot tell a runaway answer from a
+      // genuinely long one.
+      calls.push({
+        prompt: attemptPrompt,
+        raw: partial.slice(0, 2000),
+        ms,
+        attempt,
+        error: lastError,
+        ...(cut ? { truncated: true, finishReason } : {}),
+      });
     }
   }
   throw new JsonCallError(`model_output_invalid: ${lastError}`, calls);

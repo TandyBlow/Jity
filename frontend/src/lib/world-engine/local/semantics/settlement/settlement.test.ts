@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { IncompleteGenerationError } from '../../../runtime/engine';
 import type { InferenceEngine } from '../../../runtime/engine';
 import type { InitialState, Json, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
@@ -151,6 +152,42 @@ describe('common-group results', () => {
       { memberId: 'a', factCount: 1 },
       { memberId: 'b', factCount: 2 },
     ]);
+  });
+
+  it('retries a length-truncated results answer with a shorter-answer instruction and the member list', async () => {
+    const truncated = new IncompleteGenerationError({
+      raw: '{"judgments":[{"memberId":"a","label":"achieved","reason":"甲把工具推向乙',
+      finishReason: 'length', firstTokenMs: 20, wallMs: 49_866,
+    });
+    const complete = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲把工具推向乙。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] },
+      ],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] },
+        { text: '工具落在乙脚边。', memberIds: ['b'] },
+      ],
+    });
+    const engine = new ScriptedEngine([truncated, complete]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value!.a).toContain('乙伸手接住');
+    expect(outcome.evidence.calls).toHaveLength(2);
+    expect(outcome.evidence.calls[0]?.error).toContain('ended with length');
+    // The paid partial output is evidence, not discarded: the page has to show
+    // what the model wrote before the cap.
+    expect(outcome.evidence.calls[0]?.truncated).toBe(true);
+    expect(outcome.evidence.calls[0]?.finishReason).toBe('length');
+    expect(outcome.evidence.calls[0]?.raw).toContain('甲把工具推向乙');
+    const retry = engine.prompts[1];
+    // A capacity failure must not be retried with the same request.
+    expect(retry).toContain('因长度上限被截断');
+    expect(retry).toContain('每条 reason 压到 20 字以内');
+    // The group's own members are named, so a repair cannot silently judge only
+    // one of them (3turn 9623 group_29 answered nono only while lu was frozen).
+    expect(retry).toContain('甲(a)');
+    expect(retry).toContain('乙(b)');
+    expect(retry).toContain('judgments 必须每人一条');
   });
 
   it('does not put pending task goals into the results prompt', async () => {

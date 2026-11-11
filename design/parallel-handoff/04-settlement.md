@@ -332,3 +332,56 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 测试 **78 focused passed | 1 expected fail**；全前端 **725 passed | 1 expected fail**，14 个既有 styles/wllama 环境失败。d101 构建 `d1019f09` 不含 `ab242e32`/`6afa8e39`。
 
 同日 3-turn `2026-11-10T2137-ac7c`：turn 1 是模型 142 字，`aec9` 一次 continuation 后 policy stop，无 auto2；turn 2 的 330s timeout 与 06 在 21:42:05Z 重启到 5d4c/chunk 81f5 同时发生，页面还是 d101 的 chunk a922，因此 turn 2 是基础设施失效，不是 04 continuation。06 的 served 5d4c/sourceAhead 58bed 已含 `aa9622a3`，不含 `ab242e32`/`6afa8e39`。
+
+### 2026-11-11 736a/5810 真实 trace 根因：事实没到旁白，判定理由成了事实（`5a015c52`、`7b00ca28`）
+
+读了两份真实 trace：`09-constrained-beats-5810.json` 和 `root-constrained-736a-retry.json`（head `736a3841`，chunk `page-7454…`，pageSha `a4259e74…`）。同一句输入“我沿着服务巷往里走，先看清墙上的演习规则牌”。
+
+链路（逐句可对）：
+
+1. `results group_10`（lu）事实是对的：`路明非沿着服务巷往里走，先看清墙上的演习规则牌。`
+2. `results group_12`（nono，判定目标 lu、`admitted:false`）把判定理由抄成事实：`路明非未被掀开袖口，未看到规则牌，骰点未触发准入条件。行动未成功或被阻止。`——没提本组的诺诺，且“未看到规则牌”与 group_10 已结算的“先看清规则牌”冲突。
+3. 页面控制器 `results()` 每次覆盖 `lastResultsText`，group_12 在 group_10 之后结算，于是旁白只剩 nono 组那条。
+4. 旁白的 facts packet 只有 `facts:time`（plan `open:open:facts:time`），没有玩家的走/读；模型只能自造，736a 写出“路明非的护目镜沿服务巷往里走”（物品当行动者；视角锚点另由 root `f4272699` 修），5810 写出“低头检查护目镜的镜片”。
+
+04 的修复：
+
+- `results.ts`：一条事实若**只点名本组外的人物**，报错并触发一次修复（错误带本组冻结行动），重复则 abort；机制词删完补主语时若句首已有人物名则不再前置（旧写法产出 `诺诺路明非未被掀开袖口`）；提示加一条“facts 写本组成员自己的行动结果，不要写其他人物的行动或判定理由”。
+- `port.ts`：新增 `settledFactLines()`，返回当前点全部已结算事实（`名字：事实`，主角组优先、去重），`beginSubmission`/`reset`/每轮 continuation 结束时清空。
+- 06 还需在 `game-model.results()` 用 `settledFactLines()` 替代“只留最后一组”的赋值（3 行，见 `results/quality/requests-04-to-06-736a-facts.md`）。
+
+两组结论（有数字）：group_10 成员 lu、无判定，results 14.2s / 1639 字符，六阶段 position 7.3s、appearance 4.5s、tasks 7.3s，受影响 3 人 / 17 行；group_12 成员 nono、目标 lu `admitted:false`，results 13.7s / 1708 字符，六阶段 8.2/5.0/7.4s，受影响 4 人 / 22 行。两组冻结成员、目标、投影都不同，是玩家组 + 反应组，不是重放的已消费候选。可去掉的重复只有两组都回的 `goggles_lu → lu`/`keep` 状态回显，已被 `guardStage` 当 no-op 丢弃；失败行动也可能移动，所以不跳 position/appearance，不删组、不缩六阶段、不设自动推进上限。
+
+测量：`prompt-size.mjs` results 2461→2526、2391→2456（+65 字符/次），updates 最大仍 4656；字符不是 token。84 focused passed | 1 expected fail；全前端 731 passed | 1 expected fail（14 个既有环境失败）；tsc 通过；eslint 0 error。
+
+边界：`f4272699` 修的是 facts-only 投影的视角锚点（护目镜被当成视点），不是本轮 04 修复；`736a`/`5810` 构建都没有 `5a015c52` 和 06 那 3 行。
+
+### 2026-11-11 `9623` 有效回合：走/读还只是“指令”（`0fa995f0`）
+
+09 在 06 `d17d6534`（build `gGQuSjufzXOTz_gf3HBIw`，chunk `page-8df80f7597394665.js`）跑同一个输入，COMPLETED：1 回合、69 字、`source=model`、history 1→1、刷新 ready 72.5s。正文：
+
+`路明非沿着服务巷往里走，时间过去一分钟。他先看清墙上的演习规则牌，护目镜必须戴好。诺诺在巷口等待，红发用发圈束在脑后，红色识别带缠在左臂。`
+
+- root `f4272699` 生效：`goggles_lu:position` 只是 at 事实，不再当视点。
+- 02 的“指令后置”生效：走/读出现在正文。
+- 仍未解决：plan 只有 `open:open:facts:time`，coverage 没有 `facts:result`。走/读来自“玩家这一回合的指令”，不是已结算事实；`护目镜必须戴好` 被列为 unverified（规则口吻）。
+- group_12 事实仍是判定理由复制且含 `骰点`，被 02 的 result 过滤整句丢弃 → result 事实为空。
+
+`0fa995f0` 让端口的已结算事实以**原句**交出（不带 `名字：`），因为 02 的 `verifyText` 要求 `text.includes(fact.text)`；带标签会要求正文出现 `路明非：路明非沿着…`。合入 `5a015c52`+`0fa995f0` 并在 `game-model.results()` 用 `settledFactLines()` 后，result beat 才会拿到 `路明非沿着服务巷往里走，先看清墙上的演习规则牌。` 并要求原样写出。
+
+### 2026-11-11 3-turn `9623` 的 turn 2：results 被长度截断后修复失败（`d266d12c`、`6f287b5f`）
+
+`09-product-03turn-9623.json`（runId `2026-11-11T0245-9b69`，head `d17d6534`）三回合：
+
+- turn 1：模型 103 字，aec9 一次 continuation 后 policy stop，history 1。
+- turn 2（问诺诺红蓝局势）：group_29（lu+nono）
+  - 第 1 次 49.9 s，`IncompleteGenerationError: generation ended with length`；旧端口把这次调用的 raw 存成空，页面只能看到 “length”。
+  - 第 2 次修复只答 nono，`missing judgment for lu` → 点 abort，页面 `结算没有完成，可以重试。`；无 updates/continuation。
+- turn 3：1 个字符占位，history 0。
+
+修复：
+
+- `d266d12c`：`callJson` 识别截断（`ended with length` / `IncompleteGenerationError`），重试提示改成“reason ≤20 字、facts 每人一句”，并在 results 的修复提示里列出本组成员名与 id（`甲(a)、乙(b)`），避免修复再次漏人。
+- `6f287b5f`：截断调用的部分文本（≤2000 字符）、`truncated:true`、`finishReason` 都留在 `ModelCallEvidence` 里，`JsonCallError.raw` 也会带上，不再把已付费的输出丢掉。
+
+85 focused / 733 full 通过（14 个既有环境失败）；tsc 通过；eslint 0 error。
