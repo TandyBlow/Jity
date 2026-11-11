@@ -113,9 +113,13 @@ interface WorldTurnRecord {
    * at submit so one evidence file cannot mix two arms unknowingly. */
   narrationModel: string | null;
   promptShape: string | null;
+  /** The adapter the page obtained before loading (probeGpu), so a CPU fallback
+   * behind a 99999-layer request is visible in the run record. */
+  gpu?: Record<string, unknown> | null;
   engines: Array<{
     label: string; loadCount: number; workersCreated: number; workersExited: number; generations: number;
     contextSize?: number; backend?: string; gpuLayers?: number;
+    /** Adapter the page actually obtained before loading (probeGpu). */
     lastLoadMs?: number | null; lastLoadFetchMs?: number | null;
     lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
     /** Full runtime record of the last generation (engine.runtime().lastGeneration):
@@ -320,6 +324,37 @@ interface ProductEnginePort extends InferenceEngine {
     lastLoadCompileMs?: number | null; lastLoadFromCache?: boolean | null;
     lastGeneration?: WorldTurnRecord['engines'][number]['lastGeneration'];
   } | null;
+}
+
+/** Which device the browser will actually give this page. `n_gpu_layers:
+ * 99999` is a request, not proof: llama.cpp falls back to CPU silently when the
+ * worker gets no adapter, and the only symptom is a decode rate near 7 tokens
+ * per second (2026-11-11 turns) that looks exactly like a slow GPU. Probe the
+ * adapter before loading and keep the answer in the turn record. */
+async function probeGpu(): Promise<Record<string, unknown>> {
+  const nav = navigator as unknown as { gpu?: { requestAdapter?: (options?: unknown) => Promise<unknown> } };
+  const out: Record<string, unknown> = {
+    hasGpu: Boolean(nav.gpu),
+    jspi: Boolean((WebAssembly as unknown as { Suspending?: unknown }).Suspending),
+  };
+  if (!nav.gpu?.requestAdapter) return out;
+  try {
+    const adapter = await nav.gpu.requestAdapter({ powerPreference: 'high-performance' }) as {
+      info?: { vendor?: string; architecture?: string; device?: string; description?: string };
+      requestDevice?: () => Promise<unknown>;
+      features?: Iterable<string>;
+    } | null;
+    if (!adapter) { out.adapter = null; return out; }
+    out.adapter = adapter.info ? {
+      vendor: adapter.info.vendor ?? null, architecture: adapter.info.architecture ?? null,
+      device: adapter.info.device ?? null, description: adapter.info.description ?? null,
+    } : null;
+    out.device = Boolean(adapter.requestDevice);
+    out.features = adapter.features ? [...adapter.features].slice(0, 8) : null;
+  } catch (error) {
+    out.adapterError = error instanceof Error ? error.message : String(error);
+  }
+  return out;
 }
 
 function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number): ProductEnginePort {
@@ -645,6 +680,11 @@ export default function WorldLocalPage() {
         // must restore and paint before a ~100 s cold load, otherwise a reload
         // shows an empty history while the models load.
         setMessage('正在读取本地存档…');
+        // Which device this page actually gets, recorded next to the timings:
+        // the 99999-layer request alone cannot prove the GPU carried the model.
+        const gpu = await probeGpu();
+        (window as unknown as { __worldGpu?: unknown }).__worldGpu = gpu;
+        console.info('[world-local] gpu probe', JSON.stringify(gpu));
         // 12288 covers the settlement's measured prompt (7877 chars) plus the
         // repair feedback; 8192 left a retry on the edge of the context.
         const semantic = resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
@@ -717,6 +757,7 @@ export default function WorldLocalPage() {
                 (window as unknown as { __worldLive?: unknown }).__worldLive = {
                   turn: liveRecord.index, at: Date.now(), engines: liveRecord.engines,
                   modelId: liveRecord.modelId, generations: liveRecord.generations ?? null,
+                  gpu: (window as unknown as { __worldGpu?: unknown }).__worldGpu ?? null,
                 };
               }
             }
@@ -1231,6 +1272,7 @@ export default function WorldLocalPage() {
       if (live) {
         live.engines = [engineCounters('semantic', semanticRef.current), engineCounters('narration', narrationRef.current)]
           .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+        live.gpu = (window as unknown as { __worldGpu?: Record<string, unknown> }).__worldGpu ?? null;
         live.modelId = narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? live.modelId;
         live.generations = [lastGeneration('semantic'), lastGeneration('narration')]
           .filter((note): note is GenerationNote => note != null);
