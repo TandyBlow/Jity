@@ -87,3 +87,21 @@ describe('the product narration path passes structured settled records', () => {
     expect(call).toContain('settledFacts: this.lastSettledFacts');
   });
 });
+
+import { alignNarration } from '../runtime/narration-alignment';
+
+describe('reported speech after a colon is dialogue, not a POV slip', () => {
+  const packet = {
+    anchor: { worldId: 'w', pointId: 'p', version: 1, stateDigest: 'd', previousPointId: 'root' },
+    facts: [{ id: 'f1', kind: 'at' as const, actorId: 'lu', name: '路明非', locationId: 'lane', location: '服务巷' }],
+  };
+  it('accepts 路明非问诺诺：现在…我能不能先保持中立？', () => {
+    const result = alignNarration(packet, '路明非问诺诺：现在红蓝两方各在哪，我能不能先保持中立？', {});
+    expect(result.violations.map((violation) => violation.kind)).not.toContain('wrong_person');
+  });
+
+  it('still rejects a bare first-person narration sentence', () => {
+    const result = alignNarration(packet, '他停了一下，我沿着服务巷往里走。', {});
+    expect(result.violations.map((violation) => violation.kind)).toContain('wrong_person');
+  });
+});

@@ -328,7 +328,11 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // protagonist; a stray 「我」 turns the narration into the player's own
     // voice mid-paragraph. Quoted speech is exempt because a character saying
     // 「我」 is legitimate dialogue.
-    if (/[^「『“‘]我(?!们)/u.test(maskFrozenQuotes(sentence.replace(/[「『“][^」』”]*[」』”]/gu, '')))) {
+    // A colon after a speech verb introduces reported speech; 「路明非问诺诺：
+    // 现在…我能不能…」 is the character talking, not the narrator slipping into
+    // first person (09 35ad t2). Mask that clause before the pronoun scan.
+    const reportedSpeech = sentence.replace(/(问|说|道|答|喊|叫|回|念)[^。！？：:]{0,6}[：:][^。！？]*/gu, '$1：「」');
+    if (/[^「『“‘]我(?!们)/u.test(maskFrozenQuotes(reportedSpeech.replace(/[「『“][^」』”]*[」』”]/gu, '')))) {
       violations.push({ kind: 'wrong_person', sentence, detail: 'first-person pronoun outside dialogue' });
       continue;
     }
