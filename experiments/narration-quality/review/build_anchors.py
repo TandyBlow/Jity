@@ -1637,6 +1637,25 @@ anchors.append({
                "notes": "the panel `诺诺：未成功触发…因此未达成目标。`; the 凯撒/红方集结点 viewpoint is a scene-assembly defect, not caught by an in-cast rule."},
 })
 
+
+# 11a7: the scoped beat prompt loses the settled hair; 诺诺红发垂落 while the
+# state says tied; panel and missing walk/see remain.
+run_11a7 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-11a7.json", encoding="utf-8"))
+t_11a7 = run_11a7["turns"][0]
+anchors.append({
+    "id": "neg/route/11a7-hair-and-panel",
+    "source": "09 constrained-beats 2026-11-11T0053-1d3f (head 11a78afb): mixed 244 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_11a7["text"],
+    "options": {"minChars": 1, "action": t_11a7["input"]},
+    "expect": {"fact": ["fact.action_omitted", "fact.state_contradiction"], "style": ["style.status_panel"],
+               "notes": "诺诺红发垂落 vs settled 束在脑后; panel; walk/see missing."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
