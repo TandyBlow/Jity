@@ -385,3 +385,14 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - `6f287b5f`：截断调用的部分文本（≤2000 字符）、`truncated:true`、`finishReason` 都留在 `ModelCallEvidence` 里，`JsonCallError.raw` 也会带上，不再把已付费的输出丢掉。
 
 85 focused / 733 full 通过（14 个既有环境失败）；tsc 通过；eslint 0 error。
+
+### 2026-11-11 `missing judgment` 不该杀掉整个点（`719b5e25`）
+
+06 问：玩家只是“开口问诺诺”，这一行要不要强制？答案是看它是不是状态：
+
+- **没有判定目标的成员**：这一行只是证据。六阶段读的是 results 的 facts，从不读 label；label 只进证据和“可证明没发生”的判断。所以模型漏写时补一条 `label: 'no_change'`、`reason: '模型漏写这一行；该成员没有判定目标，按无变化记录'`，id 记入 `implicitJudgments`，**不花修复调用、不杀点**。
+- **有判定目标的成员**：`effects[].reacted` 由 `admitted` 决定，是已结算状态，漏写仍报错修复，重复则 abort。
+
+9623 turn 2 的 group_29 正是前者（lu 的 facts 已存在、只有 judgment 行缺），现在会被接受，页面不再 `结算没有完成，可以重试`，也不会多花 59 s。回归：两位成员只答一位、facts 覆盖两人 → 接受且 `implicitJudgments:['a']`、只 1 次调用；漏写有判定的成员 → `missing judgment for a`。
+
+86 focused / 733 full 通过（14 个既有环境失败）；tsc 通过；eslint 0 error。
