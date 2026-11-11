@@ -161,7 +161,7 @@ export function buildBeatPrompt(
       const said = String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name).replace(/[。！？]+$/u, '');
       return fact.includes(said);
     })
-      ? [`玩家这一回合的指令：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
+      ? [`玩家这一回合的指令（用你自己的话写，不要照抄这句）：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
          '正文要写出他做了或试着做了这件事；结果只按上面已结算的事实写，没有结算成功的事不要写成成功。']
       : []),
     '',
