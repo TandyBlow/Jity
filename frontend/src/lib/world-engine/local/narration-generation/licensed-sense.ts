@@ -493,7 +493,8 @@ export interface StructuredResult {
   actor?: string;
   action?: string;
   target?: string;
-  outcome?: 'achieved' | 'partial' | 'not_achieved' | 'blocked' | 'no_change';
+  /** 04's settled labels: completed | failed | blocked | unaffected. */
+  outcome?: 'completed' | 'failed' | 'blocked' | 'unaffected';
 }
 
 export interface ResultCheck {
@@ -531,10 +532,10 @@ export function resultSemantics(
   // Settlement polarity. A negative cue wins over a positive one: «未能完成»
   // is a failure, «比对了，但对不上」 is a failure.
   const settledNegative = outcome
-    ? outcome === 'not_achieved' || outcome === 'blocked' || outcome === 'no_change'
+    ? outcome === 'failed' || outcome === 'blocked' || outcome === 'unaffected'
     : cuesIn(resultText, NEGATIVE_CUES).length > 0;
   const settledPositive = outcome
-    ? outcome === 'achieved' || outcome === 'partial'
+    ? outcome === 'completed'
     : cuesIn(resultText, DONE_CUES).length > 0;
 
   const claims = sentencesMentioning(text, actor);

@@ -671,10 +671,10 @@ describe('product regressions: result semantics accept paraphrase, reject flips'
 
   test('structured outcome decides the direction and the target must appear', () => {
     const ok = resultSemantics('路明非把登记簿合上，没找到那处差额。', '对差额',
-      { actor: '路明非', target: '登记簿', outcome: 'not_achieved' }, names);
+      { actor: '路明非', target: '登记簿', outcome: 'failed' }, names);
     expect(ok.ok).toBe(true);
     const missingTarget = resultSemantics('路明非没找到那处差额。', '对差额',
-      { actor: '路明非', target: '登记簿', outcome: 'not_achieved' }, names);
+      { actor: '路明非', target: '登记簿', outcome: 'failed' }, names);
     expect(missingTarget.ok).toBe(false);
     expect(missingTarget.detail).toMatch(/登记簿/u);
   });
