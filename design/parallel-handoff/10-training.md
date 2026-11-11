@@ -453,3 +453,27 @@ V100 fp16，同一 5 条 dev 输入、同一提示词（页面自己的 `instruc
 personality 挑中的是景物句）。`build_page_pairs.py` 已加 `--new-rows`，01/05 交来
 `{id,viewpoint,draft,target,worldFamily,lineage}` 就能一条命令生成整组划分的训练集。
 11/12 的请求继续由 10 统一走 `hpc/batch_screen.py`；目前队列里没有任何 11/12 请求。
+
+## 11. 短对训练（MiniRBT-H256）已跑：授权臂 20%，机制已量出
+
+任务书 `tasks/product-10-short-pair-training.md` sha256 `95d31f3e…`。数据 295 行 / 325 决策 /
+4225 对（300 行减 01 的 5 条标签冲突），冻结哈希全部核对过（04 `b9940084…`、13 `0b7766fa…`、
+rows `cb4676b3…`、val `284b5404…`、labels `41372ab4…`、split lists `d385b4ac…`、measurement
+`69d032f9…`、基座 `6728ca57…`）。
+
+- 作业 254363（第一次）把训练集当验证集喂进早停，`validDecisions 295`，作废保留；
+  254378（修正后）在 `gpu` 分区、1× RTX 4090 D、torch 2.5.1+cu124 上跑完，7 epoch（第 4
+  epoch 后早停），训练 wall 21 秒。
+- **验证 rowHit 0.200（3/15）**，低于 60% 判据；训练损失 1.285→1.271 基本不动；前 15 条
+  margin 0.0001–0.004；预测集中到「身体」9/15。
+- 机制：同一决策 13 个候选对只在最后一行 `动作：<组名>` 不同（冻结序列化把候选正文放在
+  `droppedSections`），163 token 上用 masked-mean 池化后两两余弦 0.999787（min 0.999659）；
+  三种池化（mean / CLS / 末位 token）的线性探针在验证集都是 6.7%，训练集 43.9–44.6%，
+  等于多数类占比。结论：这一臂在冻结规则下 13 个候选不可分，不是步数不够。
+- 已向 04/13 提两条修订，不自行改冻结：A 用冻结文件里已有的不带梯度编码器臂（lrEncoder
+  1e-5，需要新的授权，因为一次 run 已用掉）；B 让候选对带上候选正文（把 `candidateTable(text)`
+  放回），序列化与新 pairs 需要重冻结。
+- TEST 未跑：01 盲版 `004bd736…` 24 行 / 15 个 TEST 目标，20% 的 checkpoint 没有资格读它；
+  任务书里「45 行」与这个 24 行不是同一个统计。objectHit 仍为未测（没有对象输入/输出）。
+- 证据：`results/action-short-pairs-20261111/10-training-result.json`、`10-training-report.md`；
+  代码 `experiments/action-short-pairs/{run_pairwise295.py,probe_pooling.py,shortpair295.sbatch}`。
