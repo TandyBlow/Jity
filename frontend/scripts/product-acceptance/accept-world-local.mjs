@@ -302,6 +302,14 @@ try {
     }
   } catch (error) {
     evidence.productState.error = String(error).slice(0, 200);
+    // A frozen-build mismatch is a hard abort: never run turns against a
+    // different page source just because the check sits inside try/catch.
+    if (String(error).startsWith('page_sha_mismatch')) {
+      evidence.status = 'FAILED';
+      evidence.finishedAt = new Date().toISOString();
+      save();
+      throw error;
+    }
   }
   const pageResponse = await page.request.get(`${base}/world-local`, { timeout: 30000 }).catch(() => null);
   evidence.pageHttp = pageResponse ? pageResponse.status() : null;
