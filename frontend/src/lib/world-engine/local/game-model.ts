@@ -87,6 +87,17 @@ export interface GameModelOptions {
 
 interface Generated { value: Json; raw: string; ms: number; fallback: boolean; error?: string }
 
+type SettledFactRecord = {
+  text: string; actorId: string; targetId?: string; action?: string;
+  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true;
+};
+
+interface PointNarrationSnapshot {
+  resultsText: string;
+  facts: SettledFactRecord[];
+  playerInput: string;
+}
+
 /** Violations that mean the text asserts something the settlement did not
  * produce. Style, length and wording are not in this set. */
 const FATAL_ALIGNMENT = new Set([
@@ -108,7 +119,13 @@ export class LocalGameModel implements WorldModelPort {
   private lastResultsText = '';
   /** Structured settled results for the current point (04's actor/action/target/
    * outcome records), used by the candidate so it checks meaning, not wording. */
-  private lastSettledFacts: Array<{ text: string; actorId: string; targetId?: string; action?: string; outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true }> = [];
+  private lastSettledFacts: SettledFactRecord[] = [];
+  /** Per-point settlement material, frozen at commit. Narration for an older
+   * point must never read the next point's mutable lastResultsText/facts. */
+  private readonly pointResults = new Map<Id, string[]>();
+  private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
+  private readonly seenFactTexts = new Set<string>();
+  private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
   private recentEvents: string[] = [];
   private readonly narrationRunner: NarrationRunner | null;
   /** Last accepted prose (model or candidate). Only real prose is fed back as
@@ -184,7 +201,25 @@ export class LocalGameModel implements WorldModelPort {
 
   /** Player-submission account for the settlement side: which calls ran, per
    * stage, with the real milliseconds. Internal evidence, not page text. */
-  beginSubmission(inputText: string): void { this.settlement.beginSubmission(inputText); }
+  beginSubmission(inputText: string): void {
+    this.settlement.beginSubmission(inputText);
+    this.pointResults.clear();
+    this.pointFacts.clear();
+    this.seenFactTexts.clear();
+    this.narrationSnapshots.clear();
+  }
+
+  /** The controller committed this point. Freeze the settlement material that
+   * belongs to it before a later point overwrites the live caches. */
+  onPointCommitted(pointId: Id): void {
+    const resultsText = (this.pointResults.get(pointId) ?? []).join('；') || this.lastResultsText;
+    const facts = this.pointFacts.get(pointId) ?? [];
+    this.narrationSnapshots.set(pointId, {
+      resultsText,
+      facts: facts.map((fact) => ({ ...fact })),
+      playerInput: this.lastPlayerInput,
+    });
+  }
   endSubmission(): PortSubmission | null { return this.settlement.endSubmission(); }
   settlementSummary(): SettlementPortSummary { return this.settlement.summary(); }
   resetSettlement(): void { this.settlement.reset(); }
@@ -286,6 +321,17 @@ export class LocalGameModel implements WorldModelPort {
       outcome: fact.outcome,
       ...(fact.implicit ? { implicit: true as const } : {}),
     }));
+    const pointId = (input as { pointId?: Id }).pointId;
+    if (pointId) {
+      this.pointResults.set(pointId, [...(this.pointResults.get(pointId) ?? []), ...story]);
+      const facts = this.pointFacts.get(pointId) ?? [];
+      for (const fact of this.lastSettledFacts) {
+        if (this.seenFactTexts.has(fact.text)) continue;
+        this.seenFactTexts.add(fact.text);
+        facts.push({ ...fact });
+      }
+      this.pointFacts.set(pointId, facts);
+    }
     for (const line of story) this.recentEvents.push(line);
     if (this.recentEvents.length > 4) this.recentEvents = this.recentEvents.slice(-4);
     return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
@@ -402,17 +448,23 @@ export class LocalGameModel implements WorldModelPort {
     const started = performance.now();
     const before = data.before ?? null;
     const delta = data.delta ?? {};
+    // Material for THIS point, frozen at its commit. A later point's live
+    // caches must not reach an older point's prose.
+    const snapshot = this.narrationSnapshots.get(pointId);
+    const playerInput = snapshot?.playerInput ?? this.lastPlayerInput;
+    const resultsText = snapshot?.resultsText ?? '';
+    const settledFacts = snapshot?.facts ?? [];
 
     // Candidate path: one settled point in, the candidate's own beat text out.
     // Nothing here inspects, refuses, rewrites or replaces that text.
     if (this.narrationRunner) {
-      const adopted = await this.adoptNarrationCandidate(pointId, before, delta, after);
+      const adopted = await this.adoptNarrationCandidate(pointId, before, delta, after, playerInput, resultsText, settledFacts);
       if (adopted) return adopted;
     }
 
     // In-model writer: one call with the settled state as its only material.
     const brief = this.options.narrationMode === 'instruct'
-      ? instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText)
+      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText)
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
     let raw = '';
     let error: string | undefined;
@@ -470,6 +522,9 @@ export class LocalGameModel implements WorldModelPort {
     before: WorldState | null,
     delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
     after: WorldState,
+    playerInput: string,
+    resultsText: string,
+    settledFacts: SettledFactRecord[],
   ): Promise<Generated | null> {
     if (!this.narrationRunner) return null;
     const result = await this.narrationRunner.generate({
@@ -477,9 +532,9 @@ export class LocalGameModel implements WorldModelPort {
       before,
       delta,
       after,
-      playerInput: this.lastPlayerInput,
-      settledResults: this.lastResultsText ? [this.lastResultsText] : [],
-      settledFacts: this.lastSettledFacts,
+      playerInput,
+      settledResults: resultsText ? [resultsText] : [],
+      settledFacts,
     }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
     if (result.kind !== 'adopted') {
       return null;
