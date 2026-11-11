@@ -493,6 +493,8 @@ export interface StructuredResult {
   actor?: string;
   action?: string;
   target?: string;
+  /** The viewpoint character's name; only their subject may be omitted. */
+  viewpoint?: string;
   /** 04's settled labels: completed | failed | blocked | unaffected. */
   outcome?: 'completed' | 'failed' | 'blocked' | 'unaffected';
 }
@@ -538,18 +540,46 @@ export function resultSemantics(
     ? outcome === 'completed'
     : cuesIn(resultText, DONE_CUES).length > 0;
 
-  const claims = sentencesMentioning(text, actor);
+  // A structured record names the performed action. Saying that action in the
+  // actor's own sentence («诺诺回答了他») is the completion, even when the verb
+  // is not in the generic cue list; the cue list alone missed dialogue answers.
+  const actionPhrase = structured?.action?.trim() ?? '';
+  // A claim must be about THIS result. Without a binding, any completion verb in
+  // the actor's sentence would count — «路明非看清了规则牌» would be read as a
+  // success for an unrelated failed result. Bind on the target when the record
+  // names one, otherwise on the settled action, otherwise on the actor alone.
+  const aboutBinding = (sentence: string): boolean => {
+    if (structured?.target) return sentence.includes(structured.target);
+    if (actionPhrase.length >= 2) return sentence.includes(actionPhrase);
+    return true;
+  };
+  const claims = sentencesMentioning(text, actor).filter(aboutBinding);
+  // A settled result belongs to a named actor. If the prose never names that
+  // actor and the actor is not the viewpoint (whose subject may be omitted),
+  // the result was given to someone else — a swap, not a paraphrase.
+  const actorNamed = !actor || text.includes(actor);
+  const actorMayBeOmitted = !actor || actor === structured?.viewpoint;
+  if (actor && !actorNamed && !actorMayBeOmitted) {
+    return { ok: false, detail: `settled result belongs to ${actor}; the prose never names them` };
+  }
   // A claim is a sentence that says something was completed and does not itself
   // carry a negation; wording is free.
   const claim = claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
     && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
-  const failure = claims.find((sentence) => cuesIn(sentence, NEGATIVE_CUES).length > 0) ?? '';
+  // A failure counts anywhere in the actor's sentences: the turn can show the
+  // setback in one clause and other business in another.
+  const failure = sentencesMentioning(text, actor)
+    .find((sentence) => cuesIn(sentence, NEGATIVE_CUES).length > 0) ?? '';
 
   if (settledNegative) {
     if (claim) {
       return { ok: false, sentence: claim, detail: `settled result is a failure/block (${structured?.outcome ?? 'negative wording'}); the prose claims it was completed` };
     }
     if (target && !text.includes(target)) {
+      // The target is absent. If the prose still shows a failure of this actor,
+      // the turn is readable and the missing name is a review note; if it shows
+      // no failure at all, the player never learns the outcome.
+      if (failure) return { ok: true, unverified: true, detail: `failure shown without naming ${target}` };
       return { ok: false, detail: `settled result names ${target}; the prose does not` };
     }
     return { ok: true, detail: failure ? 'failure kept' : 'no success claimed' };
