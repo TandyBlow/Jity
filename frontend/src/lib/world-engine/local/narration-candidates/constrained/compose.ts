@@ -134,7 +134,14 @@ export function buildBeatPrompt(
   // Keep the beat prompt scoped: 8 objects + 10 details made the 1.7B writer
   // enumerate the scene inventory instead of writing the beat's fact.
   const present = scene.present.slice(0, 3).map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
-  const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
+  // Turns 7-9 of the 10-turn run all opened with «路明非摘下护目镜»: the item's
+  // note («镜片无裂纹，镜带松着，现挂在胸前…») was the most concrete line in the
+  // prompt and the model led with it every time. An item's note is printed only
+  // when this beat's fact names that item; otherwise the bare name is enough.
+  const factsText = facts.join('\n');
+  const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${
+    object.note && factsText.includes(object.name) ? `（${clip(object.note, 22)}）` : ''
+  }`);
   // Gender is data, not a ban: print the sourced gender for the people in this
   // scene and say nothing about anyone else.
   const genderNote = genderLine([
