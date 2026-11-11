@@ -88,6 +88,8 @@ interface WorldTurnRecord {
    * model saw, every raw attempt, why it was rejected and the echo ratio. 02
    * needs the raw text to fix wrong_person/low_support, and the turn record must
    * carry it without reading worker internals. Capped; no prompt. */
+  /** Per-point narration clocks, keyed by pointId. Evidence only. */
+  narrationStarts?: Record<string, number>;
   narration?: {
     pointId: string; rawAttempts: string[];
     raw: string; text: string; prompt: string;
@@ -672,13 +674,17 @@ export default function WorldLocalPage() {
           },
           onNarrationProgress: (progress) => {
             const startRecord = turnRecordRef.current;
+            const at = Math.round(performance.now() - submittedAtRef.current);
             if (startRecord?.clocks && startRecord.clocks.narrationStartedAtMs == null) {
-              const at = Math.round(performance.now() - submittedAtRef.current);
               startRecord.clocks.narrationStartedAtMs = at;
-              // The driver narrates the committed head point; no separate
-              // commit timestamp exists in the transport, so this is the
-              // earliest clock the page can honestly attribute to it.
-              startRecord.clocks.pointCommittedAtMs = at;
+              // pointCommittedAtMs stays null: the transport snapshot the page
+              // sees carries no commit timestamp, and copying the narration
+              // start here would fake the scheduling gap this clock exists to
+              // measure.
+            }
+            if (startRecord) {
+              startRecord.narrationStarts ??= {};
+              if (startRecord.narrationStarts[progress.pointId] == null) startRecord.narrationStarts[progress.pointId] = at;
             }
             setPhase('streaming');
             // Exactly what the model returned. No character substitution: the
@@ -688,6 +694,12 @@ export default function WorldLocalPage() {
             const draftMs = Math.round(performance.now() - submittedAtRef.current);
             const record = turnRecordRef.current;
             if (record && record.draftMs == null) record.draftMs = draftMs;
+            // First model text actually visible to the player. This is the
+            // 60 s clock; completion is recorded separately below.
+            if (record?.clocks && record.clocks.firstReadableAtMs == null && text.trim()) {
+              record.clocks.firstReadableAtMs = draftMs;
+              record.clocks.firstReadableSource = 'model';
+            }
             setEntries((list) => updateLast(list, (entry) => {
               const points = [...(entry.points ?? [])];
               const index = points.findIndex((part) => part.pointId === progress.pointId);
@@ -720,8 +732,8 @@ export default function WorldLocalPage() {
             if (clocks && clocks.firstReadableAtMs == null) {
               clocks.firstReadableAtMs = atMs;
               clocks.firstReadableSource = source;
-              clocks.firstAcceptedAtMs = atMs;
             }
+            if (clocks && clocks.firstAcceptedAtMs == null) clocks.firstAcceptedAtMs = atMs;
             const record = turnRecordRef.current;
             if (record) {
               record.narrations = record.narrations ?? [];
