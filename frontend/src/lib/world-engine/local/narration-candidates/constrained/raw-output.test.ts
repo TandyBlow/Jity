@@ -33,6 +33,11 @@ function packet() {
     facts: [
       { id: 'f_at', kind: 'at' as const, actorId: 'lu', name: '路明非', locationId: 'lane', location: '服务巷' },
       { id: 'f_nono', kind: 'at' as const, actorId: 'nono', name: '诺诺', locationId: 'lane', location: '服务巷' },
+      {
+        id: 'f_res', kind: 'result' as const, name: '路明非',
+        text: '路明非看清了墙上的演习规则牌',
+        structured: { actor: '路明非', action: '看清演习规则牌', target: null, outcome: 'completed' as const },
+      },
     ],
     timeAdvance: { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } },
     state: undefined,

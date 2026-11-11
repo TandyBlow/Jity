@@ -68,6 +68,9 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   const plan: BeatPlan = planBeats(scene, {
     narrateHiddenDeltas: policy.narrateHiddenDeltas === true,
     maxBeats: policy.maxBeats ?? 6,
+    // Fact-carrying beats include the scene texture instead of adding separate
+    // blank scene beats (the plan is a display boundary, not four fixed beats).
+    combineSceneMaterial: true,
     seed: policy.seed,
     minChars: 18,
     maxChars: 380,
@@ -96,7 +99,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     };
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       try {
-        const result = await composeBeatWithModel(input.engine, beat, scene, null, {
+        const result = await composeBeatWithModel(input.engine, beat, scene, {
           sanityStyle,
           instruction: policy.model?.instruction ?? null,
           maxTokens: policy.model?.maxTokensPerBeat ?? policy.maxTokens ?? 480,

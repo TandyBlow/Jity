@@ -176,8 +176,6 @@ export interface BeatPlan {
 export interface ComposeBeatRequest {
   beat: BeatDirective;
   scene: SceneSkeleton;
-  /** Accepted text of all previous beats; null for the first beat. */
-  prior: string | null;
 }
 
 export interface ComposeBeatOptions {
@@ -208,7 +206,7 @@ export type CandidateIssueKind =
   | 'fact_time_wrong' | 'task_without_fact' | 'movement_without_fact'
   | 'unlicensed_entity' | 'unlicensed_event' | 'rediscovery_claim'
   | 'perspective_leak' | 'prompt_echo' | 'fact_list' | 'off_language' | 'empty_text' | 'too_short' | 'too_long'
-  | 'repeated_sentence' | 'echo_prior' | 'opening_repeat' | 'engine_error' | 'cancelled'
+  | 'engine_error' | 'cancelled'
   | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing'
   | 'result_semantics' | 'result_unverified';
 

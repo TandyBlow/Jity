@@ -57,18 +57,18 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
     case 'item_discovered':
       return `${fact.name}现在在${fact.container}，视角人物此前没有留意（不要写成他早已知晓）`;
     case 'result': {
-      // With a structured record the verifier compares meaning (executor,
-      // recipient, outcome direction), so the prompt asks for the outcome in
-      // the model's own words instead of a verbatim copy. Free-text-only results
-      // still need their sentence because there is nothing else to check.
+      // The settlement record is prompt material: the model writes it in its own
+      // words. When the structured record does not carry the action wording, the
+      // settled sentence is included so the beat still has content.
       if (fact.structured) {
         const outcome = { completed: '行动完成', failed: '行动失败', blocked: '行动被阻止', unaffected: '目标没有受到影响' }[fact.structured.outcome];
         const who = fact.structured.actor ? `由${fact.structured.actor}` : '';
         const on = fact.structured.target ? `，对象是${fact.structured.target}` : '';
         const what = fact.structured.action ? `，动作是${fact.structured.action}` : '';
-        return `结算结果：${who}${what}${on}，${outcome}（用自己的话写清谁做了什么、结果朝哪个方向；人、对象和方向不能改，措辞可以改）`;
+        const detail = fact.text && fact.text !== fact.structured.action ? `。结算记录：「${fact.text}」` : '';
+        return `结算结果：${who}${what}${on}，${outcome}${detail}`;
       }
-      return `结算内容：「${fact.text}」（用正文写清这件事是谁做的、结果如何；措辞可以改，人和结果不能改）`;
+      return `结算内容：「${fact.text}」`;
     }
     case 'at':
       return `${fact.name}在${fact.location}`;
@@ -88,7 +88,6 @@ function clip(text: string, max: number): string {
 export function buildBeatPrompt(
   beat: BeatDirective,
   scene: SceneSkeleton,
-  prior: string | null,
   options: BeatPromptOptions,
 ): string {
   const facts = beat.factIds
@@ -104,9 +103,6 @@ export function buildBeatPrompt(
   // enumerate the scene inventory instead of writing the beat's fact.
   const present = scene.present.slice(0, 3).map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
   const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
-  const lastPrior = prior
-    ? clip(prior.split(/\n+/u).filter(Boolean).slice(-1)[0] ?? '', 60)
-    : '';
   const lines = [
     '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
@@ -131,14 +127,13 @@ export function buildBeatPrompt(
     ...(present.length ? [`- 在场：${present.join('；')}`] : []),
     ...(objects.length ? [`- 可见物品：${objects.join('；')}`] : []),
     ...(details.length ? [`- 已登记细节：${details.join('；')}`] : []),
-    ...(lastPrior ? [`已写内容（不要重复其中的句子）：${lastPrior}`] : []),
     '',
     '要求：',
     `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
     '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
     '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
-    '- 「结算原话」要原样放进正文；不要换同义词，也不要把它拆成两句话。',
+    '- 结算记录的措辞可以自己写；人物、对象和结果方向不能改。',
     '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
     '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
     '- 把它写成一幕，不是写成清单：只挑一处此刻最显眼的细节，用视角人物的注意力带出来；不要把「可见物品」「已登记细节」逐条抄进正文。',
@@ -207,7 +202,6 @@ export async function composeBeatWithModel(
   engine: InferenceEngine,
   beat: BeatDirective,
   scene: SceneSkeleton,
-  prior: string | null,
   options: {
     sanityStyle: 'direction' | 'number';
     instruction?: string | null;
@@ -220,7 +214,7 @@ export async function composeBeatWithModel(
   },
 ): Promise<ModelBeatResult> {
   const started = performance.now();
-  const prompt = buildBeatPrompt(beat, scene, prior, {
+  const prompt = buildBeatPrompt(beat, scene, {
     instruction: [options.instruction, options.feedback].filter(Boolean).join(' ') || null,
     sanityStyle: options.sanityStyle,
     // The 05e7 beats catalogued every licensed detail ("弹匣内剩3发…", "电量灯不亮…").
