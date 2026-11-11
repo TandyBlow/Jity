@@ -101,6 +101,9 @@ interface ResultsAnswer {
   /** A written outcome that disagreed with the judgement or the sentence and was
    * replaced by the judgement-derived direction. */
   outcomeAdjusted?: { actorId: Id; original: string; written: ResultOutcome; derived: ResultOutcome; why: string }[];
+  /** An effects row that contradicted the frozen admission; the frozen value
+   * was written instead of re-asking the group. */
+  effectsAdjusted?: { memberId: Id; targetId: Id; written: boolean; frozen: boolean }[];
   /** An item possessive that named the wrong character; the frozen owner was
    * written instead so the observation survives. */
   ownershipAdjusted?: { original: string; from: string; to: string; item: string }[];
@@ -213,6 +216,7 @@ export async function runResults(
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
       outcomeAdjusted: parsedAnswer.outcomeAdjusted ?? [],
+      effectsAdjusted: parsedAnswer.effectsAdjusted ?? [],
       ownershipAdjusted: parsedAnswer.ownershipAdjusted ?? [],
       firstPersonAdjusted: parsedAnswer.firstPersonAdjusted ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
@@ -412,6 +416,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const seen = new Set<Id>();
   const judgments: Judgment[] = [];
   const dropped: NonNullable<ResultsAnswer['dropped']> = [];
+  const effectsAdjusted: NonNullable<ResultsAnswer['effectsAdjusted']> = [];
   for (const rawJudgment of answer.judgments) {
     if (!isRecord(rawJudgment)) throw new Error('judgment must be an object');
     const rawMemberId = asString(rawJudgment.memberId);
@@ -455,10 +460,15 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       if (effectIds.has(targetId)) throw new Error(`duplicate effect target ${targetId}`);
       effectIds.add(targetId);
       if (typeof rawEffect.reacted !== 'boolean') throw new Error(`reacted must be boolean for ${targetId}`);
-      if (rawEffect.reacted !== expected.get(targetId)) {
-        throw new Error(`reacted=${rawEffect.reacted} contradicts admitted=${expected.get(targetId)} for ${memberId}->${targetId}`);
+      const frozen = expected.get(targetId) === true;
+      if (rawEffect.reacted !== frozen) {
+        // The admission is frozen state; the model copying the opposite value
+        // is a slip. 09-frozen-raw-6186 turn 2 lost the whole turn to exactly
+        // this (two 22 s attempts, empty prose, 世界没有完成). The value is
+        // corrected from the frozen roll and recorded, not re-asked.
+        effectsAdjusted.push({ memberId, targetId, written: rawEffect.reacted, frozen });
       }
-      effects.push({ targetId, reacted: rawEffect.reacted });
+      effects.push({ targetId, reacted: frozen });
     }
     for (const targetId of expected.keys()) {
       if (!effectIds.has(targetId)) throw new Error(`missing effect for ${memberId}->${targetId}`);
@@ -810,6 +820,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),
     ...(adjustments.length ? { outcomeAdjusted: adjustments } : {}),
+    ...(effectsAdjusted.length ? { effectsAdjusted } : {}),
     ...(ownershipAdjusted.length ? { ownershipAdjusted } : {}),
     ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
   };

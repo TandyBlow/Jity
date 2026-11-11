@@ -613,7 +613,10 @@ describe('common-group results', () => {
     expect(detail.sanitizedFacts[0]?.text).not.toContain('行动成功完成');
   });
 
-  it('rejects a denied roll narrated as a reaction and retries with feedback', async () => {
+  it('corrects a denied roll narrated as a reaction from the frozen admission', async () => {
+    // 09-frozen-raw-6186 turn 2: the group wrote reacted=true for an admitted=false
+    // target twice and the whole turn ended with 世界没有完成. The admission is
+    // frozen state, so the value is corrected and recorded, not re-asked.
     const state = world();
     const input = {
       groupId: 'g1',
@@ -623,26 +626,27 @@ describe('common-group results', () => {
       ],
       workingState: state,
     } as unknown as Json;
-    const invalid = JSON.stringify({
+    const answer = JSON.stringify({
       judgments: [
         { memberId: 'a', label: 'partial', reason: '抓到了。', effects: [{ targetId: 'b', reacted: true }] },
         { memberId: 'b', label: 'achieved', reason: '躲开。', effects: [] },
       ],
-      facts: [{ text: '甲抓住了乙。', memberIds: ['a', 'b'] }],
-    });
-    const valid = JSON.stringify({
-      judgments: [
-        { memberId: 'a', label: 'not_achieved', reason: '乙没有反应。', effects: [{ targetId: 'b', reacted: false }] },
-        { memberId: 'b', label: 'no_change', reason: '乙没有被迫行动。', effects: [] },
+      facts: [
+        { text: '甲伸手抓向乙，乙侧身避开。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙侧身避开。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
       ],
-      facts: [{ text: '甲伸手，乙没有反应。', memberIds: ['a', 'b'] }],
     });
-    const engine = new ScriptedEngine([invalid, valid]);
-    const handlers = createSettlementHandlers({ engine });
-    const outcome = await handlers.results('g1', input);
-    expect(outcome.value!.a).toContain('乙没有反应');
-    expect(outcome.evidence.calls).toHaveLength(2);
-    expect(engine.prompts[1]).toContain('reacted=true contradicts admitted=false');
+    const engine = new ScriptedEngine([answer]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', input);
+    expect(outcome.error ?? null).toBeNull();
+    expect(outcome.value).not.toBeNull();
+    expect(engine.prompts).toHaveLength(1);
+    const detail = outcome.evidence.detail as {
+      facts: { actorId: string; text: string }[];
+      effectsAdjusted: { memberId: string; targetId: string; written: boolean; frozen: boolean }[];
+    };
+    expect(detail.facts.map((fact) => fact.actorId)).toEqual(['a', 'b']);
+    expect(detail.effectsAdjusted[0]).toMatchObject({ memberId: 'a', targetId: 'b', written: true, frozen: false });
   });
 
   it('aborts the point after repeated invalid output instead of inventing a result', async () => {
