@@ -798,6 +798,10 @@ try {
           pointCommittedAtMs: record.clocks?.pointCommittedAtMs ?? record.pointCommittedAtMs ?? null,
           narrationStartedAtMs: record.clocks?.narrationStartedAtMs ?? null,
           narrationStarts: record.narrationStarts ?? null,
+          // Per-point narration clocks (06 f4893c53): startedAtMs /
+          // firstTextAtMs / completedAtMs keyed by pointId. This is the
+          // overlap evidence; narrationStarts above is the older field.
+          pointNarration: record.pointNarration ?? null,
           actions: Array.isArray(record.actions) ? record.actions : null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
@@ -856,7 +860,9 @@ try {
             source: row.source,
             // The lane's own value decides act vs skip; the issue codes are the
             // fallback signal when the value is not exposed.
-            decision: value ? (value.kind === 'skip' ? 'skip' : 'act') : (skipIssue ? 'skip' : 'act'),
+            // Only a value or a skip code decides; a fallback row carries
+            // neither, and calling it 'act' would invent a decision.
+            decision: value ? (value.kind === 'skip' ? 'skip' : 'act') : (skipIssue ? 'skip' : null),
             value: value ? { kind: value.kind ?? null, text: typeof value.text === 'string' ? value.text.slice(0, 200) : null } : null,
             issueDetails: Array.isArray(row.issueDetails) ? row.issueDetails : null,
             recordKind: row.recordKind ?? null,
@@ -880,6 +886,7 @@ try {
           fallbackJudged: rows.length ? fallback.length : null,
           modelSkips: model.filter((row) => row.decision === 'skip').length,
           modelActs: model.filter((row) => row.decision === 'act').length,
+          modelDecisionUnknown: model.filter((row) => row.decision == null).length,
           programSkips: program.filter((row) => row.decision === 'skip').length,
           modelMs: mean(model),
           programMs: mean(program),
