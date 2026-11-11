@@ -75,4 +75,27 @@ describe('point narration queue empty/error outcomes', () => {
       { pointId: 'p2', outcome: 'ready', text: '第二点的正文。', reason: null },
     ]);
   });
+
+  it('leaves the same point pending when the model is cancelled', async () => {
+    const fake = fakeTransport();
+    const model: WorldModelPort = {
+      async generate() {
+        const error = new Error('model_output_discarded_by_cancel');
+        error.name = 'AbortError';
+        throw error;
+      },
+    };
+    let seq = 0;
+    const outcomes: string[] = [];
+    const queue = new PointNarrationQueue({
+      transport: fake.transport, model, worldId: 'w', requestId: () => `q_${++seq}`,
+      lease: () => ({ leaseToken: 'lease', fenceEpoch: 1 }),
+      onOutcome: (outcome) => outcomes.push(`${outcome.status}:${outcome.pointId}`),
+    });
+    queue.enqueue('p1');
+    await queue.settled();
+    expect(fake.entries.p1).toMatchObject({ status: 'pending', text: null });
+    expect(fake.submits).toEqual([]);
+    expect(outcomes).toEqual(['skipped:p1']);
+  });
 });
