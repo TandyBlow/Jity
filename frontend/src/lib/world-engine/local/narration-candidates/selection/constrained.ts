@@ -109,6 +109,14 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         // (actor/action/target/outcome direction) instead of requiring the
         // settled wording verbatim.
         settledFacts: point.settledFacts ?? null,
+        // The world's own names, so the facts-packet projection can refuse an
+        // offscreen place or an unlisted person (09 35ad listed a whole route
+        // through 西门/西回廊/检修口 with no move fact and it passed).
+        worldNames: {
+          characters: Object.values(point.after.initial.characters).map((entity) => entity.name),
+          locations: Object.values(point.after.initial.locations).map((entity) => entity.name),
+          items: Object.values(point.after.initial.items).map((entity) => entity.name),
+        },
         // Near-empty only: length alone never rejects a complete scene. The
         // earlier 40-char floor rejected semantically complete short paragraphs
         // and the 30/36+ floor inside the candidate was the same rule twice.
@@ -176,10 +184,11 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
           // Rejected model drafts, in full: the final text is the program
           // fallback, so this is the only place the model's own words survive.
           // Raw is kept too (pre-sanitize), with its prompt size.
-          rejected: (beat.rejected ?? []).map((attempt: { attempt: number; text: string; raw?: string; promptChars?: number; issues: { kind: string; severity: string }[] }) => ({
+          rejected: (beat.rejected ?? []).map((attempt: { attempt: number; text: string; raw?: string; prompt?: string; promptChars?: number; issues: { kind: string; severity: string }[] }) => ({
             attempt: attempt.attempt,
             text: attempt.text,
             raw: attempt.raw ?? attempt.text,
+            prompt: attempt.prompt ?? null,
             promptChars: attempt.promptChars ?? null,
             hard: attempt.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind),
             details: attempt.issues.map((issue) => `${issue.kind}/${issue.severity}: ${(issue as { detail?: string }).detail ?? ''}`),

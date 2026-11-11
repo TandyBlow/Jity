@@ -37,6 +37,10 @@ export interface ProjectSceneOptions {
   timeAdvance?: TimeAdvance | null;
   /** Prefix for fact ids; keeps two projections of the same point distinct. */
   idPrefix?: string;
+  /** Every name the world knows. The facts-packet path has no state, so the
+   * caller supplies them and the gate can still refuse an offscreen place or an
+   * unlisted person instead of treating an unknown name as licensed. */
+  worldNames?: { characters: string[]; locations: string[]; items: string[] };
 }
 
 const emptyKnowledge = (): SceneKnowledge => ({ discoveredItemIds: [], visitedLocationIds: [], metCharacterIds: [] });
@@ -727,9 +731,14 @@ export function projectFromFactsPacket(
     if (fact.kind === 'at') {
       facts.push({ id: fact.id, kind: 'at', mandatory: false, visibility: 'scene', entityId: fact.actorId, name: fact.name, locationId: fact.locationId, location: fact.location });
     } else if (fact.kind === 'moved') {
+      // The packet may carry only ids when the caller had no state to resolve
+      // names; an empty «从到» reaches the prompt verbatim. Fall back to the
+      // string fields, then to the ids, never to an empty phrase.
+      const from = (fact.from ?? '').trim() || fact.fromId;
+      const to = (fact.to ?? '').trim() || fact.toId;
       facts.push({
         id: fact.id, kind: 'move', mandatory: true, visibility: 'scene', entityId: fact.actorId, name: fact.name,
-        entityKind: 'character', fromId: fact.fromId, from: fact.from, toId: fact.toId, to: fact.to,
+        entityKind: 'character', fromId: fact.fromId, from, toId: fact.toId, to,
         fromVisibility: 'in_view', toVisibility: 'in_view', viewpoint: fact.name === viewpointName,
       });
     } else if (fact.kind === 'task_achieved') {
@@ -807,7 +816,7 @@ export function projectFromFactsPacket(
     // dropped it, so no beat could write the player's declared action.
     previousAction: options.scene?.previousAction ?? null,
     resultsText: options.resultsText ?? null,
-    worldNames: { characters: [], locations: [], items: [] },
+    worldNames: options.worldNames ?? { characters: [], locations: [], items: [] },
     hasSceneMaterial: present.length > 0 || objects.length > 0,
     timeOnly: !facts.some((fact) => fact.kind !== 'time' && fact.kind !== 'at'),
   };

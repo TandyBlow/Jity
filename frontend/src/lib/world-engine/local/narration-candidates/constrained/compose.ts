@@ -28,8 +28,14 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
       const label = unit === 'hour' ? `${amount}小时` : unit === 'month' ? `${amount}个月` : `${amount}${UNIT_LABEL[unit]}`;
       return `本回合经过${label}（时间背景，不必写进正文；写到时长时不得改错）`;
     }
-    case 'move':
-      return `${fact.name}从${fact.from}到${fact.to}（方向必须是从到；${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
+    case 'move': {
+      // A location name can be missing when the packet only knows ids; an empty
+      // «从到» would be copied verbatim by a small model («方向是从到»).
+      const from = (fact.from ?? '').trim();
+      const to = (fact.to ?? '').trim();
+      const where = from && to ? `从${from}到${to}` : to ? `在${to}` : from ? `离开${from}` : '换了位置';
+      return `${fact.name}${where}（${from && to ? '方向必须是从到；' : ''}${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
+    }
     case 'task_achieved':
       return `「${fact.goal}」这件事，${fact.name}已经办完了（目标原话要出现，完成的意思要读得出来）`;
     case 'subtask_added':

@@ -47,6 +47,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
       knowledge: policy.knowledge,
       resultsText: policy.resultsText,
       settledFacts: policy.settledFacts ?? null,
+      ...(policy.worldNames ? { worldNames: policy.worldNames } : {}),
       priorText,
       inputText,
     });
@@ -398,7 +399,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
   // 2. Constrained model writer (one call per beat, one feedback retry).
   let modelAttempted = false;
   let modelFailed = false;
-  const rejected: { attempt: number; text: string; raw?: string; promptChars?: number; issues: CandidateIssue[] }[] = [];
+  const rejected: { attempt: number; text: string; raw?: string; prompt?: string; promptChars?: number; issues: CandidateIssue[] }[] = [];
   if (modelEnabled && args.modelBudget().enabled) {
     modelAttempted = true;
     const maxAttempts = Math.max(1, Math.min(2, policy.model?.maxAttempts ?? 2));
@@ -433,6 +434,8 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
             composer: 'model',
             evidence: {
               beatId: beat.id, kind: beat.kind, source: 'model', text: result.text,
+              // Keep the full prompt the model actually saw: a bad sentence is
+              // only attributable when the evidence shows its input.
               prompt: result.prompt, raw: result.raw, attempts: attempt, ms: result.ms, issues: beatIssues,
               ...(rejected.length ? { rejected } : {}),
             },
@@ -440,7 +443,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
         }
         // Keep the model's full raw output and prompt size with the rejection:
         // the fallback text replaces it, so this is the only copy.
-        rejected.push({ attempt, text: result.text, raw: result.raw, promptChars: result.prompt.length, issues: beatIssues });
+        rejected.push({ attempt, text: result.text, raw: result.raw, prompt: result.prompt, promptChars: result.prompt.length, issues: beatIssues });
         issues.push(...beatIssues);
         feedback = feedbackFor(beatIssues);
       } catch (error) {
@@ -473,7 +476,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
         composer: 'model-unverified',
         evidence: {
           beatId: beat.id, kind: beat.kind, source: 'draft', text: draft.text,
-          prompt: null, raw: draft.raw ?? draft.text, attempts: draft.attempt,
+          prompt: draft.prompt ?? null, raw: draft.raw ?? draft.text, attempts: draft.attempt,
           ms: now() - starts, issues: [...issues, ...draft.issues],
           ...(rejected.length ? { rejected } : {}),
         },

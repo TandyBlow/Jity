@@ -235,7 +235,7 @@ export interface BeatEvidence {
   issues: CandidateIssue[];
   /** Drafts that failed the beat gate before the accepted one. Kept so a mixed
    * turn shows what the model actually produced, not only the accepted text. */
-  rejected?: { attempt: number; text: string; raw?: string; promptChars?: number; issues: CandidateIssue[] }[];
+  rejected?: { attempt: number; text: string; raw?: string; prompt?: string; promptChars?: number; issues: CandidateIssue[] }[];
 }
 
 export interface CandidateTimings {
@@ -281,6 +281,8 @@ export interface ConstrainedPolicy {
   /** Structured settled records (04): actor, action, target, outcome direction.
    * When present they become the result facts; the wording above is ignored. */
   settledFacts?: StructuredSettledFact[] | null;
+  /** All world names (characters/locations/items) for the facts-packet path. */
+  worldNames?: { characters: string[]; locations: string[]; items: string[] };
   /** Whether hidden (out-of-scene) facts may be narrated. Default false. */
   narrateHiddenDeltas?: boolean;
   /** 'program' never calls a model; 'model' uses the engine per beat;
