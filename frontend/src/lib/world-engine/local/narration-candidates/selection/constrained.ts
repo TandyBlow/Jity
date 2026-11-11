@@ -109,7 +109,11 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
         // point (time + presence) is short on purpose. 40 keeps it readable
         // without padding it with invented detail.
         minChars: 40,
-        maxChars: 500,
+        // Variable length: a rich turn must not be rejected for being long
+        // (6e3a: four model beats composed >500 chars and the whole candidate
+        // was rejected as too_long, falling back to program). The cap only
+        // guards a runaway answer.
+        maxChars: 1200,
         requireTime: prepared.policy.requireTime ?? false,
         sanityStyle: 'number',
         ...(mode === 'program' ? { composer: composerWithResultBeat } : {}),
