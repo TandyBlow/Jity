@@ -35,7 +35,7 @@
   "goalCoverage": {
     "byGoal": {
       "task_caesar_contact": [
-        "B"
+        "A"
       ],
       "task_caesar_flag": [
         "B"
@@ -126,7 +126,6 @@
     "referenced": 28,
     "withoutA": [
       "task_caesar_bridge",
-      "task_caesar_contact",
       "task_caesar_flag",
       "task_caesar_win",
       "task_chu_flag",
@@ -158,6 +157,7 @@
     ],
     "withoutB": [
       "task_caesar_bridge",
+      "task_caesar_contact",
       "task_caesar_tang",
       "task_caesar_win",
       "task_chu_flag",
@@ -204,8 +204,7 @@
   "groups": {
     "skip": 6,
     "感知": 14,
-    "物品": 3,
-    "移动": 1,
+    "物品": 4,
     "立场": 1,
     "言语": 3,
     "请求": 2
@@ -321,8 +320,8 @@
   "predicatesUsed": 13,
   "problems": [],
   "rowClasses": {
-    "A": 18,
-    "B": 6,
+    "A": 19,
+    "B": 5,
     "skip": 6
   },
   "rowsWritten": 30,

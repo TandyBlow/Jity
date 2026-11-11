@@ -1,0 +1,24 @@
+{
+  "files": {
+    "batch1": 24,
+    "batch2": 32,
+    "batch3": 30,
+    "batch4": 30,
+    "batch5": 40,
+    "batch6": 11,
+    "train13r": 133
+  },
+  "problems": [],
+  "rowClasses": {
+    "A": 171,
+    "B": 103,
+    "skip": 26
+  },
+  "rows": {
+    "oneStep": 244,
+    "rows": 300,
+    "skip": 26,
+    "twoStep": 30
+  },
+  "uniqueX": 300
+}

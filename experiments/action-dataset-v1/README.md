@@ -41,7 +41,10 @@ experiments/action-dataset-v1/
 ├── cases/
 │   ├── batch1/           第一批 24 行（01 已审：20 pass / 4 fail，已按意见修）
 │   ├── batch2/           第二批 32 行（A 10 / B 16 / skip 6）
-│   ├── batch3/           第三批 30 行（A 18 / B 6 / skip 6，两步 6 条）
+│   ├── batch3/           第三批 30 行（A 19 / B 5 / skip 6，两步 6 条）
+│   ├── batch4/           第四批 30 行（A 20 / B 10，两步 8 条）
+│   ├── batch5/           第五批 40 行（A 21 / B 11 / skip 8，两步 10 条）
+│   ├── batch6/           收尾 11 行（A 7 / B 2 / skip 2，两步 3 条）
 │   └── *.jsonl           早期用例（skip 配方被 01 判 fail 的那部分见 §5）
 ├── rows/                 生成的行文件、每行来源记录、统计/复核报告
 └── tests/                41 个快速单元测试
@@ -148,9 +151,11 @@ python -X utf8 -m pytest experiments/action-dataset-v1/tests -q
 - 没有真实 tokenizer 的 token 长度；只有 04 字符代理档（`--stub-tokenizer`）的数字。
 - 只有一个世界（`world_dragon_raja_free_day`），跨世界泛化**未测**，不能声称。
 - 真实快照只覆盖同一局的前 3 分钟（15:20–15:23），所以“真实来源”的行在状态族上高度集中，这一点在 `pool/summary.json` 里按去重数报告，不当作多样性证据。
-- 现有 219 行（133 条 01 pass 的重建集 + batch1 24 + batch2 32 + batch3 30）：A 122 / B 81 / skip 16，skip 比例 7.3%，两步 9 条；覆盖 45/48 个目标有 A，32/48 有 B。3 个目标因 S₀ 已 achieved 无法覆盖（见 §6 第 7 条），`task_lin_leave` 有 B 无 A（伤者走不了）。
-- skip 来源窄：9 个角色里只有 4 类能只靠 X 推出“此刻没有该做的动作”（伤者、时间未到+不离岗、守窗口、守旗台）。219 行里只有 16 条 skip，离“约 30%”很远；要么承认“守位/等人时的观察”算 skip，要么接受更低比例，这需要 01 判，不硬凑。
-- batch2 的 X 长度：p50 619 字符、max 1055；batch3 p50 590、max 1220，都超过 04 的 384 cap。
+- 现有 **300 行**（133 条 01 pass 的重建集 + batch1 24 + batch2 32 + batch3 30 + batch4 30 + batch5 40 + batch6 11）：A 171 / B 103 / skip 26，skip 比例 8.7%，单步 244 / 两步 30；300 行 300 个不同 X。覆盖 45/48 个目标有 A，38/48 有 B；3 个在 S₀ 已 achieved 的目标只能有 A 行。
+- 合并交付文件用 `scripts/assemble.py` 从各批拼出，硬拒重复行号与重复 X：`rows/train13-full-candidates.jsonl`、`train13-full-provenance.jsonl`、`train13-full-check.json`。"rowClass" 只在 provenance 里，行内没有这个字段。3 个目标因 S₀ 已 achieved 无法覆盖（见 §6 第 7 条），`task_lin_leave` 有 B 无 A（伤者走不了）。
+- skip 来源窄：9 个角色里只有 4 类能只靠 X 推出“此刻没有该做的动作”（伤者、时间未到+不离岗、守窗口、守旗台）。300 行里只有 26 条 skip（8.7%），离“约 30%”很远；要么承认“守位/等人时的观察”算 skip，要么接受更低比例，这需要 01 判，不硬凑。
+- 300 行合起来的 X 长度：p50 629、p95 1207、max 1460 字符，全部超过 04 的 384 cap（04 已在 `04-x-length-decision.md` 里请用户决定，13 不擅自压缩 X）。
+- 粗组分布：感知 145 / 言语 51 / 移动 41 / 物品 31 / 请求 18 / 立场 12 / 援助 4 / 战斗 2；胁迫、算计、情绪、身体四组在演习这个非致命世界里没有可信落点，已登记给 01。
 - 行是候选数据；审查（01 100%、03 随机 10% 盲审）与最终接受都不由本线完成。
 
 ## 9. 交接记录
