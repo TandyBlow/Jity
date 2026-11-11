@@ -359,6 +359,7 @@ function cmdRender(file, mode = 'packet') {
     return [
       `### ${index + 1}/${review.ids.length}  rowId=${id}`,
       `source=${row.source} world=${row.worldId} character=${row.characterId} labelSource=${row.labelSource}`,
+      row.sourceRef ?? row.evidence ?? row.snapshot ? `sourceRef=${JSON.stringify(row.sourceRef ?? row.evidence ?? row.snapshot)}` : '',
       xText ? `X=${xText}` : '',
       !xText && x.actor ? `X.actor=${x.actor.name ?? ''}(${x.actor.id ?? ''})  精神=${x.actor.sanity ?? ''}  个性=${(x.actor.personality ?? []).join('/')}  位置=${x.actor.location ?? x.actor.position ?? ''}` : '',
       !xText && x.actor ? `X.goals=${(x.goals ?? []).map((g) => `${g?.id}(${g?.text ?? g?.goal ?? g?.description ?? ''})`).join('、') || '（无）'}` : '',
@@ -368,6 +369,7 @@ function cmdRender(file, mode = 'packet') {
       !xText ? `X.objects=${(x.objects ?? x.items ?? []).map((p) => p?.name ?? p).join('、') || '（无）'}` : '',
       !xText ? `X.justNow=${x.justNow ?? x.justHappened ?? x.recent ?? ''}` : '',
       !xText ? `X.candidates=${(x.candidates ?? []).map((c) => `${c?.id}(${c?.name ?? ''})`).join('、') || '（无）'}` : '',
+      !xText && x && typeof x === 'object' ? `X.json=${JSON.stringify(x)}` : '',
       `Y.steps=${JSON.stringify(steps)}`,
       `Y.group=${JSON.stringify(row.yGroup ?? null)}  firstStepGroup=${steps.length ? (vocabulary.actionToGroup.get(steps[0].action) ?? '?') : 'skip'}  Y.rationale=${row.yRationale}`,
       row.skipReason ? `Y.skipReason=${row.skipReason}` : null,
