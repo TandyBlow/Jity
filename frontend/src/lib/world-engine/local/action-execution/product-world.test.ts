@@ -29,12 +29,9 @@ describe('task-goal classifier on the shipped world', () => {
     const { state } = loadProductWorld();
     const scene = buildScene(state, 'nono');
     const options = { maxActionChars: 120, maxReactionChars: 200, maxTargets: 4 };
-    // The classifier flags an action when >=85% of the ACTION's characters
-    // are a subsequence of a registered goal. A concrete step that uses the
-    // task vocabulary but is longer than the goal is not a copy (0.84 here);
-    // a shortened goal restatement is (1.0). This is the boundary the 0b69
-    // diagnosis depends on: the model was emitting goal fragments, so the
-    // fix is the prompt/repair, not loosening the guard.
+    // The controlled comparison removes only the broad subsequence branch.
+    // Its high score alone must no longer reject a concrete/shortened action;
+    // exact copies and the short-goal contiguous rule remain in force.
     const goal = '确认西回廊的蓝方伤员是否需要真正的医护帮助';
     const concrete = '诺诺蹲下确认西回廊的蓝方伤员，是否需要真正的医护帮助。';
     expect(sharedSubsequence(skeleton(concrete), skeleton(goal)).coverage).toBeLessThan(0.85);
@@ -43,7 +40,7 @@ describe('task-goal classifier on the shipped world', () => {
     const fragment = '确认西回廊的蓝方伤员是否需要医护帮助。';
     expect(sharedSubsequence(skeleton(fragment), skeleton(goal)).coverage).toBeGreaterThanOrEqual(0.85);
     const fragmentIssues = checkActionText(fragment, scene, state, options).issues;
-    expect(fragmentIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(true);
+    expect(fragmentIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(false);
     // A verbatim goal is still caught.
     const verbatim = '确认西回廊的蓝方伤员是否需要真正的医护帮助。';
     const copyIssues = checkActionText(verbatim, scene, state, options).issues;

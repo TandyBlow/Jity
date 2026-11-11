@@ -54,7 +54,8 @@ function interactionNear(text: string, index: number, length: number): boolean {
 /** A task goal ("把故障短讯机恢复到能与凯撒联络的状态") is a standing
  * objective, not one action a character performs now. Small models copy it
  * verbatim — the first real probe produced three such "actions" (all three
- * were goal copies), so the guard rejects equality or near-total coverage. */
+ * were goal copies). Keep equality and the short-goal contiguous-span rule;
+ * the broad subsequence rule is removed for the user's controlled comparison. */
 function taskGoalCopy(text: string, goals: readonly string[]): string | null {
   const value = skeleton(text);
   if (value.length < 4) return null;
@@ -63,7 +64,6 @@ function taskGoalCopy(text: string, goals: readonly string[]): string | null {
     if (goal.length < 4) continue;
     if (value === goal) return goalText;
     if (goal.length <= 12 && longestSharedSpan(text, goalText).length >= Math.max(4, Math.ceil(goal.length * 0.6))) return goalText;
-    if (sharedSubsequence(text, goalText).coverage >= 0.85) return goalText;
   }
   return null;
 }
@@ -338,7 +338,12 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
     value = rewritten.text;
   }
 
-  const copiedGoal = taskGoalCopy(value, allGoals(state));
+  const reactionGoals = allGoals(state);
+  // This comparison changes action_is_task_goal only. Preserve the existing
+  // reaction_goal_copy behaviour instead of silently weakening a second guard.
+  const copiedGoal = taskGoalCopy(value, reactionGoals) ?? (skeleton(value).length >= 4
+    ? reactionGoals.find((goal) => skeleton(goal).length >= 4 && sharedSubsequence(value, goal).coverage >= 0.85)
+    : undefined);
   if (copiedGoal) {
     push(issue('reaction_goal_copy', 'error', `反应照抄了${memberName}的任务目标：“${copiedGoal}”`, { detail: copiedGoal }),
       '不要照抄任务目标；写这个角色此刻被这条行动逼出的具体反应');

@@ -90,7 +90,12 @@ interface WorldTurnRecord {
     source?: string | null;
     /** Guard codes, so a model-chosen skip (`model_skip`) stays distinct from a
      * program scope skip (`actor_out_of_scene`). */
-    issues?: string[] }>;
+    issues?: string[];
+    recordKind?: 'attempt' | 'result';
+    raw?: string | null;
+    value?: unknown;
+    calls?: Array<{ task: string; key: string; attempt: number; raw: string; elapsedMs: number; decoded: boolean; error?: string; promptChars: number; prompt?: string }>;
+    issueDetails?: Array<{ code: string; message: string; detail: string | null }> }>;
   /** Narration attempt evidence for the last point of this turn: the draft the
    * model saw, every raw attempt, why it was rejected and the echo ratio. 02
    * needs the raw text to fix wrong_person/low_support, and the turn record must
@@ -681,6 +686,13 @@ export default function WorldLocalPage() {
                 // itself are different facts about the run; keep both.
                 source: detail.source ?? null,
                 issues: (detail.issues ?? []).map((issue) => issue.code),
+                recordKind: detail.source ? 'result' : 'attempt',
+                raw: detail.raw ?? null,
+                value: detail.value,
+                calls: detail.calls,
+                issueDetails: (detail.issues ?? [])
+                  .filter((issue) => issue.severity === 'error')
+                  .map((issue) => ({ code: issue.code, message: issue.message, detail: issue.detail ?? null })),
               });
             }
             setStage(STAGE_LABEL[task] ?? task);

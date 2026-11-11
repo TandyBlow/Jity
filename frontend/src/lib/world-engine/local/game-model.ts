@@ -76,7 +76,10 @@ export interface GameModelOptions {
     source?: 'program' | 'model' | 'fallback';
     /** Guard conclusions, so a program skip and a model-chosen skip stay
      * distinguishable in the run evidence. */
-    issues?: { code: string; severity: string }[];
+    issues?: { code: string; severity: string; message: string; detail?: string }[];
+    /** Full action attempts, including rejected outputs, and the final decision. */
+    calls?: HandlerResult['calls'];
+    value?: Json;
     /** Per-stage milliseconds for a multi-stage (updates) call. */
     stageMs?: Record<string, number>;
     stages?: string[];
@@ -281,7 +284,9 @@ export class LocalGameModel implements WorldModelPort {
     this.options.onTask?.(result.task, result.key, {
       ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw,
       source: result.source,
-      issues: result.issues.map((issue) => ({ code: issue.code, severity: issue.severity })),
+      issues: result.issues.map((issue) => ({ code: issue.code, severity: issue.severity, message: issue.message, detail: issue.detail })),
+      calls: result.calls,
+      value: result.value,
     });
     return {
       value: result.value, raw: result.raw, ms: result.elapsedMs,
