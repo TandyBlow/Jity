@@ -37,6 +37,18 @@ The other 122 constructed rows and 11 real rows pass; 133 rows remain (11 real +
 5. X length: 04's `maxLen` cap 384 truncates 24/24 rows, and truncation cuts the last slot (候选, which `object` points into). Options measured: id-only candidates → p50 611, + no item place → 591, + goals 1–2 → 445, + personality 60 → 420/max 821.
 6. whether 03's blind re-review covers only the 11 real rows or also the 122 passing constructed rows.
 
+## 01 verdict on batch1 (round 1) and the fixes
+
+01 reviewed the 24 rows: 20 pass, 4 fail. All four fails were skip rows whose rationale used facts absent from X (a shout that never appears in `刚才`, fire that pinned the actor, other characters' remote rooms). Two batch-level problems: batch rowIds restarted at `train13-0001` (colliding with the 220-row set) and 01 asked not to expand before the batch is stable. 01 also reported a provenance mismatch where `row.source` said `evidence-snapshot` while provenance said `constructed`.
+
+Fixes in round 2:
+
+- three skip rationales rewritten to use only X-visible facts, with the evidence added as perceivable `刚才` lines (林亦舟's swollen ankle and sent help message, 周映's flag stuck in the lock); the 唐骁 skip became an A-class reload row because the empty magazine was in reach;
+- batch rows now use `b1-####` and `build_rows.py --row-prefix/--row-start`; old ids are never reused;
+- provenance `source` is derived from the same value as the row, plus a `derivation` field (`committed-snapshot`, `committed-snapshot+transforms`, `world-s0+transforms`).
+
+Regenerated batch: 24 rows (A 10, B 10, skip 4), 22 rows with `刚才`, 24/24 replay, 0 failures.
+
 ## Next
 
 After 01's verdict on this batch: fix the failed rows only, rebuild the 122 passing rows under the new X shape, add the remaining rows to 300 with A/B coverage per TRAIN goal, re-run `build_rows.py` + `check_dataset.py` + tests, and hand the full set to 01 for 100% review.

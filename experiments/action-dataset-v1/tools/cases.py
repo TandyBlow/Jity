@@ -165,9 +165,17 @@ def build_case(case: dict[str, Any], worktree_root: Path, snapshot_dir: Path, al
         if goal not in actor_goals:
             raise CaseError(f"case {case['caseId']}: references goal {goal} not pending for {actor}")
 
+    has_transforms = bool(records)
+    if base_meta["kind"] == "snapshot":
+        source = "evidence-snapshot"
+        derivation = "committed-snapshot+transforms" if has_transforms else "committed-snapshot"
+    else:
+        source = "constructed"
+        derivation = "world-s0+transforms"
     provenance_record = {
         "caseId": case["caseId"],
-        "source": "constructed",
+        "source": source,
+        "derivation": derivation,
         "base": base_meta,
         "seed": case.get("seed"),
         "transformCount": len(records),

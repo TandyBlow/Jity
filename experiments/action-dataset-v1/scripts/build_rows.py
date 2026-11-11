@@ -91,6 +91,8 @@ def main() -> int:
     parser.add_argument("--catalog", type=Path, nargs="+", required=True)
     parser.add_argument("--allowed-goals", type=Path, required=True)
     parser.add_argument("--snapshots", type=Path, default=HERE / "snapshots")
+    parser.add_argument("--row-prefix", default="train13", help="rowId prefix; keep batches from colliding")
+    parser.add_argument("--row-start", type=int, default=1)
     parser.add_argument("--out", type=Path, default=HERE / "rows" / "train-candidates-v1.jsonl")
     parser.add_argument("--provenance-out", type=Path, default=HERE / "rows" / "provenance-v1.jsonl")
     parser.add_argument("--report-out", type=Path, default=HERE / "rows" / "report-v1.json")
@@ -108,8 +110,8 @@ def main() -> int:
     records: list[dict] = []
     failures: list[dict] = []
     seen_x: dict[str, str] = {}
-    for index, case in enumerate(catalog, start=1):
-        row_id = f"train13-{index:04d}"
+    for index, case in enumerate(catalog, start=args.row_start):
+        row_id = f"{args.row_prefix}-{index:04d}"
         row_class = case.get("rowClass")
         try:
             if row_class not in ROW_CLASSES:
@@ -142,12 +144,14 @@ def main() -> int:
         rows.append(row)
         record = {
             "rowId": row_id,
+            "rowSource": row["source"],
             "caseId": case.get("caseId"),
             "rowClass": row_class,
             "characterId": case["actor"],
             "goalsReferenced": case.get("goalsReferenced") or [],
             "judgmentBasis": case.get("judgmentBasis") or ["goal"],
             "xSha256": key,
+            "rowIdCollision": False,
             "loaderXSha256": provenance.sha256_bytes(rendered["text"].encode("utf-8")),
             "loaderXChars": rendered["chars"],
             "loaderSerializer": {

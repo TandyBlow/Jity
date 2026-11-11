@@ -63,7 +63,7 @@ X 的**键名就是 04 loader 冻结的形状**（`character / goals / place / p
 
 ## 4. 行格式与校验
 
-行字段严格为用户给的十个：`rowId / source / worldId / characterId / x / y / yGroup / yRationale / labelSource / skipReason`。`y` 只有 `steps`，0/1/2 步，每步 `{action, object}`。
+行字段严格为用户给的十个：`rowId / source / worldId / characterId / x / y / yGroup / yRationale / labelSource / skipReason`。`rowId` 全局不重号：批次用 `b1-####`，整批用 `train13-####`（`build_rows.py --row-prefix/--row-start`），旧编号不复用。`y` 只有 `steps`，0/1/2 步，每步 `{action, object}`。
 
 校验规则（`tools/schema.py`，`check_dataset.py` 会独立重跑）：
 
@@ -85,7 +85,7 @@ X 的**键名就是 04 loader 冻结的形状**（`character / goals / place / p
 
 `source` 只有两种值，记录在每行的来源文件里：
 
-- `evidence-snapshot`：X 直接来自真实产品运行的已提交状态。记录证据文件相对路径、证据文件 sha256、JSON 指针、pointId/roundId/trigger、产品自己的 `stateDigest`、该次运行的 `status`、本实验对快照的 sha256。同一状态在多份运行里出现时，主指针优先选 `status` 不是 `FAILED` 的那一份，其余位置连同各自状态列进 `copies`；
+- `evidence-snapshot`：X 直接来自真实产品运行的已提交状态。行的 `source`、来源记录的 `source`、来源记录的 `derivation`（`committed-snapshot` / `committed-snapshot+transforms`）必须互相对得上。记录证据文件相对路径、证据文件 sha256、JSON 指针、pointId/roundId/trigger、产品自己的 `stateDigest`、该次运行的 `status`、本实验对快照的 sha256。同一状态在多份运行里出现时，主指针优先选 `status` 不是 `FAILED` 的那一份，其余位置连同各自状态列进 `copies`；
 - `constructed`：X 来自 `data/worlds/dragon-raja-free-day.world.json`（或某个真实快照）+ 显式变换序列。记录 base 文件 sha256、按序的变换记录（op/实体/容器/文字/若有的可见句子）、随机种子、变换合法性检查结果和状态不变量检查结果。
 
 三条硬规则：

@@ -22,10 +22,10 @@
     "splitSha256": "b4680a9e6b1b4af3ed023eb7bfc7c491afab1200a486254d56098a160d18a8eb"
   },
   "groups": {
-    "skip": 5,
+    "skip": 4,
     "感知": 9,
     "战斗": 1,
-    "物品": 3,
+    "物品": 4,
     "移动": 2,
     "言语": 2,
     "请求": 2
@@ -149,19 +149,19 @@
   "predicatesUsed": 11,
   "replayedRows": 24,
   "rowClasses": {
-    "A": 9,
+    "A": 10,
     "B": 10,
-    "skip": 5
+    "skip": 4
   },
   "rows": {
-    "oneStep": 18,
+    "oneStep": 19,
     "rows": 24,
-    "skip": 5,
+    "skip": 4,
     "twoStep": 1
   },
-  "skipRatio": 0.2083,
+  "skipRatio": 0.1667,
   "skipRatioBySource": {
-    "constructed": 0.2381,
+    "constructed": 0.1905,
     "evidence-snapshot": 0.0
   },
   "sources": {
