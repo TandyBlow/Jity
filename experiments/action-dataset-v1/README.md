@@ -42,8 +42,8 @@ experiments/action-dataset-v1/
 │   ├── batch1/           第一批 24 行（01 已审：20 pass / 4 fail，已按意见修）
 │   ├── batch2/           第二批 32 行（A 10 / B 16 / skip 6）
 │   ├── batch3/           第三批 30 行（A 19 / B 5 / skip 6，两步 6 条）
-│   ├── batch4/           第四批 30 行（A 20 / B 10，两步 8 条）
-│   ├── batch5/           第五批 40 行（A 21 / B 11 / skip 8，两步 10 条）
+│   ├── batch4/           第四批 30 行（A 22 / B 8，两步 8 条）
+│   ├── batch5/           第五批 40 行（A 22 / B 10 / skip 8，两步 10 条）
 │   ├── batch6/           收尾 11 行（A 7 / B 2 / skip 2，两步 3 条）
 │   └── *.jsonl           早期用例（skip 配方被 01 判 fail 的那部分见 §5）
 ├── rows/                 生成的行文件、每行来源记录、统计/复核报告
@@ -151,7 +151,7 @@ python -X utf8 -m pytest experiments/action-dataset-v1/tests -q
 - 没有真实 tokenizer 的 token 长度；只有 04 字符代理档（`--stub-tokenizer`）的数字。
 - 只有一个世界（`world_dragon_raja_free_day`），跨世界泛化**未测**，不能声称。
 - 真实快照只覆盖同一局的前 3 分钟（15:20–15:23），所以“真实来源”的行在状态族上高度集中，这一点在 `pool/summary.json` 里按去重数报告，不当作多样性证据。
-- 现有 **300 行**（133 条 01 pass 的重建集 + batch1 24 + batch2 32 + batch3 30 + batch4 30 + batch5 40 + batch6 11）：A 171 / B 103 / skip 26，skip 比例 8.7%，单步 244 / 两步 30；300 行 300 个不同 X。覆盖 45/48 个目标有 A，38/48 有 B；3 个在 S₀ 已 achieved 的目标只能有 A 行。
+- 现有 **300 行**（133 条 01 pass 的重建集 + batch1 24 + batch2 32 + batch3 30 + batch4 30 + batch5 40 + batch6 11）：A 174 / B 100 / skip 26，skip 比例 8.7%，单步 244 / 两步 30；300 行 300 个不同 X。覆盖 45/48 个目标有 A，37/48 有 B；3 个在 S₀ 已 achieved 的目标只能有 A 行。
 - 合并交付文件用 `scripts/assemble.py` 从各批拼出，硬拒重复行号与重复 X：`rows/train13-full-candidates.jsonl`、`train13-full-provenance.jsonl`、`train13-full-check.json`。"rowClass" 只在 provenance 里，行内没有这个字段。3 个目标因 S₀ 已 achieved 无法覆盖（见 §6 第 7 条），`task_lin_leave` 有 B 无 A（伤者走不了）。
 - skip 来源窄：9 个角色里只有 4 类能只靠 X 推出“此刻没有该做的动作”（伤者、时间未到+不离岗、守窗口、守旗台）。300 行里只有 26 条 skip（8.7%），离“约 30%”很远；要么承认“守位/等人时的观察”算 skip，要么接受更低比例，这需要 01 判，不硬凑。
 - 300 行合起来的 X 长度：p50 629、p95 1207、max 1460 字符，全部超过 04 的 384 cap（04 已在 `04-x-length-decision.md` 里请用户决定，13 不擅自压缩 X）。
