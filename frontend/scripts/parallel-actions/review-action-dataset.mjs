@@ -170,8 +170,11 @@ export function checkPacket(packet, vocabulary = null, trainGoals = null) {
     const badKeys = Object.keys(row).filter((key) => FORBIDDEN_ROW_KEYS.has(key.toLowerCase())
       || /^01/i.test(key) || /^review/i.test(key));
     if (badKeys.length) problems.push(`row ${id} carries 01-side fields (${badKeys.join(',')}): not blind`);
-    for (const field of ['source', 'worldId', 'characterId', 'x', 'yRationale', 'labelSource']) {
+    for (const field of ['source', 'worldId', 'characterId', 'x', 'yRationale']) {
       if (row[field] == null) problems.push(`row ${id} is missing ${field}`);
+    }
+    if (row.labelSource == null) {
+      warnings.push(`row ${id} has no labelSource (the 01 packet keeps X/Y/provenance; not needed to judge Y)`);
     }
     // 01's actual row shape: x.actor/goals/present/objects/justNow/candidates.
     // The legacy shape is still accepted for old fixtures, but a row that
@@ -243,7 +246,7 @@ export function checkPacket(packet, vocabulary = null, trainGoals = null) {
       if (step.object === row.characterId) problems.push(`row ${id} step.object is the actor`);
     }
     const manifest = packet?.manifest ?? packet?.sourceManifest ?? packet?.sources ?? null;
-    if (row.source === 'evidence-snapshot' && !row.sourceRef && !row.evidence && !row.snapshot
+    if (row.source === 'evidence-snapshot' && !row.sourceRef && !row.evidence && !row.snapshot && !row.provenance
       && !(manifest && (manifest[row.rowId] ?? manifest[row.id]))) {
       warnings.push(`row ${id} claims evidence-snapshot but has no source pointer and the packet has no manifest entry`);
     }
@@ -386,6 +389,7 @@ function cmdRender(file, mode = 'packet') {
       `### ${index + 1}/${review.ids.length}  rowId=${id}`,
       `source=${row.source} world=${row.worldId} character=${row.characterId} labelSource=${row.labelSource}`,
       row.sourceRef ?? row.evidence ?? row.snapshot ? `sourceRef=${JSON.stringify(row.sourceRef ?? row.evidence ?? row.snapshot)}` : '',
+      row.provenance ? `provenance=${JSON.stringify(row.provenance)}` : '',
       xText ? `X=${xText}` : '',
       !xText && x.actor ? `X.actor=${x.actor.name ?? ''}(${x.actor.id ?? ''})  精神=${x.actor.sanity ?? ''}  个性=${(x.actor.personality ?? []).join('/')}  位置=${x.actor.location ?? x.actor.position ?? ''}` : '',
       !xText && x.actor ? `X.goals=${(x.goals ?? []).map((g) => `${g?.id}(${g?.text ?? g?.goal ?? g?.description ?? ''})`).join('、') || '（无）'}` : '',
