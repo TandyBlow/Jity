@@ -197,6 +197,14 @@ export function checkRun(input, options = {}) {
     if (decision === 'failed' && continuation.length) soft.push(`${where}: continuation failed (no candidate; not a normal handback)`);
     const stops = Array.isArray(sub.stops) ? sub.stops : [];
     const policyStops = stops.filter((stop) => String(stop).includes('continuation_policy_'));
+    // 10turn run 2026-11-11T0928-94ef: every settlement call succeeded, the
+    // commit threw KernelViolation, and the page then died on click timeouts.
+    // The ledger cannot see a commit failure, so say so instead of passing.
+    const turnRow = turns[index] ?? turns.find((row) => row?.submission === sub) ?? null;
+    if (turnRow?.problems?.includes('settlement_failed_recoverable')
+      && (sub.calls ?? []).every((call) => !call.error)) {
+      soft.push(`${where}: the turn failed after settlement (every call succeeded); the commit step is not in the ledger`);
+    }
     const unsettled = (sub.calls ?? []).filter((call) => call.roundProgress?.reason === 'action_not_settled');
     if (unsettled.length) {
       soft.push(`${where}: ${unsettled.length} automatic point(s) settled something other than their proposal (${unsettled.map((call) => call.key).join(',')})`);
