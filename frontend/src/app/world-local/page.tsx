@@ -678,7 +678,9 @@ export default function WorldLocalPage() {
               startRecord.clocks.pointCommittedAtMs = at;
             }
             setPhase('streaming');
-            const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
+            // Exactly what the model returned. No character substitution: the
+            // page must be identical to the model text (whitespace kept).
+            const text = progress.raw;
             // First visible model text; the same prose is completed in place.
             const draftMs = Math.round(performance.now() - submittedAtRef.current);
             const record = turnRecordRef.current;
@@ -690,11 +692,13 @@ export default function WorldLocalPage() {
               // until the call finishes, but it is not a draft to be replaced.
               if (index < 0) points.push({ pointId: progress.pointId, text, source: 'model' });
               else if (points[index].source !== 'program') points[index] = { ...points[index], text };
-              return { ...entry, points, text: points.map((part) => part.text.trim()).filter(Boolean).join('\n\n'), draftMs: entry.draftMs ?? draftMs };
+              return { ...entry, points, text: points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10)), draftMs: entry.draftMs ?? draftMs };
             }));
           },
           onNarrationComplete: (progress) => {
-            const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
+            // Exactly what the model returned. No character substitution: the
+            // page must be identical to the model text (whitespace kept).
+            const text = progress.raw;
             const atMs = Math.round(performance.now() - submittedAtRef.current);
             // Non-empty model prose is shown exactly as returned. Source = model
             // describes where it came from; it is not a quality verdict.
@@ -731,7 +735,7 @@ export default function WorldLocalPage() {
               const segments = progress.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }));
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
               else points[index] = { pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
-              const joined = points.map((part) => part.text.trim()).filter(Boolean).join(String.fromCharCode(10, 10));
+              const joined = points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10));
               return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
             }));
             setPhase('ready');
