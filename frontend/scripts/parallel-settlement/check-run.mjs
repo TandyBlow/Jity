@@ -93,6 +93,36 @@ export function checkRun(input, options = {}) {
     for (const call of updates) {
       hard.push(...stageProblems(call, `${where} updates/${call.key}`));
       const coverage = call.coverage;
+      // The 04 fixes of 2026-11-11 add fields the ledger did not have. They are
+      // checked here so a real run proves the new behaviour, not just coverage.
+      if (coverage && !Array.isArray(coverage.defaultedUnchanged)) {
+        soft.push(`${where} updates/${call.key}: defaultedUnchanged not recorded (port predates 9c100ad4 wiring)`);
+      }
+      const hasFacts = Array.isArray(call.facts);
+      const factCount = hasFacts ? call.facts.length : 0;
+      for (const support of Array.isArray(coverage?.supports) ? coverage.supports : []) {
+        const basis = String(support?.basis ?? '');
+        if (basis === 'time') continue;
+        const match = /^f(\d+)$/.exec(basis);
+        if (!match) {
+          hard.push(`${where} updates/${call.key}: ${support?.characterId}/${support?.taskId} cites basis ${JSON.stringify(basis)}, not f<n> or time`);
+        } else if (hasFacts && Number(match[1]) > factCount) {
+          hard.push(`${where} updates/${call.key}: ${support?.characterId}/${support?.taskId} cites ${basis} but this point settled ${factCount} fact(s)`);
+        }
+      }
+      for (const [label, list] of [
+        ['rejectedTaskIds', coverage?.rejectedTaskIds],
+        ['rejectedSubtasks', call.rejectedSubtasks],
+        ['rejectedPersonality', call.rejectedPersonality],
+      ]) {
+        if (!Array.isArray(list)) continue;
+        for (const row of list) {
+          if (!row || typeof row.reason !== 'string') hard.push(`${where} updates/${call.key}: ${label} row has no reason`);
+        }
+      }
+      if (Array.isArray(call.lenientDrops) && call.lenientDrops.length) {
+        soft.push(`${where} updates/${call.key}: ${call.lenientDrops.length} redundant keep/remove text dropped (${call.lenientDrops.map((row) => `${row.entityId}:${row.op}`).join(',')})`);
+      }
       if (!coverage) soft.push(`${where} updates/${call.key}: no coverage counts recorded`);
       else {
         if (coverage.tasks < cast) hard.push(`${where} updates/${call.key}: task coverage ${coverage.tasks} < cast ${cast}`);
@@ -292,6 +322,24 @@ function selfTest() {
     )) }, false],
     ['policy stop kept the paragraph', { turns: [{ text: '路明非走进服务巷。', submission: { ...base, continuationDecision: 'policy_stop', stops: ['continuation:continuation_policy_abstract_task_goal'] } }] }, true],
     ['policy stop lost the paragraph', { turns: [{ text: '', problems: ['no_readable_prose'], submission: { ...base, continuationDecision: 'policy_stop', stops: ['continuation:continuation_policy_no_progress'] } }] }, false],
+    ['achievement cites a fact this point did not settle', { ...base, calls: base.calls.map((call) => (
+      call.task === 'updates'
+        ? { ...call, coverage: { ...call.coverage, supports: [{ characterId: 'a', taskId: 't1', basis: 'f9' }] }, facts: [] }
+        : call
+    )) }, false],
+    ['achievement cites a basis that is not a fact id', { ...base, calls: base.calls.map((call) => (
+      call.task === 'updates'
+        ? { ...call, coverage: { ...call.coverage, supports: [{ characterId: 'a', taskId: 't1', basis: '目标达成' }] } }
+        : call
+    )) }, false],
+    ['rejection row without a reason', { ...base, calls: base.calls.map((call) => (
+      call.task === 'updates' ? { ...call, rejectedPersonality: [{ entityId: 'a' }] } : call
+    )) }, false],
+    ['grounded achievement and time basis', { ...base, calls: base.calls.map((call) => (
+      call.task === 'updates'
+        ? { ...call, coverage: { ...call.coverage, supports: [{ characterId: 'a', taskId: 't1', basis: 'f1' }, { characterId: 'b', taskId: 't2', basis: 'time' }] } }
+        : call
+    )) }, true],
   ];
   let failed = 0;
   for (const [name, input, expected] of cases) {

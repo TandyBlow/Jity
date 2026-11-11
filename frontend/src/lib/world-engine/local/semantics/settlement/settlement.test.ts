@@ -4,7 +4,7 @@ import type { InferenceEngine } from '../../../runtime/engine';
 import type { InitialState, Json, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import { buildInitialState } from '../../state';
-import { projectStage } from './support';
+import { projectStage, unwrapIdBrackets } from './support';
 import type { RoundProgressEvidence } from './support';
 import { createContinuationPolicy, createSettlementHandlers, continuationPolicy } from './index';
 
@@ -90,7 +90,7 @@ function updatesInput(state = world(), stage?: UpdatesStage, mode: 'group' | 'ti
     groupId: mode === 'group' ? 'g1' : undefined,
     mode,
     stage,
-    results: mode === 'group' ? { a: '甲退到远处，工具被放进盒子。', b: '乙留在房间。', off: '丙仍在远处。' } : undefined,
+    results: mode === 'group' ? { a: '甲把工具放进盒子，站在房间门口。', b: '乙留在房间。', off: '丙在远处张望。' } : undefined,
     workingState: state,
   } as unknown as Json;
 }
@@ -355,6 +355,63 @@ describe('common-group results', () => {
     expect(policy.observe([], accepted, evidence('digest-b'), 'automatic').allow).toBe(true);
   });
 
+  it('asks for the walk to be recorded when the fact names a place, and only once', async () => {
+    // Real 0.6B: "路明非…走进演习观察席" came back as {"changes":[]} (or with his
+    // old container copied from the example), so the player's walk was dropped.
+    // The first answer must record it; a second miss is kept and reported.
+    const walk = JSON.stringify({ changes: [] });
+    const moved = JSON.stringify({ changes: [{ entityId: 'a', containerId: 'far', slotId: null, relativeTo: null }] });
+    const engine = new ScriptedEngine([
+      walk,
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    await createSettlementHandlers({ engine }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '甲退到远处，把门关上。', b: '乙留在房间。' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(engine.prompts[1]).toContain('甲退到远处');
+    expect(engine.prompts[1]).toContain('far');
+
+    const second = new ScriptedEngine([walk, walk, walk, JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }), JSON.stringify({ subtasks: [] })]);
+    const outcome = await createSettlementHandlers({ engine: second }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '甲退到远处，把门关上。', b: '乙留在房间。' },
+      workingState: world(),
+    } as unknown as Json);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; missingMoves?: unknown[] }[] }).stages ?? [];
+    expect(stages.find((row) => row.stage === 'position')?.missingMoves).toEqual([
+      { factId: 'f1', entityId: 'a', locationId: 'far' },
+    ]);
+
+    // A fact that describes somebody else walking must not move its own member.
+    const other = new ScriptedEngine([walk, JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }), JSON.stringify({ subtasks: [] })]);
+    await createSettlementHandlers({ engine: other }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '乙走进远处，甲留在原地。', b: '乙点头。' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(other.prompts.filter((prompt) => prompt.includes('位置结算器')).length).toBe(1);
+  });
+
+  it('does not print a visible character’s pending task goal in the proposal prompt', async () => {
+    // Real 0.6B, both measured cases: the only concrete sentence on the page was
+    // nono's pending goal ("让红方的旗台行动有可执行的掩护…"), the model copied it
+    // as the follow-up, and the policy had to stop the chain as
+    // abstract_task_goal — every turn ended after its first automatic round.
+    const engine = new ScriptedEngine([JSON.stringify({ candidates: [] })]);
+    await createSettlementHandlers({ engine }).continuation('round_1', continuationInput([]));
+    const prompt = engine.prompts[0];
+    expect(prompt).not.toContain('待办=');
+    expect(prompt).not.toContain('任务=');
+    expect(prompt).toMatch(/同地点人物：/u);
+  });
+
   it('never shows a literal placeholder id in the continuation format example', async () => {
     // 35ad turn 3: nobody else in the room, the example said characterId
     // "人物id", the model copied it four times and the fatal placeholder check
@@ -607,6 +664,86 @@ describe('common-group results', () => {
     expect(detail.subjectRestored ?? []).toEqual([]);
   });
 
+  it('asks for achieved-only task answers and defaults the rest to unchanged', async () => {
+    // 171 recorded task-stage answers (532 updates answers, 44 evidence files)
+    // named every character under `unchanged` and never achieved a task: the
+    // roster skeleton was copied. Under the 'achieved' contract the model names
+    // only what changed, and the program applies unchanged to the rest.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      // The verifier is a second model call: the cited fact must satisfy the goal.
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved' } }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲把工具拿到手，放进自己的口袋。', b: '' }, workingState: world(),
+    } as unknown as Json);
+    const prompt = engine.prompts[0];
+    expect(prompt).toContain('没有变化的人物不要写');
+    expect(prompt).not.toContain('"unchanged":[');
+    expect(prompt).toContain('"achieved":[{"characterId":"<人物id>"');
+    // The model asserted one change and said nothing about the other owner; the
+    // reader must apply unchanged instead of failing coverage, and record it.
+    const detail = outcome.evidence.detail as {
+      stageDetail?: {
+        newlyAchievedTaskIds?: string[];
+        taskScope?: { defaultedUnchanged?: string[]; supports?: { taskId: string }[]; verifier?: { satisfied: string }[] };
+      };
+    };
+    expect(detail.stageDetail?.newlyAchievedTaskIds).toEqual(['a1']);
+    expect(detail.stageDetail?.taskScope?.supports?.map((row) => row.taskId)).toEqual(['a1']);
+    expect(detail.stageDetail?.taskScope?.verifier?.[0]?.satisfied).toBe('yes');
+    expect(detail.stageDetail?.taskScope?.defaultedUnchanged ?? []).toContain('b');
+  });
+
+  it('refuses an achievement credited to another member fact unless it names them', async () => {
+    // Real 0.6B probe 2026-11-11: with the 'achieved' contract the model marked
+    // caesar's bridge task achieved on lu's goggles fact, and the verifier said
+    // yes. The fact's owner is structural, so the reader rejects the swap; a fact
+    // that names the other character still counts.
+    const answer = (characterId: string, taskKey: string) => JSON.stringify({
+      achieved: [{ characterId, tasks: [{ taskId: taskKey, basis: 'f1' }] }], subtasks: [],
+    });
+    const engine = new ScriptedEngine([answer('b', 't3')]);
+    const swapped = await createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved' } })
+      .updates('group_1#tasks', {
+        groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+        results: { a: '甲把工具拿到手，放进自己的口袋。' }, workingState: world(),
+      } as unknown as Json);
+    const swappedDetail = swapped.evidence.detail as {
+      stageDetail?: { newlyAchievedTaskIds?: string[]; taskScope?: { rejectedTaskIds?: { characterId: string; reason: string }[] } };
+    };
+    expect(swappedDetail.stageDetail?.newlyAchievedTaskIds ?? []).toEqual([]);
+    expect((swappedDetail.stageDetail?.taskScope?.rejectedTaskIds ?? []).map((row) => `${row.characterId}:${row.reason}`))
+      .toEqual(['b:support_belongs_to_a']);
+
+    const naming = new ScriptedEngine([
+      answer('b', 't3'),
+      JSON.stringify({ judgments: [{ characterId: 'b', taskId: 'b1', satisfied: 'yes', reason: '乙的条件成立。' }] }),
+    ]);
+    const named = await createSettlementHandlers({ engine: naming, options: { requireTaskSupport: true, tasksContract: 'achieved' } })
+      .updates('group_1#tasks', {
+        groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+        results: { a: '甲把工具交给乙，乙协助甲把工具拿稳。' }, workingState: world(),
+      } as unknown as Json);
+    const namedDetail = named.evidence.detail as { stageDetail?: { newlyAchievedTaskIds?: string[] } };
+    expect(namedDetail.stageDetail?.newlyAchievedTaskIds ?? []).toEqual(['b1']);
+  });
+
+  it('still refuses an achieved entry whose fact basis is not in this point', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f9' }] }],
+      subtasks: [],
+    })]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'achieved' } }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲把工具拿到手，放进自己的口袋。' }, workingState: world(),
+    } as unknown as Json);
+    const detail = outcome.evidence.detail as { stageDetail?: { changes?: Record<string, unknown>; reason?: string } };
+    expect(Object.keys(detail.stageDetail?.changes ?? {})).toEqual([]);
+    expect(detail.stageDetail?.reason ?? '').toContain('unknown_support');
+  });
+
   it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
     // 3turn 9623 group_29: lu asked nono a question, the answer judged nono only
     // and facts were attributed to both. lu had no roll target, so the row is
@@ -682,12 +819,17 @@ describe('common-group results', () => {
     const from = prompt.indexOf('地点和容器');
     const to = prompt.indexOf('输出 {', from);
     const catalog = prompt.slice(from, to > from ? to : undefined);
-    const ids = [...Object.keys(state.initial.locations), ...Object.keys(state.initial.items), ...Object.keys(state.initial.characters)];
+    const ids = [...Object.keys(state.initial.locations), ...Object.keys(state.initial.characters),
+      ...Object.keys(state.initial.items).filter((id) => (state.initial.items[id]?.slots ?? []).length)];
     for (const id of ids) expect(catalog).toContain(`${id}=`);
     for (const entity of [...Object.values(state.initial.locations), ...Object.values(state.initial.items), ...Object.values(state.initial.characters)]) {
       for (const slot of entity.slots ?? []) expect(catalog).toContain(slot.id);
     }
     expect(catalog).not.toContain('[]');
+    // A slotless item can hold nothing and the world never uses one as a
+    // container, so its line is not worth its prefill on every point.
+    const slotless = Object.keys(state.initial.items).filter((id) => !(state.initial.items[id]?.slots ?? []).length);
+    for (const id of slotless) expect(catalog).not.toContain(`${id}=`);
   });
 
   it('keeps the first judgement when a member is repeated instead of failing the turn', async () => {
@@ -977,7 +1119,207 @@ describe('six-stage updates', () => {
     const tasksPrompt = engine.prompts.find((prompt) => prompt.includes('任务判定器'))!;
     expect(tasksPrompt).toContain('甲（id=a）位置=远处');
     const personalityPrompt = engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))!;
-    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`\"${id}\"`);
+    // Every scanned character is listed as a row; the answer no longer prints a
+    // copyable roster skeleton, so the ids appear as rows rather than as quotes.
+    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`id=${id}`);
+  });
+
+  it('accepts a changes-only personality answer and keeps everyone else', async () => {
+    // Same defect class as the tasks roster: the prompt printed
+    // {"scanned":[...],"changes":[]}, the 0.6B copied it, and no personality
+    // change was ever produced on real output (five probes, 2026-11-11).
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),                                     // position
+      JSON.stringify({ operations: [] }),                                  // appearance
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }), // tasks
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }), // verifier
+      JSON.stringify({ subtasks: [] }),                                    // subtasks
+      JSON.stringify({ changes: [{ entityId: 'a', op: 'add', recordIds: [], text: '做完这件事后更愿意先动手。' }] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const personality = calls.find((call) => call.stage === 'personality')!;
+    expect(personality.changes.a?.personalityChanges?.[0]?.text).toBe('做完这件事后更愿意先动手。');
+    expect(Object.keys(personality.changes)).toEqual(['a']);
+    const sanity = calls.find((call) => call.stage === 'sanity')!;
+    expect(sanity.changes.a?.sanitySet).toBe(61);
+    expect(engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))).not.toContain('"scanned":[');
+  });
+
+  it('unwraps one layer of brackets around a real id but not a shape placeholder', async () => {
+    // The real 0.6B answered entityId "<lu>" (it kept the shape's brackets) and
+    // the point aborted as "unknown character <lu>"; "<人物id>" must still fail.
+    expect(unwrapIdBrackets('<lu>')).toBe('lu');
+    expect(unwrapIdBrackets('（路明非）')).toBe('路明非');
+    expect(unwrapIdBrackets('人物id')).toBe('人物id');
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: '<a>', op: 'add', recordIds: [], text: '更愿意先动手。' }] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'personality')!.changes.a?.personalityChanges?.[0]?.text).toBe('更愿意先动手。');
+  });
+
+  it('drops a personality text that just repeats the settled fact', async () => {
+    // Real 0.6B (probe 04-six-stage-real-8): the personality answer for both lu
+    // and nono was the settled fact verbatim. A permanent trait made of the
+    // event sentence is state pollution, so the text is dropped and reported.
+    const echo = '甲把工具放进盒子，站在房间门口。';
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: 'a', op: 'add', recordIds: [], text: echo }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const personality = calls.find((call) => call.stage === 'personality')!;
+    expect(Object.keys(personality.changes)).toEqual([]);
+    const detail = outcome.evidence.detail as {
+      stages?: { stage: string; rejectedPersonality?: { entityId: string; reason: string }[] }[];
+    };
+    const personalityDetail = detail.stages?.find((row) => row.stage === 'personality');
+    expect(personalityDetail?.rejectedPersonality ?? []).toEqual([{ entityId: 'a', reason: 'personality_echoes_fact' }]);
+    // No personality change means no sanity rewrite.
+    expect(calls.find((call) => call.stage === 'sanity')!.changes).toEqual({});
+  });
+
+  it('still asks the subtask stage when the merged tasks answer returns an empty array', async () => {
+    // The tasks schema always includes subtasks: [], so the merged path used to
+    // answer the subtask stage with "nothing" and its own prompt never ran.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [{ parentTaskId: 't1', goal: '把工具擦干净再放回盒子' }] }),
+      JSON.stringify({ changes: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const subtasks = calls.find((call) => call.stage === 'subtasks')!;
+    expect(subtasks.changes.a?.subtasksAdded?.[0]).toMatchObject({ parentTaskId: 'a1', status: 'pending' });
+    expect(engine.prompts.some((prompt) => prompt.includes('新增小任务判断器'))).toBe(true);
+  });
+
+  it('never invents a position for an actor whose fact has no destination', async () => {
+    // 09's open request (4b1e turn 10): the lu fact is "路明非离开演习场" with no
+    // destination. The position stage only reads the answer's own changes array;
+    // a fact never becomes a position here, and an empty answer yields none.
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲离开演习场。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#position', input);
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes).toEqual({});
+    const prompt = engine.prompts[0];
+    // The fact is input to the judgement, but the stage cannot derive a place
+    // from it: nothing in the prompt offers a destination for 离开.
+    expect(prompt).toContain('甲离开演习场');
+    expect(prompt).not.toContain('离开→');
+  });
+
+  it('drops a personality text that names a character or an item', async () => {
+    // Real 0.6B (probe 04-six-stage-real-12): the accepted trait was
+    // "护目镜戴好并确认镜片无裂纹" — the event again, compressed below the echo
+    // threshold. A trait naming an item or a character is the event.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: 'a', op: 'add', recordIds: [], text: '更会照顾工具' }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(Object.keys(calls.find((call) => call.stage === 'personality')!.changes)).toEqual([]);
+    const detail = outcome.evidence.detail as {
+      stages?: { stage: string; rejectedPersonality?: { reason: string }[] }[];
+    };
+    expect(detail.stages?.find((row) => row.stage === 'personality')?.rejectedPersonality ?? [])
+      .toEqual([{ entityId: 'a', reason: 'personality_names_entity' }]);
+  });
+
+  it('does not ask the subtask stage on a time-scan point with no settled fact', async () => {
+    // With no facts the grounding check had nothing to compare against, so the
+    // only possible outcome on an automatic point was an invented goal. The
+    // stage is skipped instead of spending 17 s on it (measured on the real 0.6B).
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine })
+      .updates('time_scan_1', { mode: 'time_scan', workingState: world(), results: {} } as never);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    const subtasks = stages.find((row) => row.stage === 'subtasks');
+    expect(subtasks?.skipped).toBe('no_facts_to_ground');
+    expect(engine.prompts.filter((prompt) => prompt.includes('新增小任务'))).toEqual([]);
+  });
+
+  it('does not ask the tasks stage on a time-scan point whose goals are not about the clock', async () => {
+    // The time-scan tasks prompt printed no task id (the fact shortlist is empty
+    // without facts), so the stage could only answer "nothing changed" and still
+    // cost 11.4 s on every automatic point. This world's goals are all actions
+    // ("拿到工具"), so the point records the skip instead of paying for it.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine })
+      .updates('time_scan_1', { mode: 'time_scan', workingState: world(), results: {} } as never);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    // This fixture's clock touches no owner at all; a world that does list
+    // owners records no_time_triggered_task instead (probe 04-timescan-skip).
+    expect(['no_affected_tasks', 'no_time_triggered_task']).toContain(stages.find((row) => row.stage === 'tasks')?.skipped);
+    expect(engine.prompts.filter((prompt) => prompt.includes('任务判定器'))).toEqual([]);
+
+    // A goal that is about time passing still gets its call.
+    const clocked = world();
+    clocked.characters.a.tasks.a1 = { ...clocked.characters.a.tasks.a1, goal: '等到午夜' };
+    const clockEngine = new ScriptedEngine([
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    const clockOutcome = await createSettlementHandlers({ engine: clockEngine })
+      .updates('time_scan_2', { mode: 'time_scan', workingState: clocked, results: {} } as never);
+    const clockStages = (clockOutcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    expect(clockStages.find((row) => row.stage === 'tasks')?.skipped).toBeUndefined();
+  });
+
+  it('drops the redundant text on a keep/remove row instead of failing the point', async () => {
+    // 09's open request: "keep cannot add text for spare_mag1" refused a turn
+    // 88.5 s in. The op is unambiguous; the text is redundant and never applied.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [
+        { entityId: 'tool', op: 'keep', recordIds: [], text: '表面沾了灰' },
+        { entityId: 'tool', op: 'add', recordIds: [], text: '把手缠了布条' },
+      ] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#appearance', updatesInput(world(), 'appearance'));
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.tool?.appearanceChanges?.map((change) => change.text)).toEqual(['把手缠了布条']);
+    const detail = outcome.evidence.detail as {
+      stageDetail?: { lenientDrops?: { entityId: string; op: string; droppedText: string }[] };
+    };
+    expect(detail.stageDetail?.lenientDrops ?? []).toEqual([{ entityId: 'tool', op: 'keep', droppedText: '表面沾了灰' }]);
   });
 
   it('does not re-achieve an already achieved task', async () => {
@@ -1489,7 +1831,9 @@ describe('real failed-output shapes (09 product run)', () => {
       { characterId: 'off', achieved: ['off1'] },
     ] });
     const engine = new ScriptedEngine([partial, full]);
-    const handlers = createSettlementHandlers({ engine });
+    // Roster-contract arm: this is the policy that requires every character to
+    // be named. The product default ('achieved') applies unchanged instead.
+    const handlers = createSettlementHandlers({ engine, options: { tasksContract: 'roster' } });
     const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
     expect(outcome.value).not.toBeNull();
     const call = outcome.value as UpdatesCall;
@@ -1743,7 +2087,7 @@ describe('bounded task-id contract', () => {
       JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }] }),
       JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }] }),
     ]);
-    const handlers = createSettlementHandlers({ engine });
+    const handlers = createSettlementHandlers({ engine, options: { tasksContract: 'roster' } });
     const outcome = await handlers.updates('g1#tasks', updatesInput(world(), 'tasks'));
     expect(outcome.value).toBeNull();
     expect(outcome.error).toContain('task character coverage incomplete: 2/3; missing off');
@@ -1773,7 +2117,12 @@ describe('compact subtask parent keys', () => {
       { parentTaskId: 't1', goal: '查看工具上的刻痕' },
     ] })]);
     const handlers = createSettlementHandlers({ engine });
-    const outcome = await handlers.updates('g1#subtasks', updatesInput(world(), 'subtasks'));
+    // A new goal must come from this point's facts, so the fact mentions 刻痕.
+    const input = {
+      ...(updatesInput(world(), 'subtasks') as Record<string, unknown>),
+      results: { a: '甲把工具翻过来，工具上的刻痕很清楚。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await handlers.updates('g1#subtasks', input);
     expect(outcome.value).not.toBeNull();
     const call = outcome.value as UpdatesCall;
     expect(call.changes.a?.subtasksAdded?.[0]?.parentTaskId).toBe('a1');
@@ -1805,9 +2154,11 @@ describe('grounded task transitions', () => {
   });
 
   it('accepts an achievement that cites a settled fact', async () => {
+    // Each achievement cites the fact of the member who produced it: f1 is 甲's
+    // result, f3 is 丙's own ("丙仍在远处"), so neither is an actor swap.
     const grounded = JSON.stringify({ unchanged: ['b'], achieved: [
       { characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] },
-      { characterId: 'off', tasks: [{ taskId: 't4', basis: 'f1' }] },
+      { characterId: 'off', tasks: [{ taskId: 't4', basis: 'f3' }] },
     ] });
     const engine = new ScriptedEngine([grounded, JSON.stringify({ judgments: [
       { characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '甲拿到工具，目标条件成立。' },
@@ -1825,7 +2176,7 @@ describe('grounded task transitions', () => {
     } }).taskScope;
     expect(scope.supports).toEqual([
       { characterId: 'a', taskId: 'a1', basis: 'f1' },
-      { characterId: 'off', taskId: 'off1', basis: 'f1' },
+      { characterId: 'off', taskId: 'off1', basis: 'f3' },
     ]);
     expect(scope.rejectedTaskIds).toEqual([]);
     expect(scope.verifier?.map((row) => row.satisfied)).toEqual(['yes', 'yes']);

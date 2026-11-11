@@ -18,7 +18,7 @@ import {
   SETTLEMENT_STAGES, activeChangeIds, activeRecords, allEntityIds, allKnownTaskIds, allTasks,
   appearanceLine, asInteger, asRecord, asString, currentAchieved, errorText,
   isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
-  positionFromRow, projectStage, referenceError, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson,
+  positionFromRow, projectStage, referenceError, repeatsText, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson, unwrapIdBrackets,
 } from './support';
 import { projectPoint, type PointProjection } from './projection';
 import type { SettlementStage } from './support';
@@ -170,7 +170,10 @@ const TASKS_SCHEMA = {
 const PERSONALITY_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['scanned', 'changes'],
+  // `scanned` is optional: the program applies keep to every character the
+  // prompt listed and the answer did not name (the roster skeleton was copied by
+  // the 0.6B and no personality change was ever produced).
+  required: ['changes'],
   properties: {
     // `scanned` proves every character was considered; only actual changes
     // need an operation row. The program supplies keep rows and record ids.
@@ -661,20 +664,60 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
     return { changes: {}, detail: { scannedEntityIds: [], positionScope: scope, skipped: 'no_affected_position' }, fallback: false, calls: [] };
   }
   const prompt = buildPositionPrompt(ctx.state, ctx.results, scanned);
+  const slotDrops: { entityId: unknown; slotId: string }[] = [];
   try {
+    // The missing-move check only forces a repair on the first attempt: if the
+    // second answer still leaves the actor where they were, the point keeps the
+    // answer and records it, instead of aborting the whole point over a stage
+    // the model cannot do.
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 240),
       temperature: ctx.options.temperature ?? 0,
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: POSITION_SCHEMA,
-      validate: (value) => validatePositionAnswer(value, ctx.state),
+      maxAttempts: 3,
+      validate: (value, attempt) => {
+        // A fact-backed walk whose container is right but whose slot is noise
+        // ("containerId":"control","slotId":"lane") loses only the slot: the
+        // destination was named by the fact and confirmed by the model. An
+        // entry with no fact behind it keeps the strict rejection.
+        const rows = asRecord(value).changes;
+        for (const row of Array.isArray(rows) ? rows : []) {
+          if (!isRecord(row)) continue;
+          const entityId = resolveEntityId(ctx.state, asString(row.entityId));
+          if (!entityId) continue;
+          const fact = resultFacts(ctx.results).find((entry) => entry.memberId === entityId);
+          if (!fact) continue;
+          const destination = destinationOfFact(ctx.state, fact.text);
+          if (!destination) continue;
+          const containerId = resolveEntityId(ctx.state, asString(row.containerId));
+          if (containerId !== destination.locationId) continue;
+          const slotId = asString(row.slotId);
+          if (!slotId) continue;
+          if (slotsOf(ctx.state, containerId).some((slot) => slot.id === slotId)) continue;
+          slotDrops.push({ entityId: row.entityId, slotId });
+          row.slotId = null;
+        }
+        const read = readPositionChanges(value, ctx.state);
+        if (attempt >= 3) return;
+        const missing = missingMoves(ctx.state, ctx.results, read.changes);
+        if (!missing.length) return;
+        const first = missing[0];
+        throw new Error(`position_missing_move: ${first.factId} 说「${first.text.slice(0, 40)}」，` +
+          `但 ${first.entityId} 没有改变位置；请把 ${first.entityId} 的 containerId 写成 ${first.locationId}（${first.name}），` +
+          'slotId 只能是该容器的槽位 id（不能填地点或人物 id），不确定就省略 slotId。');
+      },
     });
     const read = readPositionChanges(answer.value, ctx.state, new Set(scanned));
     const changes = read.changes;
+    const stillMissing = missingMoves(ctx.state, ctx.results, changes);
     projectStage(ctx.state, 'position', changes);
     const detail: Record<string, unknown> = {
       scannedEntityIds: scanned,
+      ...(slotDrops.length ? { slotDropped: slotDrops } : {}),
+      ...(stillMissing.length ? { missingMoves: stillMissing.map((row) => ({ factId: row.factId, entityId: row.entityId, locationId: row.locationId })) } : {}),
+
       changedEntityIds: Object.keys(changes).sort(),
       positionScope: scope,
     };
@@ -702,6 +745,7 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
     return { changes: {}, detail: { scannedEntityIds: [], appearanceScope: scope, skipped: 'no_affected_appearance' }, fallback: false, calls: [] };
   }
   const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance', scanned);
+  const lenientDrops: { entityId: string; op: string; droppedText: string }[] = [];
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 420),
@@ -709,13 +753,14 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned)),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned), [], [], []),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned));
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned), [], [], lenientDrops);
     projectStage(ctx.state, 'appearance', changes);
     return {
       changes,
-      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope },
+      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope,
+        lenientDrops },
       fallback: false,
       calls: answer.calls,
     };
@@ -724,13 +769,19 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
   }
 }
 
+/** A goal whose completion is the clock itself, not an action. Kept lexical on
+ * purpose: it only decides whether the time-scan tasks stage is worth a call. */
+const TIME_GOAL_WORDS = ['等到', '午夜', '天亮', '天黑', '明天', '次日', '黄昏', '清晨', '小时后', '分钟后', '入夜'] as const;
+
 async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
   const rows = allTasks(ctx.state);
   const characters = roster(ctx.state);
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   const ownerSet = new Set(projection.affectedTaskOwners);
   const affectedRows = rows.filter((row) => ownerSet.has(row.ownerId));
-  const taskIds = new Set(projection.affectedTasks);
+  // The reader may only require what the prompt printed: the owners of the
+  // affected rows, not every task id that the family closure pulled in.
+  const taskIds = new Set(affectedRows.map(({ task }) => task.id));
   const taskScope = taskScopeFor(ctx.state, projection);
   const decidedIds = affectedRows.map(({ task }) => task.id).sort();
   if (!rows.length) {
@@ -757,7 +808,42 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
-  const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection);
+  // A time-scan point has no settled facts, so the fact shortlist is empty and
+  // the prompt printed no task ids at all: the stage could only answer "nothing
+  // changed" and still cost 11.4 s on every automatic point (probe
+  // 04-six-stage-timescan-3: 1862-char prompt, 1177 tokens, 17 completion
+  // tokens). It now runs only when a pending goal is itself about time passing
+  // ("等到午夜"), which is the sole case a clock can achieve a task without a
+  // fact; otherwise the point records why the stage was skipped.
+  if (ctx.mode === 'time_scan' && !affectedRows.some(({ task }) => task.status !== 'achieved' && TIME_GOAL_WORDS.some((word) => task.goal.includes(word)))) {
+    return {
+      changes: {},
+      detail: {
+        taskCoverageIds: characters,
+        taskScope: { ...taskScope, assertedUnchanged: 0, achievedByCharacter: [], emptyCharacters: taskScope.affectedCharacters, rejectedTaskIds: [], supports: [] },
+        decidedTaskIds: [],
+        skipped: 'no_time_triggered_task',
+      },
+      fallback: false,
+      calls: [],
+    };
+  }
+  const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection, ctx.options.tasksContract ?? 'achieved');
+  // Under the 'achieved' contract, a character the prompt listed but the model
+  // did not name is unchanged by default; the roster contract still requires the
+  // model to name everyone.
+  const defaultUnchangedFor = (ctx.options.tasksContract ?? 'achieved') === 'achieved'
+    ? new Set<Id>(projection.affectedTaskOwners)
+    : undefined;
+  // A fact belongs to the member whose result it is; crediting another
+  // character's task to it is the actor swap the real 0.6B makes (probe
+  // 2026-11-11: lu's goggles fact was used to achieve caesar's bridge task).
+  const factOwnerFor = new Map<string, Id>();
+  const factTextFor = new Map<string, string>();
+  for (const fact of resultFacts(ctx.results)) {
+    factOwnerFor.set(fact.id, fact.memberId);
+    factTextFor.set(fact.id, fact.text);
+  }
   const factIds = new Set(resultFacts(ctx.results).map((fact) => fact.id));
   const strictSupport = ctx.options.requireTaskSupport === true;
   try {
@@ -767,9 +853,9 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: TASKS_SCHEMA,
-      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds, taskIds }),
+      validate: (value) => readTaskDecisions(value, ctx.state, { strictSupport, factIds, taskIds, defaultUnchangedFor, factOwnerFor, factTextFor }),
     });
-    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds, taskIds });
+    const read = readTaskDecisions(answer.value, ctx.state, { strictSupport, factIds, taskIds, defaultUnchangedFor, factOwnerFor, factTextFor });
     let changes = read.changes;
     let acceptedSupports = read.supports;
     let rejected = read.rejected;
@@ -812,8 +898,13 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     if (ctx.shared && Array.isArray(asRecord(answer.value).subtasks)) {
       const parsed = readSubtaskProposals(
         answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
+        { facts: resultFacts(ctx.results).map((fact) => fact.text) },
       );
-      ctx.shared.pendingSubtasks = verifier ? filterSubtasksByAccepted(parsed, changes) : parsed;
+      // Only a non-empty merged answer short-circuits the subtask stage; an
+      // empty array (which the schema always produces) used to count as an
+      // answer, so the dedicated subtask prompt never ran and no point ever
+      // proposed a subtask.
+      if (Object.keys(parsed).length) ctx.shared.pendingSubtasks = verifier ? filterSubtasksByAccepted(parsed, changes) : parsed;
     }
     const newlyAchieved = [...achievedFromChanges(changes)];
     const achievedByCharacter = Object.entries(changes)
@@ -831,6 +922,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           rejectedTaskIds: rejected,
           supports: acceptedSupports,
           verifier: verifier ?? undefined,
+          defaultedUnchanged: read.defaultedUnchanged,
         },
         decidedTaskIds: decidedIds,
         newlyAchievedTaskIds: newlyAchieved.sort(),
@@ -894,6 +986,21 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
+  const facts = resultFacts(ctx.results).map((fact) => fact.text);
+  if (!facts.length) {
+    // A new goal has to come from this point (subtask_not_grounded). A time-scan
+    // point has no settled result at all, so the only thing the model could add
+    // there is an invention: with no facts the grounding check had nothing to
+    // compare against and accepted whatever came back. The automatic point is
+    // half of every turn, and the real 0.6B returned an empty answer in the
+    // measured one, so the stage is not asked without a fact to stand on.
+    return {
+      changes: {},
+      detail: { parentTaskIds: [], characterIds: characters, skipped: 'no_facts_to_ground' },
+      fallback: false,
+      calls: [],
+    };
+  }
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   if (!projection.affectedTaskOwners.length) {
     return {
@@ -916,15 +1023,17 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: SUBTASKS_SCHEMA,
-      validate: (value) => readSubtaskProposals(value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8),
+      validate: (value) => readSubtaskProposals(value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8, { facts }),
     });
-    const changes = readSubtaskProposals(answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8);
+    const subtaskRejections: { parentTaskId: string; goal: string; reason: string }[] = [];
+    const changes = readSubtaskProposals(answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8, { facts, rejections: subtaskRejections });
     return {
       changes,
       detail: {
         parentTaskIds: rows.map(({ task }) => task.id).sort(),
         characterIds: characters,
         addedTaskIds: Object.values(changes).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort(),
+        rejectedSubtasks: subtaskRejections,
       },
       fallback: false,
       calls: answer.calls,
@@ -955,6 +1064,8 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
     ...projection.factEntities.filter((id) => Boolean(ctx.state.characters[id])),
   ]);
   const scanned = characters.filter((id) => affected.has(id));
+  const echoFacts = resultFacts(ctx.results).map((fact) => fact.text);
+  const personalityLenient: { entityId: string; op: string; droppedText: string }[] = [];
   const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0, scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
@@ -963,9 +1074,10 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: PERSONALITY_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned)),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, [], []),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned));
+    const personalityRejections: { entityId: string; reason: string }[] = [];
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, personalityRejections, personalityLenient);
     return {
       changes,
       detail: {
@@ -975,6 +1087,8 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
         triggeredByTaskIds: triggerIds.sort(),
         triggerBasis: ctx.recoveredAchieved.size > 0 ? 'recovered_achieved_tasks' : 'new_tasks',
         changedCharacterIds: Object.keys(changes).sort(),
+        rejectedPersonality: personalityRejections.sort((left, right) => left.entityId.localeCompare(right.entityId)),
+        lenientDrops: personalityLenient,
         personalityScope: { mode: 'affected_projection', affectedCharacterIds: scanned, unaffectedCharacterIds: characters.filter((id) => !affected.has(id)) },
       },
       fallback: false,
@@ -1076,7 +1190,14 @@ function sharedHeader(state: WorldState, results: Record<Id, string>): string {
   return [
     `当前世界时间：${state.time.dateTime}`,
     '本组结算结果（任务达成必须引用其中的编号）：',
-    facts.length ? facts.map((fact) => `${fact.id} [${fact.memberId}] ${fact.text}`).join(String.fromCharCode(10)) : '（无）',
+    // The fact text names characters by display name; printing only the raw id
+    // made the 0.6B credit a fact to whichever character was listed first.
+    facts.length
+      ? facts.map((fact) => {
+        const name = state.initial.characters[fact.memberId]?.name ?? '';
+        return `${fact.id} [${fact.memberId}${name ? ` ${name}` : ''}] ${fact.text}`;
+      }).join(String.fromCharCode(10))
+      : '（无）',
   ].join('\n');
 }
 
@@ -1084,7 +1205,12 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>, onl
   const allMovable = movableIds(state);
   const listed = onlyIds ? allMovable.filter((id) => onlyIds.includes(id)) : allMovable;
   const entities = listed.map((id) => `- ${positionLineFor(state, id)}`);
-  const sampleId = listed[0] ?? '';
+  // The example shows a real CHARACTER id, not `listed[0]`: movableIds sorts
+  // items before characters, so the template used to read
+  // {"entityId":"goggles_lu","containerId":"lu"}. The real 0.6B copied that
+  // example verbatim and never moved the character the fact named, even when
+  // the fact was a plain walk into an existing room.
+  const sampleId = listed.find((id) => state.characters[id]) ?? listed[0] ?? '';
   const sampleContainer = state.characters[sampleId]?.position.containerId
     ?? state.items[sampleId]?.position.containerId
     ?? allEntityIds(state)[0] ?? '';
@@ -1102,7 +1228,11 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>, onl
     ...entities,
     '地点和容器（id=名字，槽位）：',
     ...containerCatalog(state),
-    `输出 {"changes":[{"entityId":"${sampleId}","containerId":"${sampleContainer}","slotId":null,"relativeTo":null}]}；没有变化输出 {"changes":[]}。`,
+    // The example carries only the two required fields. With slotId/relativeTo in
+    // it the real 0.6B copied the example's container into slotId
+    // ("containerId":"control","slotId":"lane") and the whole entry was rejected.
+    `输出 {"changes":[{"entityId":"${sampleId}","containerId":"${sampleContainer}"}]}；` +
+      '进入槽位再加 "slotId"（必须是该容器的槽位 id），贴在某实体旁再加 "relativeTo"；没有变化输出 {"changes":[]}。',
   ].join('\n');
 }
 
@@ -1137,6 +1267,12 @@ function containerCatalog(state: WorldState): string[] {
     const name = state.initial.locations[id]?.name ?? state.initial.items[id]?.name ?? state.initial.characters[id]?.name ?? id;
     const slots = slotIds(id);
     const isCharacter = Boolean(state.initial.characters[id]);
+    // A slotless item cannot hold anything, and the world never uses one as a
+    // container; 67 of the 74 items are slotless and their lines were 1.7k of
+    // the position prompt's 3.1k characters. The catalogue is prefill paid on
+    // every point, so only real containers (locations, characters, items with
+    // slots) are listed now.
+    if (!isCharacter && !state.initial.locations[id] && !slots.length) continue;
     if (isCharacter && sharedCharacterSlots) {
       lines.push(`${id}=${name}`);
       continue;
@@ -1147,8 +1283,47 @@ function containerCatalog(state: WorldState): string[] {
   return lines;
 }
 
-function validatePositionAnswer(value: unknown, state: WorldState): void {
-  readPositionChanges(value, state);
+/** A fact that names a known place right after a movement word. The real 0.6B
+ * answered "路明非…走进演习观察席" with {"changes":[]} (or copied the example's
+ * current container), so the player's walk was silently dropped and every later
+ * stage kept the old room. The check is literal: an existing location name plus
+ * a movement word in the fact text, and the actor's answer must move them. */
+const MOVE_WORDS = ['走进', '走入', '走到', '走向', '进入', '来到', '回到', '退回', '退到', '跑到', '冲向', '赶到', '爬上', '走下', '钻出', '穿过'] as const;
+
+function destinationOfFact(state: WorldState, text: string): { locationId: Id; name: string; at: number } | null {
+  if (!MOVE_WORDS.some((word) => text.includes(word))) return null;
+  let best: { locationId: Id; name: string; at: number } | null = null;
+  for (const [locationId, location] of Object.entries(state.initial.locations)) {
+    const name = location.name ?? '';
+    if (name.length < 2) continue;
+    const at = text.lastIndexOf(name);
+    if (at < 0) continue;
+    if (!best || at > best.at) best = { locationId, name, at };
+  }
+  return best;
+}
+
+function missingMoves(state: WorldState, results: Record<Id, string>,
+                     changes: Record<Id, Partial<EntityDelta>>): { factId: string; entityId: Id; text: string; locationId: Id; name: string }[] {
+  const missing = [];
+  for (const fact of resultFacts(results)) {
+    const destination = destinationOfFact(state, fact.text);
+    if (!destination) continue;
+    const entity = state.characters[fact.memberId];
+    if (!entity) continue;
+    // The fact belongs to one member, but the sentence may describe somebody
+    // else walking ("诺诺走进钟楼" inside lu's result). Only demand a move when
+    // the member is named before the place in their own fact.
+    const name = state.initial.characters[fact.memberId]?.name ?? '';
+    const at = name ? fact.text.indexOf(name) : -1;
+    if (at < 0 || at > destination.at) continue;
+    if (entity.position.containerId === destination.locationId) continue;
+    // A no-op "move" to the room they are already in (the example's container)
+    // does not satisfy the fact either: the walk has to reach the named place.
+    if (changes[fact.memberId]?.positionSet?.containerId === destination.locationId) continue;
+    missing.push({ factId: fact.id, entityId: fact.memberId, text: fact.text, locationId: destination.locationId, name: destination.name });
+  }
+  return missing;
 }
 
 interface PositionRead {
@@ -1260,9 +1435,20 @@ function readDescriptionOperations(
   allocator: LocalIdAllocator,
   requireEveryEntity: boolean,
   onlyIds?: Set<Id>,
+  /** Personality text must be a tendency, not the settled fact again; a text
+   * that repeats a fact is dropped and reported instead of becoming a permanent
+   * trait. */
+  echoFacts: string[] = [],
+  rejections?: { entityId: string; reason: string }[],
+  lenient?: { entityId: string; op: string; droppedText: string }[],
 ): Record<Id, Partial<EntityDelta>> {
   const payload = asRecord(value);
   let rows = payload.operations;
+  if (!Array.isArray(rows) && kind === 'personality' && !Array.isArray(payload.scanned) && Array.isArray(payload.changes)) {
+    // Changes-only answer: unnamed characters are unchanged by default.
+    rows = payload.changes;
+    requireEveryEntity = false;
+  }
   if (!Array.isArray(rows) && kind === 'personality' && Array.isArray(payload.scanned)) {
     const scannedRaw = payload.scanned.map(asString);
     const changesRaw = Array.isArray(payload.changes) ? payload.changes : [];
@@ -1292,19 +1478,33 @@ function readDescriptionOperations(
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('operation must be an object');
     const rawEntityId = asString(raw.entityId);
-    const entityId = kind === 'appearance' ? resolveEntityId(state, rawEntityId) : resolveCharacterId(state, rawEntityId);
+    const bareEntityId = unwrapIdBrackets(rawEntityId);
+    const entityId = kind === 'appearance' ? resolveEntityId(state, bareEntityId) : resolveCharacterId(state, bareEntityId);
     if (!entityId) throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
     if (!targets.has(entityId)) continue;
     if (!allTargets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
     const op = asString(raw.op);
     if (!OPS.has(op)) throw new Error(`invalid operation ${op || '?'} for ${entityId}`);
-    const recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
+    let recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
+    if (recordIds && op === 'add') {
+      // The 0.6B copies the shape's id field into recordIds ("<lu>"). An `add`
+      // cannot supersede anything, and an id that does not exist cannot be a
+      // record: drop those copies; a real record id on `add` is still an error.
+      const known = new Set(activeRecords(state, kind, entityId).filter((record) => record.active).map((record) => record.id));
+      recordIds = recordIds.filter((id) => known.has(unwrapIdBrackets(id)));
+    }
     if (!recordIds) throw new Error(`recordIds must be an array for ${entityId}`);
-    const text = raw.text == null ? null : asString(raw.text);
-    if (op === 'keep' && text != null && text !== '') throw new Error(`keep cannot add text for ${entityId}`);
+    let text = raw.text == null ? null : asString(raw.text);
+    // A 0.6B often writes the current text next to `keep` (or next to `remove`).
+    // The op is unambiguous and the text is redundant there; failing the whole
+    // point 88 s in (09's 'keep cannot add text for spare_mag1') is not worth it.
+    // The dropped text stays in evidence, never in state.
+    if ((op === 'keep' || op === 'remove') && text != null && text !== '') {
+      lenient?.push({ entityId, op, droppedText: text });
+      text = null;
+    }
     if (op === 'add' && !text) throw new Error(`add requires text for ${entityId}`);
     if (op === 'add' && recordIds.length) throw new Error(`add cannot supersede records for ${entityId}`);
-    if (op === 'remove' && text) throw new Error(`remove cannot add text for ${entityId}`);
     if (op === 'remove' && !recordIds.length) throw new Error(`remove requires record ids for ${entityId}`);
     if (op === 'replace' && !text) throw new Error(`replace requires text for ${entityId}`);
     if (op === 'replace' && !recordIds.length) throw new Error(`replace requires record ids for ${entityId}`);
@@ -1329,6 +1529,18 @@ function readDescriptionOperations(
         covered.add(recordId);
       }
       if (op.op === 'keep') continue;
+      if (kind === 'personality' && op.text && echoFacts.some((fact) => repeatsText(op.text as string, fact))) {
+        rejections?.push({ entityId, reason: 'personality_echoes_fact' });
+        continue;
+      }
+      if (kind === 'personality' && op.text && namesWorldEntity(state, op.text as string)) {
+        // The real 0.6B stored "护目镜戴好并确认镜片无裂纹" as a personality change:
+        // a compressed event sentence, not a tendency. A trait that names a
+        // character, item or place is the event again, so it is dropped. The
+        // prompt already forbids names; this is the structural enforcement.
+        rejections?.push({ entityId, reason: 'personality_names_entity' });
+        continue;
+      }
       const supersedes = op.op === 'remove' || op.op === 'replace' ? [...op.recordIds] : [];
       const change: Change = {
         id: allocator.changeId(kind, entityId, used),
@@ -1368,16 +1580,66 @@ function readDescriptionOperations(
   return changes;
 }
 
-function buildTasksPrompt(ctx: StageContext, ownerIds: Id[], projection: PointProjection): string {
+function buildTasksPrompt(
+  ctx: StageContext,
+  ownerIds: Id[],
+  projection: PointProjection,
+  contract: 'roster' | 'achieved' = 'roster',
+): string {
   const keys = taskKeyIndex(ctx.state);
-  const owners = [...ownerIds].sort();
-  const rows = owners.map((id) => taskLine(ctx.state, id, keys));
+  // Characters who produced a result come first: the 0.6B anchors on the first
+  // row it reads, and sorted ids put an uninvolved character (caesar) there.
+  const factOwners = new Set(resultFacts(ctx.results).map((fact) => fact.memberId));
+  const owners = [...ownerIds].sort((left, right) => {
+    const rank = (id: Id) => (factOwners.has(id) ? 0 : 1);
+    return rank(left) - rank(right) || left.localeCompare(right);
+  });
+  // Under the 'achieved' contract a character's row lists only the tasks whose
+  // goal wording the settled facts mention. With six tasks per character the
+  // 0.6B achieved the first id it read (lu's match task for a goggles fact); the
+  // shortlist is a deterministic necessary condition, and the model still decides
+  // which shortlisted task (if any) is met.
+  const factTexts = resultFacts(ctx.results).map((fact) => fact.text);
+  const rows = owners.map((id) => {
+    if (contract !== 'achieved') return taskLine(ctx.state, id, keys);
+    const shortlisted = Object.values(ctx.state.characters[id]?.tasks ?? {})
+      .filter((task) => task.status !== 'achieved'
+        && factTexts.some((text) => sharesGoalWording(text, task.goal)))
+      .map((task) => task.id);
+    return taskLine(ctx.state, id, keys, new Set(shortlisted));
+  });
   const required = owners;
   const checklist = required.map((id) => `${ctx.state.initial.characters[id]?.name ?? id}(${id})`).join('、');
   // A 0.6B copies the example verbatim; a one-row example made it answer for a
   // single character. The skeleton names every required character, so copying
   // it still produces coverage for the affected set.
   const unchanged = required.map((id) => `"${id}"`).join(',');
+  if (contract === 'achieved') {
+    // The model asserts changes only. Listing the roster under `unchanged` made
+    // a 0.6B copy the skeleton: 171/171 recorded answers named every character
+    // as unchanged, no task ever became achieved, and the personality, sanity and
+    // task-verifier stages therefore never ran.
+    return [
+      sharedHeader(ctx.state, ctx.results),
+      '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
+      `下面只列本轮可能受影响的人物和任务（${required.length} 人）；程序已按依赖投影保留其余 ${projection.unaffectedTasks.length} 条任务，未列出的人物/任务不需要判断。`,
+      '规则：',
+      '- achieved 只列本轮**新达成**的任务；没有达成任何任务就输出空数组。没有变化的人物不要写，程序默认他们不变。',
+      '- 每个任务写成 {"characterId":"人物id","tasks":[{"taskId":"t1","basis":"f1"}]}：taskId 逐字复制该人物行开头的编号，basis 引用本轮结算结果里的 f1、f2…；只有目标确实由时间推移直接触发时才可写 basis: "time"。',
+      '- 只有结算结果明确表明目标条件已经满足，才列入 achieved；尝试、接近、部分完成、被制止、行动成功但目标未满足，都留空。',
+      '- 一条事实只能用来达成它自己那位人物的任务：f1 是第一个人物的结果，只能写那个人物；除非事实正文里明确写了另一个人的名字，才可以写那个人。',
+      '- 只有结算结果里明确提到该人物的事实，才可列入 achieved；不能因为时间过去就替不在场人物完成任务。',
+      '- 行动结果里的 achieved 只描述那次行动，不等于任务完成；任务是否达成必须看目标本身。',
+      '- 已完成的任务保持 achieved，不要重复列出；任务编号必须逐字复制，不能自己造编号。',
+      '如果本组结算结果产生了新的具体目标，也可以在同一答案里给出 subtasks：',
+      '- 小任务必须挂在已有任务下，parentTaskId 用行首任务编号；负责人必须是父任务的负责人；新任务一律 pending。',
+      '- 没有新的具体目标就输出空数组，不要为了凑数量新增。',
+      '人物和任务：',
+      ...rows,
+      '输出格式（尖括号里换成真实值；没有达成就是空数组）：',
+      '{"achieved":[{"characterId":"<人物id>","tasks":[{"taskId":"<任务编号，如 t1>","basis":"<依据，如 f1>"}]}],"subtasks":[]}',
+    ].join(String.fromCharCode(10));
+  }
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的任务判定器。只输出 JSON，不要解释。',
@@ -1410,6 +1672,11 @@ interface TaskDecisionRead {
   changes: Record<Id, Partial<EntityDelta>>;
   rejected: { characterId: Id; taskId: string; reason: string }[];
   supports: { characterId: Id; taskId: Id; basis: string }[];
+  /** Characters the prompt presented, for which the answer asserted nothing.
+   * Under the 'achieved' contract that is the intended "unchanged" default; the
+   * list is kept in evidence so a model that answered nothing at all is visible
+   * instead of looking like a well-judged no-change point. */
+  defaultedUnchanged: Id[];
 }
 
 /** One decision per character covers all of that character's tasks. Character
@@ -1421,7 +1688,20 @@ interface TaskDecisionRead {
 function readTaskDecisions(
   value: unknown,
   state: WorldState,
-  options: { strictSupport?: boolean; factIds?: Set<string>; taskIds?: Set<Id> } = {},
+  options: {
+    strictSupport?: boolean;
+    factIds?: Set<string>;
+    taskIds?: Set<Id>;
+    /** Present under the 'achieved' contract: characters the prompt listed, for
+     * which an omitted answer means unchanged. */
+    defaultUnchangedFor?: Set<Id>;
+    /** Which member produced each result fact. A fact has an owner; crediting
+     * another character's task to it without the fact naming that character is
+     * the actor-swap error the real 0.6B makes. */
+    factOwnerFor?: Map<string, Id>;
+    /** The frozen fact text, for the name lookup above. */
+    factTextFor?: Map<string, string>;
+  } = {},
 ): TaskDecisionRead {
   const payload = asRecord(value);
   type Entry = { taskId: string; basis?: string };
@@ -1484,7 +1764,7 @@ function readTaskDecisions(
   const supports: TaskDecisionRead['supports'] = [];
   for (const raw of decisions) {
     const rawCharacterId = asString(raw.characterId);
-    const characterId = resolveCharacterId(state, rawCharacterId);
+    const characterId = resolveCharacterId(state, unwrapIdBrackets(rawCharacterId));
     if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
     if (!state.characters[characterId]) throw new Error(referenceError(state, rawCharacterId, 'character', required[0]));
     if (!ownerTasks.has(characterId)) {
@@ -1519,6 +1799,25 @@ function readTaskDecisions(
           rejected.push({ characterId, taskId, reason: 'unknown_support' });
           continue;
         }
+        if (entry.basis !== 'time' && options.factOwnerFor && options.factTextFor) {
+          const owner = options.factOwnerFor.get(entry.basis);
+          const text = options.factTextFor.get(entry.basis) ?? '';
+          const name = state.initial.characters[characterId]?.name ?? '';
+          const named = (name.length > 0 && text.includes(name)) || text.includes(characterId);
+          if (owner && owner !== characterId && !named) {
+            rejected.push({ characterId, taskId, reason: `support_belongs_to_${owner}` });
+            continue;
+          }
+          // Necessary condition only: the cited fact must mention something the
+          // goal is about. The 0.6B verifier approves any pairing (real probe
+          // 2026-11-11: lu's goggles fact "satisfied" lu's match task), so a fact
+          // that shares no wording with the goal never reaches the verifier.
+          // Paraphrased true achievements may be dropped; false ones may not pass.
+          if (text && !sharesGoalWording(text, row.task.goal)) {
+            rejected.push({ characterId, taskId, reason: 'support_does_not_mention_goal' });
+            continue;
+          }
+        }
       }
       list.push(taskId);
       if (options.strictSupport && entry.basis) supports.push({ characterId, taskId, basis: entry.basis });
@@ -1526,8 +1825,19 @@ function readTaskDecisions(
     byCharacter.set(characterId, list);
   }
   const missing = required.filter((id) => !byCharacter.has(id));
+  const defaultedUnchanged: Id[] = [];
   if (missing.length) {
-    throw new Error(`task character coverage incomplete: ${byCharacter.size}/${required.length}; missing ${missing.join(',')}`);
+    const defaultFor = options.defaultUnchangedFor;
+    const undeclared = defaultFor ? missing.filter((id) => !defaultFor.has(id)) : missing;
+    if (undeclared.length) {
+      throw new Error(`task character coverage incomplete: ${byCharacter.size}/${required.length}; missing ${undeclared.join(',')}`);
+    }
+    // The 'achieved' contract: the model asserts changes, the program applies
+    // "unchanged" to every character it presented but the model did not name.
+    for (const id of missing) {
+      byCharacter.set(id, []);
+      defaultedUnchanged.push(id);
+    }
   }
   if (options.strictSupport) {
     const unsupported = rejected.filter((row) => row.reason === 'missing_support' || row.reason === 'unknown_support');
@@ -1540,12 +1850,66 @@ function readTaskDecisions(
   for (const [ownerId, taskIds] of byCharacter) {
     if (taskIds.length) changes[ownerId] = { tasksAchieved: taskIds.sort() };
   }
-  return { changes, rejected, supports };
+  return { changes, rejected, supports, defaultedUnchanged };
+}
+
+/** How much of a task goal's wording the settled fact repeats. A deterministic
+ * necessary condition, never a decision: the model verifier still decides
+ * whether the goal is met. Measured pairs (2026-11-11): lu's goggles fact vs the
+ * goggles goal 0.50+; the same fact vs lu's match goal 0.07. */
+export function goalWordingOverlap(factText: string, goal: string): number {
+  const clean = (text: string) => text.replace(/[^一-鿿A-Za-z0-9]/g, '');
+  const left = clean(factText);
+  const right = clean(goal);
+  if (!left || !right) return 0;
+  if (left.includes(right) || right.includes(left)) return 1;
+  const grams = (text: string) => {
+    const set = new Set<string>();
+    for (let index = 0; index + 2 <= text.length; index += 1) set.add(text.slice(index, index + 2));
+    return set;
+  };
+  const goalGrams = grams(right);
+  if (!goalGrams.size) return 0;
+  let shared = 0;
+  for (const gram of grams(left)) if (goalGrams.has(gram)) shared += 1;
+  return shared / goalGrams.size;
+}
+const GOAL_WORDING_MIN = 0.2;
+export function sharesGoalWording(factText: string, goal: string): boolean {
+  return goalWordingOverlap(factText, goal) >= GOAL_WORDING_MIN;
+}
+
+/** Does a personality text name a character or item? Literal lookup on the
+ * state's own names, never a semantic judgement. Places are deliberately not
+ * checked: "开始留意远处的动静" is a trait, and "远处" is also a room name. */
+function namesWorldEntity(state: WorldState, text: string): boolean {
+  const names: string[] = [];
+  for (const space of [state.initial.characters, state.initial.items]) {
+    for (const entry of Object.values(space ?? {})) {
+      const name = (entry as { name?: string } | undefined)?.name ?? '';
+      if (name.length >= 2) names.push(name);
+      // "路明非的护目镜" is also named "护目镜" in prose; the core after the
+      // possessor is a literal part of the state name, not a guess.
+      const core = name.split("的").pop() ?? "";
+      if (core.length >= 2 && core !== name) names.push(core);
+    }
+  }
+  return names.some((name) => text.includes(name));
 }
 
 function buildSubtasksPrompt(ctx: StageContext, ownerIds: Id[] = roster(ctx.state), projection?: PointProjection): string {
   const keys = taskKeyIndex(ctx.state);
-  const rows = [...ownerIds].sort().map((id) => taskLine(ctx.state, id, keys));
+  // The subtask stage needs the parent task's id, owner and goal — not the
+  // owner's appearance, personality or position, which `taskLine` also prints.
+  // Those lines were most of a 1.3k-token prompt that cost 16.6 s a point and
+  // returned an empty array in five measured points.
+  const rows = [...ownerIds].sort().map((id) => {
+    const name = ctx.state.initial.characters[id]?.name ?? id;
+    const tasks = Object.values(ctx.state.characters[id]?.tasks ?? {})
+      .filter((task) => task.status !== 'achieved')
+      .map((task) => `${keys.get(task.id) ?? task.id}：${task.goal}`);
+    return `- ${name}（id=${id}）待办任务：${tasks.join('；') || '无'}`;
+  });
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
@@ -1565,6 +1929,7 @@ function readSubtaskProposals(
   state: WorldState,
   allocator: LocalIdAllocator,
   maxNewTasks: number,
+  options: { facts?: string[]; rejections?: { parentTaskId: string; goal: string; reason: string }[] } = {},
 ): Record<Id, Partial<EntityDelta>> {
   const rows = asRecord(value).subtasks;
   if (!Array.isArray(rows)) throw new Error('subtasks must be an array');
@@ -1586,6 +1951,13 @@ function readSubtaskProposals(
     if (!parent) throw new Error(referenceError(state, parentTaskId, 'task', allTasks(state)[0]?.task.id));
     const goal = asString(raw.goal);
     if (!goal) throw new Error(`subtask for ${parentTaskId} has an empty goal`);
+    // A new goal has to come from this point: the 0.6B invented one unrelated
+    // subtask ("红方确认可溪小桥的通行权") under t1 in all four probe cases,
+    // including the point where nothing happened at all.
+    if (options.facts && options.facts.length && !options.facts.some((fact) => sharesGoalWording(fact, goal))) {
+      options.rejections?.push({ parentTaskId, goal, reason: 'subtask_not_grounded' });
+      continue;
+    }
     const key = `${parentTaskId}:${normalizeChangeText(goal)}`;
     if (usedGoals.has(key)) throw new Error(`duplicate subtask under ${parentTaskId}`);
     usedGoals.add(key);
@@ -1629,12 +2001,18 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...scannedIds.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"scanned":[${scanned}],"changes":[]}（scanned 必须列出上面列出的人物；没有变化就不要放进 changes；changes 里的 entityId 用真实 id 或人物全名，op 为 add/remove/replace）。`,
+    '- 个性变化只写一句长期倾向，12 个字以内；不要出现人名、地名、物品名，不要复述本轮发生了什么。照抄结算事实会被程序丢弃。',
+    '- 如果这次经历不会改变性格，就把 changes 留空；不要为了有输出硬编一句。',
+    '输出格式（尖括号里换成真实值；没有变化就输出空数组）：',
+    '{"changes":[{"entityId":"<人物id>","op":"add","text":"<一句性格倾向，12字以内>"}]}',
+    '没有变化的人物不要写，程序默认他们保持原样。',
   ].filter(Boolean).join('\n');
 }
 
 function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
-  const skeleton = owners.map((id) => `{"characterId":"${id}","value":${ctx.state.characters[id]?.sanity ?? 50}}`).join(',');
+  // No filled skeleton: printing each owner with the current value made the
+  // answer a copyable "everyone unchanged".
+  const skeleton = '{"sanity":[{"characterId":"<人物id>","value":<0-100 的新理智值>}]}';
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏中的人物理智重算器。只输出 JSON，不要解释。',
@@ -1644,7 +2022,8 @@ function buildSanityPrompt(ctx: StageContext, owners: Id[]): string {
     '- 理智必须是 0 到 100 的整数；不要用小数、布尔或字符串。',
     '- 只依据变化后的个性和本轮已结算事实，不要新增任务、往事或心理原因。',
     ...owners.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"sanity":[${skeleton}]}（只为上面每个人物各一条，value 为 0-100 整数；characterId 用真实 id 或人物全名）。`,
+    '输出格式（尖括号里换成真实值；只为上面列出的人物各写一条）：',
+    skeleton,
   ].join('\n');
 }
 
@@ -1657,7 +2036,7 @@ function readSanityValues(value: unknown, owners: Id[], state: WorldState): Reco
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('sanity row must be an object');
     const rawCharacterId = asString(raw.characterId);
-    const characterId = resolveCharacterId(state, rawCharacterId);
+    const characterId = resolveCharacterId(state, unwrapIdBrackets(rawCharacterId));
     if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', owners[0]));
     if (!expected.has(characterId)) throw new Error(`sanity for a character without a personality change: ${rawCharacterId}${characterId !== rawCharacterId ? ` (${characterId})` : ''}`);
     if (seen.has(characterId)) throw new Error(`duplicate sanity for ${characterId}`);

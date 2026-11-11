@@ -193,10 +193,16 @@ def main() -> int:
     labels = load_labels(frozen["labels"]["path"])
     train_rows = read_rows(args.train)
     validation_rows = read_rows(args.validation)
+    # The delivered row format (lane 13) has no `split`: the file a row arrives
+    # in IS its role. A row that carries one must agree with its file, so a
+    # misplaced row is caught instead of silently trained.
     for rows, name in ((train_rows, "train"), (validation_rows, "validation")):
         for row in rows:
-            if str(row.get("split") or "") != name:
-                raise SystemExit(f"REFUSED: {row.get('rowId')} in {name} declares split {row.get('split')!r}")
+            declared = row.get("split")
+            if declared in (None, ""):
+                row["split"] = name
+            elif str(declared) != name:
+                raise SystemExit(f"REFUSED: {row.get('rowId')} in {name} declares split {declared!r}")
     check_split_isolation([*train_rows, *validation_rows])
     synthetic = [row.get("rowId") for row in [*train_rows, *validation_rows] if str(row.get("source")) == "fixture"]
     if synthetic and not args.dry_run_tiny:

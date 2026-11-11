@@ -13,7 +13,7 @@ import type {
 } from './types';
 import { asRecord, asString, errorText, isRecord, normalizeChangeText, referenceError, resolveCharacterId, toJson } from './support';
 import type { RoundProgressEvidence } from './support';
-import { describeCharacter, describeDelta, visibleCharacters } from '../../prompt';
+import { changedTexts, describeCharacter, describeDelta, visibleCharacters } from '../../prompt';
 
 interface RoundPoint {
   pointId: Id;
@@ -483,6 +483,21 @@ function parseContinuationInput(input: Json): ContinuationInput | { error: strin
   };
 }
 
+/** A visible character as the proposal stage needs them: where they are and
+ * what they look like, never their pending task goals. `describeCharacter(...,
+ * false)` printed `待办=task_id=goal`, and the real 0.6B answered with that goal
+ * sentence verbatim in both measured cases ("让红方的旗台行动有可执行的掩护…")
+ * — the only concrete sentence in the prompt was the one it copied, and the
+ * policy then had to stop the chain as abstract_task_goal. */
+function describeFollowUpCharacter(state: WorldState, id: Id): string {
+  const initial = state.initial.characters[id];
+  const current = state.characters[id];
+  if (!initial || !current) return `- ${id}`;
+  const appearance = [initial.initialAppearance, ...changedTexts(state, id).appearance].join('；');
+  const place = `${current.position.containerId}${current.position.slotId ? `/${current.position.slotId}` : ''}`;
+  return `- ${initial.name}（id=${id}）位置=${place}；精神值=${current.sanity}${appearance ? `；外貌=${appearance}` : ''}`;
+}
+
 function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): string {
   const state = input.workingState;
   const protagonist = state.protagonistId;
@@ -504,8 +519,8 @@ function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): 
     '- 普通闲聊、等待、场景切换、需要玩家决定的事都不要列。',
     '- 不要重复玩家输入，不要把候选当成已经发生；不要新增人物、地点、物品或往事。',
     '- 没有值得自动推进的行动就返回空数组。',
-    `主角：${describeCharacter(state, protagonist)}`,
-    `同地点人物：\n${visible.map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
+    `主角：${describeFollowUpCharacter(state, protagonist)}`,
+    `同地点人物：\n${visible.map((id) => describeFollowUpCharacter(state, id)).join('\n') || '无'}`,
     `本轮状态变化：\n${changes}`,
     `当前时间：${state.time.dateTime}`,
     // A literal placeholder in the format example is copied verbatim: 35ad turn

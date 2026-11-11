@@ -174,7 +174,7 @@ export function appearanceLine(state: WorldState, entityId: Id, options: { compa
   return `- ${name}（id=${entityId}，${kind}）初始外貌=${initial}；有效变化=[${records.join('；')}]${position}`;
 }
 
-export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>): string {
+export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>, onlyTaskIds?: Set<Id>): string {
   const name = state.initial.characters[ownerId]?.name ?? ownerId;
   const position = containerLabel(state, ownerId);
   const initial = state.initial.characters[ownerId];
@@ -182,9 +182,11 @@ export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>)
     .filter(Boolean).join('；');
   const personality = [initial?.initialPersonality ?? '', ...activeRecordText(activeRecords(state, 'personality', ownerId))]
     .filter(Boolean).join('；');
-  const tasks = Object.values(state.characters[ownerId]?.tasks ?? {});
+  const all = Object.values(state.characters[ownerId]?.tasks ?? {});
+  const tasks = onlyTaskIds ? all.filter((task) => onlyTaskIds.has(task.id)) : all;
   const prefix = `- ${name}（id=${ownerId}）位置=${position}；外貌=${appearance}；个性=${personality}`;
-  if (!tasks.length) return `${prefix}：无任务`;
+  if (!all.length) return `${prefix}：无任务`;
+  if (!tasks.length) return `${prefix}：本组事实与这些任务的目标无关，保持原状`;
   const rows = tasks.map((task) => `${keys?.get(task.id) ?? task.id}：${task.goal}（${task.status === 'achieved' ? '已完成' : '待办'}）`);
   return `${prefix}：${rows.join('；')}`;
 }
@@ -398,6 +400,25 @@ export function normalizeChangeText(text: string): string {
   return text.replace(/\s+/gu, '').replace(/[。！？!?；;，,、]+$/u, '').trim();
 }
 
+/** Character-bigram containment over the smaller text. Used to recognise a
+ * model answer that repeats a source sentence instead of producing a new one
+ * (9711 pair 0.93; a reworded question 0.71; a different find 0.60). */
+export function repeatsText(candidate: string, source: string, min = 0.85): boolean {
+  const bigrams = (text: string): Set<string> => {
+    const chars = [...text.replace(/[\s，。；：、！？…—,.!?:;'"“”‘’（）()]/gu, '')];
+    const set = new Set<string>();
+    for (let index = 0; index + 2 <= chars.length; index += 1) set.add(chars.slice(index, index + 2).join(''));
+    return set;
+  };
+  const mine = bigrams(candidate);
+  const theirs = bigrams(source);
+  const smaller = Math.min(mine.size, theirs.size);
+  if (!smaller) return false;
+  let shared = 0;
+  for (const gram of mine) if (theirs.has(gram)) shared += 1;
+  return shared / smaller >= min;
+}
+
 export function sameChangeText(a: string | null | undefined, b: string | null | undefined): boolean {
   return normalizeChangeText(a ?? '') === normalizeChangeText(b ?? '');
 }
@@ -475,6 +496,15 @@ const ID_PLACEHOLDERS = new Set([
   'parenttaskid', 'containerid', '人物id', '成员id', '目标id', '任务id',
   '父任务id', '实体id', '人物ID', '成员ID', '目标ID', '任务ID',
 ]);
+
+/** A model may keep the shape's brackets around a real id ("<lu>"). With one
+ * matching layer removed the inner text resolves like any other id; a shape
+ * placeholder ("<人物id>") still fails to resolve and is rejected. */
+export function unwrapIdBrackets(value: string): string {
+  const trimmed = value.trim();
+  const match = /^[<〈「『（(]\s*(.+?)\s*[>〉」』）)]$/u.exec(trimmed);
+  return match ? match[1].trim() : trimmed;
+}
 
 export function isPlaceholderId(value: string): boolean {
   return ID_PLACEHOLDERS.has(value.trim());

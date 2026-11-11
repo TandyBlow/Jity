@@ -13,8 +13,10 @@ export interface JsonCallOptions {
   maxPromptChars?: number;
   maxAttempts?: number;
   jsonSchema?: unknown;
-  /** Parse and structurally validate. Throwing triggers one feedback retry. */
-  validate: (value: unknown) => void;
+  /** Parse and structurally validate. Throwing triggers one feedback retry.
+   * The attempt number lets a caller relax a semantic check on the repair
+   * (first answer must move the actor; a second miss is recorded, not fatal). */
+  validate: (value: unknown, attempt: number) => void;
   /** Optional second-attempt instruction; defaults to a format-only reminder. */
   feedback?: string;
 }
@@ -79,7 +81,7 @@ export async function callJson(
       const ms = performance.now() - started;
       try {
         const value = parseJsonValue(raw);
-        options.validate(value);
+        options.validate(value, attempt);
         calls.push({ prompt: attemptPrompt, raw, ms, attempt });
         return { value, raw, ms: calls.reduce((sum, call) => sum + call.ms, 0), calls };
       } catch (error) {
