@@ -357,7 +357,7 @@ describe('21c3 trace replay (CPU)', () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
       judgments: [{ memberId: 'lu', label: 'not_achieved', reason: '诺诺没有被迫反应。', effects: [{ targetId: 'nono', reacted: false }] }],
-      facts: [{ text: '路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
+      facts: [{ text: '路明非问诺诺红蓝两方的方位，诺诺说她也不清楚。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
     });
     const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
     const outcome = await handlers.results('group_29', {

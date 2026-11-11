@@ -527,11 +527,36 @@ describe('common-group results', () => {
     const prompt = engine.prompts[0];
     // 3turn 9623 group_29 copied the judgement reason as its fact; a walk/read
     // example alone does not teach a question group what its result looks like.
-    expect(prompt).toContain('我向诺诺问现在的局势');
+    // The rule must still say what a question's result looks like, but as a
+    // rule, not as a sentence: the 0.6B copied the worked example verbatim onto
+    // unrelated actions (6042 turns 2-3), so no concrete fact sentence stays in
+    // the prompt.
+    expect(prompt).toContain('问话就写谁问了谁、对方答了什么或没答');
     // 73f3 kept the read but dropped the walk from the result.
     expect(prompt).toContain('行动里有走/进入就先写走到哪');
-    expect(prompt).toContain('诺诺摇头说不知道');
+    expect(prompt).not.toContain('诺诺摇头说不知道');
+    expect(prompt).not.toContain('走到服务巷');
     expect(prompt).not.toContain('待办=');
+  });
+
+  it('drops a fact that repeats the old worked example instead of settling it', async () => {
+    // 6042 turn 3: the player said «我决定先不站队，就在你这儿…», and the fact
+    // came back as the prompt's own example sentence about asking nono where
+    // the two sides are — word for word. The six stages then moved qin on it.
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲回答。' }],
+      facts: [{ text: '路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([raw, raw, raw]) })
+      .results('g1', {
+        groupId: 'g1',
+        members: [{ memberId: 'a', actionText: '我决定先不站队。', rollRefs: [] }],
+        workingState: world(),
+      } as unknown as Json);
+    const detail = outcome.evidence.detail as { droppedFacts: { reason: string }[]; facts: unknown[] };
+    expect(detail.droppedFacts[0]).toMatchObject({ reason: 'no_result_text' });
+    expect(detail.facts).toEqual([]);
+    expect(outcome.value?.a ?? '').toBe('');
   });
 
   it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
