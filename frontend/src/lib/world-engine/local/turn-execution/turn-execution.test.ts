@@ -517,8 +517,18 @@ describe('settled facts for narration', () => {
       { text: '周宁推开走廊的门，看清门后的台阶。', actor: 'person_c', outcome: 'completed' },
       { text: '林川停在原地，没有跟着进去。', actor: 'person_a', outcome: 'failed' },
     ]);
+    // The ledger carries the same structured record for the run report (06/01
+    // read it without parsing raw, and it never contains a `名字：` label).
+    const records = port.summary().calls.filter((row) => row.task === 'results');
+    expect(records.map((row) => row.facts?.map((fact) => ({ actor: fact.actorId, outcome: fact.outcome, text: fact.text })))).toEqual([
+      [{ actor: 'person_c', outcome: 'completed', text: '周宁推开走廊的门，看清门后的台阶。' }],
+      [{ actor: 'person_a', outcome: 'failed', text: '林川停在原地，没有跟着进去。' }],
+    ]);
     const submission = port.endSubmission();
     expect(submission?.settledFacts?.map((fact) => fact.actorId)).toEqual(['person_c', 'person_a']);
+    // The snapshot is taken while the point is live: continuation clears the
+    // accessor's list at round end, so endSubmission used to see nothing.
+    expect(port.settledFacts()).toHaveLength(2);
     // A new submission starts empty: the same words in the next turn are a new
     // result, not a replayed one.
     port.beginSubmission('我再看一眼。');

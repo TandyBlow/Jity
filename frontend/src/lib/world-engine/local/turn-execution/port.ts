@@ -54,6 +54,20 @@ export interface PortCallRecord {
   rawAttempts?: { ms: number; promptChars: number; error?: string; raw: string }[];
   /** Updates stages in the order this task ran them (merged or split). */
   stages?: string[];
+  /** What the results answer settled, as committed: the executor, the optional
+   * recipient, the action and the direction. This is the whole record 06 and 01
+   * need — no prose check is implied, and no `名字：` label is present. */
+  facts?: Omit<SettledFact, 'playerGroup'>[];
+  /** Facts that were dropped as noise, with the reason (a denied reaction, a
+   * fact about another group). Visible so a zero-fact point is not a mystery. */
+  droppedFacts?: { memberIds: string[]; reason: string; original: string }[];
+  /** A written outcome that disagreed with the judgement and was replaced by
+   * the judgement-derived direction (d531/bed9/9eae/08f4 all lost a turn to a
+   * direction word). */
+  outcomeAdjusted?: { actorId: string; written: string; derived: string; why: string }[];
+  /** Members whose judgement row the model omitted; their outcome is derived,
+   * not asserted. */
+  implicitJudgments?: string[];
   /** How many characters the stage answers covered. The full cast is a product
    * requirement, and this is the lightweight proof 09 can read from the page.
    * `taskRows` is the full-world task-row count, never a scene-only subset. */
@@ -108,16 +122,14 @@ export interface SettlementPortSummary {
 }
 
 export interface SettlementModelPort extends WorldModelPort {
-  /** Every fact settled so far for the current point, verbatim, with the
-   * protagonist's own group first. A reaction group answers after the player's
-   * group and used to overwrite the player's result in the caller's single
-   * `lastResultsText` slot, so the walk/read outcome never reached narration
-   * and the result beat was composed from nothing.
+  /** Every fact settled so far for the current point, with the protagonist's
+   * own group first. This is settlement input (six stages, next-turn world
+   * knowledge), NOT a prose contract: the runtime shows the model's own prose
+   * unchanged and never verifies or rewrites it against these sentences
+   * (2026-11-11 raw-output decision).
    *
-   * No `名字：` prefix: the constrained result fact is verified as a sentence
-   * that must appear in the prose verbatim, and a label turns it into
-   * `路明非：路明非沿着…` — the same speaker-label leak that reached the page
-   * from the labeled results lines. */
+   * No `名字：` prefix: a label turns a fact into `路明非：路明非沿着…`, a
+   * speaker-label leak that is not a fact about the world. */
   settledFactLines(): string[];
   /** Structured settled results for the same point, protagonist group first.
    * Each record names the executor, the recipient (when any), the performed
@@ -232,6 +244,45 @@ export function createSettlementModelPort(
           : {}),
       };
     }
+    if (task === 'results' && !outcome.error) {
+      const settled = outcome.evidence.detail as {
+        facts?: SettledFact[];
+        droppedFacts?: { memberIds?: string[]; reason?: string; original?: string }[];
+        outcomeAdjusted?: { actorId?: string; written?: string; derived?: string; why?: string }[];
+        implicitJudgments?: string[];
+      } | null;
+      if (Array.isArray(settled?.facts)) {
+        record.facts = settled.facts.map((fact) => ({
+          text: String(fact.text),
+          memberIds: (fact.memberIds ?? []).map(String),
+          actorId: String(fact.actorId),
+          ...(fact.targetId ? { targetId: String(fact.targetId) } : {}),
+          ...(fact.action ? { action: String(fact.action) } : {}),
+          outcome: fact.outcome,
+          actorSource: fact.actorSource,
+          outcomeSource: fact.outcomeSource,
+          ...(fact.implicit ? { implicit: true as const } : {}),
+        }));
+      }
+      if (Array.isArray(settled?.droppedFacts) && settled.droppedFacts.length) {
+        record.droppedFacts = settled.droppedFacts.map((row) => ({
+          memberIds: (row.memberIds ?? []).map(String),
+          reason: String(row.reason ?? ''),
+          original: String(row.original ?? ''),
+        }));
+      }
+      if (Array.isArray(settled?.outcomeAdjusted) && settled.outcomeAdjusted.length) {
+        record.outcomeAdjusted = settled.outcomeAdjusted.map((row) => ({
+          actorId: String(row.actorId ?? ''),
+          written: String(row.written ?? ''),
+          derived: String(row.derived ?? ''),
+          why: String(row.why ?? ''),
+        }));
+      }
+      if (Array.isArray(settled?.implicitJudgments) && settled.implicitJudgments.length) {
+        record.implicitJudgments = settled.implicitJudgments.map(String);
+      }
+    }
     const progress = (outcome.evidence.detail as { roundProgress?: RoundProgressEvidence } | null)?.roundProgress;
     if (progress) record.roundProgress = progress;
     // Keep the successful attempt's raw output too: a semantically invalid
@@ -339,6 +390,14 @@ export function createSettlementModelPort(
           ...(fact.implicit === true ? { implicit: true as const } : {}),
           playerGroup,
         });
+      }
+      // The point's facts must survive the round: continuation clears the live
+      // list, so a submission snapshot taken at endSubmission() used to be empty
+      // (bed9de41's run recorded settledFacts: null although two groups had
+      // settled). Keep the current point's copy on the open submission.
+      if (submission) {
+        const facts = settledFacts();
+        if (facts.length) submission.settledFacts = facts;
       }
     }
   }

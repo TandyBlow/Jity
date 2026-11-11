@@ -67,6 +67,7 @@ interface Fact {
    * member list and judgement label. Kept so the page can show a derived row. */
   actorSource: 'model' | 'derived';
   outcomeSource: 'model' | 'derived';
+  targetSource?: 'model' | 'derived';
   /** The model omitted this actor's judgement row, so a derived outcome is not a
    * claim about direction: 02/06 must treat `text` as the only result content
    * for such a fact. */
@@ -97,6 +98,9 @@ interface ResultsAnswer {
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
+  /** A written outcome that disagreed with the judgement or the sentence and was
+   * replaced by the judgement-derived direction. */
+  outcomeAdjusted?: { actorId: Id; original: string; written: ResultOutcome; derived: ResultOutcome; why: string }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -202,6 +206,7 @@ export async function runResults(
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
+      outcomeAdjusted: parsedAnswer.outcomeAdjusted ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -300,10 +305,14 @@ function parseResultsInput(input: Json): ResultsInput | { error: string } {
 function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState): string {
   const memberLines = members.map((member) => {
     const name = state.initial.characters[member.memberId]?.name ?? member.memberId;
+    // The effects row is fully determined by the frozen admission: printing it
+    // as a value to copy removes the 35ad failure where the model wrote
+    // reacted=true for an admitted=false target and the whole group was re-asked
+    // (23.6 s for nothing).
     const rolls = member.rolls.length
       ? member.rolls.map((roll) => {
         const targetName = state.initial.characters[roll.targetId]?.name ?? roll.targetId;
-        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted}`;
+        return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted} → effects 写 {"targetId":"${roll.targetId}","reacted":${roll.admitted}}`;
       }).join('；')
       : '无判定';
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;
@@ -480,6 +489,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
+  const adjustments: NonNullable<ResultsAnswer['outcomeAdjusted']> = [];
   const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
@@ -544,6 +554,30 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // and reading the sign. Committing it would hand the narrator a fact that
     // contradicts the point and no result for the reacting member.
     const mentioned = mentionedCharacterIds(state, cleaned.text);
+    // “路明非的红色识别带” when the band belongs to 诺诺 is an item-ownership
+    // flip: d531 turn 2 wrote exactly that. Only an explicit possessive whose
+    // item resolves in the frozen state is checked, so ordinary prose is not
+    // touched.
+    if (mentioned.length) {
+      for (const ownerId of mentioned) {
+        const ownerName = state.initial.characters[ownerId]?.name;
+        if (!ownerName) continue;
+        for (const item of Object.values(state.initial.items)) {
+          const itemName = item.name;
+          // Item names often start with the owner's name ("诺诺的红色识别带");
+          // the possessive to check is that noun without the leading owner.
+          const bare = String(itemName ?? '').replace(/^[^的]{1,6}的/u, '');
+          const named = itemName && cleaned.text.includes(`${ownerName}的${itemName}`);
+          const namedBare = bare && bare !== itemName && cleaned.text.includes(`${ownerName}的${bare}`);
+          if (!named && !namedBare) continue;
+          const itemName2 = namedBare ? bare : itemName;
+          const holderId = state.items[item.id]?.position.containerId;
+          if (holderId && state.characters[holderId] && holderId !== ownerId) {
+            throw new Error(`fact gives ${itemName2} to ${ownerName}, but it belongs to ${state.initial.characters[holderId]?.name ?? holderId}: ${original}`);
+          }
+        }
+      }
+    }
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -553,7 +587,8 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         continue;
       }
       const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
-      throw new Error(`fact names only ${names}, who ${names.length > 1 ? 'are' : 'is'} not in this group; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+      const inGroup = mentioned.some((id) => memberById.has(id));
+      throw new Error(`fact names only ${names}, who ${inGroup ? 'belong to another group of this turn' : `${names.length > 1 ? 'are' : 'is'} not in this group`}; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
     }
     // A mechanics clause can take the subject with it. If the remaining result
     // is a continuation (“且未被允许反应”), prefix the recipient's display name
@@ -590,11 +625,23 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       actorSource = 'model';
     }
     let targetId: Id | undefined;
+    let targetSource: Fact['targetSource'];
     if (rawTarget) {
       const resolved = resolveCharacterId(state, rawTarget) ?? resolveEntityId(state, rawTarget);
       if (!resolved) throw new Error(referenceError(state, rawTarget, 'entity', recipientIds[0]));
       if (resolved === actorId) throw new Error(`target ${rawTarget} is the actor itself; 受事/目标不能是执行者`);
       targetId = resolved;
+      targetSource = 'model';
+    } else {
+      // A question/hand-off often omits targetId while the sentence names the
+      // declared target (bed9: 路明非问诺诺… with a frozen lu→nono roll). The
+      // declared target is frozen state, so deriving it invents nothing.
+      const declaredTargets = [...new Set(memberById.get(actorId)?.rolls.map((roll) => roll.targetId) ?? [])]
+        .filter((id) => mentioned.includes(id) && id !== actorId);
+      if (declaredTargets.length === 1) {
+        targetId = declaredTargets[0];
+        targetSource = 'derived';
+      }
     }
     let outcome: ResultOutcome;
     let outcomeSource: Fact['outcomeSource'] = 'derived';
@@ -607,16 +654,49 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         : label === 'blocked' ? 'blocked'
           : label === 'not_achieved' ? 'failed' : 'unaffected';
     }
-    // A written outcome may not contradict the judgement it belongs to: a denied
-    // action is failed, not completed.
+    // A written outcome can disagree with the group's own judgement or with the
+    // sentence (d531's reacted=true re-ask, bed9's blocked while 未被阻止, 9eae's
+    // blocked on an answer, 08f4's not_achieved + completed). Aborting the point
+    // kills the whole turn for a direction word, so the written direction is
+    // dropped and re-derived from the model's own judgement label; the fact text
+    // — the part the six stages and next-turn knowledge read — is kept. This is
+    // still the model's judgement, not an invented result.
     if (outcomeSource === 'model') {
-      const label = judgments.find((judgment) => judgment.memberId === actorId)?.label;
-      if (label === 'blocked' && outcome === 'completed') throw new Error(`outcome completed contradicts blocked judgement for ${actorId}`);
-      if (label === 'not_achieved' && outcome === 'completed') throw new Error(`outcome completed contradicts not_achieved judgement for ${actorId}`);
-      if (label === 'achieved' && (outcome === 'blocked' || outcome === 'unaffected')) {
-        throw new Error(`outcome ${outcome} contradicts achieved judgement for ${actorId}`);
+      const judgment = judgments.find((row) => row.memberId === actorId);
+      const label = judgment?.label;
+      const derived: ResultOutcome = label === 'achieved' || label === 'partial' ? 'completed'
+        : label === 'blocked' ? 'blocked'
+          : label === 'not_achieved' ? 'failed' : 'unaffected';
+      const reason = judgment?.reason ?? '';
+      const obstruction = /被(?:阻止|拦住|拦下|拦|挡|按|拽|推|制住)|无法|没能|不能|阻止|拦住|拦下|挡住/u.test(cleaned.text);
+      const contradictsLabel = (label === 'blocked' && outcome === 'completed')
+        || (label === 'not_achieved' && outcome === 'completed')
+        || (label === 'achieved' && (outcome === 'blocked' || outcome === 'unaffected'))
+        || (label === 'no_change' && outcome === 'completed');
+      const contradictsReason = outcome === 'blocked' && /未被(?:阻止|拦住|拦下)|没有被(?:阻止|拦住)/u.test(reason);
+      const blockedWithoutCue = outcome === 'blocked' && !obstruction;
+      if (contradictsLabel || contradictsReason || blockedWithoutCue) {
+        adjustments.push({
+          actorId,
+          original,
+          written: outcome,
+          derived,
+          why: contradictsReason ? 'reason_says_not_blocked' : blockedWithoutCue ? 'blocked_without_cue' : 'judgement_direction',
+        });
+        outcome = derived;
+        outcomeSource = 'derived';
       }
-      if (label === 'no_change' && outcome === 'completed') throw new Error(`outcome completed contradicts no_change judgement for ${actorId}`);
+    }
+    // A fact that is the member's declared action restated is not a result:
+    // 35ad turn 3 answered the player's own sentence (我请诺诺带我走…路线)
+    // verbatim with outcome completed, so the “result” asserted the player's
+    // declaration had already succeeded.
+    // Only the player's typed sentence is written in the first person, so a
+    // fact about the protagonist that still says “我” is that sentence copied,
+    // not a description of what happened.
+    const actorIdForFact = recipientIds[0];
+    if (actorIdForFact === state.protagonistId && /[我咱]/u.test(cleaned.text)) {
+      throw new Error(`fact is the player's own “我” sentence, not a third-person result: ${original}。用第三人称写实际发生的执行、尝试、受阻或失败（${actionHint}）。`);
     }
     // “甲未能。” is what is left after a stripped task clause: a dangling
     // negation is not a result. The 60-char action hint tells the repair what to
@@ -638,6 +718,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       outcome,
       actorSource,
       outcomeSource,
+      ...(targetSource ? { targetSource } : {}),
       ...(implicit.includes(actorId) ? { implicit: true as const } : {}),
     });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
@@ -654,6 +735,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(sanitized.length ? { sanitized } : {}),
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),
+    ...(adjustments.length ? { outcomeAdjusted: adjustments } : {}),
   };
 }
 

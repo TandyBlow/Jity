@@ -345,6 +345,96 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.droppedFacts[0].original).toContain('路明非未被判定为反应');
   });
 
+  it('re-derives a blocked outcome that the sentence does not support', async () => {
+    // 9eae turn 2: 诺诺摇头说不知道 was committed as outcome blocked.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'not_achieved', reason: '诺诺没有被迫反应。', effects: [{ targetId: 'nono', reacted: false }] }],
+      facts: [{ text: '路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_29', {
+      groupId: 'group_29',
+      members: [{
+        memberId: 'lu',
+        actionText: '我向诺诺问现在的局势。',
+        rollRefs: [{ targetId: 'nono', rollId: 'r1', result: 12, eligible: true, admitted: false }],
+      }],
+      workingState: state,
+    } as unknown as Json);
+    // The turn no longer dies on a direction word: the fact stays, the outcome
+    // follows the model's own not_achieved judgement.
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { outcome: string; outcomeSource: string }[]; outcomeAdjusted: { why: string; written: string; derived: string }[] };
+    expect(detail.facts[0]).toMatchObject({ outcome: 'failed', outcomeSource: 'derived' });
+    expect(detail.outcomeAdjusted[0]).toMatchObject({ why: 'blocked_without_cue', written: 'blocked', derived: 'failed' });
+    // A real obstruction keeps the written blocked outcome.
+    const blocked = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'not_achieved', reason: '门被顶住。', effects: [] }],
+      facts: [{ text: '路明非被门板挡住，没有挤进器材棚。', memberIds: ['lu'], actorId: 'lu', outcome: 'blocked' }],
+    });
+    const ok = await createSettlementHandlers({ engine: scriptedEngine([blocked]) }).results('group_29', {
+      groupId: 'group_29',
+      members: [{ memberId: 'lu', actionText: '我挤进器材棚。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(ok.value).not.toBeNull();
+    expect((ok.evidence.detail as { facts: { outcome: string; outcomeSource: string }[] }).facts[0]).toMatchObject({ outcome: 'blocked', outcomeSource: 'model' });
+  });
+
+  it('rejects a fact that gives one character’s item to another', async () => {
+    // d531 turn 2 wrote 路明非的红色识别带… although the band is 诺诺's.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [
+        { memberId: 'nono', label: 'partial', reason: '诺诺低声说话。', effects: [{ targetId: 'lu', reacted: true }] },
+        { memberId: 'lu', label: 'achieved', reason: '路明非听着。', effects: [] },
+      ],
+      facts: [
+        { text: '路明非的红色识别带在胸前微微发烫，她低声说出一条路线。', memberIds: ['nono'], actorId: 'nono', outcome: 'completed' },
+        { text: '路明非听着诺诺说的路线。', memberIds: ['lu'], actorId: 'lu', outcome: 'completed' },
+      ],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_29', {
+      groupId: 'group_29',
+      members: [
+        { memberId: 'nono', actionText: '诺诺低声说出路线。', rollRefs: [{ targetId: 'lu', rollId: 'r1', result: 9, eligible: true, admitted: true }] },
+        { memberId: 'lu', actionText: '我听诺诺说。', rollRefs: [] },
+      ],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('红色识别带');
+    expect(outcome.error).toContain('belongs to 诺诺');
+  });
+
+  it('rejects a protagonist fact that copied the player’s “我” sentence', async () => {
+    // 35ad turn 3: the player wrote 我请诺诺带我走一条有掩护、能到钟楼西侧的路线。and
+    // the results answer repeated it verbatim with outcome completed.
+    const { state } = loadWorld();
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'achieved', reason: '路明非请求诺诺。', effects: [{ targetId: 'nono', reacted: true }] }],
+      facts: [{ text: '路明非请诺诺带我走一条有掩护、能到钟楼西侧的路线', memberIds: ['lu'], actorId: 'lu', outcome: 'completed' }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([raw, raw]) });
+    const outcome = await handlers.results('group_49', {
+      groupId: 'group_49',
+      members: [
+        {
+          memberId: 'lu',
+          actionText: '我请诺诺带我走一条有掩护、能到钟楼西侧的路线。',
+          rollRefs: [{ targetId: 'nono', rollId: 'r1', result: 11, eligible: true, admitted: true }],
+        },
+        { memberId: 'nono', actionText: '诺诺考虑路线。', rollRefs: [] },
+      ],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.error).toContain('third-person result');
+    expect(outcome.error).toContain('我请诺诺带我走');
+  });
+
   it('keeps the real d101 pending task goal out of the results prompt', async () => {
     const { state } = loadWorld();
     const seen: string[] = [];

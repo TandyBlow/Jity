@@ -209,24 +209,37 @@ describe('common-group results', () => {
     expect(facts[1]).toMatchObject({ actorId: 'b', outcome: 'unaffected' });
   });
 
-  it('rejects an outcome that contradicts the judgement, a non-member actor and a task claim', async () => {
+  it('re-derives a contradictory outcome instead of killing the point, and still rejects protocol errors', async () => {
+    // A direction word is repaired from the model's own judgement; the fact text
+    // — what the six stages and next-turn knowledge read — is kept.
     const contradicting = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没推动。', effects: [{ targetId: 'b', reacted: true }] }],
-      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+      facts: [
+        { text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙站在原地。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
     });
-    const engine = new ScriptedEngine([contradicting, contradicting]);
-    const failed = await createSettlementHandlers({ engine }).results('g1', resultsInput());
-    expect(failed.value).toBeNull();
-    expect(failed.error).toContain('contradicts not_achieved');
+    const engine = new ScriptedEngine([contradicting]);
+    const adjusted = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(adjusted.value).not.toBeNull();
+    const adjustedDetail = adjusted.evidence.detail as {
+      facts: { outcome: string; outcomeSource: string }[];
+      outcomeAdjusted: { why: string; written: string; derived: string }[];
+    };
+    expect(adjustedDetail.facts[0]).toMatchObject({ outcome: 'failed', outcomeSource: 'derived' });
+    expect(adjustedDetail.outcomeAdjusted[0]).toMatchObject({ why: 'judgement_direction', written: 'completed', derived: 'failed' });
 
     const achievedBlocked = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
-      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+      facts: [
+        { text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' },
+        { text: '乙站在原地。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
     });
-    const achievedEngine = new ScriptedEngine([achievedBlocked, achievedBlocked]);
+    const achievedEngine = new ScriptedEngine([achievedBlocked]);
     const achievedOutcome = await createSettlementHandlers({ engine: achievedEngine }).results('g1', resultsInput());
-    expect(achievedOutcome.value).toBeNull();
-    expect(achievedOutcome.error).toContain('contradicts achieved');
+    expect(achievedOutcome.value).not.toBeNull();
+    expect((achievedOutcome.evidence.detail as { facts: { outcome: string }[] }).facts[0].outcome).toBe('completed');
 
     const foreign = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
@@ -260,6 +273,79 @@ describe('common-group results', () => {
     const taskWordEngine = new ScriptedEngine([taskWord]);
     const taskWordOutcome = await createSettlementHandlers({ engine: taskWordEngine }).results('g1', resultsInput());
     expect(taskWordOutcome.value).not.toBeNull();
+  });
+
+  it('derives the declared target from the sentence when targetId is omitted', async () => {
+    // bed9 turn 2: 路明非问诺诺… with a frozen lu→nono roll but no targetId.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲问了乙。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙回答。', effects: [] },
+      ],
+      facts: [
+        { text: '甲问乙红蓝两方现在在哪，乙摇头说不知道', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙摇头说不清楚局势', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '我问乙现在的局势。', rollRefs: [{ targetId: 'b', rollId: 'r1', result: 12, eligible: true, admitted: true }] },
+        { memberId: 'b', actionText: '乙回答。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    const facts = (outcome.evidence.detail as { facts: { actorId: string; targetId?: string; targetSource?: string }[] }).facts;
+    const asked = facts.find((fact) => fact.actorId === 'a');
+    expect(asked?.targetId).toBe('b');
+    expect(asked?.targetSource).toBe('derived');
+    // The other member's sentence names no declared target -> no invented one.
+    const answered = facts.find((fact) => fact.actorId === 'b');
+    expect(answered?.targetId).toBeUndefined();
+  });
+
+  it('never shows a literal placeholder id in the continuation format example', async () => {
+    // 35ad turn 3: nobody else in the room, the example said characterId
+    // "人物id", the model copied it four times and the fatal placeholder check
+    // ended the chain after two calls.
+    const empty = new ScriptedEngine([JSON.stringify({ candidates: [] })]);
+    // a is alone in the room: b, c and off are all elsewhere.
+    const lonely = world({ farOnly: true });
+    lonely.characters.c!.position = { containerId: 'far' } as typeof lonely.characters.c.position;
+    await createSettlementHandlers({ engine: empty }).continuation('round_1', {
+      round: { roundId: 'round_1', trigger: 'automatic', conclusion: null },
+      head: { pointId: 'p1' },
+      workingState: lonely,
+      roundChanges: [],
+      roundProgress: progressEvidence(false, 'no_change'),
+    } as unknown as Json);
+    const lonelyPrompt = empty.prompts[0];
+    expect(lonelyPrompt).not.toContain('人物id');
+    expect(lonelyPrompt).toContain('同地点没有其他人物');
+
+    // With someone present the example uses that character's real id.
+    const present = new ScriptedEngine([JSON.stringify({ candidates: [] })]);
+    await createSettlementHandlers({ engine: present }).continuation('round_1', continuationInput([]));
+    expect(present.prompts[0]).not.toContain('人物id');
+    expect(present.prompts[0]).toMatch(/characterId":"(?:b|off)"/u);
+  });
+
+  it('re-derives an outcome that contradicts the model’s own reason', async () => {
+    // bed9 turn 2 answered “…未被阻止” with outcome blocked.
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲的行动未成功完成目标，因此未被阻止。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [
+        { text: '甲问乙局势，乙摇头说不知道', memberIds: ['a'], actorId: 'a', outcome: 'blocked' },
+        { text: '乙站在原地。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const engine = new ScriptedEngine([raw]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { outcomeAdjusted: { why: string; derived: string }[]; facts: { outcome: string; outcomeSource: string }[] };
+    expect(detail.facts[0]).toMatchObject({ outcome: 'failed', outcomeSource: 'derived' });
+    expect(detail.outcomeAdjusted[0]).toMatchObject({ why: 'reason_says_not_blocked', derived: 'failed' });
   });
 
   it('keeps a negative action result instead of stripping the negation as a task claim', async () => {
@@ -636,6 +722,18 @@ describe('six-stage updates', () => {
     expect((outcome.value as UpdatesCall[]).map((call) => call.stage)).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
     const detail = outcome.evidence.detail as { skipped: string };
     expect(detail.skipped).toBe('no_settled_fact');
+
+    // The production controller splits the stages; a split call for the empty
+    // group must skip too, or that saving never happens.
+    const splitEngine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const split = await createSettlementHandlers({ engine: splitEngine }).updates('group_12', {
+      groupId: 'group_12',
+      stage: 'position',
+      results: { nono: '' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(splitEngine.prompts).toHaveLength(0);
+    expect(split.value).toMatchObject({ stage: 'position', changes: {} });
 
     // Any settled fact still runs the whole pass.
     const engine2 = new ScriptedEngine([
@@ -1260,6 +1358,31 @@ describe('real failed-output shapes (09 product run)', () => {
     expect(outcome.value).toBeNull();
     expect(outcome.error).toContain('placeholder_id:id');
     expect(outcome.evidence.detail).toMatchObject({ reason: 'point_aborted_after_repair' });
+  });
+
+  it('prints the admitted-derived effects row so the model can copy it', async () => {
+    // 35ad turn 3 wrote reacted=true for a target whose 准入=false and the whole
+    // group was re-asked (23.6 s).
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推过去。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [
+        { text: '甲把工具推向乙。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙伸手接住工具。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    })]);
+    await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(engine.prompts[0]).toContain('准入=true → effects 写 {"targetId":"b","reacted":true}');
+
+    const denied = new ScriptedEngine([JSON.stringify({ judgments: [], facts: [] })]);
+    await createSettlementHandlers({ engine: denied }).results('g1', {
+      groupId: 'g1',
+      members: [{
+        memberId: 'a', actionText: '甲推门。',
+        rollRefs: [{ targetId: 'b', rollId: 'r1', result: 3, eligible: true, admitted: false }],
+      }],
+      workingState: world(),
+    } as unknown as Json).catch(() => null);
+    expect(denied.prompts[0]).toContain('准入=false → effects 写 {"targetId":"b","reacted":false}');
   });
 
   it('repairs an effect for an undeclared target and resolves full names', async () => {

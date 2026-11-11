@@ -139,6 +139,37 @@ export function checkRun(input, options = {}) {
     }
     for (const call of results) {
       if (call.fallback) soft.push(`${where} results/${call.key}: failed, point aborted (${call.error ?? 'no error text'})`);
+      if (call.error) continue;
+      // The structured result record is what 06/01 consume: executor, optional
+      // recipient, action, direction. Absent on a ledger older than fd8030f1.
+      const facts = Array.isArray(call.facts) ? call.facts : null;
+      if (!facts) {
+        soft.push(`${where} results/${call.key}: no structured facts recorded (ledger predates fd8030f1)`);
+      } else {
+        if (!facts.length) hard.push(`${where} results/${call.key}: settled with no fact and no dropped-fact reason`);
+        for (const fact of facts) {
+          if (!fact || typeof fact.text !== 'string' || !fact.text.trim()) hard.push(`${where} results/${call.key}: fact has no text`);
+          if (!fact || typeof fact.actorId !== 'string' || !fact.actorId) hard.push(`${where} results/${call.key}: fact has no actorId`);
+          if (!fact || !['completed', 'failed', 'blocked', 'unaffected'].includes(fact.outcome)) {
+            hard.push(`${where} results/${call.key}: fact outcome is ${JSON.stringify(fact?.outcome ?? null)}`);
+          }
+          if (fact && Array.isArray(fact.memberIds) && fact.actorId && !fact.memberIds.includes(fact.actorId)) {
+            hard.push(`${where} results/${call.key}: actor ${fact.actorId} is not one of its own memberIds`);
+          }
+          if (fact && typeof fact.text === 'string' && /^[^\s，。；：]{1,6}：/u.test(fact.text)) {
+            soft.push(`${where} results/${call.key}: fact starts like a speaker label (${fact.text.slice(0, 12)})`);
+          }
+        }
+      }
+      if (Array.isArray(call.droppedFacts) && call.droppedFacts.length) {
+        soft.push(`${where} results/${call.key}: ${call.droppedFacts.length} fact(s) dropped (${[...new Set(call.droppedFacts.map((row) => row.reason))].join(',')})`);
+      }
+      if (Array.isArray(call.outcomeAdjusted) && call.outcomeAdjusted.length) {
+        soft.push(`${where} results/${call.key}: ${call.outcomeAdjusted.length} written outcome(s) re-derived (${call.outcomeAdjusted.map((row) => `${row.written}->${row.derived}`).join(',')})`);
+      }
+      if (Array.isArray(call.implicitJudgments) && call.implicitJudgments.length) {
+        soft.push(`${where} results/${call.key}: judgement row missing for ${call.implicitJudgments.join(',')} (outcome derived)`);
+      }
     }
     const decision = sub.continuationDecision ?? 'handback';
     if (decision === 'continue' && !continuation.length) hard.push(`${where}: decision is continue but no continuation call ran`);
@@ -202,6 +233,12 @@ function selfTest() {
         : call
     )) }, true],
     ['raw __worldTurns array', [{ index: 1, submission: base }], true],
+    ['fact without an actor', { ...base, calls: base.calls.map((call) => (
+      call.task === 'results' ? { ...call, facts: [{ text: '甲推开门。', outcome: 'completed' }] } : call
+    )) }, false],
+    ['fact actor outside its members', { ...base, calls: base.calls.map((call) => (
+      call.task === 'results' ? { ...call, facts: [{ text: '甲推开门。', actorId: 'zz', memberIds: ['a'], outcome: 'completed' }] } : call
+    )) }, false],
   ];
   let failed = 0;
   for (const [name, input, expected] of cases) {
