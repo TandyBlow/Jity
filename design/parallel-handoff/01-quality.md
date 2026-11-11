@@ -324,3 +324,4 @@
 - 定位 `position_invalid`：4b1e 第十回合三组 updates 都没有给 lu 写位置，唯一的额外写入者是 06 `game-model.ts:injectMovement`（输入命中「退/离开」，每组各调一次 `movementJudgement`，从相邻地点硬选去处）。已写 `results/quality/requests-01-to-06-inject-movement.md`，并向 09/06 请求 `__worldSubmission.commits` + 两个 unit id（`browser-requests/01-input-turn10-commits-dump.json`）。
 - 09 move CTYY（run `2026-11-11T1635-24da`，head `c47a725a`，build CTYY）：330 s、`…` 占位符、无提交账本、无历史增量——同一输入的最新构建比 CT3Y 更差，登记为回归（`review-09-move-CTYY.md`）。
 - 新增 `results/quality/prereg-10turn-20261111.md`：在下一份十回合证据出现前预先登记七个维度与判定口径（动作/事实/连续/时空/文体/交还/等待），避免看完再定标准。
+- 09 move sW5U（`2026-11-11T1708-4d84`，head `f4302b6d`）：先提交玩家点的第一次真实运行，18.1 s 交还、12.7 s 首段，但 `resultsCalls 0`、只有 `time_scan` 说 lu 未变、正文 27 字原地静止，随后 `world_complete` 取消其余角色点——快而空。已登记 53 条并写 `browser-requests/01-input-first-point-action.json`。
