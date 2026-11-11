@@ -154,6 +154,46 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
+    // 3turn 9623 group_29: lu asked nono a question, the answer judged nono only
+    // and facts were attributed to both. lu had no roll target, so the row is
+    // evidence, not state; the point must not die after a 59 s call.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] },
+        { text: '工具落在乙脚边。', memberIds: ['b'] },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具推向乙。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙伸手接住工具。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('乙伸手接住');
+    expect(outcome.evidence.calls).toHaveLength(1);
+    const detail = outcome.evidence.detail as { implicitJudgments: string[]; labels: string[] };
+    expect(detail.implicitJudgments).toEqual(['a']);
+    expect(detail.labels).toContain('a:no_change');
+
+    // A member with a declared roll target still has to answer: its reacted flag
+    // is settled state.
+    const missing = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
+      facts: [{ text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] }],
+    }), JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
+      facts: [{ text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] }],
+    })]);
+    const failed = await createSettlementHandlers({ engine: missing }).results('g1', resultsInput());
+    expect(failed.value).toBeNull();
+    expect(failed.error).toContain('missing judgment for a');
+  });
+
   it('retries a length-truncated results answer with a shorter-answer instruction and the member list', async () => {
     const truncated = new IncompleteGenerationError({
       raw: '{"judgments":[{"memberId":"a","label":"achieved","reason":"甲把工具推向乙',
