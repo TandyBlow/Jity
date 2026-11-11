@@ -942,27 +942,47 @@ try {
   //   displayedEqualsRaw - each displayed text is exactly the raw beat text
   //   priorProseLeaks    - no later prompt contains an earlier displayed text or
   //                        any sentence of it (>=10 chars)
-  const beatsOf = (turn) => {
+  // The page appends one block per committed point; a point's beats are the
+  // sentences it wrote. Rebuild that layout from the candidate records the turn
+  // added and compare the page's text with it. Whitespace between blocks is the
+  // only tolerated difference; any word difference is a real mismatch.
+  const pointsOf = (turn) => {
     const tail = turn.candidate?.tail;
-    if (!Array.isArray(tail) || tail.length === 0) return [];
-    const last = tail[tail.length - 1];
-    if (Array.isArray(last?.beats)) return last.beats;
-    // The candidate record keeps the plan and beats inside a JSON string.
-    if (typeof last?.detail === 'string') {
-      try { return JSON.parse(last.detail)?.beats ?? []; } catch { return []; }
-    }
-    return [];
+    if (!Array.isArray(tail)) return [];
+    return tail.map((item) => {
+      let beats = [];
+      if (Array.isArray(item?.beats)) beats = item.beats;
+      else if (typeof item?.detail === 'string') {
+        try { beats = JSON.parse(item.detail)?.beats ?? []; } catch { beats = []; }
+      }
+      return beats.map((beat) => beat?.raw ?? '').filter(Boolean).join(String.fromCharCode(10));
+    }).filter(Boolean);
   };
   const rawOf = (turn) => {
-    const beats = beatsOf(turn);
-    if (beats.length === 0) return null;
-    return beats.map((beat) => beat?.raw ?? '').filter(Boolean).join(String.fromCharCode(10, 10));
+    const points = pointsOf(turn);
+    if (points.length === 0) return null;
+    return points.join(String.fromCharCode(10, 10));
   };
+  const flat = (value) => String(value ?? '').replace(/\s+/gu, '');
+  const beatsOf = (turn) => (turn.candidate?.tail ?? []).flatMap((item) => {
+    if (Array.isArray(item?.beats)) return item.beats;
+    if (typeof item?.detail === 'string') {
+      try { return JSON.parse(item.detail)?.beats ?? []; } catch { return []; }
+    }
+    return [];
+  });
   const sentences = (text) => String(text).split(String.fromCharCode(10)).flatMap((line) => line.split(/[。！？；]/u)).map((part) => part.trim()).filter((part) => part.length >= 10);
   const leaks = [];
   for (let i = 0; i < evidence.turns.length; i += 1) {
     const turn = evidence.turns[i];
-    turn.displayedEqualsRaw = turn.text ? turn.text === rawOf(turn) : null;
+    const expected = rawOf(turn);
+    if (turn.text) {
+      turn.displayedEqualsRaw = expected != null && flat(turn.text) === flat(expected);
+      turn.displayedSameLayout = expected != null && turn.text === expected;
+    } else {
+      turn.displayedEqualsRaw = null;
+      turn.displayedSameLayout = null;
+    }
     const later = evidence.turns.slice(i + 1);
     const earlierText = turn.text || '';
     if (!earlierText) continue;
