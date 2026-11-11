@@ -252,7 +252,6 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   // Gender is printed as data next to each person (character-gender.ts); the
   // old line banned 他/她 outright, which the 2026-11-11 decision removed.
   lines.push('只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
-  lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
   lines.push('不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。');
   lines.push(...BACKGROUND_RULES);
   const extra = policy.instruction?.trim();
