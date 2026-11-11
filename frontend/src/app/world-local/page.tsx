@@ -1079,6 +1079,25 @@ export default function WorldLocalPage() {
             new Promise((resolve) => setTimeout(resolve, 15_000)),
           ]);
         } catch (cancelError) { console.warn('[world-local] cancel after failure failed', cancelError); }
+        // The cancel is refused while the head point's narration is still
+        // pending (checkHeadReady). A failed round can have committed a point
+        // whose narration never ran, which leaves every later submit refused
+        // as turn_in_progress (the 10-turn run's turns 5-10). Finish the head
+        // narration, then cancel again; its prose is kept.
+        if (session.snapshot.transport.advance) {
+          try {
+            await Promise.race([
+              session.start(),
+              new Promise((resolve) => setTimeout(resolve, 60_000)),
+            ]);
+          } catch (finishError) { console.warn('[world-local] finishing narration after failure failed', finishError); }
+          try {
+            await Promise.race([
+              session.cancel('turn_failed'),
+              new Promise((resolve) => setTimeout(resolve, 15_000)),
+            ]);
+          } catch (cancelError) { console.warn('[world-local] second cancel after failure failed', cancelError); }
+        }
         try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after cancel failed', refreshError); }
       }
       setEntries((list) => {
