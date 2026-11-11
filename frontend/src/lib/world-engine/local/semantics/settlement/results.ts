@@ -289,6 +289,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
+    '- reason 一句话，20 字以内；facts 每人一句，短句即可。',
     '- 每个成员至少获得一条结果事实；共同发生的事实可以同时归属多个成员；facts 的 memberIds 只能填本组成员。',
     '- facts 只写这次行动的直接结果；不得写“任务完成/任务达成/目标达成/行动成功完成/成功完成/成功执行行动/任务要求/奖励”这类任务或成功结论。',
     '- facts 写本组成员自己的行动结果；不要写其他人物正在做什么，也不要把判定理由（未触发/未成功/被阻止/未达成）抄成事实。',
