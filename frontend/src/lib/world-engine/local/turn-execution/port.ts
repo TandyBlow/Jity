@@ -198,6 +198,10 @@ export function createSettlementModelPort(
    * next point's frozen action must be about that proposal; when it is not, the
    * action lane handed the point a stale action (10turn 9711 turn 4). */
   let acceptedProposal: { characterId: string; text: string }[] = [];
+  /** Facts already settled by automatic points in this submission. A point
+   * whose facts restate one of them did not move the story, however the model
+   * worded it (9711 turn 4 settled the same wound-check sentence twice). */
+  let automaticFacts: string[] = [];
   let roundFacts: string[] = [];
   const consumedActions = new Set<string>();
   const consumedFacts = new Set<string>();
@@ -475,7 +479,8 @@ export function createSettlementModelPort(
             ...(readTrigger(input) === 'automatic'
               ? {
                 actionSettled: settledCoversActions(roundActionTexts, settledRecords, after)
-                  && actionFollowsProposal(acceptedProposal, roundActionTexts, after),
+                  && actionFollowsProposal(acceptedProposal, roundActionTexts, after)
+                  && !restatesAutomaticFact(roundFacts, automaticFacts),
               }
               : {}),
           });
@@ -501,6 +506,9 @@ export function createSettlementModelPort(
             .filter((row) => typeof row?.characterId === 'string' && typeof row?.text === 'string'
               && (acceptedIds.size === 0 || acceptedIds.has(row.characterId)))
             .map((row) => ({ characterId: row.characterId as string, text: row.text as string }));
+          if (readTrigger(input) === 'automatic') {
+            for (const fact of roundFacts) automaticFacts.push(fact);
+          }
           // The controller only accepts a Conclusion value; a null value is a
           // visible stop (policy rule or model failure), never a handback.
           return unwrap('continuation', key, null, outcome) as unknown as Json;
@@ -538,6 +546,8 @@ export function createSettlementModelPort(
       // lets a later turn legitimately repeat an action that was consumed in
       // the previous turn.
       continuation.reset();
+      automaticFacts = [];
+      acceptedProposal = [];
       roundStartState = null;
       roundActionTexts = [];
       roundFacts = [];
@@ -682,6 +692,33 @@ function actionFollowsProposal(
     if (!own.some((row) => sharesContent(row.text, action, names))) return false;
   }
   return true;
+}
+
+/** Does one of this point's facts restate a fact an automatic point already
+ * settled? Containment (shared character bigrams over the smaller set) >= 0.85
+ * catches a reworded repeat (9711: «芬格尔蹲下并掀开路明非的袖口查看伤口» after
+ * «芬格尔掀开路明非的袖口查看伤口» = 0.93) while a reworded question (0.71) or a
+ * different finding in the same place (0.60) stays below it. */
+function restatesAutomaticFact(facts: string[], earlier: string[]): boolean {
+  if (!facts.length || !earlier.length) return false;
+  const bigrams = (text: string): Set<string> => {
+    const chars = [...text.replace(/[\s，。；：、！？…—,.!?:;'"“”‘’（）()]/gu, '')];
+    const set = new Set<string>();
+    for (let index = 0; index + 2 <= chars.length; index += 1) set.add(chars.slice(index, index + 2).join(''));
+    return set;
+  };
+  for (const fact of facts) {
+    const mine = bigrams(fact);
+    if (!mine.size) continue;
+    for (const other of earlier) {
+      const theirs = bigrams(other);
+      let shared = 0;
+      for (const gram of mine) if (theirs.has(gram)) shared += 1;
+      const smaller = Math.min(mine.size, theirs.size);
+      if (smaller > 0 && shared / smaller >= 0.85) return true;
+    }
+  }
+  return false;
 }
 
 function sharesContent(action: string, fact: string, names: string[]): boolean {

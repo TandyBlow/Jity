@@ -50,8 +50,22 @@ function initialState(brain: Brain): InitialTemplate {
   return initial;
 }
 
+/** Four different results for the NPC follow-ups. The chain test asserts that
+ * four *different* no-state-change follow-ups are each progress; a fixture that
+ * returned one identical fact for all four would now be stopped by the
+ * repeated-settled-fact guard, which is the correct product behaviour for a
+ * replay but not what that test is about. */
+const NPC_FACTS = [
+  '林川朝门口走了一步，又停下来听。',
+  '林川伸手扶住门框，侧身听走廊里的脚步。',
+  '林川退回门内半步，把重心放低。',
+  '林川抬眼看了看盒子的方向。',
+  '林川把门缝合到只留一线。',
+];
+
 function scriptedEngine(brain: Brain): InferenceEngine {
   let continuationRound = 0;
+  let npcFactRound = 0;
   return {
     info: { backend: 'scripted', modelId: 'turn-execution-integration' },
     async load() {},
@@ -73,7 +87,7 @@ function scriptedEngine(brain: Brain): InferenceEngine {
           facts: unique.map((memberId) => ({
             text: memberId === 'person_c'
               ? (brain.taskAchieved ? '周宁把盒盖打开了。' : '周宁向盒盖伸了手，但没有打开。')
-              : '林川朝门口走了一步，又停下来听。',
+              : NPC_FACTS[npcFactRound++ % NPC_FACTS.length],
             memberIds: [memberId],
           })),
         });
@@ -539,6 +553,69 @@ describe('automatic round progress', () => {
     const automatic = submission?.calls.filter((row) => row.task === 'continuation')[1];
     expect(automatic?.roundProgress?.progress).toBe(false);
     expect(automatic?.roundProgress?.reason).toBe('action_not_settled');
+  });
+
+  it('does not count a second automatic point that settles the same sentence again', async () => {
+    // 9711 turn 4: two automatic points in one submission settled
+    // «芬格尔蹲下并掀开路明非的袖口查看伤口» and «芬格尔掀开路明非的袖口查看伤口».
+    // Different candidate texts, so candidate identity cannot stop it; the
+    // settled event is the same.
+    const outputs = [
+      JSON.stringify({
+        judgments: [{ memberId: 'person_c', label: 'achieved', reason: '周宁推门。' }],
+        facts: [{ text: '周宁推开走廊的门。', memberIds: ['person_c'] }],
+      }),
+      JSON.stringify({ candidates: [{ characterId: 'person_a', text: '确认护目镜佩戴情况并准备行动' }] }),
+      JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: '相关。' }] }),
+      JSON.stringify({
+        judgments: [{ memberId: 'person_a', label: 'no_change', reason: '林川查看袖口。' }],
+        facts: [{ text: '林川蹲下并掀开周宁的袖口查看伤口。', memberIds: ['person_a'] }],
+      }),
+      JSON.stringify({ candidates: [{ characterId: 'person_a', text: '找到一张泛黄的地图并确认其真实性' }] }),
+      JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: '相关。' }] }),
+      JSON.stringify({
+        judgments: [{ memberId: 'person_a', label: 'no_change', reason: '林川查看袖口。' }],
+        facts: [{ text: '林川掀开周宁的袖口查看伤口。', memberIds: ['person_a'] }],
+      }),
+      JSON.stringify({ candidates: [] }),
+    ];
+    let call = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'repeat-fact' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        const value = outputs[Math.min(call, outputs.length - 1)];
+        call += 1;
+        return value;
+      },
+    };
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const port = createSettlementModelPort(engine);
+    port.beginSubmission('我推门进去。');
+    const point = (pointId: string) => [{ pointId, timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, entityDeltas: {} }];
+    await port.generate('results', 'group_1', {
+      groupId: 'group_1', members: [{ memberId: 'person_c', actionText: '我推门进去。', rollRefs: [] }], workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_1', {
+      round: { roundId: 'round_1', trigger: 'player', conclusion: null }, head: { pointId: 'p1' }, workingState: state, roundChanges: point('p1'),
+    } as unknown as Json);
+    await port.generate('results', 'group_2', {
+      groupId: 'group_2', members: [{ memberId: 'person_a', actionText: '确认护目镜佩戴情况并准备行动', rollRefs: [] }], workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_2', {
+      round: { roundId: 'round_2', trigger: 'automatic', conclusion: null }, head: { pointId: 'p2' }, workingState: state, roundChanges: point('p2'),
+    } as unknown as Json);
+    await port.generate('results', 'group_3', {
+      groupId: 'group_3', members: [{ memberId: 'person_a', actionText: '找到一张泛黄的地图并确认其真实性', rollRefs: [] }], workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_3', {
+      round: { roundId: 'round_3', trigger: 'automatic', conclusion: null }, head: { pointId: 'p3' }, workingState: state, roundChanges: point('p3'),
+    } as unknown as Json);
+    const submission = port.endSubmission();
+    const automatic = submission?.calls.filter((row) => row.task === 'continuation');
+    expect(automatic?.[1]?.roundProgress?.reason).toBe('action_not_settled');
+    expect(automatic?.[2]?.roundProgress?.progress).toBe(false);
   });
 
   it('counts a point whose facts do cover the proposal', async () => {
