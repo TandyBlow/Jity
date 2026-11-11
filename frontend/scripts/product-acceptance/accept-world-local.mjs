@@ -904,11 +904,20 @@ try {
   //   displayedEqualsRaw - each displayed text is exactly the raw beat text
   //   priorProseLeaks    - no later prompt contains an earlier displayed text or
   //                        any sentence of it (>=10 chars)
-  const rawOf = (turn) => {
+  const beatsOf = (turn) => {
     const tail = turn.candidate?.tail;
-    if (!Array.isArray(tail) || tail.length === 0) return null;
-    const beats = tail[tail.length - 1]?.beats;
-    if (!Array.isArray(beats)) return null;
+    if (!Array.isArray(tail) || tail.length === 0) return [];
+    const last = tail[tail.length - 1];
+    if (Array.isArray(last?.beats)) return last.beats;
+    // The candidate record keeps the plan and beats inside a JSON string.
+    if (typeof last?.detail === 'string') {
+      try { return JSON.parse(last.detail)?.beats ?? []; } catch { return []; }
+    }
+    return [];
+  };
+  const rawOf = (turn) => {
+    const beats = beatsOf(turn);
+    if (beats.length === 0) return null;
     return beats.map((beat) => beat?.raw ?? '').filter(Boolean).join(String.fromCharCode(10, 10));
   };
   const sentences = (text) => String(text).split(String.fromCharCode(10)).flatMap((line) => line.split(/[。！？；]/u)).map((part) => part.trim()).filter((part) => part.length >= 10);
@@ -920,7 +929,7 @@ try {
     const earlierText = turn.text || '';
     if (!earlierText) continue;
     for (const other of later) {
-      const prompts = other.candidate?.tail?.flatMap((item) => (item.beats || []).map((beat) => beat?.prompt || '')) ?? [];
+      const prompts = beatsOf(other).map((beat) => beat?.prompt || '');
       for (const prompt of prompts) {
         if (prompt.includes(earlierText)) leaks.push({ from: turn.id, into: other.id, kind: 'full' });
         for (const sentence of sentences(earlierText)) {
