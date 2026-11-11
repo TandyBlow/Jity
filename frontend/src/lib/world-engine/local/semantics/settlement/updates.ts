@@ -1387,6 +1387,14 @@ function readDescriptionOperations(
         rejections?.push({ entityId, reason: 'personality_echoes_fact' });
         continue;
       }
+      if (kind === 'personality' && op.text && namesWorldEntity(state, op.text as string)) {
+        // The real 0.6B stored "护目镜戴好并确认镜片无裂纹" as a personality change:
+        // a compressed event sentence, not a tendency. A trait that names a
+        // character, item or place is the event again, so it is dropped. The
+        // prompt already forbids names; this is the structural enforcement.
+        rejections?.push({ entityId, reason: 'personality_names_entity' });
+        continue;
+      }
       const supersedes = op.op === 'remove' || op.op === 'replace' ? [...op.recordIds] : [];
       const change: Change = {
         id: allocator.changeId(kind, entityId, used),
@@ -1723,6 +1731,24 @@ export function goalWordingOverlap(factText: string, goal: string): number {
 const GOAL_WORDING_MIN = 0.2;
 export function sharesGoalWording(factText: string, goal: string): boolean {
   return goalWordingOverlap(factText, goal) >= GOAL_WORDING_MIN;
+}
+
+/** Does a personality text name a character or item? Literal lookup on the
+ * state's own names, never a semantic judgement. Places are deliberately not
+ * checked: "开始留意远处的动静" is a trait, and "远处" is also a room name. */
+function namesWorldEntity(state: WorldState, text: string): boolean {
+  const names: string[] = [];
+  for (const space of [state.initial.characters, state.initial.items]) {
+    for (const entry of Object.values(space ?? {})) {
+      const name = (entry as { name?: string } | undefined)?.name ?? '';
+      if (name.length >= 2) names.push(name);
+      // "路明非的护目镜" is also named "护目镜" in prose; the core after the
+      // possessor is a literal part of the state name, not a guess.
+      const core = name.split("的").pop() ?? "";
+      if (core.length >= 2 && core !== name) names.push(core);
+    }
+  }
+  return names.some((name) => text.includes(name));
 }
 
 function buildSubtasksPrompt(ctx: StageContext, ownerIds: Id[] = roster(ctx.state), projection?: PointProjection): string {

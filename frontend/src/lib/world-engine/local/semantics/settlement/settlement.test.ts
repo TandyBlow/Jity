@@ -1172,6 +1172,29 @@ describe('six-stage updates', () => {
     expect(prompt).not.toContain('离开→');
   });
 
+  it('drops a personality text that names a character or an item', async () => {
+    // Real 0.6B (probe 04-six-stage-real-12): the accepted trait was
+    // "护目镜戴好并确认镜片无裂纹" — the event again, compressed below the echo
+    // threshold. A trait naming an item or a character is the event.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: 'a', op: 'add', recordIds: [], text: '更会照顾工具' }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(Object.keys(calls.find((call) => call.stage === 'personality')!.changes)).toEqual([]);
+    const detail = outcome.evidence.detail as {
+      stages?: { stage: string; rejectedPersonality?: { reason: string }[] }[];
+    };
+    expect(detail.stages?.find((row) => row.stage === 'personality')?.rejectedPersonality ?? [])
+      .toEqual([{ entityId: 'a', reason: 'personality_names_entity' }]);
+  });
+
   it('does not re-achieve an already achieved task', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),
