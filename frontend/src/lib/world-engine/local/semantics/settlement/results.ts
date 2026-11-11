@@ -363,8 +363,14 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
   const exampleRows = members.slice(0, 2).map((member) => (
     `{"memberId":"${member.memberId}","label":"achieved|partial|not_achieved|blocked|no_change","reason":"一句话理由"}`
   ));
+  // The fact's `text` is a placeholder frame, never a sentence about this world.
+  // Until 2026-11-11 the two worked examples in the rules block were concrete
+  // sentences ("路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道"); the 0.6B copied
+  // them verbatim onto unrelated actions (6042 turns 2-3, 4b1e turn 2), so a
+  // fact about asking nono appeared under "我决定先不站队" and the six stages
+  // moved qin on it.
   const exampleFacts = members.slice(0, 4)
-    .map((member) => `{"text":"${state.initial.characters[member.memberId]?.name ?? member.memberId}做了什么/看到什么","memberIds":["${member.memberId}"],"actorId":"${member.memberId}","outcome":"completed"}`);
+    .map((member) => `{"text":"〈这一步实际做了什么、谁回应了什么〉","memberIds":["${member.memberId}"],"actorId":"${member.memberId}","outcome":"completed"}`);
   return [
     '你是中文跑团游戏的共同结算器。只输出 JSON，不要解释。',
     '下面是一个已经冻结的结算组：行动已经确认，骰点已经落定。请统一结算全组行动，写清实际发生了什么。',
@@ -378,9 +384,9 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- reason 一句话，20 字以内；facts 每人一句，短句即可。',
     '- facts 每个成员一条自己的行动结果（共同的可以归多人），memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
     '- 不写“任务完成/任务达成/目标达成/成功完成/奖励”这类结论；failed/blocked 照实写，保留“没有/未/被阻止”。',
-    '- 例：行动是“沿着服务巷走，看清墙上的演习规则牌”，事实写“路明非走到服务巷，看见墙上的规则牌”；不要写“完成参赛选择/任务”。',
-    '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：73f3 只写了看懂规则牌，走路从结果里丢了。',
-    '- 例：行动是“我向诺诺问现在的局势”，事实写“路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道”；不要写“骰点未获取，因此未能达成目标”。',
+    '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：只写“看懂了规则牌”会把走路从结果里丢掉；不要写“完成参赛选择/任务”。',
+    '- 问话就写谁问了谁、对方答了什么或没答；不要写“骰点未获取，因此未能达成目标”。',
+    '- 事实必须是这次冻结行动的结果；不要把示例、上一回合的事或别的成员的行动抄成本次事实。',
     '- fact 带字段：actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
     '- failed/blocked 照实写，保留“没有/未/被阻止”；任务目标、骰点资格、判定理由都不是事实。',
     `本组：${groupId}`,
@@ -903,7 +909,14 @@ function readResultsAnswer(
  * template as the world's fact. */
 export function isExampleFactText(text: string): boolean {
   const compact = text.replace(/\s+/gu, '');
-  return /做了什么\/看到什么|做了什么\/看到了什么|做了什么\/听见了什么/u.test(compact);
+  if (/做了什么\/看到什么|做了什么\/看到了什么|做了什么\/听见了什么/u.test(compact)) return true;
+  // The worked examples that sat in the rules block until 2026-11-11. A 0.6B
+  // repeats a concrete example sentence as if it were this point's result, so
+  // a prompt that still carries one (older build, cached page) must not let it
+  // into the facts either.
+  if (/走到服务巷.{0,4}看见墙上的规则牌/u.test(compact)) return true;
+  if (/问诺诺红蓝两方现在(在)?哪.{0,6}摇头说不知道/u.test(compact)) return true;
+  return false;
 }
 
 /** Remove a fact that only wraps another member's fact text. The wrapper must
