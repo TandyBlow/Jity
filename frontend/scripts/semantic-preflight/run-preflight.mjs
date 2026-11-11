@@ -435,20 +435,29 @@ async function score(file) {
       kindCounts[kind] = { total: subset.length, correct: subset.filter((row) => row.correct).length };
     }
     const times = rows.map((row) => row.wallMs).sort((a, b) => a - b);
+    const emitted = {};
+    for (const row of rows) {
+      if (!row.predicted) continue;
+      emitted[row.predicted] = (emitted[row.predicted] ?? 0) + 1;
+    }
     arms[arm] = {
       calls: rows.length, evaluated: evaluated.length, correct,
       accuracy: rows.length ? Number((correct / rows.length).toFixed(4)) : null,
       outOfEnum: rows.filter((row) => !row.inEnum).length,
       byKind: kindCounts,
+      emittedLabels: Object.entries(emitted).sort((a, b) => b[1] - a[1]),
       latency: times.length ? {
         mean: Math.round(times.reduce((sum, value) => sum + value, 0) / times.length),
         p50: times[Math.floor(times.length / 2)], max: times[times.length - 1],
       } : null,
     };
   }
+  // The probe prompt demands 丙. Escaping means the output followed the prompt
+  // (丙); honouring means the decoder stayed inside the declared enum.
   const probes = lines.filter((row) => row.kind === 'probe').map((row) => ({
-    withSchema: row.withSchema, trial: row.trial, content: row.content, error: row.error ?? null,
-    emittedOutsideEnum: Boolean(row.content) && !/甲|乙/u.test(row.content),
+    name: row.name ?? null, withSchema: row.withSchema, trial: row.trial,
+    content: row.content, error: row.error ?? null,
+    followedPrompt: typeof row.content === 'string' && row.content.includes('丙'),
   }));
   const result = {
     kind: 'preflight-score', runId: start.runId, scoredAt: new Date().toISOString(),
@@ -458,8 +467,13 @@ async function score(file) {
     scoringRule: gold.scoring,
     enumEnforcement: {
       probes,
-      withSchemaHonouredEnum: probes.filter((row) => row.withSchema).every((row) => !row.emittedOutsideEnum),
-      withoutSchemaEscapedEnum: probes.filter((row) => !row.withSchema).some((row) => row.emittedOutsideEnum),
+      // Every constrained probe must refuse the demanded 丙; every unconstrained
+      // probe must show that the same prompt alone does produce 丙.
+      withSchemaHonouredEnum: probes.filter((row) => row.withSchema).every((row) => !row.followedPrompt),
+      withoutSchemaEscapedEnum: probes.filter((row) => !row.withSchema).some((row) => row.followedPrompt),
+      forcedSingleMemberProof: probes
+        .filter((row) => row.name === 'schema-single-forced')
+        .every((row) => row.content === '{"label":"戊"}'),
     },
     arms,
     misses: Object.fromEntries(['cold', 'warm'].map((arm) => [arm, lines

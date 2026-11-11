@@ -1,0 +1,101 @@
+{
+ "experiment": "action-next-step",
+ "version": "v1",
+ "role": "04-settlement independent experiment; product protocol untouched",
+ "criterion": {
+  "path": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\criterion.txt",
+  "sha256": "56092d0c6e5ba0a03e8dc4096e3edb1bb2e4123b351b9f14d6884afdea11d21c",
+  "text": "给定这个角色此刻知道的信息，他最可能立刻做的一件事是什么。以他的目标为主要依据；现场没有条件做目标里那一步时，写他为了创造条件而做的下一步（例如移动到目的地、去找人）。"
+ },
+ "labels": {
+  "path": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\labels-v1.json",
+  "sha256": "41372ab43bc16ed90dd488bf334a562f6cec44e5633f07ba01d2833f85bb1829",
+  "fine": 115,
+  "coarse": 12,
+  "order": "groups in file order, predicates in file order",
+  "skipRepresentation": "steps = []",
+  "playerFallbackLabel": "??",
+  "coarseIsReportingOnly": true
+ },
+ "sources": {
+  "labels.py": "6075c3a1fad347e98e5ec6bd7d5177c874f4fd73172052101c6be9c9af7e5228",
+  "serialize.py": "4f1403fb6ec982169dbb7a3a98176032a4f0999091c85fa967c1a7fb083ee496",
+  "dataset.py": "5a3ee1f3d3f5c324250aaeb0138fcc9ddbbce45c6b3a8db26f5feb1d915f766f",
+  "model.py": "a8f412906abe4a9e6ceaa53eb69583a08048e720158771636bd18099272fbfe2",
+  "train.py": "9a78cce72204e7fb0bdd2cb27526ba74e2f0a9294b9f116afcffc9a25aa7489c",
+  "evaluate.py": "dfef59bfd00d2f6172877ed0235d7019986cc58b0a50298c30b39cfba0bf5dc2",
+  "measure_tokens.py": "3849950320b9c39d69a2f1f38a8dc604b39ea10d0946519d05a755bdd33be78d"
+ },
+ "backbone": {
+  "name": "MiniRBT-H256",
+  "dirArgument": "--base (resolved on the HPC login node; not present on this machine)",
+  "expectedWeightsSha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc",
+  "expectedWeightsNote": "records the weights file the previous component line trained against; train.py reports the actual sha it loaded",
+  "tokenizer": "BertTokenizer from the same directory; the tokenizer files are hashed into the run report"
+ },
+ "seed": {
+  "value": 20261111,
+  "rule": "torch.manual_seed + random.seed + numpy seed (when numpy is imported) happen BEFORE the encoder is loaded and BEFORE any new head parameter exists",
+  "why": "the reference trainer seeded after model construction; that ordering is not reused"
+ },
+ "arms": {
+  "primary": "frozen_encoder",
+  "secondary": "unfrozen_encoder",
+  "selection": "validation only; the test set is opened once, after the arm and hyperparameters are fixed",
+  "reporting": "the two arms are reported separately; they are never averaged"
+ },
+ "hyper": {
+  "batch": 16,
+  "epochsMax": 12,
+  "lrHeadFrozen": 0.001,
+  "lrFull": 3e-05,
+  "weightDecay": 0.01,
+  "dropout": 0.1,
+  "optimizer": "AdamW",
+  "earlyStop": "validation primaryGroupHit, patience 3 epochs, best checkpoint kept",
+  "maxLen": null,
+  "maxLenRule": "measure_tokens.py reports the 100th percentile over train+validation; maxLen = that value rounded UP to a multiple of 32, capped at 384; if the 100th percentile exceeds 384 the run stops and reports the count instead of truncating"
+ },
+ "loss": {
+  "step": "CrossEntropyLoss(weight=stepWeights) over 3 classes [skip, one, two]",
+  "action": "CrossEntropyLoss(weight=fineWeights) per step slot, masked where the row has no such step",
+  "object": "CrossEntropyLoss over [null, candidate_1..candidate_n], masked where the row has no such step; padding scores are masked by the candidate mask",
+  "stepWeights": [
+   0.3,
+   1.0,
+   1.0
+  ],
+  "fineWeightRule": "weight_i = clip(median(count)/count_i, 1.0, 1.5); computed from the TRAIN split only and printed in the run report",
+  "objectNullWeight": 1.0,
+  "note": "skip stays a real learnable class; skip rows contribute no action/object loss and one-step rows contribute no slot-2 loss"
+ },
+ "data": {
+  "trainRows": 300,
+  "trainSource": "13-action-dataset; 01 reviewed every row; 03 blind second review of 10%",
+  "validationSource": "separate rows, isolated by goal family (see dataset.check_split_isolation)",
+  "testSource": "01-frozen, 15 withheld goals, opened exactly once after the arm and hyperparameters are fixed",
+  "noCrossSplitGoal": true,
+  "noSyntheticTrainingRows": "synthetic fixtures exist only under tests/ and are labelled fixture"
+ },
+ "metrics": {
+  "primaryGroupHit": "coarse group of step 1 vs the frozen acceptable group set",
+  "fullHit": "exact steps list: count, order, fine predicate, object",
+  "skipRecall": "skips predicted / skips in the frozen answer",
+  "wrongActionRate": "non-skip rows whose step-1 group is not acceptable",
+  "nonSkipGroupAccuracy": "group accuracy over non-skip rows",
+  "groupMacro": "12-group macro average over non-skip rows",
+  "perGoal": "one row per withheld goal with its scenario count",
+  "thresholds": {
+   "continue": 0.6,
+   "stop": 0.4
+  }
+ },
+ "notClaimed": [
+  "a 12-group hit is not a full Y",
+  "one 300-row version is not proof that the task is unlearnable",
+  "an experimental classifier is not a product protocol change"
+ ],
+ "frozenAt": "2026-11-11T12:31:49.346382+00:00",
+ "supersedes": "a4514a993ac9e7096b21b9ba24d477430b855927eded1014fb1d89381f17deb7",
+ "freezeId": "9fb32ba6b5c555ce980cc08587fae7b3eea4c15b4eeef8b6386dd1eda28ef873"
+}
