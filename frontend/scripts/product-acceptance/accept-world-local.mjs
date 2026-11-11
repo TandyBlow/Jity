@@ -835,42 +835,51 @@ try {
         };
       }).catch(() => null);
       entry.submission = entry.product?.submission ?? null;
-      // Offscreen judge record: one row per actor the action lane looked at.
-      // The page's per-actor record carries task/key/ms/fallback/error. It does
-      // not yet carry whether the model judged the actor or the lane skipped it
-      // by rule, so 'source' is only filled when the page provides it; without
-      // it the row is marked ms-only and the split stays unknown rather than
-      // guessed from timing.
+      // Offscreen judge record. The page pushes two kinds of row for the action
+      // lane: a per-model-call row (source null, ms = one call) and a per-actor
+      // decision row from reportAction (source model|program|fallback, plus the
+      // issue codes). The split is computed from the decision rows only; the
+      // call rows are kept so the model-call count is auditable.
       {
         const actions = (entry.product?.actions ?? []).filter((row) => row?.task === 'action');
-        const rows = actions.map((row) => ({
-          actorId: row.key ?? null,
-          source: row.source ?? null,
-          decision: row.decision ?? null,
-          // The page records the issue codes it produced for this actor; the
-          // deciding code is the informative one (model_skip vs actor_out_of_scene
-          // vs protagonist_command), so keep them all and name the last.
-          issueCode: Array.isArray(row.issues) ? (row.issues.at(-1) ?? null) : (row.issueCode ?? null),
-          issues: Array.isArray(row.issues) ? row.issues : null,
-          modelCalls: row.calls ?? null,
-          fallback: row.fallback ?? null,
-          error: row.error ?? null,
-          ms: Math.round(row.ms ?? 0),
-        }));
-        const exact = rows.filter((row) => row.source != null);
-        const model = exact.filter((row) => row.source === 'model');
-        const program = exact.filter((row) => row.source === 'program');
+        const decisionRows = actions.filter((row) => row?.source != null);
+        const callRows = actions.filter((row) => row?.source == null);
+        const skipCodes = new Set(['model_skip', 'actor_out_of_scene', 'protagonist_command', 'protagonist_command_consumed', 'protagonist_no_input']);
+        const rows = decisionRows.map((row) => {
+          const issues = Array.isArray(row.issues) ? row.issues : [];
+          const skipIssue = issues.find((code) => skipCodes.has(code)) ?? null;
+          return {
+            actorId: row.key ?? null,
+            source: row.source,
+            decision: skipIssue ? 'skip' : 'act',
+            issueCode: skipIssue ?? (issues.at(-1) ?? null),
+            issues,
+            fallback: row.fallback ?? null,
+            error: row.error ?? null,
+            ms: Math.round(row.ms ?? 0),
+          };
+        });
+        const model = rows.filter((row) => row.source === 'model');
+        const program = rows.filter((row) => row.source === 'program');
+        const fallback = rows.filter((row) => row.source === 'fallback');
         const mean = (list) => (list.length ? Math.round(list.reduce((sum, row) => sum + row.ms, 0) / list.length) : null);
         entry.offscreenJudge = {
+          basis: rows.length ? 'page-recorded-source' : 'none',
           actors: rows.length,
-          basis: exact.length === rows.length ? 'page-recorded-source' : 'ms-only',
-          modelJudged: exact.length === rows.length ? model.length : null,
-          programSkipped: exact.length === rows.length ? program.length : null,
-          modelSkipMs: mean(model),
-          programSkipMs: mean(program),
+          modelJudged: rows.length ? model.length : null,
+          programSkipped: rows.length ? program.length : null,
+          fallbackJudged: rows.length ? fallback.length : null,
+          modelSkips: model.filter((row) => row.decision === 'skip').length,
+          modelActs: model.filter((row) => row.decision === 'act').length,
+          programSkips: program.filter((row) => row.decision === 'skip').length,
+          modelMs: mean(model),
+          programMs: mean(program),
+          /** Time one model-judged actor costs over a program-skipped one. */
           deltaMs: (mean(model) != null && mean(program) != null) ? mean(model) - mean(program) : null,
-          modelSkips: exact.filter((row) => row.source === 'model' && row.decision === 'skip').length,
+          modelCalls: callRows.length,
+          modelCallMs: callRows.reduce((sum, row) => sum + Math.round(row.ms ?? 0), 0),
           rows,
+          callRows: callRows.map((row) => ({ actorId: row.key ?? null, ms: Math.round(row.ms ?? 0), fallback: row.fallback ?? null, error: row.error ?? null })),
         };
       }
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
