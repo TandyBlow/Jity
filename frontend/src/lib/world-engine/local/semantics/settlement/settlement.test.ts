@@ -90,7 +90,7 @@ function updatesInput(state = world(), stage?: UpdatesStage, mode: 'group' | 'ti
     groupId: mode === 'group' ? 'g1' : undefined,
     mode,
     stage,
-    results: mode === 'group' ? { a: '甲退到远处，工具被放进盒子。', b: '乙留在房间。', off: '丙仍在远处。' } : undefined,
+    results: mode === 'group' ? { a: '甲把工具放进盒子，站在房间门口。', b: '乙留在房间。', off: '丙在远处张望。' } : undefined,
     workingState: state,
   } as unknown as Json;
 }
@@ -353,6 +353,50 @@ describe('common-group results', () => {
     // The world moved: the same action is new again.
     policy.reset();
     expect(policy.observe([], accepted, evidence('digest-b'), 'automatic').allow).toBe(true);
+  });
+
+  it('asks for the walk to be recorded when the fact names a place, and only once', async () => {
+    // Real 0.6B: "路明非…走进演习观察席" came back as {"changes":[]} (or with his
+    // old container copied from the example), so the player's walk was dropped.
+    // The first answer must record it; a second miss is kept and reported.
+    const walk = JSON.stringify({ changes: [] });
+    const moved = JSON.stringify({ changes: [{ entityId: 'a', containerId: 'far', slotId: null, relativeTo: null }] });
+    const engine = new ScriptedEngine([
+      walk,
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    await createSettlementHandlers({ engine }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '甲退到远处，把门关上。', b: '乙留在房间。' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(engine.prompts[1]).toContain('甲退到远处');
+    expect(engine.prompts[1]).toContain('far');
+
+    const second = new ScriptedEngine([walk, walk, walk, JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }), JSON.stringify({ subtasks: [] })]);
+    const outcome = await createSettlementHandlers({ engine: second }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '甲退到远处，把门关上。', b: '乙留在房间。' },
+      workingState: world(),
+    } as unknown as Json);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; missingMoves?: unknown[] }[] }).stages ?? [];
+    expect(stages.find((row) => row.stage === 'position')?.missingMoves).toEqual([
+      { factId: 'f1', entityId: 'a', locationId: 'far' },
+    ]);
+
+    // A fact that describes somebody else walking must not move its own member.
+    const other = new ScriptedEngine([walk, JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [], subtasks: [] }), JSON.stringify({ subtasks: [] })]);
+    await createSettlementHandlers({ engine: other }).updates('g1', {
+      groupId: 'g1', mode: 'group',
+      results: { a: '乙走进远处，甲留在原地。', b: '乙点头。' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(other.prompts.filter((prompt) => prompt.includes('位置结算器')).length).toBe(1);
   });
 
   it('does not print a visible character’s pending task goal in the proposal prompt', async () => {
@@ -775,12 +819,17 @@ describe('common-group results', () => {
     const from = prompt.indexOf('地点和容器');
     const to = prompt.indexOf('输出 {', from);
     const catalog = prompt.slice(from, to > from ? to : undefined);
-    const ids = [...Object.keys(state.initial.locations), ...Object.keys(state.initial.items), ...Object.keys(state.initial.characters)];
+    const ids = [...Object.keys(state.initial.locations), ...Object.keys(state.initial.characters),
+      ...Object.keys(state.initial.items).filter((id) => (state.initial.items[id]?.slots ?? []).length)];
     for (const id of ids) expect(catalog).toContain(`${id}=`);
     for (const entity of [...Object.values(state.initial.locations), ...Object.values(state.initial.items), ...Object.values(state.initial.characters)]) {
       for (const slot of entity.slots ?? []) expect(catalog).toContain(slot.id);
     }
     expect(catalog).not.toContain('[]');
+    // A slotless item can hold nothing and the world never uses one as a
+    // container, so its line is not worth its prefill on every point.
+    const slotless = Object.keys(state.initial.items).filter((id) => !(state.initial.items[id]?.slots ?? []).length);
+    for (const id of slotless) expect(catalog).not.toContain(`${id}=`);
   });
 
   it('keeps the first judgement when a member is repeated instead of failing the turn', async () => {
@@ -1124,7 +1173,7 @@ describe('six-stage updates', () => {
     // Real 0.6B (probe 04-six-stage-real-8): the personality answer for both lu
     // and nono was the settled fact verbatim. A permanent trait made of the
     // event sentence is state pollution, so the text is dropped and reported.
-    const echo = '甲退到远处，工具被放进盒子。';
+    const echo = '甲把工具放进盒子，站在房间门口。';
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),
       JSON.stringify({ operations: [] }),

@@ -664,20 +664,60 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
     return { changes: {}, detail: { scannedEntityIds: [], positionScope: scope, skipped: 'no_affected_position' }, fallback: false, calls: [] };
   }
   const prompt = buildPositionPrompt(ctx.state, ctx.results, scanned);
+  const slotDrops: { entityId: unknown; slotId: string }[] = [];
   try {
+    // The missing-move check only forces a repair on the first attempt: if the
+    // second answer still leaves the actor where they were, the point keeps the
+    // answer and records it, instead of aborting the whole point over a stage
+    // the model cannot do.
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 240),
       temperature: ctx.options.temperature ?? 0,
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: POSITION_SCHEMA,
-      validate: (value) => validatePositionAnswer(value, ctx.state),
+      maxAttempts: 3,
+      validate: (value, attempt) => {
+        // A fact-backed walk whose container is right but whose slot is noise
+        // ("containerId":"control","slotId":"lane") loses only the slot: the
+        // destination was named by the fact and confirmed by the model. An
+        // entry with no fact behind it keeps the strict rejection.
+        const rows = asRecord(value).changes;
+        for (const row of Array.isArray(rows) ? rows : []) {
+          if (!isRecord(row)) continue;
+          const entityId = resolveEntityId(ctx.state, asString(row.entityId));
+          if (!entityId) continue;
+          const fact = resultFacts(ctx.results).find((entry) => entry.memberId === entityId);
+          if (!fact) continue;
+          const destination = destinationOfFact(ctx.state, fact.text);
+          if (!destination) continue;
+          const containerId = resolveEntityId(ctx.state, asString(row.containerId));
+          if (containerId !== destination.locationId) continue;
+          const slotId = asString(row.slotId);
+          if (!slotId) continue;
+          if (slotsOf(ctx.state, containerId).some((slot) => slot.id === slotId)) continue;
+          slotDrops.push({ entityId: row.entityId, slotId });
+          row.slotId = null;
+        }
+        const read = readPositionChanges(value, ctx.state);
+        if (attempt >= 3) return;
+        const missing = missingMoves(ctx.state, ctx.results, read.changes);
+        if (!missing.length) return;
+        const first = missing[0];
+        throw new Error(`position_missing_move: ${first.factId} 说「${first.text.slice(0, 40)}」，` +
+          `但 ${first.entityId} 没有改变位置；请把 ${first.entityId} 的 containerId 写成 ${first.locationId}（${first.name}），` +
+          'slotId 只能是该容器的槽位 id（不能填地点或人物 id），不确定就省略 slotId。');
+      },
     });
     const read = readPositionChanges(answer.value, ctx.state, new Set(scanned));
     const changes = read.changes;
+    const stillMissing = missingMoves(ctx.state, ctx.results, changes);
     projectStage(ctx.state, 'position', changes);
     const detail: Record<string, unknown> = {
       scannedEntityIds: scanned,
+      ...(slotDrops.length ? { slotDropped: slotDrops } : {}),
+      ...(stillMissing.length ? { missingMoves: stillMissing.map((row) => ({ factId: row.factId, entityId: row.entityId, locationId: row.locationId })) } : {}),
+
       changedEntityIds: Object.keys(changes).sort(),
       positionScope: scope,
     };
@@ -1141,7 +1181,12 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>, onl
   const allMovable = movableIds(state);
   const listed = onlyIds ? allMovable.filter((id) => onlyIds.includes(id)) : allMovable;
   const entities = listed.map((id) => `- ${positionLineFor(state, id)}`);
-  const sampleId = listed[0] ?? '';
+  // The example shows a real CHARACTER id, not `listed[0]`: movableIds sorts
+  // items before characters, so the template used to read
+  // {"entityId":"goggles_lu","containerId":"lu"}. The real 0.6B copied that
+  // example verbatim and never moved the character the fact named, even when
+  // the fact was a plain walk into an existing room.
+  const sampleId = listed.find((id) => state.characters[id]) ?? listed[0] ?? '';
   const sampleContainer = state.characters[sampleId]?.position.containerId
     ?? state.items[sampleId]?.position.containerId
     ?? allEntityIds(state)[0] ?? '';
@@ -1159,7 +1204,11 @@ function buildPositionPrompt(state: WorldState, results: Record<Id, string>, onl
     ...entities,
     '地点和容器（id=名字，槽位）：',
     ...containerCatalog(state),
-    `输出 {"changes":[{"entityId":"${sampleId}","containerId":"${sampleContainer}","slotId":null,"relativeTo":null}]}；没有变化输出 {"changes":[]}。`,
+    // The example carries only the two required fields. With slotId/relativeTo in
+    // it the real 0.6B copied the example's container into slotId
+    // ("containerId":"control","slotId":"lane") and the whole entry was rejected.
+    `输出 {"changes":[{"entityId":"${sampleId}","containerId":"${sampleContainer}"}]}；` +
+      '进入槽位再加 "slotId"（必须是该容器的槽位 id），贴在某实体旁再加 "relativeTo"；没有变化输出 {"changes":[]}。',
   ].join('\n');
 }
 
@@ -1194,6 +1243,12 @@ function containerCatalog(state: WorldState): string[] {
     const name = state.initial.locations[id]?.name ?? state.initial.items[id]?.name ?? state.initial.characters[id]?.name ?? id;
     const slots = slotIds(id);
     const isCharacter = Boolean(state.initial.characters[id]);
+    // A slotless item cannot hold anything, and the world never uses one as a
+    // container; 67 of the 74 items are slotless and their lines were 1.7k of
+    // the position prompt's 3.1k characters. The catalogue is prefill paid on
+    // every point, so only real containers (locations, characters, items with
+    // slots) are listed now.
+    if (!isCharacter && !state.initial.locations[id] && !slots.length) continue;
     if (isCharacter && sharedCharacterSlots) {
       lines.push(`${id}=${name}`);
       continue;
@@ -1204,8 +1259,47 @@ function containerCatalog(state: WorldState): string[] {
   return lines;
 }
 
-function validatePositionAnswer(value: unknown, state: WorldState): void {
-  readPositionChanges(value, state);
+/** A fact that names a known place right after a movement word. The real 0.6B
+ * answered "路明非…走进演习观察席" with {"changes":[]} (or copied the example's
+ * current container), so the player's walk was silently dropped and every later
+ * stage kept the old room. The check is literal: an existing location name plus
+ * a movement word in the fact text, and the actor's answer must move them. */
+const MOVE_WORDS = ['走进', '走入', '走到', '走向', '进入', '来到', '回到', '退回', '退到', '跑到', '冲向', '赶到', '爬上', '走下', '钻出', '穿过'] as const;
+
+function destinationOfFact(state: WorldState, text: string): { locationId: Id; name: string; at: number } | null {
+  if (!MOVE_WORDS.some((word) => text.includes(word))) return null;
+  let best: { locationId: Id; name: string; at: number } | null = null;
+  for (const [locationId, location] of Object.entries(state.initial.locations)) {
+    const name = location.name ?? '';
+    if (name.length < 2) continue;
+    const at = text.lastIndexOf(name);
+    if (at < 0) continue;
+    if (!best || at > best.at) best = { locationId, name, at };
+  }
+  return best;
+}
+
+function missingMoves(state: WorldState, results: Record<Id, string>,
+                     changes: Record<Id, Partial<EntityDelta>>): { factId: string; entityId: Id; text: string; locationId: Id; name: string }[] {
+  const missing = [];
+  for (const fact of resultFacts(results)) {
+    const destination = destinationOfFact(state, fact.text);
+    if (!destination) continue;
+    const entity = state.characters[fact.memberId];
+    if (!entity) continue;
+    // The fact belongs to one member, but the sentence may describe somebody
+    // else walking ("诺诺走进钟楼" inside lu's result). Only demand a move when
+    // the member is named before the place in their own fact.
+    const name = state.initial.characters[fact.memberId]?.name ?? '';
+    const at = name ? fact.text.indexOf(name) : -1;
+    if (at < 0 || at > destination.at) continue;
+    if (entity.position.containerId === destination.locationId) continue;
+    // A no-op "move" to the room they are already in (the example's container)
+    // does not satisfy the fact either: the walk has to reach the named place.
+    if (changes[fact.memberId]?.positionSet?.containerId === destination.locationId) continue;
+    missing.push({ factId: fact.id, entityId: fact.memberId, text: fact.text, locationId: destination.locationId, name: destination.name });
+  }
+  return missing;
 }
 
 interface PositionRead {
@@ -1781,7 +1875,17 @@ function namesWorldEntity(state: WorldState, text: string): boolean {
 
 function buildSubtasksPrompt(ctx: StageContext, ownerIds: Id[] = roster(ctx.state), projection?: PointProjection): string {
   const keys = taskKeyIndex(ctx.state);
-  const rows = [...ownerIds].sort().map((id) => taskLine(ctx.state, id, keys));
+  // The subtask stage needs the parent task's id, owner and goal — not the
+  // owner's appearance, personality or position, which `taskLine` also prints.
+  // Those lines were most of a 1.3k-token prompt that cost 16.6 s a point and
+  // returned an empty array in five measured points.
+  const rows = [...ownerIds].sort().map((id) => {
+    const name = ctx.state.initial.characters[id]?.name ?? id;
+    const tasks = Object.values(ctx.state.characters[id]?.tasks ?? {})
+      .filter((task) => task.status !== 'achieved')
+      .map((task) => `${keys.get(task.id) ?? task.id}：${task.goal}`);
+    return `- ${name}（id=${id}）待办任务：${tasks.join('；') || '无'}`;
+  });
   return [
     sharedHeader(ctx.state, ctx.results),
     '你是中文跑团游戏的新增小任务判断器。只输出 JSON，不要解释。',
