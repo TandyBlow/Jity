@@ -226,7 +226,7 @@ export function settledAppearanceViolations(
     }
     // The settled hair is tied: rewriting it loose changes how the person looks.
     if (settledText.includes('束在脑后')) {
-      const loose = /(发圈|红发|发丝|长发)[^。！？]{0,6}(垂落|垂下|轻垂|散开|披散)/u.exec(sentence);
+      const loose = /(发圈|红发|发丝|长发)[^。！？]{0,8}(垂落|垂下|轻垂|垂在肩|垂到肩|散开|散落|散在肩|披散|披在肩)/u.exec(sentence);
       if (loose) found.push({ sentence, detail: `the settled hair is tied (${loose[0]})` });
     }
     // Goggles settled on the chest are not worn over the eyes.
@@ -236,6 +236,39 @@ export function settledAppearanceViolations(
       // when they are over the eyes, and the settled line says they hang on the chest.
       if (/(镜片后|戴着护目镜|护目镜[^。！？]{0,4}(戴|架在|盖在|泛着雾气|蒙着雾|起雾|浮着雾气|边缘的雾气|上的雾气)|镜片上[^。！？]{0,3}(雾气|水汽))/u.test(sentence)) {
         found.push({ sentence, detail: 'the goggles hang on the chest, not over the eyes' });
+      }
+    }
+  }
+  return found;
+}
+
+/** An item that the settlement/local scene places somewhere other than the actor's
+ * hand, written as if it were being held. 09's 35ad run: «弗里嘉演习弹在手中发烫»
+ * while the round was in the equipment shed. This is a possession transfer, one of
+ * the classes the product keeps: it changes what the player may do next. */
+const HELD = /(手中|手里|手上|掌心|攥着|握着|握着|拎着|拿着|捧着|按在手里)/u;
+const HELD_BEFORE = /(把|将)[^。！？]{0,6}$/u;
+
+export function possessionViolations(
+  text: string,
+  inventory: readonly { name: string; note?: string }[],
+): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  for (const item of inventory) {
+    const name = item.name?.trim();
+    if (!name || name.length < 2) continue;
+    const note = item.note ?? '';
+    // Already in hand in the settled line: nothing to check.
+    if (HELD.test(note)) continue;
+    for (const sentence of sentencesOf(text)) {
+      if (!sentence.includes(name)) continue;
+      const after = sentence.slice(sentence.indexOf(name) + name.length);
+      const before = sentence.slice(0, sentence.indexOf(name));
+      const held = HELD.test(after.slice(0, 12));
+      const heldByBa = HELD_BEFORE.test(before) && /(拿起|抓起|掏出|取出|递|塞)/u.test(before + name);
+      if (held || heldByBa) {
+        found.push({ sentence, detail: `${name} is written as held, but the settled line does not put it in hand` });
+        break;
       }
     }
   }
@@ -365,6 +398,10 @@ export function settledViolationsFromScene(
     ...settledStateViolations(text, settled, null),
     ...objectActorViolations(text, settled),
     ...itemStateViolations(text, settled),
+    ...possessionViolations(text, [
+      ...(scene.objects ?? []).map((object) => ({ name: object.name, note: object.note ?? '' })),
+      ...(scene.inventory ?? []).map((item) => ({ name: item.name, note: item.note ?? '' })),
+    ]),
   ];
 }
 

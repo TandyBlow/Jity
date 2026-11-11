@@ -756,3 +756,36 @@ describe('product regressions: the settled line names its actor before the colon
     expect(check.detail).toMatch(/诺诺/u);
   });
 });
+
+describe('product regressions: possession and tied hair from 09 35ad', () => {
+  // Four lines from the 35ad run. The item names are world names, so the
+  // licence check lets them through; what is wrong is where they are.
+  const scene = {
+    inputText: null,
+    viewpoint: { name: '路明非', note: '护目镜挂在胸前' },
+    place: { name: '服务巷', note: '墙上挂着演习规则牌' },
+    present: [{ name: '诺诺', note: '红发用发圈束在脑后，红色识别带缠在左臂' }],
+    objects: [{ name: '弗里嘉演习弹', note: '在器材棚的箱子里' }, { name: '护目镜', note: '挂在胸前' }],
+    inventory: [],
+  };
+
+  test('an item in the equipment shed is not in his hand', () => {
+    const found = settledViolationsFromScene('弗里嘉演习弹在手中发烫。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('弗里嘉演习弹'))).toBe(true);
+  });
+
+  test('the same item named in its settled place passes', () => {
+    const found = settledViolationsFromScene('弗里嘉演习弹还在器材棚的箱子里。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('弗里嘉演习弹'))).toBe(false);
+  });
+
+  test('tied hair written as falling on the shoulder is caught', () => {
+    const found = settledViolationsFromScene('诺诺的红发垂在肩上。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('tied'))).toBe(true);
+  });
+
+  test('goggles on the chest stay on the chest', () => {
+    const found = settledViolationsFromScene('护目镜挂在他胸前，镜带松着。', scene, ['路明非', '诺诺']);
+    expect(found.length).toBe(0);
+  });
+});
