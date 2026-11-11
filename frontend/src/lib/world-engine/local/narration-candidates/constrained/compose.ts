@@ -173,7 +173,7 @@ export function buildBeatPrompt(
     ...(details.length ? [`- 已登记细节：${details.join('；')}`] : []),
     '',
     '要求：',
-    `- 只写 ${lengthHint(facts.length).sentences} 句，约 ${lengthHint(facts.length).chars} 字，短句，用句号收尾。`,
+    `- 只写 ${lengthHint(facts.length).sentences} 句，共约 ${lengthHint(facts.length).chars} 字，句末用句号。`,
     '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
     '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
