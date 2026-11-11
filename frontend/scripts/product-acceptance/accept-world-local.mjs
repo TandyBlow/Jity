@@ -842,16 +842,25 @@ try {
       // call rows are kept so the model-call count is auditable.
       {
         const actions = (entry.product?.actions ?? []).filter((row) => row?.task === 'action');
-        const decisionRows = actions.filter((row) => row?.source != null);
-        const callRows = actions.filter((row) => row?.source == null);
+        // A decision row carries source; a per-call row does not. Some builds
+        // also tag rows with recordKind; trust it when present.
+        const decisionRows = actions.filter((row) => (row?.recordKind ? row.recordKind === 'result' : row?.source != null));
+        const callRows = actions.filter((row) => (row?.recordKind ? row.recordKind !== 'result' : row?.source == null));
         const skipCodes = new Set(['model_skip', 'actor_out_of_scene', 'protagonist_command', 'protagonist_command_consumed', 'protagonist_no_input']);
         const rows = decisionRows.map((row) => {
           const issues = Array.isArray(row.issues) ? row.issues : [];
           const skipIssue = issues.find((code) => skipCodes.has(code)) ?? null;
+          const value = row.value && typeof row.value === 'object' ? row.value : null;
           return {
             actorId: row.key ?? null,
             source: row.source,
-            decision: skipIssue ? 'skip' : 'act',
+            // The lane's own value decides act vs skip; the issue codes are the
+            // fallback signal when the value is not exposed.
+            decision: value ? (value.kind === 'skip' ? 'skip' : 'act') : (skipIssue ? 'skip' : 'act'),
+            value: value ? { kind: value.kind ?? null, text: typeof value.text === 'string' ? value.text.slice(0, 200) : null } : null,
+            issueDetails: Array.isArray(row.issueDetails) ? row.issueDetails : null,
+            recordKind: row.recordKind ?? null,
+            repaired: row.fallback === false && Array.isArray(row.issues) && row.issues.includes('repair_requested'),
             issueCode: skipIssue ?? (issues.at(-1) ?? null),
             issues,
             fallback: row.fallback ?? null,
@@ -878,6 +887,9 @@ try {
           deltaMs: (mean(model) != null && mean(program) != null) ? mean(model) - mean(program) : null,
           modelCalls: callRows.length,
           modelCallMs: callRows.reduce((sum, row) => sum + Math.round(row.ms ?? 0), 0),
+          uniqueActors: new Set(rows.map((row) => row.actorId)).size,
+          repairedActs: rows.filter((row) => row.source === 'model' && row.decision === 'act' && row.repaired).length,
+          rawKept: rows.filter((row) => typeof row.raw === 'string' && row.raw.length > 0).length,
           rows,
           callRows: callRows.map((row) => ({ actorId: row.key ?? null, ms: Math.round(row.ms ?? 0), fallback: row.fallback ?? null, error: row.error ?? null })),
         };
