@@ -114,6 +114,10 @@ export interface SceneSkeleton {
   knowledge: SceneKnowledge;
   priorText: string | null;
   inputText: string | null;
+  /** What the player declared this turn ("我沿着服务巷往里走…"). An instruction,
+   * not a settled outcome: the beats may write it as done/tried, never as a
+   * successful result (01's fact.action_omitted on every page turn). */
+  previousAction?: string | null;
   resultsText: string | null;
   /** False when only the fact packet (no full state) was available. */
   hasSceneMaterial: boolean;

@@ -757,7 +757,13 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
     out.push(declared.startsWith(name) ? endSentence(declared) : `${name}${declared}。`);
   }
   const actionGrams = bigramsOf(declared);
+  // A settlement judgment is not a scene fact. 09 d101 fed
+  // «诺诺未成功完成目标，因为路明非的骰点资格为false且无法反应。» into the draft
+  // and the page showed dice the player never touched; the 2026-11-10 page runs
+  // printed «诺诺：……未被掀开袖口，未看到规则牌» and «诺诺：因此未被阻止或达成目标。».
+  const JUDGMENT = /(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u;
   for (const settled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
+    if (JUDGMENT.test(settled)) continue;
     if (/完成了刚才的动作|行动发生了，但没有产生新的结果|本组结算未能确认|未能确认新的结果|向.+移动/u.test(settled)) continue;
     const sentence = endSentence(settled.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name));
     if (out.includes(sentence)) continue;

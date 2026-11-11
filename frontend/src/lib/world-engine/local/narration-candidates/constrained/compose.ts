@@ -92,6 +92,14 @@ export function buildBeatPrompt(
   const lines = [
     '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
+    ...(facts.length ? [] : ['本段只写视角人物此刻的一个动作或一处注意，一到两句就够，不要把场景材料清点一遍。']),
+    // The first beat carries the player's declared action. It is an instruction:
+    // the beats may write the attempt, never a settled success the facts do not
+    // have (09 page turns write the walk as «路明非也没有动» or omit it).
+    ...(beat.index === 0 && scene.previousAction
+      ? [`玩家这一回合的指令：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
+         '正文要写出他做了或试着做了这件事；结果只按上面已结算的事实写，没有结算成功的事不要写成成功。']
+      : []),
     ...facts.map((fact) => `- ${fact}`),
     '',
     '场景材料（只可使用这些）：',
@@ -105,9 +113,11 @@ export function buildBeatPrompt(
     '要求：',
     `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
     '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
+    '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
     '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
     '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
+    '- 把它写成一幕，不是写成清单：只挑一处此刻最显眼的细节，用视角人物的注意力带出来；不要把「可见物品」「已登记细节」逐条抄进正文。',
     options.instruction ? `- ${options.instruction}` : '',
     '',
     '只输出正文：',

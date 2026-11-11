@@ -59,7 +59,14 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
       index: beats.length,
       seed: beat.seed ?? hashSeed(scene.anchor.pointId, beat.id, seed),
       minChars: beat.factIds.length ? minChars : Math.min(minChars, 12),
-      maxChars: beat.factIds.length > 2 ? Math.round(maxChars * 1.6) : maxChars,
+      // The budget follows the material. One fact is one or two sentences: the
+      // reference corpus's median scene is 97 chars and 3 sentences, while the
+      // 11a7/4794 quiet turn produced 256-502 chars over four beats that carried
+      // one time fact between them. A beat with no fact gets one short sentence;
+      // three or more facts keep the large budget so a rich turn is not thinned.
+      maxChars: beat.factIds.length > 2
+        ? Math.round(maxChars * 1.6)
+        : beat.factIds.length === 1 ? Math.round(maxChars * 0.55) : Math.min(maxChars, 32),
     });
   };
 

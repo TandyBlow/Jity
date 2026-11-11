@@ -433,10 +433,19 @@ export function projectConstrainedScene(
   // model free-write: it is licensed verbatim so a question/answer or a
   // hand-off does not disappear from the prose.
   if (options.resultsText && options.resultsText.trim()) {
-    facts.push({
-      id: `${prefix}:result`, kind: 'result', mandatory: true, visibility: 'scene',
-      text: clampSentences(options.resultsText, 2, 130),
-    });
+    // The settlement's result line carries the concrete outcome. A judgment
+    // about a member («诺诺：因此未被阻止或达成目标。») is mechanics; the program
+    // realizer printed it verbatim in the 2026-11-10 constrained page run
+    // (09-constrained-beats-a178.json). Drop judgment clauses, keep the outcome.
+    const settledResult = options.resultsText.split(/[；;]/u).map((part) => part.trim())
+      .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
+      .join('；');
+    if (settledResult) {
+      facts.push({
+        id: `${prefix}:result`, kind: 'result', mandatory: true, visibility: 'scene',
+        text: clampSentences(settledResult, 2, 130),
+      });
+    }
   }
 
   // ---- licensing -----------------------------------------------------------
@@ -553,6 +562,9 @@ export function projectConstrainedScene(
     knowledge,
     priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
+    // SceneHints already receives it (selection/constrained.ts); the skeleton
+    // dropped it, so no beat could write the player's declared action.
+    previousAction: options.scene?.previousAction ?? null,
     resultsText: options.resultsText ?? null,
     hasSceneMaterial: true,
     timeOnly: !Object.keys(deltas).length,
@@ -722,6 +734,9 @@ export function projectFromFactsPacket(
     knowledge: { ...emptyKnowledge(), ...(options.knowledge ?? {}) },
     priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
+    // SceneHints already receives it (selection/constrained.ts); the skeleton
+    // dropped it, so no beat could write the player's declared action.
+    previousAction: options.scene?.previousAction ?? null,
     resultsText: options.resultsText ?? null,
     worldNames: { characters: [], locations: [], items: [] },
     hasSceneMaterial: present.length > 0 || objects.length > 0,

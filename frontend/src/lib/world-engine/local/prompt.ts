@@ -196,7 +196,14 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   const sentences: string[] = [];
   const declared = actionText.trim().replace(/^我/u, name);
   if (declared) sentences.push(`玩家这回合让${name}做的事：${declared}。`);
-  if (resultsText.trim()) sentences.push(`这一回合的结算结果：${squash(resultsText).slice(0, 120)}。`);
+  // Judgment clauses («…的骰点资格为false», «…未被掀开袖口，未获得任何效果») are
+  // settlement mechanics, not scene facts; feeding them to the writer made it
+  // dramatize dice (d101) and print judgments (page runs 2026-11-10). Keep only
+  // clauses that describe what changed.
+  const settled = squash(resultsText).split(/[；;]/u).map((part) => part.trim())
+    .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
+    .join('；');
+  if (settled) sentences.push(`这一回合的结算结果：${settled.slice(0, 120)}。`);
   const time = after.time.dateTime.slice(11, 16);
   if (delta.timeAdvance) sentences.push(`时间到了${time}，过去${delta.timeAdvance.duration.amount}${timeUnitName(delta.timeAdvance.duration.unit)}。`);
   const own = delta.entityDeltas?.[view];
