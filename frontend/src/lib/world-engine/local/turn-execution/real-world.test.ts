@@ -287,6 +287,36 @@ describe('21c3 trace replay (CPU)', () => {
     expect(outcome.evidence.calls).toHaveLength(3);
   });
 
+  it('rejects the aa30 question-group answers for their content, not for a missing judgement row', async () => {
+    // 09-product-03turn-aa30.json turn 2, group_29 (lu asks nono the situation).
+    // The two real answers each judged one member: the first left nono without a
+    // result sentence, the second left only a mechanics clause and its causal
+    // tail. Both are content failures the repair can fix; neither is the old
+    // "missing judgment for lu" abort.
+    const { state } = loadWorld();
+    const first = JSON.stringify({
+      judgments: [{ memberId: 'lu', label: 'partial', reason: '路明非的行动成功获得诺诺的确认，且诺诺的判定为准入=true，因此行动被接纳并部分成功完成。', effects: [{ targetId: 'nono', reacted: true }] }],
+      facts: [{ text: '路明非向诺诺询问路线图，确认了路明非的行动。', memberIds: ['lu'] }],
+    });
+    const second = JSON.stringify({
+      judgments: [{ memberId: 'nono', label: 'not_achieved', reason: '路明非的骰点未触发，因此未被接纳。', effects: [{ targetId: 'lu', reacted: false }] }],
+      facts: [{ text: '路明非的骰点未被触发，因此未被接纳。', memberIds: ['lu'] }],
+    });
+    const handlers = createSettlementHandlers({ engine: scriptedEngine([first, second]) });
+    const outcome = await handlers.results('group_29', {
+      groupId: 'group_29',
+      members: [
+        { memberId: 'lu', actionText: '我向诺诺问：现在红蓝两方各在哪，我能不能先保持中立？', rollRefs: [{ targetId: 'nono', rollId: 'r1', result: 12, eligible: true, admitted: true }] },
+        { memberId: 'nono', actionText: '诺诺回答。', rollRefs: [{ targetId: 'lu', rollId: 'r2', result: 9, eligible: true, admitted: false }] },
+      ],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.value).toBeNull();
+    expect(outcome.evidence.calls[0]?.error).toContain('no fact attributed to nono');
+    expect(outcome.evidence.calls[1]?.error).toContain('no action result left');
+    expect(outcome.error).not.toContain('missing judgment');
+  });
+
   it('keeps the real d101 pending task goal out of the results prompt', async () => {
     const { state } = loadWorld();
     const seen: string[] = [];
