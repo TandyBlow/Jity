@@ -188,3 +188,38 @@ node scripts/candidate-shipping/run-product-turn.mjs --base http://127.0.0.1:<po
 2. 打开 `/world-local`，等“本地世界已就绪”。开局叙述由原模型写；若它被自己的事实校验拒绝，页面会显示 04 骨架 + 07 合成器写出的程序正文，并标注“程序按已结算事实成文”。
 3. 输入行动，等回合结束。模型正文被接受时显示模型正文；被拒绝时显示同一标注的程序降级正文，不会退回成字段流水账。
 4. 候选的开关是内部配置（`narrationCandidate` 或 QA 的 `__jityNarrationCandidate`），页面不显示训练/测试细节；试玩时保持默认 `auto` 即可。
+
+## 8. 2026-11-11 集成现状（约束事实 beats + 模型分段）
+
+当前服务：`:3241`，head `b44c2397`，BUILD_ID `YrWmDOlQs0ISXJ8T5pWgs`，page chunk `page-55621083ad16b292.js`，
+page sha256 `860ad66ae244`，PID 138772。唯一候选入口：
+`/world-local?narrationModel=qwen3-1.7b&narrationCandidate=constrained&narrationMode=beats`（模型 Qwen3-1.7B，
+sha256 `b139949c…`）。这不是产品默认（页面默认仍是 `auto`），只是下一候选；程序文本永远标“程序”，混合标“混合”。
+
+### 已合入（本轮）
+
+- 04：影响集投影（c2d422e9/d158c849）：任务 4940→3262、外观 7906→1162 字符；updates 每共同组 18–22 s；
+  任务/位置依据、子任务复用、语义校验、紧凑答案；results prompt 不再带待办目标任务、要求具体行动结果。
+- 02：echo/重复句、物品手持/腰挂矛盾、摘戴已结算物品、规则牌发声、跨点收尾、声明动作段、事实段预算与反清单提示。
+- 06：逐段来源（model/program/mixed/draft）、`narrations`/`points` 逐点合并、刷新后 provenance 保留、
+  失败后刷新/取消遗留 advance、`__worldSnapshot` getter、失败命令独立槽位、未完成正文补写、调度时钟、
+  约束候选 480 token/段、1200 字上限、逐段失败证据（含被打回的模型草稿）。
+
+### 实测（09，真实页面，同一真实输入）
+
+| 运行 | 结果 | 说明 |
+| --- | --- | --- |
+| 4794 | mixed 256 字 | 3/4 段模型（7.5/10.6/9.4 s），result 段程序；刷新 1→1 |
+| 5810 | mixed 53 字 | 结果句过滤后只剩 3 段，open 段程序（time 事实失败），scene/close 同句重复 |
+| 926e | mixed 103 字 | 结果句仍从 facts-packet 路径漏出（5810 已修）；close 写「摘下护目镜」（b44c2397 已修） |
+
+### 仍不合格（按归属）
+
+1. **02**：open 段模型稿时事实失败且证据里没有被打回草稿；scene/close 出现同一句；result 段在 926e 从
+   facts-packet 路径漏出判断句（06 已修 5810）；`beat-gate-settled-check.patch` 把规则牌引文「护目镜必须戴好」
+   误判为自相矛盾，未合入。逐段证据见 `results/product/evidence/06-to-02-constrained-beats.md`。
+2. **04**：results 答案仍会产出 `诺诺：因此未被阻止或达成目标。`这类内部判断句；它是 result 段只能回退程序的原因。
+   见 `results/product/evidence/06-to-04-results-fact.md`。
+3. **时延**：4794 实测结算 60.8 s（4 次调用）+ 叙事 53.5 s ≈ 114 s 才出现合格文本；首字草稿 82 s。
+   页面已在提交点后立即叙事、不等自动续推，所以 60 s 目标只剩两条路：结算更快（04）或分段更少/更快（02/09）。
+4. **质量**：以上 mixed 文本仍含“护目镜在风中晃动”“护目镜泛着雾气”等无依据感觉句，01 需独立读原文判定。
