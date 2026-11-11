@@ -445,7 +445,21 @@ try {
     try {
       await page.fill('textarea', turn.input);
       const submitAt = Date.now();
-      await page.click('button:has-text("行动")');
+      // If the submit control is not actionable, record what the page shows
+      // (label, disabled, status line) so a page-busy state is distinguishable
+      // from a driver selector break.
+      try {
+        await page.click('button:has-text("行动")', { timeout: 30000 });
+      } catch (error) {
+        entry.submitBlocked = await page.evaluate(() => {
+          const buttons = [...document.querySelectorAll('button')].map((node) => ({
+            text: (node.textContent ?? '').trim().slice(0, 40), disabled: Boolean(node.disabled), visible: node.offsetParent !== null,
+          }));
+          const statusLine = document.body.innerText.split(String.fromCharCode(10)).find((line) => /结算中|正在写正文|本轮/.test(line)) ?? null;
+          return { buttons, statusLine };
+        }).catch(() => null);
+        throw error;
+      }
 
       // A mid-settlement refresh must restore the last complete settlement and
       // must not consume the same input twice. This is a product behaviour the
