@@ -7,9 +7,10 @@
 - 基线：`a7dbf94ac021ef2d59e740279b338bc8e1cac7b8`
 - 实现提交：`d5ddd00e61d46be4d2aff4fd60238fba9f40571a`
 - 取消归属测试提交：`803c9613d1cd7f38ae05605e06ddd5301a95d356`
+- policy-stop 等待提交：`04349fe727d33fba549a4321e8069305b6db8e03`
 - 旧 `05-kernel` 树未改动。
 
-实现提交在基线之上改了 05 独占文件，并附带两个只针对 06 文件的补丁，外加一个针对已合入 06 的 `session.ts` 的增量补丁：
+实现提交在基线之上改了 05 独占文件，并附带两个只针对 06 文件的补丁，外加两个针对已合入 06 的增量补丁：
 
 ```text
 frontend/src/lib/world-engine/schedule.ts
@@ -21,9 +22,10 @@ frontend/src/lib/world-engine/local/point-narration/overlap.test.ts (new)
 design/parallel-handoff/05-point-pipeline-06-session.patch
 design/parallel-handoff/05-point-pipeline-06-game-model.patch
 design/parallel-handoff/05-point-pipeline-06-session-followup.patch
+design/parallel-handoff/05-point-pipeline-06-policy-stop.patch
 ```
 
-06 已合入 `d5ddd00e`（`6ca1d7a3`）；增量补丁 `05-point-pipeline-06-session-followup.patch` 让 06 的 `start()` 对回合内 pending head 也走同点恢复，并避免新 root 在 `create_world` 前抢占。该补丁已对 06 当前 `HEAD`（`f4893c53`）做 `git apply --check` 通过。
+06 已合入 `d5ddd00e`（`6ca1d7a3`）；增量补丁 `05-point-pipeline-06-session-followup.patch` 让 06 的 `start()` 对回合内 pending head 也走同点恢复，并避免新 root 在 `create_world` 前抢占；`05-point-pipeline-06-policy-stop.patch` 让自动 continuation policy-stop 的 cancel 在 head 正文未完成时等待队列，而不是反复被 `narration_blocked` 拒绝。两个补丁都已对 06 当前 `HEAD`（`f4893c53`）做 `git apply --check` 通过。
 
 ## 机制
 
@@ -63,6 +65,7 @@ design/parallel-handoff/05-point-pipeline-06-session-followup.patch
 - 模型抛错提交为 `failed`，原因保留；取消/abort 的 `ModelCancelledError` 不提交失败，点保持 pending，便于同一回合恢复。
 - `get_state` 缺字段（读能力不完整）提交为 `failed`，`narration_read_incomplete`，不把空增量当事实。
 - 控制器在队列写出后通过一次 `get_context` 刷新 served head/control，防止旧 pending gate 被内联 narration 再 claim 一次。
+- continuation policy-stop 是自动回合终止，但服务端仍要求 head 正文 ready 才接受 cancel。`finish_own_narration` 现在先等队列把该点正文写完、刷新 state，再重试 cancel；head 正文 failed 时才返回 `narration_failed`。没有这一步，cancel 会在 pending 时被拒绝并每步重发，最终 `stalled:round_conclusion_cancel`。
 
 ## 06 接线补丁
 
@@ -106,9 +109,9 @@ node node_modules/vitest/vitest.mjs run --maxWorkers=1
 结果：
 
 - `tsc --noEmit`：通过。
-- point-narration：5/5 通过。`overlap.test.ts` 用真实 `LocalWorldTransport` + `ControllerDriver`：p1 正文被 deliberately hold，p2 仍完成 commit；释放 p1 后 p1 文本只落在 p1，p2 保持自己的文本；从中间 record 恢复只补正文、不发 action，不重复 commit。
+- point-narration：6/6 通过。`overlap.test.ts` 用真实 `LocalWorldTransport` + `ControllerDriver`：p1 正文被 deliberately hold，p2 仍完成 commit；释放 p1 后 p1 文本只落在 p1，p2 保持自己的文本；从中间 record 恢复只补正文、不发 action，不重复 commit。
 - world-engine：`968 passed / 3 skipped`。
-- 完整 frontend（**临时应用两个 06 补丁后**）：`1047 passed / 3 skipped`，74 个测试文件 72 通过、2 跳过。未应用补丁时同样 1047 通过；补丁只改变产品 session/game-model 路径，不改变既有测试预期。
+- 完整 frontend（**临时应用两个 06 补丁后**）：`1048 passed / 3 skipped`，74 个测试文件 72 通过、2 跳过。未应用补丁时同样 1048 通过；补丁只改变产品 session/game-model 路径，不改变既有测试预期。
 - 没有启动服务、模型、GPU 或真实页面；真实双引擎/首段/恢复测试仍由 09 执行。
 
 ## 未完成 / 边界说明
