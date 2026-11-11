@@ -31,6 +31,58 @@ import pairwise_model as pm
 import pairwise_serialize as ps
 
 
+def sha256_file(path: Path) -> str:
+    import hashlib
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_frozen_pairs(path: Path, freeze_path: Path) -> List[Dict[str, Any]]:
+    """Read 13's frozen pairs.jsonl and check it against 13's own freeze file."""
+    frozen = json.loads(freeze_path.read_text(encoding="utf-8"))
+    expected = (frozen.get("files") or {}).get(path.name)
+    if not expected:
+        raise SystemExit(f"REFUSED: {freeze_path} pins no hash for {path.name}")
+    actual = sha256_file(path)
+    if actual != expected:
+        raise SystemExit(f"REFUSED: {path.name} sha256 {actual} != 13's freeze {expected}")
+    pairs: List[Dict[str, Any]] = []
+    by_decision: Dict[Tuple[str, int], List[Dict[str, Any]]] = {}
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            raw = json.loads(line)
+            pair = {"rowId": raw["rowId"], "stepIndex": int(raw["stepIndex"]),
+                    "group": raw["candidateGroup"], "label": int(bool(raw["positive"])),
+                    "text": raw["text"]}
+            pairs.append(pair)
+            by_decision.setdefault((pair["rowId"], pair["stepIndex"]), []).append(pair)
+    groups = ps.ALL_GROUPS
+    for key, group in by_decision.items():
+        if len(group) != len(groups):
+            raise SystemExit(f"REFUSED: decision {key} has {len(group)} pairs, not {len(groups)}")
+        if sorted({pair["group"] for pair in group}) != sorted(groups):
+            raise SystemExit(f"REFUSED: decision {key} does not cover the 13 groups once each")
+        if sum(pair["label"] for pair in group) != 1:
+            raise SystemExit(f"REFUSED: decision {key} has {sum(pair['label'] for pair in group)} positives")
+    return pairs
+
+
+def pick_device(spec: str) -> torch.device:
+    if spec == "cpu":
+        return torch.device("cpu")
+    if spec == "cuda":
+        if not torch.cuda.is_available():
+            raise SystemExit("REFUSED: --device cuda but torch.cuda.is_available() is false")
+        return torch.device("cuda")
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 def load_split(path: Path) -> Dict[str, List[str]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     out: Dict[str, List[str]] = {}
@@ -84,9 +136,13 @@ def measure_max_len(rows: Sequence[Dict[str, Any]], tokenizer: Any, groups: Dict
     return min(cap, int(math.ceil(longest / 32) * 32))
 
 
-def run_epoch(model: pm.PairwiseModel, dataset: pm.PairwiseDataset, tokenizer: Any,
+def to_device(batch: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
+    return {key: value.to(device) for key, value in batch.items()}
+
+
+def run_epoch(model: pm.PairwiseModel, dataset: Any, tokenizer: Any,
               optimizer: torch.optim.Optimizer | None, batch_decisions: int,
-              seed: int) -> Dict[str, float]:
+              seed: int, device: torch.device | None = None) -> Dict[str, float]:
     order = list(range(len(dataset.decisions)))
     generator = random.Random(seed)
     generator.shuffle(order)
@@ -97,6 +153,8 @@ def run_epoch(model: pm.PairwiseModel, dataset: pm.PairwiseDataset, tokenizer: A
         chunk = order[start:start + batch_decisions]
         indices = [index for decision in chunk for index in dataset.decisions[decision]]
         batch = dataset.collate([dataset[index] for index in indices], tokenizer.pad_token_id)
+        if device is not None and device.type != "cpu":
+            batch = to_device(batch, device)
         logits = model(batch["input_ids"], batch["attention_mask"])
         loss = pm.decision_loss(logits, batch["labels"], 13)
         if optimizer is not None:
@@ -110,12 +168,15 @@ def run_epoch(model: pm.PairwiseModel, dataset: pm.PairwiseDataset, tokenizer: A
 
 
 @torch.no_grad()
-def evaluate(model: pm.PairwiseModel, dataset: pm.PairwiseDataset, tokenizer: Any) -> Dict[str, Any]:
+def evaluate(model: pm.PairwiseModel, dataset: Any, tokenizer: Any,
+             device: torch.device | None = None) -> Dict[str, Any]:
     model.eval()
     decisions: List[Dict[str, Any]] = []
     for indices in dataset.decisions:
         batch = dataset.collate([dataset[index] for index in indices], tokenizer.pad_token_id)
-        logits = model(batch["input_ids"], batch["attention_mask"]).tolist()
+        if device is not None and device.type != "cpu":
+            batch = to_device(batch, device)
+        logits = model(batch["input_ids"], batch["attention_mask"]).detach().cpu().tolist()
         prediction = pm.predict_decision(logits)
         first = dataset[indices[0]]
         gold = next(dataset[index]["group"] for index in indices if dataset[index]["label"] == 1)
@@ -142,7 +203,12 @@ def main(argv: List[str] | None = None) -> int:
     parser.add_argument("--split", required=True)
     parser.add_argument("--base", required=True)
     parser.add_argument("--out", required=True)
-    parser.add_argument("--arm", default="both", choices=["frozen", "unfrozen", "both"])
+    parser.add_argument("--arm", default="frozen", choices=["frozen", "unfrozen", "both"],
+                        help="one arm per run; 'both' is for the old comparison only")
+    parser.add_argument("--pairs", help="13's frozen pairs.jsonl (295 rows, 4225 pairs)")
+    parser.add_argument("--pairs-freeze", help="13's freeze.json that pins pairs.jsonl")
+    parser.add_argument("--valid-rows", help="01's validation rows file (full rows with y)")
+    parser.add_argument("--device", default="auto", help="auto | cpu | cuda")
     parser.add_argument("--eval-only")
     parser.add_argument("--use-test", action="store_true")
     args = parser.parse_args(argv)
@@ -163,14 +229,40 @@ def main(argv: List[str] | None = None) -> int:
         print("REFUSED: labels argument differs from the frozen labels file")
         return 2
     groups = ps.load_predicate_groups(args.labels)
-    rows = ps.load_rows(args.rows)
     split = load_split(Path(args.split))
-    parts = split_rows(rows, split)
+    if args.pairs:
+        # 13's frozen delivery is the training set: 295 rows / 4225 pairs. The
+        # 300-row file is only used to derive the split and to check ownership.
+        frozen_pairs = load_frozen_pairs(Path(args.pairs), Path(args.pairs_freeze))
+        rows = ps.load_rows(args.rows)
+        parts = split_rows(rows, split)
+        pairs_by_row = {row["rowId"] for row in frozen_pairs}
+        kept = [row for row in parts["TRAIN"] if row["rowId"] in pairs_by_row]
+        missing = sorted(pairs_by_row - {row["rowId"] for row in rows})
+        if missing:
+            print(f"REFUSED: pairs reference rows not in the 300-row file: {missing[:3]}")
+            return 2
+        if len(kept) != len({row['rowId'] for row in frozen_pairs}):
+            print(f"REFUSED: pairs cover {len({row['rowId'] for row in frozen_pairs})} rows, "
+                  f"split assigns {len(kept)} to TRAIN")
+            return 2
+        parts = {"TRAIN": kept, "VALIDATION": [], "TEST": [], "_pairs": frozen_pairs}
+    elif args.valid_rows:
+        print("REFUSED: --valid-rows only works together with --pairs")
+        return 2
+    else:
+        rows = ps.load_rows(args.rows)
+        parts = split_rows(rows, split)
     if args.use_test != bool(parts.get("TEST")):
         pass  # TEST is only read when it exists; using it is a separate decision.
 
-    max_len = measure_max_len(parts["TRAIN"] + parts["VALIDATION"], tokenizer, groups,
-                              cap=training["maxLenHardCap"])
+    if parts.get("_pairs"):
+        longest = max(len(tokenizer(pair["text"], add_special_tokens=True)["input_ids"])
+                      for pair in parts["_pairs"])
+        max_len = min(training["maxLenHardCap"], int(math.ceil(longest / 32) * 32))
+    else:
+        max_len = measure_max_len(parts["TRAIN"] + parts["VALIDATION"], tokenizer, groups,
+                                  cap=training["maxLenHardCap"])
     frozen_len = (frozen.get("measurement") or {}).get("maxLenCeil32")
     if frozen_len and max_len > frozen_len:
         print(f"REFUSED: registered maxLen {frozen_len} violates the frozen rule; measured {max_len}")
@@ -191,8 +283,24 @@ def main(argv: List[str] | None = None) -> int:
         "startedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
 
-    train_set = pm.PairwiseDataset(parts["TRAIN"], tokenizer, max_len, groups, decisions_of(parts["TRAIN"]))
-    valid_set = pm.PairwiseDataset(parts["VALIDATION"], tokenizer, max_len, groups, decisions_of(parts["VALIDATION"]))
+    if parts.get("_pairs"):
+        train_set = pm.PairsDataset(parts["_pairs"], tokenizer, max_len)
+        if not args.valid_rows:
+            print("REFUSED: --pairs needs --valid-rows; the frozen pairs file is training only")
+            return 2
+        valid_source = json.loads(Path(args.valid_rows).read_text(encoding="utf-8"))
+        valid_rows = valid_source.get("rows") if isinstance(valid_source, dict) else valid_source
+        for row in valid_rows:
+            gold = row.get("yGroup")
+            rendered = ps.row_group(row, 0, groups)
+            if gold and rendered and gold != rendered:
+                print(f"REFUSED: validation row {row['rowId']} renders {rendered}, gold is {gold}")
+                return 2
+        valid_set = pm.PairwiseDataset(valid_rows, tokenizer, max_len, groups, decisions_of(valid_rows))
+        parts["VALIDATION"] = valid_rows
+    else:
+        train_set = pm.PairwiseDataset(parts["TRAIN"], tokenizer, max_len, groups, decisions_of(parts["TRAIN"]))
+        valid_set = pm.PairwiseDataset(parts["VALIDATION"], tokenizer, max_len, groups, decisions_of(parts["VALIDATION"]))
 
     if args.eval_only:
         # One checkpoint, one split. TEST is only used when --use-test is passed,
@@ -204,12 +312,14 @@ def main(argv: List[str] | None = None) -> int:
         torch.manual_seed(training["seed"])
         model = pm.PairwiseModel(args.base, dropout=training["dropout"])
         model.load_state_dict(checkpoint["state"])
+        device = pick_device(args.device)
+        model.to(device)
         target = valid_set
         target_name = "validation"
         if args.use_test and parts.get("TEST"):
             target = pm.PairwiseDataset(parts["TEST"], tokenizer, max_len, groups, decisions_of(parts["TEST"]))
             target_name = "test"
-        result = evaluate(model, target, tokenizer)
+        result = evaluate(model, target, tokenizer, device)
         payload = {"kind": "pairwise-eval", "split": target_name, "checkpoint": args.eval_only,
                    "measurement": result}
         (out_dir / f"pairwise-eval-{target_name}.json").write_text(
@@ -219,12 +329,23 @@ def main(argv: List[str] | None = None) -> int:
         return 0
     report["pairs"] = {"train": len(train_set.pairs), "validation": len(valid_set.pairs)}
 
+    device = pick_device(args.device)
+    report["device"] = {
+        "requested": args.device,
+        "used": device.type,
+        "name": (torch.cuda.get_device_name(0) if device.type == "cuda" else "cpu"),
+        "torch": torch.__version__,
+        "cudaAvailable": torch.cuda.is_available(),
+    }
+    if device.type == "cuda":
+        report["device"]["cudaVersion"] = torch.version.cuda
+
     arms = ["frozen", "unfrozen"] if args.arm == "both" else [args.arm]
     for arm in arms:
         # Seed BEFORE the encoder is loaded and the head created.
         torch.manual_seed(training["seed"])
         random.seed(training["seed"])
-        model = pm.PairwiseModel(args.base, dropout=training["dropout"])
+        model = pm.PairwiseModel(args.base, dropout=training["dropout"]).to(device)
         if arm == "frozen":
             for parameter in model.encoder.parameters():
                 parameter.requires_grad = False
@@ -240,8 +361,8 @@ def main(argv: List[str] | None = None) -> int:
         stale = 0
         for epoch in range(1, training["epochsMax"] + 1):
             train_stats = run_epoch(model, train_set, tokenizer, optimizer,
-                                    training["batchDecisions"], training["seed"] + epoch)
-            valid_metrics = evaluate(model, valid_set, tokenizer)
+                                    training["batchDecisions"], training["seed"] + epoch, device)
+            valid_metrics = evaluate(model, valid_set, tokenizer, device)
             score = valid_metrics["step1"]["rowHit"]
             history.append({"epoch": epoch, "train": train_stats, "validRowHit": score})
             if score > best_score:
@@ -255,7 +376,7 @@ def main(argv: List[str] | None = None) -> int:
                     break
         if best["state"] is not None:
             model.load_state_dict(best["state"])
-        final = best["metrics"] or evaluate(model, valid_set, tokenizer)
+        final = best["metrics"] or evaluate(model, valid_set, tokenizer, device)
         checkpoint = out_dir / f"pairwise-{arm}.pt"
         torch.save({
             "state": model.state_dict(),
@@ -275,6 +396,8 @@ def main(argv: List[str] | None = None) -> int:
                                  "skipPrecision": final["step1"]["skipPrecision"],
                                  "skipRecall": final["step1"]["skipRecall"]}}, ensure_ascii=False))
 
+    if device.type == "cuda":
+        report["device"]["peakMemoryMb"] = round(torch.cuda.max_memory_allocated() / (1 << 20), 1)
     report["wallSeconds"] = round(time.time() - started, 1)
     report["finishedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     (out_dir / "pairwise-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n",

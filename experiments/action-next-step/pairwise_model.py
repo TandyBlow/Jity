@@ -76,6 +76,42 @@ class PairwiseDataset(Dataset):
                 "labels": torch.tensor([item["label"] for item in batch], dtype=torch.float32)}
 
 
+class PairsDataset(Dataset):
+    """Pairs that already exist as text (13's frozen pairs.jsonl). Used by the
+    HPC run so training reads the frozen 295 rows / 4225 pairs verbatim instead
+    of re-rendering the 300-row file."""
+
+    def __init__(self, pairs: Sequence[Dict[str, Any]], tokenizer: Any, max_len: int) -> None:
+        self.pairs: List[Dict[str, Any]] = []
+        self.decisions: List[List[int]] = []
+        by_decision: Dict[Tuple[str, int], List[Dict[str, Any]]] = {}
+        for pair in pairs:
+            key = (pair["rowId"], int(pair["stepIndex"]))
+            by_decision.setdefault(key, []).append(pair)
+        for key in sorted(by_decision):
+            group = by_decision[key]
+            start = len(self.pairs)
+            for pair in group:
+                tokens = tokenizer(pair["text"], add_special_tokens=True)["input_ids"]
+                if len(tokens) > max_len:
+                    raise SystemExit(
+                        f"REFUSED: {key[0]} step {key[1]} group {pair['group']} has "
+                        f"{len(tokens)} tokens > maxLen {max_len}; no truncation")
+                self.pairs.append({"input_ids": tokens, "label": int(pair["label"]),
+                                   "group": pair["group"], "rowId": key[0],
+                                   "stepIndex": key[1]})
+            self.decisions.append(list(range(start, len(self.pairs))))
+
+    def __len__(self) -> int:
+        return len(self.pairs)
+
+    def __getitem__(self, index: int) -> Dict[str, Any]:
+        return self.pairs[index]
+
+    def collate(self, batch: Sequence[Dict[str, Any]], pad_id: int) -> Dict[str, torch.Tensor]:
+        return PairwiseDataset.collate(self, batch, pad_id)
+
+
 def decision_loss(logits: torch.Tensor, labels: torch.Tensor, groups_per_decision: int,
                   pos_weight: float = 12.0) -> torch.Tensor:
     """Sum of BCE over all pairs in the batch, divided by decisions*13."""
