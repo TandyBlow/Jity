@@ -269,3 +269,4 @@
 - 已向 04/06 提「提问回合」请求（`results/quality/requests-01-to-04-06-question-turn.md`）：纯对话行动需要结果路径（能答就给答案事实，不能答也要完成并写「没答」），不能 `submit_refused` 整回合；失败时页面不得把 `…` 当正文。
 - root `6c202872`（时间可选，基于 aa30835f，7 个 constrained 文件）已独立核对：两处投影 time `mandatory:false`；`verifyText` 强制 `requireTime=false`，coverage 对 time 永不 hard；写错时长仍由 `alignNarration` 拒。已提 06 吸收 / 09 下次运行需同时含 `6c202872`+`f4272699`+结果契约（`results/quality/requests-01-to-06-absorb-time-optional.md`）。本线 checker 同步：缺时长不判、写错判 `fact.time_wrong`。
 - aa30 三回合按新边界独立阅读（`results/quality/review-09-aa30.md`）：t1 程序 89 字（候选 `too_short` + 模型稿 `unprojected_entity:诺诺的红色识别带` 被挡，走/看牌都没发生）；t2 提问回合 `missing judgment for lu`（首次有 lu 判定、重试丢失）0 字；t3 仍显示 `…`。结论：不是模型不合格，是候选门槛与结算/展示失败；需 09 在含 6c202872+f4272699+结果契约的 build 重跑。
+- 73f3 三回合独立阅读（`results/quality/review-09-73f3.md`）：t1 结算第一次把「走+看牌」判成 achieved（lu 组），但 nono 组两次只写机制事实被 04 拒，整回合 0 字；t2 仍显示 `…`；t3 驱动 30 s 点不到「行动」按钮。结论：挡住玩家的是结果契约与失败恢复，不是叙事模型。需 04/02 把行动结果写进事实、06 修失败后展示/可继续，再同一 build 重跑。
