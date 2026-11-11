@@ -22,9 +22,10 @@ import { projectPoint } from '../semantics/settlement/projection';
 function loadWorld(): { initial: InitialTemplate; state: WorldState } {
   const file = join(process.cwd(), 'public/worlds/dragon-raja-free-day.world.json');
   const world = JSON.parse(readFileSync(file, 'utf8'));
-  const source = structuredClone(world.initial) as InitialTemplate & { worldId?: string };
-  delete source.worldId;
-  const initial = source as InitialTemplate;
+  // The product kernel validates worldId; keep the world file's own id instead
+  // of stripping it (06's normalizeInitialState started requiring it).
+  const source = structuredClone(world.initial) as InitialTemplate;
+  const initial = source;
   return { initial, state: buildInitialState(source as unknown as InitialState) };
 }
 

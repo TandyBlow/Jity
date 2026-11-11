@@ -6,6 +6,7 @@
  * missing facts named, then the caller falls back to `realizeBeat` — never to
  * a fact list.
  */
+import { genderLine } from '../../narration-generation/character-gender';
 import type { InferenceEngine } from '../../../runtime/engine';
 import { isAbortError } from '../../../runtime/engine';
 import type { BeatDirective, SceneFact, SceneSkeleton } from './types';
@@ -26,10 +27,16 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
     case 'time': {
       const { amount, unit } = fact.advance.duration;
       const label = unit === 'hour' ? `${amount}小时` : unit === 'month' ? `${amount}个月` : `${amount}${UNIT_LABEL[unit]}`;
-      return `时间过去 ${label}（正文必须写出这个时长）`;
+      return `本回合经过${label}（时间背景，不必写进正文；写到时长时不得改错）`;
     }
-    case 'move':
-      return `${fact.name}从${fact.from}到${fact.to}（方向必须是从到；${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
+    case 'move': {
+      // A location name can be missing when the packet only knows ids; an empty
+      // «从到» would be copied verbatim by a small model («方向是从到»).
+      const from = (fact.from ?? '').trim();
+      const to = (fact.to ?? '').trim();
+      const where = from && to ? `从${from}到${to}` : to ? `在${to}` : from ? `离开${from}` : '换了位置';
+      return `${fact.name}${where}（${from && to ? '方向必须是从到；' : ''}${fact.entityKind === 'item' ? '这是物品' : '这是人物'}）`;
+    }
     case 'task_achieved':
       return `「${fact.goal}」这件事，${fact.name}已经办完了（目标原话要出现，完成的意思要读得出来）`;
     case 'subtask_added':
@@ -50,8 +57,27 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
       return `${fact.name}现在在${fact.container}`;
     case 'item_discovered':
       return `${fact.name}现在在${fact.container}，视角人物此前没有留意（不要写成他早已知晓）`;
-    case 'result':
-      return `结算原话：「${fact.text}」（可以换措辞，但不能改变其中的人和事）`;
+    case 'result': {
+      // The settlement record is prompt material: the model writes it in its own
+      // words. When the structured record does not carry the action wording, the
+      // settled sentence is included so the beat still has content.
+      if (fact.structured) {
+        const outcome = { completed: '行动完成', failed: '行动失败', blocked: '行动被阻止', unaffected: '目标没有受到影响' }[fact.structured.outcome];
+        const who = fact.structured.actor ? `由${fact.structured.actor}` : '';
+        const on = fact.structured.target ? `，对象是${fact.structured.target}` : '';
+        const what = fact.structured.action ? `，动作是${fact.structured.action}` : '';
+        // «行动失败» alone reads as "he was stopped". Three runs wrote a blocked
+        // gesture instead of the exchange the record carries («他伸手想触碰她，却在
+        // 她转身时被挡住»). The word stays true to the settlement; the note says
+        // what it does not mean.
+        const failedNote = fact.structured.outcome === 'failed'
+          ? '（失败指他要的结果没得到；按结算记录写对方实际怎么回应，不要改写成被拦住、被推开或被打断）'
+          : '';
+        const detail = fact.text && fact.text !== fact.structured.action ? `。结算记录：「${fact.text}」` : '';
+        return `结算结果：${who}${what}${on}，${outcome}${failedNote}${detail}`;
+      }
+      return `结算内容：「${fact.text}」`;
+    }
     case 'at':
       return `${fact.name}在${fact.location}`;
     default:
@@ -67,10 +93,31 @@ function clip(text: string, max: number): string {
   return `${(punctuation > max * 0.5 ? cut.slice(0, punctuation) : cut).replace(/[，、；]+$/u, '')}…`;
 }
 
+/** Drop a settled clause that repeats another: same text with different
+ * punctuation, a clause already inside a longer one, or a clause already printed
+ * next to the person/object. Order is kept. */
+function dedupeClauses(details: readonly string[], alreadyPrinted: string): string[] {
+  const norm = (value: string): string => value.replace(/[…。；;，,、\s]+/gu, '');
+  const printed = norm(alreadyPrinted);
+  const kept: string[] = [];
+  const keptNorm: string[] = [];
+  for (const detail of details) {
+    const text = detail.trim();
+    const key = norm(text);
+    if ([...text].length < 2 || !key) continue;
+    if (printed.includes(key)) continue;
+    if (keptNorm.some((other) => other.includes(key))) continue;
+    const shorter = keptNorm.findIndex((other) => key.includes(other) && other.length < key.length);
+    if (shorter >= 0) { kept.splice(shorter, 1); keptNorm.splice(shorter, 1); }
+    kept.push(text);
+    keptNorm.push(key);
+  }
+  return kept;
+}
+
 export function buildBeatPrompt(
   beat: BeatDirective,
   scene: SceneSkeleton,
-  prior: string | null,
   options: BeatPromptOptions,
 ): string {
   const facts = beat.factIds
@@ -78,39 +125,112 @@ export function buildBeatPrompt(
     .filter((fact): fact is SceneFact => Boolean(fact))
     .map((fact) => factDirective(fact, options.sanityStyle))
     .filter(Boolean);
-  const details = scene.licensed.details
+  // The same settled clause arrives three times: the whole note, its
+  // clause-split parts (projection's expandedDetails) and another source that
+  // repeats it. 09's captured prompt carried «红发用发圈束在脑后；红色识别带缠在
+  // 左臂» twice in one list. Dedupe before clipping: drop a clause already inside
+  // a longer one, or already printed in 地点/在场/可见物品.
+  const alreadyPrinted = [
+    scene.place.note ?? '',
+    ...scene.present.map((person) => person.note ?? ''),
+    ...scene.objects.map((object) => object.note ?? ''),
+  ].join('；');
+  const details = dedupeClauses(scene.licensed.details, alreadyPrinted)
     .map((detail) => clip(detail, 44))
-    .filter((detail) => detail.length > 1)
     .slice(0, options.maxDetails ?? 10);
-  const present = scene.present.map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
-  const objects = scene.objects.slice(0, 8).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
-  const lastPrior = prior
-    ? clip(prior.split(/\n+/u).filter(Boolean).slice(-1)[0] ?? '', 60)
-    : '';
+  // Keep the beat prompt scoped: 8 objects + 10 details made the 1.7B writer
+  // enumerate the scene inventory instead of writing the beat's fact.
+  const present = scene.present.slice(0, 3).map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
+  // Turns 7-9 of the 10-turn run all opened with «路明非摘下护目镜»: the item's
+  // note («镜片无裂纹，镜带松着，现挂在胸前…») was the most concrete line in the
+  // prompt and the model led with it every time. An item's note is printed only
+  // when this beat's fact names that item; otherwise the bare name is enough.
+  const factsText = facts.join('\n');
+  // A question that the record answers is the whole beat: the player asked and
+  // the other character replied. Runs wrote only the approach («他缓缓走近，低声
+  // 问…» with no answer) or a blocked gesture. When the record carries a question
+  // and a reply, say so in the fact block instead of leaving it to be inferred.
+  const asksAndAnswers = beat.factIds
+    .map((id) => scene.facts.find((fact) => fact.id === id))
+    .some((fact) => fact?.kind === 'result'
+      && /问|盘问|追问/u.test(fact.text)
+      && /(摇头|点头|回答|答|说|不知道|没有说)/u.test(fact.text));
+  const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${
+    object.note && factsText.includes(object.name) ? `（${clip(object.note, 22)}）` : ''
+  }`);
+  // Gender is data, not a ban: print the sourced gender for the people in this
+  // scene and say nothing about anyone else.
+  const genderNote = genderLine([
+    scene.viewpoint.name,
+    ...scene.present.map((person) => person.name),
+  ]);
+  // The settled record goes last, immediately before «只输出正文». The model kept
+  // writing around it: turn 2 of 02-run-e699 asked a question in the prompt's own
+  // words and answered nothing, while the record («诺诺摇头说不知道») sat at the
+  // top above the materials and nine requirements. Recency is the lever a small
+  // model actually follows; the instruction now points at the block below.
+  const factBlock = [
+    `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
+    ...(facts.length ? [] : ['本段只写视角人物此刻的一个动作或一处注意，一到两句就够，不要把场景材料清点一遍。']),
+    ...facts.map((fact) => `- ${fact}`),
+    ...(asksAndAnswers ? ['- 这一回合是他问、对方答：他问的那句话和对方的回答都要写出来；不要只写走近、伸手或环境。'] : []),
+    ...(scene.time && !beat.factIds.some((id) => scene.facts.find((fact) => fact.id === id)?.kind === 'time')
+      ? [factDirective({ id: 'time-context', kind: 'time', mandatory: false, visibility: 'scene', advance: scene.time }, options.sanityStyle)]
+      : []),
+  ];
+  const instructionBlock = beat.index === 0 && scene.previousAction && !facts.some((fact) => {
+    // The player's own sentence comes back as the settled record on a plain
+    // action («我沿着服务巷往里走…»). Printing it twice is the duplication the
+    // prompt cleanup is for; the fact line at the end already carries it.
+    const said = String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name).replace(/[。！？]+$/u, '');
+    return fact.includes(said);
+  })
+    ? [`玩家这一回合的指令（用你自己的话写，不要照抄这句）：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
+       '正文要写出他做了或试着做了这件事；结果只按最后给出的事实写，没有结算成功的事不要写成成功。']
+    : [];
   const lines = [
     '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
-    `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
-    ...facts.map((fact) => `- ${fact}`),
+    ...instructionBlock,
     '',
     '场景材料（只可使用这些）：',
-    `- 视角人物：${scene.viewpoint.name}`,
+    `- 视角人物：${scene.viewpoint.name}（这一段写的就是他本人；不要把他写成另一个人，也不要用他的名字指别人）`,
     `- 地点：${scene.place.name}${scene.place.note ? `；${clip(scene.place.note, 60)}` : ''}`,
     ...(present.length ? [`- 在场：${present.join('；')}`] : []),
     ...(objects.length ? [`- 可见物品：${objects.join('；')}`] : []),
     ...(details.length ? [`- 已登记细节：${details.join('；')}`] : []),
-    ...(lastPrior ? [`上一段结尾：${lastPrior}`] : []),
     '',
     '要求：',
-    `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
-    '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
+    `- 只写 ${lengthHint(facts.length).sentences} 句，共约 ${lengthHint(facts.length).chars} 字，句末用句号。`,
+    '- 只表达最后给出的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
+    '- 可见物品在场景里，不是他手里的东西；只有结算或材料写明他拿着，才写成他拿着。',
+    '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
-    '- 可以写细微动作和措辞润色；不知道性别时用名字或不写代词。',
-    '- 不要复述上一段，不要写“他说”“她想”以外的解释性总结。',
+    '- 结算记录的措辞可以自己写；人物、对象和结果方向不能改。',
+    ...(genderNote
+      ? [`- 可以写细微动作和措辞润色。${genderNote}`]
+      : ['- 可以写细微动作和措辞润色。']),
+    '- 不要重复本段已经写过的句子；不要写解释性的总结。',
+    '- 把它写成一幕，不是写成清单：只挑一处此刻最显眼的细节，用视角人物的注意力带出来；不要把「可见物品」「已登记细节」逐条抄进正文。',
     options.instruction ? `- ${options.instruction}` : '',
+    '',
+    ...factBlock,
     '',
     '只输出正文：',
   ].filter((line) => line !== '');
   return lines.join('\n');
+}
+
+/** How long one segment should be, by how much it has to carry.
+ *
+ * The captured prompt on 09's 0frozen run said «只写 1-27 句，18-380 字» — a
+ * twentyfold range, and the model wrote one 24-char sentence that only repeated
+ * the settled record. A segment with one fact needs a scene around it; a
+ * transition needs a line. These are prompt suggestions, not runtime limits.
+ */
+function lengthHint(facts: number): { sentences: string; chars: string } {
+  if (facts <= 0) return { sentences: '1-2', chars: '20-60' };
+  if (facts === 1) return { sentences: '2-4', chars: '60-120' };
+  return { sentences: '3-6', chars: '100-200' };
 }
 
 export interface ModelBeatResult {
@@ -155,27 +275,22 @@ function unwrapStructured(raw: string): string {
 const THREE_NEWLINES = new RegExp(String.fromCharCode(10) + '{3,}', 'gu');
 
 export function sanitizeBeat(raw: string): string {
-  const NL = String.fromCharCode(10);
+  // Protocol extraction only. A fenced/JSON answer is still the model's text;
+  // the 【正文】 marker is part of the prompt contract. Nothing is deleted,
+  // re-worded, punctuated or trimmed for length: the content is shown as-is.
   const marker = String.fromCharCode(0x3010) + '正文' + String.fromCharCode(0x3011);
   const afterMarker = raw.includes(marker) ? raw.split(marker).pop() ?? raw : raw;
-  // Remove fence markers first, then read a structured answer: a fenced JSON
-  // object is still the model's text, not a code sample to discard.
-  const unfenced = afterMarker.replace(/```[a-zA-Z]*/gu, '').replace(/```/gu, '');
-  const stripped = unwrapStructured(unfenced)
-    .replace(/^\s*(正文|叙事|输出|片段)[:：]\s*/u, '')
-    .replace(/【[^】]{1,10}】/gu, '')
-    .replace(/\*\*/gu, '')
-    .replace(/[ 	]+/gu, ' ')
-    .replace(THREE_NEWLINES, NL + NL)
-    .trim();
-  return stripped;
+  const unfenced = afterMarker.split(String.fromCharCode(96,96,96)).join('');
+  const structured = unwrapStructured(unfenced);
+  // `unwrapStructured` returns the text field when the answer is a JSON object;
+  // otherwise the input itself.
+  return structured;
 }
 
 export async function composeBeatWithModel(
   engine: InferenceEngine,
   beat: BeatDirective,
   scene: SceneSkeleton,
-  prior: string | null,
   options: {
     sanityStyle: 'direction' | 'number';
     instruction?: string | null;
@@ -188,9 +303,12 @@ export async function composeBeatWithModel(
   },
 ): Promise<ModelBeatResult> {
   const started = performance.now();
-  const prompt = buildBeatPrompt(beat, scene, prior, {
+  const prompt = buildBeatPrompt(beat, scene, {
     instruction: [options.instruction, options.feedback].filter(Boolean).join(' ') || null,
     sanityStyle: options.sanityStyle,
+    // The 05e7 beats catalogued every licensed detail ("弹匣内剩3发…", "电量灯不亮…").
+    // A beat needs the details its own facts name, not the whole scene inventory.
+    maxDetails: 2,
   });
   const raw = await engine.complete(prompt, {
     maxTokens: options.maxTokens,
@@ -198,9 +316,12 @@ export async function composeBeatWithModel(
     timeoutMs: options.timeoutMs,
     signal: options.signal,
     onProgress: options.onProgress
-      ? (progress) => options.onProgress?.({ text: sanitizeBeat(progress.raw), elapsedMs: performance.now() - started })
+      // Raw streaming: the page shows the model's own text while it is written.
+      ? (progress) => options.onProgress?.({ text: progress.raw, elapsedMs: performance.now() - started })
       : undefined,
   });
+  // The answer is used exactly as returned (after protocol extraction). No
+  // trimming, sentence surgery or repair: a non-empty answer is the prose.
   return {
     text: sanitizeBeat(raw),
     raw,

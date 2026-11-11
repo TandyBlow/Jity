@@ -53,7 +53,7 @@ const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
   narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
   updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
   lastRoundIdentityError: null, roundIdentityBlocked: null,
-  continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
+  continuation: null, continuationStop: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
 });
 
 const view = (world_: WorldContext | null, control_: ControlState, work_: PointWork | null, memory_: ControllerMemory, command?: ScheduleView['command'], activeInput: ScheduleView['activeInput'] = null): ScheduleView =>
@@ -675,6 +675,13 @@ describe('round conclusion', () => {
     const conclude = expectTransport(next(w, c, null, concluding), 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
     expect((conclude.request as unknown as { conclusion: unknown }).conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
   });
+  test('a continuation policy stop closes the round as a visible cancel', () => {
+    const { w, c } = assessing();
+    const m = memory({ continuationStop: { reason: 'continuation_policy_abstract_task_goal' } });
+    const cancel = expectTransport(next(w, c, null, m), 'round_conclusion_cancel') as Extract<Decision, { kind: 'transport' }>;
+    expect(cancel.request).toMatchObject({ operation: 'cancel', cancelReason: 'continuation_policy_abstract_task_goal' });
+  });
+
   test('concludes continue with a seeded next round id', () => {
     const { w, c } = assessing();
     const m = memory({ continuation: { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_c'], nextRoundId: 'r2' } });

@@ -527,6 +527,9 @@ export class UpdatesRunner {
       promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
       stageMs,
       stages: outcomes.map((outcome, index) => (Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage)),
+      // The affected projection is evidence the page can print while the turn
+      // is open (which owners/rows were actually judged).
+      scope: (evidence.detail as { taskScope?: unknown } | null)?.taskScope ?? null,
     });
     return outcome;
   }

@@ -61,8 +61,24 @@ export type SceneFact =
     id: string; kind: 'item_discovered'; mandatory: boolean; visibility: FactVisibility;
     itemId: Id; name: string; containerId: Id; container: string; note: string;
   }
-  /** The settlement's own result wording; narrated as one short paragraph. */
-  | { id: string; kind: 'result'; mandatory: boolean; visibility: FactVisibility; text: string };
+  /** The settlement's own result wording; narrated as one short paragraph.
+   * `structured` carries who acted, on whom, what action, and the outcome
+   * direction, so verification can accept a faithful paraphrase. */
+  | {
+    id: string; kind: 'result'; mandatory: boolean; visibility: FactVisibility; text: string;
+    structured?: { actorId: string; actor?: string; action?: string; targetId?: string; target?: string;
+      outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true };
+  };
+
+/** One settled result record as committed by the settlement (04). */
+export interface StructuredSettledFact {
+  text: string;
+  actorId: string;
+  targetId?: string;
+  action?: string;
+  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected';
+  implicit?: true;
+}
 
 /** Whether the viewpoint could perceive the fact. Hidden facts are kept in the
  * skeleton for evidence but are not narrated by default (`R11/R12`: the prose
@@ -112,8 +128,11 @@ export interface SceneSkeleton {
     quotes: string[];
   };
   knowledge: SceneKnowledge;
-  priorText: string | null;
   inputText: string | null;
+  /** What the player declared this turn ("我沿着服务巷往里走…"). An instruction,
+   * not a settled outcome: the beats may write it as done/tried, never as a
+   * successful result (01's fact.action_omitted on every page turn). */
+  previousAction?: string | null;
   resultsText: string | null;
   /** False when only the fact packet (no full state) was available. */
   hasSceneMaterial: boolean;
@@ -157,8 +176,6 @@ export interface BeatPlan {
 export interface ComposeBeatRequest {
   beat: BeatDirective;
   scene: SceneSkeleton;
-  /** Accepted text of all previous beats; null for the first beat. */
-  prior: string | null;
 }
 
 export interface ComposeBeatOptions {
@@ -189,8 +206,9 @@ export type CandidateIssueKind =
   | 'fact_time_wrong' | 'task_without_fact' | 'movement_without_fact'
   | 'unlicensed_entity' | 'unlicensed_event' | 'rediscovery_claim'
   | 'perspective_leak' | 'prompt_echo' | 'fact_list' | 'off_language' | 'empty_text' | 'too_short' | 'too_long'
-  | 'repeated_sentence' | 'echo_prior' | 'opening_repeat' | 'engine_error' | 'cancelled'
-  | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing';
+  | 'engine_error' | 'cancelled'
+  | 'beat_repaired' | 'beat_fallback' | 'sanity_direction_missing'
+  | 'result_semantics' | 'result_unverified';
 
 export interface CandidateIssue {
   kind: CandidateIssueKind;
@@ -203,23 +221,22 @@ export interface CandidateIssue {
 export interface BeatEvidence {
   beatId: string;
   kind: BeatDirective['kind'];
-  source: 'program' | 'model' | 'external' | 'fallback';
+  source: 'model';
+  /** Exactly what the model returned for this beat (never rewritten). */
   text: string;
   prompt: string | null;
   raw: string | null;
   attempts: number;
   ms: number;
   issues: CandidateIssue[];
-  /** Drafts that failed the beat gate before the accepted one. Kept so a mixed
-   * turn shows what the model actually produced, not only the accepted text. */
-  rejected?: { attempt: number; text: string; issues: CandidateIssue[] }[];
+  /** Transport/model failure for this beat, when there was one. */
+  error?: string;
 }
 
 export interface CandidateTimings {
   totalMs: number;
   planMs: number;
   composeMs: number;
-  verifyMs: number;
   beatsMs: number[];
   firstTextMs: number | null;
 }
@@ -255,6 +272,11 @@ export interface ConstrainedPolicy {
   /** Settlement result text for this point, if the caller has it. Used only as
    * extra licensed material for item/scene selection, never as a fact source. */
   resultsText?: string | null;
+  /** Structured settled records (04): actor, action, target, outcome direction.
+   * When present they become the result facts; the wording above is ignored. */
+  settledFacts?: StructuredSettledFact[] | null;
+  /** All world names (characters/locations/items) for the facts-packet path. */
+  worldNames?: { characters: string[]; locations: string[]; items: string[] };
   /** Whether hidden (out-of-scene) facts may be narrated. Default false. */
   narrateHiddenDeltas?: boolean;
   /** 'program' never calls a model; 'model' uses the engine per beat;
@@ -278,8 +300,8 @@ export interface ConstrainedPolicy {
   sanityStyle?: 'direction' | 'number';
   minChars?: number;
   maxChars?: number;
-  /** Require the elapsed duration to be stated. Defaults to true for elapsed
-   * advances with amount > 0, false otherwise. */
+  /** Deprecated: elapsed time may be omitted from prose. Incorrect durations
+   * are still checked, even when an older caller sets this flag. */
   requireTime?: boolean;
   maxBeats?: number;
   /** Whole-turn wall budget for model writing (default 180000 ms). Once it is
@@ -304,7 +326,6 @@ export interface GenerateCandidateInput {
   /** Caller-serialized model input (lane 01 projection). Licensed material:
    * names inside it may appear in prose, and it is never re-parsed as state. */
   inputText?: string | null;
-  priorText?: string | null;
   signal?: AbortSignal;
   onProgress?: (progress: CandidateProgress) => void;
   policy?: ConstrainedPolicy;
@@ -320,17 +341,6 @@ export interface CommittedScenePacket extends CommittedNarration {
   /** Alternative serialized model input, when `inputText` is not passed. */
   inputText?: string | null;
   /** Alternative previous accepted text. */
-  priorText?: string | null;
-}
-
-export interface CandidateVerification {
-  ok: boolean;
-  coverage: { factId: string; kind: SceneFact['kind']; expressed: boolean; mandatory: boolean }[];
-  issues: CandidateIssue[];
-  unverifiedSentences: string[];
-  chars: number;
-  hiddenFactIds: string[];
-  repetition: number | null;
 }
 
 /** One assembled paragraph and who wrote it. Program paragraphs are an
@@ -343,30 +353,20 @@ export interface BeatSegment {
 }
 
 export interface CandidateResult {
+  /** Non-empty beat texts joined in plan order, exactly as the model wrote them. */
   text: string;
-  accepted: boolean;
-  /** Every beat, including repaired and fallback beats, with raw model output. */
+  /** Every beat, its prompt and the model's exact answer (evidence only). */
   rawAttempts: BeatEvidence[];
-  issues: CandidateIssue[];
   timings: CandidateTimings;
   strategyVersion: string;
-  status: 'accepted' | 'rejected' | 'cancelled' | 'error';
-  verification: CandidateVerification;
+  /** `empty` means the model returned nothing: the caller shows a status note
+   * and never a program-written narration. */
+  status: 'accepted' | 'empty' | 'cancelled' | 'error';
+  detail?: string;
   skeleton: SceneSkeleton | null;
   plan: BeatPlan | null;
-  /** Which composer wrote each beat, in order. */
-  composers: string[];
-  /** Assembled paragraphs with their writer, so a mixed turn is never shown as
-   * wholly model-written. */
+  /** Display boundaries: one entry per non-empty beat. */
   segments: BeatSegment[];
-  /** Beat provenance counts for one-line labelling. */
-  beatCounts: { model: number; program: number; external: number; fallback: number };
-  /** True when both a model/external writer and a program fallback wrote part of
-   * this text. `accepted` alone never means the whole text is model prose. */
-  mixed: boolean;
-  /** Base fact packet for the legacy alignment gate (position/task/personality
-   * facts only; sanity uses this route's direction rule). */
-  basePacket: CommittedNarration | null;
   display: CandidateProgress;
 }
 

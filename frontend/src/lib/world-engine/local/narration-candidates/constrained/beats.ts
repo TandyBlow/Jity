@@ -16,6 +16,9 @@ export interface BeatPlanOptions {
   /** Minimum length per beat. */
   minChars?: number;
   maxChars?: number;
+  /** Let fact-carrying beats include the scene texture instead of spending
+   * separate model calls on an opening, texture and closing with no facts. */
+  combineSceneMaterial?: boolean;
 }
 
 const DEFAULT_MIN = 22;
@@ -42,13 +45,16 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
   const minChars = options.minChars ?? DEFAULT_MIN;
   const maxChars = options.maxChars ?? DEFAULT_MAX;
   const seed = options.seed ?? 0;
+  const combineSceneMaterial = options.combineSceneMaterial === true;
   const maxBeats = Math.max(2, options.maxBeats ?? 6);
   const visible = scene.facts.filter((fact) => fact.visibility === 'scene' || narrateHidden);
   const hiddenFactIds = scene.facts.filter((fact) => fact.visibility === 'hidden' && !narrateHidden).map((fact) => fact.id);
 
   const mandatory = visible.filter((fact) => fact.mandatory);
   const optional = visible.filter((fact) => !fact.mandatory);
-  const time = mandatory.find((fact) => fact.kind === 'time') ?? null;
+  // A deterministic no-model rendering can still choose to state elapsed
+  // time. Model prose does not need a separate opening just to say the clock.
+  const time = (combineSceneMaterial ? mandatory : visible).find((fact) => fact.kind === 'time') ?? null;
   const moves = mandatory.filter((fact) => fact.kind === 'move') as Extract<SceneFact, { kind: 'move' }>[];
   const rest = mandatory.filter((fact) => fact.kind !== 'time' && fact.kind !== 'move');
 
@@ -59,19 +65,29 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
       index: beats.length,
       seed: beat.seed ?? hashSeed(scene.anchor.pointId, beat.id, seed),
       minChars: beat.factIds.length ? minChars : Math.min(minChars, 12),
-      maxChars: beat.factIds.length > 2 ? Math.round(maxChars * 1.6) : maxChars,
+      // The budget follows the material. One fact is one or two sentences: the
+      // reference corpus's median scene is 97 chars and 3 sentences, while the
+      // 11a7/4794 quiet turn produced 256-502 chars over four beats that carried
+      // one time fact between them. A beat with no fact gets one short sentence;
+      // three or more facts keep the large budget so a rich turn is not thinned.
+      maxChars: beat.factIds.length > 2
+        ? Math.round(maxChars * 1.6)
+        : combineSceneMaterial ? maxChars
+          : beat.factIds.length === 1 ? Math.round(maxChars * 0.55) : Math.min(maxChars, 32),
     });
   };
 
   // 1. Opening: place + elapsed time.
-  push({
-    id: 'open',
-    kind: 'open',
-    subject: { id: scene.viewpoint.id, name: scene.viewpoint.name, viewpoint: true },
-    factIds: time ? [time.id] : [],
-    details: placeDetails(scene),
-    mustMention: [scene.viewpoint.name],
-  });
+  if (!combineSceneMaterial || time || mandatory.length === 0) {
+    push({
+      id: 'open',
+      kind: 'open',
+      subject: { id: scene.viewpoint.id, name: scene.viewpoint.name, viewpoint: true },
+      factIds: time ? [time.id] : [],
+      details: placeDetails(scene),
+      mustMention: [scene.viewpoint.name],
+    });
+  }
 
   // 2. The viewpoint's own move comes first: it re-anchors the scene.
   const viewpointMove = moves.find((fact) => fact.viewpoint);
@@ -143,7 +159,7 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
   // 5. Scene texture: existing objects. Optional facts only; never a new prop.
   const sceneFacts = optional.filter((fact) => fact.kind === 'item_discovered' || fact.kind === 'item_present');
   const hasTexture = scene.hasSceneMaterial && (scene.present.length > 0 || scene.objects.length > 0 || sceneFacts.length > 0);
-  if (hasTexture) {
+  if (hasTexture && !combineSceneMaterial) {
     const chosen = sceneFacts.slice(0, 2);
     push({
       id: 'scene',
@@ -170,14 +186,16 @@ export function planBeats(scene: SceneSkeleton, options: BeatPlanOptions = {}): 
   }
 
   // 7. Closing: a grounded micro-action; no new event, prop or promise.
-  push({
-    id: 'close',
-    kind: 'close',
-    subject: { id: scene.viewpoint.id, name: scene.viewpoint.name, viewpoint: true },
-    factIds: [],
-    details: scene.present.map((person) => person.name),
-    mustMention: [],
-  });
+  if (!combineSceneMaterial) {
+    push({
+      id: 'close',
+      kind: 'close',
+      subject: { id: scene.viewpoint.id, name: scene.viewpoint.name, viewpoint: true },
+      factIds: [],
+      details: scene.present.map((person) => person.name),
+      mustMention: [],
+    });
+  }
 
   // Trim only if the plan exceeds the budget: merge the smallest event beats
   // into their neighbours instead of dropping facts.

@@ -362,12 +362,11 @@ describe('turn execution through the real kernel', () => {
     expect(snapshot.state.characters.person_a.tasks.task_watch?.status).toBe('pending');
   });
 
-  // KNOWN SHARED BUG (scheduled.ts `inputIds`, owned by 05/06): the working
-  // state's location appearanceChanges are not registered as known change ids,
-  // so a second change to the same room is stopped as a dangling reference.
-  // This test is expected to fail until that shared fix lands; it then fails as
-  // "expected to fail but passed", which is the prompt to promote it back.
-  it.fails('replaces the same room appearance on a second turn and keeps the old record', async () => {
+  // Shared bug fixed by 06 (schedule.ts `inputIds`): the working state's
+  // location appearanceChanges are now registered as known change ids, so a
+  // second change to the same room is a normal replacement instead of a
+  // dangling reference. Promoted from `it.fails` when the fix landed.
+  it('replaces the same room appearance on a second turn and keeps the old record', async () => {
     // Turn 1 adds the room's first change; turn 2 replaces that change with a
     // new id, which references a record the working state already has.
     let turn = 0;
@@ -375,8 +374,14 @@ describe('turn execution through the real kernel', () => {
       placement: { person_c: 'corridor', person_a: 'corridor' },
       taskAchieved: false,
       continuations: [{ candidates: [] }, { candidates: [] }],
+      // Every actor gets an appearance-stage prompt; only the first one (turn 1)
+      // and the first call of the next round (turn 4) touch the room, so the
+      // add and its replacement land in different points. Several replacements
+      // in one point would be refused for superseding a same-point change,
+      // which is a different rule from the bug under test.
       appearanceOps: (prompt) => {
         turn += 1;
+        if (turn !== 1 && turn !== 4) return [];
         const line = prompt.split(String.fromCharCode(10)).find((row) => row.includes('id=corridor'));
         const recordIds = /记录=\[([^\]]*)\]/u.exec(line ?? '')?.[1].split(',').filter(Boolean) ?? [];
         if (turn === 1) return [{ entityId: 'corridor', op: 'add', recordIds: [], text: '地板上多了一道新划痕。' }];

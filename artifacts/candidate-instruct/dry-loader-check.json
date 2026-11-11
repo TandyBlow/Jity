@@ -1,0 +1,105 @@
+{
+  "status": "DRY",
+  "recordedAt": "2026-11-10T07:39:21.758Z",
+  "candidate": "instruct-narration-candidate",
+  "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "config": {
+    "contextSize": 4096,
+    "numThreads": 6,
+    "temperature": 0.6,
+    "retryTemperature": 0.35,
+    "maxTokens": 520,
+    "maxAttempts": 2,
+    "targetChars": 220,
+    "seed": 42,
+    "styleSample": null
+  },
+  "source": {
+    "head": "85e1db66106fa519e72fc5512b508f3fbd642606",
+    "status": "M artifacts/candidate-instruct/dry-root.json\n M frontend/scripts/candidate-instruct/run-instruct-candidate.mjs\n?? artifacts/candidate-instruct/dry-loader-check.json\n?? design/narration-single-model-goal.md",
+    "sha256": {
+      "src/lib/world-engine/local/narration-candidates/instruct/index.ts": "1fe1f8a2aa0ebc01ea1ed2ecea25a63198d961ef924cb92c18e88f92e1366ebe",
+      "src/lib/world-engine/local/narration-candidates/instruct/projection.ts": "9e32ff22324952e47a3dd3f8535cc904e7c44670606f14917afcfa93dd0dc464",
+      "src/lib/world-engine/local/narration-candidates/instruct/prompt.ts": "b96f97e2871cb3e2203ccfade79a191bbdfa391b6f122273774d48a0f38c3fd1",
+      "src/lib/world-engine/local/narration-candidates/instruct/verify.ts": "e43b37be266128c07f27f5d2cece34bbeed9012d8a30de5a1d8f54f39c6a7fdc",
+      "src/lib/world-engine/local/narration-candidates/instruct/facts.ts": "74b1f175b046c8642ea100e825bc8f66012046c584fe87d7112969a713260cce",
+      "src/lib/world-engine/local/narration-candidates/instruct/template.ts": "416f84e2487f2e965b86668d1f6cfcb56b0bafa93fdca9a8d072480549f220dc",
+      "src/lib/world-engine/local/narration-candidates/instruct/clean.ts": "b68f84bc720b6f9878d627c8661e37d17a1e6a57c8c3cbf6d0dafaa0e88c0f45",
+      "src/lib/world-engine/local/state.ts": "024b61fb63f2bec78c46a1cd4ed158a5798b4e28c31293b2d3765acbb6497b43",
+      "src/lib/world-engine/local/prompt.ts": "a21489ca6480d479d83a97cb750cf93011b468fa80e29e74aed8d1558d5f98b8",
+      "src/lib/world-engine/runtime/narration-alignment.ts": "42d163fcf7789ab7e0b163a4f7de1e5fa18164251fc6aa01ea76304a03d42cf6",
+      "src/lib/world-engine/runtime/committed-narration.ts": "a57656648aa9d4ea92cc5fdfb257de28122a3acc9530596642a9172b6040ad32"
+    }
+  },
+  "assets": {
+    "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "modelSha256": null,
+    "modelBytes": null,
+    "wllamaSha256": null,
+    "wasmSha256": null
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "cases": [
+    {
+      "id": "S0-root-open",
+      "note": "开局点：没有任何结算变化，只有初始场景（自由一日服务巷，15:20）"
+    }
+  ],
+  "runs": [],
+  "browser": "157.0.4341.42",
+  "dryRuns": [
+    {
+      "caseId": "S0-root-open",
+      "note": "开局点：没有任何结算变化，只有初始场景（自由一日服务巷，15:20）",
+      "prompt": "<|im_start|>system\n你是一位中文小说作者。读者只能看到你写的正文。\n写作规则：\n1. 用第三人称写一个连贯的场景，两段左右，约 220 字（不少于 150 字）；不要标题、编号、括号说明、总结或作者旁白。\n2. 资料里标为“本段必须写到”的内容，每一条都要写出来，可以换说法、换顺序。\n3. 只用资料里出现的人名、地名、物品和细节。资料没写的不要补：不要新增人物、往事、线索、承诺、物品或战果。\n4. 主角做了什么由资料给定；可以一笔带过，但不要整句照抄，也不要给主角加别的动作，不要替任何角色宣布行动成功或失败。\n5. 只写主角能看到、听到的事；叙述里不要用“我”自称。主角的心里话可以写，别人的心理不要写，只写他们外在的动作、表情和说话。\n6. 语言具体、克制，短句为主，不堆形容词。没有变化时写一小段此刻的静止场面，不要逐项介绍人物和物品。<|im_end|>\n<|im_start|>user\n【时间】2009年10月17日 15:20\n【地点】西侧服务巷：巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。\n【此刻站位】（已经如此，不必逐条复述）\n- 路明非在西侧服务巷。\n- 诺诺在西侧服务巷。\n【在场人物】\n- 路明非（主角，视角）；校服领口松着，膝盖沾了灰。护目镜挂在胸前，右手还空着，身上没有红蓝识别带；习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见；随身：路明非的护目镜、路明非的演习背心\n- 诺诺（在场）；红发用发圈束在脑后，红色识别带缠在左臂。右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面\n【身边可见的东西】\n- 路明非的护目镜（在路明非带着）：镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前\n- 路明非的演习背心（在路明非带着）：背心前襟完好，没有演习弹痕。胸袋能放一只弹匣，肩上没有阵营识别带\n- 赛区路线图（在西侧服务巷）：图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路。地下检修通道用虚线标注，未标门闩状态\n- 演习规则牌（在西侧服务巷）：牌面写明：使用弗里嘉演习弹。护目镜必须戴好\n【写作顺序】\n1. 先交代此刻在哪、什么时候：西侧服务巷，2009年10月17日 15:20\n2. 停在当前这一刻，不写下一步计划，不写结果评价\n【开始】直接写正文，写满两段，不要解释。<|im_end|>\n<|im_start|>assistant\n",
+      "promptChars": 1054,
+      "projection": {
+        "place": "西侧服务巷",
+        "time": "2009年10月17日 15:20",
+        "characters": [
+          "路明非",
+          "诺诺"
+        ],
+        "items": [
+          "路明非的护目镜",
+          "路明非的演习背心",
+          "赛区路线图",
+          "演习规则牌"
+        ],
+        "facts": []
+      }
+    }
+  ],
+  "loaderCheck": {
+    "exports": [
+      "CANDIDATE_STRATEGY_VERSION",
+      "DEFAULT_MODEL_ID",
+      "MODEL_CATALOG",
+      "NARRATOR_SYSTEM_PROMPT",
+      "ThinkingFilter",
+      "buildMessages",
+      "cleanNarration",
+      "describeCommitted",
+      "generateCandidate",
+      "loadCandidateModel",
+      "modelSpec",
+      "modelSpecByFile",
+      "modelUrlFor",
+      "normalizeTime",
+      "renderFallbackPrompt",
+      "renderNarrationUser",
+      "stripThinking",
+      "webgpuAvailable"
+    ],
+    "spec": "qwen2.5-1.5b-instruct-q4km",
+    "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+  },
+  "completedAt": "2026-11-10T07:39:22.810Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}

@@ -10,10 +10,14 @@ import type { WorldModelPort } from '../controller';
 import type { EntityDelta, Id, Json, TimeAdvance, WorldState } from '../types';
 import type { CompletionEvidence, InferenceEngine } from '../runtime/engine';
 import { decodeTaskOutput } from '../runtime/structured-output';
-import { alignNarration } from '../runtime/narration-alignment';
+import { IncompleteGenerationError } from '../runtime/engine';
 import type { CommittedNarration, NarrationFact } from '../runtime/committed-narration';
 import { taskOutputSchema } from '../runtime/output-schema';
-import { describeCharacter, describeDelta, describeItem, describeLocation, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
+import { createActionHandlers, type HandlerResult } from './semantics/actions';
+import { createNarrationRunner, type NarrationRunner } from './narration-candidates/selection';
+import { requireSettlementValue } from './semantics/settlement';
+import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
+import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
 export interface GameModelOptions {
   modelUrl?: string;
@@ -21,73 +25,204 @@ export interface GameModelOptions {
   nGpuLayers?: number;
   temperature?: number;
   narrationTemperature?: number;
+  narrationMaxTokens?: number;
+  narrationTimeoutMs?: number;
   narrationEngine?: InferenceEngine;
-  maxTokensByTask?: Partial<Record<ModelTask, number>>;
+  /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
+   * 'instruct' states the task for an instruction-tuned narration model. */
+  narrationMode?: 'legacy' | 'instruct';
+  /** Internal narration candidate selection. `auto` only offers candidates
+   * whose real-model evidence is positive, so the shipped default changes
+   * nothing until one is accepted; the named routes exist for evaluation and
+   * are never a player-visible setting. */
+  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
+  /** Constrained route only: `program` never calls the model, `model` writes
+   * one verified beat per call. Internal. */
+
+  /** Trained route only: whole-scene vs beats. Internal evaluation switch. */
+  trainedMode?: 'beats' | 'scene';
+  /** Trained whole-scene prompt shape. `serialized` is the training shape for
+   * the fine-tuned checkpoints; `prose-facts` is the closed-book shape measured
+   * for the deployable instruct model. Internal. */
+  trainedPromptShape?: 'serialized' | 'prose-facts';
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
-  onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence }) => void;
-  onTask?: (task: ModelTask, key: string, detail: { ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number }) => void;
+  /** `fallback` is true when the shown text came from the program composer (a
+   * labelled downgrade) rather than model prose the candidate's own gate
+   * accepted. `source: 'model'` is that gate's verdict, never independent
+   * quality review. The page must not count a fallback as readable model text. */
+  onNarrationComplete?: (progress: {
+    pointId: Id; raw: string; completion: CompletionEvidence; fallback: boolean;
+    /** `mixed` = some sentences are verified model prose and some are program
+     * realizations; never counted as fully model-written. */
+    source: 'model' | 'program' | 'mixed' | 'draft';
+    segments?: Array<{ id: string; kind: string; source: string; text: string }>;
+  }) => void;
+  /** Test/evaluation hook: the raw model answer and the prompt it answered.
+   * Never used to make a product decision. */
+  onNarrationDebug?: (debug: {
+    pointId: Id; raw: string; text: string;
+    /** Every model attempt's raw text, in order. */
+    rawAttempts: string[];
+    prompt: string;
+  }) => void;
+  /** Internal evidence sink for candidate runs: candidate id, grade, per-beat
+   * segments and the candidate's own attempt record. Never rendered. */
+  onNarrationEvidence?: (record: Record<string, unknown>) => void;
+  onTask?: (task: ModelTask, key: string, detail: {
+    ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number;
+    /** Who produced this answer: the program (no model call), the model, or a
+     * fallback after a failed generation. Action-family only. */
+    source?: 'program' | 'model' | 'fallback';
+    /** Guard conclusions, so a program skip and a model-chosen skip stay
+     * distinguishable in the run evidence. */
+    issues?: { code: string; severity: string }[];
+    /** Per-stage milliseconds for a multi-stage (updates) call. */
+    stageMs?: Record<string, number>;
+    stages?: string[];
+    /** Affected-projection scope from the updates ledger. */
+    scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
+  }) => void;
 }
 
 interface Generated { value: Json; raw: string; ms: number; fallback: boolean; error?: string }
 
-const JSON_SCHEMAS = {
-  targets: {
-    type: 'object', additionalProperties: false, required: ['targets'],
-    properties: { targets: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['targetId'], properties: { targetId: { type: 'string' } } } } },
-  },
-  results: { type: 'object', additionalProperties: { type: 'string' }, minProperties: 1 },
-  continue: {
-    type: 'object', additionalProperties: false, required: ['continue'],
-    properties: { continue: { type: 'boolean' }, reason: { type: 'string' } },
-  },
-  changes: {
-    type: 'object', additionalProperties: false, required: ['changes'],
-    properties: {
-      changes: { type: 'object', additionalProperties: {
-        type: 'object', additionalProperties: false,
-        properties: {
-          positionSet: { anyOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['containerId'], properties: {
-            containerId: { type: 'string' }, slotId: { type: ['string', 'null'] },
-            relativeTo: { anyOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['entityId', 'relation'], properties: {
-              entityId: { type: 'string' }, relation: { enum: ['under', 'above', 'beside', 'in_front_of', 'behind'] } } }] } } }] },
-          appearanceChanges: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['id', 'text', 'supersedes'], properties: {
-            id: { type: 'string' }, text: { type: ['string', 'null'] }, supersedes: { type: 'array', items: { type: 'string' } } } } },
-          personalityChanges: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['id', 'text', 'supersedes'], properties: {
-            id: { type: 'string' }, text: { type: ['string', 'null'] }, supersedes: { type: 'array', items: { type: 'string' } } } } },
-          sanitySet: { type: ['number', 'null'] },
-          tasksAchieved: { type: 'array', items: { type: 'string' } },
-          subtasksAdded: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['id', 'ownerId', 'parentTaskId', 'goal', 'status'], properties: {
-            id: { type: 'string' }, ownerId: { type: 'string' }, parentTaskId: { type: ['string', 'null'] },
-            goal: { type: 'string' }, status: { enum: ['pending', 'achieved'] } } } },
-        },
-      } },
-    },
-  },
+type SettledFactRecord = {
+  text: string; actorId: string; targetId?: string; action?: string;
+  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true;
 };
 
-const TASK_MAX_TOKENS: Record<string, number> = {
-  action: 96, targets: 96, reaction: 128, results: 320, updates: 640,
-  continuation: 64, pointPlan: 64, narration: 900, time: 64, initial: 64,
-};
+interface PointNarrationSnapshot {
+  resultsText: string;
+  facts: SettledFactRecord[];
+  playerInput: string;
+}
+
+/** Violations that mean the text asserts something the settlement did not
+ * produce. Style, length and wording are not in this set. */
+const FATAL_ALIGNMENT = new Set([
+  'added_event', 'actor_swap', 'direction_reversed', 'wrong_number',
+  'movement_without_fact', 'task_claimed_without_fact', 'state_claim_without_fact',
+]);
+
 
 export class LocalGameModel implements WorldModelPort {
   private readonly engine: InferenceEngine;
   private readonly narrationEngine: InferenceEngine;
+  /** One abort scope per player turn. Every engine port created here attaches
+   * this signal, so a cancel stops the device work instead of only discarding
+   * the answer the controller's cancel gate would have refused. */
+  private turnAbort: AbortController | null = null;
   private readonly options: GameModelOptions;
   private roundCounter = 0;
   private lastPlayerInput = '';
-  private autoContinuations = 0;
+  private lastResultsText = '';
+  /** Structured settled results for the current point (04's actor/action/target/
+   * outcome records), used by the candidate so it checks meaning, not wording. */
+  private lastSettledFacts: SettledFactRecord[] = [];
+  /** Per-point settlement material, frozen at commit. Narration for an older
+   * point must never read the next point's mutable lastResultsText/facts. */
+  private readonly pointResults = new Map<Id, string[]>();
+  private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
+  private readonly seenFactTexts = new Set<string>();
+  private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
+  private recentEvents: string[] = [];
+  private readonly narrationRunner: NarrationRunner | null;
+  /** Last accepted prose (model or candidate). Only real prose is fed back as
+   * continuation context; program/ledger paragraphs never are. */
+  private readonly settlement: SettlementModelPort;
+  private readonly actionHandlers;
 
   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
-    this.engine = engine;
-    this.narrationEngine = options.narrationEngine ?? engine;
+    // The handlers below keep their own engine references, so they get the
+    // same abort-scoped port as the direct calls in this class.
+    const scoped = (inner: InferenceEngine): InferenceEngine => ({
+      get info() { return inner.info; },
+      load: (loadOptions) => inner.load(loadOptions),
+      dispose: () => inner.dispose(),
+      complete: (prompt, completeOptions) => {
+        const signal = completeOptions?.signal ?? this.turnAbort?.signal;
+        if (signal?.aborted) return Promise.reject(new DOMException('Aborted', 'AbortError'));
+        return inner.complete(prompt, signal ? { ...completeOptions, signal } : completeOptions);
+      },
+    });
+    const semanticEngine = scoped(engine);
+    const narrationPort = scoped(options.narrationEngine ?? engine);
+    this.engine = semanticEngine;
+    this.narrationEngine = narrationPort;
     this.options = options;
+    // Lane 04's settlement port owns results/updates (six stages) and the
+    // continuation judgement. A policy stop is a visible stop; there is no
+    // product-side "one action per round" switch and no fabricated handback.
+    this.settlement = createSettlementModelPort(semanticEngine, {
+      onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
+      nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
+      // The appearance stage measures 7877 chars on the shipped world; a retry
+      // with feedback is ~7970. The guard must leave room for the repair while
+      // still refusing a runaway prompt (lane 04's measured numbers).
+      maxPromptChars: 11_000,
+    });
+    this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
+      ? null
+      : createNarrationRunner({
+        engine: narrationPort,
+        candidate: options.narrationCandidate ?? 'auto',
+        ...(options.trainedMode ? { trainedMode: options.trainedMode } : {}),
+        ...(options.trainedPromptShape ? { trainedPromptShape: options.trainedPromptShape } : {}),
+        // The page's chat model expects one templated user turn; the candidates
+        // send plain text, so the runner wraps them the same way.
+        engineTemplate: options.narrationMode === 'instruct' ? 'chatml' : 'none',
+        temperature: options.narrationTemperature ?? 0.45,
+        maxTokens: options.narrationMaxTokens ?? 240,
+        timeoutMs: options.narrationTimeoutMs ?? 150_000,
+        // Variable-length contract: a short complete paragraph is allowed, so
+        // candidates only reject a near-empty string, not a scene under a
+        // fixed character count.
+        minChars: 20,
+      });
+    this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
+      recentEvents: () => this.recentEvents,
+      onCall: (call) => this.options.onTask?.(call.task, call.key, {
+        ms: call.elapsedMs, fallback: !call.decoded, error: call.error, raw: call.raw, promptChars: call.promptChars,
+      }),
+    } });
   }
 
   get info() { return this.engine.info; }
 
-  resetAutoContinuations(): void { this.autoContinuations = 0; }
+  /** Open a fresh abort scope at the start of a player turn. */
+  beginTurn(): void { this.turnAbort = new AbortController(); }
+
+  /** Abort in-flight inference for the current turn. The controller's cancel
+   * command still owns the state conclusion; this only stops device work. The
+   * aborted scope stays in place so a late task cannot start a fresh generation
+   * after the cancel; `beginTurn()` opens the next scope. */
+  abortTurn(): void { this.turnAbort?.abort(); }
+
+  /** Player-submission account for the settlement side: which calls ran, per
+   * stage, with the real milliseconds. Internal evidence, not page text. */
+  beginSubmission(inputText: string): void {
+    this.settlement.beginSubmission(inputText);
+    this.pointResults.clear();
+    this.pointFacts.clear();
+    this.seenFactTexts.clear();
+    this.narrationSnapshots.clear();
+  }
+
+  /** The controller committed this point. Freeze the settlement material that
+   * belongs to it before a later point overwrites the live caches. */
+  onPointCommitted(pointId: Id): void {
+    const resultsText = (this.pointResults.get(pointId) ?? []).join('；') || this.lastResultsText;
+    const facts = this.pointFacts.get(pointId) ?? [];
+    this.narrationSnapshots.set(pointId, {
+      resultsText,
+      facts: facts.map((fact) => ({ ...fact })),
+      playerInput: this.lastPlayerInput,
+    });
+  }
+  endSubmission(): PortSubmission | null { return this.settlement.endSubmission(); }
+  settlementSummary(): SettlementPortSummary { return this.settlement.summary(); }
+  resetSettlement(): void { this.settlement.reset(); }
 
   async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
     const generated = await this.run(task, key, input);
@@ -103,7 +238,7 @@ export class LocalGameModel implements WorldModelPort {
       if (task === 'reaction') return await this.reaction(key, input);
       if (task === 'results') return await this.results(key, input);
       if (task === 'updates') return await this.updates(key, input);
-      if (task === 'continuation') return await this.continuation(input);
+      if (task === 'continuation') return await this.continuation(key, input);
       if (task === 'narration') return await this.narration(key, input);
       throw new Error(`unsupported game task: ${task}`);
     } catch (error) {
@@ -122,194 +257,186 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async action(key: Id, input: Json): Promise<Generated> {
-    const data = input as { actor?: Id; advance?: { inputText?: string | null; intentStatus?: string }; workingState?: WorldState };
-    const state = data.workingState;
-    const actor = data.actor ?? key;
-    if (!state) throw new Error('action without workingState');
-    if (actor === state.protagonistId) {
-      const text = data.advance?.inputText?.trim() ?? '';
-      this.lastPlayerInput = text;
-      return { value: text ? { kind: 'act', text } : { kind: 'skip' }, raw: '', ms: 0, fallback: false };
+    const data = input as { actor?: Id; advance?: { inputText?: string | null; intentStatus?: string } | null; workingState?: WorldState };
+    if (data.workingState && data.actor === data.workingState.protagonistId) {
+      const text = data.advance?.inputText?.trim();
+      if (text) this.lastPlayerInput = text;
     }
-    // Distant characters are not put in front of the player: judge the room
-    // the protagonist can actually see. This is a visibility rule, not a
-    // fixed command list; same-room NPCs do get a real model decision.
-    if (roomOf(state, actor) !== roomOf(state, state.protagonistId)) {
-      return { value: { kind: 'skip' }, raw: '', ms: 0, fallback: false };
-    }
-    const actorName = state.initial.characters[actor]?.name ?? actor;
-    if (!this.lastPlayerInput.includes(actorName) || !INTERACTION.test(this.lastPlayerInput)) {
-      return { value: { kind: 'skip' }, raw: '', ms: 0, fallback: false };
-    }
-    const visible = visibleCharacters(state, actor).filter((id) => id !== actor);
-    const prompt = [
-      '你是中文跑团游戏的角色行动判断器。只输出 JSON。',
-      '判断下面这个角色此刻是否采取行动。可以是动作、对白或短句；若没有值得结算的行动，输出 {"kind":"skip"}。',
-      '不要代替主角执行玩家命令；不要复述玩家输入；不要用“我”自称；不要新增未登记的人物、地点、物品或往事。',
-      `当前角色：\n${describeCharacter(state, actor)}`,
-      `同地点可见人物：\n${visible.map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
-      `玩家本回合输入：${data.advance?.inputText ?? '（无）'}`,
-      `地点：${describeLocation(state, roomOf(state, actor))}`,
-      '输出只能是：{"kind":"act","text":"一句话行动描述"} 或 {"kind":"skip"}。',
-    ].join('\n');
-    const generated = await this.jsonTask('action', prompt, undefined, key);
-    const output = generated.value as { kind?: string; text?: string };
-    if (output.kind === 'act') {
-      const text = (output.text ?? '').trim();
-      if (!text || text === (data.advance?.inputText ?? '').trim() || text.startsWith('我')) {
-        this.options.onTask?.('action', key, { ms: generated.ms, fallback: true, error: 'npc_action_copied_player', raw: text });
-        return { ...generated, value: { kind: 'skip' }, fallback: true };
-      }
-      return { ...generated, value: { kind: 'act', text } };
-    }
-    return generated;
+    // Every actor the controller freezes is judged; the old "unnamed NPC is
+    // skipped" budget was a product shortcut, not a model decision. Scene scope
+    // for those judgements is owned by the settlement port, not this gate.
+    return this.reportAction(await this.actionHandlers.action(key, input));
   }
 
   private async targets(key: Id, input: Json): Promise<Generated> {
-    const data = input as { sourceId?: Id; actionText?: string; workingState?: WorldState };
-    const state = data.workingState;
-    const source = data.sourceId ?? key;
-    if (!state) throw new Error('targets without workingState');
-    const candidates = visibleCharacters(state, source).filter((id) => id !== source);
-    if (!candidates.length) return { value: { targets: [] }, raw: '', ms: 0, fallback: false };
-    if (source === state.protagonistId && !INTERACTION.test(data.actionText ?? '')) return { value: { targets: [] }, raw: '', ms: 0, fallback: false };
-    if (source !== state.protagonistId && !this.lastPlayerInput.includes(state.initial.characters[source]?.name ?? source)) return { value: { targets: [] }, raw: '', ms: 0, fallback: false };
-    const prompt = [
-      '你是中文跑团游戏的牵连判断器。只输出 JSON。',
-      '下面是一条已经确认的行动。判断它直接牵连哪些同地点人物；只选会被这句话直接触及、需要立即反应的人。没有就返回空数组。',
-      `行动者：${describeCharacter(state, source)}`,
-      `行动：${data.actionText ?? ''}`,
-      `同地点人物：\n${candidates.map((id) => describeCharacter(state, id, false)).join('\n')}`,
-      '输出：{"targets":[{"targetId":"人物id"}]}。targetId 只能从上面的人物 id 中选。',
-    ].join('\n');
-    const generated = await this.jsonTask('targets', prompt, JSON_SCHEMAS.targets, key);
-    const output = generated.value as { targets?: { targetId?: string }[] };
-    const byName = new Map(candidates.map((id) => [state.initial.characters[id]?.name ?? id, id]));
-    const allowed = new Set(candidates);
-    const normalized = (output.targets ?? []).map((target) => {
-      const raw = String(target.targetId ?? '');
-      return allowed.has(raw) ? raw : byName.get(raw) ?? '';
-    }).filter(Boolean);
-    const unique = [...new Set(normalized)];
-    if (unique.length > 2) this.options.onTask?.('targets', key, { ms: generated.ms, fallback: false, error: `targets_capped:${unique.length}->2` });
-    return { ...generated, value: { targets: unique.slice(0, 2).map((targetId) => ({ targetId })) } as unknown as Json };
+    return this.reportAction(await this.actionHandlers.targets(key, input));
   }
 
   private async reaction(key: Id, input: Json): Promise<Generated> {
-    const data = input as { sourceId?: Id; sourceActionText?: string; memberId?: Id; workingState?: WorldState };
-    const state = data.workingState;
-    const member = data.memberId ?? key;
-    if (!state) throw new Error('reaction without workingState');
-    const prompt = [
-      '你是中文跑团游戏的反应生成器。只输出正文，不要 JSON。',
-      '写被牵连角色的一句到两句即时反应。必须针对下面这条具体威胁；不得替主角行动，不得新增人物、地点、物品或往事。',
-      `被牵连角色：${describeCharacter(state, member)}`,
-      `发起者：${describeCharacter(state, data.sourceId ?? key, false)}`,
-      `发起者的行动：${data.sourceActionText ?? ''}`,
-      '反应：',
-    ].join('\n');
-    return this.textTask(prompt, `reaction:${key}`, 128, 0);
+    return this.reportAction(await this.actionHandlers.reaction(key, input));
+  }
+
+  private reportAction(result: HandlerResult): Generated {
+    const error = result.issues.filter((issue) => issue.severity === 'error').map((issue) => issue.code).join(',') || undefined;
+    this.options.onTask?.(result.task, result.key, {
+      ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw,
+      source: result.source,
+      issues: result.issues.map((issue) => ({ code: issue.code, severity: issue.severity })),
+    });
+    return {
+      value: result.value, raw: result.raw, ms: result.elapsedMs,
+      fallback: result.fallback, error,
+    };
   }
 
   private async results(key: Id, input: Json): Promise<Generated> {
-    const data = input as { groupId?: Id; members?: { memberId: Id; actionText?: string | null; rollRefs?: unknown[] }[]; workingState?: WorldState };
-    const state = data.workingState;
-    if (!state) throw new Error('results without workingState');
-    const members = data.members ?? [];
-    if (members.length === 1 && members[0].memberId === state.protagonistId) {
-      const text = this.programResult(members[0].actionText ?? '', state);
-      this.options.onTask?.('results', key, { ms: 0, fallback: true, error: 'program_single_member', raw: text });
-      return { value: { [members[0].memberId]: text } as unknown as Json, raw: text, ms: 0, fallback: true, error: 'program_single_member' };
-    }
-    const lines = members.map((member) => {
-      const rolls = (member.rollRefs ?? []).length ? '有判定' : '无判定';
-      return `- ${member.memberId}（${state.initial.characters[member.memberId]?.name ?? '?'}）行动：${member.actionText ?? '（无）'}；${rolls}`;
-    });
-    const prompt = [
-      '你是中文跑团游戏的结算叙述器。不要输出 JSON，不要解释。',
-      '为每个小组成员写一句结算结果，每行一个成员，格式：成员id：结果。',
-      '结果要写“发生了什么”，不要复述行动；已接纳的行动可以成功或付出代价，未被接纳的行动要写被制止或没有发生。',
-      '只能使用下面出现的人物、地点、物品；不得新增人物、地点、物品、往事、线索或任务。',
-      `本组：${data.groupId ?? key}`,
-      ...lines,
-      '现在逐行输出结果：',
-    ].join(String.fromCharCode(10));
     const started = performance.now();
-    const raw = await this.engine.complete(prompt, { maxTokens: 360, temperature: 0, timeoutMs: 60_000 });
-    const byName = new Map(members.map((member) => [state.initial.characters[member.memberId]?.name ?? member.memberId, member.memberId]));
-    const normalized: Record<string, string> = {};
-    for (const line of raw.split(/\r?\n/)) {
-      const match = line.match(/^\s*[-*]?\s*([^：:|]+)\s*[：:|]\s*(.+)$/u);
-      if (!match) continue;
-      const rawKey = match[1].trim();
-      const id = members.some((member) => member.memberId === rawKey) ? rawKey : byName.get(rawKey) ?? '';
-      if (id && !normalized[id]) normalized[id] = match[2].trim();
+    const value = await this.settlement.generate('results', key, input) as Record<Id, string>;
+    const outcome = { raw: '', ms: performance.now() - started, fallback: false, error: undefined as string | undefined };
+    const state = (input as { workingState?: WorldState }).workingState;
+    const lines = Object.entries(value).map(([id, text]) => {
+      const name = state?.initial.characters[id]?.name ?? id;
+      // A weak model sometimes answers the settlement with a state dump
+      // ("id=… 位置=… 外貌=…"). Facts must be prose: drop field dumps rather
+      // than feeding them into the narration brief and the page.
+      const prose = text.split(/\n+/u).map((part) => part.trim())
+        .filter((part) => part && !/id=/u.test(part) && !/^(位置|外貌|精神值|任务)[=：]/u.test(part));
+      const body = prose.join('').replace(new RegExp(`^${name}[：:，,]?`, 'u'), '');
+      return body ? `${name}：${body}` : '';
+    }).filter(Boolean);
+    // Settlement-internal wording is not story material. Lane 04's results
+    // step falls back to "本组结算未能确认新的结果。" and the action lane uses
+    // "无判定"; both used to leak into the program prose as if a character said
+    // them. They stay out of the narration brief and the recent events.
+    const internal = /本组结算未能确认|未能确认新的结果|无判定|没有产生新的结果|完成了刚才的动作/u;
+    const story = lines.filter((line) => !internal.test(line));
+    this.lastResultsText = internal.test(lines.join('；')) ? '' : story.join('；');
+    // 04's structured records are the authoritative description of what the
+    // settlement produced; the free-text line above is only its rendering.
+    this.lastSettledFacts = this.settlement.settledFacts().map((fact) => ({
+      text: fact.text,
+      actorId: fact.actorId,
+      ...(fact.targetId ? { targetId: fact.targetId } : {}),
+      ...(fact.action ? { action: fact.action } : {}),
+      outcome: fact.outcome,
+      ...(fact.implicit ? { implicit: true as const } : {}),
+    }));
+    const pointId = (input as { pointId?: Id }).pointId;
+    if (pointId) {
+      this.pointResults.set(pointId, [...(this.pointResults.get(pointId) ?? []), ...story]);
+      const facts = this.pointFacts.get(pointId) ?? [];
+      for (const fact of this.lastSettledFacts) {
+        if (this.seenFactTexts.has(fact.text)) continue;
+        this.seenFactTexts.add(fact.text);
+        facts.push({ ...fact });
+      }
+      this.pointFacts.set(pointId, facts);
     }
-    for (const member of members) if (!normalized[member.memberId]) normalized[member.memberId] = '行动发生了，但没有产生新的结果。';
-    this.options.onTask?.('results', key, { ms: performance.now() - started, fallback: false, raw, promptChars: prompt.length });
-    return { value: normalized as unknown as Json, raw, ms: performance.now() - started, fallback: false };
+    for (const line of story) this.recentEvents.push(line);
+    if (this.recentEvents.length > 4) this.recentEvents = this.recentEvents.slice(-4);
+    return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
   }
 
   private async updates(key: Id, input: Json): Promise<Generated> {
-    const data = input as { workingState?: WorldState; results?: Record<Id, string>; mode?: string; stage?: string };
-    const state = data.workingState;
-    if (!state) throw new Error('updates without workingState');
-    const resultLines = Object.entries(data.results ?? {}).map(([id, text]) => `${id}：${text}`).join('；');
-    const characters = Object.keys(state.characters).sort().map((id) => describeCharacter(state, id, id === state.protagonistId)).join('；');
-    const locations = locationIdCatalog(state);
-    const prompt = [
-      '你是中文跑团游戏的状态记录器。不要输出 JSON，不要解释。',
-      '根据结算结果，列出世界状态的明确变化。每行一条，格式如下（只写有变化的）：',
-      '实体id|position|地点id',
-      '实体id|sanity|数字',
-      '实体id|task|任务id',
-      '实体id|appearance|一句新的外貌描述',
-      '实体id|personality|一句新的个性描述',
-      '没有变化就只输出 NONE。不能改变未涉及的人物，不能凭空新增地点或任务。',
-      `结算结果：${resultLines || '（无）'}`,
-      `人物（id、位置、精神、任务 id 和目标）：${characters}`,
-      `地点 id 和名字（position 只能填地点 id）：${locations}`,
-      '变化：',
-    ].join(String.fromCharCode(10));
     const started = performance.now();
-    const raw = await this.engine.complete(prompt, { maxTokens: 420, temperature: 0, timeoutMs: 60_000 });
+    const value = await this.settlement.generate('updates', key, input);
+    const state = (input as { workingState?: WorldState }).workingState;
+    const results = (input as { results?: Record<Id, string> }).results ?? {};
+    const stage = (input as { stage?: string }).stage;
+    const merged = await this.injectMovement(state, value, results, stage);
+    return { value: merged as unknown as Json, raw: '', ms: performance.now() - started, fallback: false };
+  }
+
+  /** A player sentence that walks to a named room is a movement the state must
+   * reflect. The six-stage settlement leaves it to a free-text position scan,
+   * which the small model often answers with "no change"; this asks the one
+   * pick-from-a-list question it answers reliably and merges the result into
+   * the position stage before the controller previews it. */
+  private async injectMovement(state: WorldState | undefined, value: unknown, results: Record<Id, string>, stage: string | undefined): Promise<unknown> {
+    if (!state || stage) return value;
+    const view = state.protagonistId;
+    if (!/走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|离开|去|赶到|溜|冲|贴墙|靠近/u.test(this.lastPlayerInput)) return value;
+    const calls = Array.isArray(value) ? value as { stage: string; changes: Record<Id, EntityDelta> }[] : null;
+    if (!calls) return value;
+    const hasMove = calls.some((call) => call.changes?.[view]?.positionSet);
+    if (hasMove) return value;
+    const current = state.characters[view]?.position.containerId ?? '';
+    const moved = await this.movementJudgement(state, results);
+    if (!moved || moved === current) return value;
+    const position: { stage: 'position'; changes: Record<Id, EntityDelta> } = {
+      stage: 'position',
+      changes: { [view]: { entityId: view, positionSet: { containerId: moved, slotId: null, relativeTo: null } } },
+    };
+    const index = calls.findIndex((call) => call.stage === 'position');
+    if (index < 0) return [position, ...calls];
+    const merged = { stage: 'position', changes: { ...calls[index].changes, ...position.changes } };
+    return calls.map((call, at) => (at === index ? merged : call));
+  }
+
+  private async movementJudgement(state: WorldState, results: Record<Id, string>): Promise<Id | null> {
+    const current = state.characters[state.protagonistId]?.position.containerId;
+    const named = Object.values(state.initial.locations).map((location) => location.name).filter((name) => name && this.lastPlayerInput.includes(name));
+    const candidates = adjacentLocations(state, current, [this.lastPlayerInput]);
+    const prompt = [
+      '你是中文跑团游戏的位置判断器。只输出 JSON。',
+      '判断主角在这一回合结束后是否换了地点。只有主角真的移动到别处才算；原地说话、观察、等待都不算。',
+      `主角：${describeCharacter(state, state.protagonistId, false)}`,
+      `玩家输入：${this.lastPlayerInput}`,
+      `结算结果：${Object.values(results).join('；') || '（无）'}`,
+      `候选地点：${candidates}`,
+      ...(named.length === 1 ? [`玩家这一句只点名了一个地点：${named[0]}。只回答他去没去那里。`] : []),
+      ...(named.length ? [`玩家句子里点名的地点：${named.join('、')}。句子点名它就是要走过去，除非结果明确写他被拦住没走成。`] : []),
+      '输出：{"moved":true,"toLocationId":"地点id"} 或 {"moved":false,"toLocationId":null}。toLocationId 只能从候选地点里选，不能等于主角当前地点。',
+    ].join(String.fromCharCode(10));
     try {
-      let value = parseLineChanges(raw, state);
-      let fallback = false;
-      if (Array.isArray(value) && value.length === 0) {
-        const program = this.programMovementChanges(state, data.results ?? {});
-        if (program.length) { value = program as unknown as Json; fallback = true; }
-      }
-      this.options.onTask?.('updates', key, { ms: performance.now() - started, fallback, raw, promptChars: prompt.length, error: fallback ? 'program_movement_fallback' : undefined });
-      return { value: value as unknown as Json, raw, ms: performance.now() - started, fallback };
-    } catch (error) {
-      this.options.onTask?.('updates', key, { ms: performance.now() - started, fallback: true, error: error instanceof Error ? error.message : String(error), raw, promptChars: prompt.length });
-      return { value: [], raw, ms: performance.now() - started, fallback: true, error: error instanceof Error ? error.message : String(error) };
+      const raw = await this.engine.complete(prompt, {
+        maxTokens: 64, temperature: 0, timeoutMs: 60_000,
+        jsonSchema: {
+          type: 'object', additionalProperties: false, required: ['moved'],
+          properties: { moved: { type: 'boolean' }, toLocationId: { type: ['string', 'null'] } },
+        },
+      });
+      const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '');
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start < 0 || end <= start) return null;
+      const output = JSON.parse(text.slice(start, end + 1)) as { moved?: boolean; toLocationId?: string | null };
+      if (output.moved !== true) return null;
+      // When the player's own sentence names exactly one location, that name is
+      // the destination. Letting the model re-pick from the adjacency list made
+      // it answer with the parent area («器材棚» became «演习区»), which moved
+      // the protagonist to the wrong place.
+      const fixed = named.length === 1
+        ? Object.values(state.initial.locations).find((location) => location.name === named[0])?.id ?? null
+        : null;
+      const target = fixed ?? (typeof output.toLocationId === 'string' ? output.toLocationId.trim() : '');
+      if (!state.initial.locations[target] || target === current) return null;
+      return target;
+    } catch {
+      return null;
     }
   }
 
-  private async continuation(input: Json): Promise<Generated> {
-    const data = input as { workingState?: WorldState; roundChanges?: Json; round?: { roundId?: Id } };
-    const state = data.workingState;
-    if (!state) throw new Error('continuation without workingState');
-    const prompt = [
-      '你是中文跑团游戏的继续判断器。只输出 JSON。',
-      '判断本回合结束后，是否还有一个与主角当前行动紧密相关、必须马上继续的后续行动。只有同一场景内、主角或在场人物已经明确开始且未完成的动作才继续；普通闲聊、等待、场景切换都交还玩家。',
-      `主角：${describeCharacter(state, state.protagonistId)}`,
-      `同地点人物：\n${visibleCharacters(state, state.protagonistId).filter((id) => id !== state.protagonistId).map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
-      `本回合变化：${JSON.stringify(data.roundChanges ?? {})}`,
-      '输出：{"continue":true或false,"reason":"一句话理由"}。',
-    ].join('\n');
-    const generated = await this.objectTask('continuation', prompt, JSON_SCHEMAS.continue, 'continuation');
-    const output = generated.value as { continue?: boolean; reason?: string };
-    const nextRoundId = `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`;
-    const candidates = [state.protagonistId, ...visibleCharacters(state, state.protagonistId).filter((id) => id !== state.protagonistId)];
-    const wantContinue = output.continue === true && this.autoContinuations < 1;
-    if (wantContinue) this.autoContinuations += 1;
-    const conclusion = wantContinue
-      ? { kind: 'continue', closedBy: 'model', cancelReason: null, nextRoundId, candidateCharacterIds: candidates }
-      : { kind: 'handback', closedBy: 'model', cancelReason: null };
-    return { ...generated, value: conclusion as unknown as Json };
+  private async continuation(key: Id, input: Json): Promise<Generated> {
+    // The continuation judgement is lane 04's port. A policy stop has no model
+    // conclusion value; it is passed to the controller as a typed stop so the
+    // round closes as a visible cancel (never a fabricated model handback) and
+    // the narration of the committed points still runs.
+    const started = performance.now();
+    try {
+      const value = await this.settlement.generate('continuation', key, input);
+      return { value, raw: '', ms: performance.now() - started, fallback: false };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const marker = 'settlement_failed:continuation:continuation_policy_';
+      if (message.startsWith(marker)) {
+        return {
+          value: { kind: 'policy_stop', reason: message.slice('settlement_failed:continuation:'.length) },
+          raw: '', ms: performance.now() - started, fallback: false,
+        };
+      }
+      throw error;
+    }
   }
 
   private async narration(key: Id, input: Json): Promise<Generated> {
@@ -318,135 +445,112 @@ export class LocalGameModel implements WorldModelPort {
     if (!after) throw new Error('narration without after state');
     const pointId = data.pointId ?? key;
     const view = after.protagonistId;
-    const facts = legacyNarrationInput(data.before ?? null, data.delta ?? {}, after, view);
     const started = performance.now();
-    const raw = await this.narrationEngine.complete(facts, {
-      maxTokens: 480, temperature: this.options.narrationTemperature ?? 0.7,
-      timeoutMs: 120_000,
-      onProgress: (progress) => this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started }),
+    const before = data.before ?? null;
+    const delta = data.delta ?? {};
+    // Material for THIS point, frozen at its commit. A later point's live
+    // caches must not reach an older point's prose.
+    const snapshot = this.narrationSnapshots.get(pointId);
+    const playerInput = snapshot?.playerInput ?? this.lastPlayerInput;
+    const resultsText = snapshot?.resultsText ?? '';
+    const settledFacts = snapshot?.facts ?? [];
+
+    // Candidate path: one settled point in, the candidate's own beat text out.
+    // Nothing here inspects, refuses, rewrites or replaces that text.
+    if (this.narrationRunner) {
+      const adopted = await this.adoptNarrationCandidate(pointId, before, delta, after, playerInput, resultsText, settledFacts);
+      if (adopted) return adopted;
+    }
+
+    // In-model writer: one call with the settled state as its only material.
+    const brief = this.options.narrationMode === 'instruct'
+      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText)
+      : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
+    let raw = '';
+    let error: string | undefined;
+    try {
+      raw = await this.narrationEngine.complete(this.options.narrationMode === 'instruct' ? chatml(brief.prompt) : brief.prompt, {
+        maxTokens: this.options.narrationMaxTokens ?? 240,
+        temperature: this.options.narrationTemperature ?? 0.45,
+        timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
+        onProgress: (progress) => {
+          // The page shows the model's own text while it is written. There is no
+          // sentence filter in the stream.
+          if (progress.raw.trim()) this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started });
+        },
+        ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
+      });
+    } catch (caught) {
+      if (caught instanceof IncompleteGenerationError) {
+        // A length-limited generation still returned text: it is the content.
+        raw = caught.completion.raw;
+      } else {
+        // A transport/model failure is a run error, not a reason to invent prose.
+        throw caught;
+      }
+    }
+    const text = protocolText(raw);
+    const empty = text.trim().length === 0;
+    this.options.onNarrationDebug?.({ pointId, raw, text, rawAttempts: [raw], prompt: brief.prompt });
+    this.options.onTask?.('narration', key, {
+      ms: performance.now() - started, fallback: false,
+      ...(empty ? { error: 'empty_model_output' } : {}),
+      raw: text, promptChars: brief.prompt.length,
     });
-    const cleaned = cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10)).trim();
-    const validation = validateNarration(cleaned, facts, after, view);
-    const hasDelta = Object.keys(data.delta?.entityDeltas ?? {}).length > 0;
-    const alignment = !hasDelta ? { ok: true, violations: [] as { kind: string }[] } : alignNarration(alignmentPacket(data.before ?? null, data.delta ?? {}, after), cleaned, {
-      roster: Object.values(after.initial.characters).map((entity) => entity.name),
-      locations: Object.values(after.initial.locations).map((entity) => entity.name),
-      time: data.delta?.timeAdvance?.duration ?? null,
-      knownPositions: visibleCharacters(after, view).filter((id) => id !== view).map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
-    });
-    const hard = alignment.violations.map((violation) => violation.kind).join(',');
-    const reason = validation.ok ? (alignment.ok ? undefined : `align:${hard}`) : validation.reason;
+    if (empty) {
+      // The only non-content case: no model text. The page shows a status note;
+      // no program narration is written.
+      this.options.onNarrationComplete?.({
+        pointId, raw: '',
+        completion: { raw, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+        fallback: false, source: 'model', segments: [],
+      });
+      return { value: '' as unknown as Json, raw, ms: performance.now() - started, fallback: false, error: 'empty_model_output' };
+    }
     this.options.onNarrationComplete?.({
-      pointId, raw: cleaned,
-      completion: { raw: cleaned, finishReason: validation.ok && alignment.ok ? 'stop' : 'validation_failed', firstTokenMs: null, wallMs: performance.now() - started },
+      pointId, raw: text,
+      completion: { raw: text, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+      fallback: false, source: 'model',
     });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !validation.ok || !alignment.ok, error: reason, raw: cleaned, promptChars: facts.length });
-    return { value: cleaned as unknown as Json, raw: cleaned, ms: performance.now() - started, fallback: !validation.ok || !alignment.ok, error: reason };
-  }
-
-  private normalizeChanges(input: { changes?: Record<Id, EntityDelta> }, state: WorldState): Json {
-    const stages: { stage: string; changes: Record<Id, EntityDelta> }[] = [];
-    const order: { stage: string; fields: (keyof EntityDelta)[] }[] = [
-      { stage: 'position', fields: ['positionSet'] },
-      { stage: 'appearance', fields: ['appearanceChanges'] },
-      { stage: 'tasks', fields: ['tasksAchieved'] },
-      { stage: 'subtasks', fields: ['subtasksAdded'] },
-      { stage: 'personality', fields: ['personalityChanges'] },
-      { stage: 'sanity', fields: ['sanitySet'] },
-    ];
-    for (const { stage, fields } of order) {
-      const changes: Record<Id, EntityDelta> = {};
-      for (const [id, delta] of Object.entries(input.changes ?? {})) {
-        if (!state.characters[id] && !state.items[id]) continue;
-        const picked: EntityDelta = { entityId: id };
-        for (const field of fields) if (delta[field] !== undefined) (picked as unknown as Record<string, unknown>)[field] = delta[field];
-        if (Object.keys(picked).length) changes[id] = picked;
-      }
-      if (Object.keys(changes).length) stages.push({ stage, changes });
-    }
-    return stages as unknown as Json;
-  }
-
-  private async objectTask(task: ModelTask, prompt: string, schema: object, key: string): Promise<Generated> {
-    const started = performance.now();
-    let lastError = '';
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      try {
-        const raw = await this.engine.complete(prompt, {
-          maxTokens: this.options.maxTokensByTask?.[task] ?? TASK_MAX_TOKENS[task] ?? 256,
-          temperature: attempt === 0 ? 0 : 0.2,
-          jsonSchema: schema,
-          timeoutMs: 60_000,
-        });
-        const value = parseJsonObject(raw);
-        this.options.onTask?.(task, key, { ms: performance.now() - started, fallback: false, raw, promptChars: prompt.length });
-        return { value: value as Json, raw, ms: performance.now() - started, fallback: false };
-      } catch (error) {
-        lastError = error instanceof Error ? error.message : String(error);
-        if (attempt === 0) continue;
-      }
-    }
-    this.options.onTask?.(task, key, { ms: performance.now() - started, fallback: true, error: lastError, promptChars: prompt.length });
-    return { value: this.fallback(task, key), raw: '', ms: performance.now() - started, fallback: true, error: lastError };
-  }
-
-  private programMovementChanges(state: WorldState, results: Record<Id, string>): { stage: string; changes: Record<Id, EntityDelta> }[] {
-    const input = this.lastPlayerInput;
-    const destination = this.mentionedLocation(input, state);
-    if (!destination || !MOVEMENT.test(input)) return [];
-    const resultText = results[state.protagonistId] ?? '';
-    if (/制止|失败|未能|没有发生|被打断/u.test(resultText)) return [];
-    const current = state.characters[state.protagonistId]?.position.containerId;
-    if (current === destination) return [];
-    return [{ stage: 'position', changes: { [state.protagonistId]: { entityId: state.protagonistId, positionSet: { containerId: destination, slotId: null, relativeTo: null } } } }];
-  }
-
-  private programResult(action: string, state: WorldState): string {
-    const name = state.initial.characters[state.protagonistId]?.name ?? '主角';
-    const destination = this.mentionedLocation(action, state);
-    if (destination && MOVEMENT.test(action)) return `${name}向${locationName(state, destination)}移动。`;
-    return `${name}完成了刚才的动作。`;
-  }
-
-  private mentionedLocation(text: string, state: WorldState): Id | null {
-    let best: { id: Id; length: number } | null = null;
-    for (const [id, location] of Object.entries(state.initial.locations)) {
-      if (location.name.length >= 2 && text.includes(location.name) && (!best || location.name.length > best.length)) {
-        best = { id, length: location.name.length };
-      }
-    }
-    return best?.id ?? null;
-  }
-
-  private async jsonTask(task: ModelTask, prompt: string, schema: object | undefined, key: string): Promise<Generated> {
-    const started = performance.now();
-    let lastError = '';
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      try {
-        const raw = await this.engine.complete(prompt, {
-          maxTokens: this.options.maxTokensByTask?.[task] ?? TASK_MAX_TOKENS[task] ?? 256,
-          temperature: attempt === 0 ? 0 : 0.2,
-          jsonSchema: schema ?? taskOutputSchema(task, {} as Json),
-          timeoutMs: 60_000,
-          stop: ['\n\n\n'],
-        });
-        const value = decodeTaskOutput(task, raw);
-        this.options.onTask?.(task, key, { ms: performance.now() - started, fallback: false, raw, promptChars: prompt.length });
-        return { value: value as Json, raw, ms: performance.now() - started, fallback: false };
-      } catch (error) {
-        lastError = error instanceof Error ? error.message : String(error);
-        if (attempt === 0) continue;
-      }
-    }
-    this.options.onTask?.(task, key, { ms: performance.now() - started, fallback: true, error: lastError, promptChars: prompt.length });
-    return { value: this.fallback(task, key), raw: '', ms: performance.now() - started, fallback: true, error: lastError };
-  }
-
-  private async textTask(prompt: string, _key: string, maxTokens: number, temperature: number): Promise<Generated> {
-    const started = performance.now();
-    const raw = await this.engine.complete(prompt, { maxTokens, temperature, timeoutMs: 60_000 });
-    const text = raw.trim();
     return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: false };
+  }
+
+  /** Run the configured candidate for this point. The candidate's text is used
+   * exactly as returned; only an empty answer falls through. */
+  private async adoptNarrationCandidate(
+    pointId: Id,
+    before: WorldState | null,
+    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
+    after: WorldState,
+    playerInput: string,
+    resultsText: string,
+    settledFacts: SettledFactRecord[],
+  ): Promise<Generated | null> {
+    if (!this.narrationRunner) return null;
+    const result = await this.narrationRunner.generate({
+      pointId,
+      before,
+      delta,
+      after,
+      playerInput,
+      settledResults: resultsText ? [resultsText] : [],
+      settledFacts,
+    }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
+    if (result.kind !== 'adopted') {
+      return null;
+    }
+    this.options.onTask?.('narration', pointId, {
+      ms: result.timings.totalMs, fallback: false, raw: result.text, promptChars: result.promptChars,
+    });
+    this.options.onNarrationEvidence?.({
+      pointId, candidateId: result.candidateId, route: result.route,
+      strategyVersion: result.strategyVersion, segments: result.segments,
+      timings: result.timings, detail: result.detail ?? null,
+    });
+    this.options.onNarrationComplete?.({
+      pointId, raw: result.text, completion: result.completion, fallback: false, source: 'model', segments: result.segments,
+    });
+    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };
   }
 
   private fallback(task: ModelTask, key: Id): Json {
@@ -460,171 +564,34 @@ export class LocalGameModel implements WorldModelPort {
   }
 }
 
-function parseJsonObject(raw: string): unknown {
-  const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start < 0 || end <= start) throw new Error('model output is not a JSON object');
-  return JSON.parse(text.slice(start, end + 1));
+function chatml(prompt: string): string {
+  return `<|im_start|>user
+${prompt}<|im_end|>
+<|im_start|>assistant
+`;
 }
 
-function locationCatalog(state: WorldState): string {
-  return Object.keys(state.initial.locations).sort().map((id) => describeLocation(state, id)).join('\n');
-}
-
-function itemCatalog(state: WorldState): string {
-  return Object.keys(state.initial.items).sort().map((id) => describeItem(state, id)).join('\n');
-}
-
-function narrationFacts(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id): string {
-  const changed = Object.keys(delta.entityDeltas ?? {});
-  const visible = new Set([view, ...visibleCharacters(after, view), ...changed]);
-  const beforeView = before ? [before.protagonistId, ...visibleCharacters(before, view), ...changed] : [];
-  const afterLines = [...visible].filter((id) => after.characters[id]).map((id) => describeCharacter(after, id));
-  const beforeLines = before ? [...new Set(beforeView)].filter((id) => before.characters[id]).map((id) => describeCharacter(before, id)) : [];
-  const locations = new Set<Id>();
-  for (const id of [...visible, ...beforeView]) { locations.add(roomOf(after, id)); if (before) locations.add(roomOf(before, id)); }
-  const items = new Set<Id>();
-  for (const id of [...visible, ...changed]) for (const item of sameRoomItems(after, id)) items.add(item);
-  return [
-    `【视角】${after.initial.characters[view]?.name ?? view}（id=${view}）`,
-    before ? `【上回合状态】\n${beforeLines.join('\n')}` : '【上回合状态】故事开始。',
-    `【本回合变化】\n${describeDelta(delta.entityDeltas ?? {}, after)}`,
-    `【本回合状态】\n${afterLines.join('\n')}`,
-    `【时间和地点】${delta.timeAdvance ? `时间推进 ${delta.timeAdvance.duration.amount} ${delta.timeAdvance.duration.unit}；` : ''}地点：${[...locations].map((id) => describeLocation(after, id)).join('；')}`,
-    `【可写到的东西】${[...items].map((id) => describeItem(after, id)).join('；') || '无'}`,
-  ].join('\n');
-}
-
-function cleanNarration(raw: string): string {
-  const body = raw.includes('【正文】') ? raw.split('【正文】').pop() ?? raw : raw;
-  return body
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/【[^】]{1,8}】/g, '')
-    .replace(/^\s*(正文|叙事|输出)[:：]\s*/u, '')
-    .trim();
-}
-
-function validateNarration(text: string, facts: string, after: WorldState, view: Id): { ok: boolean; reason: string } {
-  if ([...text].length < 40) return { ok: false, reason: 'too_short' };
-  // Third-person prose may use “他/她” for a whole paragraph without naming
-  // the protagonist; absence of the literal name is not a fact error.
-
-  const changedNames = Object.keys(after.characters).filter((id) => facts.includes(`（id=${id}）`) && facts.includes('位置→'));
-  for (const id of changedNames) {
-    const name = after.initial.characters[id]?.name;
-    if (name && !text.includes(name)) return { ok: false, reason: `missing_changed_character:${id}` };
+/** Protocol framing only: chat-template tokens and the prompt's 【正文】 marker
+ * are not story content. The text itself is returned untouched — no sentence or
+ * character is removed for style, facts or length. */
+function protocolText(raw: string): string {
+  const marker = String.fromCharCode(0x3010) + '正文' + String.fromCharCode(0x3011);
+  let text = raw.includes(marker) ? raw.split(marker).pop() ?? raw : raw;
+  for (const token of ['<|im_end|>', '<|im_start|>', '<|endoftext|>']) {
+    text = text.split(token).join('');
   }
-  const numbers = text.match(/\d+/g) ?? [];
-  for (const number of numbers) if (!facts.includes(number)) return { ok: false, reason: `unverified_number:${number}` };
-  // Any known character/location/item the projector did not put in the input
-  // must not appear by name. This catches the common small-model failure of
-  // pulling a familiar name from its pretraining into a scene where that
-  // character is not present.
-  const known = [
-    ...Object.values(after.initial.characters).map((entity) => entity.name),
-    ...Object.values(after.initial.locations).map((entity) => entity.name),
-    ...Object.values(after.initial.items).map((entity) => entity.name),
-  ];
-  for (const name of known) {
-    if (name.length < 2 || facts.includes(name)) continue;
-    if (text.includes(name)) return { ok: false, reason: `unprojected_entity:${name}` };
-  }
-  return { ok: true, reason: '' };
+  return text;
 }
 
-function locationIdCatalog(state: WorldState): string {
-  return Object.keys(state.initial.locations).sort().map((id) => `${id}=${state.initial.locations[id].name}`).join('；');
-}
-
-function parseLineChanges(raw: string, state: WorldState): Json {
-  const text = raw.trim();
-  if (!text || /^NONE$/i.test(text)) return [];
-  const deltas = new Map<Id, EntityDelta>();
-  const appearanceSeq = new Map<Id, number>();
-  const personalitySeq = new Map<Id, number>();
-  for (const line of text.split(/\r?\n/)) {
-    const parts = line.split('|').map((part) => part.trim());
-    if (parts.length < 3) continue;
-    const [id, field, ...rest] = parts;
-    const value = rest.join('|').trim();
-    if (!state.characters[id] && !state.items[id]) continue;
-    let delta = deltas.get(id);
-    if (!delta) { delta = { entityId: id }; deltas.set(id, delta); }
-    if (field === 'position') {
-      const [containerId, slotId] = value.split('/').map((part) => part.trim());
-      if (!state.initial.locations[containerId]) continue;
-      delta.positionSet = { containerId, slotId: slotId || null, relativeTo: null };
-    } else if (field === 'sanity') {
-      const number = Number(value);
-      if (Number.isFinite(number)) delta.sanitySet = Math.max(0, Math.min(100, Math.round(number)));
-    } else if (field === 'task' && state.characters[id]) {
-      const owner = state.characters[id];
-      const taskId = value.split(/\s+/)[0];
-      if (owner.tasks[taskId]) delta.tasksAchieved = [...(delta.tasksAchieved ?? []), taskId];
-    } else if (field === 'appearance' && value) {
-      const n = (appearanceSeq.get(id) ?? 0) + 1;
-      appearanceSeq.set(id, n);
-      delta.appearanceChanges = [...(delta.appearanceChanges ?? []), { id: `appearance_${id}_${n}`, text: value, supersedes: [] }];
-    } else if (field === 'personality' && value) {
-      const n = (personalitySeq.get(id) ?? 0) + 1;
-      personalitySeq.set(id, n);
-      delta.personalityChanges = [...(delta.personalityChanges ?? []), { id: `personality_${id}_${n}`, text: value, supersedes: [] }];
-    }
+export function adjacentLocations(state: WorldState, current: Id, named: string[] = []): string {
+  const locations = state.initial.locations;
+  const parent = locations[current]?.parentLocationId ?? null;
+  const ids = new Set<Id>([current]);
+  if (parent) {
+    ids.add(parent);
+    for (const [id, location] of Object.entries(locations)) if (location.parentLocationId === parent) ids.add(id);
   }
-  const stages: { stage: string; changes: Record<Id, EntityDelta> }[] = [];
-  const order: { stage: string; fields: (keyof EntityDelta)[] }[] = [
-    { stage: 'position', fields: ['positionSet'] },
-    { stage: 'appearance', fields: ['appearanceChanges'] },
-    { stage: 'tasks', fields: ['tasksAchieved'] },
-    { stage: 'subtasks', fields: ['subtasksAdded'] },
-    { stage: 'personality', fields: ['personalityChanges'] },
-    { stage: 'sanity', fields: ['sanitySet'] },
-  ];
-  for (const { stage, fields } of order) {
-    const changes: Record<Id, EntityDelta> = {};
-    for (const [id, delta] of deltas) {
-      const picked: EntityDelta = { entityId: id };
-      for (const field of fields) if (delta[field] !== undefined) (picked as unknown as Record<string, unknown>)[field] = delta[field];
-      if (Object.keys(picked).length > 1) changes[id] = picked;
-    }
-    if (Object.keys(changes).length) stages.push({ stage, changes });
-  }
-  return stages as unknown as Json;
-}
-
-const INTERACTION = /问|叫|喊|看|望|盯|递|给|拿|抓|推|拉|拽|撞|拦|挡|攻击|打|踢|开火|射击|威胁|提醒|告诉|回答|答应|拒绝|扶|抱|拍|碰|搜|找|救|帮|交换|谈判/u;
-const MOVEMENT = /走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|离开|去|赶到|溜|冲|贴墙|靠近|靠近/u;
-
-/** Facts that the alignment grader is allowed to require. Only the
- * protagonist and entities with a committed delta enter the packet; static
- * "everyone is here" facts would demand a roll-call that the scene language
- * never uses. */
-function alignmentPacket(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState): CommittedNarration {
-  const facts: NarrationFact[] = [];
-  const view = after.protagonistId;
-  const changed = Object.keys(delta.entityDeltas ?? {});
-  const ids = new Set<Id>([view, ...changed]);
-  for (const id of ids) {
-    const character = after.characters[id];
-    if (!character) continue;
-    const name = after.initial.characters[id]?.name;
-    const previous = before?.characters[id];
-    if (!name) continue;
-    const d = delta.entityDeltas?.[id];
-    if (d?.positionSet) {
-      const fromId = previous?.position.containerId;
-      const from = fromId ? before?.initial.locations[fromId]?.name : undefined;
-      if (from && fromId) facts.push({ id: `${id}:position`, actorId: id, name, kind: 'moved', fromId, from, toId: character.position.containerId, to: locationName(after, character.position.containerId) });
-    } else if (id === view) {
-      facts.push({ id: `${id}:position`, actorId: id, name, kind: 'at', locationId: character.position.containerId, location: locationName(after, character.position.containerId) });
-    }
-    if (d?.sanitySet != null && previous) facts.push({ id: `${id}:sanity`, actorId: id, name, kind: 'sanity_changed', from: previous.sanity, to: character.sanity });
-    for (const taskId of d?.tasksAchieved ?? []) {
-      const task = character.tasks[taskId];
-      if (task) facts.push({ id: `${id}:task:${taskId}`, actorId: id, name, kind: 'task_achieved', taskId, goal: task.goal });
-    }
-    for (const change of d?.personalityChanges ?? []) if (change.text) facts.push({ id: `${id}:personality:${change.id}`, actorId: id, name, kind: 'personality_changed', changeId: change.id, text: change.text });
-  }
-  return { anchor: { worldId: after.worldId, pointId: `local_${Date.now()}`, version: 0, stateDigest: '', previousPointId: null }, facts };
+  for (const [id, location] of Object.entries(locations)) if (location.parentLocationId === current) ids.add(id);
+  for (const [id, location] of Object.entries(locations)) if (named.some((text) => text.includes(location.name))) ids.add(id);
+  return [...ids].map((id) => `${id}=${locations[id]?.name ?? id}`).join('；');
 }

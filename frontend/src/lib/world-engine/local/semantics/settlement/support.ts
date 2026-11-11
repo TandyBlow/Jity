@@ -374,6 +374,10 @@ export function projectStage(state: WorldState, stage: SettlementStage, changes:
     deltas[entityId] = delta;
   }
   if (!Object.keys(deltas).length) return clone(state);
+  // Kernel compatibility (06 tree): the product kernel requires a positive
+  // sequence and an `instant` kind for a zero-duration internal projection, and
+  // the projection is linked to the point it projects from. Values are local
+  // placeholders; the transport never commits this point.
   const point = buildTimelinePoint({
     worldId: state.worldId,
     id: `local_${stage}_${++localPointSequence}`,

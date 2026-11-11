@@ -29,12 +29,17 @@ export interface ProjectSceneOptions {
   scene?: import('./types').SceneHints;
   knowledge?: Partial<SceneKnowledge>;
   resultsText?: string | null;
-  priorText?: string | null;
+  /** Structured settled records (04); preferred over `resultsText` when present. */
+  settledFacts?: import('./types').StructuredSettledFact[] | null;
   inputText?: string | null;
   /** Facts-only packets still carry the point's time advance. */
   timeAdvance?: TimeAdvance | null;
   /** Prefix for fact ids; keeps two projections of the same point distinct. */
   idPrefix?: string;
+  /** Every name the world knows. The facts-packet path has no state, so the
+   * caller supplies them and the gate can still refuse an offscreen place or an
+   * unlisted person instead of treating an unknown name as licensed. */
+  worldNames?: { characters: string[]; locations: string[]; items: string[] };
 }
 
 const emptyKnowledge = (): SceneKnowledge => ({ discoveredItemIds: [], visitedLocationIds: [], metCharacterIds: [] });
@@ -288,7 +293,7 @@ export function projectConstrainedScene(
   const advance = after.timeAdvance ?? null;
   const hasElapsed = advance != null && advance.duration.amount > 0;
   if (hasElapsed) {
-    facts.push({ id: `${prefix}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
+    facts.push({ id: `${prefix}:time`, kind: 'time', mandatory: false, visibility: 'scene', advance });
   }
 
   // ---- moves ---------------------------------------------------------------
@@ -432,11 +437,45 @@ export function projectConstrainedScene(
   // The settlement's own result line is a fact-bearing description, not a
   // model free-write: it is licensed verbatim so a question/answer or a
   // hand-off does not disappear from the prose.
-  if (options.resultsText && options.resultsText.trim()) {
-    facts.push({
-      id: `${prefix}:result`, kind: 'result', mandatory: true, visibility: 'scene',
-      text: clampSentences(options.resultsText, 2, 130),
+  // Structured settled records are the fact source: each names the executor,
+  // the recipient, the action and the outcome direction. They keep a negative
+  // outcome («未能…», «被拦住») instead of a wording filter deciding what
+  // counts as a result (that filter dropped real failures and kept mechanics).
+  const structuredResults = (options.settledFacts ?? []).filter((record) => (record.text ?? '').trim());
+  if (structuredResults.length) {
+    structuredResults.forEach((record, index) => {
+      const actorName = entityName(state, record.actorId);
+      const targetName = record.targetId ? entityName(state, record.targetId) : undefined;
+      const text = clampSentences(record.text.trim(), 2, 130);
+      facts.push({
+        id: `${prefix}:result:${index}`, kind: 'result', mandatory: true, visibility: 'scene', text,
+        structured: {
+          actorId: record.actorId,
+          actor: actorName,
+          ...(record.action ? { action: record.action } : {}),
+          ...(record.targetId ? { targetId: record.targetId } : {}),
+          ...(targetName ? { target: targetName } : {}),
+          outcome: record.outcome,
+          ...(record.implicit ? { implicit: true as const } : {}),
+        },
+      });
+      // Names the settlement used are licensed material: the prose may name the
+      // executor and the recipient even when the brief does not repeat them.
+      names.add(actorName);
+      if (targetName) names.add(targetName);
     });
+  } else if (options.resultsText && options.resultsText.trim()) {
+    // Free-text only (an older caller or a point with no structured record).
+    // Keep the outcome sentence as licensed material; the verifier decides the
+    // polarity from its own cues and says `unverified` when it cannot.
+    const settledResult = options.resultsText.split(/[；;]/u).map((part) => part.trim())
+      .filter(Boolean).join('；');
+    if (settledResult) {
+      facts.push({
+        id: `${prefix}:result`, kind: 'result', mandatory: true, visibility: 'scene',
+        text: clampSentences(settledResult, 2, 130),
+      });
+    }
   }
 
   // ---- licensing -----------------------------------------------------------
@@ -551,8 +590,10 @@ export function projectConstrainedScene(
       quotes: [...quotes],
     },
     knowledge,
-    priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
+    // SceneHints already receives it (selection/constrained.ts); the skeleton
+    // dropped it, so no beat could write the player's declared action.
+    previousAction: options.scene?.previousAction ?? null,
     resultsText: options.resultsText ?? null,
     hasSceneMaterial: true,
     timeOnly: !Object.keys(deltas).length,
@@ -625,23 +666,54 @@ export function projectFromFactsPacket(
 ): ProjectedScene {
   // The viewpoint is either standing (at) or arriving (moved) this point; a
   // facts-only packet with a pure move still knows who moved and where to.
-  const atFact = packet.facts.find((fact) => fact.kind === 'at');
-  const movedFact = packet.facts.find((fact) => fact.kind === 'moved');
-  const anchorFact = atFact ?? movedFact;
+  const positions = packet.facts.filter((fact) => fact.kind === 'at' || fact.kind === 'moved');
+  const anchorFact = options.viewpointId
+    ? positions.find((fact) => fact.actorId === options.viewpointId)
+    : positions.find((fact) => fact.kind === 'at') ?? positions[0];
   const viewpointName = anchorFact?.name ?? '主角';
-  const location = atFact?.kind === 'at' ? atFact.location : movedFact?.kind === 'moved' ? movedFact.to : '';
-  if (!location) throw new SceneProjectionError('facts_packet_without_scene', 'needs an at-fact or a moved-fact for the viewpoint');
+  const location = anchorFact?.kind === 'at' ? anchorFact.location : anchorFact?.kind === 'moved' ? anchorFact.to : '';
+  if (!anchorFact || !location) throw new SceneProjectionError('facts_packet_without_scene', 'needs an at-fact or a moved-fact for the viewpoint');
   const facts: SceneFact[] = [];
   const advance = options.timeAdvance ?? null;
   if (advance && advance.duration.amount > 0) {
-    facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: true, visibility: 'scene', advance });
+    facts.push({ id: `${options.idPrefix ?? 'facts'}:time`, kind: 'time', mandatory: false, visibility: 'scene', advance });
   }
   // The caller's settled answer (a question answered, a hand-off) must stay in
-  // the prose; it is quoted, not paraphrased.
-  if (options.resultsText && options.resultsText.trim()) {
+  // the prose; it is quoted, not paraphrased. Judgment/mechanics clauses are
+  // not prose and are dropped here too (926e printed 诺诺：…未被阻止… from this
+  // packet path while the scene path already filtered it).
+  // Structured records first: they carry the actor/target/outcome direction,
+  // so a faithful paraphrase is checkable and a negative outcome is not lost.
+  const structuredResults = (options.settledFacts ?? []).filter((record) => (record.text ?? '').trim());
+  const nameOf = (id: string) => packet.facts.find((fact) => fact.actorId === id)?.name ?? id;
+  const settledQuote = structuredResults.length
+    ? structuredResults.map((record) => clampSentences(record.text.trim(), 2, 130)).join('；')
+    : options.resultsText && options.resultsText.trim()
+      ? options.resultsText.split(/[；;]/u).map((part) => part.trim())
+        .filter(Boolean).join('；') || null
+      : null;
+  if (structuredResults.length) {
+    structuredResults.forEach((record, index) => {
+      const actorName = nameOf(record.actorId);
+      const targetName = record.targetId ? nameOf(record.targetId) : undefined;
+      facts.push({
+        id: `${options.idPrefix ?? 'facts'}:result:${index}`, kind: 'result', mandatory: true, visibility: 'scene',
+        text: clampSentences(record.text.trim(), 2, 130),
+        structured: {
+          actorId: record.actorId,
+          actor: actorName,
+          ...(record.action ? { action: record.action } : {}),
+          ...(record.targetId ? { targetId: record.targetId } : {}),
+          ...(targetName ? { target: targetName } : {}),
+          outcome: record.outcome,
+          ...(record.implicit ? { implicit: true as const } : {}),
+        },
+      });
+    });
+  } else if (settledQuote) {
     facts.push({
       id: `${options.idPrefix ?? 'facts'}:result`, kind: 'result', mandatory: true, visibility: 'scene',
-      text: clampSentences(options.resultsText, 2, 130),
+      text: clampSentences(settledQuote, 2, 130),
     });
   }
   // The viewpoint's own position is a licensed fact, not a change: without it
@@ -657,9 +729,14 @@ export function projectFromFactsPacket(
     if (fact.kind === 'at') {
       facts.push({ id: fact.id, kind: 'at', mandatory: false, visibility: 'scene', entityId: fact.actorId, name: fact.name, locationId: fact.locationId, location: fact.location });
     } else if (fact.kind === 'moved') {
+      // The packet may carry only ids when the caller had no state to resolve
+      // names; an empty «从到» reaches the prompt verbatim. Fall back to the
+      // string fields, then to the ids, never to an empty phrase.
+      const from = (fact.from ?? '').trim() || fact.fromId;
+      const to = (fact.to ?? '').trim() || fact.toId;
       facts.push({
         id: fact.id, kind: 'move', mandatory: true, visibility: 'scene', entityId: fact.actorId, name: fact.name,
-        entityKind: 'character', fromId: fact.fromId, from: fact.from, toId: fact.toId, to: fact.to,
+        entityKind: 'character', fromId: fact.fromId, from, toId: fact.toId, to,
         fromVisibility: 'in_view', toVisibility: 'in_view', viewpoint: fact.name === viewpointName,
       });
     } else if (fact.kind === 'task_achieved') {
@@ -679,6 +756,7 @@ export function projectFromFactsPacket(
   const present: ScenePerson[] = [];
   for (const fact of packet.facts) {
     if (fact.kind !== 'at' || fact.name === viewpointName) continue;
+    if (hints?.objectNotes && Object.hasOwn(hints.objectNotes, fact.name)) continue;
     if (present.some((person) => person.id === fact.actorId)) continue;
     present.push({
       id: fact.actorId, name: fact.name,
@@ -696,8 +774,10 @@ export function projectFromFactsPacket(
   const scene: SceneSkeleton = {
     anchor: packet.anchor,
     viewpoint: {
-      id: anchorFact?.kind === 'at' ? anchorFact.actorId : 'viewpoint',
-      name: viewpointName, locationId: anchorFact?.kind === 'at' ? anchorFact.locationId : '', location,
+      id: anchorFact.actorId,
+      name: viewpointName,
+      locationId: anchorFact.kind === 'at' ? anchorFact.locationId : anchorFact.toId,
+      location,
       note: '', personality: '', sanity: 0,
     },
     time: advance,
@@ -706,7 +786,14 @@ export function projectFromFactsPacket(
     objects,
     facts,
     licensed: {
-      names: [...new Set([...packet.facts.map((fact) => fact.name), ...present.map((person) => person.name)])],
+      names: [...new Set([
+        ...packet.facts.map((fact) => fact.name),
+        ...present.map((person) => person.name),
+        ...structuredResults.flatMap((record) => [
+          nameOf(record.actorId),
+          ...(record.targetId ? [nameOf(record.targetId)] : []),
+        ]),
+      ])],
       locations: [...new Set(packet.facts.flatMap((fact) => fact.kind === 'moved' ? [fact.from, fact.to] : fact.kind === 'at' ? [fact.location] : []))],
       items: objects.map((object) => object.name),
       details: [...expandedDetails(new Set([
@@ -716,14 +803,17 @@ export function projectFromFactsPacket(
       ].filter(Boolean)))],
       quotes: [...new Set([
         ...packet.facts.flatMap((fact) => fact.kind === 'task_achieved' ? [fact.goal] : []),
-        ...(options.resultsText ? [clampSentences(options.resultsText, 2, 130)] : []),
+        // The quotes list must not re-admit a judgment clause the fact filter dropped.
+        ...(settledQuote ? [clampSentences(settledQuote, 2, 130)] : []),
       ])],
     },
     knowledge: { ...emptyKnowledge(), ...(options.knowledge ?? {}) },
-    priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
+    // SceneHints already receives it (selection/constrained.ts); the skeleton
+    // dropped it, so no beat could write the player's declared action.
+    previousAction: options.scene?.previousAction ?? null,
     resultsText: options.resultsText ?? null,
-    worldNames: { characters: [], locations: [], items: [] },
+    worldNames: options.worldNames ?? { characters: [], locations: [], items: [] },
     hasSceneMaterial: present.length > 0 || objects.length > 0,
     timeOnly: !facts.some((fact) => fact.kind !== 'time' && fact.kind !== 'at'),
   };

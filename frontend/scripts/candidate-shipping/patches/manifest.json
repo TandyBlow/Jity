@@ -1,0 +1,502 @@
+{
+  "updatedAt": "2026-11-10T10:57:54.729Z",
+  "patches": [
+    {
+      "patch": "patches/world-narration-candidate-57e4316fd20e-dffabefe1b1a.patch",
+      "patchSha256": "dffabefe1b1a100838e7f77b9c7e5d14f67ca30c96af416363b8efaf77361e09",
+      "patchBytes": 412695,
+      "generatedAt": "2026-11-10T10:57:54.719Z",
+      "target": "D:\\others\\Jity\\.local\\world-narration-worktree",
+      "inputs": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "57e4316fd20edf939131749a6f2016075e70506a6e464b3b6d803080a0a46f58"
+        }
+      ],
+      "transforms": [
+        "import-selection",
+        "option-narration-candidate",
+        "field-narration-runner",
+        "constructor-runner",
+        "narration-candidate-first",
+        "narration-candidate-method",
+        "narration-accepted-continuation",
+        "narration-program-fallback",
+        "narration-final-text-debug",
+        "narration-final-text-task",
+        "narration-final-text-complete",
+        "narration-final-text-return"
+      ],
+      "additions": [
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/constrained.ts",
+          "sha256": "7e69994bd1559d9a160f54ee3a056001c3a9beecd7990c0f08bef8aca216be98"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/engine-template.ts",
+          "sha256": "eda5a73bd3a17a5fea381904de91d90d2c87a6369b2adad3f2248993d4509e14"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/index.ts",
+          "sha256": "d5fbb54b556f934a45a46e4d041211d308d11aaff8c2d6043817b9d47d304d4a"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/projection.ts",
+          "sha256": "0f3f0dedb5a180e138fa90ca34e0987e418e6f282bf284c97b9ce06e88de02e4"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/runner.ts",
+          "sha256": "bb9dad9a56365a3b7bb2177cf955b8b77094e68726e13992f0f2efd77c95f9eb"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/trained.ts",
+          "sha256": "48dcf8dfc687c2381a6f808cb36b30cfb080188147e41daa7b2689d46f4ed23e"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/selection/types.ts",
+          "sha256": "b07076e6172725ab79fbffb3481ad8f6b11c523360e0789bb3e6885055cab8c1"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts",
+          "sha256": "566640e49dc8a5251bb1ba4995b6a6106d4c670fbc78a8bec0bf44cc9d9cac67"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts",
+          "sha256": "42d7bd9de7f9d08559a520c3695f0f5a9c4323c26b0430d512ff05ded24d08ea"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts",
+          "sha256": "c01158dfa7384f04cdcba627fbcbe283409e030bf4444ba55c69a72e6329425a"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts",
+          "sha256": "7ed7e3efc5f294f4c9b0bd99a53b71cd90a87f3c3114ea7c8074648401a932aa"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts",
+          "sha256": "2f4e8da9e8f8d90819f00460084a7feb8e32aec411a1cb2d32523e0fb95bcac9"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+          "sha256": "63bd10bfbb2a6c929d63adfa1c0c03f5393b744b1d124b59314521f9862ab50c"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts",
+          "sha256": "5d4d426a334907cd495f214533aa5e49da4f7cec44095f65a016198cb95dcb29"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts",
+          "sha256": "5dfdf4d6f2719d5dc125b4f626aa63bb475f8d58f622f6e9fed978357a6ddcc9"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/beats.ts",
+          "sha256": "c69d3f5d4b3faf90a0c4afaa3014258cd9b07b8c9912991e8c3dd71d99983634"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/compose.ts",
+          "sha256": "fb6e3294020dfaacb38f91a3d99b7599fe94ef647081df09897e71c74e80806d"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts",
+          "sha256": "47b024b9aed1c2e60152b142547b3fe791250a933a6d3e096f1e67f129382477"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/projection.ts",
+          "sha256": "c5a2d0db7cd3403b6f8f80ee5da7d8628086827cd466b52cb3c0b54ae158c817"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/realize.ts",
+          "sha256": "af8fabbc9aebe44e52bd0c934bb1cc96503c00ce3bce201fecd9fa41db17bbf3"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/types.ts",
+          "sha256": "b94fd938cd0bed19012dc31989ff21ecaa7aea4d55055f0ebc0a0822556b32c2"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/constrained/verify.ts",
+          "sha256": "e52301f754f3f5028e5510b2e174141262d24ede2530083a023a695d276ac789"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/beats.ts",
+          "sha256": "5765bebd90961ebccad5af274b9241e15d2adccb9cf25c4a5ecd5b29fa32dca7"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/guidance.ts",
+          "sha256": "ce38de7e81c529881a3705c691c1b25eab22b45d24bd8794b7cbf657ab728a74"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/index.ts",
+          "sha256": "25a8e6ed84a8f850d24229cd683072fc04ee5fe31addb382e9046be1a45cc3b9"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/ledger.ts",
+          "sha256": "33a078a9419d57bcf88a49692ffc2fed6b230439d3fdcfe3861e63edfec05918"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/prompt.ts",
+          "sha256": "3640cdb472ea340606f4a5b27a05a03269a18b37a6fa09c779777f82c1be831d"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/trained-input.ts",
+          "sha256": "896b3b497501e268dd5464a759f587f7e87147104c82a490b1e6f1112e732889"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/types.ts",
+          "sha256": "c656692b1c6bfbe2e768376063eaaadd28430c9ffdba5d12a1eecd2be94f4fff"
+        },
+        {
+          "path": "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/verify.ts",
+          "sha256": "16350bc3e99d985d3d1a022b9b6e37f795aabcfa925223ef8692f6e4fead5d07"
+        }
+      ],
+      "vendored": {
+        "proseComposer": {
+          "source": "goal/local-07-sync @ 69915b49",
+          "note": "runtime files only (no tests); the constrained adapter injects createBeatComposer() for the program route",
+          "files": [
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/candidate.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/compose.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-beat.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/from-committed.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/guard.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/index.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/support.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/prose-composer/types.ts"
+          ]
+        },
+        "trainedGeneration": {
+          "source": "goal/local-02-narration @ 92c2d95e",
+          "note": "runtime files only (no tests); imported by selection/trained.ts and the BeatSceneContext type",
+          "files": [
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/beats.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/guidance.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/index.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/ledger.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/prompt.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/trained-input.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/types.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/trained-generation/verify.ts"
+          ]
+        },
+        "constrained": {
+          "source": "goal/local-04-settlement @ 11e7433b",
+          "note": "runtime files only (no tests); the selection adapter calls generateCandidate and passes the facts-only packet, scene hints, result line and composer",
+          "files": [
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/beats.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/compose.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/index.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/projection.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/realize.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/types.ts",
+            "frontend/src/lib/world-engine/local/narration-candidates/constrained/verify.ts"
+          ]
+        }
+      },
+      "edits": [
+        "frontend/src/lib/world-engine/local/game-model.ts"
+      ],
+      "pageChanges": [],
+      "prerequisites": [
+        "lane 02 commits 211fd463 + 92c2d95e (narration-generation beats, short-scene acceptance) must be present",
+        "lane 04 commit 11e7433b (constrained candidate, facts-only scene hints) must be present",
+        "no page.tsx change: selection stays internal and the page keeps its callbacks"
+      ],
+      "applyCheck": {
+        "ok": true,
+        "command": "git apply --check -p1 candidate.patch"
+      },
+      "superseded": false,
+      "stale": false
+    }
+  ],
+  "history": [
+    {
+      "patch": "patches/world-narration-candidate-7494654c6189-ebc1807312cf.patch",
+      "patchSha256": "ebc1807312cfb00628db09257c25c2e58ebfcb70624089970465a58b48b1ae6b",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "7494654c61891dd24ecd193bde30927e52431d1eb1fc6fff4b02ba7cb158c2fc"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:40:19.245Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-7494654c6189-da2124353a25.patch",
+      "patchSha256": "da2124353a254bc2816018f3789ec078f6a7d36da0c50bde3f77478abdf6e238",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "7494654c61891dd24ecd193bde30927e52431d1eb1fc6fff4b02ba7cb158c2fc"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:40:19.245Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-7494654c6189-246efc7cc90b.patch",
+      "patchSha256": "246efc7cc90b769f4e66af91797bab7e9eb0ace575cd66ba7d12a640710cae99",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "7494654c61891dd24ecd193bde30927e52431d1eb1fc6fff4b02ba7cb158c2fc"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:40:19.245Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-632f408ed1bc.patch",
+      "patchSha256": "632f408ed1bcc087bcf5ed7995031193162a0ca4fa392f76fc1f8847fd5ae604",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:44:20.509Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-b7e6af15a810.patch",
+      "patchSha256": "b7e6af15a8106aa36ec4d281e32d85962a39e7f8ac68c0fe6ad51a74854b168e",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:49:09.660Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-028da3969794.patch",
+      "patchSha256": "028da3969794af3360904be98d98c5bd749a67af52497b307a805cdd57c5782a",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:53:01.429Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-a3c1cca5e85c.patch",
+      "patchSha256": "a3c1cca5e85c3f84399b3b3b2f418d8afa59d3b4b8c1d30a33bb1eba8b9a6289",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:55:28.362Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-73d190f7d1a8.patch",
+      "patchSha256": "73d190f7d1a8bb19e6dcb96e174f74b525531fc1ad6412fcc17b38b560edf095",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T07:57:04.391Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-d3b548032b52.patch",
+      "patchSha256": "d3b548032b523620f8598ac1bf1c91fe08d07222294498306d6b60af86b7cafc",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:06:00.073Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-b8c2122b2a0a.patch",
+      "patchSha256": "b8c2122b2a0a986c48ed709fe42746880e465bdecb87e0fddfd2ead0af8d0bc7",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:15:02.970Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-f84f58e05571.patch",
+      "patchSha256": "f84f58e055713a38f94b51876d5d4942f247b4b0cbf52283ce67c7c21f25bc44",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:21:15.185Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-fa6fe7bf242c.patch",
+      "patchSha256": "fa6fe7bf242ccb0d88103185eff2bd980cdc104fdb3d3081149b5c0e37374409",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:29:56.368Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-b57a30a77099.patch",
+      "patchSha256": "b57a30a770992cddf343368448a1dbc521ac46968b752b318002271d160221d0",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:44:29.695Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-e2ce7a467bd5.patch",
+      "patchSha256": "e2ce7a467bd5f79b3d0141b71bb0c273cde219d25e3f4893b29e17db405b9c25",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:45:37.629Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-989629487ae3.patch",
+      "patchSha256": "989629487ae3aa2ff7f14a0115a6e360b90ea3310c7e4f7630f7a14e73278dde",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T08:53:37.832Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-291dc123e3bb.patch",
+      "patchSha256": "291dc123e3bbfdbcf52ec9bb6e13fcab98bf6a70d9875a91ffb513561e69a3df",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:03:59.640Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-46592d209819.patch",
+      "patchSha256": "46592d209819cf6fcca59174df996c56e8394924ab01264f09b3879b83885564",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:05:16.183Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-c073fadf2943.patch",
+      "patchSha256": "c073fadf29437ba51708ca3a14855bcf81a309061e2bb6e1c07e1f8df8d69869",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:09:46.456Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-4878c5c4959b.patch",
+      "patchSha256": "4878c5c4959bcbbdf3639407e69c5816104fbea638f13b2cf30221f8c4c301f0",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:12:33.594Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-66ec906d6fcf.patch",
+      "patchSha256": "66ec906d6fcf58fc0053d2cbbcf695999958eb25c9a5f271d8074ea9ba0340a5",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:13:19.351Z",
+      "reason": "superseded"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ff1574dd9ccb-7594417a9826.patch",
+      "patchSha256": "7594417a9826d04a089db3c1b383466e249fba7225c943552f39f375e8f08101",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ff1574dd9ccba970bf0375d4d8fa0271f0265c3433689676c08d8fd0d8de8d35"
+        }
+      ],
+      "retiredAt": "2026-11-10T09:59:21.061Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-51885288f10c-1efc716cd9eb.patch",
+      "patchSha256": "1efc716cd9eb40c2d49a2d21bbcdce18716904e0e37dc7b7e30315082d6d1471",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "51885288f10cd32644260cacfc98c6e93b921fafe37ba3ec91b73dfc95e0f01f"
+        }
+      ],
+      "retiredAt": "2026-11-10T10:17:18.471Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-2c25891317b8-3e73bdf530d1.patch",
+      "patchSha256": "3e73bdf530d177718075c1aa16ef57d39b47d13393db4be9ba923092448eef76",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "2c25891317b83723f113d8d30a22683e6de8334b4e3ede36350e13caa6824cc7"
+        }
+      ],
+      "retiredAt": "2026-11-10T10:20:42.512Z",
+      "reason": "stale_input"
+    },
+    {
+      "patch": "patches/world-narration-candidate-ee4c77aebefb-b980c112fb0b.patch",
+      "patchSha256": "b980c112fb0ba6280b43235482ccde24d390b337b112c2160491cc6f01562e15",
+      "input": [
+        {
+          "path": "frontend/src/lib/world-engine/local/game-model.ts",
+          "sha256": "ee4c77aebefb22df0832231958ff2aa60711caca1a116be5f9a806fb82846c0b"
+        }
+      ],
+      "retiredAt": "2026-11-10T10:57:54.729Z",
+      "reason": "stale_input"
+    }
+  ]
+}

@@ -1,0 +1,235 @@
+{
+  "schema": "jity-narration-dataset-v2",
+  "dataVersion": "narration-rows-v2",
+  "createdAt": "2026-11-10T03:25:04.952861+00:00",
+  "sourceBaseCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
+  "builder": "experiments/narration-runtime-v2/src/build_dataset.py",
+  "source": {
+    "sourceDir": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\world-components\\narration-dataset-v1",
+    "sourceHashes": {
+      "sourceDir": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\world-components\\narration-dataset-v1",
+      "files": {
+        "rows_common.py": {
+          "exists": true,
+          "sha256": "22f11acde3592b7b47f798fcd1f311f8f070677755dd782b0fe887db1438dea1",
+          "sha256Lf": "cf87c6a7cf7f9441ad2fe8e77cc21bd6323faa9034e073c5bb3ef34938ff7d64",
+          "bytes": 2431
+        },
+        "split_xy.py": {
+          "exists": true,
+          "sha256": "28d9d1fccba55470c2ad2f3e58d323744dea89612e501982652749d3b705dee3",
+          "sha256Lf": "c1160ce76904540b26588463634efa46c4ba314e6bcc458b4365c6113d398022",
+          "bytes": 2964
+        },
+        "yuyan/convert_yuyan.py": {
+          "exists": true,
+          "sha256": "150b558d7d643c50f50849316c534aa85634d32824c55c67fadc24b5fe6cd876",
+          "sha256Lf": "dd21a2c4f30b16ffc4d3fc1fbea3ad19c72cacbfda36b91606d504534478d044",
+          "bytes": 7542
+        },
+        "rows-xy.jsonl": {
+          "exists": true,
+          "sha256": "b1c5bcbfedde869d83edb864b844ec0063c26bd4f4b33277f35ba490a7e0274e",
+          "sha256Lf": "b7cc1c1b33f7b3f179c58c2244fe3d532184840be0ef2827ea72d3f71ca62ef2",
+          "bytes": 958994
+        },
+        "yuyan/rows-yuyan.jsonl": {
+          "exists": true,
+          "sha256": "13c6879a445adb10365e4dfc91b001d48ef2de8ec31aa1b2bbb6ad0127442703",
+          "sha256Lf": "645df1b1438c4a388fbb09fb7d71ed99796b33393005dbda528f3d3d8c5db824",
+          "bytes": 1076854
+        },
+        "README.md": {
+          "exists": true,
+          "sha256": "64a37e2496873c9ad1ef9105c2dd40dc206eb6c1c957330168ca2ade87dd2164",
+          "sha256Lf": "14f33377005c376a0ebc33c9367b500252886f50b48c4ba9a13760405cad99e1",
+          "bytes": 2817
+        },
+        "splits/v1.json": {
+          "exists": true,
+          "sha256": "fdeb259cb532af7c42730aae2b5b04ce9b315c444b7856380e0f531e84906169",
+          "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836",
+          "bytes": 3088
+        }
+      },
+      "ok": true,
+      "problems": []
+    },
+    "legacyRowsFile": "rows-xy.jsonl",
+    "legacyYuyanFile": "yuyan/rows-yuyan.jsonl",
+    "splitFile": "splits/v1.json",
+    "splitSha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836",
+    "splitCounts": {
+      "train": 139,
+      "dev": 40,
+      "test": 20
+    }
+  },
+  "versions": {
+    "projectionVersion": "narration-result-view-v2",
+    "serializerVersion": "yuyan-prose-result-v2",
+    "legacyProjectionVersion": "narration-result-view-v1",
+    "legacySerializerVersion": "yuyan-prose-legacy-v1",
+    "modelTemplateVersion": "yuyan-raw-completion-v1",
+    "tokenizerHash": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "tokenizerStatus": "bound",
+    "whitespacePolicy": "remove-space-tab-fullwidth-and-record; reject-crlf-and-other-whitespace",
+    "listPunctuationPolicy": "strip-trailing-。；，",
+    "resultTypeOrder": [
+      "地点",
+      "人物",
+      "物品"
+    ],
+    "resultFieldOrder": {
+      "人物": [
+        "位置",
+        "精神值",
+        "外貌",
+        "个性",
+        "任务"
+      ],
+      "地点": [
+        "位于",
+        "外貌"
+      ],
+      "物品": [
+        "位置",
+        "外貌"
+      ]
+    },
+    "itemPositionSyntax": "物品（位于<位置>）"
+  },
+  "files": {
+    "rows-v2.jsonl": {
+      "bytes": 1873170,
+      "sha256": "a9b7ca0971c21b79b348c639a6819ffc2570767484fb28a6c3c99c6fa119fb55",
+      "rows": 199
+    },
+    "rows-yuyan-v2.jsonl": {
+      "bytes": 808649,
+      "sha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+      "rows": 199
+    },
+    "normalization-ledger.jsonl": {
+      "bytes": 30162,
+      "sha256": "da1744f0fcd6790608fba036f34b59f8c66d94333b32453f390dcaba6632b9a5",
+      "rows": 199
+    },
+    "result-fills.jsonl": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rows": 0
+    }
+  },
+  "counts": {
+    "rows": 199,
+    "train": 139,
+    "dev": 40,
+    "test": 20
+  },
+  "identity": {
+    "rowIdsSha256": "29fa31fab342b7ab7aa53b69d408e6c8db5dfe6c52a20e53fc1e9f4b642d7c32",
+    "targetsSha256": "f01b03b25f5aec11fe1f3ac5d8c503db014be37c6d7c79cca121bb08835c4e10",
+    "legacyXProseSha256": "04833983e703bedb38919b1364cdd10696fa227f8d4df3ae7266c2e6c4f5bbb7",
+    "v2XProseSha256": "64c3360a3da51a9f062f5a67a7078e1cf3e02d2a6f85e9545fa3578e0234c8c2",
+    "sameRowIds": true,
+    "sameTargets": true,
+    "sameSplit": true,
+    "legacyBytesEqual": true,
+    "legacyBytesCompared": 199
+  },
+  "checks": {
+    "sourceOk": true,
+    "legacyBytesOk": true,
+    "splitOk": true,
+    "tokenizerOk": true,
+    "tokenizerRowsChecked": 199,
+    "normalizationEntries": 199,
+    "normalizationRemovedChars": 199,
+    "resultFills": 0,
+    "rowsWithResultBlock": 198,
+    "rowsWithoutChange": 1,
+    "rowsWithEmptyListResult": 2,
+    "rowsWithZeroSanityResult": 0,
+    "answerLeakChecks": 199
+  },
+  "tokenizer": {
+    "name": "yuyan-char-v1",
+    "source": "hpc:~/narr_rows/dict.txt",
+    "path": "tokenizers/yuyan-v1/dict.txt",
+    "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "bytes": 119884,
+    "vocabSize": 13668,
+    "specialTokens": [
+      "<end>",
+      "<mask>",
+      "<sep>",
+      "<hold>"
+    ],
+    "hasSpaceToken": false,
+    "hasTabToken": false,
+    "hasNewlineToken": false
+  },
+  "sourceWeights": {
+    "yuyan": {
+      "checkpoint": {
+        "source": "hpc:~/narr_rows/checkpoint_best.pt",
+        "sha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106",
+        "bytes": 2950000000,
+        "availability": "observed on hpc login node 2026-11-10",
+        "inGit": false
+      },
+      "loraAdapter": {
+        "source": "hpc:~/narr_rows/yu-split-6ep/lora_adapter.pt",
+        "sha256": "e80c479e690c4128e8f8a4006417ea4f4df13a641b057fbcee3efa807de62c1d",
+        "availability": "observed on hpc login node 2026-11-10",
+        "inGit": false
+      },
+      "dict": {
+        "source": "hpc:~/narr_rows/dict.txt",
+        "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+        "inGit": true,
+        "path": "tokenizers/yuyan-v1/dict.txt"
+      }
+    },
+    "instruct": {
+      "status": "pending",
+      "reason": "no instruct base/tokenizer has been selected for the v2 result-block arm; the HF entry is ready but its config is a template, not a run"
+    }
+  },
+  "diagnosticArms": {
+    "legacy": {
+      "serializerVersion": "yuyan-prose-legacy-v1",
+      "file": "yuyan/rows-yuyan.jsonl",
+      "sha256Lf": "645df1b1438c4a388fbb09fb7d71ed99796b33393005dbda528f3d3d8c5db824",
+      "dataSha256": "13c6879a445adb10365e4dfc91b001d48ef2de8ec31aa1b2bbb6ad0127442703",
+      "resultBlock": false,
+      "itemPosition": false
+    },
+    "resultV2": {
+      "serializerVersion": "yuyan-prose-result-v2",
+      "file": "data/rows-yuyan-v2.jsonl",
+      "sha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+      "resultBlock": true,
+      "itemPosition": true
+    }
+  },
+  "dLine": {
+    "sourceCommit": "51bd76e97a8892a6ff012a2ebea57476deb22d4b",
+    "branch": "origin/codex/d-training-source-20261110",
+    "rows": 4750,
+    "train": 3204,
+    "dev": 693,
+    "test": 853,
+    "usedForTraining": false,
+    "status": "not_used_for_narration_v2",
+    "reason": "D-line supervision is a different short-semantics schema; it is not narration result-block data. Its 4,750 rows remain available for non-narrative training/development after a separate quality check, and cannot be an independent final validation set."
+  },
+  "limitations": [
+    "The 199 rows are the frozen v1 scene rows; they are not an independent final validation set.",
+    "The v2 result block is a partial changed-fields view, not a full after snapshot.",
+    "No human review metadata is attached to the 199 rows; the targets are treated as the frozen v1 targets.",
+    "The YuYan tokenizer is bound for the diagnostic arm; the instruct tokenizer remains pending.",
+    "The 199 rows contain no real item-position change or zero-sanity result; synthetic golden vectors cover those shapes and are not training rows."
+  ]
+}

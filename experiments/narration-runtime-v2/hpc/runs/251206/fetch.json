@@ -1,0 +1,39 @@
+{
+  "job": "251206",
+  "dir": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\runs\\251206",
+  "fetched": [
+    "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\runs\\251206\\report.json",
+    "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\runs\\251206\\samples.txt",
+    "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\runs\\251206\\job.out",
+    "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\runs\\251206\\job.err"
+  ],
+  "best": {
+    "epoch": 3,
+    "devLoss": 1.4106
+  },
+  "final": {
+    "trainLoss": 1.0582,
+    "devLoss": 1.4106,
+    "testLoss": 1.4241
+  },
+  "seconds": 375.6,
+  "identity": {
+    "dataPath": "hpc:~/narr_v2/data/rows-yuyan-v2.jsonl",
+    "dataSha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+    "dataManifest": "hpc:~/narr_v2/data/manifest.json",
+    "dataManifestSha256": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378",
+    "splitsPath": "hpc:~/narr_v2/splits/v1.json",
+    "splitSha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836",
+    "basePath": "hpc:~/narr_rows/checkpoint_best.pt",
+    "baseSha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106",
+    "dictPath": "hpc:~/narr_rows/dict.txt",
+    "dictSha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "trainIdsSha256": "e108757b002066f9d9068d4effc05318a20fcd819bbc79281bc62a7e99532848",
+    "devIdsSha256": "dd6fc9fc22783d634a82f1713a08c0d73604d51073ae6055e27cd5ff9ec20e0f",
+    "testIdsSha256": "27d0120c1380ca8168de3d20e81aabd809f73ce448512df69bb854555b345ed9",
+    "trainRows": 139,
+    "devRows": 40,
+    "testRows": 20,
+    "seed": 20261109
+  }
+}
