@@ -282,8 +282,8 @@ export interface ConstrainedPolicy {
   sanityStyle?: 'direction' | 'number';
   minChars?: number;
   maxChars?: number;
-  /** Require the elapsed duration to be stated. Defaults to true for elapsed
-   * advances with amount > 0, false otherwise. */
+  /** Deprecated: elapsed time may be omitted from prose. Incorrect durations
+   * are still checked, even when an older caller sets this flag. */
   requireTime?: boolean;
   maxBeats?: number;
   /** Whole-turn wall budget for model writing (default 180000 ms). Once it is

@@ -569,9 +569,9 @@ describe('generateCandidate model mode', () => {
     expect(result.plan?.beats[0].maxChars).toBe(150);
   });
 
-  it('keeps rejected model drafts when a missing-time beat uses the program fallback', async () => {
+  it('keeps rejected model drafts when an invented event uses the program fallback', async () => {
     const { packet } = await productWorldFixture();
-    const rejectedText = '路明非低头检查胸前的护目镜，目光仍停在镜片上。';
+    const rejectedText = '路明非跳下台阶，低头检查胸前的护目镜，目光仍停在镜片上。';
     const { engine } = scriptedEngine(() => rejectedText);
     const result = await generateCandidate({
       engine, committed: packet, inputText: '', policy: { mode: 'model' },
@@ -580,8 +580,8 @@ describe('generateCandidate model mode', () => {
     expect(open?.source).toBe('program');
     expect(open?.rejected).toHaveLength(2);
     expect(open?.rejected?.every((draft) => draft.text === rejectedText)).toBe(true);
-    expect(open?.rejected?.every((draft) => draft.issues.some((issue) => issue.kind === 'fact_missing'))).toBe(true);
-    expect(result.verification.coverage.find((fact) => fact.kind === 'time')?.expressed).toBe(true);
+    expect(open?.rejected?.every((draft) => draft.issues.some((issue) => issue.kind === 'unlicensed_event'))).toBe(true);
+    expect(result.verification.coverage.find((fact) => fact.kind === 'time')?.mandatory).toBe(false);
   });
 
   it('accepts per-beat model prose and reports real streaming progress', async () => {
@@ -627,34 +627,34 @@ describe('generateCandidate model mode', () => {
     expect(result.text).not.toContain('跳下台阶');
   });
 
-  it('names the missing time when a model draft skips it, then accepts the rewrite', async () => {
-    const { packet } = await fixture();
-    let openCalls = 0;
-    const { engine, prompts } = scriptedEngine((prompt) => {
-      if (!factLine(prompt, '时间过去 2分钟')) return modelReplyForPrompt(prompt);
-      openCalls += 1;
-      return openCalls === 1 ? '值班室的门半开着。' : modelReplyForPrompt(prompt);
-    });
+  it('keeps a scene without a time sentence instead of retrying or inserting program time', async () => {
+    const { packet } = await productWorldFixture();
+    const text = '路明非沿着服务巷往里走，在墙上的演习规则牌前停下，仔细看过上面的字。诺诺还在巷口，路明非没有继续往交火区走。';
+    const { engine, prompts } = scriptedEngine(() => text);
     const result = await generateCandidate({
-      engine, committed: packet, inputText: '', policy: { mode: 'model' },
+      engine, committed: packet, inputText: '', policy: { mode: 'model', requireTime: true },
     });
     expect(result.accepted).toBe(true);
-    expect(prompts.some((prompt) => prompt.includes('必须写出已经过去的时间'))).toBe(true);
-    expect(result.text).toContain('两分钟');
+    expect(prompts).toHaveLength(1);
+    expect(prompts[0]).toContain('时间背景，不必写进正文');
+    expect(prompts[0]).not.toContain('正文必须写出这个时长');
+    expect(result.text).toBe(text);
+    expect(result.composers).toEqual(['model']);
+    expect(result.verification.coverage.find((fact) => fact.kind === 'time')).toMatchObject({ mandatory: false, expressed: false });
   });
 
   it('asks for a different opening frame when the draft repeats the last one', async () => {
     const { packet } = await fixture();
-    const repeated = '两分钟过去了。值班室的窗帘没有动。';
+    const repeated = '路明非从值班室走进后院。';
     const { engine, prompts } = scriptedEngine((prompt) => {
-      if (!factLine(prompt, '时间过去 2分钟')) return modelReplyForPrompt(prompt);
+      if (!factLine(prompt, '路明非从值班室到后院')) return modelReplyForPrompt(prompt);
       // Both drafts reuse the previous turn's opening; the second is accepted
       // because a repeated opening is a soft style issue, not a fact error.
       return repeated;
     });
     const result = await generateCandidate({
       engine, committed: packet, inputText: '',
-      priorText: '两分钟过去了。走廊里没有人。',
+      priorText: '路明非从值班室门口望出去，没有动。',
       policy: { mode: 'model' },
     });
     expect(result.accepted).toBe(true);
@@ -926,7 +926,7 @@ describe('verifyText', () => {
     expect(result.issues.some((issue) => issue.kind === 'rediscovery_claim')).toBe(true);
   });
 
-  it('rejects a text that never states the elapsed time', async () => {
+  it('does not report omitted elapsed time as a missing fact, even for an older caller', async () => {
     const { packet } = await fixture();
     const full = await generateCandidate({
       engine: scriptedEngine(() => '').engine,
@@ -940,7 +940,21 @@ describe('verifyText', () => {
       requireTime: true,
       minChars: 0,
     });
-    expect(result.issues.some((issue) => issue.kind === 'fact_missing' && issue.detail.includes('time'))).toBe(true);
+    expect(result.issues.some((issue) => issue.kind === 'fact_missing' && issue.detail.includes('time'))).toBe(false);
+    expect(result.coverage.find((fact) => fact.kind === 'time')?.mandatory).toBe(false);
+  });
+
+  it('still rejects a stated duration that contradicts the settled minute', async () => {
+    const { packet } = await productWorldFixture();
+    const full = await generateCandidate({
+      engine: scriptedEngine(() => '').engine, committed: packet,
+      policy: { mode: 'program' },
+    });
+    const result = verifyText('三分钟过去，路明非还在西侧服务巷，目光停在墙上的演习规则牌上。', {
+      scene: full.skeleton!, base: full.basePacket!, requireTime: false, minChars: 0,
+    });
+    expect(result.ok).toBe(false);
+    expect(result.issues.some((issue) => issue.kind === 'fact_time_wrong')).toBe(true);
   });
 });
 
