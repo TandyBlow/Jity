@@ -668,7 +668,11 @@ try {
             stops: record.submission.stops ?? null,
             calls: (record.submission.calls ?? []).map((call) => ({
               task: call.task, key: call.key, stage: call.stage ?? null, ms: call.ms ?? null,
-              promptChars: call.promptChars ?? null, fallback: Boolean(call.fallback), error: call.error ?? null,
+              promptChars: call.promptChars ?? null,
+              // Full prompt: NARRATION-RAW-OUTPUT needs the exact text sent to the
+              // model to prove no previous-turn prose is in it.
+              prompt: typeof call.prompt === 'string' ? call.prompt : (call.prompt ?? null),
+              fallback: Boolean(call.fallback), error: call.error ?? null,
               calls: call.calls ?? null, stages: call.stages ?? null, coverage: call.coverage ?? null,
               stageMs: call.stageMs ?? null,
               raw: typeof call.raw === 'string' ? call.raw.slice(0, 4000) : (call.raw ?? null),
