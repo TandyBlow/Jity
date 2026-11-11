@@ -31,15 +31,18 @@ export function MainCheckOverlay({ action, check, busy = false, submitError = ""
   const [error, setError] = useState("");
   const committing = useRef(false);
   const [isCommitting, setIsCommitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const visible = !submitted || !!submitError;
   const isBusy = busy || isCommitting;
   // A full-screen overlay that only a mouse can leave is a keyboard trap.
-  const overlayRef = useModalFocus<HTMLElement>(true, () => {
+  const overlayRef = useModalFocus<HTMLElement>(visible, () => {
     if (!busy && !committing.current) onCancel();
   });
 
   async function commitResult() {
     if (!result || busy || committing.current) return;
     committing.current = true;
+    setSubmitted(true);
     setIsCommitting(true);
     try {
       await onCommit(result);
@@ -79,6 +82,9 @@ export function MainCheckOverlay({ action, check, busy = false, submitError = ""
   const isFailure = result?.outcome === "failure" || result?.outcome === "fumble";
   // While the dice are in play the card stays wordless.
   const title = phase === "prepared" ? "确认行动判定" : phase === "revealed" ? "判定完成" : "";
+
+  // Keep the roll mounted for retries, but leave the dice screen immediately.
+  if (!visible) return null;
 
   return (
     <section

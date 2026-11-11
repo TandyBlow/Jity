@@ -27,7 +27,7 @@ async function openGame(page: Page, requiresCheck = true) {
   const checks: ActionRequest[] = [];
   const generations: ActionRequest[] = [];
   const errors: string[] = [];
-  const controls = { generationFailures: 0, preflightStatus: 200 };
+  const controls = { generationFailures: 0, preflightStatus: 200, generationGate: null as Promise<void> | null };
   page.on("pageerror", (error) => errors.push(error.message));
   await seedSession(page);
   await installApiMocks(page);
@@ -47,6 +47,7 @@ async function openGame(page: Page, requiresCheck = true) {
   });
   await page.route(`**/sessions/${SESSION_ID}/generate`, async (route) => {
     generations.push(route.request().postDataJSON() as ActionRequest);
+    if (controls.generationGate) await controls.generationGate;
     if (controls.generationFailures > 0) {
       controls.generationFailures -= 1;
       await route.fulfill({ status: 502, json: { detail: "临时生成失败，请重试。" } });
@@ -96,7 +97,9 @@ async function rollRealDice(page: Page, roll: number, degree: string) {
 test.describe("action checks reach the generation API", () => {
   for (const [roll, degree] of [[1, "大失败"], [11, "失败"], [12, "成功"], [20, "大成功"]] as const) {
     test(`real d20 roll ${roll} produces ${degree} and submits once`, async ({ page }) => {
-      const { generations, errors } = await openGame(page);
+      const { generations, errors, controls } = await openGame(page);
+      let releaseGeneration!: () => void;
+      controls.generationGate = new Promise<void>((resolve) => { releaseGeneration = resolve; });
       await page.locator(".option-button").nth(1).click();
       await rollRealDice(page, roll, degree);
       expect(generations).toHaveLength(0);
@@ -106,6 +109,12 @@ test.describe("action checks reach the generation API", () => {
         (button as HTMLButtonElement).click();
         (button as HTMLButtonElement).click();
       });
+      try {
+        await expect(page.getByRole("dialog")).toHaveCount(0);
+        await expect(page.locator(".narration")).not.toContainText(nextNarration);
+      } finally {
+        releaseGeneration();
+      }
       await expect(page.locator(".narration")).toContainText(nextNarration);
       await page.waitForLoadState("networkidle");
       expect(generations).toHaveLength(1);
