@@ -142,6 +142,7 @@ def main() -> int:
         rows.append(row)
         record = {
             "rowId": row_id,
+            "caseId": case.get("caseId"),
             "rowClass": row_class,
             "characterId": case["actor"],
             "goalsReferenced": case.get("goalsReferenced") or [],

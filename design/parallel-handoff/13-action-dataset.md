@@ -7,11 +7,11 @@ Status: **not complete**. 01's audit of the first 220 rows returned 132 pass / 8
 | Cause | Rows | Disposition |
 |---|---|---|
 | skip built by marking every task achieved, then calling it skip | 82 | retired; `cases/02-skip.jsonl` is history only, `build_rows.py` refuses rows whose actor has no pending goal |
-| actor placed inside the locked equipment cage (unreachable) | 3 (`0132/0149/0182`) | delete two, move one outside the cage in the rebuild |
-| identical X with two different labels | 2 pairs (`0106/0172`, `0125/0186`) | keep one per pair in the rebuild |
+| actor placed inside the locked equipment cage (unreachable) | 3 (`0132/0149/0182` = `d-043`, `d-061`, `e-012`) | deleted: there is no unlock transform, and moving the actor outside the cage removes the very item the label points at, so no honest repair exists |
+| identical X with two different labels | 2 pairs (`0106/0172`, `0125/0186`) | one row of each pair already deleted (`d-013`, `d-035`); the surviving rows are unique |
 | `刚才` written as an engine log line | 1 (`0011`, later corrected to pass by the user) | `刚才` is now restricted to perceivable scene lines |
 
-The other 122 constructed rows and 11 real rows pass; they stay and are rebuilt under the new X shape.
+The other 122 constructed rows and 11 real rows pass; 133 rows remain (11 real + 73 direct + 49 condition), all with a 01 pass verdict, and are rebuilt under the new X shape after the batch verdict.
 
 ## What changed in the code
 
