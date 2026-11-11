@@ -20,7 +20,7 @@ import { describe, expect, test } from 'vitest';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 import type { CompleteOptions, InferenceEngine } from '../../runtime/engine';
 import { contradictionTarget, generateCommittedNarration, stateRepairLines } from './index';
-import { selfPossessiveRepair, selfReferenceRepair, settledViolationsFromScene } from './licensed-sense';
+import { resultSemantics, selfPossessiveRepair, selfReferenceRepair, settledViolationsFromScene } from './licensed-sense';
 import type { NarrationPolicy } from './types';
 
 type Step = { kind: 'text'; text: string } | { kind: 'throw'; error: Error };
@@ -635,5 +635,53 @@ describe('product regressions: 926e model beats', () => {
   test('fog on the edge of chest-hung goggles is worn-goggles wording', async () => {
     const { kinds } = await issuesOf('路明非低头检查护目镜边缘的雾气。');
     expect(kinds).toContain('hard:self_contradiction');
+  });
+});
+
+describe('product regressions: result semantics accept paraphrase, reject flips', () => {
+  // NARRATION-BOUNDARY-20261111: a result is rewritten, not quoted. The bindings
+  // are fixed (actor, target, direction); wording is free.
+  const names = ['路明非', '诺诺', '登记簿'];
+
+  test('a dropped negation is rejected (known miss)', () => {
+    const check = resultSemantics('路明非比对完了登记簿，三处差额都对上了。',
+      '路明非比对了登记簿，登记簿上的三处差额对不上。', undefined, names);
+    expect(check.ok).toBe(false);
+    expect(check.detail).toMatch(/claims it was completed/u);
+  });
+
+  test('a synonym rewrite of a completed result passes', () => {
+    const check = resultSemantics('路明非站在原地，翻完登记簿，把差额记下。',
+      '路明非比对了登记簿，三处差额对上了。', undefined, names);
+    expect(check.ok).toBe(true);
+    expect(check.unverified).toBeFalsy();
+  });
+
+  test('a failure kept with a micro-action passes', () => {
+    const check = resultSemantics('诺诺拦在门口，路明非没能进去。',
+      '路明非走到门口，被诺诺拦住，进不去。', undefined, names);
+    expect(check.ok).toBe(true);
+  });
+
+  test('a reversed result is rejected', () => {
+    const check = resultSemantics('路明非走到门口，被诺诺拦住。',
+      '路明非比对了登记簿，三处差额对上了。', undefined, names);
+    expect(check.ok).toBe(false);
+  });
+
+  test('structured outcome decides the direction and the target must appear', () => {
+    const ok = resultSemantics('路明非把登记簿合上，没找到那处差额。', '对差额',
+      { actor: '路明非', target: '登记簿', outcome: 'not_achieved' }, names);
+    expect(ok.ok).toBe(true);
+    const missingTarget = resultSemantics('路明非没找到那处差额。', '对差额',
+      { actor: '路明非', target: '登记簿', outcome: 'not_achieved' }, names);
+    expect(missingTarget.ok).toBe(false);
+    expect(missingTarget.detail).toMatch(/登记簿/u);
+  });
+
+  test('undecidable free text is marked for review, not passed silently', () => {
+    const check = resultSemantics('路明非站着。', '场面安静。', undefined, names);
+    expect(check.ok).toBe(true);
+    expect(check.unverified).toBe(true);
   });
 });
