@@ -1648,6 +1648,11 @@ export function reviewNarration(args: {
           if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(sentence.text)) continue;
           // Taking them off the chest is the settled transfer, not wearing them.
           if (/(从|由)(胸前|身上|颈上|脖子上|怀里)/u.test(sentence.text)) continue;
+          // A sentence that puts them back where they are settled (hanging on
+          // the chest) is the same look, not a worn pair (09 35ad t3:
+          // «他摘下护目镜，镜带松着，挂在胸前。「).
+          if (/(挂在|垂在|吊在|别在)(胸前|颈上|脖子上|胸口)/u.test(sentence.text)
+            && !/(镜片后|戴着护目镜|戴在眼前|架在鼻梁)/u.test(sentence.text)) continue;
           // Taking them off the chest is a transfer; a bare 「摘下」 still
           // implies they were worn, which the settled look contradicts.
           if (/(?:从|把)(?:胸前|身上|颈上|脖子上|怀里)[^。]{0,6}(?:摘下|取下|摘掉)/u.test(sentence.text)) continue;
@@ -1659,10 +1664,47 @@ export function reviewNarration(args: {
         }
       }
     }
+    // A settled empty hand cannot hold a new object (09 35ad t1: the state says
+    // «右手还空着», the prose says «弗里嘉演习弹在手中发烫»).
+    {
+      for (const [personName, person] of Object.entries(projection.people)) {
+        const looks = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
+        if (!/(右手|左手|双手|两手|手)(?:还|仍|一直)?空着|手中(?:并)?没有|空着手/u.test(looks)) continue;
+        const idx = sentences.indexOf(sentence);
+        const binds = sentence.text.includes(personName)
+          || pronounPerson(sentence.text, idx) === personName
+          // A sentence naming nobody is about the viewpoint person; a sentence
+          // naming someone else is not.
+          || (projection.viewpoint === personName
+            && ![...new Set([...Object.keys(projection.people), ...names])]
+              .some((other) => other !== personName && sentence.text.includes(other)));
+        if (!binds) continue;
+        if (/(未|没|不|没有|空)/u.test(sentence.text.replace(/空着/u, ''))) {
+          if (!/(手中|手里|掌心|掌中|手上)/u.test(sentence.text)) continue;
+        }
+        const inHand = /[^，。；]{2,10}(?:在|攥在|握在|捏在|托在)(?:手|掌)(?:中|里|心)/u
+          .test(sentence.text)
+          || /(?:手中|手里|掌心|掌中)[^，。；]{0,4}(?:攥着|握着|捏着|拿着|提着|托着|把玩)/u.test(sentence.text);
+        if (!inHand) continue;
+        // «手里什么也没有» / «手中没有枪» is the empty hand again.
+        if (/(手里|手中|掌心)(?:什么也|空空|只|仅仅)?(?:没有|没|空)/u.test(sentence.text)) continue;
+        findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
+          `${personName}: the settled look has an empty hand, but the prose puts an object in it`,
+          [looks.slice(0, 40)], []));
+        break;
+      }
+    }
     // A personal accessory in a sentence that names only other people belongs
     // to the wrong body.
     {
       const named = nameHits(narration, names, Object.keys(projection.people)).map((hit) => hit.name);
+      // A sentence that names nobody but puts an accessory on a body part is
+      // about the viewpoint person (09 35ad t1: «…红色识别带缠在左臂。» in the
+      // paragraph that only named 路明非).
+      if (!named.length && projection.viewpoint
+        && /(缠在|戴在|系在|别在|套在|挂在)[^。；]{0,4}(左臂|右臂|手臂|手腕|脖子|颈上|腰间|胸前|头上|发上)/u.test(sentence.text)) {
+        named.push(projection.viewpoint);
+      }
       // 「他手中的护目镜」 names nobody, but the pronoun still mentions the owner.
       {
         const bound = pronounPerson(narration, sentences.indexOf(sentence));
@@ -1688,19 +1730,26 @@ export function reviewNarration(args: {
         const boardGoverns = (phrase: string): boolean => {
           const index = at(phrase);
           if (index < 0) return false;
-          return /(牌面|写着|写明|规定|必须|禁止|要求)[^。]{0,24}$/u.test(narration.slice(Math.max(0, index - 24), index));
+          const before = narration.slice(Math.max(0, index - 24), index);
+          // The exemption is per sentence: a board mentioned in the previous
+          // sentence does not govern an accessory two sentences later
+          // (09 35ad t1: «…牌面。弗里嘉演习弹在手中发烫，红色识别带缠在左臂。«).
+          if (/[。！？]/u.test(before)) return false;
+          return /(牌面|写着|写明|规定|必须|禁止|要求)/u.test(before);
         };
+        // The first phrase whose sole owner is absent from the sentence is the
+        // misattribution; a phrase owned by someone the sentence does name
+        // («红蓝识别带» denied to 路明非) must not mask a later one (09 35ad t1).
         const hit = [...phrases.entries()].find(([phrase, owners]) =>
-          owners.size === 1 && narration.includes(phrase) && !boardGoverns(phrase));
+          owners.size === 1 && narration.includes(phrase) && !boardGoverns(phrase)
+          && !named.includes([...owners][0]));
 
         if (hit) {
           const [phrase, owners] = hit;
           const owner = [...owners][0];
-          if (!named.includes(owner)) {
-            findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
-              `${phrase} belongs to ${owner}, but the sentence names ${named.join('/')} only`,
-              [phrase], [`accessory:${owner}:${phrase}`]));
-          }
+          findings.push(finding(ctx, 'fact.item_misattribution', sentence.text,
+            `${phrase} belongs to ${owner}, but the sentence names ${named.join('/')} only`,
+            [phrase], [`accessory:${owner}:${phrase}`]));
         }
       }
     }

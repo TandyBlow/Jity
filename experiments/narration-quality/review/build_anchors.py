@@ -1753,6 +1753,41 @@ anchors.append({
                "notes": "walk, time, board reading and Nono's settled look; the board quote is a rule, not worn goggles."},
 })
 
+
+# 35ad t1: an accepted (model) 59-char turn that puts blank ammunition in a hand
+# the settled look calls empty, and hangs Nono's red band on the viewpoint's arm.
+run_35ad = json.load(io.open(ROOT + "/results/product/evidence/09-product-03turn-35ad.json", encoding="utf-8"))
+t_35ad_1 = run_35ad["turns"][0]
+t_35ad_3 = run_35ad["turns"][2]
+anchors.append({
+    "id": "neg/route/35ad-ammo-in-empty-hand-and-band",
+    "source": "09 product 3-turn 2026-11-11T0419-e25a (head 35ad30e3): model 59 chars turn 1",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_35ad_1["text"],
+    "options": {"minChars": 1, "action": t_35ad_1["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.state_contradiction", "fact.item_misattribution"], "style": [],
+               "review": ["review.tone"],
+               "notes": "the settled look says «右手还空着» and denies a band; the prose puts hot blank rounds in the hand and Nono's band on his arm."},
+})
+anchors.append({
+    "id": "pos/route/35ad-goggles-off-to-chest",
+    "source": "09 product 3-turn 2026-11-11T0419-e25a (head 35ad30e3): model 110 chars turn 3",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_35ad_3["text"],
+    "options": {"minChars": 1, "action": t_35ad_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": [], "style": [],
+               "review": ["review.tone", "review.micro_action"],
+               "notes": "«他摘下护目镜…挂在胸前» restores the settled chest look and must not be a contradiction; the route list is list-like prose, not a fact error."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
