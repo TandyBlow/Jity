@@ -702,6 +702,7 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
     return { changes: {}, detail: { scannedEntityIds: [], appearanceScope: scope, skipped: 'no_affected_appearance' }, fallback: false, calls: [] };
   }
   const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance', scanned);
+  const lenientDrops: { entityId: string; op: string; droppedText: string }[] = [];
   try {
     const answer = await callJson(ctx.engine, prompt, {
       maxTokens: stageTokens(ctx, 420),
@@ -709,13 +710,14 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned)),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned), [], [], []),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned));
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned), [], [], lenientDrops);
     projectStage(ctx.state, 'appearance', changes);
     return {
       changes,
-      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope },
+      detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope,
+        lenientDrops },
       fallback: false,
       calls: answer.calls,
     };
@@ -982,6 +984,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
   ]);
   const scanned = characters.filter((id) => affected.has(id));
   const echoFacts = resultFacts(ctx.results).map((fact) => fact.text);
+  const personalityLenient: { entityId: string; op: string; droppedText: string }[] = [];
   const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0, scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
@@ -990,10 +993,10 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: PERSONALITY_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, []),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, [], []),
     });
     const personalityRejections: { entityId: string; reason: string }[] = [];
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, personalityRejections);
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, personalityRejections, personalityLenient);
     return {
       changes,
       detail: {
@@ -1004,6 +1007,7 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
         triggerBasis: ctx.recoveredAchieved.size > 0 ? 'recovered_achieved_tasks' : 'new_tasks',
         changedCharacterIds: Object.keys(changes).sort(),
         rejectedPersonality: personalityRejections.sort((left, right) => left.entityId.localeCompare(right.entityId)),
+        lenientDrops: personalityLenient,
         personalityScope: { mode: 'affected_projection', affectedCharacterIds: scanned, unaffectedCharacterIds: characters.filter((id) => !affected.has(id)) },
       },
       fallback: false,
@@ -1301,6 +1305,7 @@ function readDescriptionOperations(
    * trait. */
   echoFacts: string[] = [],
   rejections?: { entityId: string; reason: string }[],
+  lenient?: { entityId: string; op: string; droppedText: string }[],
 ): Record<Id, Partial<EntityDelta>> {
   const payload = asRecord(value);
   let rows = payload.operations;
@@ -1354,11 +1359,17 @@ function readDescriptionOperations(
       recordIds = recordIds.filter((id) => known.has(unwrapIdBrackets(id)));
     }
     if (!recordIds) throw new Error(`recordIds must be an array for ${entityId}`);
-    const text = raw.text == null ? null : asString(raw.text);
-    if (op === 'keep' && text != null && text !== '') throw new Error(`keep cannot add text for ${entityId}`);
+    let text = raw.text == null ? null : asString(raw.text);
+    // A 0.6B often writes the current text next to `keep` (or next to `remove`).
+    // The op is unambiguous and the text is redundant there; failing the whole
+    // point 88 s in (09's 'keep cannot add text for spare_mag1') is not worth it.
+    // The dropped text stays in evidence, never in state.
+    if ((op === 'keep' || op === 'remove') && text != null && text !== '') {
+      lenient?.push({ entityId, op, droppedText: text });
+      text = null;
+    }
     if (op === 'add' && !text) throw new Error(`add requires text for ${entityId}`);
     if (op === 'add' && recordIds.length) throw new Error(`add cannot supersede records for ${entityId}`);
-    if (op === 'remove' && text) throw new Error(`remove cannot add text for ${entityId}`);
     if (op === 'remove' && !recordIds.length) throw new Error(`remove requires record ids for ${entityId}`);
     if (op === 'replace' && !text) throw new Error(`replace requires text for ${entityId}`);
     if (op === 'replace' && !recordIds.length) throw new Error(`replace requires record ids for ${entityId}`);

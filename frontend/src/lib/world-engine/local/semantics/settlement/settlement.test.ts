@@ -1195,6 +1195,25 @@ describe('six-stage updates', () => {
       .toEqual([{ entityId: 'a', reason: 'personality_names_entity' }]);
   });
 
+  it('drops the redundant text on a keep/remove row instead of failing the point', async () => {
+    // 09's open request: "keep cannot add text for spare_mag1" refused a turn
+    // 88.5 s in. The op is unambiguous; the text is redundant and never applied.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [
+        { entityId: 'tool', op: 'keep', recordIds: [], text: '表面沾了灰' },
+        { entityId: 'tool', op: 'add', recordIds: [], text: '把手缠了布条' },
+      ] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#appearance', updatesInput(world(), 'appearance'));
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.tool?.appearanceChanges?.map((change) => change.text)).toEqual(['把手缠了布条']);
+    const detail = outcome.evidence.detail as {
+      stageDetail?: { lenientDrops?: { entityId: string; op: string; droppedText: string }[] };
+    };
+    expect(detail.stageDetail?.lenientDrops ?? []).toEqual([{ entityId: 'tool', op: 'keep', droppedText: '表面沾了灰' }]);
+  });
+
   it('does not re-achieve an already achieved task', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),
