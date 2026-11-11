@@ -141,29 +141,32 @@ export function buildBeatPrompt(
     scene.viewpoint.name,
     ...scene.present.map((person) => person.name),
   ]);
-  const lines = [
-    '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
+  // The settled record goes last, immediately before «只输出正文». The model kept
+  // writing around it: turn 2 of 02-run-e699 asked a question in the prompt's own
+  // words and answered nothing, while the record («诺诺摇头说不知道») sat at the
+  // top above the materials and nine requirements. Recency is the lever a small
+  // model actually follows; the instruction now points at the block below.
+  const factBlock = [
     `本段必须写出的事实：${facts.length ? '' : '（本段只做场景过渡，不新增事实）'}`,
     ...(facts.length ? [] : ['本段只写视角人物此刻的一个动作或一处注意，一到两句就够，不要把场景材料清点一遍。']),
     ...facts.map((fact) => `- ${fact}`),
     ...(scene.time && !beat.factIds.some((id) => scene.facts.find((fact) => fact.id === id)?.kind === 'time')
       ? [factDirective({ id: 'time-context', kind: 'time', mandatory: false, visibility: 'scene', advance: scene.time }, options.sanityStyle)]
       : []),
-    // The declared action comes after the facts. With the one-beat plan a single
-    // call carries the time fact and this instruction; when the instruction was
-    // printed first (926e/5810), the model wrote the action and dropped the time.
-    // It is still an instruction, not an outcome: the attempt may be written, a
-    // settled success may not.
-    ...(beat.index === 0 && scene.previousAction && !facts.some((fact) => {
-      // The player's own sentence comes back as the settled record on a plain
-      // action («我沿着服务巷往里走…»). Printing it twice is the duplication the
-      // prompt cleanup is for; the fact line already carries it.
-      const said = String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name).replace(/[。！？]+$/u, '');
-      return fact.includes(said);
-    })
-      ? [`玩家这一回合的指令（用你自己的话写，不要照抄这句）：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
-         '正文要写出他做了或试着做了这件事；结果只按上面已结算的事实写，没有结算成功的事不要写成成功。']
-      : []),
+  ];
+  const instructionBlock = beat.index === 0 && scene.previousAction && !facts.some((fact) => {
+    // The player's own sentence comes back as the settled record on a plain
+    // action («我沿着服务巷往里走…»). Printing it twice is the duplication the
+    // prompt cleanup is for; the fact line at the end already carries it.
+    const said = String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name).replace(/[。！？]+$/u, '');
+    return fact.includes(said);
+  })
+    ? [`玩家这一回合的指令（用你自己的话写，不要照抄这句）：${String(scene.previousAction).replace(/^我(?!们)/u, scene.viewpoint.name)}`,
+       '正文要写出他做了或试着做了这件事；结果只按最后给出的事实写，没有结算成功的事不要写成成功。']
+    : [];
+  const lines = [
+    '你是中文小说叙事者。只写下面这一段，不要解释，不要写标题。',
+    ...instructionBlock,
     '',
     '场景材料（只可使用这些）：',
     `- 视角人物：${scene.viewpoint.name}（这一段写的就是他本人；不要把他写成另一个人，也不要用他的名字指别人）`,
@@ -174,7 +177,7 @@ export function buildBeatPrompt(
     '',
     '要求：',
     `- 只写 ${lengthHint(facts.length).sentences} 句，共约 ${lengthHint(facts.length).chars} 字，句末用句号。`,
-    '- 只表达上面的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
+    '- 只表达最后给出的事实，不要新增人物、地点、物品、天气、家具、往事、线索或承诺。',
     '- 可见物品在场景里，不是他手里的东西；只有结算或材料写明他拿着，才写成他拿着。',
     '- 不要把「玩家这一回合的指令」写成已经办成的结果；结算里没有的结果就不要写。',
     '- 不要写“完成了一项任务”“个性发生了变化”“新增一条待办”这类状态说明，直接写发生了什么。',
@@ -185,6 +188,8 @@ export function buildBeatPrompt(
     '- 不要重复本段已经写过的句子；不要写解释性的总结。',
     '- 把它写成一幕，不是写成清单：只挑一处此刻最显眼的细节，用视角人物的注意力带出来；不要把「可见物品」「已登记细节」逐条抄进正文。',
     options.instruction ? `- ${options.instruction}` : '',
+    '',
+    ...factBlock,
     '',
     '只输出正文：',
   ].filter((line) => line !== '');
