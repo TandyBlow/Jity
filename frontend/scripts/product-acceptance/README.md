@@ -40,6 +40,8 @@ node scripts/product-acceptance/accept-world-local.mjs \
 node scripts/product-acceptance/accept-world-local.mjs   --base http://127.0.0.1:3241   --turns ../../../results/product/evidence/09-turns-01-legal.json   --query 'narrationModel=qwen3-1.7b&narrationCandidate=constrained&narrationMode=beats'   --expect-page-sha <served-page-sha> --fresh   --out ../../../results/product/evidence/09-<name>.json
 ```
 
+`--expect-page-sha` 同时接受 LF 归一化后的 sha（06 发布的就是这个）与磁盘原始字节 sha，避免 CRLF 检出被误判成另一个 build。
+
 `--query` 让页面按该候选/模式运行，`__worldArm` 会原样记入证据；`--expect-page-sha` 在 06 中途重建时直接中止（记 INVALID，不算产品结果）；`--fresh` 清空 IndexedDB/Cache/OPFS。驱动在启动浏览器前自动执行 `resource_lease.py acquire`（holderPid=驱动进程），`finally` 清理浏览器后按 token 释放；锁被别人占用时立即退出，不加载模型。
 
 `__worldCandidate` 的每条记录（grade/segments/composers/detail.beats/issues）随回合保存；beats 模式下 `composers` 出现 `program+model-failed` 表示该 beat 的模型调用失败并退回程序成文，`detail.beats` 里有具体失败原因。
