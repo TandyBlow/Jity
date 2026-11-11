@@ -374,8 +374,10 @@ describe('common-group results', () => {
       members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
       workingState: world(),
     } as unknown as Json);
-    expect(taskOutcome.value).toBeNull();
-    expect(taskOutcome.error).toContain('no action result left');
+    // Repaired twice, then accepted with the empty fact dropped and recorded:
+    // the task claim never becomes a result, and the point still settles.
+    expect(taskOutcome.value).not.toBeNull();
+    expect((taskOutcome.evidence.detail as { droppedFacts: { reason: string }[] }).droppedFacts[0].reason).toBe('no_result_text');
   });
 
   it('drops the tail of a mechanics clause so a judgement explanation cannot become a fact', async () => {
@@ -523,17 +525,22 @@ describe('common-group results', () => {
     const acceptedDetail = accepted.evidence.detail as { implicitJudgments: string[] };
     expect(acceptedDetail.implicitJudgments).toEqual(['a']);
 
-    // The hard requirement is the member's result sentence: with no fact for a,
-    // the point aborts and the repair names the missing member and the action.
+    // With no fact for a, the repair names the missing member and the action;
+    // when the repair repeats, the point settles with the facts that exist and
+    // records the gap instead of ending the turn with a stop.
     const noFact = JSON.stringify({
       judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
       facts: [{ text: '乙伸手接住工具。', memberIds: ['b'] }],
     });
     const missing = new ScriptedEngine([noFact, noFact]);
-    const failed = await createSettlementHandlers({ engine: missing }).results('g1', resultsInput());
-    expect(failed.value).toBeNull();
-    expect(failed.error).toContain('no fact attributed to a');
-    expect(failed.error).toContain('甲把工具推向乙');
+    const settled = await createSettlementHandlers({ engine: missing }).results('g1', resultsInput());
+    expect(settled.value).not.toBeNull();
+    expect(settled.value!.b).toContain('乙伸手接住工具');
+    const settledDetail = settled.evidence.detail as { missingFactMembers: string[]; droppedFacts?: unknown };
+    expect(settledDetail.missingFactMembers).toEqual(['a']);
+    // The first two attempts still asked for the missing member by name.
+    expect(settled.evidence.calls[0]?.error).toContain('no fact attributed to a');
+    expect(settled.evidence.calls[0]?.error).toContain('甲把工具推向乙');
   });
 
   it('retries a length-truncated results answer with a shorter-answer instruction and the member list', async () => {

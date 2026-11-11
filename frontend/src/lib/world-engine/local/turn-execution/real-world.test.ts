@@ -264,7 +264,7 @@ describe('21c3 trace replay (CPU)', () => {
     expect(projection.unaffectedAppearance.map((row) => row.id)).not.toContain('red_band_nono');
   });
 
-  it('aborts the d101 completion fact even when the second repair uses an ASCII period', async () => {
+  it('drops the d101 completion fact after the last repair instead of killing the turn', async () => {
     const { state } = loadWorld();
     const answer = (period: string): string => JSON.stringify({
       judgments: [
@@ -280,11 +280,13 @@ describe('21c3 trace replay (CPU)', () => {
       members: [{ memberId: 'lu', actionText: '路明非看规则牌。', rollRefs: [] }],
       workingState: state,
     } as unknown as Json);
-    expect(outcome.value).toBeNull();
-    expect(outcome.error).toContain('fact only asserted completion');
-    expect(outcome.error).toContain('路明非看规则牌');
-    // Three attempts: a question group has to produce two complete results.
+    // Two repairs ask for the real result; the third answer is accepted with the
+    // empty fact dropped and recorded, so the point still settles.
     expect(outcome.evidence.calls).toHaveLength(3);
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: unknown[]; droppedFacts: { reason: string }[] };
+    expect(detail.facts).toHaveLength(0);
+    expect(detail.droppedFacts[0].reason).toBe('no_result_text');
   });
 
   it('rejects the aa30 question-group answers for their content, not for a missing judgement row', async () => {
@@ -311,10 +313,15 @@ describe('21c3 trace replay (CPU)', () => {
       ],
       workingState: state,
     } as unknown as Json);
-    expect(outcome.value).toBeNull();
+    // Attempt 1 asks for nono's fact; attempt 2's lu fact is a mechanics tail and
+    // is rejected; attempt 3 (the same text) is accepted with it dropped, so the
+    // point settles instead of killing the turn.
     expect(outcome.evidence.calls[0]?.error).toContain('no fact attributed to nono');
     expect(outcome.evidence.calls[1]?.error).toContain('no action result left');
-    expect(outcome.error).not.toContain('missing judgment');
+    expect(outcome.error ?? null).toBeNull();
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { droppedFacts: { reason: string }[] };
+    expect(detail.droppedFacts[0].reason).toBe('no_result_text');
   });
 
   it('settles the 73f3 reaction group with no invented fact when the model only writes a mechanics line', async () => {
@@ -531,7 +538,7 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.sanitizedFacts[0].removed).toEqual(expect.arrayContaining(['骰点']));
   });
 
-  it('aborts a fact that is only an invented dice action', async () => {
+  it('drops a fact that is only an invented dice action after the last repair', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
       judgments: [{ memberId: 'lu', label: 'achieved', reason: '路明非和骰子互动。', effects: [] }],
@@ -543,8 +550,10 @@ describe('21c3 trace replay (CPU)', () => {
       members: [{ memberId: 'lu', actionText: '路明非看规则牌。', rollRefs: [] }],
       workingState: state,
     } as unknown as Json);
-    expect(outcome.value).toBeNull();
-    expect(outcome.error).toContain('no action result left');
+    // 抓起骰子 is mechanics vocabulary; the repair asks for a visible result and
+    // the last attempt is accepted with the fact dropped.
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.evidence.detail as { droppedFacts: { reason: string }[] }).droppedFacts[0].reason).toBe('no_result_text');
   });
 
   it('sanitizes the b7cd result fact so a pending task cannot read as finished', async () => {
@@ -601,7 +610,7 @@ describe('21c3 trace replay (CPU)', () => {
     expect(detail.sanitizedFacts[0]?.removed).toEqual(expect.arrayContaining(['任务完成', '成功执行行动']));
   });
 
-  it('rejects the 95dc results fact that only claims a choice/task completion', async () => {
+  it('repairs then drops the 95dc fact that only claims a choice/task completion', async () => {
     const { state } = loadWorld();
     const raw = JSON.stringify({
       judgments: [{ memberId: 'lu', label: 'achieved', reason: '路明非完成了任务。', effects: [] }],
@@ -613,8 +622,12 @@ describe('21c3 trace replay (CPU)', () => {
       members: [{ memberId: 'lu', actionText: '我沿着服务巷往里走，先看清墙上的演习规则牌。', rollRefs: [] }],
       workingState: state,
     } as unknown as Json);
-    expect(outcome.value).toBeNull();
-    expect(outcome.error).toContain('fact only asserted completion');
+    // The old product committed this as the player's result; now the point
+    // settles without it and the drop is visible in evidence.
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { droppedFacts: { reason: string; original: string }[] };
+    expect(detail.droppedFacts[0].reason).toBe('no_result_text');
+    expect(detail.droppedFacts[0].original).toContain('参赛选择');
   });
 
   it('strips 95dc dice mechanics into a natural result and still strips task claims', async () => {
