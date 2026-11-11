@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh">
+<head><meta charset="utf-8"><title>action classifier probe</title></head>
+<body>
+<div id="status">loading…</div>
+<pre id="out"></pre>
+<script type="module">
+  // The page owns only the runtime: tokenizer, session, batched inference.
+  // Decoding of the head outputs into a Y happens in the driver from the raw
+  // logits, so the same numbers can be re-scored without rerunning the model.
+  const status = (text) => { document.getElementById('status').textContent = text; };
+
+  const vocabFromText = (text) => {
+    const vocab = new Map();
+    text.split('\n').forEach((line, index) => vocab.set(line.replace(/\r$/u, ''), index));
+    return vocab;
+  };
+
+  // BertTokenizer-compatible enough for the frozen inputs: per-character CJK,
+  // lowercase ASCII, longest-match WordPiece for ASCII runs, [CLS]/[SEP]/[UNK].
+  class BertTokenizer {
+    constructor(vocab, { lowercase = true, maxLen = 192 } = {}) {
+      this.vocab = vocab; this.lowercase = lowercase; this.maxLen = maxLen;
+      this.cls = vocab.get('[CLS]'); this.sep = vocab.get('[SEP]'); this.unk = vocab.get('[UNK]');
+      this.pad = vocab.get('[PAD]') ?? 0;
+    }
+    ids(text) {
+      const normalized = this.lowercase ? String(text).toLowerCase() : String(text);
+      const pieces = [];
+      for (const char of normalized) {
+        if (/\s/u.test(char)) { pieces.push(char); continue; }
+        pieces.push(char);
+      }
+      const out = [];
+      for (const piece of pieces) {
+        if (this.vocab.has(piece)) { out.push(this.vocab.get(piece)); continue; }
+        const bytes = [...piece];
+        let start = 0; let ok = true;
+        while (start < bytes.length) {
+          let end = bytes.length; let found = null;
+          while (start < end) {
+            const candidate = (start === 0 ? '' : '##') + bytes.slice(start, end).join('');
+            if (this.vocab.has(candidate)) { found = candidate; break; }
+            end -= 1;
+          }
+          if (!found) { ok = false; break; }
+          out.push(this.vocab.get(found));
+          start = end;
+        }
+        if (!ok) out.push(this.unk);
+      }
+      const trimmed = out.slice(0, Math.max(1, this.maxLen - 2));
+      return [this.cls, ...trimmed, this.sep];
+    }
+  }
+
+  window.__setup = async ({ modelUrl, vocabUrl, lowercase, maxLen, preferWebGpu }) => {
+    const ort = await import('/ort/ort.wasm.bundle.min.mjs').catch(() => import('/ort/ort.wasm.min.mjs'));
+    ort.env.wasm.wasmPaths = '/ort/';
+    ort.env.wasm.numThreads = Math.min(4, navigator.hardwareConcurrency || 4);
+    const vocabText = await (await fetch(vocabUrl)).text();
+    const tokenizer = new BertTokenizer(vocabFromText(vocabText), { lowercase, maxLen });
+    const attempts = [];
+    let session = null;
+    const providers = preferWebGpu ? ['webgpu', 'wasm'] : ['wasm'];
+    const started = performance.now();
+    try {
+      session = await ort.InferenceSession.create(modelUrl, { executionProviders: providers, graphOptimizationLevel: 'all' });
+      attempts.push({ providers, ok: true });
+    } catch (error) {
+      attempts.push({ providers, ok: false, error: String(error).slice(0, 300) });
+      session = await ort.InferenceSession.create(modelUrl, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
+      attempts.push({ providers: ['wasm'], ok: true });
+    }
+    const loadMs = Math.round(performance.now() - started);
+    const inputNames = session.inputNames;
+    const outputNames = session.outputNames;
+    window.__session = { ort, session, tokenizer, inputNames, outputNames };
+    return { loadMs, inputNames, outputNames, attempts, threads: ort.env.wasm.numThreads,
+      adapter: Boolean(navigator.gpu) };
+  };
+
+  // batch: [{ rowId, text }]. Encodes every row, pads to the batch maximum, runs
+  // one session call, returns raw output tensors as plain arrays.
+  window.__classify = async (batch, { padTo = null } = {}) => {
+    const { ort, session, tokenizer, inputNames, outputNames } = window.__session;
+    const encoded = batch.map((row) => ({ rowId: row.rowId, ids: tokenizer.ids(row.text) }));
+    const length = Math.max(...encoded.map((row) => row.ids.length), padTo ?? 0);
+    const batchSize = encoded.length;
+    const ids = new BigInt64Array(batchSize * length);
+    const mask = new BigInt64Array(batchSize * length);
+    const types = new BigInt64Array(batchSize * length);
+    encoded.forEach((row, index) => {
+      for (let i = 0; i < length; i += 1) {
+        ids[index * length + i] = BigInt(row.ids[i] ?? tokenizer.pad);
+        mask[index * length + i] = BigInt(i < row.ids.length ? 1 : 0);
+        types[index * length + i] = 0n;
+      }
+    });
+    const feeds = {};
+    const has = (name) => inputNames.includes(name);
+    if (has('input_ids')) feeds.input_ids = new ort.Tensor('int64', ids, [batchSize, length]);
+    else feeds[inputNames[0]] = new ort.Tensor('int64', ids, [batchSize, length]);
+    if (has('attention_mask')) feeds.attention_mask = new ort.Tensor('int64', mask, [batchSize, length]);
+    if (has('token_type_ids')) feeds.token_type_ids = new ort.Tensor('int64', types, [batchSize, length]);
+    const started = performance.now();
+    const outputs = await session.run(feeds);
+    const wallMs = Math.round(performance.now() - started);
+    const tensors = {};
+    for (const name of outputNames) {
+      const tensor = outputs[name];
+      tensors[name] = { dims: tensor.dims, data: Array.from(tensor.data) };
+    }
+    return {
+      wallMs,
+      length,
+      batchSize,
+      inputIds: encoded.map((row) => row.ids),
+      tensors,
+    };
+  };
+
+  // Tokenizer parity hook: the driver compares these ids with the ids 04's
+  // Python BertTokenizer produced for the same text before any batch runs.
+  window.__tokenize = (text) => window.__session.tokenizer.ids(text);
+
+  window.__ready = true;
+  status('ready');
+</script>
+</body>
+</html>
