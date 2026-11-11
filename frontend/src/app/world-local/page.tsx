@@ -731,7 +731,7 @@ export default function WorldLocalPage() {
                   : source === 'mixed'
                     ? { ...entry, points, text: joined, mixedMs: entry.mixedMs ?? atMs, ms: null, note: entry.note ?? '这一段里混有程序按已结算事实写出的句子' }
                     : source === 'draft'
-                    ? { ...entry, points, text: joined, note: entry.note ?? '这段没有通过事实自检，只是按已结算事实列出的草稿，不是成文正文。' }
+                    ? { ...entry, points, text: joined, note: entry.note ?? '这是模型写出的草稿，没有通过事实/视角校对；标出来供你判断，不算合格正文，也不会被当成已确认前文。' }
                     : { ...entry, points, text: joined };
             }));
             setPhase('ready');

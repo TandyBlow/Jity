@@ -598,6 +598,35 @@ export class LocalGameModel implements WorldModelPort {
     }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
     if (result.kind !== 'adopted') {
       console.info('[narration] candidate fallback', result.reason);
+      // A non-empty model scene rejected by its own gate is kept as a labelled
+      // draft: replacing written prose with program text loses the model's
+      // work. The page marks it 未通过校对 and it never fills accepted prose.
+      const draft = result.kind === 'fallback' ? result.draft : null;
+      if (draft && draft.text.trim()) {
+        const segments = draft.segments
+          ? draft.segments.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }))
+          : undefined;
+        this.options.onTask?.('narration', pointId, {
+          ms: draft.timings.totalMs,
+          fallback: true,
+          error: `未通过校对：${result.reason}`,
+          raw: draft.text,
+          promptChars: draft.text.length,
+        });
+        this.options.onNarrationEvidence?.({
+          pointId, candidateId: draft.candidateId, route: draft.route ?? undefined, grade: 'candidate_unverified',
+          strategyVersion: draft.strategyVersion, segments, beatCounts: draft.beatCounts,
+          issues: draft.issues, timings: draft.timings, detail: draft.detail ?? null, rejectedBy: 'candidate_gate',
+        });
+        this.options.onNarrationComplete?.({
+          pointId, raw: draft.text,
+          completion: { raw: draft.text, finishReason: 'stop', firstTokenMs: draft.timings.firstTokenMs, wallMs: draft.timings.totalMs },
+          fallback: true, source: 'draft', segments,
+        });
+        // A draft is not confirmed prose: it must not become the prior text a
+        // later turn is asked to continue from.
+        return { value: draft.text as unknown as Json, raw: draft.text, ms: draft.timings.totalMs, fallback: true };
+      }
       return null;
     }
     // Independent protection against invented current events. The candidate's

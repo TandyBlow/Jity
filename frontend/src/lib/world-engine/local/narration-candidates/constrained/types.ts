@@ -216,7 +216,7 @@ export interface BeatEvidence {
   issues: CandidateIssue[];
   /** Drafts that failed the beat gate before the accepted one. Kept so a mixed
    * turn shows what the model actually produced, not only the accepted text. */
-  rejected?: { attempt: number; text: string; issues: CandidateIssue[] }[];
+  rejected?: { attempt: number; text: string; raw?: string; promptChars?: number; issues: CandidateIssue[] }[];
 }
 
 export interface CandidateTimings {

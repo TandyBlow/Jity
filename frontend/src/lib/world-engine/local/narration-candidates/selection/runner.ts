@@ -210,12 +210,30 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
         }
         problems.push(`${result.status}:${candidate.id}|${summarize(result)}`);
       }
+      // Preserve the last non-empty rejected scene: the product must not replace
+      // a written model paragraph with program text just because its gate
+      // refused it. It is shown as an unverified draft, never as accepted prose.
+      const draftText = last?.text?.trim() ? last.text : null;
       return {
         kind: 'fallback',
         candidateId: plan[0]?.id ?? null,
         grade: 'program_fallback',
         reason: problems.join(';') || 'candidate_rejected',
         notice: null,
+        ...(draftText && last ? {
+          draft: {
+            text: draftText,
+            candidateId: last.candidateId,
+            route: last.route,
+            grade: last.grade,
+            issues: last.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity })),
+            timings: last.timings,
+            strategyVersion: last.strategyVersion,
+            segments: resultSegments(last),
+            beatCounts: resultBeatCounts(last),
+            detail: last.detail ?? null,
+          },
+        } : {}),
         detail: last ? {
           candidateId: last.candidateId,
           status: last.status,

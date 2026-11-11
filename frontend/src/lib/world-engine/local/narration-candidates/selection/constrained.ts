@@ -169,10 +169,17 @@ export const CONSTRAINED_CANDIDATE: NarrationCandidate = {
           ms: Math.round(beat.ms),
           text: beat.text,
           issues: beat.issues.map((issue) => `${issue.kind}/${issue.severity}: ${issue.detail ?? ''}${issue.sentence ? ` | ${issue.sentence}` : ''}`),
-          // Rejected model drafts: the final text is the program fallback, so
-          // without these the evidence cannot say why the model beat failed.
-          rejected: (beat.rejected ?? []).map((attempt: { attempt: number; text: string; issues: { kind: string; severity: string }[] }) =>
-            `#${attempt.attempt} ${attempt.text.slice(0, 300)} | ${attempt.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind).join('+')}`),
+          // Rejected model drafts, in full: the final text is the program
+          // fallback, so this is the only place the model's own words survive.
+          // Raw is kept too (pre-sanitize), with its prompt size.
+          rejected: (beat.rejected ?? []).map((attempt: { attempt: number; text: string; raw?: string; promptChars?: number; issues: { kind: string; severity: string }[] }) => ({
+            attempt: attempt.attempt,
+            text: attempt.text,
+            raw: attempt.raw ?? attempt.text,
+            promptChars: attempt.promptChars ?? null,
+            hard: attempt.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind),
+            details: attempt.issues.map((issue) => `${issue.kind}/${issue.severity}: ${(issue as { detail?: string }).detail ?? ''}`),
+          })),
         })),
       },
     };

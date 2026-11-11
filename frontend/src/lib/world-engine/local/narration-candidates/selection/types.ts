@@ -168,6 +168,21 @@ export type NarrationRunResult =
     /** Internal evidence of the last candidate attempt: its own text, issue
      * list, timings and candidate-specific detail. Never rendered. */
     detail?: Record<string, unknown>;
+    /** A non-empty model scene the candidate wrote but its own gate rejected.
+     * It is preserved and labelled as an unverified draft instead of being
+     * thrown away for program text; it never counts as accepted prose. */
+    draft?: {
+      text: string;
+      candidateId: string | null;
+      route: NarrationCandidate['route'] | null;
+      grade: 'candidate_unverified' | 'program' | 'mixed' | string;
+      issues: CandidateIssueSummary[];
+      timings: CandidateNarrationResult['timings'];
+      strategyVersion: string | null;
+      segments?: Array<{ id: string; kind: string; source: string; text: string }>;
+      beatCounts?: { model: number; program: number; other: number };
+      detail?: Record<string, unknown> | null;
+    };
   };
 
 export interface NarrationRunnerOptions {

@@ -394,7 +394,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
   // 2. Constrained model writer (one call per beat, one feedback retry).
   let modelAttempted = false;
   let modelFailed = false;
-  const rejected: { attempt: number; text: string; issues: CandidateIssue[] }[] = [];
+  const rejected: { attempt: number; text: string; raw?: string; promptChars?: number; issues: CandidateIssue[] }[] = [];
   if (modelEnabled && args.modelBudget().enabled) {
     modelAttempted = true;
     const maxAttempts = Math.max(1, Math.min(2, policy.model?.maxAttempts ?? 2));
@@ -434,7 +434,9 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
             },
           };
         }
-        rejected.push({ attempt, text: result.text, issues: beatIssues });
+        // Keep the model's full raw output and prompt size with the rejection:
+        // the fallback text replaces it, so this is the only copy.
+        rejected.push({ attempt, text: result.text, raw: result.raw, promptChars: result.prompt.length, issues: beatIssues });
         issues.push(...beatIssues);
         feedback = feedbackFor(beatIssues);
       } catch (error) {
