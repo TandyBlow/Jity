@@ -63,6 +63,8 @@ export interface LocalGameOptions {
   autoSave?: boolean;
   /** Require the held writer lease on every save (default true with storage). */
   requireLease?: boolean;
+  /** Evidence sink for the exact commit_point request (see ControllerIo). */
+  onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
   onEvent?: (event: LocalSessionEvent) => void;
   /** Page-owned provenance for committed narration text (label only). */
   narrationSourceOf?: () => Record<string, NarrationSourceNote> | undefined;
@@ -165,7 +167,10 @@ export class LocalGameSession {
     // New worlds carry the template; restored worlds are seeded from context.
     if (initial) seed.initialTemplate = structuredClone(initial);
     const durable = new CheckpointingTransport(transport, () => this.flushPersistence());
-    this.driver = new ControllerDriver({ transport: durable, model: this.gate }, seed, state ?? { world: null });
+    this.driver = new ControllerDriver({
+      transport: durable, model: this.gate,
+      ...(options.onCommit ? { onCommit: options.onCommit } : {}),
+    }, seed, state ?? { world: null });
     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
   }
 

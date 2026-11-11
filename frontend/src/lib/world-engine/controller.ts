@@ -20,7 +20,14 @@ import type {
 } from './types';
 
 export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
-export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
+export interface ControllerIo {
+  transport: WorldTransport;
+  model: WorldModelPort;
+  /** Evidence hook: the exact commit_point request, before and after the
+   * server answers. It never changes the request or the decision; a rejected
+   * commit is the one a diagnosis needs, so it is reported on the attempt. */
+  onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
+}
 /** Program-owned per-round identity allocation (review 20, ①b): continue
  * conclusions must not strand the next round with used point/groups. The sink
  * allocates via the transport (program authority, §9.3) and returns a DELTA
@@ -332,7 +339,15 @@ export class ControllerDriver {
         return this.preview();
       case 'transport': {
         const executesCommand = command != null && this.commandOperation(command) === decision.operation;
+        const commit = decision.operation === 'commit_point';
+        if (commit) this.io.onCommit?.({ phase: 'attempt', request: decision.request });
         const outcome = await this.call(decision.operation, decision.request, decision.scope);
+        if (commit) {
+          this.io.onCommit?.({
+            phase: 'committed', request: decision.request,
+            ...(outcome.ok ? { response: outcome.response } : { error: (outcome as { error?: unknown }).error ?? null }),
+          });
+        }
         if (outcome.ok) {
           if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);

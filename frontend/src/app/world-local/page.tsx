@@ -382,6 +382,19 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
  * took the lease, otherwise the fresh page would be blocked again. */
 const LEASE_TAKEOVER_KEY = 'jity.world.local.lease.takeover';
 
+/** The diagnosis fields of a commit request: which unit gave which position or
+ * appearance to which entity. It never feeds a decision. */
+function summarizeCommit(request: unknown): unknown {
+  const data = request as { pointId?: string; settlementGroups?: { groupId?: string | null; actorIds?: string[]; positions?: Record<string, unknown>; appearances?: Record<string, unknown>; tasksAchieved?: Record<string, unknown> }[] };
+  return (data.settlementGroups ?? []).map((group) => ({
+    groupId: group.groupId ?? null,
+    actorIds: group.actorIds ?? [],
+    positions: group.positions ?? {},
+    appearances: Object.fromEntries(Object.entries(group.appearances ?? {}).map(([id, changes]) => [id, (changes as unknown[]).length])),
+    tasksAchieved: group.tasksAchieved ?? {},
+  }));
+}
+
 /** Open the saved session, waiting briefly when a just-unloaded page has not
  * released its lease yet. A held lease is never treated as a corrupt save. */
 async function openWithLease(
@@ -390,6 +403,7 @@ async function openWithLease(
   model: LocalGameModel,
   alive: () => boolean,
   narrationSourceOf: () => Record<string, { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }> | undefined,
+  onCommit: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void,
   attempts = 20,
   // The writer lease lives 30 s and a page that is being reloaded may not have
   // released it yet (its flush can still be running). Wait past that TTL before
@@ -405,7 +419,7 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf },
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit },
       );
       if (opened.created) await opened.session.start();
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
@@ -430,6 +444,10 @@ export default function WorldLocalPage() {
   /** The current turn's evidence record; the same object lives in the window
    * array, so later callbacks update it in place. */
   const turnRecordRef = useRef<WorldTurnRecord | null>(null);
+  /** Every commit_point attempt of the current submission, with the exact
+   * per-group positions/appearances. Evidence only: a rejected commit is the
+   * one a diagnosis needs. */
+  const commitEventsRef = useRef<{ phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }[]>([]);
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
@@ -781,7 +799,7 @@ export default function WorldLocalPage() {
         let session: LocalGameSession;
         let restored = false;
         try {
-          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current);
+          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, (event) => commitEventsRef.current.push(event));
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           // A save can carry an advance left open by a failed turn. The next
           // submit would be refused as turn_in_progress (2603 run: ready, then
@@ -841,7 +859,7 @@ export default function WorldLocalPage() {
           if (!archived) throw openError;
           await store.delete(world.worldId, { force: true });
           setWarning('旧存档无法恢复，已保留原始副本并开始新的一局。');
-          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store });
+          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store, onCommit: (event) => commitEventsRef.current.push(event) });
           await session.start();
         }
         sessionRef.current = session;
@@ -976,6 +994,7 @@ export default function WorldLocalPage() {
     submittedAtRef.current = submittedAt;
     const engines = [engineCounters('semantic', semanticRef.current), engineCounters('narration', narrationRef.current)]
       .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+    commitEventsRef.current = [];
     const record: WorldTurnRecord = {
       index: ((window as unknown as { __worldTurns?: WorldTurnRecord[] }).__worldTurns?.length ?? 0) + 1,
       input: text, acceptedMs: null, draftMs: null, programMs: null, mixedMs: null, cancelled: false, source: null,
@@ -1164,6 +1183,11 @@ export default function WorldLocalPage() {
           decision: submission.continuationDecision,
           stops: submission.stops,
           stageMs: submission.calls.map((call) => ({ task: call.task, key: call.key, stageMs: call.stageMs ?? null })),
+        }));
+        (submission as unknown as { commits?: unknown }).commits = commitEventsRef.current.map((event) => ({
+          phase: event.phase,
+          ...(event.phase === 'attempt' ? { groups: summarizeCommit(event.request) } : {}),
+          ...(event.phase === 'committed' ? { error: event.error ? String((event.error as { message?: unknown }).message ?? event.error) : null } : {}),
         }));
         (window as unknown as { __worldSubmission?: unknown }).__worldSubmission = submission;
       }
