@@ -102,3 +102,19 @@ describe('settled scene states are wired into the constrained route', () => {
     expect(result.issues.map((issue) => issue.kind)).not.toContain('unlicensed_event');
   });
 });
+
+describe('a place named by the settled scene text is known, not unlicensed', () => {
+  it('accepts a corridor mentioned by the route map note', () => {
+    const base = sceneSkeleton('completed');
+    const skeleton = {
+      ...base,
+      place: { ...base.place, note: '赛区路线图画出庭院、东西回廊、跨溪小桥、钟楼。' },
+      worldNames: { ...base.worldNames, locations: [...base.worldNames.locations, '西回廊', '钟楼'] },
+      licensed: { ...base.licensed, locations: [...base.licensed.locations, '西回廊', '钟楼'], details: [...base.licensed.details, '赛区路线图画出庭院、东西回廊、跨溪小桥、钟楼。'] },
+    };
+    const result = verifyText('路明非从西侧服务巷走向钟楼，经过西回廊。', {
+      scene: skeleton, base: { anchor: skeleton.anchor, facts: [] }, minChars: 0, maxChars: 1200,
+    });
+    expect(result.issues.map((issue) => issue.kind)).not.toContain('unlicensed_entity');
+  });
+});

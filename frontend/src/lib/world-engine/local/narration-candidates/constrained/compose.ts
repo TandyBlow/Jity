@@ -68,7 +68,7 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
         const what = fact.structured.action ? `，动作是${fact.structured.action}` : '';
         return `结算结果：${who}${what}${on}，${outcome}（用自己的话写清谁做了什么、结果朝哪个方向；人、对象和方向不能改，措辞可以改）`;
       }
-      return `结算原话：「${fact.text}」（正文要原样写出这一句，可以前后加动作或环境，但这句里的人、事、措辞都不要改）`;
+      return `结算内容：「${fact.text}」（用正文写清这件事是谁做的、结果如何；措辞可以改，人和结果不能改）`;
     }
     case 'at':
       return `${fact.name}在${fact.location}`;

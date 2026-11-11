@@ -356,10 +356,19 @@ export function verifyText(text: string, options: VerifyOptions): {
   const licensedNames = [...scene.licensed.names, ...scene.licensed.locations, ...scene.licensed.items,
     ...scene.licensed.details, ...scene.licensed.quotes];
   const mask = licenseMask(text, licensedNames);
+  const detailText = [...scene.licensed.details, ...scene.licensed.quotes,
+    scene.place.note, scene.viewpoint.note, ...scene.present.map((person) => person.note),
+    ...scene.objects.map((object) => object.note)].join('；');
   const allNames = [...new Set([
     ...scene.worldNames.characters, ...scene.worldNames.locations, ...scene.worldNames.items,
   ])].sort((left, right) => right.length - left.length);
+  // A place or object the settled scene text itself names (the route map note
+  // lists 西回廊/检修口) is a known name, not an unlicensed entity: naming it is
+  // describing the scene. Claiming to have gone there still needs a move fact.
+  const knownFromScene = new Set([...scene.worldNames.locations, ...scene.worldNames.items]
+    .filter((name) => name.length >= 2 && detailText.includes(name)));
   for (const name of allNames) {
+    if (knownFromScene.has(name)) continue;
     const hit = unlicensedName(text, name, mask);
     if (hit) {
       issues.push({ kind: 'unlicensed_entity', severity: 'hard', beatId: null, detail: hit });
