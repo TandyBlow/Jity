@@ -1,0 +1,216 @@
+{
+  "actors": [
+    "caesar",
+    "chu",
+    "lin",
+    "lu",
+    "manstein",
+    "nono",
+    "su",
+    "tang",
+    "zhou"
+  ],
+  "allowedGoals": {
+    "count": 48,
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\01-train-goals-for-13.json",
+    "splitSha256": "b4680a9e6b1b4af3ed023eb7bfc7c491afab1200a486254d56098a160d18a8eb",
+    "version": "train-goals-v1"
+  },
+  "episodes": [
+    {
+      "duplicateLocations": 8,
+      "evidenceFile": "evidence/09-one-legal-turn-415c.json",
+      "pointId": "point_round_3_1",
+      "snapshotSha256": "21bb80921bdeb6136df3cef36999aa28d2d224547a7d3c782746b11ae63999d6",
+      "time": "2009-10-17T15:21:00"
+    },
+    {
+      "duplicateLocations": 21,
+      "evidenceFile": "evidence/09-one-legal-turn-03ec-infra-invalid.json",
+      "pointId": "point_root_world_dragon_raja_free_day",
+      "snapshotSha256": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
+      "time": "2009-10-17T15:20:00"
+    },
+    {
+      "duplicateLocations": 1,
+      "evidenceFile": "evidence/09-one-legal-turn-f15d.json",
+      "pointId": "point_round_3_1",
+      "snapshotSha256": "61ef61766ce8cacb2f903d22b55746988960f28d49a5f5bd4f718f542e8d48b2",
+      "time": "2009-10-17T15:21:00"
+    },
+    {
+      "duplicateLocations": 5,
+      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "pointId": "point_round_auto_mwb3otrr_1_1",
+      "snapshotSha256": "7a3155ecb0849df5519381a7b4337ba1e88c1b4a89b6eed64cba08b8738c3833",
+      "time": "2009-10-17T15:22:00"
+    },
+    {
+      "duplicateLocations": 1,
+      "evidenceFile": "evidence/09-one-legal-turn-2324-7bfc.json",
+      "pointId": "point_round_3_1",
+      "snapshotSha256": "7ee10bceeff5e43771bda0b02135d59627e6e9bfe14da9551eadb028677ba77d",
+      "time": "2009-10-17T15:21:00"
+    },
+    {
+      "duplicateLocations": 3,
+      "evidenceFile": "evidence/09-one-legal-turn-415c.json",
+      "pointId": "point_round_auto_mwb6b3j2_1_1",
+      "snapshotSha256": "8b7eb737bc11c081a8133ef43bd9aba5339ce4266ec70bec826c7d3828a25911",
+      "time": "2009-10-17T15:22:00"
+    },
+    {
+      "duplicateLocations": 5,
+      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "pointId": "point_round_auto_mwb3q8vp_2_1",
+      "snapshotSha256": "c127c9df63dba339f1006214a5a0dc2dcce52d34a6356a267884f140e300e2eb",
+      "time": "2009-10-17T15:23:00"
+    },
+    {
+      "duplicateLocations": 1,
+      "evidenceFile": "evidence/09-one-legal-turn-f15d.json",
+      "pointId": "point_round_auto_mwb1qa0x_1_1",
+      "snapshotSha256": "d0d75870dd897bdf296ea2aed1ff9d8c14c170a241124c801d6af22b52acb16b",
+      "time": "2009-10-17T15:22:00"
+    },
+    {
+      "duplicateLocations": 5,
+      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "pointId": "point_round_3_1",
+      "snapshotSha256": "eb87329372773e1f8c3116bffb4efb544b16f2d96433d7f86f199bc58a42694d",
+      "time": "2009-10-17T15:21:00"
+    }
+  ],
+  "excludedActors": {
+    "doctor": [
+      "task_doctor_prepare",
+      "task_doctor_rest",
+      "task_doctor_signal",
+      "task_doctor_treat",
+      "task_doctor_triage"
+    ],
+    "fingel": [
+      "task_fingel_camera",
+      "task_fingel_deal",
+      "task_fingel_help",
+      "task_fingel_map",
+      "task_fingel_soup"
+    ],
+    "qin": [
+      "task_qin_battery",
+      "task_qin_gear",
+      "task_qin_ladder",
+      "task_qin_return",
+      "task_qin_stretcher"
+    ],
+    "shen": [
+      "task_shen_account",
+      "task_shen_recover",
+      "task_shen_stay",
+      "task_shen_symptom"
+    ],
+    "tomiyama": [
+      "task_tomiyama_boundary",
+      "task_tomiyama_help",
+      "task_tomiyama_refer",
+      "task_tomiyama_shen",
+      "task_tomiyama_support"
+    ]
+  },
+  "goalsCovered": [
+    "task_caesar_bridge",
+    "task_caesar_contact",
+    "task_caesar_flag",
+    "task_caesar_tang",
+    "task_caesar_win",
+    "task_chu_flag",
+    "task_chu_hatch",
+    "task_chu_hold",
+    "task_chu_lin",
+    "task_chu_su",
+    "task_lin_call",
+    "task_lin_carry",
+    "task_lin_leave",
+    "task_lin_safe",
+    "task_lu_ally",
+    "task_lu_choice",
+    "task_lu_goggles",
+    "task_lu_kit",
+    "task_lu_match",
+    "task_lu_route",
+    "task_manstein_clock",
+    "task_manstein_injury",
+    "task_manstein_log",
+    "task_manstein_order",
+    "task_manstein_radio",
+    "task_nono_battery",
+    "task_nono_lu",
+    "task_nono_signal",
+    "task_nono_squad",
+    "task_nono_wounded",
+    "task_su_exit",
+    "task_su_lin",
+    "task_su_reload",
+    "task_su_report",
+    "task_su_watch",
+    "task_tang_ammo",
+    "task_tang_fallback",
+    "task_tang_pause",
+    "task_tang_push",
+    "task_tang_report",
+    "task_zhou_guard",
+    "task_zhou_latch",
+    "task_zhou_retreat",
+    "task_zhou_rope",
+    "task_zhou_warn"
+  ],
+  "notDone": [
+    "no y labels yet: this file is a candidate pool, not training data",
+    "token length is not measured (the MiniRBT tokenizer is not available in this lane); only character length is measured, which is an upper bound for Chinese text"
+  ],
+  "poolRows": 80,
+  "profiles": {
+    "full": {
+      "charsMax": 1489,
+      "charsMin": 777,
+      "charsP50": 984,
+      "charsP95": 1477,
+      "clippedFieldCounts": {},
+      "fitsFiveTwelveCharBudget": false
+    },
+    "tight": {
+      "charsMax": 1372,
+      "charsMin": 712,
+      "charsP50": 925,
+      "charsP95": 1360,
+      "clippedFieldCounts": {
+        "actorAppearance": 80,
+        "personality": 80,
+        "placeAppearance": 80,
+        "presentAppearance": 18
+      },
+      "fitsFiveTwelveCharBudget": false
+    }
+  },
+  "rooms": [
+    "东回廊",
+    "中央庭院",
+    "演习观察席",
+    "红方集结点",
+    "西侧服务巷",
+    "西回廊",
+    "钟楼二层平台",
+    "钟楼旗台外廊"
+  ],
+  "schema": "action-dataset-pool-v1",
+  "serializerVersion": "action-x-v2",
+  "uniqueRenderedX": 43,
+  "uniqueSituations": 18,
+  "withRecentEvents": 8,
+  "xChars": {
+    "max": 1489,
+    "min": 777,
+    "p50": 984,
+    "p95": 1477
+  }
+}
