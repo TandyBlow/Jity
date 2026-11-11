@@ -261,13 +261,20 @@ export function hasDeltaContent(delta: Partial<EntityDelta> | undefined): boolea
  * only for callers that do not have the state (unit fixtures). */
 export interface RoundProgressEvidence {
   progress: boolean;
-  reason: 'state_changed' | 'time_advanced' | 'new_action' | 'new_settled_fact' | 'no_change';
+  reason: 'state_changed' | 'time_advanced' | 'new_action' | 'new_settled_fact' | 'action_not_settled' | 'no_change';
   stateChanged: boolean;
   timeAdvanced: boolean;
   newActionCount: number;
   newSettledFactCount: number;
   beforeDigest?: string;
   afterDigest?: string;
+  /** Automatic rounds only: did the settled facts cover the proposed action? A
+   * proposal that settled something else made no progress toward itself. */
+  actionSettled?: boolean;
+  /** The after state with the clock pinned. A candidate accepted at this world
+   * digest that is proposed again while the digest is unchanged is a repeat,
+   * not a new event (the clock alone advancing is not a change). */
+  worldDigest?: string;
 }
 
 export interface RoundProgressComputation {
@@ -282,6 +289,19 @@ export interface RoundProgressComputation {
   knownActions: ReadonlySet<string>;
   /** Explicit real time advance when the caller already knows it. */
   timeAdvanced?: boolean;
+  /** Automatic rounds pass false when the point settled no fact related to the
+   * action it proposed. Time passing is not progress toward that action, and
+   * counting it made a chain repeat the same beat for five points. */
+  actionSettled?: boolean;
+}
+
+/** Digest of everything except the clock, so "the world moved" and "a minute
+ * passed" are different questions. */
+export async function worldDigestOf(state: WorldState | null): Promise<string | undefined> {
+  if (!state) return undefined;
+  const pinned = JSON.parse(JSON.stringify(state)) as WorldState;
+  pinned.time = { ...pinned.time, dateTime: '1970-01-01T00:00:00' };
+  return stateDigest(pinned);
 }
 
 export async function roundProgressFromState(input: RoundProgressComputation): Promise<{
@@ -298,24 +318,32 @@ export async function roundProgressFromState(input: RoundProgressComputation): P
     || Boolean(before && after && before.time.dateTime !== after.time.dateTime);
   const newActions = [...new Set(input.actions.map(normalizeChangeText).filter((text) => text && !input.knownActions.has(text)))];
   const newFacts = [...new Set(input.facts.map(normalizeChangeText).filter((text) => text && !input.knownFacts.has(text)))];
-  const progress = stateChanged || timeAdvanced || newActions.length > 0 || newFacts.length > 0;
+  const actionSettled = input.actionSettled !== false;
+  const progress = input.actionSettled === false
+    ? stateChanged
+    : stateChanged || timeAdvanced || newActions.length > 0 || newFacts.length > 0;
   const reason: RoundProgressEvidence['reason'] = stateChanged
     ? 'state_changed'
-    : timeAdvanced
-      ? 'time_advanced'
-      : newActions.length
-        ? 'new_action'
-        : newFacts.length
-          ? 'new_settled_fact'
-          : 'no_change';
+    : input.actionSettled === false
+      ? 'action_not_settled'
+      : timeAdvanced
+        ? 'time_advanced'
+        : newActions.length
+          ? 'new_action'
+          : newFacts.length
+            ? 'new_settled_fact'
+            : 'no_change';
+  const worldDigest = await worldDigestOf(after);
   return {
     evidence: {
       progress,
       reason,
+      ...(worldDigest ? { worldDigest } : {}),
       stateChanged,
       timeAdvanced,
       newActionCount: newActions.length,
       newSettledFactCount: newFacts.length,
+      ...(input.actionSettled === false ? { actionSettled: false } : {}),
       ...(beforeDigest ? { beforeDigest } : {}),
       ...(afterDigest ? { afterDigest } : {}),
     },

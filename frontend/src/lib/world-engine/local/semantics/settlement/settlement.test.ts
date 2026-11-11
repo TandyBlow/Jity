@@ -305,6 +305,56 @@ describe('common-group results', () => {
     expect(answered?.targetId).toBeUndefined();
   });
 
+  it('rejects the prompt example copied as a fact, then settles without inventing one', async () => {
+    // 10turn turn 4 (2026-11-11T0928-94ef): the accepted group_72 answer was
+    // «秦越做了什么/看到什么» — the example row from the results prompt.
+    const placeholder = JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'partial', reason: '无判定。' }],
+      facts: [{ text: '乙做了什么/看到什么', memberIds: ['b'], actorId: 'b', outcome: 'completed' }],
+    });
+    const real = JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'partial', reason: '乙接住了工具。' }],
+      facts: [{ text: '乙接住了工具。', memberIds: ['b'], actorId: 'b', outcome: 'completed' }],
+    });
+    const repaired = new ScriptedEngine([placeholder, real]);
+    const outcome = await createSettlementHandlers({ engine: repaired }).results('g1', {
+      groupId: 'g1', members: [{ memberId: 'b', actionText: '乙接住工具。', rollRefs: [] }], workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value!.b).toContain('乙接住了工具');
+    expect(outcome.evidence.calls[0]?.error).toContain('format example');
+
+    // On the last attempt the template is dropped, not settled and not fatal.
+    const alwaysPlaceholder = new ScriptedEngine([placeholder, placeholder, placeholder]);
+    const settled = await createSettlementHandlers({ engine: alwaysPlaceholder }).results('g1', {
+      groupId: 'g1', members: [{ memberId: 'b', actionText: '乙接住工具。', rollRefs: [] }], workingState: world(),
+    } as unknown as Json);
+    expect(settled.value).not.toBeNull();
+    const detail = settled.evidence.detail as { droppedFacts: { reason: string }[] };
+    expect(detail.droppedFacts[0].reason).toBe('no_result_text');
+  });
+
+  it('stops an automatic action that was already accepted in an earlier turn', async () => {
+    // 10turn: turns 8, 9 and 10 each proposed «在器材棚内寻找并确认可用的护目镜与
+    // 演习装备» in a new submission. Every reset cleared the consumed set, so the
+    // same beat ran again and again while the world did not move.
+    const { ContinuationPolicy } = await import('./continuation');
+    const policy = new ContinuationPolicy();
+    const accepted = [{ characterId: 'b', text: '在器材棚内寻找并确认可用的护目镜。' }];
+    const evidence = (digest: string) => ({
+      progress: true, reason: 'new_settled_fact' as const, stateChanged: false, timeAdvanced: true,
+      newActionCount: 1, newSettledFactCount: 1, worldDigest: digest,
+    });
+    expect(policy.observe([], accepted, evidence('digest-a'), 'automatic').allow).toBe(true);
+    policy.reset();
+    // Same world (clock aside): the proposal is a repeat.
+    const repeat = policy.observe([], accepted, evidence('digest-a'), 'automatic');
+    expect(repeat.allow).toBe(false);
+    expect(repeat.reason).toBe('repeated_candidate');
+    // The world moved: the same action is new again.
+    policy.reset();
+    expect(policy.observe([], accepted, evidence('digest-b'), 'automatic').allow).toBe(true);
+  });
+
   it('never shows a literal placeholder id in the continuation format example', async () => {
     // 35ad turn 3: nobody else in the room, the example said characterId
     // "人物id", the model copied it four times and the fatal placeholder check

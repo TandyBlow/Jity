@@ -439,6 +439,92 @@ describe('turn execution through the real kernel', () => {
   });
 });
 
+describe('automatic round progress', () => {
+  it('does not count a point that settled something other than its proposal', async () => {
+    // 10turn turns 8-10: fingel proposed «在器材棚内寻找并确认可用的护目镜与
+    // 演习装备», the results lane settled «芬格尔检查了相机备用电池并准备拍摄
+    // 争旗场面», and because the point also advanced the clock the chain counted
+    // it as progress and ran five points (330 s) repeating the same beat.
+    let call = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'action-not-settled' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        call += 1;
+        if (call === 1) {
+          return JSON.stringify({
+            judgments: [{ memberId: 'person_a', label: 'no_change', reason: '林川检查了相机电池。' }],
+            facts: [{ text: '林川检查了相机备用电池并准备拍摄。', memberIds: ['person_a'] }],
+          });
+        }
+        return JSON.stringify({ candidates: [] });
+      },
+    };
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const port = createSettlementModelPort(engine);
+    port.beginSubmission('我打开盒盖。');
+    await port.generate('results', 'group_1', {
+      groupId: 'group_1',
+      members: [{ memberId: 'person_a', actionText: '在器材棚内寻找并确认可用的护目镜与演习装备', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_1', {
+      round: { roundId: 'round_1', trigger: 'automatic', conclusion: null },
+      head: { pointId: 'p1' },
+      workingState: state,
+      roundChanges: [{
+        pointId: 'p1',
+        timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+        entityDeltas: {},
+      }],
+    } as unknown as Json);
+    const submission = port.endSubmission();
+    const continuation = submission?.calls.find((row) => row.task === 'continuation');
+    expect(continuation?.roundProgress?.progress).toBe(false);
+    expect(continuation?.roundProgress?.reason).toBe('action_not_settled');
+  });
+
+  it('counts a point whose facts do cover the proposal', async () => {
+    let call = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'action-settled' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        call += 1;
+        if (call === 1) {
+          return JSON.stringify({
+            judgments: [{ memberId: 'person_a', label: 'achieved', reason: '林川找到了护目镜。' }],
+            facts: [{ text: '林川在器材棚内找到护目镜，确认可以戴。', memberIds: ['person_a'] }],
+          });
+        }
+        return JSON.stringify({ candidates: [] });
+      },
+    };
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const port = createSettlementModelPort(engine);
+    port.beginSubmission('我打开盒盖。');
+    await port.generate('results', 'group_1', {
+      groupId: 'group_1',
+      members: [{ memberId: 'person_a', actionText: '在器材棚内寻找并确认可用的护目镜', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_1', {
+      round: { roundId: 'round_1', trigger: 'automatic', conclusion: null },
+      head: { pointId: 'p1' },
+      workingState: state,
+      roundChanges: [{
+        pointId: 'p1',
+        timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+        entityDeltas: {},
+      }],
+    } as unknown as Json);
+    const continuation = port.endSubmission()?.calls.find((row) => row.task === 'continuation');
+    expect(continuation?.roundProgress?.progress).toBe(true);
+  });
+});
+
 describe('settlement port failure evidence', () => {
   it('aborts a failed repair and keeps raw output, attempts and timings in the ledger', async () => {
     const engine: InferenceEngine = {

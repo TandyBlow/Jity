@@ -479,6 +479,14 @@ export function createSettlementModelPort(
             // snapshot may already contain the new clock. The settled point's
             // timeAdvance is the authoritative event and must still count.
             timeAdvanced: roundAdvancedTime(input),
+            // 10turn turns 8-10: an automatic point proposed «在器材棚内寻找
+            // 护目镜» and the results lane settled «检查了相机备用电池»; because
+            // every point also advanced the clock, each one counted as progress
+            // and the chain ran five points (330 s) repeating the same beat. An
+            // automatic round only progresses if its facts cover its proposal.
+            ...(readTrigger(input) === 'automatic'
+              ? { actionSettled: settledCoversActions(roundActionTexts, settledRecords, after) }
+              : {}),
           });
           for (const action of computed.newActions) consumedActions.add(action);
           for (const fact of computed.newFacts) consumedFacts.add(fact);
@@ -609,6 +617,48 @@ function roundAdvancedTime(input: Json): boolean {
     const amount = (duration as { amount?: unknown }).amount;
     return typeof amount === 'number' && Number.isFinite(amount) && amount > 0;
   });
+}
+
+function readTrigger(input: Json): string | null {
+  if (input == null || typeof input !== 'object' || Array.isArray(input)) return null;
+  const round = (input as { round?: unknown }).round;
+  if (round == null || typeof round !== 'object' || Array.isArray(round)) return null;
+  const trigger = (round as { trigger?: unknown }).trigger;
+  return typeof trigger === 'string' ? trigger : null;
+}
+
+/** Did this point's settled facts cover the action the point proposed? Shared
+ * content is a run of three or more characters, or a world entity name of two
+ * or more characters. A proposal settled as something else did not happen. */
+function settledCoversActions(
+  actions: string[],
+  records: SettledFact[],
+  state: WorldState,
+): boolean {
+  if (!actions.length) return true;
+  const names = [
+    ...Object.values(state.initial.locations ?? {}).map((row) => row?.name),
+    ...Object.values(state.initial.items ?? {}).map((row) => row?.name),
+    ...Object.values(state.initial.characters ?? {}).map((row) => row?.name),
+  ].filter((name): name is string => typeof name === 'string' && name.length >= 2);
+  for (const label of actions) {
+    const separator = label.indexOf(':');
+    const memberId = separator > 0 ? label.slice(0, separator) : '';
+    const action = separator > 0 ? label.slice(separator + 1) : label;
+    const own = records.filter((record) => !memberId || record.memberIds.includes(memberId));
+    const covered = own.some((record) => sharesContent(action, record.text, names));
+    if (!covered) return false;
+  }
+  return true;
+}
+
+function sharesContent(action: string, fact: string, names: string[]): boolean {
+  if (names.some((name) => action.includes(name) && fact.includes(name))) return true;
+  const chars = [...action];
+  for (let index = 0; index + 3 <= chars.length; index += 1) {
+    if (fact.includes(chars.slice(index, index + 3).join(''))) return true;
+  }
+  return false;
 }
 
 function readStage(input: Json): string | null {
