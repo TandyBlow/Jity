@@ -72,3 +72,18 @@ describe('a candidate refused by the independent gate keeps its prose', () => {
     expect(kept.promptChars).toBe(900);
   });
 });
+
+// The main candidate path must receive 04's structured records; without them the
+// result fact is free text and the verifier demands the sentence verbatim
+// (09 bed9 turn 1: a good 47-char scene rejected for fact_missing).
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+describe('the product narration path passes structured settled records', () => {
+  it('the candidate call in game-model carries settledFacts', () => {
+    const source = readFileSync(resolve('src/lib/world-engine/local/game-model.ts'), 'utf8');
+    const adopt = source.slice(source.indexOf('private async adoptNarrationCandidate'));
+    const call = adopt.slice(0, adopt.indexOf('}, (state) =>'));
+    expect(call).toContain('settledFacts: this.lastSettledFacts');
+  });
+});

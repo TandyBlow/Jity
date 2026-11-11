@@ -607,6 +607,9 @@ export class LocalGameModel implements WorldModelPort {
       after,
       playerInput: this.lastPlayerInput,
       settledResults: this.lastResultsText ? [this.lastResultsText] : [],
+      // 04's structured records are what the verifier compares; without them the
+      // result fact falls back to the impossible verbatim sentence check.
+      settledFacts: this.lastSettledFacts,
       priorText: this.lastAcceptedNarration,
       recentEvents: this.recentEvents,
     }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
