@@ -245,3 +245,4 @@
 - human-71 复核：71 条人写行仍 0 fact，`review.self_contradiction` 0，style/review 计数与旧报告一致（31/105），新增规则未污染人工材料。
 - 6565 逐 beat：`3/4 beats model`，只剩 result beat `fact_missing result:facts:result`；程序兜底即 `诺诺：…` 面板。请求 04 结果事实自然句 + 02 表达接受（`results/quality/requests-01-to-04-02-result-beat.md`）。
 - cf3d（head cf3d027e，program 122 字）：checker 命中 `action_omitted` + `status_panel`；视点/地点错（凯撒/红方集结点）因 凯撒 不在投影内未自动判，记为已知限制（07 同结论，归 06/04 组装）。锚点 96。
+- 11a7（head 11a78afb）：视点已回 路明非/西侧服务巷，但 `诺诺红发垂落` 与已结算束发矛盾（fact），面板/物品晃动/走看缺失仍在；已向 06 提 beat prompt 保留已结算外貌（`results/quality/requests-01-to-06-11a7-hair.md`）。
