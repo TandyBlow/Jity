@@ -637,6 +637,18 @@ describe('six-stage updates', () => {
     const detail = outcome.evidence.detail as { skipped: string };
     expect(detail.skipped).toBe('no_settled_fact');
 
+    // The production controller splits the stages; a split call for the empty
+    // group must skip too, or that saving never happens.
+    const splitEngine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const split = await createSettlementHandlers({ engine: splitEngine }).updates('group_12', {
+      groupId: 'group_12',
+      stage: 'position',
+      results: { nono: '' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(splitEngine.prompts).toHaveLength(0);
+    expect(split.value).toMatchObject({ stage: 'position', changes: {} });
+
     // Any settled fact still runs the whole pass.
     const engine2 = new ScriptedEngine([
       JSON.stringify({ changes: [] }),

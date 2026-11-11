@@ -250,7 +250,28 @@ export class UpdatesRunner {
     // no changes; skip the pass instead of paying ~20 s for it. A time scan or a
     // group with any fact still runs every stage.
     const settledText = Object.values(parsed.results ?? {}).join('').trim();
-    if (!stage && parsed.mode !== 'time_scan' && Object.keys(parsed.results ?? {}).length && !settledText) {
+    const settledNothing = parsed.mode !== 'time_scan'
+      && Object.keys(parsed.results ?? {}).length > 0
+      && !settledText;
+    if (stage && settledNothing) {
+      // The controller splits the stages; a split call for an empty group must
+      // skip as well, or the saving above never happens in production.
+      const calls = [{ stage, changes: {} as UpdatesCall['changes'] }];
+      const evidence: SettlementEvidence = {
+        task: 'updates',
+        key,
+        raw: '',
+        ms: performance.now() - started,
+        fallback: false,
+        calls: [],
+        detail: toJson({ groupId: parsed.groupId, skipped: 'no_settled_fact', stages: [stage], stageMs: {}, stageErrors: [] }),
+      };
+      this.options.onTask?.('updates', key, {
+        ms: evidence.ms, fallback: false, raw: '', promptChars: 0, stageMs: {}, stages: [stage],
+      });
+      return { value: calls[0], raw: '', ms: evidence.ms, fallback: false, evidence };
+    }
+    if (!stage && settledNothing) {
       const calls = SETTLEMENT_STAGES.map((name) => ({ stage: name, changes: {} as UpdatesCall['changes'] }));
       const evidence: SettlementEvidence = {
         task: 'updates',
