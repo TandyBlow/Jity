@@ -847,7 +847,11 @@ try {
           actorId: row.key ?? null,
           source: row.source ?? null,
           decision: row.decision ?? null,
-          issueCode: row.issueCode ?? null,
+          // The page records the issue codes it produced for this actor; the
+          // deciding code is the informative one (model_skip vs actor_out_of_scene
+          // vs protagonist_command), so keep them all and name the last.
+          issueCode: Array.isArray(row.issues) ? (row.issues.at(-1) ?? null) : (row.issueCode ?? null),
+          issues: Array.isArray(row.issues) ? row.issues : null,
           modelCalls: row.calls ?? null,
           fallback: row.fallback ?? null,
           error: row.error ?? null,
