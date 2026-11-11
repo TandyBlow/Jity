@@ -992,12 +992,17 @@ try {
   for (let i = 0; i < evidence.turns.length; i += 1) {
     const turn = evidence.turns[i];
     const expected = rawOf(turn);
-    if (turn.text) {
-      turn.displayedEqualsRaw = expected != null && flat(turn.text) === flat(expected);
-      turn.displayedSameLayout = expected != null && turn.text === expected;
+    if (turn.text && expected != null) {
+      turn.displayedEqualsRaw = flat(turn.text) === flat(expected);
+      turn.displayedSameLayout = turn.text === expected;
     } else {
+      // No prose, or no raw beat kept on this build: the comparison is unknown,
+      // not false. Say so instead of reporting a mismatch that was never checked.
       turn.displayedEqualsRaw = null;
       turn.displayedSameLayout = null;
+      if (turn.text && expected == null) {
+        turn.displayChecksSkipped = 'no candidate beats recorded by the page on this build';
+      }
     }
     const later = evidence.turns.slice(i + 1);
     const earlierText = turn.text || '';
