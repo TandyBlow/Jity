@@ -242,6 +242,28 @@ export function settledAppearanceViolations(
   return found;
 }
 
+/** Prose that reports compliance instead of telling the story.
+ *
+ * 09's d531 turn 3: «他摘下护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。
+ * 演习背心前襟完好，没有演习弹痕。» The model was told which settled state it must
+ * not change and answered with a checklist — a negation of a property, not an action.
+ * A failed result («没能进去», «没有回答») is different: that is what happened. */
+const COMPLIANCE = [
+  /而非/u,
+  /(没有|并无|未见|未发现)[^。！？]{0,6}(痕迹|弹痕|裂纹|破损|损坏|伤口|变化)/u,
+  /(完好无损|完好如初)/u,
+  /(现|正)(挂|放|摆)在[^。！？]{0,8}(而非|不是)/u,
+];
+
+export function stateReportViolations(text: string): SettledViolation[] {
+  const found: SettledViolation[] = [];
+  for (const sentence of sentencesOf(text)) {
+    const hit = COMPLIANCE.find((pattern) => pattern.test(sentence));
+    if (hit) found.push({ sentence, detail: 'the sentence reports a state check instead of telling what happened' });
+  }
+  return found;
+}
+
 /** An item that the settlement/local scene places somewhere other than the actor's
  * hand, written as if it were being held. 09's 35ad run: «弗里嘉演习弹在手中发烫»
  * while the round was in the equipment shed. This is a possession transfer, one of
@@ -398,6 +420,7 @@ export function settledViolationsFromScene(
     ...settledStateViolations(text, settled, null),
     ...objectActorViolations(text, settled),
     ...itemStateViolations(text, settled),
+    ...stateReportViolations(text),
     ...possessionViolations(text, [
       ...(scene.objects ?? []).map((object) => ({ name: object.name, note: object.note ?? '' })),
       ...(scene.inventory ?? []).map((item) => ({ name: item.name, note: item.note ?? '' })),

@@ -23,6 +23,7 @@ import type { CommittedNarration, NarrationFact } from '../../runtime/committed-
 import { factPhrases } from '../../runtime/committed-narration';
 import type { BeatSceneContext, NarrationLedger, NarrationPolicy } from './types';
 import { BACKGROUND_RULES, ownerOf } from './scene-prompt';
+import { genderLabel } from './character-gender';
 
 export type BeatKind = 'scene' | 'fact' | 'time';
 
@@ -199,8 +200,6 @@ export interface BeatPromptInput {
   scene?: BeatSceneContext | null;
   /** Sentences already written for this scene, oldest first. */
   written: readonly string[];
-  /** First sentence of the previous accepted scene, for continuity. */
-
 }
 
 /** One beat prompt. Kept short on purpose: tiny models lose the instruction
@@ -224,7 +223,8 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   if (present.length) {
     lines.push(`【在场】${present.map((person) => {
       const note = person.note?.trim();
-      return note ? `${person.name}（${trimNote(note)}）` : person.name;
+      const label = genderLabel(person.name)?.slice(person.name.length) ?? '';
+      return note ? `${person.name}${label}（${trimNote(note)}）` : `${person.name}${label}`;
     }).join('；')}`);
   }
   const notes = (scene?.placeNotes ?? []).slice(0, 2);
@@ -250,7 +250,9 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
   // produced flat, unnarratable sentences.
   lines.push('【要求】写具体的动作或手上的东西；对话用「」；不新增人物、物品、事件、往事、承诺和数字；'
     + '可以写视角人物的感受和判断，不要写别人心里怎么想；不要重复上面的说明；不要标题。');
-  lines.push('称呼人物用名字，不要用他/她指代；只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
+  // Gender is printed as data next to each person (character-gender.ts); the
+  // old line banned 他/她 outright, which the 2026-11-11 decision removed.
+  lines.push('只写【环境】里给出的声音和气味；属于某人的东西只写在那个人手上。');
   lines.push('不要写上面没有给出的姿势（蹲下、坐下、靠墙、站起）；人物保持原本的姿态。');
   lines.push('不要写「完成了一项任务」「个性发生了变化」「新增一条待办」这类报告句式，把结果写进动作或对话里。');
   lines.push(...BACKGROUND_RULES);
