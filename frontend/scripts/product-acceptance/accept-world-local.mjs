@@ -131,6 +131,11 @@ function sha256(text) {
   const { createHash } = require('node:crypto');
   return createHash('sha256').update(text, 'utf8').digest('hex');
 }
+/** Hash raw bytes: a served chunk must be hashed exactly as it arrived. */
+function sha256Buffer(buffer) {
+  const { createHash } = require('node:crypto');
+  return createHash('sha256').update(buffer).digest('hex');
+}
 
 function save() {
   evidence.updatedAt = new Date().toISOString();
@@ -295,11 +300,35 @@ try {
       : resolve(rootDir, declared);
     evidence.productState.worktree = productWorktree;
     evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
-    // The served bundle is whatever .next-prod was built from, not whatever the
-    // worktree head says. Record the build id file's mtime and the head commit's
-    // time so a run cannot silently claim code that was never compiled in.
+    // 06 serves a specific built directory (product.serve in integration.json),
+    // not necessarily the worktree head and not a fixed dist name; read the
+    // declared distDir and verify the served chunk's hash.
+    const serve = integration?.product?.serve ?? null;
+    if (serve) {
+      evidence.productState.serve = {
+        mode: serve.mode ?? null, buildId: serve.buildId ?? null, pageChunk: serve.pageChunk ?? null,
+        chunkSha256: serve.chunkSha256 ?? null, pid: serve.pid ?? null, frozenAt: serve.frozenAt ?? null,
+      };
+      if (serve.pageChunk) {
+        const chunkResponse = await page.request.get(`${base}/_next/static/chunks/app/world-local/${serve.pageChunk}`, { timeout: 30000 }).catch(() => null);
+        const body = chunkResponse ? await chunkResponse.body().catch(() => null) : null;
+        evidence.productState.servedChunkHttp = chunkResponse ? chunkResponse.status() : null;
+        evidence.productState.servedChunkSha256 = body ? sha256Buffer(body) : null;
+        evidence.productState.servedChunkMatches = Boolean(serve.chunkSha256 && evidence.productState.servedChunkSha256 === serve.chunkSha256);
+        if (body && serve.chunkSha256 && !evidence.productState.servedChunkMatches && !has('--allow-page-sha-mismatch')) {
+          noteFailure('product', `served chunk ${serve.pageChunk} hash ${evidence.productState.servedChunkSha256.slice(0, 12)} does not match the frozen ${serve.chunkSha256.slice(0, 12)}`);
+          evidence.status = 'FAILED';
+          save();
+          throw new Error(`chunk_sha_mismatch:${evidence.productState.servedChunkSha256.slice(0, 12)}`);
+        }
+      }
+    }
+    // The served bundle is whatever the declared distDir was built from, not
+    // whatever the worktree head says. Record the build id file's mtime and the
+    // head commit's time so a run cannot silently claim uncompiled code.
     try {
-      const buildIdPath = resolve(productWorktree, 'frontend/.next-prod/BUILD_ID');
+      const distDir = serve?.mode?.match(/\.next[-\w]*/u)?.[0] ?? '.next-prod';
+      const buildIdPath = resolve(productWorktree, 'frontend', distDir, 'BUILD_ID');
       if (existsSync(buildIdPath)) {
         const stat = statSync(buildIdPath);
         evidence.productState.buildId = readFileSync(buildIdPath, 'utf8').trim();
@@ -341,7 +370,7 @@ try {
     evidence.productState.error = String(error).slice(0, 200);
     // A frozen-build mismatch is a hard abort: never run turns against a
     // different page source just because the check sits inside try/catch.
-    if (String(error).startsWith('page_sha_mismatch')) {
+    if (/^(page_sha_mismatch|chunk_sha_mismatch)/u.test(String(error))) {
       evidence.status = 'FAILED';
       evidence.finishedAt = new Date().toISOString();
       save();
