@@ -1559,7 +1559,12 @@ export function reviewNarration(args: {
       // The object noun alone, never the leading particle: «墙上的…» used to
       // yield «的墙», which no prose contains, so 4794 was wrongly reported as
       // omitting an action it did narrate.
-      const actionObject = /(规则牌|登记簿|牌|簿|册|图|枪|绳|带|镜|门|墙|桌|台|架|箱|包|杯|书|纸|信|灯|钟|窗|柜)/u.exec(options.action)?.[1];
+      // The longest noun the action names: «墙上的演习规则牌» is about the
+      // board, not the wall (926e).
+      const NOUNS = ['规则牌', '登记簿', '牌', '簿', '册', '图', '枪', '绳', '带', '镜', '门', '墙', '桌', '台',
+        '架', '箱', '包', '杯', '书', '纸', '信', '灯', '钟', '窗', '柜'];
+      const actionObject = NOUNS.filter((noun) => options.action!.includes(noun))
+        .sort((a, b) => b.length - a.length)[0];
       const objectSeen = !actionObject || text.includes(actionObject);
       // A denied verb is not the action: «未看到规则牌» says the look failed.
       const positive = (verb: string) => {
@@ -1571,11 +1576,25 @@ export function reviewNarration(args: {
         }
         return false;
       };
-      const verbSeen = !verbs.length || verbs.some(positive);
-      if (verbs.length && (!verbSeen || !objectSeen) && !findings.some((f) => f.kind === 'fact.action_omitted')) {
-        const missing = !verbSeen ? `none of its verbs (${verbs.join('/')}) is narrated` : `its object «${actionObject}» is not in the text`;
+      const VERB_SEEN = verbs.some(positive);
+      // Looking is also written as the gaze: «目光落在规则牌上» (926e).
+      const PERCEPTION = /(目光|视线|注意力|眼神)[^。；]{0,8}(落在|扫过|停在|转向)|(?:看向|望向|端详|打量|查看|瞧)/u;
+      const perceived = Boolean(actionObject) && text.includes(actionObject ?? '') && PERCEPTION.test(text);
+      // The action's object missing entirely is not a partial rendering: the
+      // player asked for that object (d101: «看清…规则牌», the text never
+      // mentions the board).
+      const judged = findings.some((f) => f.kind === 'fact.action_omitted' || f.kind === 'review.action_partial');
+      if (verbs.length && (!objectSeen || (!VERB_SEEN && !perceived)) && !judged) {
+        const missing = !objectSeen ? `its object «${actionObject}» is not in the text`
+          : `none of its verbs (${verbs.join('/')}) is narrated`;
         findings.push(finding(ctx, 'fact.action_omitted', sentences[0]?.text ?? text,
-          `the input action «${options.action.slice(0, 40)}» is not narrated; ${missing}`, [options.action.slice(0, 60)], []));
+          `the input action «${options.action.slice(0, 40)}» is not narrated; ${missing}`,
+          [options.action.slice(0, 60)], []));
+      } else if (verbs.length && !VERB_SEEN && !judged) {
+        const missing = !VERB_SEEN ? `verbs ${verbs.join('/')}` : `object «${actionObject}»`;
+        findings.push(finding(ctx, 'review.action_partial', sentences[0]?.text ?? text,
+          `only part of the input action «${options.action.slice(0, 40)}» is narrated; missing ${missing}`,
+          [options.action.slice(0, 60)], []));
       }
     }
     // Hair settled tied up (束在脑后) cannot hang loose (垂落/披散) in the
@@ -1597,23 +1616,33 @@ export function reviewNarration(args: {
     // Goggles settled on the chest cannot be worn on the eyes in the same turn
     // unless the point completed the "put them on" task.
     {
+      // The goal can put the object first: 「把胸前护目镜戴好并确认…」
+      // (human row dr-0003-task-goggles).
       const wornTask = [...projection.taskCompleted, ...projection.taskAdded]
-        .some((task) => /戴(上|好|起)?(护目镜|眼镜)/u.test(task.goal));
+        .some((task) => /戴(上|好|起)?(护目镜|眼镜)|(护目镜|眼镜)[^。]{0,6}(戴好|戴上|戴起)/u.test(task.goal));
       if (!wornTask) {
         for (const [personName, person] of Object.entries(projection.people)) {
           const looks = [...person.appearanceAfter, ...person.appearanceBefore].join('｜');
           if (!/(护目镜|眼镜)/u.test(looks) || !/(挂在胸前|没戴|不在眼前|挂在颈|别在胸前)/u.test(looks)) continue;
-          if (!refersTo(sentence.text, sentences.indexOf(sentence), personName)) continue;
-          if (!/(护目镜|眼镜)/u.test(narration)) continue;
+          // The sentence must bind the goggles to that person: by name, or by
+          // a pronoun that resolves to them. A paragraph whose «她» is someone
+          // else does not (q3-quiet-beats).
+          const idx = sentences.indexOf(sentence);
+          const ownerByPronoun = pronounPerson(sentence.text, idx) === personName
+            || (/(他|她)/u.test(sentence.text) && lastPersonBefore.get(idx) === personName);
+          if (!sentence.text.includes(personName) && !ownerByPronoun) continue;
+          if (!/(护目镜|眼镜)/u.test(sentence.text)) continue;
           // A rule board saying "护目镜必须戴好" is not someone wearing them.
-          if (/(牌面|写明|规则|规定|必须|禁止|要求|白线)/u.test(narration)) continue;
-          if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(narration)) continue;
+          // A board quote only: 「规则牌」 as the object of the sentence is not
+          // a rule about wearing them (926e: «路明非摘下护目镜，目光落在规则牌上»).
+          if (/(牌面|写明|规定|必须|禁止|要求)/u.test(sentence.text)) continue;
+          if (!/(戴在|戴好|贴在|贴着|架在|架上|紧贴|捂住眼睛|摘下|取下|摘掉)/u.test(sentence.text)) continue;
           // Taking them off the chest is the settled transfer, not wearing them.
-          if (/(从|由)(胸前|身上|颈上|脖子上|怀里)/u.test(narration)) continue;
+          if (/(从|由)(胸前|身上|颈上|脖子上|怀里)/u.test(sentence.text)) continue;
           // Taking them off the chest is a transfer; a bare 「摘下」 still
           // implies they were worn, which the settled look contradicts.
-          if (/(?:从|把)(?:胸前|身上|颈上|脖子上|怀里)[^。]{0,6}(?:摘下|取下|摘掉)/u.test(narration)) continue;
-          if (/(未|没|不|尚未|没有|而非|而不是)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(narration)) continue;
+          if (/(?:从|把)(?:胸前|身上|颈上|脖子上|怀里)[^。]{0,6}(?:摘下|取下|摘掉)/u.test(sentence.text)) continue;
+          if (/(未|没|不|尚未|没有|而非|而不是)(把|将)?(护目镜|眼镜)?[^，。]{0,2}(戴|贴|架|捂)/u.test(sentence.text)) continue;
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `${personName}: the goggles are settled hanging on the chest, not worn over the eyes`,
             [looks.slice(0, 40)], []));

@@ -1677,6 +1677,25 @@ anchors.append({
                "notes": "walk + look are present, so no action_omitted; the rope is lowered again (settled down)."},
 })
 
+
+# 926e: the model now writes time and the gaze, but takes off goggles settled on
+# the chest and still ends on a mechanics panel; the walk is only partial.
+run_926e = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-926e.json", encoding="utf-8"))
+t_926e = run_926e["turns"][0]
+anchors.append({
+    "id": "neg/route/926e-partial-action-and-goggles",
+    "source": "09 constrained-beats 2026-11-11T0144-fe25 (head 926e5c98): mixed 103 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_926e["text"],
+    "options": {"minChars": 1, "action": t_926e["input"]},
+    "expect": {"fact": ["fact.state_contradiction"], "style": ["style.status_panel"], "review": ["review.action_partial"],
+               "notes": "摘下护目镜 while settled on the chest; walk not narrated (gaze only); panel remains."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

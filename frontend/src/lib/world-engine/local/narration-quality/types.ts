@@ -78,6 +78,7 @@ export type FindingKind =
   | 'review.number'
   | 'review.speech_act'
   | 'review.micro_action'
+  | 'review.action_partial'
   | 'review.object_added'
   | 'review.trait_as_event'
   | 'review.unseen_entity'
