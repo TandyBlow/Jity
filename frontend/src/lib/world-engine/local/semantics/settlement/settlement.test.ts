@@ -343,6 +343,48 @@ describe('common-group results', () => {
 });
 
 describe('six-stage updates', () => {
+  it('settles a whole submission in one six-stage pass when the caller unions the groups’ facts', async () => {
+    // 736a spent two full six-stage passes (19.1 s + 20.6 s) because the
+    // controller calls updates per group. The stages judge the world after the
+    // whole submission, so one pass over the union of the settled fact lines
+    // scans the same full cast (14 characters, 73 rows in the real world) half
+    // as often. Nothing in updates requires the key to be a single group.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ decisions: [
+        { characterId: 'a', achieved: [] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: [] },
+      ] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [] }),
+      JSON.stringify({ sanity: [] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('turn:1', {
+      groupId: 'turn:1',
+      // The controller already holds results keyed by member; a turn-level call
+      // is the union of the two groups' maps.
+      results: {
+        a: '甲沿着走廊往远处走，先看清墙上的规则牌。',
+        b: '乙没有掀开袖口，也没有看到规则牌。',
+      },
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.error ?? null).toBeNull();
+    expect(outcome.value).not.toBeNull();
+    const stages = (outcome.value as UpdatesCall[]).map((call) => call.stage);
+    expect(stages).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
+    // Both groups' facts reach the projection: the actor from the player group
+    // and the reaction target from the second group.
+    const positionPrompt = engine.prompts[0];
+    expect(positionPrompt).toContain('甲沿着走廊往远处走');
+    expect(positionPrompt).toContain('乙没有掀开袖口');
+    const detail = outcome.evidence.detail as { taskCoverageIds: string[] };
+    expect(detail.taskCoverageIds).toEqual(['a', 'b', 'c', 'off']);
+  });
+
   it('runs the canonical six stages, moves an item, covers the full cast, and pairs personality with sanity', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [
