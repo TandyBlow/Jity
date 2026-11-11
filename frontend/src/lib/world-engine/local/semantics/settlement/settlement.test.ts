@@ -19,9 +19,11 @@ class ScriptedEngine implements InferenceEngine {
 
   async complete(prompt: string): Promise<string> {
     this.prompts.push(prompt);
-    const output = this.outputs[this.index++];
+    // Abort tests need every retry attempt to answer: repeat the last scripted
+    // output once the list is exhausted instead of throwing a helper error.
+    const output = this.outputs[Math.min(this.index++, this.outputs.length - 1)];
     if (output instanceof Error) throw output;
-    if (output == null) throw new Error('scripted engine has no output left');
+    if (output == null) throw new Error('scripted engine has no output');
     return output;
   }
 
@@ -467,7 +469,7 @@ describe('common-group results', () => {
   });
 
   it('aborts the point after repeated invalid output instead of inventing a result', async () => {
-    const engine = new ScriptedEngine(['not json', 'still not json']);
+    const engine = new ScriptedEngine(['not json', 'still not json', 'not json either']);
     const handlers = createSettlementHandlers({ engine });
     const outcome = await handlers.results('g1', resultsInput());
     expect(outcome.value).toBeNull();

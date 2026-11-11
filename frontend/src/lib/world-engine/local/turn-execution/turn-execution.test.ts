@@ -458,7 +458,8 @@ describe('settlement port failure evidence', () => {
     expect(record?.fallback).toBe(true);
     expect(record?.raw).toContain('not json');
     expect(record?.rawChars).toBeGreaterThan(0);
-    expect(record?.attempts).toHaveLength(2);
+    // results allows three attempts so a two-member group can complete both rows.
+    expect(record?.attempts).toHaveLength(3);
     expect(record?.attempts?.[0].ms).toBeGreaterThanOrEqual(0);
     expect(record?.attempts?.[0].rawChars).toBe(8);
   });

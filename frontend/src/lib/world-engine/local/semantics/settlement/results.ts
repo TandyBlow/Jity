@@ -166,6 +166,11 @@ export async function runResults(
       temperature: options.temperature ?? 0,
       timeoutMs: options.timeoutMs,
       maxPromptChars: options.maxPromptChars,
+      // A question group needs two complete member results; 9623's turn 2 wrote
+      // one member per attempt (lu then nono) and died on the second. A third
+      // attempt costs ~9 s on a failing point but saves the whole turn (73 s,
+      // no prose). The repair now names the missing facts, not just the row.
+      maxAttempts: 3,
       jsonSchema: RESULTS_SCHEMA,
       validate: (value) => { readResultsAnswer(value, members, workingState); },
       // A retry has to name the frozen members: the 3turn 9623 repair answered
