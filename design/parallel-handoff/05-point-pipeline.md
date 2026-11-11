@@ -9,7 +9,7 @@
 - 取消归属测试提交：`803c9613d1cd7f38ae05605e06ddd5301a95d356`
 - 旧 `05-kernel` 树未改动。
 
-实现提交在基线之上改了 05 独占文件，并附带两个只针对 06 文件的补丁：
+实现提交在基线之上改了 05 独占文件，并附带两个只针对 06 文件的补丁，外加一个针对已合入 06 的 `session.ts` 的增量补丁：
 
 ```text
 frontend/src/lib/world-engine/schedule.ts
@@ -20,7 +20,10 @@ frontend/src/lib/world-engine/local/point-narration/queue.test.ts  (new)
 frontend/src/lib/world-engine/local/point-narration/overlap.test.ts (new)
 design/parallel-handoff/05-point-pipeline-06-session.patch
 design/parallel-handoff/05-point-pipeline-06-game-model.patch
+design/parallel-handoff/05-point-pipeline-06-session-followup.patch
 ```
+
+06 已合入 `d5ddd00e`（`6ca1d7a3`）；增量补丁 `05-point-pipeline-06-session-followup.patch` 让 06 的 `start()` 对回合内 pending head 也走同点恢复，并避免新 root 在 `create_world` 前抢占。该补丁已对 06 当前 `HEAD`（`f4893c53`）做 `git apply --check` 通过。
 
 ## 机制
 
