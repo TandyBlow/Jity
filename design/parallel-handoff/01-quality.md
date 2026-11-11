@@ -236,3 +236,4 @@
 - 05e7 per-beat：open+scene model，result（缺 result fact）+ close（跨 beat 重复）program = 2/4+2/4；`路明非也没有动` 与 `诺诺：因此未被阻止或达成目标。` 属 fallback。
 - 01 checker 第五遍：`影子/身影` 入可新造物；`红方集结点影子`=review.object_added。
 - 05e7 锚点（93 总数）：`neg/route/05e7-mixed-recital`；`action_omitted` 仍命中。
+- 10 dev 双臂（f2135824）独立复核：0/8×2；page-v3 加人/物/伤/往事，shipped 整段自造对白+假完成面板；harness 未计契约禁止项。
