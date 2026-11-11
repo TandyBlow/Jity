@@ -265,3 +265,4 @@
 - 736a 重测复核（`results/quality/findings-736a-retry.md`）：`model` 71 字、accepted 97.2 s，**不合格**——护目镜沿巷走（item actor ×3）、小句重复 4 次、规则牌缺失；root 已定位投影器缺陷 f4272699（忽略 viewpointId、取首个 at 物品；父 e07d324c），06 待吸收。单段规划有效但不等于正文合格。checker 补 item_actor 移动短语与 clause 级 loop，101 锚点；human-71 仍 0 fact。
 - 9623（head d17d6534）：**首份真实模型正文经独立复核 0 fact/0 style/0 review**（69 字，走/时间/看牌/诺诺在场各落地）；仍非产品通过——首读 103.7 s、无结果后果、`program_fallback_labelled` 误标与 `textSource:model` 冲突。`results/quality/review-09-9623.md`。第一稿 `rejected` 含「摘下护目镜」，被打回原因是别的 fact_missing，说明摘戴检查仍未接 beat 路径。
 - 已向 09/06 提 provenance 误标：9623 `textSource:model`、`composers:["model"]`，却带 `program_fallback_labelled`（`results/quality/requests-01-to-09-9623-provenance.md`）。
+- 3turn 9623（head d17d6534）：turn1 模型 103 字可读（0 fact，2 review=场地注记复述）；turn2 提问回合结算被拒 0 字；turn3 只显示 `…`。1/3 可读、0/3 有结果。归属：04 纯对话结果路径、06/09 失败不得展示占位符、02 场地注记复述降权。`results/quality/review-09-3turn-9623.md`
