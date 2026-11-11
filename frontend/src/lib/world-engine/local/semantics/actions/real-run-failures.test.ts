@@ -204,7 +204,7 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '诺诺把故障短讯机举到耳边，试了试信号。' });
   });
 
-  it('A6: a verbatim goal is still rejected; a paraphrase is the trade the 20ee comparison makes', async () => {
+  it('A6: a verbatim goal and a long paraphrase of it are both rejected', async () => {
     // run-5: the model produced Nono's goal as the protagonist's next step.
     // The consumed-protagonist rule above closes the path from a goal string to
     // a player action, and the all-character list still catches a verbatim copy.
@@ -220,15 +220,16 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
     expect(rejected.attempts).toBe(2);
     expect(codes(rejected)).toContain('action_is_task_goal');
 
-    // A long paraphrase of the same goal no longer trips the guard: the 85%
-    // subsequence branch was removed for the user's 20ee comparison. The
-    // sentence survives as the actor's action; the real-run comparison decides
-    // whether that trade is kept.
+    // The broad subsequence branch is back (the 20ee comparison showed the
+    // remaining real rejections were exact copies, so removing it reduced
+    // nothing). A long paraphrase is caught again, as it was before the trial.
     const paraphrase = await createActionHandlers({
-      engine: new ScriptedEngine(['{"kind":"act","text":"诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线"}']),
+      engine: new ScriptedEngine([
+        '{"kind":"act","text":"诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线"}',
+        '{"kind":"act","text":"诺诺抬手指了指钟楼方向，没有接话。"}',
+      ]),
     }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
-    expect(paraphrase.attempts).toBe(1);
-    expect(codes(paraphrase)).not.toContain('action_is_task_goal');
-    expect(paraphrase.value).toEqual({ kind: 'act', text: '诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线' });
+    expect(paraphrase.attempts).toBe(2);
+    expect(codes(paraphrase)).toContain('action_is_task_goal');
   });
 });

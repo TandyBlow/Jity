@@ -54,8 +54,9 @@ function interactionNear(text: string, index: number, length: number): boolean {
 /** A task goal ("把故障短讯机恢复到能与凯撒联络的状态") is a standing
  * objective, not one action a character performs now. Small models copy it
  * verbatim — the first real probe produced three such "actions" (all three
- * were goal copies). Keep equality and the short-goal contiguous-span rule;
- * the broad subsequence rule is removed for the user's controlled comparison. */
+ * were goal copies). Equality, the short-goal contiguous-span rule and the
+ * broad subsequence rule are all keepers: the controlled comparison showed the
+ * remaining rejections were exact copies, not paraphrases. */
 function taskGoalCopy(text: string, goals: readonly string[]): string | null {
   const value = skeleton(text);
   if (value.length < 4) return null;
@@ -64,6 +65,11 @@ function taskGoalCopy(text: string, goals: readonly string[]): string | null {
     if (goal.length < 4) continue;
     if (value === goal) return goalText;
     if (goal.length <= 12 && longestSharedSpan(text, goalText).length >= Math.max(4, Math.ceil(goal.length * 0.6))) return goalText;
+    // Restored after the 20ee comparison: the real run showed the rejections
+    // were exact goal copies, so removing this branch reduced nothing while it
+    // would let a long paraphrase through. See
+    // results/product/evidence/06-goal-copy-ab-verdict.json.
+    if (sharedSubsequence(text, goalText).coverage >= 0.85) return goalText;
   }
   return null;
 }

@@ -29,9 +29,11 @@ describe('task-goal classifier on the shipped world', () => {
     const { state } = loadProductWorld();
     const scene = buildScene(state, 'nono');
     const options = { maxActionChars: 120, maxReactionChars: 200, maxTargets: 4 };
-    // The controlled comparison removes only the broad subsequence branch.
-    // Its high score alone must no longer reject a concrete/shortened action;
-    // exact copies and the short-goal contiguous rule remain in force.
+    // The controlled comparison removed only the broad subsequence branch for
+    // one run. The real run showed the remaining rejections were exact copies,
+    // so the branch is restored: a shortened fragment that scores high on it is
+    // rejected again, while a concrete action that does not reach the score is
+    // accepted.
     const goal = '确认西回廊的蓝方伤员是否需要真正的医护帮助';
     const concrete = '诺诺蹲下确认西回廊的蓝方伤员，是否需要真正的医护帮助。';
     expect(sharedSubsequence(skeleton(concrete), skeleton(goal)).coverage).toBeLessThan(0.85);
@@ -40,7 +42,7 @@ describe('task-goal classifier on the shipped world', () => {
     const fragment = '确认西回廊的蓝方伤员是否需要医护帮助。';
     expect(sharedSubsequence(skeleton(fragment), skeleton(goal)).coverage).toBeGreaterThanOrEqual(0.85);
     const fragmentIssues = checkActionText(fragment, scene, state, options).issues;
-    expect(fragmentIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(false);
+    expect(fragmentIssues.some((issue) => issue.code === 'action_is_task_goal')).toBe(true);
     // A verbatim goal is still caught.
     const verbatim = '确认西回廊的蓝方伤员是否需要真正的医护帮助。';
     const copyIssues = checkActionText(verbatim, scene, state, options).issues;
