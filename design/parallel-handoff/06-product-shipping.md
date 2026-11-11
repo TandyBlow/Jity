@@ -291,3 +291,42 @@ chunk `page-19ac6488c8da198a.js`，PID 41180，`:3241`。页面默认 `auto`；�
 - 当前服务 `:3241` 仍是 `661ae966` 构建（BUILD_ID `fx5jceQkxddEF_Z69QwcV`，PID 128288），**未替换**；
 - 下一个构建已就绪未发布：head `b3304a4b`，BUILD_ID `zh5-0ysyzDNR9feZ7eARs`，
   chunk `page-cb2486fb7a329f9e.js`（`.next-prod6`），等 09 释放后再换。
+
+## 11. 2026-11-11 21:xx：按点正文队列已合入并发布
+
+### 合入
+
+- `d5ddd00e`（05）核心：`local/point-narration/queue.ts`、controller 接线、schedule 的重叠判定、transport 写串行。
+- `6ca1d7a3`（06）接线：session 默认开 `narrationOverlap`，提交点回报 `onPointCommitted`；game-model 按点冻结
+  `resultsText`/`facts`/`playerInput`，正文只读本点快照；failed head 在 `start()` 时显式重试一次。
+- `f4893c53`（06）页面证据：每点 `startedAtMs/firstTextAtMs/completedAtMs`，`pointCommittedAtMs` 由提交事件写入。
+
+### 合并时我对 05 补丁做的适配
+
+- session 的 `onCommit` 保留了我这边先记录证据、再通知模型端点的顺序；
+- game-model 的补丁落在我加了 `source/issues` 的 `reportAction` 旁边，没有覆盖；
+- 某点没有快照时正文用空 `resultsText`，不回退到 live `lastResultsText`——那正是补丁要堵的泄漏。
+
+### 已核对的机制事实
+
+- 队列按提交顺序串行处理点；正文只写 `record.narrations[pointId]`，不改 head、不 apply point。
+- 允许结算穿过 pending gate 的条件：队列正忙 + 有 active advance + 唯一 blocked reason 是 `narration_pending`；
+  暂停、租约失效、正文失败都不绕过；新玩家回合仍要求 head ready。
+- 写操作经过 `writeTail` 串行；队列只在提交响应采纳后入队，不会读到半提交状态。
+- 05 的 `overlap.test.ts` 用真实 transport/controller 证明：p1 正文被挂起时 p2 完成提交，释放后 p1 文本只落 p1；
+  从中间存档恢复只补正文，不发 action、不重复提交。
+
+### 发布
+
+- head `f4893c53`，BUILD_ID `nAX2kzAJu6mA0y_NSETGH`，chunk `page-bcbecab7c6fdd7fe.js`，
+  sha256 `7e1f67fad337…`，PID 76956，`:3241`，目录 `.next-prod8`。
+- 发布前 21:17–21:19 无 live 标记、无活动连接。
+- 请求 09 的 10 回合运行写在 `09-run-request-f489.json` / `.md`。
+
+### 仍未完成
+
+1. 真实回合的逐点时钟与逐角色 action 调用还没跑（09）。
+2. `position_invalid`（04）仍在：4b1e t10 三组同点写 lu 位置。
+3. failed head 正文时 cancel 被拒仍会让该回合无法继续（已交 05 的具体边界，见
+   `results/product/ownership-requests/06-to-05-pipeline-merged.json`）。
+4. 60 s 首段仍取决于结算耗时；重叠只能把正文藏进结算，不能加快结算。
