@@ -750,6 +750,7 @@ try {
           pointCommittedAtMs: record.clocks?.pointCommittedAtMs ?? record.pointCommittedAtMs ?? null,
           narrationStartedAtMs: record.clocks?.narrationStartedAtMs ?? null,
           narrationStarts: record.narrationStarts ?? null,
+          actions: Array.isArray(record.actions) ? record.actions : null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
           narration: record.narration ?? null,
@@ -787,73 +788,39 @@ try {
       }).catch(() => null);
       entry.submission = entry.product?.submission ?? null;
       // Offscreen judge record: one row per actor the action lane looked at.
-      // A call with zero model calls is a program skip (the lane decided without
-      // the model); a call with at least one model call was judged by the model,
-      // whether it answered act or skip. The page's ledger does not carry the
-      // lane's 'source' yet, so the model-call count is the discriminator and the
-      // raw/attempts are kept alongside for review.
+      // The page's per-actor record carries task/key/ms/fallback/error. It does
+      // not yet carry whether the model judged the actor or the lane skipped it
+      // by rule, so 'source' is only filled when the page provides it; without
+      // it the row is marked ms-only and the split stays unknown rather than
+      // guessed from timing.
       {
-        const calls = entry.product?.submission?.calls ?? [];
-        const actions = calls.filter((call) => call.task === 'action');
-        const rows = actions.map((call) => ({
-          actorId: call.key ?? null,
-          modelCalls: call.calls ?? 0,
-          judgedByModel: (call.calls ?? 0) > 0,
-          fallback: call.fallback ?? null,
-          ms: Math.round(call.ms ?? 0),
-          attempts: call.attempts ?? null,
-          raw: call.raw ?? null,
+        const actions = (entry.product?.actions ?? []).filter((row) => row?.task === 'action');
+        const rows = actions.map((row) => ({
+          actorId: row.key ?? null,
+          source: row.source ?? null,
+          decision: row.decision ?? null,
+          issueCode: row.issueCode ?? null,
+          modelCalls: row.calls ?? null,
+          fallback: row.fallback ?? null,
+          error: row.error ?? null,
+          ms: Math.round(row.ms ?? 0),
         }));
-        const model = rows.filter((row) => row.judgedByModel);
-        const program = rows.filter((row) => !row.judgedByModel);
+        const exact = rows.filter((row) => row.source != null);
+        const model = exact.filter((row) => row.source === 'model');
+        const program = exact.filter((row) => row.source === 'program');
         const mean = (list) => (list.length ? Math.round(list.reduce((sum, row) => sum + row.ms, 0) / list.length) : null);
         entry.offscreenJudge = {
           actors: rows.length,
-          modelJudged: model.length,
-          programSkipped: program.length,
+          basis: exact.length === rows.length ? 'page-recorded-source' : 'ms-only',
+          modelJudged: exact.length === rows.length ? model.length : null,
+          programSkipped: exact.length === rows.length ? program.length : null,
           modelSkipMs: mean(model),
           programSkipMs: mean(program),
           deltaMs: (mean(model) != null && mean(program) != null) ? mean(model) - mean(program) : null,
+          modelSkips: exact.filter((row) => row.source === 'model' && row.decision === 'skip').length,
           rows,
         };
       }
-      entry.narrationDebug = await page.evaluate(() => {
-        const debug = globalThis.__worldDebug;
-        if (!debug || typeof debug !== 'object') return null;
-        return {
-          violations: Array.isArray(debug.violations) ? debug.violations.slice(0, 20) : null,
-          attempts: Array.isArray(debug.attempts) ? debug.attempts.map((attempt) => (Array.isArray(attempt) ? attempt.length : attempt)) : null,
-          rawChars: typeof debug.raw === 'string' ? debug.raw.length : null,
-          cleanedChars: typeof debug.cleaned === 'string' ? debug.cleaned.length : null,
-          prunedChars: typeof debug.pruned === 'string' ? debug.pruned.length : null,
-          supportedChars: typeof debug.supported === 'string' ? debug.supported.length : null,
-        };
-      }).catch(() => null);
-      entry.candidate = await page.evaluate((from) => {
-        const list = globalThis.__worldCandidate;
-        if (!Array.isArray(list)) return null;
-        // __worldCandidate is a session-long list; keep only the records this
-        // turn appended, otherwise a later turn's text is compared against
-        // every earlier round's raw output.
-        const mine = list.slice(Number(from) || 0);
-        const trim = (value, depth = 0) => {
-          if (typeof value === 'string') return value.slice(0, 1500);
-          if (Array.isArray(value)) return depth > 3 ? `[${value.length} items]` : value.slice(0, 24).map((item) => trim(item, depth + 1));
-          if (value && typeof value === 'object') {
-            if (depth > 3) return '[object]';
-            return Object.fromEntries(Object.entries(value).slice(0, 40).map(([key, item]) => [key, trim(item, depth + 1)]));
-          }
-          return value;
-        };
-        return {
-          count: list.length,
-          added: mine.length,
-          tail: mine.map((record) => ({
-            ...trim({ ...record, detail: undefined }),
-            detail: record?.detail ? JSON.stringify(record.detail).slice(0, 16000) : null,
-          })),
-        };
-      }, candidateBefore).catch(() => null);
       entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
       entry.narrationRejections = entry.console
         .filter((line) => /\[narration\] (in-model rejected|candidate fallback rejected)/.test(line))
