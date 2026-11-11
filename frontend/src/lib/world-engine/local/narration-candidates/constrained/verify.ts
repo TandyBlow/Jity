@@ -13,6 +13,22 @@
  */
 import type { EntityDelta, Id, TimeAdvance } from '../../../types';
 import { resultSemantics } from '../../narration-generation/licensed-sense';
+
+/** Character-bigram recall of `expected` inside `text`, ignoring punctuation and
+ * whitespace. Used only for free-text results, which have no structured fields:
+ * it answers «is this sentence's content actually in the prose», not «is the
+ * wording identical». */
+export function contentRecall(text: string, expected: string): number {
+  const clean = (value: string) => value.replace(/[\s，。；：！？、「」『』…—\-·“”"'（）()]/gu, '');
+  const target = clean(expected);
+  const source = clean(text);
+  if (!target) return 1;
+  if (target.length < 2) return source.includes(target) ? 1 : 0;
+  const grams: string[] = [];
+  for (let i = 0; i + 1 < target.length; i += 1) grams.push(target.slice(i, i + 2));
+  const hit = grams.filter((gram) => source.includes(gram)).length;
+  return hit / grams.length;
+}
 import { alignNarration, mentionsTime, numbersIn, repetitionAgainst } from '../../../runtime/narration-alignment';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import type { CandidateIssue, FactVisibility, SceneFact, SceneSkeleton } from './types';
@@ -275,9 +291,24 @@ export function verifyText(text: string, options: VerifyOptions): {
           issues.push({ kind: 'result_unverified', severity: 'soft', beatId: null, detail: `result:${fact.id}:${check.detail}` });
         }
       } else {
-        // Free-text only: the settled sentence itself must appear, because there
-        // is nothing structured to compare. Callers with 04 records avoid this.
-        expressed = text.includes(fact.text);
+        // Free-text only (no 04 record). The wording is a rendering, not a
+        // contract, but there are no fields to compare either — so require the
+        // fact's own content to be largely present (character-bigram recall)
+        // rather than an exact sentence, and always mark it unverified: only a
+        // human read can confirm a free-text outcome.
+        const coverage = contentRecall(text, fact.text);
+        expressed = coverage >= 0.55;
+        if (!expressed) {
+          issues.push({
+            kind: 'fact_missing', severity: 'hard', beatId: null,
+            detail: `result:${fact.id}:「${fact.text}」(content recall ${coverage.toFixed(2)})`,
+          });
+        } else {
+          issues.push({
+            kind: 'result_unverified', severity: 'soft', beatId: null,
+            detail: `result:${fact.id}: free-text result covered by ${(coverage * 100).toFixed(0)}% content; not machine-verified`,
+          });
+        }
       }
     } else if (fact.kind === 'at') {
       expressed = parts.some((sentence) => sentence.includes(fact.name) && sentence.includes(fact.location));

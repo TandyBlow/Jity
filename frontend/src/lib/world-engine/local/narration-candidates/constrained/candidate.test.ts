@@ -908,8 +908,10 @@ describe('settled result line', () => {
       inputText: '',
       policy: { mode: 'program', resultsText, knowledge: { discoveredItemIds: ['crate'] } },
     });
+    // Without 04 structured records the wording is a rendering, not a
+    // contract: a faithful rewrite passes and preserves the outcome.
     expect(result.accepted).toBe(true);
-    expect(result.text).toContain(resultsText);
+    expect(result.text).toContain('诺诺说只剩木箱那边没人看');
     expect(result.composers).toContain('program');
   });
 });
