@@ -135,6 +135,7 @@ export function checkPacket(packet, vocabulary = null, trainGoals = null) {
   const problems = [];
   const warnings = [];
   const rationaleSeen = new Map();
+  const xSeen = new Map();
   if (!rows.length) problems.push('packet has no rows');
   const declaredTotal = Number(packet?.totalRows ?? packet?.datasetRows ?? 0);
   const declaredRate = Number(packet?.sampleRate ?? 0);
@@ -216,15 +217,27 @@ export function checkPacket(packet, vocabulary = null, trainGoals = null) {
     } catch (error) {
       problems.push(error.message);
     }
-    for (const step of steps) {
-      const group = vocab.actionToGroup.get(step.action);
-      if (!group) problems.push(`row ${id} step.action ${step.action} is not one of the 115 predicates`);
-      else if (row.yGroup != null) {
-        const declared = Array.isArray(row.yGroup) ? row.yGroup : [row.yGroup];
-        if (!declared.includes(group) && !declared.some((entry) => String(entry).includes(group))) {
-          problems.push(`row ${id} yGroup ${JSON.stringify(row.yGroup)} does not contain the first step's group ${group}`);
-        }
+    const derivedGroup = steps.length ? (vocab.actionToGroup.get(steps[0].action) ?? null) : 'skip';
+    if (derivedGroup && row.yGroup != null) {
+      if (typeof row.yGroup === 'string') {
+        if (row.yGroup !== derivedGroup) problems.push(`row ${id} yGroup ${row.yGroup} != derived ${derivedGroup}`);
+      } else if (Array.isArray(row.yGroup)) {
+        if (!row.yGroup.includes(derivedGroup)) problems.push(`row ${id} yGroup ${JSON.stringify(row.yGroup)} does not contain the derived ${derivedGroup}`);
+      } else {
+        problems.push(`row ${id} yGroup is neither a string nor an array`);
       }
+    }
+    for (const step of steps) {
+      if (!vocab.actionToGroup.get(step.action)) problems.push(`row ${id} step.action ${step.action} is not one of the 115 predicates`);
+      if (step.object === row.characterId) problems.push(`row ${id} step.object is the actor`);
+    }
+    if (row.x && typeof row.x === 'object') {
+      const xKey = canonical(row.x);
+      if (xSeen.has(xKey)) problems.push(`row ${id} X duplicates ${xSeen.get(xKey)}`);
+      else xSeen.set(xKey, id);
+    }
+    if (typeof row.yRationale === 'string' && row.yRationale.trim().length < 8) {
+      problems.push(`row ${id} yRationale is shorter than 8 chars`);
     }
     const ids = new Set((row.x?.candidates ?? []).map((candidate) => candidate?.id ?? candidate));
     for (const step of steps) {
@@ -475,7 +488,7 @@ function selfTest() {
     x: {
       actor: { id: 'c1', name: '甲', sanity: 50, personality: [], location: '巷口' },
       goals: [{ id: 'task_caesar_bridge', text: '到钟楼' }],
-      present: [], objects: [{ id: 'door', name: '门' }], justNow: '无',
+      present: [], objects: [{ id: 'door', name: '门' }], justNow: `无（${id}）`,
       candidates: [{ id: 'door', name: '门' }],
     },
     y: { steps },
@@ -501,7 +514,7 @@ function selfTest() {
   expectProblem({ criterionSha256: 'deadbeef', rows: [row('r1', [])] }, 'not the frozen', 'criterion drift');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '观察', object: 'nope' }])] }, 'not a candidate id', 'unknown object');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '飞升', object: null }])] }, 'not one of the 115', 'predicate outside the vocabulary');
-  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { yGroup: ['战斗'] })] }, 'does not contain the first step', 'yGroup mismatch');
+  expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { yGroup: ['战斗'] })] }, 'does not contain the derived', 'yGroup mismatch');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }])], vocabularySha256: 'deadbeef' }, 'vocabularySha256', 'vocabulary drift');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [{ ...row('r1', []), characterId: 'other' }] }, 'characterId != x.actor.id', 'actor mismatch');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [], { x: { ...row('r1', []).x, goals: [{ id: 'task_heldout_test' }] } })] }, 'not a TRAIN goal', 'held-out goal leak');
