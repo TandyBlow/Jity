@@ -25,14 +25,8 @@ HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 
 from tools import cases, provenance  # noqa: E402
-from tools.project_x import (  # noqa: E402
-    SERIALIZER_PROFILES,
-    SERIALIZER_VERSION,
-    candidate_ids,
-    project_x,
-    serialize_report,
-    serialize_x,
-)
+from tools import loader  # noqa: E402
+from tools.project_x import LOADER_SERIALIZER, candidate_ids, goal_ids, project_x  # noqa: E402
 from tools.state_view import canonical_bytes, entity_name, position_label, room_of  # noqa: E402
 
 POOL_SCHEMA = "action-dataset-pool-v1"
@@ -68,16 +62,17 @@ def main() -> int:
                 skipped_actor[actor_id] = sorted(set(skipped_actor.get(actor_id, [])) | set(outside))
                 continue
             x = project_x(state, actor_id, events=events)
-            rendered = serialize_x(x)
+            rendered = None
             row = {
                 "poolId": f"{entry['snapshotSha256'][:10]}-{actor_id}",
                 "source": "evidence-snapshot",
                 "worldId": entry["worldId"],
                 "characterId": actor_id,
                 "x": x,
-                "xSha256": hashlib.sha256(rendered.encode("utf-8")).hexdigest(),
-                "xChars": len(rendered),
-                "goalsInX": sorted(goal["id"] for goal in x["goals"]),
+                "xSha256": hashlib.sha256(
+                    json.dumps(x, ensure_ascii=False, sort_keys=True).encode("utf-8")
+                ).hexdigest(),
+                "goalsInX": goal_ids(x),
                 "candidates": candidate_ids(x),
                 "episode": {
                     "snapshotSha256": entry["snapshotSha256"],
@@ -89,39 +84,34 @@ def main() -> int:
                     "time": entry["time"],
                     "duplicateLocations": entry["duplicateLocations"],
                 },
-                "justNowEvents": len(x["justNow"]),
+                "recentEvents": len(x["recent"]),
             }
             situation = dict(x)
-            situation["place"] = {key: value for key, value in x["place"].items() if key != "time"}
+            situation["place"] = str(x["place"]).split("；时间=")[0]
             situation_keys.setdefault(hashlib.sha256(canonical_bytes(situation)).hexdigest(), row["poolId"])
             rows.append(row)
 
     rows.sort(key=lambda row: (row["episode"]["time"], row["characterId"], row["poolId"]))
     args.out.mkdir(parents=True, exist_ok=True)
-    with (args.out / "candidates.jsonl").open("w", encoding="utf-8") as handle:
+    with (args.out / "candidates.jsonl").open("w", encoding="utf-8", newline=chr(10)) as handle:
         for row in rows:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
 
-    profiles = {}
-    for profile in SERIALIZER_PROFILES:
-        measured = [serialize_report(row["x"], profile=profile) for row in rows]
-        sizes = sorted(item["chars"] for item in measured)
-        clipped: dict[str, int] = {}
-        for item in measured:
-            for field, count in item["clipped"].items():
-                clipped[field] = clipped.get(field, 0) + count
-        profiles[profile] = {
-            "charsMin": sizes[0] if sizes else 0,
-            "charsP50": sizes[len(sizes) // 2] if sizes else 0,
-            "charsP95": sizes[min(len(sizes) - 1, int(0.95 * len(sizes)))] if sizes else 0,
-            "charsMax": sizes[-1] if sizes else 0,
-            "clippedFieldCounts": dict(sorted(clipped.items())),
-            "fitsFiveTwelveCharBudget": bool(sizes) and sizes[-1] <= 512,
-        }
+    serializer = loader.load_serializer()
+    measured = [loader.render_row(serializer, {"rowId": row["poolId"], "x": row["x"]}) for row in rows]
+    sizes = sorted(item["chars"] for item in measured)
+    loader_info = {
+        "version": serializer.SERIALIZER_VERSION,
+        "sha256": serializer.serializer_digest(),
+        "charsMin": sizes[0] if sizes else 0,
+        "charsP50": sizes[len(sizes) // 2] if sizes else 0,
+        "charsP95": sizes[min(len(sizes) - 1, int(0.95 * len(sizes)))] if sizes else 0,
+        "charsMax": sizes[-1] if sizes else 0,
+    }
 
     summary = {
         "schema": POOL_SCHEMA,
-        "serializerVersion": SERIALIZER_VERSION,
+        "serializerVersion": LOADER_SERIALIZER,
         "allowedGoals": {
             "file": str(args.allowed_goals),
             "count": len(allowed),
@@ -133,10 +123,9 @@ def main() -> int:
         "uniqueSituations": len(situation_keys),
         "actors": sorted({row["characterId"] for row in rows}),
         "excludedActors": {actor: goals for actor, goals in sorted(skipped_actor.items()) if actor not in {row["characterId"] for row in rows}},
-        "rooms": sorted({row["x"]["place"]["name"] for row in rows}),
-        "withRecentEvents": sum(1 for row in rows if row["justNowEvents"]),
-        "xChars": {"min": profiles["full"]["charsMin"], "p50": profiles["full"]["charsP50"], "p95": profiles["full"]["charsP95"], "max": profiles["full"]["charsMax"]},
-        "profiles": profiles,
+        "rooms": sorted({str(row["x"]["place"]).split("（", 1)[0] for row in rows}),
+        "withRecentEvents": sum(1 for row in rows if row["recentEvents"]),
+        "loaderRendered": loader_info,
         "goalsCovered": sorted({goal for row in rows for goal in row["goalsInX"]}),
         "episodes": [
             {
@@ -150,7 +139,7 @@ def main() -> int:
         ],
         "notDone": [
             "no y labels yet: this file is a candidate pool, not training data",
-            "token length is not measured (the MiniRBT tokenizer is not available in this lane); only character length is measured, which is an upper bound for Chinese text",
+            "token length is not measured (the MiniRBT tokenizer is not available in this lane); only loader-rendered character length is measured, which is an upper bound for Chinese text",
         ],
     }
     provenance.write_json(args.out / "summary.json", summary)

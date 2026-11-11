@@ -19,14 +19,14 @@
   "episodes": [
     {
       "duplicateLocations": 8,
-      "evidenceFile": "evidence/09-one-legal-turn-415c.json",
+      "evidenceFile": "evidence/09-one-legal-turn-d101.json",
       "pointId": "point_round_3_1",
       "snapshotSha256": "21bb80921bdeb6136df3cef36999aa28d2d224547a7d3c782746b11ae63999d6",
       "time": "2009-10-17T15:21:00"
     },
     {
       "duplicateLocations": 21,
-      "evidenceFile": "evidence/09-one-legal-turn-03ec-infra-invalid.json",
+      "evidenceFile": "evidence/09-one-legal-turn-d101.json",
       "pointId": "point_root_world_dragon_raja_free_day",
       "snapshotSha256": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
       "time": "2009-10-17T15:20:00"
@@ -40,8 +40,8 @@
     },
     {
       "duplicateLocations": 5,
-      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
-      "pointId": "point_round_auto_mwb3otrr_1_1",
+      "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
+      "pointId": "point_round_auto_mwb4vrek_1_1",
       "snapshotSha256": "7a3155ecb0849df5519381a7b4337ba1e88c1b4a89b6eed64cba08b8738c3833",
       "time": "2009-10-17T15:22:00"
     },
@@ -61,8 +61,8 @@
     },
     {
       "duplicateLocations": 5,
-      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
-      "pointId": "point_round_auto_mwb3q8vp_2_1",
+      "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
+      "pointId": "point_round_auto_mwb4xjvx_2_1",
       "snapshotSha256": "c127c9df63dba339f1006214a5a0dc2dcce52d34a6356a267884f140e300e2eb",
       "time": "2009-10-17T15:23:00"
     },
@@ -75,7 +75,7 @@
     },
     {
       "duplicateLocations": 5,
-      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
       "pointId": "point_round_3_1",
       "snapshotSha256": "eb87329372773e1f8c3116bffb4efb544b16f2d96433d7f86f199bc58a42694d",
       "time": "2009-10-17T15:21:00"
@@ -164,34 +164,19 @@
     "task_zhou_rope",
     "task_zhou_warn"
   ],
+  "loaderRendered": {
+    "charsMax": 978,
+    "charsMin": 479,
+    "charsP50": 577,
+    "charsP95": 978,
+    "sha256": "4f1403fb6ec982169dbb7a3a98176032a4f0999091c85fa967c1a7fb083ee496",
+    "version": "action-next-step-x1"
+  },
   "notDone": [
     "no y labels yet: this file is a candidate pool, not training data",
-    "token length is not measured (the MiniRBT tokenizer is not available in this lane); only character length is measured, which is an upper bound for Chinese text"
+    "token length is not measured (the MiniRBT tokenizer is not available in this lane); only loader-rendered character length is measured, which is an upper bound for Chinese text"
   ],
   "poolRows": 80,
-  "profiles": {
-    "full": {
-      "charsMax": 1489,
-      "charsMin": 777,
-      "charsP50": 984,
-      "charsP95": 1477,
-      "clippedFieldCounts": {},
-      "fitsFiveTwelveCharBudget": false
-    },
-    "tight": {
-      "charsMax": 1372,
-      "charsMin": 712,
-      "charsP50": 925,
-      "charsP95": 1360,
-      "clippedFieldCounts": {
-        "actorAppearance": 80,
-        "personality": 80,
-        "placeAppearance": 80,
-        "presentAppearance": 18
-      },
-      "fitsFiveTwelveCharBudget": false
-    }
-  },
   "rooms": [
     "东回廊",
     "中央庭院",
@@ -203,14 +188,8 @@
     "钟楼旗台外廊"
   ],
   "schema": "action-dataset-pool-v1",
-  "serializerVersion": "action-x-v2",
+  "serializerVersion": "action-next-step-x1",
   "uniqueRenderedX": 43,
-  "uniqueSituations": 18,
-  "withRecentEvents": 8,
-  "xChars": {
-    "max": 1489,
-    "min": 777,
-    "p50": 984,
-    "p95": 1477
-  }
+  "uniqueSituations": 14,
+  "withRecentEvents": 8
 }

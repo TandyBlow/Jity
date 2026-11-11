@@ -30,7 +30,7 @@ def make_row(labels, *, actor="ann", steps=None, rationale=None, skip_reason=Non
     row = {
         "rowId": "test-0001",
         "source": "constructed",
-        "worldId": x["goals"][0]["id"][:0] + "world_test",
+        "worldId": "world_test",
         "characterId": actor,
         "x": x,
         "y": {"steps": steps},

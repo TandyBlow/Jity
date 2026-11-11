@@ -1,19 +1,28 @@
 {
-  "alsoIn": [
+  "copies": [
     {
       "evidenceFile": "evidence/09-one-legal-turn-415c.json",
       "pointId": "point_round_auto_mwb6b3j2_1_1",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb6b3j2_1_1"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb6b3j2_1_1",
+      "runStatus": "FAILED"
+    },
+    {
+      "evidenceFile": "evidence/09-one-legal-turn-415c.json",
+      "pointId": "point_round_auto_mwb6b3j2_1_1",
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb6b3j2_1_1",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-95dc.json",
       "pointId": "point_round_auto_mwb5hlqb_1_1",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb5hlqb_1_1"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb5hlqb_1_1",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-95dc.json",
       "pointId": "point_round_auto_mwb5hlqb_1_1",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb5hlqb_1_1"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb5hlqb_1_1",
+      "runStatus": "FAILED"
     }
   ],
   "provenance": {
@@ -29,6 +38,7 @@
     "protagonistId": "lu",
     "recordedStateDigest": "8b7eb737bc11c081a8133ef43bd9aba5339ce4266ec70bec826c7d3828a25911",
     "roundId": "round_auto_mwb6b3j2_1",
+    "runStatus": "FAILED",
     "snapshotSha256": "8b7eb737bc11c081a8133ef43bd9aba5339ce4266ec70bec826c7d3828a25911",
     "sourceKind": "evidence-snapshot",
     "time": "2009-10-17T15:22:00",
@@ -38,11 +48,6 @@
         "amount": 1,
         "unit": "minute"
       }
-    },
-    "transportHealth": {
-      "narrations": 3,
-      "pointStates": 3,
-      "points": 2
     },
     "transportPointer": "/turns/0/snapshotAfterTurn/transport",
     "worldId": "world_dragon_raja_free_day"

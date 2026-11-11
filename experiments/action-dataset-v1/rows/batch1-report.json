@@ -1,0 +1,331 @@
+{
+  "actors": {
+    "caesar": 3,
+    "chu": 2,
+    "lin": 3,
+    "lu": 4,
+    "manstein": 1,
+    "nono": 3,
+    "su": 3,
+    "tang": 3,
+    "zhou": 2
+  },
+  "allowedGoals": {
+    "count": 48,
+    "splitSha256": "b4680a9e6b1b4af3ed023eb7bfc7c491afab1200a486254d56098a160d18a8eb"
+  },
+  "byBase": {
+    "snapshot": 19,
+    "world-s0": 5
+  },
+  "catalog": [
+    "experiments\\action-dataset-v1\\cases\\batch1"
+  ],
+  "catalogCases": 24,
+  "counts": {
+    "oneStep": 18,
+    "rows": 24,
+    "skip": 5,
+    "twoStep": 1
+  },
+  "criterion": {
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\criterion.txt",
+    "sha256": "56092d0c6e5ba0a03e8dc4096e3edb1bb2e4123b351b9f14d6884afdea11d21c"
+  },
+  "failures": [],
+  "goalCoverage": {
+    "byGoal": {
+      "task_caesar_bridge": [
+        "A",
+        "B"
+      ],
+      "task_caesar_win": [
+        "B"
+      ],
+      "task_chu_hatch": [
+        "B",
+        "skip"
+      ],
+      "task_chu_hold": [
+        "skip"
+      ],
+      "task_chu_lin": [
+        "skip"
+      ],
+      "task_lin_carry": [
+        "A",
+        "B",
+        "skip"
+      ],
+      "task_lin_leave": [
+        "skip"
+      ],
+      "task_lu_goggles": [
+        "A"
+      ],
+      "task_lu_kit": [
+        "A"
+      ],
+      "task_lu_match": [
+        "B"
+      ],
+      "task_lu_route": [
+        "B"
+      ],
+      "task_manstein_clock": [
+        "skip"
+      ],
+      "task_manstein_injury": [
+        "skip"
+      ],
+      "task_nono_battery": [
+        "A"
+      ],
+      "task_nono_lu": [
+        "A"
+      ],
+      "task_nono_wounded": [
+        "B"
+      ],
+      "task_su_lin": [
+        "A",
+        "B"
+      ],
+      "task_su_report": [
+        "B"
+      ],
+      "task_tang_push": [
+        "B",
+        "skip"
+      ],
+      "task_tang_report": [
+        "A",
+        "skip"
+      ],
+      "task_zhou_guard": [
+        "A",
+        "skip"
+      ],
+      "task_zhou_latch": [
+        "skip"
+      ],
+      "task_zhou_warn": [
+        "skip"
+      ]
+    },
+    "referenced": 23,
+    "withoutA": [
+      "task_caesar_contact",
+      "task_caesar_flag",
+      "task_caesar_tang",
+      "task_caesar_win",
+      "task_chu_flag",
+      "task_chu_hatch",
+      "task_chu_hold",
+      "task_chu_lin",
+      "task_chu_line",
+      "task_chu_su",
+      "task_lin_call",
+      "task_lin_leave",
+      "task_lin_safe",
+      "task_lin_sent",
+      "task_lu_ally",
+      "task_lu_choice",
+      "task_lu_match",
+      "task_lu_route",
+      "task_lu_rules",
+      "task_manstein_clock",
+      "task_manstein_injury",
+      "task_manstein_log",
+      "task_manstein_order",
+      "task_manstein_radio",
+      "task_nono_signal",
+      "task_nono_squad",
+      "task_nono_wounded",
+      "task_su_exit",
+      "task_su_reload",
+      "task_su_report",
+      "task_su_watch",
+      "task_tang_ammo",
+      "task_tang_fallback",
+      "task_tang_pause",
+      "task_tang_push",
+      "task_zhou_latch",
+      "task_zhou_retreat",
+      "task_zhou_rope",
+      "task_zhou_warn"
+    ],
+    "withoutB": [
+      "task_caesar_contact",
+      "task_caesar_flag",
+      "task_caesar_tang",
+      "task_chu_flag",
+      "task_chu_hold",
+      "task_chu_lin",
+      "task_chu_line",
+      "task_chu_su",
+      "task_lin_call",
+      "task_lin_leave",
+      "task_lin_safe",
+      "task_lin_sent",
+      "task_lu_ally",
+      "task_lu_choice",
+      "task_lu_goggles",
+      "task_lu_kit",
+      "task_lu_rules",
+      "task_manstein_clock",
+      "task_manstein_injury",
+      "task_manstein_log",
+      "task_manstein_order",
+      "task_manstein_radio",
+      "task_nono_battery",
+      "task_nono_lu",
+      "task_nono_signal",
+      "task_nono_squad",
+      "task_su_exit",
+      "task_su_reload",
+      "task_su_watch",
+      "task_tang_ammo",
+      "task_tang_fallback",
+      "task_tang_pause",
+      "task_tang_report",
+      "task_zhou_guard",
+      "task_zhou_latch",
+      "task_zhou_retreat",
+      "task_zhou_rope",
+      "task_zhou_warn"
+    ]
+  },
+  "groups": {
+    "skip": 5,
+    "感知": 9,
+    "战斗": 1,
+    "物品": 3,
+    "移动": 2,
+    "言语": 2,
+    "请求": 2
+  },
+  "labelVocabulary": {
+    "file": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\labels-v1.json",
+    "sha256": "41372ab43bc16ed90dd488bf334a562f6cec44e5633f07ba01d2833f85bb1829"
+  },
+  "predicatesUnused": [
+    "查看",
+    "倾听",
+    "嗅探",
+    "触摸",
+    "搜查",
+    "试探",
+    "侦察",
+    "接近",
+    "后退",
+    "撤离",
+    "跟随",
+    "带路",
+    "潜行",
+    "翻越",
+    "攀爬",
+    "钻入",
+    "抢占",
+    "攻击",
+    "射击",
+    "投掷",
+    "格挡",
+    "闪避",
+    "掩护",
+    "压制",
+    "制服",
+    "缴械",
+    "支援",
+    "接应",
+    "搬运",
+    "治疗",
+    "搀扶",
+    "分工",
+    "协作",
+    "交接",
+    "护送",
+    "恳求",
+    "求助",
+    "借取",
+    "讨要",
+    "催促",
+    "劝阻",
+    "劝说",
+    "谈判",
+    "求情",
+    "威胁",
+    "质问",
+    "辱骂",
+    "挑衅",
+    "恐吓",
+    "拒绝",
+    "驱赶",
+    "阻拦",
+    "施压",
+    "说明",
+    "回答",
+    "提醒",
+    "约定",
+    "承诺",
+    "否认",
+    "承认",
+    "转述",
+    "联络",
+    "隐瞒",
+    "撒谎",
+    "误导",
+    "伪装",
+    "套话",
+    "盘算",
+    "谋划",
+    "预判",
+    "记认",
+    "计算",
+    "忍耐",
+    "发作",
+    "镇定",
+    "安抚",
+    "鼓励",
+    "怀疑",
+    "信任",
+    "犹豫",
+    "决心",
+    "给予",
+    "交换",
+    "卸下",
+    "操作",
+    "修理",
+    "破坏",
+    "藏匿",
+    "丢弃",
+    "登记",
+    "休息",
+    "进食",
+    "包扎",
+    "挣扎",
+    "装死",
+    "决定",
+    "宣告",
+    "加入",
+    "退出",
+    "举报",
+    "记录",
+    "遵守",
+    "违反",
+    "等待"
+  ],
+  "predicatesUsed": 11,
+  "problems": [],
+  "rowClasses": {
+    "A": 9,
+    "B": 10,
+    "skip": 5
+  },
+  "rowsWritten": 24,
+  "skipRatio": 0.2083,
+  "sources": {
+    "constructed": 21,
+    "evidence-snapshot": 3
+  }
+}

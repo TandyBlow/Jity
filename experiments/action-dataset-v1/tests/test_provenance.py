@@ -12,7 +12,7 @@ sys.path.insert(0, str(HERE))
 
 from fixtures import small_world  # noqa: E402
 from tools import provenance  # noqa: E402
-from tools.project_x import project_x, serialize_x  # noqa: E402
+from tools.project_x import project_x  # noqa: E402
 
 
 def test_canonical_digest_is_key_order_independent():
@@ -63,7 +63,7 @@ def test_extract_episodes_records_provenance_and_dedupes(tmp_path):
     _write_evidence(second_dir, world, [])
     episodes = provenance.extract_episodes(tmp_path)
     assert len(episodes) == 1, "two evidence dirs are not scanned at once; one dir dedupes by state digest"
-    assert episodes[0]["alsoIn"] == []
+    assert episodes[0]["copies"] and all(copy["evidenceFile"] == "evidence/run-1.json" for copy in episodes[0]["copies"])
 
 
 def test_extract_episodes_dedupes_two_files(tmp_path):
@@ -73,7 +73,7 @@ def test_extract_episodes_dedupes_two_files(tmp_path):
     duplicate.write_text((tmp_path / "run-1.json").read_text(encoding="utf-8"), encoding="utf-8")
     episodes = provenance.extract_episodes(tmp_path)
     assert len(episodes) == 1
-    assert len(episodes[0]["alsoIn"]) == 1
+    assert len(episodes[0]["copies"]) == 2
 
 
 def test_leak_check_ignores_state_derived_overlap_and_flags_narration_only(tmp_path):

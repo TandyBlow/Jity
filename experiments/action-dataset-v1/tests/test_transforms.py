@@ -84,11 +84,11 @@ def test_events_are_room_scoped_and_factual():
     events = transforms.events_from_transforms(moved, records)
     by_kind = {event["kind"]: event for event in events}
     assert by_kind["position"]["roomId"] == "yard"
-    assert "博移动到庭院" in by_kind["position"]["text"]
-    assert by_kind["task"]["roomId"] == "yard"
+    assert "博到了庭院" in by_kind["position"]["text"]
+    assert set(by_kind) == {"position"}, "engine state changes (tasks, sanity) never become scene sentences"
     # the actor in the hall must not receive either event
     x = __import__("tools.project_x", fromlist=["project_x"]).project_x(moved, "ann", events=events)
-    assert x["justNow"] == []
+    assert x["recent"] == []
 
 
 def test_verify_constructed_state_detects_a_dangling_position():

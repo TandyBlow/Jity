@@ -92,7 +92,14 @@ def apply_transform(state: dict[str, Any], transform: dict[str, Any], index: int
             raise TransformError(f"transform {index}: slot {slot_id} not on {container_id}")
         entity = state["characters"].get(entity_id) or state["items"][entity_id]
         entity["position"] = {"containerId": container_id, "slotId": slot_id, "relativeTo": None}
-        return {"index": index, "op": op, "entityId": entity_id, "to": f"{container_id}/{slot_id}"}
+        return {
+            "index": index,
+            "op": op,
+            "entityId": entity_id,
+            "to": f"{container_id}/{slot_id}",
+            "perceived": transform.get("perceived"),
+            "perceivedAnchor": transform.get("perceivedAnchor"),
+        }
     if op in ("appearance", "personality"):
         entity_id = transform["entityId"]
         _require_entity(state, entity_id)
@@ -119,7 +126,14 @@ def apply_transform(state: dict[str, Any], transform: dict[str, Any], index: int
                 "supersedes": supersedes,
             }
         )
-        return {"index": index, "op": op, "entityId": entity_id, "text": text}
+        return {
+            "index": index,
+            "op": op,
+            "entityId": entity_id,
+            "text": text,
+            "perceived": transform.get("perceived"),
+            "perceivedAnchor": transform.get("perceivedAnchor"),
+        }
     if op == "sanity":
         entity_id = transform["entityId"]
         _require_entity(state, entity_id)
@@ -170,47 +184,53 @@ def apply_transforms(base_state: dict[str, Any], transforms: list[dict[str, Any]
     return state, records
 
 
-def events_from_transforms(state: dict[str, Any], records: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Room-scoped `刚才` events for the transforms that were applied.
+def _destination_label(state: dict[str, Any], entity_id: str) -> str:
+    entity = state["characters"].get(entity_id) or state["items"][entity_id]
+    container_id = entity["position"]["containerId"]
+    location = state["initial"]["locations"].get(container_id)
+    if location:
+        return str(location["name"])
+    return state_view.position_label(state, entity_id)
 
-    The text restates exactly the transform; the room is the entity's room in
-    the final state. Events therefore cannot describe an outcome that did not
-    happen and cannot tell a character about another room.
+
+def events_from_transforms(state: dict[str, Any], records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Perceivable in-room happenings for the transforms that were applied.
+
+    Only two change kinds produce a `刚才` line: a changed position and a
+    changed appearance. A finished task or a sanity number is engine state, not
+    something a character sees, so those stay in provenance and never become a
+    scene sentence.
+
+    `move` and `appearance` accept an optional authored `perceived` sentence.
+    It must name the entity and, for a move, contain the destination label, so
+    the sentence cannot drift from the state change it claims to describe.
     """
-    events = []
+    events: list[dict[str, Any]] = []
     for record in records:
         entity_id = record.get("entityId")
         if not entity_id:
             continue
-        room_id = state_view.room_of(state, entity_id)
         name = state_view.entity_name(state, entity_id)
+        room_id = state_view.room_of(state, entity_id)
         if record["op"] == "move":
-            text = f"{name}移动到{state_view.position_label(state, entity_id)}"
-            kind = "position"
+            label = _destination_label(state, entity_id)
+            text = str(record.get("perceived") or f"{name}到了{label}")
+            anchor = str(record.get("perceivedAnchor") or label)
+            if anchor != label and anchor not in label:
+                raise TransformError(
+                    f"transform {record['index']}: perceived anchor {anchor!r} is not part of the destination {label!r}"
+                )
+            if name not in text or anchor not in text:
+                raise TransformError(f"transform {record['index']}: perceived move line must name {name} and {anchor}")
+            events.append({"seq": record["index"], "kind": "position", "roomId": room_id, "text": text})
         elif record["op"] == "appearance":
-            text = f"{name}的外观出现变化：{record['text']}"
-            kind = "appearance"
-        elif record["op"] == "personality":
-            text = f"{name}的个性出现变化：{record['text']}"
-            kind = "personality"
-        elif record["op"] == "sanity":
-            text = f"{name}的理智变为{record['value']}"
-            kind = "sanity"
-        else:
-            continue  # task transforms belong to their owner, not the room
-        events.append({"seq": record["index"], "kind": kind, "roomId": room_id, "text": text})
-    for record in records:
-        if record["op"] != "achieveTask":
-            continue
-        owner_id = record["ownerId"]
-        events.append(
-            {
-                "seq": record["index"],
-                "kind": "task",
-                "roomId": state_view.room_of(state, owner_id),
-                "text": f"{state_view.entity_name(state, owner_id)}的任务{record['taskId']}已完成",
-            }
-        )
+            change = str(record.get("text", ""))
+            text = str(record.get("perceived") or f"{name}{change}")
+            if name not in text:
+                raise TransformError(f"transform {record['index']}: perceived appearance line must name {name}")
+            if change not in text:
+                raise TransformError(f"transform {record['index']}: perceived appearance line must contain the change text")
+            events.append({"seq": record["index"], "kind": "appearance", "roomId": room_id, "text": text})
     return events
 
 

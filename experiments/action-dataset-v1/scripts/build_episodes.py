@@ -29,7 +29,8 @@ HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 
 from tools import provenance, state_view  # noqa: E402
-from tools.project_x import SERIALIZER_VERSION, project_x, serialize_x  # noqa: E402
+from tools.loader import DEFAULT_SERIALIZER, load_serializer, render_row  # noqa: E402
+from tools.project_x import LOADER_SERIALIZER, project_x  # noqa: E402
 
 DEFAULT_EVIDENCE = Path("D:/others/Jity/.local/parallel-local-game/results/product/evidence")
 INDEX_SCHEMA = "action-dataset-snapshot-index-v1"
@@ -83,19 +84,22 @@ def main() -> int:
                 "evidenceFile": episode["provenance"]["evidenceFile"],
                 "pointer": episode["provenance"]["pointer"],
                 "recordedStateDigest": episode["provenance"]["recordedStateDigest"],
-                "duplicateLocations": len(episode["alsoIn"]),
+                "duplicateLocations": len(episode["copies"]) - 1,
                 "characters": len(state["characters"]),
                 "items": len(state["items"]),
                 "locations": len(state["locations"]),
                 "roomsOccupied": len({state_view.room_of(state, cid) for cid in state["characters"]}),
                 "pendingGoalIds": goal_ids,
+                "primaryRunStatus": episode["provenance"].get("runStatus"),
+                "copyCount": len(episode["copies"]),
+                "cleanCopyCount": sum(1 for copy in episode["copies"] if str(copy.get("runStatus") or "").upper() != "FAILED"),
                 "narrationProseOverlap": leaks,
             }
         )
 
     index = {
         "schema": INDEX_SCHEMA,
-        "serializerVersion": SERIALIZER_VERSION,
+        "serializerVersion": LOADER_SERIALIZER,
         "evidenceDir": str(args.evidence_dir),
         "episodeCount": len(index_entries),
         "proseLeakRows": leaks,

@@ -1,116 +1,143 @@
 {
-  "alsoIn": [
+  "copies": [
     {
-      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "evidenceFile": "evidence/09-one-legal-turn-03ec-infra-invalid.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/failures/0/detail/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/failures/0/detail/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
+    },
+    {
+      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "pointId": "point_root_world_dragon_raja_free_day",
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-2324-7bfc.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-2324-7bfc.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/failures/0/detail/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/failures/0/detail/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-2324-7bfc.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-415c.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-415c.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-95dc.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-95dc.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-b7cd.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-b7cd.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-d101.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-d101.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-f15d.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-f15d.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-product-03turn-d101.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-product-03turn-d101.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/turns/1/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/turns/1/snapshotAfterTurn/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-product-03turn-d101.json",
       "pointId": "point_root_world_dragon_raja_free_day",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_root_world_dragon_raja_free_day",
+      "runStatus": "FAILED"
     }
   ],
   "provenance": {
     "advanceId": null,
     "entityDeltas": null,
-    "evidenceFile": "evidence/09-one-legal-turn-03ec-infra-invalid.json",
-    "evidenceSha256": "f091e4dad33dbd801797c4218b3c7fd1a961749172a1dc5f972b8449e9b691db",
+    "evidenceFile": "evidence/09-one-legal-turn-d101.json",
+    "evidenceSha256": "6809f04b806af7a33666ca20c3d4b31c4bab315215c747de3a17c15a09a6f2c3",
     "pointId": "point_root_world_dragon_raja_free_day",
     "pointKind": null,
     "pointSequence": null,
@@ -119,15 +146,11 @@
     "protagonistId": "lu",
     "recordedStateDigest": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
     "roundId": null,
+    "runStatus": "COMPLETED",
     "snapshotSha256": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
     "sourceKind": "evidence-snapshot",
     "time": "2009-10-17T15:20:00",
     "timeAdvance": null,
-    "transportHealth": {
-      "narrations": 1,
-      "pointStates": 1,
-      "points": 0
-    },
     "transportPointer": "/turns/0/snapshotAfterTurn/transport",
     "worldId": "world_dragon_raja_free_day"
   },

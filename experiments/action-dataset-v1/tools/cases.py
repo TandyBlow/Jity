@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 from . import provenance, state_view, transforms
-from .project_x import project_x, serialize_report
+from .project_x import project_x
 
 WORLD_RELATIVE = "data/worlds/dragon-raja-free-day.world.json"
 
@@ -62,6 +62,8 @@ def load_snapshot(snapshot_dir: Path, prefix: str) -> tuple[dict[str, Any], dict
         "sha256": provenance.sha256_file(matches[0]),
         "stateDigest": provenance.state_digest(state),
         "episode": payload.get("provenance"),
+        "snapshotSha256": payload.get("provenance", {}).get("snapshotSha256"),
+        "copies": payload.get("copies") or [],
     }
     return state, meta
 
@@ -76,11 +78,13 @@ def resolve_base(case: dict[str, Any], worktree_root: Path, snapshot_dir: Path) 
 
 
 def events_from_committed_deltas(state: dict[str, Any], deltas: dict | None) -> list[dict[str, Any]]:
-    """Structured happenings of the committed point that produced this state.
+    """Perceivable happenings of the committed point that produced this state.
 
-    Each event restates exactly one committed entity delta, and is kept only
-    when the entity's post-delta room is the room the row's actor stands in
-    later, so a character never learns about another room from `刚才`.
+    A changed position becomes "X 换了位置，现在在<label>"; a changed appearance
+    becomes "X：<visible description>". Task and sanity deltas are engine state,
+    not scene happenings, so they are not turned into `刚才` lines. The room is
+    the entity's room after the delta, so a character never learns about
+    another room.
     """
     if not deltas:
         return []
@@ -90,53 +94,30 @@ def events_from_committed_deltas(state: dict[str, Any], deltas: dict | None) -> 
         delta = deltas[entity_id] or {}
         seq += 1
         name = state_view.entity_name(state, entity_id)
+        room_id = state_view.room_of(state, entity_id)
         if delta.get("positionSet"):
+            if delta["positionSet"]["containerId"] in state["initial"]["locations"]:
+                label = state_view.location_name(state, delta["positionSet"]["containerId"])
+            else:
+                label = state_view.position_label(state, entity_id)
             events.append(
                 {
                     "seq": seq,
                     "kind": "position",
-                    "roomId": state_view.room_of(state, entity_id),
-                    "text": f"{name}移动到{state_view.position_label(state, entity_id)}",
+                    "roomId": room_id,
+                    "text": f"{name}换了位置，现在在{label}",
                 }
             )
         for change in delta.get("appearanceChanges") or []:
-            if change.get("active", True):
+            if change.get("active", True) and change.get("text"):
                 events.append(
                     {
                         "seq": seq,
                         "kind": "appearance",
-                        "roomId": state_view.room_of(state, entity_id),
-                        "text": f"{name}的外观出现变化：{change.get('text', '')}",
+                        "roomId": room_id,
+                        "text": f"{name}：{change['text']}",
                     }
                 )
-        for change in delta.get("personalityChanges") or []:
-            if change.get("active", True):
-                events.append(
-                    {
-                        "seq": seq,
-                        "kind": "personality",
-                        "roomId": state_view.room_of(state, entity_id),
-                        "text": f"{name}的个性出现变化：{change.get('text', '')}",
-                    }
-                )
-        for task_id in delta.get("tasksAchieved") or []:
-            events.append(
-                {
-                    "seq": seq,
-                    "kind": "task",
-                    "roomId": state_view.room_of(state, entity_id),
-                    "text": f"{name}的任务{task_id}已完成",
-                }
-            )
-        if delta.get("sanitySet") is not None:
-            events.append(
-                {
-                    "seq": seq,
-                    "kind": "sanity",
-                    "roomId": state_view.room_of(state, entity_id),
-                    "text": f"{name}的理智变为{delta['sanitySet']}",
-                }
-            )
     return events
 
 
@@ -172,9 +153,8 @@ def build_case(case: dict[str, Any], worktree_root: Path, snapshot_dir: Path, al
     if actor not in state["characters"]:
         raise CaseError(f"case {case['caseId']}: unknown actor {actor}")
     x = project_x(state, actor, events=events)
-    report = serialize_report(x, profile="full")
 
-    actor_goals = [goal["id"] for goal in x["goals"]]
+    actor_goals = [str(goal).split("：", 1)[0] for goal in x["goals"]]
     outside = [goal for goal in actor_goals if goal not in allowed_goals]
     if outside:
         raise CaseError(f"case {case['caseId']}: actor goals outside the allowed TRAIN list: {outside}")
@@ -208,10 +188,9 @@ def build_case(case: dict[str, Any], worktree_root: Path, snapshot_dir: Path, al
             "goalIds": actor_goals,
         },
         "x": {
-            "profile": "full",
-            "chars": report["chars"],
-            "sha256": hashlib.sha256(report["text"].encode("utf-8")).hexdigest(),
-            "clipped": report["clipped"],
+            "sha256": hashlib.sha256(
+                json.dumps(x, ensure_ascii=False, sort_keys=True).encode("utf-8")
+            ).hexdigest(),
         },
         "judgmentBasis": case.get("judgmentBasis") or ["goal"],
         "goalsReferenced": case.get("goalsReferenced") or [],

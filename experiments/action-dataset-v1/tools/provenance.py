@@ -92,15 +92,20 @@ def _narration_texts(transport: dict[str, Any]) -> list[str]:
 def extract_episodes(evidence_dir: Path) -> list[dict[str, Any]]:
     """Every committed point state in every evidence file, deduplicated.
 
-    The first occurrence wins; later duplicates are recorded as `alsoIn`.
+    The same world state often appears in several runs. The primary record is
+    chosen from a run whose own `status` is not `FAILED` when one exists, so a
+    row does not point at an infrastructure-invalid run just because its file
+    name sorts first. Every other location of the identical state is kept in
+    `copies` with its run status.
     """
-    episodes: dict[str, dict[str, Any]] = {}
+    found: dict[str, list[dict[str, Any]]] = {}
     for path in sorted(evidence_dir.glob("*.json")):
         try:
             document = json.loads(path.read_text(encoding="utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
             continue
         file_hash = sha256_file(path)
+        run_status = document.get("status") if isinstance(document, dict) else None
         for transport_pointer, transport in iter_transports(document):
             point_states = transport.get("pointStates") or {}
             points = transport.get("points") or {}
@@ -112,63 +117,64 @@ def extract_episodes(evidence_dir: Path) -> list[dict[str, Any]]:
                     continue
                 digest = state_digest(state)
                 point = points.get(point_id) or {}
-                base = {
-                    "sourceKind": "evidence-snapshot",
-                    "evidenceFile": f"evidence/{path.name}",
-                    "evidenceSha256": file_hash,
-                    "pointer": f"{transport_pointer}/pointStates/{_pointer_token(point_id)}",
-                    "transportPointer": transport_pointer,
-                    "pointId": point_id,
-                    "pointSequence": point.get("sequence"),
-                    "pointKind": point.get("kind"),
-                    "pointTrigger": point.get("trigger"),
-                    "roundId": point.get("roundId"),
-                    "advanceId": point.get("advanceId"),
-                    "timeAdvance": point.get("timeAdvance"),
-                    "entityDeltas": point.get("entityDeltas"),
-                    "recordedStateDigest": record.get("stateDigest"),
-                    "worldId": state.get("worldId"),
-                    "protagonistId": state.get("protagonistId"),
-                    "time": (state.get("time") or {}).get("dateTime"),
-                    "snapshotSha256": digest,
-                    "transportHealth": {
-                        "points": len(points),
-                        "pointStates": len(point_states),
-                        "narrations": len(narrations),
-                    },
-                }
-                existing = episodes.get(digest)
-                if existing is None:
-                    episodes[digest] = {
-                        "schema": EPISODE_SCHEMA,
-                        "provenance": base,
-                        "alsoIn": [],
+                found.setdefault(digest, []).append(
+                    {
+                        "sourceKind": "evidence-snapshot",
+                        "evidenceFile": f"evidence/{path.name}",
+                        "evidenceSha256": file_hash,
+                        "runStatus": run_status,
+                        "pointer": f"{transport_pointer}/pointStates/{_pointer_token(point_id)}",
+                        "transportPointer": transport_pointer,
+                        "pointId": point_id,
+                        "pointSequence": point.get("sequence"),
+                        "pointKind": point.get("kind"),
+                        "pointTrigger": point.get("trigger"),
+                        "roundId": point.get("roundId"),
+                        "advanceId": point.get("advanceId"),
+                        "timeAdvance": point.get("timeAdvance"),
+                        "entityDeltas": point.get("entityDeltas"),
+                        "recordedStateDigest": record.get("stateDigest"),
+                        "worldId": state.get("worldId"),
+                        "protagonistId": state.get("protagonistId"),
+                        "time": (state.get("time") or {}).get("dateTime"),
+                        "snapshotSha256": digest,
                         "state": state,
-                        # Transient: used for the prose-leak check, then dropped
-                        # before the snapshot is written to disk.
                         "narrationTexts": narrations,
                     }
-                else:
-                    existing["alsoIn"].append(
-                        {"evidenceFile": base["evidenceFile"], "pointer": base["pointer"], "pointId": point_id}
-                    )
-    return [episodes[key] for key in sorted(episodes)]
-
-
-def _state_windows(state: dict[str, Any], window: int) -> set[str]:
-    """Every short string window that already exists in the snapshot itself."""
-    windows: set[str] = set()
-    stack: list[Any] = [state]
-    while stack:
-        value = stack.pop()
-        if isinstance(value, str):
-            for start in range(max(0, len(value) - window + 1)):
-                windows.add(value[start : start + window])
-        elif isinstance(value, dict):
-            stack.extend(value.values())
-        elif isinstance(value, list):
-            stack.extend(value)
-    return windows
+                )
+    episodes = []
+    for digest in sorted(found):
+        candidates = found[digest]
+        clean = [entry for entry in candidates if str(entry.get("runStatus") or "").upper() != "FAILED"]
+        pool = clean or candidates
+        primary = sorted(pool, key=lambda entry: entry["evidenceFile"])[0]
+        state = primary.pop("state")
+        narrations = primary.pop("narrationTexts")
+        copies = []
+        seen = set()
+        for entry in candidates:
+            key = (entry["evidenceFile"], entry["pointer"])
+            if key in seen:
+                continue
+            seen.add(key)
+            copies.append(
+                {
+                    "evidenceFile": entry["evidenceFile"],
+                    "pointer": entry["pointer"],
+                    "pointId": entry["pointId"],
+                    "runStatus": entry.get("runStatus"),
+                }
+            )
+        episodes.append(
+            {
+                "schema": EPISODE_SCHEMA,
+                "provenance": primary,
+                "copies": copies,
+                "state": state,
+                "narrationTexts": narrations,
+            }
+        )
+    return episodes
 
 
 def string_values(value: Any) -> list[str]:
@@ -188,6 +194,22 @@ def string_values(value: Any) -> list[str]:
 
     walk(value)
     return parts
+
+
+def _state_windows(state: dict[str, Any], window: int) -> set[str]:
+    """Every short string window that already exists in the snapshot itself."""
+    windows: set[str] = set()
+    stack: list[Any] = [state]
+    while stack:
+        value = stack.pop()
+        if isinstance(value, str):
+            for start in range(max(0, len(value) - window + 1)):
+                windows.add(value[start : start + window])
+        elif isinstance(value, dict):
+            stack.extend(value.values())
+        elif isinstance(value, list):
+            stack.extend(value)
+    return windows
 
 
 def narration_leak_check(
@@ -231,7 +253,11 @@ def narration_leak_check(
 def write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_name(path.name + ".tmp")
-    temp.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    temp.write_text(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2) + chr(10),
+        encoding="utf-8",
+        newline=chr(10),
+    )
     temp.replace(path)
 
 

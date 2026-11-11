@@ -16,7 +16,12 @@ import json
 from pathlib import Path
 from typing import Any, Iterable
 
-from .project_x import candidate_ids, contains_prompt_rule, validate_x_shape
+from .project_x import (
+    candidate_ids,
+    contains_prompt_rule,
+    goal_ids,
+    validate_x_shape,
+)
 
 ROW_KEYS = (
     "rowId",
@@ -78,14 +83,14 @@ def expected_group(row: dict[str, Any], labels: dict[str, Any]) -> str:
 
 
 def _task_ids(x: dict[str, Any]) -> set[str]:
-    return {goal["id"] for goal in x["goals"]}
+    return set(goal_ids(x))
 
 
 def _validate_goals_and_events(x: dict[str, Any]) -> list[str]:
     problems = validate_x_shape(x)
-    for event in x.get("justNow", []):
-        if contains_prompt_rule(event["text"]):
-            problems.append(f"justNow[{event['seq']}] contains prompt rule text")
+    for text in x.get("recent", []):
+        if contains_prompt_rule(text):
+            problems.append(f"recent line contains prompt rule text: {text}")
     return problems
 
 
@@ -107,8 +112,8 @@ def validate_row(row: dict[str, Any], labels: dict[str, Any]) -> list[str]:
         problems.append("x must be an object")
         return problems
     problems.extend(_validate_goals_and_events(x))
-    if x["actor"]["id"] != row["characterId"]:
-        problems.append("characterId differs from x.actor.id")
+    if x["character"]["id"] != row["characterId"]:
+        problems.append("characterId differs from x.character.id")
     if not isinstance(row["y"], dict) or set(row["y"]) != {"steps"}:
         problems.append("y must have exactly one field: steps")
         return problems
@@ -160,13 +165,13 @@ def validate_row(row: dict[str, Any], labels: dict[str, Any]) -> list[str]:
         # copied template cannot pass as a per-row judgement.
         mentioned = any(task_id in rationale for task_id in _task_ids(x))
         mentioned = mentioned or any(entry["id"] in rationale or entry["name"] in rationale for entry in x["candidates"])
-        mentioned = mentioned or ("刚才" in rationale and bool(x["justNow"]))
+        mentioned = mentioned or ("刚才" in rationale and bool(x["recent"]))
         if not mentioned:
             problems.append("yRationale cites no task id, candidate, or event from this row")
     if not problems and isinstance(rationale, str) and not steps:
         # A skip needs a scene- or goal-based reason, not silence.
         cited_goal = any(task_id in (rationale + (reason or "")) for task_id in _task_ids(x))
-        cited_scene = bool(x["present"]) or bool(x["objects"])
+        cited_scene = bool(x["present"]) or bool(x["items"])
         if not cited_goal and not cited_scene and "待办" not in (rationale + (reason or "")):
             problems.append("skip rationale cites neither a goal nor a scene fact")
     return problems
@@ -192,9 +197,7 @@ def validate_dataset(rows: Iterable[dict[str, Any]], labels: dict[str, Any]) -> 
             problems.append({"rowId": row["rowId"], "problems": ["duplicate rowId"]})
         seen_ids.add(row["rowId"])
         try:
-            from .project_x import serialize_x
-
-            text = serialize_x(row["x"])
+            text = json.dumps(row["x"], ensure_ascii=False, sort_keys=True)
         except Exception as error:  # noqa: BLE001 - report, do not hide
             problems.append({"rowId": row["rowId"], "problems": [f"x cannot be serialized: {error}"]})
             continue

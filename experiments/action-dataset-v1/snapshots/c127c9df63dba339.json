@@ -1,29 +1,40 @@
 {
-  "alsoIn": [
+  "copies": [
     {
       "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
       "pointId": "point_round_auto_mwb3q8vp_2_1",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb3q8vp_2_1"
+      "pointer": "/failures/0/detail/snapshotAfterReload/transport/pointStates/point_round_auto_mwb3q8vp_2_1",
+      "runStatus": "FAILED"
+    },
+    {
+      "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
+      "pointId": "point_round_auto_mwb3q8vp_2_1",
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb3q8vp_2_1",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-b7cd.json",
       "pointId": "point_round_auto_mwb4avcm_2_1",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb4avcm_2_1"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb4avcm_2_1",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-b7cd.json",
       "pointId": "point_round_auto_mwb4avcm_2_1",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb4avcm_2_1"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb4avcm_2_1",
+      "runStatus": "FAILED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
       "pointId": "point_round_auto_mwb4xjvx_2_1",
-      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb4xjvx_2_1"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb4xjvx_2_1",
+      "runStatus": "COMPLETED"
     },
     {
       "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
       "pointId": "point_round_auto_mwb4xjvx_2_1",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb4xjvx_2_1"
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_auto_mwb4xjvx_2_1",
+      "runStatus": "COMPLETED"
     }
   ],
   "provenance": {
@@ -38,16 +49,17 @@
         }
       }
     },
-    "evidenceFile": "evidence/09-one-legal-turn-21c3.json",
-    "evidenceSha256": "6f07691442edd441e50814e9a9b4124431ee25d4f2bb4d6c8b1c9c835df06650",
-    "pointId": "point_round_auto_mwb3q8vp_2_1",
+    "evidenceFile": "evidence/09-one-legal-turn-e9a5.json",
+    "evidenceSha256": "df1a4471ca79a4448c78bb1cb148f9b87e5339aae2211aa74c218462f7ea5ff4",
+    "pointId": "point_round_auto_mwb4xjvx_2_1",
     "pointKind": "normal",
     "pointSequence": 3,
     "pointTrigger": "automatic",
-    "pointer": "/failures/0/detail/snapshotAfterReload/transport/pointStates/point_round_auto_mwb3q8vp_2_1",
+    "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_auto_mwb4xjvx_2_1",
     "protagonistId": "lu",
     "recordedStateDigest": "c127c9df63dba339f1006214a5a0dc2dcce52d34a6356a267884f140e300e2eb",
-    "roundId": "round_auto_mwb3q8vp_2",
+    "roundId": "round_auto_mwb4xjvx_2",
+    "runStatus": "COMPLETED",
     "snapshotSha256": "c127c9df63dba339f1006214a5a0dc2dcce52d34a6356a267884f140e300e2eb",
     "sourceKind": "evidence-snapshot",
     "time": "2009-10-17T15:23:00",
@@ -58,12 +70,7 @@
         "unit": "minute"
       }
     },
-    "transportHealth": {
-      "narrations": 4,
-      "pointStates": 4,
-      "points": 3
-    },
-    "transportPointer": "/failures/0/detail/snapshotAfterReload/transport",
+    "transportPointer": "/turns/0/snapshotAfterTurn/transport",
     "worldId": "world_dragon_raja_free_day"
   },
   "schema": "action-dataset-episode-v1",

@@ -1,9 +1,16 @@
 {
-  "alsoIn": [
+  "copies": [
     {
       "evidenceFile": "evidence/09-one-legal-turn-f15d.json",
       "pointId": "point_round_3_1",
-      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_3_1"
+      "pointer": "/turns/0/snapshotAfterTurn/transport/pointStates/point_round_3_1",
+      "runStatus": "COMPLETED"
+    },
+    {
+      "evidenceFile": "evidence/09-one-legal-turn-f15d.json",
+      "pointId": "point_round_3_1",
+      "pointer": "/refreshRestore/snapshotAfterReload/transport/pointStates/point_round_3_1",
+      "runStatus": "COMPLETED"
     }
   ],
   "provenance": {
@@ -19,6 +26,7 @@
     "protagonistId": "lu",
     "recordedStateDigest": "61ef61766ce8cacb2f903d22b55746988960f28d49a5f5bd4f718f542e8d48b2",
     "roundId": "round_3",
+    "runStatus": "COMPLETED",
     "snapshotSha256": "61ef61766ce8cacb2f903d22b55746988960f28d49a5f5bd4f718f542e8d48b2",
     "sourceKind": "evidence-snapshot",
     "time": "2009-10-17T15:21:00",
@@ -28,11 +36,6 @@
         "amount": 1,
         "unit": "minute"
       }
-    },
-    "transportHealth": {
-      "narrations": 3,
-      "pointStates": 3,
-      "points": 2
     },
     "transportPointer": "/turns/0/snapshotAfterTurn/transport",
     "worldId": "world_dragon_raja_free_day"
