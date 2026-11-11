@@ -68,6 +68,9 @@ interface WorldTurnRecord {
     narrationStartedAtMs: number | null;
     firstReadableAtMs: number | null;
     firstReadableSource: 'model' | 'program' | 'mixed' | 'draft' | null;
+    /** First narration that may count as accepted prose; a draft/program never
+     * fills it, so draft display time is reported separately. */
+    firstAcceptedAtMs: number | null;
   };
   cancelled: boolean; source: 'model' | 'program' | 'mixed' | 'draft' | null;
   /** Settlement ledger for this turn (results/updates/continuation calls,
@@ -700,6 +703,9 @@ export default function WorldLocalPage() {
             if (clocks && clocks.firstReadableAtMs == null) {
               clocks.firstReadableAtMs = atMs;
               clocks.firstReadableSource = source;
+              // A draft is readable but not accepted prose: its arrival must not
+              // count as the first accepted/verified text (NARRATION-BOUNDARY).
+              clocks.firstAcceptedAtMs = source === 'model' || source === 'mixed' ? atMs : null;
             }
             const record = turnRecordRef.current;
             if (record) {
@@ -967,7 +973,7 @@ export default function WorldLocalPage() {
       engines,
       clocks: {
         inputAtMs: 0, inputAt: new Date().toISOString(),
-        pointCommittedAtMs: null, narrationStartedAtMs: null, firstReadableAtMs: null, firstReadableSource: null,
+        pointCommittedAtMs: null, narrationStartedAtMs: null, firstReadableAtMs: null, firstReadableSource: null, firstAcceptedAtMs: null,
       },
     };
     turnRecordRef.current = record;
