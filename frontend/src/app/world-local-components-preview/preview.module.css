@@ -1,21 +1,5 @@
 /* Preview-only chrome. The playable components keep their own module CSS; this
    file only styles the clearly-marked fixture banner and state switches. */
-:root {
-  --preview-page-bg: #e9e2d4;
-  --preview-ink: #2c2318;
-  --preview-gold: #7a5b19;
-  --preview-gold-wash: #fff3d8;
-  --preview-ink-soft: #5f5343;
-  --preview-brown: #6d5232;
-  --preview-line: #d3c6b0;
-  --preview-card: #fffdf8;
-  --preview-ink-muted: #7b6d59;
-  --preview-line-strong: #c9bda8;
-  --preview-on-brown: #fff;
-  --preview-ink-strong: #4b3d2b;
-  --preview-line-warm: #e4cb91;
-}
-
 
 .shell {
   min-height: 100vh;

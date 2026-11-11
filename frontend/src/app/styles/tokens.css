@@ -100,6 +100,49 @@
   --color-line-muted: #666;
   --surface-story-tint: rgba(8, 10, 14, 0.86);
 
+  /* World-local page and its component preview (values from the page's
+     original inline chrome; page.module.css and preview.module.css read them). */
+  --wl-ink: #222;
+  --wl-page: #f7f3ea;
+  --wl-rule: #d8ccb8;
+  --wl-ink-muted: #7c6f5d;
+  --wl-card: #fffdf8;
+  --wl-card-line: #ded4c2;
+  --wl-ink-soft: #7b6d59;
+  --wl-ink-faint: #8a7c68;
+  --wl-entry-line: #e2d6c1;
+  --wl-meta: #9a8b74;
+  --wl-model: #6b7a5a;
+  --wl-legacy: #a2762a;
+  --wl-notice: #fff6e0;
+  --wl-notice-line: #e6cf9d;
+  --wl-notice-ink: #7a5a1c;
+  --wl-error: #ffe8e5;
+  --wl-error-line: #e7b1a9;
+  --wl-error-ink: #8b2a1e;
+  --wl-button-line: #c9bda8;
+  --wl-button-ink: #6b5d4a;
+  --wl-input-line: #cfc3ae;
+  --wl-on-accent: #fff;
+  --wl-accent: #6d5232;
+  --wl-accent-busy: #b9ac96;
+  --wl-side-ink: #5f5343;
+  --wl-side-title: #3b2f20;
+  --wl-task-done: #9b8d78;
+  --preview-page-bg: #e9e2d4;
+  --preview-ink: #2c2318;
+  --preview-gold: #7a5b19;
+  --preview-gold-wash: #fff3d8;
+  --preview-ink-soft: #5f5343;
+  --preview-brown: #6d5232;
+  --preview-line: #d3c6b0;
+  --preview-card: #fffdf8;
+  --preview-ink-muted: #7b6d59;
+  --preview-line-strong: #c9bda8;
+  --preview-on-brown: #fff;
+  --preview-ink-strong: #4b3d2b;
+  --preview-line-warm: #e4cb91;
+
   /* Dice effect gold; a rendering effect, not a UI semantic. */
   --fx-gold: #ffd166;
   --fx-gold-pale: #fff1b8;

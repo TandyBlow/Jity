@@ -1,35 +1,5 @@
 /* The playable page's layout. Inline styles are avoided so the stylesheet
    invariants (raw colours/font sizes/heights) stay enforceable. */
-:root {
-  --wl-ink: #222;
-  --wl-page: #f7f3ea;
-  --wl-rule: #d8ccb8;
-  --wl-ink-muted: #7c6f5d;
-  --wl-card: #fffdf8;
-  --wl-card-line: #ded4c2;
-  --wl-ink-soft: #7b6d59;
-  --wl-ink-faint: #8a7c68;
-  --wl-entry-line: #e2d6c1;
-  --wl-meta: #9a8b74;
-  --wl-model: #6b7a5a;
-  --wl-legacy: #a2762a;
-  --wl-notice: #fff6e0;
-  --wl-notice-line: #e6cf9d;
-  --wl-notice-ink: #7a5a1c;
-  --wl-error: #ffe8e5;
-  --wl-error-line: #e7b1a9;
-  --wl-error-ink: #8b2a1e;
-  --wl-button-line: #c9bda8;
-  --wl-button-ink: #6b5d4a;
-  --wl-input-line: #cfc3ae;
-  --wl-on-accent: #fff;
-  --wl-accent: #6d5232;
-  --wl-accent-busy: #b9ac96;
-  --wl-side-ink: #5f5343;
-  --wl-side-title: #3b2f20;
-  --wl-task-done: #9b8d78;
-}
-
 .page {
   max-width: 920px;
   margin: 0 auto;
