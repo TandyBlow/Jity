@@ -559,6 +559,54 @@ describe('common-group results', () => {
     expect(outcome.value?.a ?? '').toBe('');
   });
 
+  it('keeps a member negative result whose subject a mechanics clause carried away', async () => {
+    // 21c3 / 415c x2 / e9a5 (one-legal-turn): nono's reaction group answered
+    // «诺诺未成功触发骰点，路明非未被阻止或反应». The mechanics clause took
+    // 诺诺 with it; the remaining sentence is about 路明非, so the fact was
+    // dropped as "another character's explanation" and nono's failed attempt
+    // disappeared from settlement. The subject is restored from the model's own
+    // sentence (未成功 comes from it), so the negative result survives.
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'not_achieved', reason: '甲的骰点未被触发。', effects: [{ targetId: 'a', reacted: false }] }],
+      facts: [{ text: '乙未成功触发骰点，甲未被阻止或反应。', memberIds: ['b'] }],
+    });
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([raw]) }).results('group_12', {
+      groupId: 'group_12',
+      members: [{ memberId: 'b', actionText: '乙掀开甲的袖口', rollRefs: [{ targetId: 'a', rollId: 'r1', result: 12, eligible: true, admitted: false }] }],
+      workingState: world(),
+    } as unknown as Json);
+    const detail = outcome.evidence.detail as {
+      facts: { text: string; actorId: string; targetId?: string; outcome: string }[];
+      droppedFacts: { reason: string }[];
+      subjectRestored: { original: string; restored: string; memberId: string }[];
+    };
+    expect(detail.droppedFacts ?? []).toEqual([]);
+    expect(detail.subjectRestored[0]).toMatchObject({ memberId: 'b' });
+    expect(detail.subjectRestored[0].restored).toContain('未成功');
+    expect(detail.facts[0]).toMatchObject({ actorId: 'b', targetId: 'a', outcome: 'failed' });
+    expect(outcome.value?.b ?? '').toContain('未成功');
+  });
+
+  it('still drops a fact whose only subject is the other character', async () => {
+    // The 11a7/448e/5810 class: the same group answered «路明非未被掀开袖口，未看到
+    // 规则牌，骰点未落地，且未被阻止。» — 诺诺 is not in that sentence at all, so
+    // it is the judgement's explanation of 路明非's action, which another group
+    // already settled. Restoring a subject there would invent one.
+    const raw = JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'not_achieved', reason: '甲的骰点未被触发。', effects: [{ targetId: 'a', reacted: false }] }],
+      facts: [{ text: '甲未被掀开袖口，未看到规则牌，骰点未落地，且未被阻止。', memberIds: ['b'] }],
+    });
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([raw]) }).results('group_12', {
+      groupId: 'group_12',
+      members: [{ memberId: 'b', actionText: '乙掀开甲的袖口', rollRefs: [{ targetId: 'a', rollId: 'r1', result: 12, eligible: true, admitted: false }] }],
+      workingState: world(),
+    } as unknown as Json);
+    const detail = outcome.evidence.detail as { facts: unknown[]; droppedFacts: { reason: string }[]; subjectRestored?: unknown[] };
+    expect(detail.facts).toEqual([]);
+    expect(detail.droppedFacts[0]).toMatchObject({ reason: 'explains_another_character' });
+    expect(detail.subjectRestored ?? []).toEqual([]);
+  });
+
   it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
     // 3turn 9623 group_29: lu asked nono a question, the answer judged nono only
     // and facts were attributed to both. lu had no roll target, so the row is

@@ -113,6 +113,10 @@ interface ResultsAnswer {
   /** The player's own first-person sentence rewritten to the protagonist's
    * name outside dialogue. */
   firstPersonAdjusted?: { original: string; text: string }[];
+  /** A mechanics clause took the member's own name with it; the subject was
+   * restored from the original sentence so a legitimate negative result is
+   * kept instead of being dropped as another character's explanation. */
+  subjectRestored?: { original: string; restored: string; memberId: Id }[];
   /** Members with no result sentence after the last repair; the point settles
    * without inventing one. */
   missingFactMembers?: Id[];
@@ -238,6 +242,7 @@ export async function runResults(
       effectsAdjusted: parsedAnswer.effectsAdjusted ?? [],
       ownershipAdjusted: parsedAnswer.ownershipAdjusted ?? [],
       firstPersonAdjusted: parsedAnswer.firstPersonAdjusted ?? [],
+      subjectRestored: parsedAnswer.subjectRestored ?? [],
       missingFactMembers: parsedAnswer.missingFactMembers ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
@@ -558,6 +563,11 @@ function readResultsAnswer(
   const adjustments: NonNullable<ResultsAnswer['outcomeAdjusted']> = [];
   const ownershipAdjusted: NonNullable<ResultsAnswer['ownershipAdjusted']> = [];
   const firstPersonAdjusted: NonNullable<ResultsAnswer['firstPersonAdjusted']> = [];
+  /** Facts whose subject was taken away by a mechanics clause and restored from
+   * the original sentence (21c3/415c/e9a5: «诺诺未成功触发骰点，路明非未被阻止
+   * 或反应» lost 诺诺 with the stripped clause and was then dropped as another
+   * character's explanation, although it is this member's own failed result). */
+  const subjectRestored: { original: string; restored: string; memberId: Id }[] = [];
   const missingFactMembers: Id[] = [];
   const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   /** Members whose only answer was dropped (a wrapper duplicate or an empty
@@ -644,6 +654,33 @@ function readResultsAnswer(
     // explanation of 路明非, who the other group already settled as walking in
     // and reading the sign. Committing it would hand the narrator a fact that
     // contradicts the point and no result for the reacting member.
+    // A stripped mechanics clause can take this member's own name with it
+    // («诺诺未成功触发骰点，路明非未被阻止或反应» -> «路明非未被阻止或反应»).
+    // What remains is about the recipient, so the fact then looks like another
+    // character's explanation and is dropped even though it is this member's own
+    // failed result. Restore the subject from the original: the wording 未成功
+    // is copied from the model's own sentence, and the mechanics clause it came
+    // from is not re-added.
+    const namedInOriginal = members
+      .map((member) => member.memberId)
+      .filter((id) => {
+        const name = state.initial.characters[id]?.name;
+        return Boolean(name) && original.includes(String(name));
+      });
+    const soleName = namedInOriginal.length === 1 ? String(state.initial.characters[namedInOriginal[0]]?.name) : '';
+    // The remaining sentence must name someone else; if it names nobody, the
+    // subject that vanished could have been either the member or the recipient
+    // (95dc's «路明非未被允许反应» leaves «未被允许反应»), and guessing would
+    // attribute the recipient's state to the member.
+    const tailNamesSomeone = Object.values(state.initial.characters)
+      .some((character) => character.name && cleaned.text.includes(String(character.name)));
+    if (soleName && cleaned.text && tailNamesSomeone && !cleaned.text.includes(soleName)
+      && cleaned.removed.length && /未|没有|没能|失败|被阻止/u.test(original)) {
+      const tail = cleaned.text.replace(/^(?:且|并且|并|但|却|而)[，、；\s]*/u, '');
+      const restored = `${soleName}未成功${tail ? `；${tail}` : ''}`;
+      subjectRestored.push({ original, restored, memberId: namedInOriginal[0] });
+      cleaned.text = restored;
+    }
     let mentioned = mentionedCharacterIds(state, cleaned.text);
     // “路明非的红色识别带” when the band belongs to 诺诺 is an item-ownership
     // flip: d531 turn 2 wrote exactly that. Only an explicit possessive whose
@@ -900,6 +937,7 @@ function readResultsAnswer(
     ...(effectsAdjusted.length ? { effectsAdjusted } : {}),
     ...(ownershipAdjusted.length ? { ownershipAdjusted } : {}),
     ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
+    ...(subjectRestored.length ? { subjectRestored } : {}),
     ...(missingFactMembers.length ? { missingFactMembers } : {}),
   };
 }
