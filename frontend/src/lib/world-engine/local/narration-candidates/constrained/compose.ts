@@ -82,8 +82,10 @@ export function buildBeatPrompt(
     .map((detail) => clip(detail, 44))
     .filter((detail) => detail.length > 1)
     .slice(0, options.maxDetails ?? 10);
-  const present = scene.present.map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
-  const objects = scene.objects.slice(0, 8).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
+  // Keep the beat prompt scoped: 8 objects + 10 details made the 1.7B writer
+  // enumerate the scene inventory instead of writing the beat's fact.
+  const present = scene.present.slice(0, 3).map((person) => `${person.name}${person.note ? `（${clip(person.note, 24)}）` : ''}`);
+  const objects = scene.objects.slice(0, 2).map((object) => `${object.name}${object.note ? `（${clip(object.note, 22)}）` : ''}`);
   const lastPrior = prior
     ? clip(prior.split(/\n+/u).filter(Boolean).slice(-1)[0] ?? '', 60)
     : '';
