@@ -1091,7 +1091,10 @@ export default function WorldLocalPage() {
       setEntries((list) => updateLast(list, (entry) => entry.acceptedMs == null
         ? { ...entry, text: '', failed: true, note: `本回合没有完成：${message}` }
         : entry));
-      if (session.commandsPlayed === commandsAtStart) setInput(text);
+      // Nothing was committed, so the player's sentence was not consumed: give
+      // it back even when a command slot was recorded, otherwise the input is
+      // empty and the 行动 button stays disabled (09 73f3 t3).
+      setInput(text);
     } finally {
       const live = turnRecordRef.current;
       if (live) {
