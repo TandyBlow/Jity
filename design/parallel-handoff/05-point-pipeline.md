@@ -71,7 +71,7 @@ design/parallel-handoff/05-point-pipeline-06-game-model.patch
 - 新增 `LocalGameOptions.narrationOverlap`，产品 session 默认 true；
 - 把 `ControllerDriver` 的 `narrationOverlap` 打开；
 - controller 的 `onCommit` 包装成：先调用页面原有 `options.onCommit`，再在 `committed` 阶段调用 `productModel.onPointCommitted(pointId)`；
-- `start()` 对 failed head 调 `driver.retryNarration()`，保留页面已有的 failed-turn recovery。
+- `start()` 对当前 head 的 failed 或 pending 状态调 `driver.retryNarration()`：failed 是页面已有的恢复重试，pending 是模型 abort 后对同一点的恢复；都不重新结算。
 
 ### `05-point-pipeline-06-game-model.patch`
 
@@ -111,7 +111,7 @@ node node_modules/vitest/vitest.mjs run --maxWorkers=1
 
 - **同引擎内部串行**：队列与结算可以重叠，但同一个 `InferenceEngine` 仍按其自身串行；不同引擎的并发只由 09 真实量测，不在 05 的受控测试里声明。
 - **恢复后的 per-point 结果缓存**：06 的冻结快照是内存态；刷新后新 game-model 没有旧点结果文本，narration 仍只用点自身的 `before/delta/after`，不会读后点，也不会伪造结果。若产品要求刷新后仍保留“该点结算结果句子”给候选，需要另做持久化（本次未做）。
-- **failed 正文的自动重试**：队列不自动重试 failed；`start()` 只对当前 head 的 failed 做一次显式恢复重试，空文本/推理错误仍需要页面已有的用户恢复路径。
+- **failed/pending 正文的自动重试**：队列不自动重试 failed；`start()` 只对当前 head 的 failed 或 pending 做一次显式恢复重试，空文本/推理错误仍需要页面已有的用户恢复路径。pending 恢复只续同一点，不重掷骰点或重结算。
 - **取消**：服务端 `checkHeadReady` 对 pending head 的 cancel 仍然拒绝，页面原有的“先补正文再取消”流程不变；队列在模型 abort 时让该点保持 pending，不重新结算，也不改写其它点。没有把 cancel 变成可绕过正文生成的路径。
 - **旧存档兼容**：只把仍为 `pending` 的点加入恢复队列；旧的 `missing` 不自动生成，`failed` 不偷偷重抽。`narrationOverlap` 关闭时 controller 维持原有串行 narration 行为。
 - **未在 05 宣布产品验收**：60s 首段/性能、真实页面、自动轮连续 3/10/20 回合、真实双引擎仍待 06 接线后由 09 采证。
