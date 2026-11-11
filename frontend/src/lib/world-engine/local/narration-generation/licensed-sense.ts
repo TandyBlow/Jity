@@ -526,9 +526,18 @@ export function resultSemantics(
   structured: StructuredResult | undefined,
   names: readonly string[] = [],
 ): ResultCheck {
-  const actor = structured?.actor ?? names.find((name) => name.length >= 2 && resultText.includes(name)) ?? null;
+  // The settled line often arrives as «诺诺：蹲下，掀开路明非的袖口查看伤口»:
+  // the name before the colon is the actor, not the first roster name that
+  // happens to appear in the sentence. Guessing by list order swapped the
+  // actor and the target on 09's 3-turn run and rejected a correct paraphrase.
+  const LEADING_NAME = /^\s*([^：:，,。]{2,6})[：:]/u;
+  const leading = resultText.match(LEADING_NAME);
+  const leadingName = leading && names.includes(leading[1].trim()) ? leading[1].trim() : null;
+  const body = leadingName && leading ? resultText.slice(leading[0].length) : resultText;
+  const actor = structured?.actor ?? leadingName
+    ?? names.find((name) => name.length >= 2 && body.includes(name)) ?? null;
   const target = structured?.target
-    ?? names.find((name) => name.length >= 2 && resultText.includes(name) && name !== actor)
+    ?? names.find((name) => name.length >= 2 && body.includes(name) && name !== actor)
     ?? null;
   const outcome = structured?.outcome;
   // Settlement polarity. A negative cue wins over a positive one: «未能完成»

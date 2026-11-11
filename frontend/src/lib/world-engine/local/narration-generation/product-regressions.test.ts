@@ -735,3 +735,24 @@ describe('product regressions: a result claim must be about that result', () => 
     expect(check.detail).not.toMatch(/never names/u);
   });
 });
+
+describe('product regressions: the settled line names its actor before the colon', () => {
+  // 09's 3-turn run (bed9de41) rejected a correct paraphrase three times because
+  // «诺诺：蹲下，掀开路明非的袖口查看伤口» was read with 路明非 as the actor.
+  const names = ['路明非', '诺诺', '演习规则牌'];
+
+  test('an actor prefix is the actor, not the first roster name in the sentence', () => {
+    const check = resultSemantics(
+      '路明非沿着服务巷往里走，先看清墙上的演习规则牌。诺诺蹲下，掀开路明非的袖口查看伤口。',
+      '诺诺：蹲下，掀开路明非的袖口查看伤口', undefined, names);
+    expect(check.ok).toBe(true);
+    expect(check.detail).not.toMatch(/never names/u);
+  });
+
+  test('a prose that drops that actor is still a swap', () => {
+    const check = resultSemantics('有人蹲下查看伤口。', '诺诺：蹲下，掀开路明非的袖口查看伤口',
+      undefined, names);
+    expect(check.ok).toBe(false);
+    expect(check.detail).toMatch(/诺诺/u);
+  });
+});
