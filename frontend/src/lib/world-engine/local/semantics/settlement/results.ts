@@ -93,7 +93,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -341,6 +341,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- facts 每个成员一条自己的行动结果（共同的可以归多人），memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
     '- 不写“任务完成/任务达成/目标达成/成功完成/奖励”这类结论；failed/blocked 照实写，保留“没有/未/被阻止”。',
     '- 例：行动是“沿着服务巷走，看清墙上的演习规则牌”，事实写“路明非走到服务巷，看见墙上的规则牌”；不要写“完成参赛选择/任务”。',
+    '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：73f3 只写了看懂规则牌，走路从结果里丢了。',
     '- 例：行动是“我向诺诺问现在的局势”，事实写“路明非问诺诺红蓝两方现在在哪，诺诺摇头说不知道”；不要写“骰点未获取，因此未能达成目标”。',
     '- fact 带字段：actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
     '- failed/blocked 照实写，保留“没有/未/被阻止”；任务目标、骰点资格、判定理由都不是事实。',
@@ -465,6 +466,17 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       && memberById.get(judgment.memberId)!.rolls.every((roll) => !roll.admitted))
     .map((judgment) => judgment.memberId));
   const factRecipients = new Set<Id>();
+  // Resolve a fact's member list before its text is judged: an inactive member's
+  // mechanics-only line is dropped, a live member's line is repaired.
+  const recipientsFor = (rawFact: unknown): Id[] => {
+    const raw = isRecord(rawFact) && Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
+    const ids: Id[] = [];
+    for (const value of raw) {
+      const id = resolveCharacterId(state, value);
+      if (id && memberById.has(id) && !ids.includes(id)) ids.push(id);
+    }
+    return ids;
+  };
   const knownNumbers = knownDigitRuns(state, members);
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
@@ -478,6 +490,15 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     if (!original) throw new Error('fact text must be non-empty');
     const cleaned = sanitizeFactText(original);
     if (!cleaned.text || !cleaned.text.replace(FACT_PUNCTUATION, '')) {
+      // A member who provably did nothing (all rolls denied, judged
+      // not_achieved) has no observable result to narrate: 09-product-03turn-73f3's
+      // reaction group answered 路明非未被判定为反应 for nono and the whole turn
+      // died on a mechanics-only fact. Drop it and let the point settle with no
+      // fact for that member instead of inventing one.
+      if (recipientsFor(rawFact).every((id) => inactive.has(id))) {
+        droppedFacts.push({ memberIds: recipientsFor(rawFact), original, reason: 'inactive_no_result' });
+        continue;
+      }
       throw new Error(`fact only asserted completion or mechanics, no action result left: ${original}。只写这次行动的直接可见结果（${actionHint}），不要写任务、选择、规则或奖励结论。`);
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {

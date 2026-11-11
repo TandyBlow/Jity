@@ -390,6 +390,8 @@ describe('common-group results', () => {
     // 3turn 9623 group_29 copied the judgement reason as its fact; a walk/read
     // example alone does not teach a question group what its result looks like.
     expect(prompt).toContain('我向诺诺问现在的局势');
+    // 73f3 kept the read but dropped the walk from the result.
+    expect(prompt).toContain('行动里有走/进入就先写走到哪');
     expect(prompt).toContain('诺诺摇头说不知道');
     expect(prompt).not.toContain('待办=');
   });
@@ -611,6 +613,46 @@ describe('six-stage updates', () => {
     expect(positionPrompt).toContain('乙没有掀开袖口');
     const detail = outcome.evidence.detail as { taskCoverageIds: string[] };
     expect(detail.taskCoverageIds).toEqual(['a', 'b', 'c', 'off']);
+  });
+
+  it('skips the six-stage pass when a group settled no fact at all', async () => {
+    // 73f3's denied reaction group now settles with no fact (04 9c295392); a
+    // full cast scan would cost ~20 s to write nothing.
+    let calls = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'skip-empty' },
+      async load() {},
+      async dispose() {},
+      async complete() { calls += 1; return '{}'; },
+    };
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('group_12', {
+      groupId: 'group_12',
+      results: { nono: '' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(calls).toBe(0);
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as UpdatesCall[]).map((call) => call.stage)).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
+    const detail = outcome.evidence.detail as { skipped: string };
+    expect(detail.skipped).toBe('no_settled_fact');
+
+    // Any settled fact still runs the whole pass.
+    const engine2 = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ decisions: [{ characterId: 'a', achieved: [] }, { characterId: 'b', achieved: [] }, { characterId: 'off', achieved: [] }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [] }),
+      JSON.stringify({ sanity: [] }),
+    ]);
+    const ran = await createSettlementHandlers({ engine: engine2 }).updates('group_10', {
+      groupId: 'group_10',
+      results: { a: '甲走到远处。' },
+      workingState: world(),
+    } as unknown as Json);
+    expect(engine2.prompts.length).toBeGreaterThan(0);
+    expect((ran.evidence.detail as { skipped?: string }).skipped).toBeUndefined();
   });
 
   it('runs the canonical six stages, moves an item, covers the full cast, and pairs personality with sanity', async () => {

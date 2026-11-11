@@ -245,6 +245,34 @@ export class UpdatesRunner {
     const batch = this.batch(baseKey, parsed.workingState);
     const currentAchievedIds = currentAchieved(parsed.workingState);
     const stage = parsed.stage;
+    // A group whose results are all empty settled nothing observable (73f3's
+    // denied reaction group). The six stages would scan the whole cast and write
+    // no changes; skip the pass instead of paying ~20 s for it. A time scan or a
+    // group with any fact still runs every stage.
+    const settledText = Object.values(parsed.results ?? {}).join('').trim();
+    if (!stage && parsed.mode !== 'time_scan' && Object.keys(parsed.results ?? {}).length && !settledText) {
+      const calls = SETTLEMENT_STAGES.map((name) => ({ stage: name, changes: {} as UpdatesCall['changes'] }));
+      const evidence: SettlementEvidence = {
+        task: 'updates',
+        key,
+        raw: '',
+        ms: performance.now() - started,
+        fallback: false,
+        calls: [],
+        detail: toJson({
+          groupId: parsed.groupId,
+          skipped: 'no_settled_fact',
+          stages: calls.map((call) => call.stage),
+          stageMs: {},
+          stageErrors: [],
+        }),
+      };
+      this.options.onTask?.('updates', key, {
+        ms: evidence.ms, fallback: false, raw: '', promptChars: 0,
+        stageMs: {}, stages: calls.map((call) => call.stage),
+      });
+      return { value: calls, raw: '', ms: evidence.ms, fallback: false, evidence };
+    }
     const beforeTasks = stage === 'tasks' || stage === 'position' || stage === 'appearance' || stage === 'subtasks';
     const newlyAchieved = beforeTasks ? new Set<Id>() : difference(currentAchievedIds, batch.baselineAchieved);
     const effectiveNew = batch.tasksAchieved.size > 0 ? new Set(batch.tasksAchieved) : newlyAchieved;
