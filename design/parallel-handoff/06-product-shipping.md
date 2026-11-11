@@ -265,3 +265,29 @@ chunk `page-19ac6488c8da198a.js`，PID 41180，`:3241`。页面默认 `auto`；�
 3. **60 s**：结算 60-70 s 仍是首段主成本，正文 10-17 s；回合 3 这类小结算已 51-56 s。04 的结算成本是唯一杠杆。
 4. **质量**：第 2 回合模型给诺诺编了回答，第 3 回合路线与终点矛盾、护目镜重复；01 独立读，02 改提示材料，运行时不拦。
 5. **完整验收**：10→20 回合连续游玩、01 独立复核、用户真实试玩都未完成。
+
+## 10. 2026-11-11 20:xx：离场判断、两条措辞判据、按点流水交接
+
+### 这一轮实际改了什么（都在 `goal/local-06-recovery`）
+
+| commit | 内容 |
+|---|---|
+| `661ae966` | `offscreenPolicy` 默认 `judge`：不在主角房间的角色由模型从**自己的房间**判断，`skip` 由模型自己答；显式 `skip` 臂保留作对照。离场提示不再含主角房间名/描述、玩家原句、其他房间名单、远端事件。行动提示删掉“医护掀袖”和“我叫诺诺”两个自由例句。 |
+| `a7dbf94a` | 删 `target_unmentioned`、`reaction_off_topic` 两条措辞判据（连同类型、修复文案、旧预期）。id/self/重复/可见性/上限/掷骰/不在场/编造人物/替发起者行动等结构检查全部保留。 |
+| `b3304a4b` | 应用 02 两个提示补丁：去掉姿势禁令；失败结果加“失败=他要的结果没得到”的说明，问-答记录加“问句和回答都要写出来”。 |
+
+`npx tsc --noEmit` 干净；`npx vitest run --maxWorkers=1` 1042 passed / 3 skipped。
+
+### 按点叙事与下一点结算重叠：已转交 05
+
+用户 2026-11-11 决定召回 05 做核心实现，文件所有权同时转移：
+`world-engine/{schedule.ts,controller.ts,types.ts,protocol.ts}`、`local/transport.ts` 及对应测试归 05；
+06 保留 page/game-model/session/semantics、合入与构建。交接文件
+`results/product/ownership-requests/06-to-05-pipeline.json` 记录了基线 `a7dbf94a`、现有 gate/head/claim
+机制、必须证明的不变量、需要的接线说明和禁止事项。06 这几个文件本轮未改、无未提交改动需要交接。
+
+### 构建状态
+
+- 当前服务 `:3241` 仍是 `661ae966` 构建（BUILD_ID `fx5jceQkxddEF_Z69QwcV`，PID 128288），**未替换**；
+- 下一个构建已就绪未发布：head `b3304a4b`，BUILD_ID `zh5-0ysyzDNR9feZ7eARs`，
+  chunk `page-cb2486fb7a329f9e.js`（`.next-prod6`），等 09 释放后再换。
