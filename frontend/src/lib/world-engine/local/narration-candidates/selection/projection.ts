@@ -19,8 +19,7 @@
  */
 import type { EntityDelta, Id, Position, TimeAdvance, WorldState } from '../../../types';
 import type { CommittedNarration, NarrationFact } from '../../../runtime/committed-narration';
-import { EVENT_VERBS } from '../../../runtime/narration-alignment';
-import type { BeatSceneContext, NarrationPolicy } from '../trained-generation/types';
+import type { BeatSceneContext, NarrationPolicy } from '../../narration-generation/types';
 import { projectNarrationInput } from '../../narration-input';
 import { renderResultInput } from '../../narration-input';
 import type { NarrationPoint, PreparedNarration } from './types';
@@ -228,7 +227,9 @@ export function narrationPolicy(point: NarrationPoint, limits: {
     visibleEntities: Object.keys(after.items)
       .filter((id) => visibleRoomOf(after, id) === room || carried.includes(id))
       .map((id) => after.initial.items[id].name),
-    licensedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
+    // Licensed events are not a runtime check any more; the field stays for the
+    // prompt contract's wording list.
+    licensedEvents: [],
     time,
     requireTime: Boolean(time && time.boundary === 'elapsed' && time.duration.amount > 0),
     // Lane 02's short-scene corpus counts 60–149 chars as a complete scene;

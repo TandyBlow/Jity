@@ -82,14 +82,13 @@ const TIME_PHRASES = [
  * exact sentence is an echo, not continuity. */
 export function timeFallbackSentence(
   duration: TimeAdvance['duration'],
-  priorText?: string | null,
   offset = 0,
 ): string {
   const amount = cnAmount(duration.amount);
   const unit = UNIT_CN[duration.unit];
   const candidates = [...TIME_PHRASES.slice(offset), ...TIME_PHRASES.slice(0, offset)]
     .map((phrase) => phrase(amount, unit));
-  return candidates.find((sentence) => !priorText || !priorText.includes(sentence)) ?? candidates[0];
+  return candidates[0];
 }
 
 function factDirective(fact: NarrationFact, scene: BeatSceneContext | undefined, viewpointName: string | null): string {
@@ -201,7 +200,7 @@ export interface BeatPromptInput {
   /** Sentences already written for this scene, oldest first. */
   written: readonly string[];
   /** First sentence of the previous accepted scene, for continuity. */
-  priorTail?: string | null;
+
 }
 
 /** One beat prompt. Kept short on purpose: tiny models lose the instruction
@@ -240,7 +239,9 @@ export function buildBeatPrompt(input: BeatPromptInput): string {
       return `${object.name}${owner ? `（属于${owner}${note ? `；${trimNote(note)}` : ''}）` : note ? `（${trimNote(note)}）` : ''}`;
     });
   if (objects.length) lines.push(`【手边】${objects.join('、')}`);
-  const prior = input.written.length ? input.written.at(-1) ?? '' : (input.priorTail ?? '');
+  // No previous-turn prose and no earlier paragraph are fed back into a beat
+  // prompt: each beat gets the settled material only.
+  const prior = '';
   if (prior) lines.push(`【前一句】${prior}`);
   lines.push(`【这一件】${beat.directive}`);
   // Dialogue, the viewpoint's own feelings and ordinary figurative language

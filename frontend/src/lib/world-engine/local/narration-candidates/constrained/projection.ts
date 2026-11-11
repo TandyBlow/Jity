@@ -31,7 +31,6 @@ export interface ProjectSceneOptions {
   resultsText?: string | null;
   /** Structured settled records (04); preferred over `resultsText` when present. */
   settledFacts?: import('./types').StructuredSettledFact[] | null;
-  priorText?: string | null;
   inputText?: string | null;
   /** Facts-only packets still carry the point's time advance. */
   timeAdvance?: TimeAdvance | null;
@@ -591,7 +590,6 @@ export function projectConstrainedScene(
       quotes: [...quotes],
     },
     knowledge,
-    priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
     // SceneHints already receives it (selection/constrained.ts); the skeleton
     // dropped it, so no beat could write the player's declared action.
@@ -810,7 +808,6 @@ export function projectFromFactsPacket(
       ])],
     },
     knowledge: { ...emptyKnowledge(), ...(options.knowledge ?? {}) },
-    priorText: options.priorText ?? null,
     inputText: options.inputText ?? null,
     // SceneHints already receives it (selection/constrained.ts); the skeleton
     // dropped it, so no beat could write the player's declared action.

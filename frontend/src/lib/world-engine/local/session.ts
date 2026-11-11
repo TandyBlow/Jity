@@ -21,6 +21,8 @@ import {
  * status only; this page-owned side map keeps the honest label (accepted model,
  * mixed, program realization, or an unadopted draft) so a reload can still say
  * which one the player is reading. */
+/** `model` is the only source the current runtime produces. `mixed`, `program`
+ * and `draft` remain readable so old saves keep their honest labels. */
 export interface NarrationSourceNote { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }
 
 export interface LocalGameSnapshot {

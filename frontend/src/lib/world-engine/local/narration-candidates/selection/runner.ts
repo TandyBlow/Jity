@@ -1,23 +1,18 @@
 /** Narration candidate selection for the product page.
  *
- * The page sees ONE decision: did a candidate accept a scene for this point?
- *   - `adopted`  → the candidate's verified prose is this point's narration;
- *   - `fallback` → the existing in-model path keeps writing the text it writes
- *                  today (the page already labels that text honestly).
+ * The runtime never judges prose (NARRATION-RAW-OUTPUT-20261111). Selection is
+ * only about which candidate writes this point:
+ *   - `adopted` → the candidate returned non-empty model text; it is shown exactly
+ *                 as returned, with its display segments;
+ *   - `empty`   → the candidate ran but the model returned nothing; the page
+ *                 shows a status note and no narration (never program prose).
  *
- * Selection order is internal configuration, never a player-visible option:
- *   1. `globalThis.__jityNarrationCandidate` — QA/evaluation override, set by
- *      scripts before the page boots; unset in normal play.
- *   2. the `candidate` option the integrator passes;
- *   3. `auto`, which only offers candidates marked `productDefault`.
- *
- * A candidate marked unavailable, that throws, or that rejects its own draft
- * never becomes this point's narration. The user's cancel path is the engine's
- * own; this runner adds no second truth and no hidden retry loop.
+ * If every candidate is unavailable or errors, the caller falls back to the
+ * in-model writer with `builtin`; a candidate is never "rejected" for its text.
  */
 import type {
   CandidateNarrationResult, NarrationCandidate, NarrationPoint, NarrationProgress,
-  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration, ProgramFallback,
+  NarrationRunResult, NarrationRunner, NarrationRunnerOptions, PreparedNarration,
 } from './types';
 import { prepareNarration } from './projection';
 import { createChatTemplatedEngine } from './engine-template';
@@ -35,40 +30,6 @@ export function internalCandidateOverride(): string | null {
 }
 
 const printable = (error: unknown): string => (error instanceof Error ? `${error.name}:${error.message}` : String(error));
-
-/** Map a candidate's own provenance to the page-facing grade. A partially
- * model-written scene is `mixed`, never `candidate`: the page and the evidence
- * must be able to tell which sentences are program realizations. */
-function gradeOf(result: CandidateNarrationResult): 'candidate' | 'program' | 'mixed' {
-  if (result.grade === 'program') return 'program';
-  if (result.grade === 'candidate_with_program_sentences') return 'mixed';
-  const sources = (result.detail?.segments as Array<{ source?: string }> | undefined) ?? [];
-  if (sources.length && sources.some((s) => s.source === 'program' || s.source === 'fallback')
-    && sources.some((s) => s.source === 'model' || s.source === 'external')) return 'mixed';
-  return 'candidate';
-}
-
-function resultSegments(result: CandidateNarrationResult): Array<{ id: string; kind: string; source: string; text: string }> {
-  const segments = result.detail?.segments as Array<{ id: string; kind: string; source: string; text: string }> | undefined;
-  if (segments?.length) return segments;
-  // Whole-scene candidates have no per-sentence segmentation; the whole text
-  // is one segment attributed to the candidate's own grade.
-  return [{ id: 'scene', kind: 'scene', source: result.grade === 'program' ? 'program' : 'model', text: result.text }];
-}
-
-function resultBeatCounts(result: CandidateNarrationResult): { model: number; program: number; other: number } {
-  const counts = result.detail?.beatCounts as { model: number; program: number; other: number } | undefined;
-  if (counts) return counts;
-  return result.grade === 'program'
-    ? { model: 0, program: 1, other: 0 }
-    : { model: 1, program: 0, other: 0 };
-}
-
-function summarize(result: CandidateNarrationResult): string {
-  if (result.accepted) return '';
-  const kinds = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind);
-  return [result.reason ?? result.status, kinds.length ? kinds.join('+') : null].filter(Boolean).join('|');
-}
 
 export function createNarrationRunner(options: NarrationRunnerOptions): NarrationRunner {
   const candidates = options.candidates ?? SHIPPED_CANDIDATES;
@@ -102,64 +63,19 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
       available: candidates.map((candidate) => candidate.id),
       productDefault,
     },
-    async generateProgram(point: NarrationPoint): Promise<ProgramFallback | null> {
-      // The in-model writer already tried and failed before this is called, so
-      // the world-opening guard does not apply: a readable program scene is
-      // better than the terse factual draft, and it is labelled as a downgrade.
-      if (!point.after) return null;
-      let prepared: PreparedNarration;
-      try {
-        prepared = prepareNarration(point, limits);
-      } catch (error) {
-        // Evidence, not a decision: without this the page only sees that the
-        // program scene was absent, not why.
-        console.info('[narration] program fallback prepare error', printable(error));
-        return null;
-      }
-      const candidate = candidates.find((entry) => entry.id === 'constrained') ?? CONSTRAINED_CANDIDATE;
-      try {
-        const result = await candidate.run({
-          engine, point, prepared,
-          policy: { mode: 'program' },
-        });
-        if (!result.accepted || result.text.trim().length === 0) {
-          const kinds = result.issues.filter((issue) => issue.severity === 'hard').map((issue) => issue.kind).join('+');
-          console.info('[narration] program fallback rejected', result.reason ?? result.status, kinds);
-          return null;
-        }
-        return {
-          text: result.text,
-          strategyVersion: result.strategyVersion,
-          timings: result.timings,
-          issues: result.issues,
-        };
-      } catch (error) {
-        console.info('[narration] program fallback error', printable(error));
-        return null;
-      }
-    },
     async generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult> {
       const plan = ordered();
       if (plan.length === 0) {
-        return {
-          kind: 'fallback',
-          candidateId: null,
-          grade: 'program_fallback',
-          reason: requested === 'auto' ? 'no_product_candidate' : requested === 'builtin' ? 'builtin_requested' : `unknown_candidate:${requested}`,
-          notice: null,
-        };
+        return { kind: 'unavailable', reason: requested === 'auto' ? 'no_product_candidate' : 'builtin_requested' };
       }
       let prepared: PreparedNarration;
       try {
         prepared = prepareNarration(point, limits);
       } catch (error) {
-        return {
-          kind: 'fallback', candidateId: null, grade: 'program_fallback',
-          reason: `prepare_error:${printable(error)}`, notice: null,
-        };
+        return { kind: 'unavailable', reason: `prepare_error:${printable(error)}` };
       }
       const problems: string[] = [];
-      let last: CandidateNarrationResult | null = null;
+      let sawNonEmpty = false;
       for (const candidate of plan) {
         const availability = candidate.availability(point, prepared);
         if (!availability.available) {
@@ -171,7 +87,7 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
           result = await candidate.run({
             engine, point, prepared, onProgress,
             ...(candidate.route === 'constrained'
-              ? { policy: { mode: options.constrainedMode ?? 'program' } }
+              ? { policy: { mode: 'model' } }
               : candidate.route === 'trained'
                 ? { policy: {
                   sceneMode: options.trainedMode ?? 'beats',
@@ -183,18 +99,14 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
           problems.push(`error:${candidate.id}|${printable(error)}`);
           continue;
         }
-        last = result;
-        if (result.accepted && result.text.trim().length > 0) {
+        if (result.text.trim().length > 0) {
+          sawNonEmpty = true;
           return {
             kind: 'adopted',
             candidateId: result.candidateId,
             route: result.route,
             text: result.text,
-            accepted: true,
-            grade: gradeOf(result),
             segments: resultSegments(result),
-            beatCounts: resultBeatCounts(result),
-            issues: result.issues,
             timings: result.timings,
             promptChars: result.promptChars,
             strategyVersion: result.strategyVersion,
@@ -208,49 +120,17 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
             },
           };
         }
-        problems.push(`${result.status}:${candidate.id}|${summarize(result)}`);
+        if (result.status !== 'empty') problems.push(`${result.status}:${candidate.id}`);
       }
-      // Preserve the last non-empty rejected scene: the product must not replace
-      // a written model paragraph with program text just because its gate
-      // refused it. It is shown as an unverified draft, never as accepted prose.
-      // Only text that contains model writing can be shown as a model draft.
-      // A program-only answer is a labelled downgrade, not a draft.
-      const lastSegments = last ? resultSegments(last) : [];
-      const hasModelText = lastSegments.some((segment) => segment.source === 'model'
-        || segment.source === 'draft' || segment.source === 'external');
-      const draftText = last?.text?.trim() && hasModelText ? last.text : null;
-      return {
-        kind: 'fallback',
-        candidateId: plan[0]?.id ?? null,
-        grade: 'program_fallback',
-        reason: problems.join(';') || 'candidate_rejected',
-        notice: null,
-        ...(draftText && last ? {
-          draft: {
-            text: draftText,
-            candidateId: last.candidateId,
-            route: last.route,
-            grade: last.grade,
-            issues: last.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity })),
-            promptChars: last.promptChars,
-            timings: last.timings,
-            strategyVersion: last.strategyVersion,
-            segments: resultSegments(last),
-            beatCounts: resultBeatCounts(last),
-            detail: last.detail ?? null,
-          },
-        } : {}),
-        detail: last ? {
-          candidateId: last.candidateId,
-          status: last.status,
-          text: last.text,
-          issues: last.issues,
-          timings: last.timings,
-          strategyVersion: last.strategyVersion,
-          attempts: last.attempts,
-          candidate: last.detail ?? null,
-        } : undefined,
-      };
+      // No candidate wrote anything. That is an empty answer, not a reason to
+      // ask the legacy writer to describe the state again.
+      return { kind: 'empty', reason: problems.join(';') || 'empty_model_output', sawNonEmpty };
     },
   };
+}
+
+function resultSegments(result: CandidateNarrationResult): Array<{ id: string; kind: string; source: string; text: string }> {
+  const segments = result.detail?.segments as Array<{ id: string; kind: string; source: string; text: string }> | undefined;
+  if (segments?.length) return segments;
+  return [{ id: 'scene', kind: 'scene', source: 'model', text: result.text }];
 }

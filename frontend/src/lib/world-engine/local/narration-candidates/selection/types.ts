@@ -14,7 +14,7 @@
 import type { EntityDelta, Id, TimeAdvance, WorldState } from '../../../types';
 import type { CommittedNarration } from '../../../runtime/committed-narration';
 import type { CompletionEvidence, InferenceEngine } from '../../../runtime/engine';
-import type { BeatSceneContext, NarrationIssue, NarrationPolicy } from '../trained-generation/types';
+import type { BeatSceneContext, NarrationIssue, NarrationPolicy } from '../../narration-generation/types';
 
 /** The settled point the controller already hands to `narration()`.
  *
@@ -34,10 +34,6 @@ export interface NarrationPoint {
   /** 04's structured settled records: who acted, on whom, what action and which
    * outcome direction. Meaning is checked against these, not against wording. */
   settledFacts?: StructuredSettledFact[];
-  /** Previous narration the candidate accepted for this world, if any. */
-  priorText?: string | null;
-  /** Recent accepted events, newest last. Scene material, never new facts. */
-  recentEvents?: string[];
   signal?: AbortSignal;
 }
 
@@ -72,25 +68,17 @@ export interface CandidateIssueSummary {
   attempt?: number;
 }
 
-/** What one candidate produced. `accepted` is the candidate's own verdict;
- * `grade` states where the text came from, not how good it is. */
+/** What one candidate produced. `text` is the model's own prose; `status`
+ * reports only whether there was any, never a quality judgement. */
 export interface CandidateNarrationResult {
   candidateId: string;
   route: NarrationCandidate['route'];
   text: string;
-  accepted: boolean;
-  grade: 'candidate' | 'candidate_unverified' | 'candidate_with_program_sentences' | 'program';
-  status: 'accepted' | 'rejected' | 'cancelled' | 'timeout' | 'error';
-  /** Internal one-line reason for the fallback record. Never player-facing. */
-  reason: string | null;
-  issues: CandidateIssueSummary[];
+  status: 'accepted' | 'empty' | 'cancelled' | 'timeout' | 'error';
   attempts: number;
   promptChars: number;
   timings: { totalMs: number; attemptMs: number[]; firstTokenMs: number | null };
   strategyVersion: string;
-  /** True when every sentence came from the candidate's own program fallback
-   * rather than generated prose (B's `all_beats_fell_back`). */
-  allFellBack: boolean;
   detail?: Record<string, unknown>;
 }
 
@@ -150,55 +138,28 @@ export type NarrationRunResult =
     kind: 'adopted';
     candidateId: string;
     route: NarrationCandidate['route'];
+    /** Exactly what the model returned; never trimmed, rewritten or replaced. */
     text: string;
-    accepted: true;
-    /** `program` means every beat came from the deterministic realizer: it is
-     * a labelled downgrade, never model prose. `mixed` means some sentences
-     * are model prose and some are program realizations: it is shown with a
-     * visible note and never counted as fully model-written. */
-    grade: 'candidate' | 'program' | 'mixed';
-    /** Per-sentence provenance for the page and evidence. */
+    /** Display boundaries (one per non-empty beat), not edits. */
     segments: Array<{ id: string; kind: string; source: string; text: string }>;
-    beatCounts: { model: number; program: number; other: number };
-    issues: CandidateIssueSummary[];
     timings: CandidateNarrationResult['timings'];
     promptChars: number;
     strategyVersion: string;
     attempts: number;
-    /** Candidate-specific evidence (composers, coverage, beat plan). */
     detail?: Record<string, unknown> | null;
     completion: CompletionEvidence;
   }
   | {
-    kind: 'fallback';
-    /** Candidate that was tried, or null when selection stayed on the
-     * in-model path without a candidate run. */
-    candidateId: string | null;
-    grade: 'program_fallback';
-    /** Internal reason chain, e.g. `rejected:trained|fact_omitted`. */
+    kind: 'empty';
+    /** Why no candidate produced text (evidence only). */
     reason: string;
-    /** Player-facing sentence explaining the degraded text, or null. */
-    notice: string | null;
-    /** Internal evidence of the last candidate attempt: its own text, issue
-     * list, timings and candidate-specific detail. Never rendered. */
-    detail?: Record<string, unknown>;
-    /** A non-empty model scene the candidate wrote but its own gate rejected.
-     * It is preserved and labelled as an unverified draft instead of being
-     * thrown away for program text; it never counts as accepted prose. */
-    draft?: {
-      text: string;
-      candidateId: string | null;
-      route: NarrationCandidate['route'] | null;
-      grade: 'candidate_unverified' | 'program' | 'mixed' | string;
-      issues: CandidateIssueSummary[];
-      /** Full prompt size of the candidate run (never the text length). */
-      promptChars: number;
-      timings: CandidateNarrationResult['timings'];
-      strategyVersion: string | null;
-      segments?: Array<{ id: string; kind: string; source: string; text: string }>;
-      beatCounts?: { model: number; program: number; other: number };
-      detail?: Record<string, unknown> | null;
-    };
+    /** True when a candidate did return text but the caller lost it — should
+     * never happen; kept so an impossible state is visible in evidence. */
+    sawNonEmpty: boolean;
+  }
+  | {
+    kind: 'unavailable';
+    reason: string;
   };
 
 export interface NarrationRunnerOptions {
@@ -231,21 +192,10 @@ export interface NarrationRunnerOptions {
   targetChars?: number;
 }
 
-export interface ProgramFallback {
-  text: string;
-  strategyVersion: string;
-  timings: CandidateNarrationResult['timings'];
-  issues: CandidateIssueSummary[];
-}
-
 export interface NarrationRunner {
   /** Selection actually in force, for QA scripts and console diagnostics. */
   readonly selection: { requested: string; available: string[]; productDefault: string | null };
   generate(point: NarrationPoint, onProgress?: (progress: NarrationProgress) => void): Promise<NarrationRunResult>;
-  /** Labelled program fallback for a round the in-model writer could not accept.
-   * It never calls a model, never replaces accepted prose, and returns null when
-   * the constrained candidate cannot write this point. */
-  generateProgram(point: NarrationPoint): Promise<ProgramFallback | null>;
 }
 
 export type { NarrationIssue };

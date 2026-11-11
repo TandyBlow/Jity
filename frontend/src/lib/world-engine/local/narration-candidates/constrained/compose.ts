@@ -191,20 +191,16 @@ function unwrapStructured(raw: string): string {
 const THREE_NEWLINES = new RegExp(String.fromCharCode(10) + '{3,}', 'gu');
 
 export function sanitizeBeat(raw: string): string {
-  const NL = String.fromCharCode(10);
+  // Protocol extraction only. A fenced/JSON answer is still the model's text;
+  // the 【正文】 marker is part of the prompt contract. Nothing is deleted,
+  // re-worded, punctuated or trimmed for length: the content is shown as-is.
   const marker = String.fromCharCode(0x3010) + '正文' + String.fromCharCode(0x3011);
   const afterMarker = raw.includes(marker) ? raw.split(marker).pop() ?? raw : raw;
-  // Remove fence markers first, then read a structured answer: a fenced JSON
-  // object is still the model's text, not a code sample to discard.
-  const unfenced = afterMarker.replace(/```[a-zA-Z]*/gu, '').replace(/```/gu, '');
-  const stripped = unwrapStructured(unfenced)
-    .replace(/^\s*(正文|叙事|输出|片段)[:：]\s*/u, '')
-    .replace(/【[^】]{1,10}】/gu, '')
-    .replace(/\*\*/gu, '')
-    .replace(/[ 	]+/gu, ' ')
-    .replace(THREE_NEWLINES, NL + NL)
-    .trim();
-  return stripped;
+  const unfenced = afterMarker.split(String.fromCharCode(96,96,96)).join('');
+  const structured = unwrapStructured(unfenced);
+  // `unwrapStructured` returns the text field when the answer is a JSON object;
+  // otherwise the input itself.
+  return structured;
 }
 
 export async function composeBeatWithModel(
@@ -237,9 +233,12 @@ export async function composeBeatWithModel(
     timeoutMs: options.timeoutMs,
     signal: options.signal,
     onProgress: options.onProgress
-      ? (progress) => options.onProgress?.({ text: sanitizeBeat(progress.raw), elapsedMs: performance.now() - started })
+      // Raw streaming: the page shows the model's own text while it is written.
+      ? (progress) => options.onProgress?.({ text: progress.raw, elapsedMs: performance.now() - started })
       : undefined,
   });
+  // The answer is used exactly as returned (after protocol extraction). No
+  // trimming, sentence surgery or repair: a non-empty answer is the prose.
   return {
     text: sanitizeBeat(raw),
     raw,

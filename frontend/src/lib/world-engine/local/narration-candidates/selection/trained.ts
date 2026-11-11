@@ -1,16 +1,12 @@
 /** B-route adaptation: lane 02's committed-fact narration strategy (beats).
  *
- * The strategy owns prompt construction, verification and repair. This adapter
- * only supplies:
+ * The strategy owns prompt construction and returns the model's own text. This
+ * adapter only supplies:
  *   - the fact packet (projected from the sealed delta by `projection.ts`),
  *   - lane 01's serialized input (licensing evidence; beats do not re-use it
  *     as the prompt),
  *   - the writing policy (viewpoint, roster, time, lengths, temperature),
- *   - real progress increments and the final verdict, unmapped and unedited.
- *
- * `productDefault` stays false until a real-model evidence record shows at
- * least one accepted narration; the selection layer never promotes a candidate
- * on unit-test evidence alone.
+ *   - real progress increments and the model's text, unmapped and unedited.
  */
 // The product uses lane 02's current strategy module directly (one source of
 // truth with their measured arm), not a vendored copy.
@@ -42,7 +38,6 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
       engine,
       committed: prepared.facts,
       inputText: prepared.inputText ?? '',
-      priorText: point.priorText ?? null,
       signal: point.signal,
       onProgress: (state) => onProgress?.({
         text: state.text, elapsedMs: state.elapsedMs, verified: state.verified, attempt: state.attempt,
@@ -68,68 +63,26 @@ export const TRAINED_CANDIDATE: NarrationCandidate = {
           : {}),
       },
     });
-    const issues = result.issues.map((issue) => ({
-      kind: issue.kind,
-      severity: issue.severity,
-      attempt: issue.attempt,
-    }));
-    const modelBeats = result.beatCounts.model;
-    const programBeats = result.beatCounts.fallback;
-    const allFellBack = result.segments.length > 0 && result.segments.every((segment) => segment.source !== 'model');
-    // A scene with some model sentences and some program fallbacks must not be
-    // presented as fully model-written.
-    const mixed = result.accepted && modelBeats > 0 && programBeats > 0;
-    const segments = result.segments.length
-      ? result.segments.map((segment) => ({ id: segment.beatId, kind: segment.kind, source: segment.source === 'fallback' ? 'program' : segment.source, text: segment.text }))
-      : result.beats.map((beat) => ({ id: beat.beatId, kind: beat.kind, source: beat.source === 'fallback' ? 'program' : beat.source, text: beat.text }));
-    const hard = hardKinds(result.issues);
-    const reason = result.accepted
-      ? null
-      : result.status === 'cancelled' ? 'cancelled'
-        : result.status === 'timeout' ? 'timeout'
-          : `rejected:${hard.join('+') || 'unknown'}`;
     return {
       candidateId: 'trained',
       route: 'trained',
       text: result.text,
-      accepted: result.accepted && result.text.trim().length > 0,
-      grade: !result.accepted ? (allFellBack ? 'program' : 'candidate_unverified') : mixed ? 'candidate_with_program_sentences' : 'candidate',
-      status: result.status,
-      reason,
-      issues,
+      status: result.status === 'accepted' ? 'accepted'
+        : result.status === 'cancelled' ? 'cancelled'
+          : result.status === 'error' ? 'error' : 'empty',
       attempts: result.rawAttempts.length,
-      promptChars: result.rawAttempts.reduce((sum, attempt) => sum + attempt.promptChars, 0),
+      promptChars: result.timings.promptChars ?? 0,
       timings: {
         totalMs: result.timings.totalMs,
-        attemptMs: result.timings.attemptMs,
-        firstTokenMs: result.timings.firstTokenMs,
+        attemptMs: result.rawAttempts.map((attempt) => attempt.ms ?? attempt.durationMs ?? 0),
+        firstTokenMs: result.timings.firstTextMs ?? null,
       },
       strategyVersion: result.strategyVersion,
-      allFellBack,
       detail: {
-        mandatory: prepared.mandatoryFactIds,
+        segments: result.segments.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text })),
         beats: result.beats.map((beat) => ({
-          id: beat.beatId, kind: beat.kind, source: beat.source, attempts: beat.attempts,
-          durationMs: beat.durationMs, text: beat.text,
-          issues: beat.issues.map((issue) => `${issue.severity}:${issue.kind}`),
-        })),
-        assembly: result.assembly,
-        segments,
-        beatCounts: { model: modelBeats, program: programBeats, other: result.beats.length - modelBeats - programBeats },
-        promptShape: runPolicy?.promptShape ?? (runPolicy?.sceneMode === 'scene' ? 'prose-facts' : null),
-        sceneMode: runPolicy?.sceneMode ?? 'beats',
-        // Raw engine output per attempt. Truncated for the evidence file; the
-        // prompt is already recorded per beat inside the strategy's evidence.
-        attemptsEvidence: result.rawAttempts.map((attempt) => ({
-          attempt: attempt.attempt,
-          promptChars: attempt.promptChars,
-          durationMs: attempt.durationMs,
-          firstTokenMs: attempt.firstTokenMs,
-          finishReason: attempt.finishReason,
-          error: attempt.error,
-          raw: attempt.raw.slice(0, 1200),
-          cleaned: attempt.cleaned.slice(0, 600),
-          issues: attempt.issues.map((issue) => `${issue.severity}:${issue.kind}`),
+          beatId: beat.beatId, kind: beat.kind, factId: beat.factId ?? null,
+          text: beat.text, prompt: beat.prompt, raw: beat.raw, ms: Math.round(beat.ms ?? beat.durationMs ?? 0),
         })),
       },
     };

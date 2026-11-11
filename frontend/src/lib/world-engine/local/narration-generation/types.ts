@@ -9,7 +9,6 @@
  */
 import type { Id, TimeAdvance } from '../../types';
 import type { CompletionEvidence, InferenceEngine } from '../../runtime/engine';
-import type { AlignmentResult } from '../../runtime/narration-alignment';
 import type { CommittedNarration, NarrationFact } from '../../runtime/committed-narration';
 
 export const NARRATION_STRATEGY_VERSION = 'committed-narration-strategy-v3';
@@ -93,7 +92,7 @@ export interface NarrationPolicy {
   /** Already-true positions the scene may state without a position fact. */
   knownPositions?: { name: string; location: string }[];
   /** Every display name in the world. Names absent from the serialized input,
-   * the fact packet and `priorText` are unlicensed: the small model must not
+   * the fact packet are unlicensed: the small model must not
    * pull them from pretraining. */
   knownEntities?: string[];
   /** Extra names the caller licensed (visible items, scene props). */
@@ -112,7 +111,7 @@ export interface NarrationPolicy {
   minChars?: number;
   /** Target length used by truncated/premature-closure guidance. Default 260. */
   targetChars?: number;
-  /** Char-bigram overlap with `priorText` above which the draft echoes. */
+  /** Legacy echo threshold; the runtime no longer inspects prose. */
   maxPriorOverlap?: number;
   /** Bounded repairs; every retry is included in the end-to-end timing. */
   maxAttempts?: number;
@@ -215,30 +214,34 @@ export interface NarrationMetrics {
   mandatoryFacts: number;
   mandatoryExpressed: number;
   unverifiedSentences: number;
-  /** Char-bigram overlap with `priorText`; null when there is no prior text. */
+  /** Legacy echo metric; the runtime no longer inspects prose. */
   echoRatio: number | null;
   repeatedSentences: number;
   repeatedClauses: number;
 }
 
 export interface NarrationAttempt {
-  attempt: number;
-  prompt: string;
-  promptChars: number;
+  attempt?: number;
+  prompt?: string;
+  promptChars?: number;
   raw: string;
-  cleaned: string;
-  finishReason: string | null;
-  error: string | null;
-  durationMs: number;
-  firstTokenMs: number | null;
-  completion: CompletionEvidence | null;
-  alignment: AlignmentResult | null;
-  issues: NarrationIssue[];
-  metrics: NarrationMetrics | null;
-  accepted: boolean;
-  cancelled: boolean;
-  timedOut: boolean;
-  progressEvents: number;
+  /** The model's text after protocol extraction; identical to `raw` content. */
+  text?: string;
+  cleaned?: string;
+  finishReason?: string | null;
+  error?: string | null;
+  ms?: number;
+  durationMs?: number;
+  firstTokenMs?: number | null;
+  completion?: CompletionEvidence | null;
+  alignment?: null;
+  issues?: NarrationIssue[];
+  score?: number;
+  metrics?: NarrationMetrics | null;
+  accepted?: boolean;
+  cancelled?: boolean;
+  timedOut?: boolean;
+  progressEvents?: number;
   /** Issues the draft had before the sentence-level repair. Kept so the
    * evidence still shows what was wrong even though the returned text is
    * clean; `issues` describes the final text. */
@@ -250,14 +253,19 @@ export interface NarrationAttempt {
 export interface NarrationBeatEvidence {
   beatId: string;
   kind: 'scene' | 'fact' | 'time';
-  directive: string;
+  directive?: string;
+  /** The model's answer for this beat, exactly as returned. */
   text: string;
-  source: 'model' | 'fallback' | 'skipped';
+  source?: 'model' | 'fallback' | 'skipped';
   attempts: number;
-  durationMs: number;
+  durationMs?: number;
+  ms?: number;
   issues: NarrationIssue[];
-  prompts: string[];
-  raws: string[];
+  prompts?: string[];
+  raws?: string[];
+  prompt?: string;
+  raw?: string;
+  factId?: string | null;
 }
 
 /** Program-side assembly edits applied after the beats were written. */
@@ -269,12 +277,18 @@ export interface NarrationAssembly {
 }
 
 export interface NarrationTimings {
-  /** Wall time from call start to return, including every retry. */
+  /** Wall time from call start to return, including every model call. */
   totalMs: number;
   attemptMs: number[];
-  attemptsMs: number;
+  attemptsMs?: number;
   firstTokenMs: number | null;
-  deadlineExceeded: boolean;
+  deadlineExceeded?: boolean;
+  /** Total prompt characters sent for this point (evidence). */
+  promptChars?: number;
+  /** Wall time to the first non-empty model text (evidence). */
+  firstTextMs?: number | null;
+  /** Per-call evidence rows. */
+  attempts?: { attempt: number; ms: number; firstTokenMs: number | null; outcome: string }[];
 }
 
 /** What the page may render. `verified: false` text is provisional: it is
@@ -295,7 +309,7 @@ export interface GeneratedNarration {
   issues: NarrationIssue[];
   timings: NarrationTimings;
   strategyVersion: string;
-  status: 'accepted' | 'rejected' | 'cancelled' | 'timeout' | 'error';
+  status: 'accepted' | 'empty' | 'rejected' | 'cancelled' | 'timeout' | 'error';
   ledger: NarrationLedger;
   metrics: NarrationMetrics | null;
   /** Index into `rawAttempts` matching `text`, or null when `text` is empty. */
@@ -316,7 +330,7 @@ export interface GeneratedNarration {
 }
 
 export interface NarrationSegment {
-  beatId: string;
+  id: string;
   kind: string;
   source: 'model' | 'fallback' | 'skipped';
   text: string;
@@ -329,8 +343,6 @@ export interface GenerateCommittedNarrationInput {
   committed: CommittedNarration;
   /** The serialized model input (lane 01 / caller). Injected, never rebuilt. */
   inputText: string;
-  /** Previous accepted narration for continuity, echo detection and licensing. */
-  priorText?: string | null;
   signal?: AbortSignal;
   onProgress?: (state: NarrationDisplayState) => void;
   policy?: NarrationPolicy;

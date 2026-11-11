@@ -49,9 +49,12 @@ type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
  * acceptance run reads timings from the product instead of scraping DOM text. */
 interface WorldTurnRecord {
   index: number; input: string;
-  acceptedMs: number | null; draftMs: number | null; programMs: number | null;
-  /** Time to a scene that mixed verified model sentences with program
-   * realizations. Never counted as fully model-written. */
+  /** Completion time of the model's non-empty prose. */
+  acceptedMs: number | null;
+  /** First visible model text (the same prose, still being written). */
+  draftMs: number | null;
+  /** Legacy fields kept so old saves still render honestly. */
+  programMs: number | null;
   mixedMs: number | null;
   segments?: Array<{ id: string; source: string }>;
   /** Committed prose per point in this turn (player point first). Appending by
@@ -118,9 +121,8 @@ interface TurnEntry {
   key: number; input: string; text: string; note: string | null; ms: number | null;
   /** Committed prose per point in this turn (player point first). */
   points?: Array<{ pointId: string; text: string; source?: 'model' | 'program' | 'mixed' | 'draft'; segments?: Array<{ id: string; kind: string; source: string; text: string }> }>;
-  /** Wall time from submit to the first streamed character. A draft stream is
-   * shown for reading, but it is NOT the acceptance number: a draft is not
-   * fact-checked yet and can still be replaced or cancelled. */
+  /** Wall time from submit to the first streamed model text. The same prose is
+   * completed in place, not replaced. */
   draftMs: number | null;
   /** Wall time from submit to the model text the candidate's own gate accepted.
    * `accepted` is that gate's verdict, not independent quality review: 02's arm
@@ -638,7 +640,14 @@ export default function WorldLocalPage() {
               }
             }
             if (task !== 'narration') return;
-            setEntries((list) => updateLast(list, (entry) => ({ ...entry, note: detail.fallback ? (detail.error ?? '正文已按已结算事实修正') : null, ms: Math.round(detail.ms) })));
+            // Only a run-level failure (empty answer, transport error) gets a
+            // note. Non-empty model prose is never annotated as corrected.
+            const failed = Boolean(detail.error) && (detail.error === 'empty_model_output' || detail.fallback);
+            setEntries((list) => updateLast(list, (entry) => ({
+              ...entry,
+              note: failed ? (detail.error === 'empty_model_output' ? '模型这次没有写出正文。' : detail.error ?? null) : null,
+              ms: Math.round(detail.ms),
+            })));
           },
           onNarrationDebug: (debug) => {
             (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug;
@@ -670,30 +679,31 @@ export default function WorldLocalPage() {
             }
             setPhase('streaming');
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
-            // Draft only: recorded separately from the accepted, fact-checked text.
+            // First visible model text; the same prose is completed in place.
             const draftMs = Math.round(performance.now() - submittedAtRef.current);
             const record = turnRecordRef.current;
             if (record && record.draftMs == null) record.draftMs = draftMs;
             setEntries((list) => updateLast(list, (entry) => {
               const points = [...(entry.points ?? [])];
               const index = points.findIndex((part) => part.pointId === progress.pointId);
-              if (index < 0) points.push({ pointId: progress.pointId, text, source: 'draft' });
-              else if (points[index].source === 'draft') points[index] = { ...points[index], text };
+              // Streaming text is the model's own prose. It is not "accepted"
+              // until the call finishes, but it is not a draft to be replaced.
+              if (index < 0) points.push({ pointId: progress.pointId, text, source: 'model' });
+              else if (points[index].source !== 'program') points[index] = { ...points[index], text };
               return { ...entry, points, text: points.map((part) => part.text.trim()).filter(Boolean).join('\n\n'), draftMs: entry.draftMs ?? draftMs };
             }));
           },
           onNarrationComplete: (progress) => {
             const text = progress.raw.split(String.fromCharCode(8251)).join(String.fromCharCode(10, 10));
             const atMs = Math.round(performance.now() - submittedAtRef.current);
-            // `model` means the candidate's own verifier accepted the text; it is
-            // not independent review (the 02 arm run has accepted text with an
-            // invented event). 'program' is the labelled downgrade and 'drafted'
-            // was never accepted; neither fills the readable-text timing.
-            const source = progress.source ?? (progress.fallback ? 'program' : 'draft');
+            // Non-empty model prose is shown exactly as returned. Source = model
+            // describes where it came from; it is not a quality verdict.
+            const source = progress.source ?? 'model';
             if (!text.trim()) {
-              // An empty completion is a failure, not a silent blank paragraph.
+              // The only non-content case: the model returned nothing. The page
+              // shows a status note; it does not write program prose.
               setEntries((list) => updateLast(list, (entry) => entry.acceptedMs == null
-                ? { ...entry, text: '', failed: true, note: '这一回合没有写出正文；已结算的事实仍保留，可以再试一次。' }
+                ? { ...entry, text: '', failed: true, note: '模型这次没有写出正文；已结算的事实仍保留，可以再试一次。' }
                 : entry));
               setPhase('ready');
               return;
@@ -703,26 +713,17 @@ export default function WorldLocalPage() {
             if (clocks && clocks.firstReadableAtMs == null) {
               clocks.firstReadableAtMs = atMs;
               clocks.firstReadableSource = source;
-              // A draft is readable but not accepted prose: its arrival must not
-              // count as the first accepted/verified text (NARRATION-BOUNDARY).
-              clocks.firstAcceptedAtMs = source === 'model' || source === 'mixed' ? atMs : null;
+              clocks.firstAcceptedAtMs = atMs;
             }
             const record = turnRecordRef.current;
             if (record) {
-              // One turn can narrate several points (player point, then automatic
-              // rounds). Each gets its own provenance record; the turn-level
-              // fields keep the FIRST point's numbers, so later auto prose can
-              // neither replace the player point's accepted timing nor relabel it
-              // as draft.
               record.narrations = record.narrations ?? [];
               record.narrations.push({ pointId: progress.pointId, source, atMs });
               if (record.source == null) {
                 record.source = source;
                 record.segments = progress.segments?.map((segment) => ({ id: segment.id, source: segment.source }));
               }
-              if (source === 'model') record.acceptedMs = record.acceptedMs ?? atMs;
-              else if (source === 'program') record.programMs = record.programMs ?? atMs;
-              else if (source === 'mixed') record.mixedMs = record.mixedMs ?? atMs;
+              record.acceptedMs = record.acceptedMs ?? atMs;
             }
             setEntries((list) => updateLast(list, (entry) => {
               const points = [...(entry.points ?? [])];
@@ -730,16 +731,8 @@ export default function WorldLocalPage() {
               const segments = progress.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }));
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
               else points[index] = { pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
-              const joined = points.map((part) => part.text.trim()).filter(Boolean).join('\n\n');
-              return source === 'model'
-                ? { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs }
-                : source === 'program'
-                  ? { ...entry, points, text: joined, programMs: entry.programMs ?? atMs, ms: null, note: entry.note ?? '程序按已结算事实成文' }
-                  : source === 'mixed'
-                    ? { ...entry, points, text: joined, mixedMs: entry.mixedMs ?? atMs, ms: null, note: entry.note ?? '这一段里混有程序按已结算事实写出的句子' }
-                    : source === 'draft'
-                    ? { ...entry, points, text: joined, note: entry.note ?? '这是模型写出的草稿，没有通过事实/视角校对；标出来供你判断，不算合格正文，也不会被当成已确认前文。' }
-                    : { ...entry, points, text: joined };
+              const joined = points.map((part) => part.text.trim()).filter(Boolean).join(String.fromCharCode(10, 10));
+              return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
             }));
             setPhase('ready');
           },
@@ -1147,7 +1140,7 @@ export default function WorldLocalPage() {
       const live = turnRecordRef.current;
       if (live && live.acceptedMs == null) live.cancelled = true;
       return entry.acceptedMs == null && entry.text
-      ? { ...entry, cancelled: true, ms: null, note: entry.note ?? '本轮已取消，正文草稿未通过核对。' }
+      ? { ...entry, cancelled: true, ms: null, note: entry.note ?? '本轮已取消，正文未完成。' }
       : entry;
     }));
     if (!session) {
@@ -1213,9 +1206,10 @@ export default function WorldLocalPage() {
                 <article key={entry.key} style={{ borderLeft: '3px solid #e2d6c1', paddingLeft: 12 }}>
                   <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>
                     你：{entry.input}
-                    {entry.acceptedMs != null ? ` · 模型正文 ${(entry.acceptedMs / 1000).toFixed(1)}s（候选自检通过，未经独立复核）` : ''}
-                    {entry.acceptedMs == null && entry.programMs != null ? ` · 程序成文 ${(entry.programMs / 1000).toFixed(1)}s（降级）` : ''}
-                    {entry.acceptedMs == null && entry.mixedMs != null ? ` · 模型+程序句 ${(entry.mixedMs / 1000).toFixed(1)}s（部分降级）` : ''}
+                    {entry.acceptedMs != null ? ` · 正文完成 ${(entry.acceptedMs / 1000).toFixed(1)}s（原样显示，未经核对）` : ''}
+                    {entry.draftMs != null ? ` · 正文出现 ${(entry.draftMs / 1000).toFixed(1)}s` : ''}
+                    {entry.acceptedMs == null && entry.programMs != null ? ` · 旧存档：程序成文 ${(entry.programMs / 1000).toFixed(1)}s` : ''}
+                    {entry.acceptedMs == null && entry.mixedMs != null ? ` · 旧存档：模型+程序句 ${(entry.mixedMs / 1000).toFixed(1)}s` : ''}
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
                   {entry.points && entry.points.length > 0 ? (
@@ -1224,17 +1218,17 @@ export default function WorldLocalPage() {
                         <div key={part.pointId}>
                           <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{part.text}</div>
                           <div style={{ fontSize: 11, color: part.source === 'model' ? '#6b7a5a' : '#a2762a', marginTop: 2 }}>
-                            {part.source === 'model' ? '模型正文（候选自检通过，未经独立复核）'
-                              : part.source === 'program' ? '程序按已结算事实成文（降级）'
-                                : part.source === 'mixed' ? '模型句与程序句混合（部分降级）'
-                                  : part.source === 'draft' ? '模型写出的草稿，未通过事实/视角校对；不算合格正文'
+                            {part.source === 'model' ? '模型正文（原样显示，未做内容核对）'
+                              : part.source === 'program' ? '旧存档：程序按已结算事实成文'
+                                : part.source === 'mixed' ? '旧存档：模型句与程序句混合'
+                                  : part.source === 'draft' ? '旧存档：未通过旧检查的草稿'
                                     : '来源未记录'}
                           </div>
                           {part.segments && part.segments.length > 1 ? (
                             <div style={{ fontSize: 11, color: '#8a7c68', marginTop: 2 }}>
                               {part.segments.map((segment) => (
                                 <span key={segment.id} style={{ marginRight: 8 }}>
-                                  {segment.kind}:{segment.source === 'model' ? '模型' : segment.source === 'draft' ? '未校对模型' : segment.source === 'program' ? '程序' : segment.source}
+                                  {segment.kind}:{segment.source === 'model' ? '模型' : segment.source === 'draft' ? '旧草稿' : segment.source === 'program' ? '旧程序' : segment.source}
                                 </span>
                               ))}
                             </div>
@@ -1246,8 +1240,8 @@ export default function WorldLocalPage() {
                     <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || (entry.failed || entry.cancelled || entry.restored ? '' : '…')}</div>
                   )}
                   {entry.failed && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>{entry.note ?? '本回合没有完成。'}</div>}
-                  {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
-                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled || entry.points?.some((part) => part.source === 'draft') ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}
+                  {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字不计入正文。</div>}
+                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.note}</div>}
                 </article>
               ))}
             </div>

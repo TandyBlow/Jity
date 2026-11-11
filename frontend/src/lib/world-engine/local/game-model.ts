@@ -10,7 +10,6 @@ import type { WorldModelPort } from '../controller';
 import type { EntityDelta, Id, Json, TimeAdvance, WorldState } from '../types';
 import type { CompletionEvidence, InferenceEngine } from '../runtime/engine';
 import { decodeTaskOutput } from '../runtime/structured-output';
-import { alignNarration, EVENT_VERBS } from '../runtime/narration-alignment';
 import { IncompleteGenerationError } from '../runtime/engine';
 import type { CommittedNarration, NarrationFact } from '../runtime/committed-narration';
 import { taskOutputSchema } from '../runtime/output-schema';
@@ -19,7 +18,6 @@ import { createNarrationRunner, type NarrationRunner } from './narration-candida
 import { requireSettlementValue } from './semantics/settlement';
 import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
-import { inventedObjectActions } from './narration-generation/licensed-action';
 
 export interface GameModelOptions {
   modelUrl?: string;
@@ -116,7 +114,6 @@ export class LocalGameModel implements WorldModelPort {
   private readonly narrationRunner: NarrationRunner | null;
   /** Last accepted prose (model or candidate). Only real prose is fed back as
    * continuation context; program/ledger paragraphs never are. */
-  private lastAcceptedNarration: string | null = null;
   private readonly settlement: SettlementModelPort;
   private readonly actionHandlers;
 
@@ -312,7 +309,7 @@ export class LocalGameModel implements WorldModelPort {
   private async injectMovement(state: WorldState | undefined, value: unknown, results: Record<Id, string>, stage: string | undefined): Promise<unknown> {
     if (!state || stage) return value;
     const view = state.protagonistId;
-    if (!MOVEMENT.test(this.lastPlayerInput)) return value;
+    if (!/走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|离开|去|赶到|溜|冲|贴墙|靠近/u.test(this.lastPlayerInput)) return value;
     const calls = Array.isArray(value) ? value as { stage: string; changes: Record<Id, EntityDelta> }[] : null;
     if (!calls) return value;
     const hasMove = calls.some((call) => call.changes?.[view]?.positionSet);
@@ -382,24 +379,6 @@ export class LocalGameModel implements WorldModelPort {
     return { value, raw: '', ms: performance.now() - started, fallback: false };
   }
 
-  /** Alignment inputs shared by the in-model writer and the independent
-   * candidate gate, so both judge the same committed facts with same rules. */
-  private alignmentOptionsFor(
-    before: WorldState | null,
-    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
-    after: WorldState,
-  ) {
-    const view = after.protagonistId;
-    return {
-      roster: Object.values(after.initial.characters).map((entity) => entity.name),
-      locations: Object.values(after.initial.locations).map((entity) => entity.name),
-      time: delta.timeAdvance?.duration ?? null,
-      knownPositions: visibleCharacters(after, view).filter((id) => id !== view)
-        .map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
-      allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
-    };
-  }
-
   private async narration(key: Id, input: Json): Promise<Generated> {
     const data = input as { pointId?: Id; before?: WorldState | null; delta?: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }; after?: WorldState; perspective?: string };
     const after = data.after;
@@ -409,190 +388,73 @@ export class LocalGameModel implements WorldModelPort {
     const started = performance.now();
     const before = data.before ?? null;
     const delta = data.delta ?? {};
-    const draft = factualNarration(before, delta, after, view, this.lastPlayerInput, this.lastResultsText);
 
-    // Candidate path: one settled point in, one verified scene out. A rejected,
-    // cancelled or unavailable candidate returns null and the in-model writer
-    // below keeps the round; an accepted program scene is submitted with the
-    // labelled downgrade flag, never as a quality claim.
+    // Candidate path: one settled point in, the candidate's own beat text out.
+    // Nothing here inspects, refuses, rewrites or replaces that text.
     if (this.narrationRunner) {
       const adopted = await this.adoptNarrationCandidate(pointId, before, delta, after);
       if (adopted) return adopted;
     }
+
+    // In-model writer: one call with the settled state as its only material.
     const brief = this.options.narrationMode === 'instruct'
-      ? instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft)
+      ? instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText)
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
-    const packet = alignmentPacket(before, delta, after);
-    const alignmentOptions = this.alignmentOptionsFor(before, delta, after);
-
-    const sceneNamesList = sceneNames(after, view);
-    const protagonistName = after.initial.characters[view]?.name ?? view;
-    const acceptCandidate = (candidate: ReturnType<typeof evaluate>): boolean => {
-      if (!candidate.validation.ok) return false;
-      const audit = proseAudit(candidate.supported, protagonistName);
-      const grounding = groundingRatio(candidate.supported, sceneNamesList);
-      // The narration contract is 160–240 chars; a supported scene shorter than
-      // 140 is a short summary, not the contracted paragraph.
-      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2;
-    };
-
-    const entityNames = [
-      ...Object.values(after.initial.items).map((item) => item.name),
-      ...Object.values(after.initial.characters).map((character) => character.name),
-    ];
-    const evaluate = (raw: string) => {
-      const cleaned = finishSentences(cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10))).trim();
-      const validation = validateNarration(cleaned, brief.brief, after, view);
-      const baseAlignment = alignNarration(packet, cleaned, alignmentOptions);
-      // A pickup/throw sentence whose object is not a world entity is an event
-      // the settlement never produced (the d101 dice). Drop that sentence; the
-      // rest of the scene is still judged normally.
-      const invented = inventedObjectActions(cleaned, `${draft}${this.lastResultsText ?? ''}`, entityNames);
-      const alignment = invented.length
-        ? { ...baseAlignment, violations: [...baseAlignment.violations, ...invented.map((violation) => ({ sentence: violation.sentence, kind: 'added_event' }))] }
-        : baseAlignment;
-      // Sentence-level repair keeps the literary text and only removes the
-      // claims the settled state cannot support. Whole-text rejection made the
-      // page show a state summary almost every round, which is worse than a
-      // slightly shorter scene.
-      const pruned = pruneNarration(cleaned, alignment, after, view);
-      const supported = supportNarration(bindNarrationAttributes(pruned.text, after, view), draft);
-      return { raw, cleaned, pruned: pruned.text, supported, dropped: pruned.dropped, validation };
-    };
-
-    /** Same repair chain as the final acceptance, applied to the sentences the
-     * model has finished so far. Only used to publish the stream. */
-    const previewNarration = (partial: string): string => {
-      const cleaned = finishSentences(cleanNarration(partial)).trim();
-      if ([...cleaned].length < 12) return '';
-      const alignment = alignNarration(packet, cleaned, alignmentOptions);
-      const pruned = pruneNarration(cleaned, alignment, after, view);
-      const deduped = dedupeSentences(pruned.text);
-      return supportNarration(bindNarrationAttributes(deduped.text, after, view), draft).trim();
-    };
-
-    const generate = async (prompt: string, temperature: number): Promise<{ raw: string; error?: string }> => {
-      try {
-        let published = '';
-        const raw = await this.narrationEngine.complete(this.options.narrationMode === 'instruct' ? chatml(prompt) : prompt, {
-          maxTokens: this.options.narrationMaxTokens ?? 240, temperature,
-          timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
-          onProgress: (progress) => {
-            // Show the scene while it is being written, but only the part that
-            // already holds up against the settled facts. Streaming raw model
-            // text would print invented actions and then take them back.
-            const complete = progress.raw.replace(/[^。！？!?\n]*$/u, '');
-            if ([...complete].length <= [...published].length) return;
-            const preview = previewNarration(complete);
-            if (!preview || preview === published) return;
-            published = preview;
-            this.options.onNarrationProgress?.({ pointId, raw: preview, elapsedMs: performance.now() - started });
-          },
-          ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
-        });
-        return { raw };
-      } catch (error) {
-        // A length-limited generation still carries usable prose: keep the
-        // complete sentences instead of throwing the whole point away.
-        const partial = error instanceof IncompleteGenerationError ? error.completion.raw : '';
-        const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-        return { raw: partial, error: message };
-      }
-    };
-
-    // Two bounded attempts: a free scene first, then a strictly drafted
-    // rewrite when the first answer cannot be supported by settled facts. The
-    // player sees the better accepted candidate, not the last one generated.
-    // Attempt one rewrites the grounded draft under strict rules: the small
-    // writer model invents less when it is told exactly which facts it may
-    // use. The freer scene prompt runs only if that rewrite is rejected, so a
-    // normal round costs one generation instead of two.
-    // Publish the settled draft the moment narration starts. The player reads a
-    // true, third-person scene instead of waiting for the writer model; the
-    // streamed rewrite replaces it only if it passes the same gate.
-    this.options.onNarrationProgress?.({ pointId, raw: draft, elapsedMs: performance.now() - started });
-
-    const attempts: ReturnType<typeof evaluate>[] = [];
-    const rewrite = instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft, 'repair');
-    const first = await generate(rewrite.prompt, Math.min(0.35, this.options.narrationTemperature ?? 0.45));
-    attempts.push(evaluate(first.raw));
-    if (!acceptCandidate(attempts[0]) && this.options.narrationMode === 'instruct') {
-      const second = await generate(brief.prompt, this.options.narrationTemperature ?? 0.45);
-      attempts.push(evaluate(second.raw));
-    }
-    const best = attempts.reduce((left, right) => ([...right.supported].length > [...left.supported].length ? right : left));
-    // The support filter works on wording; alignment works on claims. A
-    // sentence can survive the first and still assert an uncommitted result,
-    // so prune again on the accepted candidate until it stops contradicting
-    // the settled facts (bounded: each pass only removes sentences).
-    // Whole-answer acceptance. Pruning sentence by sentence and then gluing the
-    // remains with draft lines produced text that was fact-clean and unreadable
-    // at the same time, so a candidate is judged as a whole: it either passes
-    // alignment, grounding and point of view by itself, or the page shows the
-    // grounded draft.
-    const deduped = dedupeSentences(best.supported);
-    const safe = deduped.text;
-    const finalAlignment = alignNarration(packet, safe, alignmentOptions);
-    const repetition = deduped.dropped;
-    // Sentence pruning is the repair, not a failure: acceptance is decided on
-    // the text the player will read, not on whether repair had to run.
-    const audit = proseAudit(safe, protagonistName);
-    const grounding = groundingRatio(safe, sceneNamesList);
-    const accepted = best.validation.ok && finalAlignment.ok && audit.ok
-      && grounding.ratio >= 0.5 && grounding.count >= 2;
-    const text = accepted ? safe : draft;
-    if (accepted) this.lastAcceptedNarration = text;
-    const reason = accepted ? undefined : [...new Set([
-      best.validation.reason,
-      ...best.dropped.map((entry) => entry.reason),
-      ...finalAlignment.violations.map((entry) => entry.kind),
-      ...(repetition.length ? ['repetition'] : []),
-      ...(grounding.ratio < 0.5 || grounding.count < 2 ? ['ungrounded'] : []),
-      audit.reason ?? 'low_support',
-    ])].filter(Boolean).join(',');
-    // The model could not carry this round. Replace the terse factual draft
-    // with the constrained candidate's fact-grounded prose (lane 04 skeleton +
-    // lane 07 composer, no model call) and keep the explicit downgrade label.
-    // Accepted model prose above is never replaced and never becomes program.
-    let finalText = text;
-    let programFallback = false;
-    if (!accepted && this.narrationRunner) {
-      const program = await this.narrationRunner.generateProgram({
-        pointId, before, delta, after,
-        playerInput: this.lastPlayerInput,
-        settledResults: this.lastResultsText ? [this.lastResultsText] : [],
-        settledFacts: this.lastSettledFacts,
-        priorText: this.lastAcceptedNarration,
-        recentEvents: this.recentEvents,
+    let raw = '';
+    let error: string | undefined;
+    try {
+      raw = await this.narrationEngine.complete(this.options.narrationMode === 'instruct' ? chatml(brief.prompt) : brief.prompt, {
+        maxTokens: this.options.narrationMaxTokens ?? 240,
+        temperature: this.options.narrationTemperature ?? 0.45,
+        timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
+        onProgress: (progress) => {
+          // The page shows the model's own text while it is written. There is no
+          // sentence filter in the stream.
+          if (progress.raw.trim()) this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started });
+        },
+        ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
       });
-      if (program) {
-        console.info('[narration] in-model rejected', reason, '-> program fallback');
-        finalText = program.text;
-        programFallback = true;
+    } catch (caught) {
+      if (caught instanceof IncompleteGenerationError) {
+        // A length-limited generation still returned text: it is the content.
+        raw = caught.completion.raw;
+      } else {
+        // A transport/model failure is a run error, not a reason to invent prose.
+        throw caught;
       }
     }
-    const finalReason = programFallback ? '程序按已结算事实成文' : reason;
-    // Provenance guard: the program draft is part of the prompt. If the model
-    // echoes it, the accepted text is still model output but it is not
-    // independent evidence of style or of state-copy behaviour. Measure it and
-    // keep it separate in evidence.
-    const draftSentences = draft.split(/[。！？!?]/u).map((part) => part.trim()).filter((part) => [...part].length >= 6);
-    const acceptedSentences = text.split(/[。！？!?]/u).map((part) => part.trim()).filter((part) => [...part].length >= 6);
-    const echoed = acceptedSentences.filter((sentence) => draftSentences.some((candidate) => candidate.includes(sentence) || sentence.includes(candidate))).length;
-    const draftEcho = acceptedSentences.length ? echoed / acceptedSentences.length : 0;
-    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text: finalText,
-      violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length),
-      rawAttempts: attempts.map((entry) => entry.raw), draftEcho, programFallback, prompt: brief.prompt });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason, raw: finalText, promptChars: brief.prompt.length });
-    this.options.onNarrationComplete?.({ pointId, raw: finalText, fallback: !accepted || programFallback,
-      source: accepted ? 'model' : programFallback ? 'program' : 'draft',
-      completion: { raw: finalText, finishReason: accepted ? 'stop' : programFallback ? 'program' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
-    return { value: finalText as unknown as Json, raw: finalText, ms: performance.now() - started, fallback: !accepted || programFallback, error: finalReason };
+    const text = protocolText(raw);
+    const empty = text.trim().length === 0;
+    this.options.onNarrationDebug?.({
+      pointId, draft: '', raw, cleaned: raw, pruned: raw, supported: text, text,
+      violations: [], attempts: [text.length], rawAttempts: [raw], draftEcho: 0, programFallback: false,
+      prompt: brief.prompt,
+    });
+    this.options.onTask?.('narration', key, {
+      ms: performance.now() - started, fallback: false,
+      ...(empty ? { error: 'empty_model_output' } : {}),
+      raw: text, promptChars: brief.prompt.length,
+    });
+    if (empty) {
+      // The only non-content case: no model text. The page shows a status note;
+      // no program narration is written.
+      this.options.onNarrationComplete?.({
+        pointId, raw: '',
+        completion: { raw, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+        fallback: false, source: 'model', segments: [],
+      });
+      return { value: '' as unknown as Json, raw, ms: performance.now() - started, fallback: false, error: 'empty_model_output' };
+    }
+    this.options.onNarrationComplete?.({
+      pointId, raw: text,
+      completion: { raw: text, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+      fallback: false, source: 'model',
+    });
+    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: false };
   }
 
-  /** Run the configured candidate for this point. Only an accepted scene is
-   * returned; every other outcome logs an internal reason and lets the
-   * in-model writer produce the page's text. */
+  /** Run the configured candidate for this point. The candidate's text is used
+   * exactly as returned; only an empty answer falls through. */
   private async adoptNarrationCandidate(
     pointId: Id,
     before: WorldState | null,
@@ -607,114 +469,23 @@ export class LocalGameModel implements WorldModelPort {
       after,
       playerInput: this.lastPlayerInput,
       settledResults: this.lastResultsText ? [this.lastResultsText] : [],
-      // 04's structured records are what the verifier compares; without them the
-      // result fact falls back to the impossible verbatim sentence check.
       settledFacts: this.lastSettledFacts,
-      priorText: this.lastAcceptedNarration,
-      recentEvents: this.recentEvents,
     }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
     if (result.kind !== 'adopted') {
-      console.info('[narration] candidate fallback', result.reason);
-      // A non-empty model scene rejected by its own gate is kept as a labelled
-      // draft: replacing written prose with program text loses the model's
-      // work. The page marks it 未通过校对 and it never fills accepted prose.
-      const draft = result.kind === 'fallback' ? result.draft : null;
-      if (draft && draft.text.trim()) {
-        const segments = draft.segments
-          ? draft.segments.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }))
-          : undefined;
-        this.options.onTask?.('narration', pointId, {
-          ms: draft.timings.totalMs,
-          fallback: true,
-          error: `未通过校对：${result.reason}`,
-          raw: draft.text,
-          promptChars: draft.promptChars ?? draft.text.length,
-        });
-        this.options.onNarrationEvidence?.({
-          pointId, candidateId: draft.candidateId, route: draft.route ?? undefined, grade: 'candidate_unverified',
-          strategyVersion: draft.strategyVersion, segments, beatCounts: draft.beatCounts,
-          issues: draft.issues, timings: draft.timings, detail: draft.detail ?? null, rejectedBy: 'candidate_gate',
-        });
-        this.options.onNarrationComplete?.({
-          pointId, raw: draft.text,
-          completion: { raw: draft.text, finishReason: 'stop', firstTokenMs: draft.timings.firstTokenMs, wallMs: draft.timings.totalMs },
-          fallback: true, source: 'draft', segments,
-        });
-        // A draft is not confirmed prose: it must not become the prior text a
-        // later turn is asked to continue from.
-        return { value: draft.text as unknown as Json, raw: draft.text, ms: draft.timings.totalMs, fallback: true };
-      }
       return null;
     }
-    // Independent protection against invented current events. The candidate's
-    // own verifier accepted text with a speaking rule sign, a gunshot derived
-    // from a conditional trait, and invented pistol handling. This gate is
-    // fact-based (alignment against the committed packet), not a word ban: a
-    // licensed micro-action stays, an event the settlement never produced is
-    // refused for the whole point and the in-model writer takes over.
-    if (result.grade !== 'program') {
-      const packet = alignmentPacket(before, delta, after);
-      const alignment = alignNarration(packet, result.text, this.alignmentOptionsFor(before, delta, after));
-      const fatal = alignment.violations.filter((violation) => FATAL_ALIGNMENT.has(violation.kind));
-      if (fatal.length > 0) {
-        const reasons = [...new Set(fatal.map((violation) => violation.kind))];
-        console.info('[narration] candidate rejected by the independent fact gate', reasons.join(','), fatal[0]?.sentence ?? '');
-        this.options.onNarrationEvidence?.({
-          pointId, candidateId: result.candidateId, grade: result.grade, rejectedBy: 'independent_fact_gate',
-          reasons, sentences: fatal.map((violation) => violation.sentence), strategyVersion: result.strategyVersion,
-        });
-        // The candidate's own gate accepted this text; the independent gate
-        // refuses a sentence it cannot ground. The prose is kept and labelled
-        // as an unverified draft instead of being replaced by program text.
-        const kept = refusedCandidateDraft({
-          text: result.text,
-          segments: result.segments,
-          candidateId: result.candidateId,
-          route: result.route,
-          strategyVersion: result.strategyVersion,
-          beatCounts: result.beatCounts,
-          issues: result.issues,
-          timings: result.timings,
-          promptChars: result.promptChars,
-          rejectedBy: 'independent_fact_gate',
-          reasons,
-        });
-        this.options.onTask?.('narration', pointId, {
-          ms: kept.ms, fallback: true, error: kept.error, raw: kept.text, promptChars: kept.promptChars,
-        });
-        this.options.onNarrationEvidence?.({
-          pointId, candidateId: kept.candidateId, route: kept.route, grade: 'candidate_unverified',
-          strategyVersion: kept.strategyVersion, segments: kept.segments, beatCounts: kept.beatCounts,
-          issues: kept.issues, timings: kept.timings, detail: result.detail ?? null, rejectedBy: kept.rejectedBy,
-        });
-        this.options.onNarrationComplete?.({
-          pointId, raw: kept.text,
-          completion: { raw: kept.text, finishReason: 'stop', firstTokenMs: kept.timings.firstTokenMs, wallMs: kept.timings.totalMs },
-          fallback: true, source: 'draft', segments: kept.segments,
-        });
-        return { value: kept.text as unknown as Json, raw: kept.text, ms: kept.ms, fallback: true };
-      }
-    }
-    const program = result.grade === 'program';
-    const mixed = result.grade === 'mixed';
-    // Only fully model-accepted prose becomes the prior text a later turn
-    // continues from: mixed (part program) and drafts are not confirmed prose.
-    if (!program && !mixed) this.lastAcceptedNarration = result.text;
     this.options.onTask?.('narration', pointId, {
-      ms: result.timings.totalMs,
-      fallback: program,
-      ...(program ? { error: '程序按已结算事实成文' } : mixed ? { error: '部分句子按已结算事实成文' } : {}),
-      raw: result.text,
-      promptChars: result.promptChars,
+      ms: result.timings.totalMs, fallback: false, raw: result.text, promptChars: result.promptChars,
     });
     this.options.onNarrationEvidence?.({
-      pointId, candidateId: result.candidateId, route: result.route, grade: result.grade,
-      strategyVersion: result.strategyVersion, segments: result.segments, beatCounts: result.beatCounts,
-      issues: result.issues, timings: result.timings, detail: result.detail ?? null,
+      pointId, candidateId: result.candidateId, route: result.route,
+      strategyVersion: result.strategyVersion, segments: result.segments,
+      timings: result.timings, detail: result.detail ?? null,
     });
-    this.options.onNarrationComplete?.({ pointId, raw: result.text, completion: result.completion,
-      fallback: program, source: program ? 'program' : mixed ? 'mixed' : 'model', segments: result.segments });
-    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: program };
+    this.options.onNarrationComplete?.({
+      pointId, raw: result.text, completion: result.completion, fallback: false, source: 'model', segments: result.segments,
+    });
+    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };
   }
 
   private fallback(task: ModelTask, key: Id): Json {
@@ -735,449 +506,18 @@ ${prompt}<|im_end|>
 `;
 }
 
-function cleanNarration(raw: string): string {
-  const body = raw.includes('【正文】') ? raw.split('【正文】').pop() ?? raw : raw;
-  return body
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/【[^】]{1,8}】/g, '')
-    .replace(/\*\*/g, '')
-    .replace(/^#{1,6}\s*/gmu, '')
-    .replace(/^\s*(正文|叙事|输出)[:：]\s*/u, '')
-    .replace(/^[\s，。、；：！？·]+/u, '')
-    .replace(/[」』”’"'）)\]]+\s*$/u, (tail) => (/[「『“‘"'（(\[]/u.test(body) ? tail : ''))
-    .trim();
-}
-
-/** Names the viewpoint can legitimately see or know in this scene: the ones the
- * brief already lists, plus people in the same container and what they (or the
- * viewpoint) wear or hold. A known name outside this set is offscreen and may
- * not appear; a worn item (aa30's red band) is visible even when the brief does
- * not spell it out. */
-export function visibleEntityNames(after: WorldState, view: Id, facts: string): Set<string> {
-  const names = new Set<string>();
-  const add = (name?: string | null) => { if (name && name.length >= 2) names.add(name); };
-  const viewpoint = after.characters[view];
-  const container = viewpoint?.position?.containerId ?? null;
-  add(after.initial.characters[view]?.name);
-  const containers = new Set<string>([view]);
-  if (container) containers.add(container);
-  for (const [id, character] of Object.entries(after.characters)) {
-    const inside = character.position?.containerId;
-    if (inside && containers.has(inside)) {
-      add(after.initial.characters[id]?.name);
-      containers.add(id);
-    }
+/** Protocol framing only: chat-template tokens and the prompt's 【正文】 marker
+ * are not story content. The text itself is returned untouched — no sentence or
+ * character is removed for style, facts or length. */
+function protocolText(raw: string): string {
+  const marker = String.fromCharCode(0x3010) + '正文' + String.fromCharCode(0x3011);
+  let text = raw.includes(marker) ? raw.split(marker).pop() ?? raw : raw;
+  for (const token of ['<|im_end|>', '<|im_start|>', '<|endoftext|>']) {
+    text = text.split(token).join('');
   }
-  for (const [id, item] of Object.entries(after.items)) {
-    const inside = item.position?.containerId;
-    if (inside && containers.has(inside)) add(after.initial.items[id]?.name);
-  }
-  for (const name of names) if (!facts.includes(name)) names.add(name);
-  return names;
+  return text;
 }
 
-/** A candidate whose text the independent gate refused keeps that text as a
- * labelled draft: same words, per-segment provenance, no accepted timing, and
- * the gate's own reasons. Never used as prior text and never a pass. */
-export function refusedCandidateDraft(input: {
-  text: string;
-  segments?: Array<{ id: string; kind: string; source: string; text: string }>;
-  candidateId: string;
-  route: string;
-  strategyVersion: string;
-  beatCounts: unknown;
-  issues: unknown;
-  timings: { totalMs: number; firstTokenMs: number | null };
-  promptChars: number;
-  rejectedBy: string;
-  reasons: string[];
-}) {
-  return {
-    text: input.text,
-    segments: input.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text })),
-    candidateId: input.candidateId,
-    route: input.route,
-    strategyVersion: input.strategyVersion,
-    beatCounts: input.beatCounts,
-    issues: input.issues,
-    timings: input.timings,
-    promptChars: input.promptChars,
-    rejectedBy: input.rejectedBy,
-    error: `独立事实门拒绝：${input.reasons.join(',')}`,
-    ms: input.timings.totalMs,
-  };
-}
-
-export function validateNarration(text: string, facts: string, after: WorldState, view: Id): { ok: boolean; reason: string } {
-  // Only near-empty text is empty. Length alone never rejects a complete scene:
-  // a settled point can be said in one short paragraph (NARRATION-BOUNDARY-20261111).
-  if ([...text].length < 20) return { ok: false, reason: 'too_short' };
-  // Third-person prose may use “他/她” for a whole paragraph without naming
-  // the protagonist; absence of the literal name is not a fact error.
-
-  // A field table is not prose: the page must not show field headings.
-  const fieldLines = text.split(String.fromCharCode(10)).filter((line) => /^(时间|地点|人物|事件|变化|视角|场景)[:：]/u.test(line.trim()));
-  if (fieldLines.length >= 2) return { ok: false, reason: 'structure_dump' };
-  // Copying the fact brief back is the other failure mode of a small model.
-  const probe = briefProbe(facts);
-  if (probe && text.includes(probe)) return { ok: false, reason: 'copied_brief' };
-  const numbers = text.match(/\d+/g) ?? [];
-  for (const number of numbers) if (!facts.includes(number)) return { ok: false, reason: `unverified_number:${number}` };
-  // Any known character/location/item the projector did not put in the input
-  // must not appear by name. This catches the common small-model failure of
-  // pulling a familiar name from its pretraining into a scene where that
-  // character is not present.
-  const visible = visibleEntityNames(after, view, facts);
-  const known = [
-    ...Object.values(after.initial.characters).map((entity) => entity.name),
-    ...Object.values(after.initial.locations).map((entity) => entity.name),
-    ...Object.values(after.initial.items).map((entity) => entity.name),
-  ];
-  for (const name of known) {
-    if (name.length < 2 || facts.includes(name) || visible.has(name)) continue;
-    if (text.includes(name)) return { ok: false, reason: `unprojected_entity:${name}` };
-  }
-  return { ok: true, reason: '' };
-}
-
-const MOVEMENT = /走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|离开|去|赶到|溜|冲|贴墙|靠近|靠近/u;
-
-/** Facts that the alignment grader is allowed to require. Only the
- * protagonist and entities with a committed delta enter the packet; static
- * "everyone is here" facts would demand a roll-call that the scene language
- * never uses. */
-function alignmentPacket(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState): CommittedNarration {
-  const facts: NarrationFact[] = [];
-  const view = after.protagonistId;
-  const changed = Object.keys(delta.entityDeltas ?? {});
-  const ids = new Set<Id>([view, ...changed]);
-  for (const id of ids) {
-    const character = after.characters[id];
-    if (!character) continue;
-    const name = after.initial.characters[id]?.name;
-    const previous = before?.characters[id];
-    if (!name) continue;
-    const d = delta.entityDeltas?.[id];
-    if (d?.positionSet) {
-      const fromId = previous?.position.containerId;
-      const from = fromId ? before?.initial.locations[fromId]?.name : undefined;
-      if (from && fromId) facts.push({ id: `${id}:position`, actorId: id, name, kind: 'moved', fromId, from, toId: character.position.containerId, to: locationName(after, character.position.containerId) });
-    } else if (id === view) {
-      facts.push({ id: `${id}:position`, actorId: id, name, kind: 'at', locationId: character.position.containerId, location: locationName(after, character.position.containerId) });
-    }
-    if (d?.sanitySet != null && previous) facts.push({ id: `${id}:sanity`, actorId: id, name, kind: 'sanity_changed', from: previous.sanity, to: character.sanity });
-    for (const taskId of d?.tasksAchieved ?? []) {
-      const task = character.tasks[taskId];
-      if (task) facts.push({ id: `${id}:task:${taskId}`, actorId: id, name, kind: 'task_achieved', taskId, goal: task.goal });
-    }
-    for (const change of d?.personalityChanges ?? []) if (change.text) facts.push({ id: `${id}:personality:${change.id}`, actorId: id, name, kind: 'personality_changed', changeId: change.id, text: change.text });
-  }
-  return { anchor: { worldId: after.worldId, pointId: `local_${Date.now()}`, version: 0, stateDigest: '', previousPointId: null }, facts };
-}
-
-function factualNarration(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = ''): string {
-  const out: string[] = [];
-  const name = after.initial.characters[view]?.name ?? view;
-  const time = delta.timeAdvance;
-  if (time) out.push(`时间过去了约${time.duration.amount}${timeUnit(time.duration.unit)}。`);
-  const change = delta.entityDeltas?.[view];
-  const room = roomOf(after, view);
-  const place = locationName(after, room);
-  const declared = actionText.trim().replace(/^我(?!们)/u, '').replace(/[。！？!?]+$/u, '');
-  const moves = Boolean(change?.positionSet);
-  if (moves) {
-    const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
-    const to = locationName(after, change?.positionSet?.containerId ?? room);
-    out.push(declared && MOVEMENT.test(declared)
-      ? `${name}${declared}，最后停在${to}。`
-      : `${name}${from ? `从${from}` : ''}走到${to}。`);
-  } else if (declared) {
-    // The player's sentence is first person ("我扶他起来"); narration is third
-    // person, so the protagonist becomes the subject rather than a fragment.
-    out.push(declared.startsWith(name) ? endSentence(declared) : `${name}${declared}。`);
-  }
-  const actionGrams = bigramsOf(declared);
-  // A settlement judgment is not a scene fact. 09 d101 fed
-  // «诺诺未成功完成目标，因为路明非的骰点资格为false且无法反应。» into the draft
-  // and the page showed dice the player never touched; the 2026-11-10 page runs
-  // printed «诺诺：……未被掀开袖口，未看到规则牌» and «诺诺：因此未被阻止或达成目标。».
-  const JUDGMENT = /(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u;
-  for (const settled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
-    if (JUDGMENT.test(settled)) continue;
-    if (/完成了刚才的动作|行动发生了，但没有产生新的结果|本组结算未能确认|未能确认新的结果|向.+移动/u.test(settled)) continue;
-    const sentence = endSentence(settled.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name));
-    if (out.includes(sentence)) continue;
-    const grams = bigramsOf(sentence);
-    let shared = 0;
-    for (const gram of grams) if (actionGrams.has(gram)) shared += 1;
-    if (actionGrams.size && shared / actionGrams.size > 0.6) continue;
-    out.push(sentence);
-  }
-
-  // Room and people are written as one look around the scene instead of a list
-  // of records: a place clause, then what the protagonist can see of it, then
-  // whoever is there with the detail that actually matters.
-  const scenery: string[] = [];
-  const appearance = after.initial.locations[room]?.initialAppearance;
-  if (appearance) scenery.push(pickClauses(appearance, 2));
-  if (scenery.length) out.push(`${place}里，${scenery.join('，')}。`);
-
-  const others = visibleCharacters(after, view).filter((candidate) => candidate !== view).slice(0, 2);
-  for (const id of others) {
-    const other = after.initial.characters[id]?.name;
-    if (!other) continue;
-    const look = after.initial.characters[id]?.initialAppearance;
-    const where = roomOf(after, id) === room ? '' : `在${locationName(after, roomOf(after, id))}，`;
-    out.push(`${other}${where}${look ? pickClauses(look, 2) : '没有出声'}。`);
-  }
-  for (const [id, entity] of Object.entries(delta.entityDeltas ?? {})) {
-    const other = after.initial.characters[id]?.name ?? after.initial.items[id]?.name;
-    if (!other) continue;
-    for (const taskId of entity.tasksAchieved ?? []) {
-      const goal = after.characters[id]?.tasks[taskId]?.goal;
-      if (goal) out.push(`${other}完成了「${goal}」。`);
-    }
-  }
-  return out.join('').replace(/\n{3,}/gu, '\n\n').trim();
-}
-
-function endSentence(text: string): string {
-  return `${text.replace(/[。！？!?；;\s]+$/u, '')}。`;
-}
-
-function firstClause(text: string): string {
-  return text.split(/[。；;]/u).slice(0, 2).join('，').replace(/[，,]\s*$/u, '').slice(0, 120);
-}
-
-function bigramsOf(text: string): Set<string> {
-  const stripped = text.replace(/[\s，。！？；：、,.!?;:"“”「」『』（）()]/gu, '');
-  const out = new Set<string>();
-  for (let index = 0; index + 1 < stripped.length; index += 1) out.add(stripped.slice(index, index + 2));
-  return out;
-}
-
-/** Keep only sentences whose wording is substantially present in the settled
- * draft. A small model can produce a fluent sentence that invents a gesture,
- * a line of dialogue or a memory; those sentences have little character-bigram
- * overlap with the draft and are dropped before the player sees them. */
-function bindNarrationAttributes(text: string, after: WorldState, view: Id): string {
-  const protectedPhrases: { name: string; phrase: string }[] = [];
-  for (const id of visibleCharacters(after, view)) {
-    if (id === view) continue;
-    const name = after.initial.characters[id]?.name;
-    if (!name) continue;
-    const looks = [after.initial.characters[id].initialAppearance, ...activeText(after.characters[id]?.appearanceChanges ?? [])];
-    for (const look of looks) {
-      for (const clause of look.split(/[，,；;。]/u)) {
-        const phrase = clause.trim();
-        if ([...phrase].length >= 4) protectedPhrases.push({ name, phrase });
-      }
-    }
-  }
-  return text.split(/(?<=[。！？!?])|\n+/u).filter((raw) => {
-    const sentence = raw.trim();
-    if (!sentence) return false;
-    const unbound = protectedPhrases.filter(({ name, phrase }) => !sentence.includes(name)
-      && (sentence.includes(phrase) || sentence.includes([...phrase].slice(0, 8).join(''))));
-    return unbound.length === 0;
-  }).join('').trim();
-}
-
-/** Facts are policed by alignment; wording is not. The only wording rule left
- * is dialogue: an invented line puts words in a character's mouth, which is a
- * fact the settlement never produced, so quoted speech must already exist in
- * the grounded draft. */
-function supportNarration(text: string, draft: string): string {
-  const kept: string[] = [];
-  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
-    const sentence = raw.trim();
-    if (!sentence || [...sentence].length < 4) continue;
-    const opened = /[「『“]/u.test(sentence);
-    const closed = /[」』”]/u.test(sentence);
-    // A sentence that carries any quote mark is dialogue being written by the
-    // model. Only a complete, grounded line may stay: a half-split quote or an
-    // invented line both put words in a character's mouth.
-    if (opened || closed) {
-      const quoted = sentence.match(/[「『“]([^」』”]{1,60})[」』”]/u);
-      if (!quoted || opened !== closed || !draft.includes(quoted[1].trim())) continue;
-    }
-    kept.push(sentence);
-  }
-  return kept.join('').replace(/\n{3,}/gu, '\n\n').trim();
-}
-
-function legacySupportNarration(text: string, draft: string): string {
-  const source = bigramsOf(draft);
-  if (!source.size) return '';
-  const kept: string[] = [];
-  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
-    const sentence = raw.trim();
-    if (!sentence) continue;
-    if (/[「」“”"]/u.test(sentence) && !draft.includes(sentence.replace(/[「」“”"]/gu, ''))) continue;
-    const grams = bigramsOf(sentence);
-    if (grams.size < 6) { kept.push(sentence); continue; }
-    let shared = 0;
-    for (const gram of grams) if (source.has(gram)) shared += 1;
-    if (shared / grams.size >= 0.12) kept.push(sentence);
-  }
-  return kept.join('').replace(/\n{3,}/gu, '\n\n').trim();
-}
-
-/** Repetition is the failure mode a small model falls into once the claims
- * pass alignment: the same walk restated with different wording for eight
- * sentences. Those repeats carry no new fact, they only make the page read
- * like a log. Compare each sentence with what is already kept and drop the
- * restatements; keep the first mention. */
-function dedupeSentences(text: string): { text: string; dropped: string[] } {
-  const kept: string[] = [];
-  const keptGrams: Set<string>[] = [];
-  const dropped: string[] = [];
-  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
-    const sentence = raw.trim();
-    if (!sentence) continue;
-    const grams = bigramsOf(sentence);
-    if (grams.size) {
-      let restatement = false;
-      for (const other of keptGrams) {
-        let shared = 0;
-        for (const gram of grams) if (other.has(gram)) shared += 1;
-        const smaller = Math.min(grams.size, other.size);
-        if (smaller > 0 && shared / smaller >= 0.5) { restatement = true; break; }
-      }
-      if (restatement) { dropped.push(sentence); continue; }
-      keptGrams.push(grams);
-    }
-    kept.push(sentence);
-  }
-  return { text: kept.join(''), dropped };
-}
-
-/** A scene is told from the protagonist's side. Text that only follows other
- * characters is not a wrong fact, it is the wrong viewpoint, and it reads as
- * a report about strangers rather than as the player's own round. */
-function proseAudit(text: string, protagonistName: string): { ok: boolean; reason?: string } {
-  const length = [...text].length;
-  if (length < 80) return { ok: false, reason: 'low_support' };
-  if (protagonistName && !text.includes(protagonistName)) return { ok: false, reason: 'off_perspective' };
-  return { ok: true };
-}
-
-/** Names the settled scene actually contains: the people in the room, the
- * items lying there, and the place itself. A sentence that mentions none of
- * them is talking about something the round never produced. */
-function sceneNames(state: WorldState, view: Id): string[] {
-  const room = roomOf(state, view);
-  const names = new Set<string>();
-  const protagonist = state.initial.characters[view]?.name;
-  if (protagonist) names.add(protagonist);
-  for (const id of Object.keys(state.characters)) {
-    const entity = state.initial.characters[id];
-    if (!entity) continue;
-    if (id === view || roomOf(state, id) === room) names.add(entity.name);
-  }
-  for (const id of sameRoomItems(state, view)) {
-    const entity = state.initial.items[id] ?? state.initial.characters[id];
-    if (entity?.name) names.add(entity.name);
-  }
-  const location = state.initial.locations[room];
-  if (location?.name) names.add(location.name);
-  return [...names].filter(Boolean);
-}
-
-function groundingRatio(text: string, names: string[]): { ratio: number; count: number } {
-  const sentences = text.split(/(?<=[。！？!?])|\n+/u).map((sentence) => sentence.trim()).filter((sentence) => [...sentence].length >= 6);
-  if (!sentences.length) return { ratio: 0, count: 0 };
-  let grounded = 0;
-  for (const sentence of sentences) if (names.some((name) => sentence.includes(name))) grounded += 1;
-  return { ratio: grounded / sentences.length, count: grounded };
-}
-
-function sentenceEnd(text: string): string {
-  return /[。！？!?…]$/u.test(text) ? text : `${text}。`;
-}
-
-function firstFeature(text: string, max: number): string {
-  const first = firstClause(text).split(/[，,]/u)[0]?.trim() ?? '';
-  return [...first].length > max ? `${[...first].slice(0, max).join('')}……` : first;
-}
-
-/** World files describe people like a character sheet: posture, clothing,
- * marks, what they hold. Reading all of it aloud reads like a form, so pick the
- * one or two clauses that actually describe what the protagonist would notice:
- * what the person is doing, then the mark that matters. */
-function pickClauses(text: string, max: number): string {
-  const clauses = text.split(/[，,；;。]/u).map((clause) => clause.trim()).filter(Boolean);
-  if (!clauses.length) return '';
-  const score = (clause: string): number => {
-    if (/^(坐|站|靠|蹲|躺|跪|趴|倚|背靠)/u.test(clause)) return 0;
-    if (/(伤|血|肿|痕|绷带|按住|捂着)/u.test(clause)) return 1;
-    if (/(手|枪|刀|绳|带|门|锁)/u.test(clause)) return 2;
-    return 3;
-  };
-  const picked = clauses.map((clause, index) => ({ clause, index, rank: score(clause) }))
-    .sort((left, right) => left.rank - right.rank || left.index - right.index)
-    .slice(0, max)
-    .sort((left, right) => left.index - right.index)
-    .map((entry) => entry.clause);
-  return picked.join('，');
-}
-
-function shortClause(text: string, max: number): string {
-  const clean = firstClause(text).replace(/[，,、\s]+$/u, '');
-  if ([...clean].length <= max) return clean;
-  const cut = [...clean].slice(0, max).join('');
-  const at = Math.max(cut.lastIndexOf('，'), cut.lastIndexOf('、'));
-  return `${(at > 8 ? cut.slice(0, at) : cut).replace(/[，,、\s]+$/u, '')}……`;
-}
-
-function timeUnit(unit: TimeAdvance['duration']['unit']): string {
-  return ({ second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' } as Record<string, string>)[unit] ?? unit;
-}
-
-/** Drop unsupported sentences, then re-add the position/time facts the scene
- * must state. Alignment reports which sentence broke which rule, so the repair
- * needs no second pass over the model output. */
-function pruneNarration(
-  text: string,
-  alignment: { violations: { sentence: string; kind: string }[]; omissions: string[] },
-  after: WorldState,
-  view: Id,
-): { text: string; dropped: { reason: string; sentence: string }[] } {
-  const normalize = (value: string) => value.replace(/[。！？!?\s]+/gu, '');
-  const hard = new Set(alignment.violations.map((violation) => normalize(violation.sentence)));
-  const dropped = alignment.violations.map((violation) => ({ reason: violation.kind, sentence: violation.sentence }));
-  const kept: string[] = [];
-  for (const raw of text.split(/(?<=[。！？!?])|\n+/u)) {
-    const sentence = raw.trim();
-    if (!sentence || hard.has(normalize(sentence))) continue;
-    kept.push(sentence);
-  }
-  const body = kept.join('');
-  const name = after.initial.characters[view]?.name ?? view;
-  const place = locationName(after, roomOf(after, view));
-  const positionOmitted = alignment.omissions.some((entry) => entry.includes('position'));
-  const headText = positionOmitted || !body.includes(place) ? `${name}在${place}。` : '';
-  return { text: `${headText}${body}`.replace(/\n{3,}/gu, '\n\n').trim(), dropped };
-}
-
-/** Longest brief slice to look for in the prose. Short fragments like a name
- * or a location are expected in any scene. */
-function briefProbe(facts: string): string {
-  const lines = facts.split(String.fromCharCode(10)).map((line) => line.trim()).filter((line) => line.length > 40);
-  const longest = lines.sort((a, b) => b.length - a.length)[0] ?? '';
-  return longest.slice(0, 28);
-}
-
-
-/** Cut a truncated generation back to its last complete sentence. */
-function finishSentences(text: string): string {
-  const last = Math.max(text.lastIndexOf('。'), text.lastIndexOf('！'), text.lastIndexOf('？'), text.lastIndexOf('」'));
-  return last > 40 ? text.slice(0, last + 1) : text;
-}
-
-
-/** Rooms the protagonist can reach in one point: the current room, its
- * parent, its siblings and its children, plus any room the player named. */
 export function adjacentLocations(state: WorldState, current: Id, named: string[] = []): string {
   const locations = state.initial.locations;
   const parent = locations[current]?.parentLocationId ?? null;

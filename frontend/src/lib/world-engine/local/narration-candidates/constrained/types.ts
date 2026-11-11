@@ -128,7 +128,6 @@ export interface SceneSkeleton {
     quotes: string[];
   };
   knowledge: SceneKnowledge;
-  priorText: string | null;
   inputText: string | null;
   /** What the player declared this turn ("我沿着服务巷往里走…"). An instruction,
    * not a settled outcome: the beats may write it as done/tried, never as a
@@ -224,25 +223,22 @@ export interface CandidateIssue {
 export interface BeatEvidence {
   beatId: string;
   kind: BeatDirective['kind'];
-  /** `draft` is model text its own gate refused: kept and labelled, never
-   * accepted and never used as prior text. */
-  source: 'program' | 'model' | 'external' | 'fallback' | 'draft';
+  source: 'model';
+  /** Exactly what the model returned for this beat (never rewritten). */
   text: string;
   prompt: string | null;
   raw: string | null;
   attempts: number;
   ms: number;
   issues: CandidateIssue[];
-  /** Drafts that failed the beat gate before the accepted one. Kept so a mixed
-   * turn shows what the model actually produced, not only the accepted text. */
-  rejected?: { attempt: number; text: string; raw?: string; prompt?: string; promptChars?: number; issues: CandidateIssue[] }[];
+  /** Transport/model failure for this beat, when there was one. */
+  error?: string;
 }
 
 export interface CandidateTimings {
   totalMs: number;
   planMs: number;
   composeMs: number;
-  verifyMs: number;
   beatsMs: number[];
   firstTextMs: number | null;
 }
@@ -332,7 +328,6 @@ export interface GenerateCandidateInput {
   /** Caller-serialized model input (lane 01 projection). Licensed material:
    * names inside it may appear in prose, and it is never re-parsed as state. */
   inputText?: string | null;
-  priorText?: string | null;
   signal?: AbortSignal;
   onProgress?: (progress: CandidateProgress) => void;
   policy?: ConstrainedPolicy;
@@ -348,17 +343,6 @@ export interface CommittedScenePacket extends CommittedNarration {
   /** Alternative serialized model input, when `inputText` is not passed. */
   inputText?: string | null;
   /** Alternative previous accepted text. */
-  priorText?: string | null;
-}
-
-export interface CandidateVerification {
-  ok: boolean;
-  coverage: { factId: string; kind: SceneFact['kind']; expressed: boolean; mandatory: boolean }[];
-  issues: CandidateIssue[];
-  unverifiedSentences: string[];
-  chars: number;
-  hiddenFactIds: string[];
-  repetition: number | null;
 }
 
 /** One assembled paragraph and who wrote it. Program paragraphs are an
@@ -371,30 +355,20 @@ export interface BeatSegment {
 }
 
 export interface CandidateResult {
+  /** Non-empty beat texts joined in plan order, exactly as the model wrote them. */
   text: string;
-  accepted: boolean;
-  /** Every beat, including repaired and fallback beats, with raw model output. */
+  /** Every beat, its prompt and the model's exact answer (evidence only). */
   rawAttempts: BeatEvidence[];
-  issues: CandidateIssue[];
   timings: CandidateTimings;
   strategyVersion: string;
-  status: 'accepted' | 'rejected' | 'cancelled' | 'error';
-  verification: CandidateVerification;
+  /** `empty` means the model returned nothing: the caller shows a status note
+   * and never a program-written narration. */
+  status: 'accepted' | 'empty' | 'cancelled' | 'error';
+  detail?: string;
   skeleton: SceneSkeleton | null;
   plan: BeatPlan | null;
-  /** Which composer wrote each beat, in order. */
-  composers: string[];
-  /** Assembled paragraphs with their writer, so a mixed turn is never shown as
-   * wholly model-written. */
+  /** Display boundaries: one entry per non-empty beat. */
   segments: BeatSegment[];
-  /** Beat provenance counts for one-line labelling. */
-  beatCounts: { model: number; program: number; external: number; fallback: number; draft?: number };
-  /** True when both a model/external writer and a program fallback wrote part of
-   * this text. `accepted` alone never means the whole text is model prose. */
-  mixed: boolean;
-  /** Base fact packet for the legacy alignment gate (position/task/personality
-   * facts only; sanity uses this route's direction rule). */
-  basePacket: CommittedNarration | null;
   display: CandidateProgress;
 }
 

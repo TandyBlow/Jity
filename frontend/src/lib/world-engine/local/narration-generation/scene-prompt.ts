@@ -140,10 +140,6 @@ export interface ProseUserArgs {
   committed: CommittedNarration;
   policy: NarrationPolicy;
   scene?: BeatSceneContext | null;
-  /** Last sentence of the previous accepted scene; used only as an anti-repeat
-   * hint, never as material to continue. */
-  priorTail?: string | null;
-  priorOpen?: string | null;
 }
 
 /** The user turn: scene, required events, time, standing, hints, length. */
@@ -343,12 +339,10 @@ export function renderProseFactsUser(args: ProseUserArgs): string {
   // Continuity before anti-repeat: with only "do not repeat" and no material,
   // a 1.7B model invented a war memory and children's laughter to fill the
   // turn. The previous accepted ending is the one thing it may build on.
-  if (args.priorTail) {
-    lines.push(`上一回合的最后一句是「…${args.priorTail}」。接着这个时刻往下写，不要重复它的句子。`);
-  }
+
   // The opening is as reusable as the ending: a model that starts every scene
   // the same way reads as a template even when every sentence is true.
-  if (args.priorOpen) lines.push(`上一回合的开头是「${args.priorOpen}…」，不要用同样的开头或句式。`);
+
   if (policy.instruction?.trim()) lines.push(`补充要求：${policy.instruction.trim()}`);
   return lines.join('\n');
 }

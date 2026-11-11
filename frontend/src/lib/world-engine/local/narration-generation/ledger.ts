@@ -28,7 +28,6 @@ export const PAST_MARKERS = ['小时候', '童年', '儿时', '当年', '十年�
 export function buildLedger(
   committed: CommittedNarration,
   inputText: string,
-  priorText: string | null,
   policy: NarrationPolicy,
 ): NarrationLedger {
   const facts = committed.facts;
@@ -55,10 +54,10 @@ export function buildLedger(
   ]);
   for (const name of policy.knownEntities ?? []) {
     if (name.length < 2) continue;
-    if (inputText.includes(name) || (priorText ? priorText.includes(name) : false)) licensed.add(name);
+    if (inputText.includes(name)) licensed.add(name);
   }
   const factText = facts.flatMap((fact) => fact.kind === 'personality_changed' ? [fact.text] : []).join('\n');
-  const sourceText = `${inputText}\n${priorText ?? ''}\n${factText}`;
+  const sourceText = [inputText, factText].join(String.fromCharCode(10));
   const licensedPromises = PROMISE_VERBS.filter((verb) => sourceText.includes(verb) || (policy.licensedEvents ?? []).includes(verb));
   const licensedPastMarkers = PAST_MARKERS.filter((marker) => sourceText.includes(marker));
   const time = policy.time ?? null;
