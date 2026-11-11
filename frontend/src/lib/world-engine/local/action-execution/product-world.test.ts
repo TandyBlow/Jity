@@ -123,7 +123,12 @@ describe('free-day product world through the action port', () => {
       async complete(prompt: string): Promise<string> {
         if (prompt.includes('角色行动判断器')) {
           prompts.push(prompt);
-          return JSON.stringify({ kind: 'act', text: '诺诺把短枪往腰后一压，抬眼看向巷口。' });
+          // 诺诺 shares the lane and acts; every off-screen actor is judged
+          // from its own room (default 'judge') and answers skip here.
+          const id = /【本次判断的角色】- [^（]*（id=([^）]+)）/.exec(prompt)?.[1] ?? '';
+          return id === 'nono'
+            ? JSON.stringify({ kind: 'act', text: '诺诺把短枪往腰后一压，抬眼看向巷口。' })
+            : JSON.stringify({ kind: 'skip' });
         }
         if (prompt.includes('牵连判断器')) return JSON.stringify({ targets: [] });
         throw new Error('no reaction is expected in this round');
@@ -160,17 +165,29 @@ describe('free-day product world through the action port', () => {
     const status = await new ControllerDriver({ transport, model: port }, memory).run();
     expect(status.kind).not.toBe('error');
 
-    // Only 诺诺 shares the lane with 路明非; the other twelve slots are a
-    // visibility scope skip, not a name rule.
+    // 路明非 is frozen program-side; 诺诺 shares his lane and acts; the other
+    // twelve are judged by the model from their own rooms and skip.
     const actions = port.evidence.filter((entry) => entry.task === 'action');
     expect(actions.map((entry) => entry.key)).toEqual(['lin', 'tang', 'shen', 'lu', 'zhou', 'fingel', 'nono', 'qin', 'su', 'chu', 'caesar', 'tomiyama', 'doctor', 'manstein']);
-    expect(actions.filter((entry) => entry.source === 'model').map((entry) => entry.key)).toEqual(['nono']);
-    expect(prompts).toHaveLength(1);
-    expect(prompts[0]).toContain('诺诺');
-    expect(prompts[0]).toContain('路明非');            // same room, other character
-    expect(prompts[0]).toContain('诺诺的演习短枪');     // carried item is in the scene
-    expect(prompts[0]).toContain('不在场角色');         // off-screen roster is labelled, not hidden
-    expect(prompts[0]).toContain('芬格尔');
+    expect(actions.find((entry) => entry.key === 'lu')?.source).toBe('program');
+    expect(actions.filter((entry) => entry.source === 'model').map((entry) => entry.key).sort())
+      .toEqual(['caesar', 'chu', 'doctor', 'fingel', 'lin', 'manstein', 'nono', 'qin', 'shen', 'su', 'tang', 'tomiyama', 'zhou']);
+    expect(prompts).toHaveLength(13);
+    const nonoPrompt = prompts.find((prompt) => prompt.includes('【本次判断的角色】- 诺诺'))!;
+    expect(nonoPrompt).toContain('路明非');            // same room, other character
+    expect(nonoPrompt).toContain('诺诺的演习短枪');     // carried item is in the scene
+    expect(nonoPrompt).toContain('不在场角色');         // same-lane prompt still lists the roster
+    expect(nonoPrompt).toContain('芬格尔');
+    // An off-screen actor's prompt keeps its own room and drops the player's
+    // room name, its description, the player's sentence and the remote roster.
+    const luRoom = buildScene(state, 'lu').roomName;
+    const playerText = '我把护目镜推上去，盯着巷口。';
+    for (const prompt of prompts.filter((entry) => entry !== nonoPrompt)) {
+      expect(prompt).toContain('这个角色不在主角所在的地点');
+      expect(prompt).not.toContain('不在场角色');
+      expect(prompt).not.toContain(playerText);
+      expect(prompt).not.toContain(`主角在${luRoom}`);
+    }
 
     const snapshot = transport.snapshot();
     expect(snapshot.round?.order).toEqual(order);

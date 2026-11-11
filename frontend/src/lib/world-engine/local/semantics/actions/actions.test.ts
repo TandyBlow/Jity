@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import type { InferenceEngine } from '../../../runtime/engine';
 import { decodeTaskOutput } from '../../../runtime/structured-output';
 import type { Json, WorldState } from '../../../types';
-import { createActionHandlers, createActionModelPort, buildScene, targetsPrompt as targetsPromptForTest, type HandlerResult } from './index';
+import { createActionHandlers, createActionModelPort, buildScene, actionPrompt as actionPromptForTest, targetsPrompt as targetsPromptForTest, type HandlerResult } from './index';
 import { buildTestWorld, withPosition } from './fixtures';
 
 type Reply = string | Error | ((prompt: string, call: number) => string);
@@ -151,10 +151,10 @@ describe('action: autonomous, named and failed judgement', () => {
     codecAccepts(result);
   });
 
-  it('skips a character in another room without spending a model call by default', async () => {
+  it('keeps the explicit skip arm at zero calls for a character in another room', async () => {
     const state = buildTestWorld();
     const engine = new ScriptedEngine([]);
-    const handlers = createActionHandlers({ engine });
+    const handlers = createActionHandlers({ engine, options: { offscreenPolicy: 'skip' } });
     const result = await handlers.action('rival', actInput(state, 'rival', '我靠在墙边喘口气。'));
 
     expect(result.value).toEqual({ kind: 'skip' });
@@ -164,20 +164,35 @@ describe('action: autonomous, named and failed judgement', () => {
     codecAccepts(result);
   });
 
-  it('judges a character in another room from its own scene when configured', async () => {
+  it('judges a character in another room from its own scene by default', async () => {
     const state = buildTestWorld();
     const engine = new ScriptedEngine(['{"kind":"act","text":"老周把字条塞进袖口，转身把书房门锁上。"}']);
-    const handlers = createActionHandlers({ engine, options: { offscreenPolicy: 'judge' } });
+    const handlers = createActionHandlers({ engine });
     const result = await handlers.action('rival', actInput(state, 'rival', '我在大厅喊老周的名字。'));
 
     expect(result.source).toBe('model');
+    expect(engine.prompts).toHaveLength(1);
     expect(codes(result)).not.toContain('actor_out_of_scene');
     expect(result.value).toEqual({ kind: 'act', text: '老周把字条塞进袖口，转身把书房门锁上。' });
-    // The actor gets its own room and tasks, never the protagonist's move.
-    expect(engine.prompts[0]).toContain('task_rival_guard');
-    expect(engine.prompts[0]).toContain('主角不在这里');
-    expect(engine.prompts[0]).not.toContain('我在大厅喊老周的名字。');
     codecAccepts(result);
+  });
+
+  it('gives an off-screen actor its own room but not the protagonist room, input or absent rooms', () => {
+    const state = buildTestWorld();
+    const scene = buildScene(state, 'rival', { playerInput: '我在大厅喊老周的名字。' });
+    expect(scene.offscreen).toBe(true);
+    const prompt = actionPromptForTest(scene);
+    // Own room and its own tasks stay: the judgement is local.
+    expect(prompt).toContain('书房');
+    expect(prompt).toContain('task_rival_guard');
+    expect(prompt).toContain('这个角色不在主角所在的地点');
+    // The player's room name, its description, the player's sentence and the
+    // other-room list are all remote knowledge the actor does not have.
+    expect(prompt).not.toContain('大厅');
+    expect(prompt).not.toContain('木门半掩');
+    expect(prompt).not.toContain('我在大厅喊老周的名字。');
+    expect(prompt).not.toContain('不在场角色');
+    expect(prompt).not.toContain('门口');
   });
 
   it('keeps the player pending command as the frozen action', async () => {

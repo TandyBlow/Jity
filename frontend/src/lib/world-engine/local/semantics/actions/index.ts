@@ -183,13 +183,14 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     const issues: ActionIssue[] = [];
     if (!call.state.characters[call.actor]) throw new Error(`actor_unknown:${call.actor}`);
     // Off-screen means outside the player's scene, not outside the world: the
-    // actor is still judged from its own room, but it must not see or answer
-    // the protagonist's move. 'skip' keeps those actors out of the model
-    // budget; 'judge' (default) lets their own tasks and events evolve the
-    // world instead of freezing everyone who is not in the current room.
+    // actor is judged from its own room, but it must not see or answer the
+    // protagonist's move. 'judge' is the product default: the small model
+    // decides whether this actor acts, from its own tasks and its own room.
+    // 'skip' is the explicit comparison arm that keeps every off-screen actor
+    // out of the model budget (zero-call program skip); it is not the default.
     const offscreen = call.actor !== call.state.protagonistId
       && roomOf(call.state, call.actor) !== roomOf(call.state, call.state.protagonistId);
-    const judgeOffscreen = offscreen && (options.offscreenPolicy ?? 'skip') === 'judge';
+    const judgeOffscreen = offscreen && (options.offscreenPolicy ?? 'judge') === 'judge';
     // A same-room NPC may see that the protagonist acted, but not the
     // player's sentence: when a program/narration line repeats the command,
     // the small model copied that line as its own action (16:46 run: nono
@@ -219,8 +220,10 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     }
 
     // Scene scope: a character in another room is not visible to the player's
-    // scene. With 'skip' it is a zero-call scope decision; with 'judge' it is a
-    // full judgement of the actor's own room (protagonist context hidden).
+    // scene. The default 'judge' sends it to the model with its own room as the
+    // only place: no protagonist input, no protagonist room name/details, no
+    // events from elsewhere and no other-room list. 'skip' is the explicit
+    // zero-call comparison arm.
     if (offscreen && !judgeOffscreen) {
       issues.push({
         code: 'actor_out_of_scene', severity: 'info',

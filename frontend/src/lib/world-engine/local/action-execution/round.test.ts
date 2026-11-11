@@ -15,9 +15,10 @@ function template(): InitialTemplate {
 
 interface Captured { task: ModelTask; key: string; input: Json }
 
-/** Engine that answers the three action-family tasks. `servant` is offscreen
- * and never reaches it; the protagonist is program-frozen; so the only action
- * answer this engine must give is 阿宁's. */
+/** Engine that answers the three action-family tasks. The protagonist is
+ * program-frozen; 阿宁 is in the room and acts; 小满 and 老周 are elsewhere and
+ * are now judged from their own rooms (default offscreenPolicy 'judge'), where
+ * the model answers skip. */
 function actionEngine(calls: string[]) {
   return {
     info: { backend: 'fake', modelId: 'fake-actions' },
@@ -25,8 +26,16 @@ function actionEngine(calls: string[]) {
     async dispose() {},
     async complete(prompt: string): Promise<string> {
       if (prompt.includes('角色行动判断器')) {
-        calls.push('action');
-        expect(prompt).toContain('阿宁');
+        const actor = /【本次判断的角色】- [^（]*（id=([^）]+)）/.exec(prompt)?.[1] ?? '';
+        calls.push(`action:${actor}`);
+        if (actor !== 'ally') {
+          // An off-screen actor's prompt must not carry the player's sentence,
+          // the player's room name or the other-room roster.
+          expect(prompt).not.toContain('我推门走进大厅');
+          expect(prompt).not.toContain('不在场角色');
+          expect(prompt).toContain('这个角色不在主角所在的地点');
+          return JSON.stringify({ kind: 'skip' });
+        }
         return JSON.stringify({ kind: 'act', text: '阿宁把木门拉上，横过门栓。' });
       }
       if (prompt.includes('牵连判断器')) {
@@ -120,10 +129,16 @@ describe('real round through the controller with the action-execution port', () 
     expect(npc?.source).toBe('model');
     expect(npc?.value).toEqual({ kind: 'act', text: '阿宁把木门拉上，横过门栓。' });
 
-    // 老周 is in the study: a scope skip, not a name rule.
+    // 老周 is in the study. By default the model judges his own room and
+    // answers skip himself; a program skip would erase his own-room decision.
     const offscreen = port.evidence.find((entry) => entry.task === 'action' && entry.key === 'rival');
-    expect(offscreen?.source).toBe('program');
+    expect(offscreen?.source).toBe('model');
     expect(offscreen?.value).toEqual({ kind: 'skip' });
+    expect(offscreen?.issues.map((issue) => issue.code)).toContain('model_skip');
+    expect(offscreen?.issues.map((issue) => issue.code)).not.toContain('actor_out_of_scene');
+    // Every off-screen actor was judged; the protagonist was not sent at all.
+    expect(modelCalls.filter((entry) => entry.startsWith('action:')).sort())
+      .toEqual(['action:ally', 'action:rival', 'action:servant']);
 
     // The protagonist's action named 阿宁; she already acted, so the roll is
     // recorded with eligible=false and stays as result input, while no second
@@ -141,9 +156,12 @@ describe('real round through the controller with the action-execution port', () 
     expect(heroResults.members[0].memberId).toBe('hero');
     expect(heroResults.members[0].rollRefs).toHaveLength(1);
 
-    // One action judgement (阿宁) and one target judgement per acting group
-    // source (阿宁, then the protagonist); 老周 stayed out of the scene.
-    expect(modelCalls).toEqual(['action', 'targets', 'targets']);
+    // Three action judgements (阿宁 in the room, 小满 and 老周 in their own
+    // rooms, both skip) and one target judgement per acting group source
+    // (阿宁, then the protagonist).
+    expect(modelCalls).toEqual([
+      'action:servant', 'action:ally', 'targets', 'targets', 'action:rival',
+    ]);
 
     // Both settlements were frozen and committed inside the same point, each
     // group as one unit — no partial group result was written between them.
