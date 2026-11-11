@@ -1721,7 +1721,7 @@ export function reviewNarration(args: {
     {
       const band = /(识别带|袖标|臂章)[^。]{0,8}(左臂|右臂|手臂|肩)/u.exec(projection.sourceText);
       if (band && narration.includes(band[1])) {
-        const elsewhere = new RegExp(`${band[1]}[^。]{0,8}(发|头|腰|腿)`, 'u');
+        const elsewhere = new RegExp(`${band[1]}[^。]{0,8}(?:发|头(?![朝外])|腰|腿)`, 'u');
         if (elsewhere.test(narration)) {
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `the ${band[1]} is settled on the ${band[2]}; the prose moves it elsewhere`, [`${band[1]} on ${band[2]}`], []));

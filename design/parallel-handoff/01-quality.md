@@ -232,3 +232,4 @@
 - 448e per-beat：open model / scene program / result program（缺 result fact）/ close model = 2/4+2/4；`beatCounts` 写 model:1/program:0 自相矛盾；result 的 program 文本是 `诺诺：…未看到规则牌…` 面板。
 - 01 checker 第三遍：`风声/雨声/钟鸣` + `风穿过…声音`；无来源的风=tone，`远处钟鸣`=氛围，`风铃`=sound_added；92 锚点。
 - 01 checker 第四遍：`落叶/枯叶/叶子` 入可新造物；新叶子=review.object_added。
+- constrained 05e7（2026-11-11T0002-6075，head 05e7f4ce）：mixed 出处已诚实（2 model+2 program）；`no_accepted_model_text`；323 字状态复述+`路明非也没有动`+状态面板。非通过。
