@@ -352,7 +352,14 @@ export class LocalGameSession {
     this.submitLock = true;
     try {
       const plan = record.initial.characters;
-      const order = Object.keys(plan).sort();
+      // The player's input triggers the round, so their slot is first; the rest
+      // keep the alphabetical order the roster has always used. The point plan
+      // puts the player alone in the round's first point, and a slot covered by
+      // a later point is deferred — if the player sat in the middle, the first
+      // slot would be deferred and the first point would settle nobody (run
+      // 09-overlap-move-sW5U: a time scan and an 18 s empty turn).
+      const protagonistId = record.state.protagonistId;
+      const order = [protagonistId, ...Object.keys(plan).sort().filter((actor) => actor !== protagonistId)];
       const memory = this.driver.getMemory();
       const allocationKey = `command_${record.round ? record.round.roundId : 'new'}_${memory.requestId}`;
       const clear = Object.keys(memory.ids);

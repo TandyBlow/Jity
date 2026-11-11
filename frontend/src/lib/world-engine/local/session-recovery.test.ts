@@ -19,6 +19,10 @@ function template(): InitialTemplate {
 }
 
 interface ModelHooks {
+  /** Override the round plan for one test (default: one point, whole roster). */
+  plan?: (input: Json) => Json;
+  /** Override a targets answer for one test. */
+  targets?: (key: string) => Json;
   /** Throw after the transport write this task follows (simulated refresh). */
   crashOn?: (task: ModelTask, key: string) => Error | null;
   /** Await before answering, to hold a step in flight. */
@@ -39,15 +43,21 @@ function scriptedModel(log: string[], hooks: ModelHooks = {}): WorldModelPort {
       };
       switch (task) {
         case 'pointPlan': {
+          if (hooks.plan) return hooks.plan(input);
           const round = (input as { round?: { roundId?: string } }).round;
           return [{ pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal',
-            timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_a', 'person_c'] }];
+            timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } },
+            // One point for the whole roster, as the product plan did before
+            // the player point was split off; these tests exercise recovery,
+            // not the split.
+            actorIds: (input as { round?: { order?: string[] } }).round?.order ?? ['person_a', 'person_c'] }];
         }
         case 'action':
           return data.actor === data.workingState?.protagonistId
             ? { kind: 'act', text: data.advance?.inputText ?? '我走到门厅。' }
             : { kind: 'skip' };
         case 'targets':
+          if (hooks.targets) return hooks.targets(key);
           return key === 'person_c' ? { targets: [{ targetId: 'person_a' }] } : { targets: [] };
         case 'reaction':
           return '林川侧过身，让开半步。';
@@ -262,12 +272,32 @@ describe('LocalGameSession durability', () => {
     const clock = { value: 300_000 };
     const store = createLocalProgressStore(backend, { now: () => clock.value });
     const log: string[] = [];
-    const crashing = scriptedModel(log, { crashOn: (task, key) => task === 'action' && key === 'person_c' ? new Error('simulated_refresh') : null });
+    // The player's slot is first in the frozen order (the round's first point
+    // holds only the player), so the crash lands on the next actor's action:
+    // the player's action is already checkpointed when the refresh happens.
+    const crashing = scriptedModel(log, {
+      // The player's point commits on its own, then the second point judges
+      // the remaining actor; the refresh interrupts that second action.
+      plan: (input) => {
+        const round = (input as { round?: { roundId?: string } }).round;
+        return [
+          { pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal',
+            timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_c'] },
+          { pointId: `point_${round?.roundId ?? 'round'}_2`, kind: 'instant',
+            timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: ['person_a'] },
+        ];
+      },
+      // A target pulled into the player's group is not judged again, so this
+      // test keeps the player's action solo; the other actor still acts.
+      targets: () => ({ targets: [] }),
+      crashOn: (task, key) => task === 'action' && key === 'person_a' ? new Error('simulated_refresh') : null,
+    });
     const session = await LocalGameSession.create(template(), crashing, {
       storage: store, sessionId: 'tab_a', leaseHeartbeat: false, leaseTtlMs: 1_000, roll: () => 13,
     });
     await session.start();
-    // The point and person_a's skip were already checkpointed before the crash.
+    // The player's point is already settled and committed before the crash;
+    // the refresh interrupts the second point's action.
     await expect(session.submit('我打开盒盖。')).rejects.toThrow('simulated_refresh');
     expect(log).toContain('action:person_a');
     const saved = await store.load(session.worldId);
@@ -289,7 +319,9 @@ describe('LocalGameSession durability', () => {
     expect(restored!.persistence.revision).toBe(revisionBefore + 1);
     const afterResume = await store.load(session.worldId);
     expect(afterResume!.metadata.revision).toBe(revisionBefore + 1);
-    expect(afterResume!.metadata.version).toBe(0);
+    // The player's point committed before the crash; the resume finishes the
+    // second point without re-settling the first.
+    expect(afterResume!.metadata.version).toBe(1);
     // Only the resume bucket must be stable; later trigger allocations are new
     // facts of the turn that followed, not duplicate group identities.
     const resumeBuckets = (record: { allocations: Record<string, Record<string, string>> }) =>
@@ -298,7 +330,7 @@ describe('LocalGameSession durability', () => {
 
     const status = await restored!.start();
     expect(status.kind).not.toBe('error');
-    expect(restored!.snapshot.transport.version).toBe(1);
+    expect(restored!.snapshot.transport.version).toBe(2);
     expect(restored!.snapshot.transport.advance).toBeNull();
     expect(restored!.commandsPlayed).toEqual(['我打开盒盖。']);
 
