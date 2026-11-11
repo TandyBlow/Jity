@@ -101,6 +101,12 @@ interface ResultsAnswer {
   /** A written outcome that disagreed with the judgement or the sentence and was
    * replaced by the judgement-derived direction. */
   outcomeAdjusted?: { actorId: Id; original: string; written: ResultOutcome; derived: ResultOutcome; why: string }[];
+  /** An item possessive that named the wrong character; the frozen owner was
+   * written instead so the observation survives. */
+  ownershipAdjusted?: { original: string; from: string; to: string; item: string }[];
+  /** The player's own first-person sentence rewritten to the protagonist's
+   * name outside dialogue. */
+  firstPersonAdjusted?: { original: string; text: string }[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -207,6 +213,8 @@ export async function runResults(
       droppedFacts: parsedAnswer.droppedFacts ?? [],
       implicitJudgments: parsedAnswer.implicitJudgments ?? [],
       outcomeAdjusted: parsedAnswer.outcomeAdjusted ?? [],
+      ownershipAdjusted: parsedAnswer.ownershipAdjusted ?? [],
+      firstPersonAdjusted: parsedAnswer.firstPersonAdjusted ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -370,6 +378,19 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
  * allowed, but a fact whose only subject is a character outside the group is
  * the judgement's explanation of that character's action, not this group's
  * result. */
+/** Replace 我/咱 outside Chinese quotation marks. Speech inside quotes is the
+ * character's own words and must not be rewritten. */
+function replaceFirstPersonOutsideQuotes(text: string, name: string): string {
+  let out = '';
+  let quoted = 0;
+  for (const char of text) {
+    if (char === '“' || char === '‘' || char === '「') quoted += 1;
+    if ((char === '”' || char === '’' || char === '」') && quoted > 0) quoted -= 1;
+    out += quoted === 0 && (char === '我' || char === '咱') ? name : char;
+  }
+  return out;
+}
+
 function mentionedCharacterIds(state: WorldState, text: string): Id[] {
   const found: Id[] = [];
   for (const id of Object.keys(state.initial.characters).sort()) {
@@ -490,6 +511,8 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
   const facts: Fact[] = [];
   const sanitized: SanitizedFact[] = [];
   const adjustments: NonNullable<ResultsAnswer['outcomeAdjusted']> = [];
+  const ownershipAdjusted: NonNullable<ResultsAnswer['ownershipAdjusted']> = [];
+  const firstPersonAdjusted: NonNullable<ResultsAnswer['firstPersonAdjusted']> = [];
   const droppedFacts: NonNullable<ResultsAnswer['droppedFacts']> = [];
   const actionHint = members
     .map((member) => `${state.initial.characters[member.memberId]?.name ?? member.memberId}：${member.actionText}`)
@@ -553,7 +576,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // explanation of 路明非, who the other group already settled as walking in
     // and reading the sign. Committing it would hand the narrator a fact that
     // contradicts the point and no result for the reacting member.
-    const mentioned = mentionedCharacterIds(state, cleaned.text);
+    let mentioned = mentionedCharacterIds(state, cleaned.text);
     // “路明非的红色识别带” when the band belongs to 诺诺 is an item-ownership
     // flip: d531 turn 2 wrote exactly that. Only an explicit possessive whose
     // item resolves in the frozen state is checked, so ordinary prose is not
@@ -572,12 +595,24 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
           if (!named && !namedBare) continue;
           const itemName2 = namedBare ? bare : itemName;
           const holderId = state.items[item.id]?.position.containerId;
-          if (holderId && state.characters[holderId] && holderId !== ownerId) {
-            throw new Error(`fact gives ${itemName2} to ${ownerName}, but it belongs to ${state.initial.characters[holderId]?.name ?? holderId}: ${original}`);
+          const holder = holderId ? state.initial.characters[holderId]?.name : undefined;
+          if (holderId && holder && holderId !== ownerId) {
+            // The frozen state says whose item it is; a possessive that names
+            // another character is a slip, not a new fact (d531 turn 2 and 1e59
+            // turn 3 both wrote 路明非的红色识别带 while the band is 诺诺's).
+            // Rewriting the owner keeps the fact (the six stages and next-turn
+            // knowledge need the observation) instead of spending a retry on it.
+            const swapped = cleaned.text.split(`${ownerName}的${itemName2}`).join(`${holder}的${itemName2}`);
+            if (swapped === cleaned.text) continue;
+            cleaned.text = swapped;
+            ownershipAdjusted.push({ original, from: ownerName, to: holder, item: itemName2 });
           }
         }
       }
     }
+    // An ownership swap can remove the only mention of the wrong owner; the
+    // “another character's action” check must read the corrected sentence.
+    if (ownershipAdjusted.length) mentioned = mentionedCharacterIds(state, cleaned.text);
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -696,7 +731,19 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     // not a description of what happened.
     const actorIdForFact = recipientIds[0];
     if (actorIdForFact === state.protagonistId && /[我咱]/u.test(cleaned.text)) {
-      throw new Error(`fact is the player's own “我” sentence, not a third-person result: ${original}。用第三人称写实际发生的执行、尝试、受阻或失败（${actionHint}）。`);
+      // 1e59 turn 3: 路明非请诺诺带我走一条… is the player's typed sentence, not
+      // a description. The subject is frozen (protagonist), so the pronoun is
+      // rewritten to the character's name outside dialogue; a line whose only
+      // “我” is quoted speech keeps it.
+      const name = state.initial.characters[actorIdForFact]?.name;
+      const swapped = name ? replaceFirstPersonOutsideQuotes(cleaned.text, String(name)) : cleaned.text;
+      if (swapped !== cleaned.text) {
+        cleaned.text = swapped;
+        firstPersonAdjusted.push({ original, text: swapped });
+      }
+      if (name && /[我咱]/u.test(cleaned.text) && !/[“'‘「]/.test(cleaned.text)) {
+        throw new Error(`fact is the player's own “我” sentence, not a third-person result: ${original}。用第三人称写实际发生的执行、尝试、受阻或失败（${actionHint}）。`);
+      }
     }
     // “甲未能。” is what is left after a stripped task clause: a dangling
     // negation is not a result. The 60-char action hint tells the repair what to
@@ -736,6 +783,8 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(droppedFacts.length ? { droppedFacts } : {}),
     ...(implicit.length ? { implicitJudgments: implicit } : {}),
     ...(adjustments.length ? { outcomeAdjusted: adjustments } : {}),
+    ...(ownershipAdjusted.length ? { ownershipAdjusted } : {}),
+    ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
   };
 }
 
