@@ -368,3 +368,20 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 - group_12 事实仍是判定理由复制且含 `骰点`，被 02 的 result 过滤整句丢弃 → result 事实为空。
 
 `0fa995f0` 让端口的已结算事实以**原句**交出（不带 `名字：`），因为 02 的 `verifyText` 要求 `text.includes(fact.text)`；带标签会要求正文出现 `路明非：路明非沿着…`。合入 `5a015c52`+`0fa995f0` 并在 `game-model.results()` 用 `settledFactLines()` 后，result beat 才会拿到 `路明非沿着服务巷往里走，先看清墙上的演习规则牌。` 并要求原样写出。
+
+### 2026-11-11 3-turn `9623` 的 turn 2：results 被长度截断后修复失败（`d266d12c`、`6f287b5f`）
+
+`09-product-03turn-9623.json`（runId `2026-11-11T0245-9b69`，head `d17d6534`）三回合：
+
+- turn 1：模型 103 字，aec9 一次 continuation 后 policy stop，history 1。
+- turn 2（问诺诺红蓝局势）：group_29（lu+nono）
+  - 第 1 次 49.9 s，`IncompleteGenerationError: generation ended with length`；旧端口把这次调用的 raw 存成空，页面只能看到 “length”。
+  - 第 2 次修复只答 nono，`missing judgment for lu` → 点 abort，页面 `结算没有完成，可以重试。`；无 updates/continuation。
+- turn 3：1 个字符占位，history 0。
+
+修复：
+
+- `d266d12c`：`callJson` 识别截断（`ended with length` / `IncompleteGenerationError`），重试提示改成“reason ≤20 字、facts 每人一句”，并在 results 的修复提示里列出本组成员名与 id（`甲(a)、乙(b)`），避免修复再次漏人。
+- `6f287b5f`：截断调用的部分文本（≤2000 字符）、`truncated:true`、`finishReason` 都留在 `ModelCallEvidence` 里，`JsonCallError.raw` 也会带上，不再把已付费的输出丢掉。
+
+85 focused / 733 full 通过（14 个既有环境失败）；tsc 通过；eslint 0 error。
