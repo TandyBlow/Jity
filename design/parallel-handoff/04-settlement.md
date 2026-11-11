@@ -332,3 +332,26 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 测试 **78 focused passed | 1 expected fail**；全前端 **725 passed | 1 expected fail**，14 个既有 styles/wllama 环境失败。d101 构建 `d1019f09` 不含 `ab242e32`/`6afa8e39`。
 
 同日 3-turn `2026-11-10T2137-ac7c`：turn 1 是模型 142 字，`aec9` 一次 continuation 后 policy stop，无 auto2；turn 2 的 330s timeout 与 06 在 21:42:05Z 重启到 5d4c/chunk 81f5 同时发生，页面还是 d101 的 chunk a922，因此 turn 2 是基础设施失效，不是 04 continuation。06 的 served 5d4c/sourceAhead 58bed 已含 `aa9622a3`，不含 `ab242e32`/`6afa8e39`。
+
+### 2026-11-11 736a/5810 真实 trace 根因：事实没到旁白，判定理由成了事实（`5a015c52`、`7b00ca28`）
+
+读了两份真实 trace：`09-constrained-beats-5810.json` 和 `root-constrained-736a-retry.json`（head `736a3841`，chunk `page-7454…`，pageSha `a4259e74…`）。同一句输入“我沿着服务巷往里走，先看清墙上的演习规则牌”。
+
+链路（逐句可对）：
+
+1. `results group_10`（lu）事实是对的：`路明非沿着服务巷往里走，先看清墙上的演习规则牌。`
+2. `results group_12`（nono，判定目标 lu、`admitted:false`）把判定理由抄成事实：`路明非未被掀开袖口，未看到规则牌，骰点未触发准入条件。行动未成功或被阻止。`——没提本组的诺诺，且“未看到规则牌”与 group_10 已结算的“先看清规则牌”冲突。
+3. 页面控制器 `results()` 每次覆盖 `lastResultsText`，group_12 在 group_10 之后结算，于是旁白只剩 nono 组那条。
+4. 旁白的 facts packet 只有 `facts:time`（plan `open:open:facts:time`），没有玩家的走/读；模型只能自造，736a 写出“路明非的护目镜沿服务巷往里走”（物品当行动者；视角锚点另由 root `f4272699` 修），5810 写出“低头检查护目镜的镜片”。
+
+04 的修复：
+
+- `results.ts`：一条事实若**只点名本组外的人物**，报错并触发一次修复（错误带本组冻结行动），重复则 abort；机制词删完补主语时若句首已有人物名则不再前置（旧写法产出 `诺诺路明非未被掀开袖口`）；提示加一条“facts 写本组成员自己的行动结果，不要写其他人物的行动或判定理由”。
+- `port.ts`：新增 `settledFactLines()`，返回当前点全部已结算事实（`名字：事实`，主角组优先、去重），`beginSubmission`/`reset`/每轮 continuation 结束时清空。
+- 06 还需在 `game-model.results()` 用 `settledFactLines()` 替代“只留最后一组”的赋值（3 行，见 `results/quality/requests-04-to-06-736a-facts.md`）。
+
+两组结论（有数字）：group_10 成员 lu、无判定，results 14.2s / 1639 字符，六阶段 position 7.3s、appearance 4.5s、tasks 7.3s，受影响 3 人 / 17 行；group_12 成员 nono、目标 lu `admitted:false`，results 13.7s / 1708 字符，六阶段 8.2/5.0/7.4s，受影响 4 人 / 22 行。两组冻结成员、目标、投影都不同，是玩家组 + 反应组，不是重放的已消费候选。可去掉的重复只有两组都回的 `goggles_lu → lu`/`keep` 状态回显，已被 `guardStage` 当 no-op 丢弃；失败行动也可能移动，所以不跳 position/appearance，不删组、不缩六阶段、不设自动推进上限。
+
+测量：`prompt-size.mjs` results 2461→2526、2391→2456（+65 字符/次），updates 最大仍 4656；字符不是 token。84 focused passed | 1 expected fail；全前端 731 passed | 1 expected fail（14 个既有环境失败）；tsc 通过；eslint 0 error。
+
+边界：`f4272699` 修的是 facts-only 投影的视角锚点（护目镜被当成视点），不是本轮 04 修复；`736a`/`5810` 构建都没有 `5a015c52` 和 06 那 3 行。
