@@ -236,6 +236,18 @@ describe('common-group results', () => {
     const goalOutcome = await createSettlementHandlers({ engine: goalEngine }).results('g1', resultsInput());
     expect(goalOutcome.value).toBeNull();
     expect(goalOutcome.error).toContain('not what the actor did');
+
+    // A task word inside a real action is not a task claim.
+    const taskWord = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲拿起任务单。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [
+        { text: '甲拿起任务单，走到乙面前。', memberIds: ['a'], actorId: 'a', action: '拿起任务单', outcome: 'completed' },
+        { text: '乙接过单子。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    });
+    const taskWordEngine = new ScriptedEngine([taskWord]);
+    const taskWordOutcome = await createSettlementHandlers({ engine: taskWordEngine }).results('g1', resultsInput());
+    expect(taskWordOutcome.value).not.toBeNull();
   });
 
   it('keeps a negative action result instead of stripping the negation as a task claim', async () => {

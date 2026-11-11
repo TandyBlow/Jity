@@ -501,7 +501,12 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
         pattern.lastIndex = 0;
         if (pattern.test(rawAction)) throw new Error(`action is a task/goal claim (${label}), not what the actor did: ${rawAction}`);
       }
-      if (/任务|目标/u.test(rawAction)) throw new Error(`action must be the performed action, not a task or goal: ${rawAction}`);
+      // A task word alone is not a claim (“拿起任务单” is an action); only the
+      // completion/direction wording makes it a goal restatement.
+      if (/(?:完成|达成|执行|符合)[^，。；.,;!?]*(?:任务|目标|要求)/u.test(rawAction)
+        || /(?:任务|目标)[^，。；.,;!?]*(?:完成|达成)/u.test(rawAction)) {
+        throw new Error(`action must be the performed action, not a task or goal: ${rawAction}`);
+      }
     }
     const rawRecipients = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
     if (!rawRecipients.length) throw new Error('fact must name at least one member');
