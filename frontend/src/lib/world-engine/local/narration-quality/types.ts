@@ -37,6 +37,7 @@ export type FindingKind =
   | 'fact.wrong_place'
   | 'fact.trait_misattribution'
   | 'fact.time_added'
+  | 'fact.time_wrong'
   // Facts: inventions without a settled basis.
   | 'fact.event_added'
   | 'fact.sound_added'
@@ -79,6 +80,8 @@ export type FindingKind =
   | 'review.speech_act'
   | 'review.micro_action'
   | 'review.action_partial'
+  | 'review.outcome_unclear'
+  | 'review.time_added'
   | 'review.object_added'
   | 'review.trait_as_event'
   | 'review.unseen_entity'

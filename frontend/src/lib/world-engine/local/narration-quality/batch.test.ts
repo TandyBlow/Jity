@@ -31,8 +31,12 @@ const reportPath = process.env.NARRATION_QUALITY_REPORT
 
 /** Human rows whose own text is known to omit a settled time advance. The
  * checker's finding is correct; the row is recorded, not silently exempted. */
+// Historical: before NARRATION-BOUNDARY-20261111 a missing duration was a hard
+// finding, and the reference row below never states its 4-minute advance. The
+// boundary makes duration optional; the entry is kept only so an old report that
+// still carries time_missing does not fail the ceiling.
 const KNOWN_DEFECTS: Record<string, string> = {
-  'frozen-row-0012': 'the reference text never states the settled 4-minute advance; the time_missing finding is true',
+  'frozen-row-0012': 'historical: the reference text never states the settled 4-minute advance; duration is optional since NARRATION-BOUNDARY-20261111',
 };
 
 const maxFacts = process.env.NARRATION_QUALITY_MAX_FACTS

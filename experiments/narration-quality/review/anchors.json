@@ -482,7 +482,6 @@
       },
       "expect": {
         "fact": [
-          "fact.time_missing",
           "fact.object_added",
           "fact.event_added"
         ],
@@ -1243,7 +1242,6 @@
       },
       "expect": {
         "fact": [
-          "fact.time_missing",
           "fact.body_mark_added"
         ],
         "notes": "The rule sign in his palm is now review-level polish; the hard errors are the missing time and 诺诺's red mark moved onto 路明非's arm."
@@ -3963,11 +3961,12 @@
         "minChars": 1
       },
       "expect": {
-        "fact": [
-          "fact.time_added"
-        ],
+        "fact": [],
         "style": [
           "style.meta"
+        ],
+        "review": [
+          "review.time_added"
         ],
         "notes": "A minute passes with no settled advance, and the settlement failure line is shown as prose. The standing micro-action must stay unflagged."
       }
@@ -8656,7 +8655,6 @@
       },
       "expect": {
         "fact": [
-          "fact.time_missing",
           "fact.body_mark_added"
         ],
         "style": [],
@@ -9381,7 +9379,6 @@
       },
       "expect": {
         "fact": [
-          "fact.time_missing",
           "fact.object_added",
           "fact.sound_added"
         ],

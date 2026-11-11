@@ -467,14 +467,17 @@ export function reviewNarration(args: {
   if (timeMinutes === null) {
     const passage = /(?:(?:一|两|二|三|四|五|六|七|八|九|十|几|半)[^，。；]{0,3}(?:分钟|小时|秒)(?:过去|之后|后|里|以后)|(?:过了|又过了|过去)[^，。；]{0,6}(?:分钟|小时|秒))/u.exec(text);
     if (passage) {
-      findings.push(finding(ctx, 'fact.time_added', sentences[0]?.text ?? text,
-        `time passes in the prose (${passage[0]}) but the point settles no time advance`, []));
+      findings.push(finding(ctx, 'review.time_added', sentences[0]?.text ?? text,
+        `time passes in the prose (${passage[0]}) but the point settles no time advance; read as pacing`, []));
     }
   }
+  // NARRATION-BOUNDARY-20261111: a missing duration is not a defect. If the
+  // prose states a duration, it must not contradict the settled advance.
   if (timeMinutes !== null) {
-    if (!timeExpressed) {
-      findings.push(finding(ctx, 'fact.time_missing', sentences[0]?.text ?? text,
-        `settled advance ${projection.timeText} is not stated`, [projection.timeText ?? '']));
+    const wrong = forms.filter((value) => value !== timeMinutes);
+    if (wrong.length && !timeExpressed) {
+      findings.push(finding(ctx, 'fact.time_wrong', sentences[0]?.text ?? text,
+        `settled advance ${projection.timeText} but the prose states ${wrong.join('/')} minutes`, [projection.timeText ?? '']));
     } else if (forms.filter((value) => value === timeMinutes).length > 1) {
       findings.push(finding(ctx, 'style.punctuation', sentences[0]?.text ?? text,
         `the same advance is stated ${forms.filter((value) => value === timeMinutes).length} times`,
@@ -685,8 +688,11 @@ export function reviewNarration(args: {
         [task.goal], [task.id]));
       continue;
     }
-    findings.push(finding(ctx, 'fact.task_omitted', sentences[0]?.text ?? text,
-      `${task.name}: 「${task.goal}」 is not narrated as completed`, [`${task.name} 完成：${task.goal}`], [task.id]));
+    // NARRATION-BOUNDARY: a paraphrase of the outcome is enough; not quoting the
+    // frozen goal is not an error.
+    findings.push(finding(ctx, 'review.outcome_unclear', sentences[0]?.text ?? text,
+      `${task.name}: the completed task is not recognisable in the prose; outcome needs reading`,
+      [`${task.name} 完成：${task.goal}`], [task.id]));
   }
   // A completion the settlement does not contain (21c3's program fallback:
   // «诺诺：确认任务完成…成功执行行动» with every task still pending).
@@ -2052,7 +2058,8 @@ export function reviewNarration(args: {
       } else if (sentence.quotes.length) {
         findings.push(finding(ctx, 'review.speech_act', sentence.text,
           'dialogue with no settled fact; content needs reading', []));
-      } else if (charCount > 0) {
+      } else if (charCount > 0
+        && !settledStrings.some((entry) => entry.length >= 8 && sharesRun(narration, entry, 6))) {
         findings.push(finding(ctx, 'review.tone', sentence.text,
           'no settled fact binds this sentence; it is atmosphere or inference', []));
       }

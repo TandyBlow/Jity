@@ -363,7 +363,7 @@ anchors += [
         "input": box_scene,
         "text": "走廊明亮，周宁看着林川站在那里，林川的手按在盒盖上，盒子静静地悬在空中。周宁的心跳加速，盒子缓缓打开，里面是一张纸条。",
         "options": {"genders": {}, "minChars": 1},
-        "expect": {"fact": ["fact.time_missing", "fact.object_added", "fact.event_added"], "style": [],
+        "expect": {"fact": ["fact.object_added", "fact.event_added"], "style": [],
                    "notes": "A closed box opens and holds a note that was never settled."},
     },
 ]
@@ -477,7 +477,7 @@ add({
     "text": from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[2]["text"],
     "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
     "expect": {
-        "fact": ["fact.time_missing", "fact.body_mark_added"],
+        "fact": ["fact.body_mark_added"],
         "notes": "The rule sign in his palm is now review-level polish; the hard errors are the missing time and 诺诺's red mark moved onto 路明非's arm.",
     },
 })
@@ -670,7 +670,7 @@ anchors += [
         "input": arms_scene,
         "text": "一分钟过去，路明非还在西侧服务巷。\n\n西侧服务巷里，巷口的黄黑绳已放下，进入即算踏入演习区。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n路明非：本组结算未能确认新的结果。\n\n路明非在原地站了一会儿。",
         "options": {"genders": {}, "minChars": 1},
-        "expect": {"fact": ["fact.time_added"], "style": ["style.meta"],
+        "expect": {"fact": [], "style": ["style.meta"], "review": ["review.time_added"],
                    "notes": "A minute passes with no settled advance, and the settlement failure line is shown as prose. The standing micro-action must stay unflagged."},
     },
     {
@@ -1235,7 +1235,7 @@ anchors.append(
         "input": b7_inputs["f15d-point"],
         "text": e95["auto1"],
         "options": {"minChars": 1},
-        "expect": {"fact": ["fact.time_missing", "fact.body_mark_added"], "style": [], "review": [],
+        "expect": {"fact": ["fact.body_mark_added"], "style": [], "review": [],
                    "notes": "The nono's look carries the right-sleeve red mark; the lu's does not."},
     },
 )
@@ -1342,7 +1342,7 @@ anchors.append(
         "input": d101_review["point"]["input"],
         "text": d101_point,
         "options": {"minChars": 1},
-        "expect": {"fact": ["fact.time_missing", "fact.object_added", "fact.sound_added"], "style": [], "review": [],
+        "expect": {"fact": ["fact.object_added", "fact.sound_added"], "style": [], "review": [],
                    "notes": "State 物品 {}; the text handles 骰子 on a 桌上 and adds 一阵风; no minute."},
     },
 )

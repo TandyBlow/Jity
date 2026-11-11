@@ -267,3 +267,4 @@
 - 已向 09/06 提 provenance 误标：9623 `textSource:model`、`composers:["model"]`，却带 `program_fallback_labelled`（`results/quality/requests-01-to-09-9623-provenance.md`）。
 - 3turn 9623（head d17d6534）：turn1 模型 103 字可读（0 fact，2 review=场地注记复述）；turn2 提问回合结算被拒 0 字；turn3 只显示 `…`。1/3 可读、0/3 有结果。归属：04 纯对话结果路径、06/09 失败不得展示占位符、02 场地注记复述降权。`results/quality/review-09-3turn-9623.md`
 - 已向 04/06 提「提问回合」请求（`results/quality/requests-01-to-04-06-question-turn.md`）：纯对话行动需要结果路径（能答就给答案事实，不能答也要完成并写「没答」），不能 `submit_refused` 整回合；失败时页面不得把 `…` 当正文。
+- root `6c202872`（时间可选，基于 aa30835f，7 个 constrained 文件）已独立核对：两处投影 time `mandatory:false`；`verifyText` 强制 `requireTime=false`，coverage 对 time 永不 hard；写错时长仍由 `alignNarration` 拒。已提 06 吸收 / 09 下次运行需同时含 `6c202872`+`f4272699`+结果契约（`results/quality/requests-01-to-06-absorb-time-optional.md`）。本线 checker 同步：缺时长不判、写错判 `fact.time_wrong`。
