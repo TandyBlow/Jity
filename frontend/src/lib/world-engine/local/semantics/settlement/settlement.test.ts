@@ -1057,7 +1057,33 @@ describe('six-stage updates', () => {
     const tasksPrompt = engine.prompts.find((prompt) => prompt.includes('任务判定器'))!;
     expect(tasksPrompt).toContain('甲（id=a）位置=远处');
     const personalityPrompt = engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))!;
-    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`\"${id}\"`);
+    // Every scanned character is listed as a row; the answer no longer prints a
+    // copyable roster skeleton, so the ids appear as rows rather than as quotes.
+    for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`id=${id}`);
+  });
+
+  it('accepts a changes-only personality answer and keeps everyone else', async () => {
+    // Same defect class as the tasks roster: the prompt printed
+    // {"scanned":[...],"changes":[]}, the 0.6B copied it, and no personality
+    // change was ever produced on real output (five probes, 2026-11-11).
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),                                     // position
+      JSON.stringify({ operations: [] }),                                  // appearance
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }), // tasks
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }), // verifier
+      JSON.stringify({ subtasks: [] }),                                    // subtasks
+      JSON.stringify({ changes: [{ entityId: 'a', op: 'add', recordIds: [], text: '做完这件事后更愿意先动手。' }] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const outcome = await handlers.updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const personality = calls.find((call) => call.stage === 'personality')!;
+    expect(personality.changes.a?.personalityChanges?.[0]?.text).toBe('做完这件事后更愿意先动手。');
+    expect(Object.keys(personality.changes)).toEqual(['a']);
+    const sanity = calls.find((call) => call.stage === 'sanity')!;
+    expect(sanity.changes.a?.sanitySet).toBe(61);
+    expect(engine.prompts.find((prompt) => prompt.includes('个性变化判断器'))).not.toContain('"scanned":[');
   });
 
   it('does not re-achieve an already achieved task', async () => {

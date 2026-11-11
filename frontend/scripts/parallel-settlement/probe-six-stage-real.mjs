@@ -86,6 +86,18 @@ const CASE = {
   },
 };
 
+/** A fact that both satisfies the goggles goal and is a plausible personality
+ * trigger: the same character, after finishing his own task, gives his spare
+ * lens away. If the model ever adds a personality record, sanity must follow. */
+const CASE_PERSONALITY = {
+  id: 'personality-change',
+  groupId: 'group_probe3',
+  results: {
+    lu: '路明非把胸前的护目镜戴好，确认镜片没有裂纹，然后把自己的备用镜片塞给诺诺。',
+    nono: '诺诺接过备用镜片，点头收进腰包。',
+  },
+};
+
 const CASE_SUBTASK = {
   id: 'subtask-opportunity',
   groupId: 'group_probe2',
@@ -185,8 +197,10 @@ try {
   };
   let lastCompletion = null;
 
-  for (const [caseSpec, contract] of [[CASE, 'roster'], [CASE, 'achieved'], [CASE_SUBTASK, 'achieved']]) {
+  const only = option('--only', '');
+  for (const [caseSpec, contract] of [[CASE, 'roster'], [CASE, 'achieved'], [CASE_SUBTASK, 'achieved'], [CASE_PERSONALITY, 'achieved']]) {
     const id = `${caseSpec.id}#${contract}`;
+    if (only && !id.startsWith(only)) continue;
     report.cases.push({ id, contract, results: caseSpec.results });
     const started = Date.now();
     const onTask = (task, key, detail) => {

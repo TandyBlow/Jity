@@ -170,7 +170,10 @@ const TASKS_SCHEMA = {
 const PERSONALITY_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['scanned', 'changes'],
+  // `scanned` is optional: the program applies keep to every character the
+  // prompt listed and the answer did not name (the roster skeleton was copied by
+  // the 0.6B and no personality change was ever produced).
+  required: ['changes'],
   properties: {
     // `scanned` proves every character was considered; only actual changes
     // need an operation row. The program supplies keep rows and record ids.
@@ -1285,6 +1288,11 @@ function readDescriptionOperations(
 ): Record<Id, Partial<EntityDelta>> {
   const payload = asRecord(value);
   let rows = payload.operations;
+  if (!Array.isArray(rows) && kind === 'personality' && !Array.isArray(payload.scanned) && Array.isArray(payload.changes)) {
+    // Changes-only answer: unnamed characters are unchanged by default.
+    rows = payload.changes;
+    requireEveryEntity = false;
+  }
   if (!Array.isArray(rows) && kind === 'personality' && Array.isArray(payload.scanned)) {
     const scannedRaw = payload.scanned.map(asString);
     const changesRaw = Array.isArray(payload.changes) ? payload.changes : [];
@@ -1775,7 +1783,9 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...scannedIds.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    `输出 {"scanned":[${scanned}],"changes":[]}（scanned 必须列出上面列出的人物；没有变化就不要放进 changes；changes 里的 entityId 用真实 id 或人物全名，op 为 add/remove/replace）。`,
+    '输出格式（尖括号里换成真实值；没有变化就输出空数组）：',
+    '{"changes":[{"entityId":"<人物id>","op":"add","text":"<新的个性变化>"}]}',
+    '没有变化的人物不要写，程序默认他们保持原样。',
   ].filter(Boolean).join('\n');
 }
 
