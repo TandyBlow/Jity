@@ -480,6 +480,67 @@ describe('automatic round progress', () => {
     expect(continuation?.roundProgress?.reason).toBe('action_not_settled');
   });
 
+  it('does not count a point whose frozen action is not the accepted proposal', async () => {
+    // 10turn run 2026-11-11 9711 turn 4: the continuation accepted fingel's
+    // «在器材棚内确认护目镜佩戴情况并准备行动», but the action lane froze
+    // «芬格尔蹲下，掀开路明非的袖口查看伤口» — the previous point's sentence with
+    // a new subject — so the results lane settled that old sentence again and the
+    // chain ran four points to the 300 s deadline.
+    const outputs = [
+      JSON.stringify({
+        judgments: [{ memberId: 'person_c', label: 'achieved', reason: '周宁推门。' }],
+        facts: [{ text: '周宁推开走廊的门，看清门后的台阶。', memberIds: ['person_c'] }],
+      }),
+      JSON.stringify({ candidates: [{ characterId: 'person_a', text: '在器材棚内确认护目镜佩戴情况并准备行动' }] }),
+      JSON.stringify({ judgments: [{ candidateId: 'c1', likely: true, related: true, reason: '与主角处境相关。' }] }),
+      JSON.stringify({
+        judgments: [{ memberId: 'person_a', label: 'no_change', reason: '林川查看周宁的袖口。' }],
+        facts: [{ text: '林川蹲下，掀开周宁的袖口查看伤口。', memberIds: ['person_a'] }],
+      }),
+      JSON.stringify({ candidates: [] }),
+    ];
+    let call = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'stale-action' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        const value = outputs[Math.min(call, outputs.length - 1)];
+        call += 1;
+        return value;
+      },
+    };
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const port = createSettlementModelPort(engine);
+    port.beginSubmission('我推门进去。');
+    await port.generate('results', 'group_1', {
+      groupId: 'group_1',
+      members: [{ memberId: 'person_c', actionText: '我推门进去。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_1', {
+      round: { roundId: 'round_1', trigger: 'player', conclusion: null },
+      head: { pointId: 'p1' },
+      workingState: state,
+      roundChanges: [{ pointId: 'p1', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, entityDeltas: {} }],
+    } as unknown as Json);
+    await port.generate('results', 'group_2', {
+      groupId: 'group_2',
+      members: [{ memberId: 'person_a', actionText: '掀开周宁的袖口查看伤口', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    await port.generate('continuation', 'round_2', {
+      round: { roundId: 'round_2', trigger: 'automatic', conclusion: null },
+      head: { pointId: 'p2' },
+      workingState: state,
+      roundChanges: [{ pointId: 'p2', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, entityDeltas: {} }],
+    } as unknown as Json);
+    const submission = port.endSubmission();
+    const automatic = submission?.calls.filter((row) => row.task === 'continuation')[1];
+    expect(automatic?.roundProgress?.progress).toBe(false);
+    expect(automatic?.roundProgress?.reason).toBe('action_not_settled');
+  });
+
   it('counts a point whose facts do cover the proposal', async () => {
     let call = 0;
     const engine: InferenceEngine = {
