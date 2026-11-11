@@ -650,6 +650,12 @@ try {
         return {
           index: record.index ?? null, input: record.input ?? null,
           acceptedMs: record.acceptedMs ?? null, draftMs: record.draftMs ?? null, programMs: record.programMs ?? null,
+          // 06 exposes the first non-whitespace streamed model text separately from
+          // completion; keep both so the 60 s clock is not measured at completion.
+          firstReadableAtMs: record.firstReadableAtMs ?? null,
+          firstAcceptedAtMs: record.firstAcceptedAtMs ?? null,
+          pointCommittedAtMs: record.pointCommittedAtMs ?? null,
+          narrationStarts: record.narrationStarts ?? null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
           narration: record.narration ?? null,
