@@ -1003,6 +1003,19 @@ export default function WorldLocalPage() {
         return;
       }
       if (status.kind === 'stop') setMessage(`本轮停止：${status.reason}`);
+      // A stop that committed nothing must not leave an empty turn behind. The
+      // kernel can refuse a submit while the previous point's narration is still
+      // being finished (narration_pending / cache_missing); finish that work,
+      // then give the sentence back to the player.
+      const committedNow = Object.values(session.snapshot.transport.points ?? {}).filter((point) => point.trigger === 'player').length;
+      if (status.kind === 'stop' && committedNow === playerPointsAtStart) {
+        setEntries((list) => list.filter((entry) => entry.key !== key));
+        setInput((current) => current || text);
+        if (/narration|gate/i.test(status.reason)) {
+          setMessage('上一回合的正文还没写完；正在补写，完成后可以再提交这一句。');
+          void session.start().catch((narrationError) => console.warn('[world-local] finishing narration after a blocked submit failed', narrationError));
+        }
+      }
       if (status.kind === 'stop' && status.reason === 'progress_conflict') {
         // The stored record was written by another writer/session. Play cannot
         // continue on a record whose revision the session does not own; the
