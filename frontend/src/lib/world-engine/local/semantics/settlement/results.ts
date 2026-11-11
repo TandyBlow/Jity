@@ -94,7 +94,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -585,28 +585,42 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       for (const ownerId of mentioned) {
         const ownerName = state.initial.characters[ownerId]?.name;
         if (!ownerName) continue;
-        for (const item of Object.values(state.initial.items)) {
-          const itemName = item.name;
-          // Item names often start with the owner's name ("诺诺的红色识别带");
-          // the possessive to check is that noun without the leading owner.
-          const bare = String(itemName ?? '').replace(/^[^的]{1,6}的/u, '');
-          const named = itemName && cleaned.text.includes(`${ownerName}的${itemName}`);
-          const namedBare = bare && bare !== itemName && cleaned.text.includes(`${ownerName}的${bare}`);
-          if (!named && !namedBare) continue;
-          const itemName2 = namedBare ? bare : itemName;
+        const items = Object.values(state.initial.items);
+        // Prefer the item whose full name is in the sentence: 诺诺的红色识别带 is
+        // the precise band, while several items share the bare 红色识别带.
+        const full = items.filter((item) => {
+          const name = String(item.name ?? '');
+          return name.startsWith(`${ownerName}的`) && cleaned.text.includes(name);
+        });
+        const candidates = full.length
+          ? full.map((item) => ({ item, itemName: String(item.name ?? '') }))
+          // A wrong possessive (路明非的红色识别带 when the band is 诺诺's) has no
+          // full-name match. Only a bare name whose holder is another mentioned
+          // character is the band the sentence means; without that it would
+          // match 凯撒的红色识别带 as well (the 1e59 replay caught this).
+          : items
+            .map((item) => ({ item, bare: String(item.name ?? '').replace(/^[^的]{1,6}的/u, '') }))
+            .filter(({ item, bare }) => {
+              const holderId = state.items[item.id]?.position.containerId;
+              return bare && bare !== String(item.name ?? '')
+                && cleaned.text.includes(`${ownerName}的${bare}`)
+                && holderId != null && holderId !== ownerId
+                && (memberById.has(holderId) || mentioned.includes(holderId));
+            })
+            .map(({ item, bare }) => ({ item, itemName: bare }));
+        for (const { item, itemName } of candidates) {
           const holderId = state.items[item.id]?.position.containerId;
           const holder = holderId ? state.initial.characters[holderId]?.name : undefined;
-          if (holderId && holder && holderId !== ownerId) {
-            // The frozen state says whose item it is; a possessive that names
-            // another character is a slip, not a new fact (d531 turn 2 and 1e59
-            // turn 3 both wrote 路明非的红色识别带 while the band is 诺诺's).
-            // Rewriting the owner keeps the fact (the six stages and next-turn
-            // knowledge need the observation) instead of spending a retry on it.
-            const swapped = cleaned.text.split(`${ownerName}的${itemName2}`).join(`${holder}的${itemName2}`);
-            if (swapped === cleaned.text) continue;
-            cleaned.text = swapped;
-            ownershipAdjusted.push({ original, from: ownerName, to: holder, item: itemName2 });
-          }
+          if (!holderId || !holder || holderId === ownerId) continue;
+          // The frozen state says whose item it is; a possessive that names
+          // another character is a slip, not a new fact (d531 turn 2 and 1e59
+          // turn 3 both wrote 路明非的红色识别带 while the band is 诺诺's).
+          // Rewriting the owner keeps the fact (the six stages and next-turn
+          // knowledge need the observation) instead of spending a retry on it.
+          const swapped = cleaned.text.split(`${ownerName}的${itemName}`).join(`${holder}的${itemName}`);
+          if (swapped === cleaned.text) continue;
+          cleaned.text = swapped;
+          ownershipAdjusted.push({ original, from: ownerName, to: holder, item: itemName });
         }
       }
     }
@@ -770,9 +784,22 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
+  // A combined group prompt makes the small model repeat one member's whole
+  // sentence inside another member's fact (1e59 turn 3: nono's line appeared
+  // verbatim inside lu's result). The other member's own fact already carries
+  // it, so the wrapper is dropped instead of attributing her action to him.
+  const coveredByDrop = new Set<Id>();
+  dropDuplicatedFacts(facts, droppedFacts, coveredByDrop);
+  if (facts.length) {
+    factRecipients.clear();
+    for (const fact of facts) for (const id of fact.memberIds) factRecipients.add(id);
+  }
   for (const member of members) {
     if (factRecipients.has(member.memberId)) continue;
     if (inactive.has(member.memberId)) continue;
+    // The member's only answer was another member's sentence repeated: it is
+    // in droppedFacts, so the point settles without inventing a result for him.
+    if (coveredByDrop.has(member.memberId)) continue;
     const names = members.map((row) => `${state.initial.characters[row.memberId]?.name ?? row.memberId}(${row.memberId})`).join('、');
     const missing = state.initial.characters[member.memberId]?.name ?? member.memberId;
     throw new Error(`no fact attributed to ${member.memberId}（${missing}）; facts 必须给本组每个成员各一条自己的结果（本组：${names}），例：${missing}做了什么、看到或听到什么。已冻结的行动：${actionHint}`);
@@ -786,6 +813,34 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     ...(ownershipAdjusted.length ? { ownershipAdjusted } : {}),
     ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
   };
+}
+
+/** Remove a fact that only wraps another member's fact text. The wrapper must
+ * be short (a prefix like “路明非请诺诺带我走…，”), and the contained fact must
+ * be a full sentence of at least 12 punctuation-free characters, so ordinary
+ * overlap between two genuine results is untouched. */
+function dropDuplicatedFacts(
+  facts: Fact[],
+  dropped: NonNullable<ResultsAnswer['droppedFacts']>,
+  coveredByDrop: Set<Id>,
+): void {
+  if (facts.length < 2) return;
+  const bare = facts.map((fact) => fact.text.replace(FACT_PUNCTUATION, ''));
+  for (let i = facts.length - 1; i >= 0; i -= 1) {
+    for (let j = 0; j < facts.length; j += 1) {
+      if (i === j) continue;
+      const inner = bare[j];
+      if (!inner || inner.length < 12) continue;
+      if (facts[i].actorId === facts[j].actorId) continue;
+      if (!bare[i].includes(inner)) continue;
+      const wrapper = bare[i].replace(inner, '');
+      if (wrapper.length > 40) continue;
+      dropped.push({ memberIds: facts[i].memberIds, original: facts[i].text, reason: 'duplicates_another_member' });
+      for (const id of facts[i].memberIds) coveredByDrop.add(id);
+      facts.splice(i, 1);
+      break;
+    }
+  }
 }
 
 const FACT_PUNCTUATION = /[\s，、；。！？.,;!?]/gu;

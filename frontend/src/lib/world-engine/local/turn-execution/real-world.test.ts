@@ -467,6 +467,35 @@ describe('21c3 trace replay (CPU)', () => {
     expect((kept.evidence.detail as { facts: { text: string }[] }).facts[0].text).toContain('“我带你走。”');
   });
 
+  it('drops a fact that wraps another member’s whole sentence', async () => {
+    // 1e59 turn 3: lu's fact was 路明非请诺诺带我走…，诺诺的红色识别带…你愿意带我走这条路吗？
+    // — a short wrapper around nono's own fact.
+    const { state } = loadWorld();
+    const nonoLine = '诺诺的红色识别带在路明非的护目镜上闪烁了一下，随即拉住路明非的手，语气中带着一丝警惕';
+    const raw = JSON.stringify({
+      judgments: [
+        { memberId: 'lu', label: 'achieved', reason: '路明非提出请求。', effects: [{ targetId: 'nono', reacted: true }] },
+        { memberId: 'nono', label: 'not_achieved', reason: '诺诺拉住他的手。', effects: [{ targetId: 'lu', reacted: true }] },
+      ],
+      facts: [
+        { text: `路明非请诺诺带我走一条有掩护的路线，${nonoLine}`, memberIds: ['lu'], actorId: 'lu', outcome: 'completed' },
+        { text: nonoLine, memberIds: ['nono'], actorId: 'nono', outcome: 'failed' },
+      ],
+    });
+    const outcome = await createSettlementHandlers({ engine: scriptedEngine([raw]) }).results('group_49', {
+      groupId: 'group_49',
+      members: [
+        { memberId: 'lu', actionText: '我请诺诺带我走一条有掩护的路线。', rollRefs: [{ targetId: 'nono', rollId: 'r1', result: 11, eligible: true, admitted: true }] },
+        { memberId: 'nono', actionText: '诺诺考虑。', rollRefs: [{ targetId: 'lu', rollId: 'r2', result: 7, eligible: true, admitted: true }] },
+      ],
+      workingState: state,
+    } as unknown as Json);
+    expect(outcome.error ?? null).toBeNull();
+    const detail = outcome.evidence.detail as { facts: { text: string; actorId: string }[]; droppedFacts: { reason: string }[] };
+    expect(detail.facts.map((fact) => fact.actorId)).toEqual(['nono']);
+    expect(detail.droppedFacts[0].reason).toBe('duplicates_another_member');
+  });
+
   it('keeps the real d101 pending task goal out of the results prompt', async () => {
     const { state } = loadWorld();
     const seen: string[] = [];
