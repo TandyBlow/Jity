@@ -565,6 +565,18 @@ function readResultsAnswer(
     if (!isRecord(rawFact)) throw new Error('fact must be an object');
     const original = asString(rawFact.text);
     if (!original) throw new Error('fact text must be non-empty');
+    // 10turn turn 4 (run 2026-11-11T0928-94ef): the accepted group_72 answer
+    // copied the prompt's example text verbatim — «秦越做了什么/看到什么» — and
+    // the six stages settled on it. A template is not a result.
+    if (isExampleFactText(original)) {
+      if (!options.dropEmptyResults) {
+        throw new Error(`fact is the format example, not a result: ${original}。只写这次行动的直接可见结果（${actionHint}）。`);
+      }
+      const droppedIds = recipientsFor(rawFact);
+      droppedFacts.push({ memberIds: droppedIds, original, reason: 'no_result_text' });
+      for (const id of droppedIds) coveredByDrop.add(id);
+      continue;
+    }
     const cleaned = sanitizeFactText(original);
     if (!cleaned.text || !cleaned.text.replace(FACT_PUNCTUATION, '')) {
       // A member who provably did nothing (all rolls denied, judged
@@ -884,6 +896,14 @@ function readResultsAnswer(
     ...(firstPersonAdjusted.length ? { firstPersonAdjusted } : {}),
     ...(missingFactMembers.length ? { missingFactMembers } : {}),
   };
+}
+
+/** The results prompt writes its example fact as «<name>做了什么/看到什么».
+ * A model that copies it has written no result; keeping it would settle the
+ * template as the world's fact. */
+export function isExampleFactText(text: string): boolean {
+  const compact = text.replace(/\s+/gu, '');
+  return /做了什么\/看到什么|做了什么\/看到了什么|做了什么\/听见了什么/u.test(compact);
 }
 
 /** Remove a fact that only wraps another member's fact text. The wrapper must
