@@ -507,6 +507,48 @@ describe('settled facts for narration', () => {
     port.endSubmission();
   });
 
+  it('puts the protagonist group first even when it settles after a reaction group', async () => {
+    const replies: Record<string, string> = {
+      person_a: JSON.stringify({
+        judgments: [{ memberId: 'person_a', label: 'not_achieved', reason: '林川没有跟上。', effects: [] }],
+        facts: [{ text: '林川停在原地，没有跟着进去。', memberIds: ['person_a'] }],
+      }),
+      person_c: JSON.stringify({
+        judgments: [{ memberId: 'person_c', label: 'achieved', reason: '周宁推门。', effects: [] }],
+        facts: [{ text: '周宁推开走廊的门。', memberIds: ['person_c'] }],
+      }),
+    };
+    let call = 0;
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'settled-facts-order' },
+      async load() {},
+      async dispose() {},
+      async complete() {
+        call += 1;
+        return call === 1 ? replies.person_a : replies.person_c;
+      },
+    };
+    const state = structuredClone(SHORT_STATE) as unknown as Json;
+    const port = createSettlementModelPort(engine);
+    port.beginSubmission('我推门。');
+    // Reaction group settles first in this fixture; the protagonist group is
+    // second. Order in the list must still follow the protagonist.
+    await port.generate('results', 'group_12', {
+      groupId: 'group_12',
+      members: [{ memberId: 'person_a', actionText: '林川观察周宁。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    await port.generate('results', 'group_10', {
+      groupId: 'group_10',
+      members: [{ memberId: 'person_c', actionText: '我推门。', rollRefs: [] }],
+      workingState: state,
+    } as unknown as Json);
+    expect(port.settledFactLines()).toEqual([
+      '周宁：周宁推开走廊的门。',
+      '林川：林川停在原地，没有跟着进去。',
+    ]);
+  });
+
   it('drops the lines when the round ends, so the next point starts clean', async () => {
     const engine: InferenceEngine = {
       info: { backend: 'scripted', modelId: 'settled-facts-reset' },
