@@ -98,7 +98,7 @@ export function buildBeatPrompt(
     ...(present.length ? [`- 在场：${present.join('；')}`] : []),
     ...(objects.length ? [`- 可见物品：${objects.join('；')}`] : []),
     ...(details.length ? [`- 已登记细节：${details.join('；')}`] : []),
-    ...(lastPrior ? [`上一段结尾：${lastPrior}`] : []),
+    ...(lastPrior ? [`已写内容（不要重复其中的句子）：${lastPrior}`] : []),
     '',
     '要求：',
     `- 只写 ${Math.max(1, Math.round(beat.minChars / 18))}-${Math.max(2, Math.round(beat.maxChars / 14))} 句，${beat.minChars}-${beat.maxChars} 字，短句，用句号收尾。`,
