@@ -72,6 +72,10 @@ def differences(left: Dict[str, Any], right: Dict[str, Any]) -> Dict[str, Any]:
         out["holds"] = [holds_l, holds_r]
     if lc.get("place") != rc.get("place"):
         out["place"] = [lc.get("place"), rc.get("place")]
+    # The clock lives on the row-level place, not the character's: the four
+    # "conflicting" pairs in the first measurement differed only by minute.
+    if lx.get("place") != rx.get("place"):
+        out["rowPlace"] = [lx.get("place"), rx.get("place")]
     recent_l = lx.get("recent") or []
     recent_r = rx.get("recent") or []
     if recent_l != recent_r:

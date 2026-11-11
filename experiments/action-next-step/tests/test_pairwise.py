@@ -66,7 +66,7 @@ def test_short_context_matches_the_agreed_format():
     text = ps.render_pair(context, "物品")
     lines = text.split("\n")
     assert lines[0].startswith("任务：")
-    assert lines[1].startswith("所见：服务巷/检修口；在场：诺诺；物品：庭院路线图，演习规则牌")
+    assert lines[1].startswith("所见：服务巷/检修口 时间=15:20；在场：诺诺；物品：庭院路线图，演习规则牌")
     assert lines[2].startswith("刚见：（无）")
     assert lines[3] == "动作：物品"
     # 18-char goal clip, task id stripped
@@ -116,7 +116,7 @@ def test_second_step_uses_the_coarse_group_of_the_first_step():
     groups["告知"] = "言语"
     pairs = ps.pairs_for_step(row, 1, predicate_to_group=groups)
     text = pairs[0]["text"]
-    assert "已做：言语（lu）" in text
+    assert "已做：言语（路明非）" in text
     assert [pair["group"] for pair in pairs if pair["label"] == 1] == ["言语"]
     # the fine predicate is not a candidate group
     assert "提问" not in text

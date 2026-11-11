@@ -33,7 +33,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
-VERSION = "action-pairwise-x1"
+VERSION = "action-pairwise-x2"
 SERIALIZER_PATH = Path(__file__).resolve()
 
 GROUP_ORDER: List[str] = [
@@ -91,14 +91,34 @@ def _goals(x: Dict[str, Any]) -> List[str]:
     return out
 
 
-def _place(value: Any) -> str:
-    """Innermost place plus slot, without the ancestor chain or the clock."""
+def _place(value: Any, fallback: Any = None) -> str:
+    """Innermost place plus slot (no ancestor chain) and the clock.
+
+    The clock stays: lane 01's per-pair audit found the only 5 failing rows are
+    time-gated skip decisions ("wait until 15:45"), which cannot be judged from a
+    text that hides the time. Format: "服务巷/检修口 时间=15:20"."""
     text = _text(value)
     if not text:
-        return EMPTY
-    text = text.split("时间=")[0].strip()
-    innermost = text.split(" < ")[0].strip()
-    return innermost or EMPTY
+        return f"{EMPTY} 时间=?"
+    clock = ""
+    if "时间=" in text:
+        clock = text.split("时间=", 1)[1].strip()
+    elif fallback is not None and "时间=" in _text(fallback):
+        # The row-level place carries the clock when the character's own place
+        # does not (the five time-gated skip rows lane 01 flagged).
+        clock = _text(fallback).split("时间=", 1)[1].strip()
+    body = text.split("时间=")[0].strip()
+    innermost = body.split(" < ")[0].strip()
+    short_clock = _short_clock(clock)
+    return f"{innermost or EMPTY} 时间={short_clock or '?'}"
+
+
+def _short_clock(value: str) -> str:
+    """2009-10-17T15:20:00 -> 15:20."""
+    text = value.strip()
+    if "T" in text:
+        text = text.split("T", 1)[1]
+    return text[:5] if len(text) >= 5 else text
 
 
 def _names(entries: Any, limit: int) -> tuple[List[str], List[str]]:
@@ -210,7 +230,7 @@ def short_context(row: Dict[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
     if not isinstance(x, dict):
         raise ValueError(f"{row.get('rowId', '?')}: x must be an object")
     character = x.get("character") or {}
-    place = _place(character.get("place"))
+    place = _place(character.get("place"), x.get("place"))
     goals = _goals(x)
     goals_clipped = [goal for goal in goals if len(goal) > GOAL_CHARS]
     present, present_omitted = _names(x.get("present"), PRESENT_LIMIT)
@@ -235,6 +255,7 @@ def short_context(row: Dict[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
         "recentTotal": recent_total,
         "recentChosenChars": recent_length,
         "recentClipped": recent_length > RECENT_CHARS,
+        "timeIncluded": True,
         "droppedSections": [
             "appearance", "sanity", "personality", "rules", "previousProse",
             "otherRooms", "candidateTable(text)",
@@ -254,12 +275,15 @@ def render_context(context: Dict[str, Any]) -> str:
 
 
 def done_line(prior: Optional[Dict[str, Any]]) -> Optional[str]:
+    """`已做：<coarse group>（<object name or id>）`. Lane 01's provisional audit
+    used the object name ("已做：言语（路明非）") and judged it sufficient, so the
+    name is preferred and the id is the fallback."""
     if not prior:
         return None
     group = _text(prior.get("group"))
     if group not in GROUP_ORDER:
         return None
-    obj = _text(prior.get("object"))
+    obj = _text(prior.get("objectName")) or _text(prior.get("object"))
     return f"已做：{group}（{obj or '无'}）"
 
 
@@ -317,9 +341,12 @@ def pairs_for_step(
         first = steps[0]
         # The prior step is named by its coarse group (a fine predicate such as
         # 提问 is not a candidate group); the object is the frozen first-step id.
+        object_id = _text(first.get("object"))
+        names = {entry["id"]: entry["name"] for entry in candidate_table(row)}
         prior = {
             "group": row_group(row, 0, predicate_to_group) if predicate_to_group else _text(row.get("yGroup")),
-            "object": _text(first.get("object")),
+            "object": object_id,
+            "objectName": names.get(object_id, "") if object_id else "",
         }
     index = object_index(row, step_index) if steps else None
     table = candidate_table(row)
