@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { WorldModelPort } from '../../controller';
 import type { RequestMap, Success, WorldContext, WorldOperation, Scope } from '../../types';
 import { SHORT_STATE } from '../../runtime/b3-short-samples';
+import { WorldApiError } from '../../transport';
 import { PointNarrationQueue } from './queue';
 
 /** A controlled point queue: p1 answers empty, p2 answers prose. The queue must
@@ -12,6 +13,8 @@ function fakeTransport() {
     p2: { status: 'pending', text: null, claim: 'claim_p2' },
   };
   const submits: Array<{ pointId: string; outcome: string; text: string | null; reason: string | null }> = [];
+  const submitModes: Array<'head' | 'history'> = [];
+  let p1SubmitAttempts = 0;
   let head = 'p1';
   const context = (): WorldContext => ({
     worldId: 'w', head: { pointId: head, version: head === 'p1' ? 1 : 2, stateDigest: 'd', narrationStatus: entries[head].status },
@@ -38,6 +41,12 @@ function fakeTransport() {
       }
       if (operation === 'narration_submit') {
         const submit = request as RequestMap['narration_submit'];
+        submitModes.push(submit.mode);
+        if (submit.pointId === 'p1' && ++p1SubmitAttempts === 1) {
+          // p2 took the head after p1 claimed it; the first p1 submit is fenced.
+          head = 'p2';
+          throw new WorldApiError({ protocolVersion: 2, error: { code: 'claim_expired', message: 'p1 claim expired' } } as never);
+        }
         submits.push({ pointId: submit.pointId, outcome: submit.outcome, text: submit.text, reason: submit.failureReason });
         entries[submit.pointId].status = submit.outcome;
         entries[submit.pointId].text = submit.text;
@@ -48,7 +57,7 @@ function fakeTransport() {
       throw new Error(`unexpected ${operation}`);
     },
   };
-  return { transport, entries, submits };
+  return { transport, entries, submits, submitModes };
 }
 
 describe('point narration queue empty/error outcomes', () => {
@@ -97,5 +106,24 @@ describe('point narration queue empty/error outcomes', () => {
     expect(fake.entries.p1).toMatchObject({ status: 'pending', text: null });
     expect(fake.submits).toEqual([]);
     expect(outcomes).toEqual(['skipped:p1']);
+  });
+
+  it('reclaims the same point when a late p1 submit is fenced by p2', async () => {
+    const fake = fakeTransport();
+    let calls = 0;
+    const model: WorldModelPort = {
+      async generate() { calls += 1; return 'p1 的正文。'; },
+    };
+    let seq = 0;
+    const queue = new PointNarrationQueue({
+      transport: fake.transport, model, worldId: 'w', requestId: () => `q_${++seq}`,
+      lease: () => ({ leaseToken: 'lease', fenceEpoch: 1 }),
+    });
+    queue.enqueue('p1');
+    await queue.settled();
+    expect(calls).toBe(1);
+    expect(fake.entries.p1).toMatchObject({ status: 'ready', text: 'p1 的正文。' });
+    expect(fake.submits).toEqual([{ pointId: 'p1', outcome: 'ready', text: 'p1 的正文。', reason: null }]);
+    expect(fake.submitModes).toEqual(['head', 'history']);
   });
 });
