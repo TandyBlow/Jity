@@ -50,6 +50,20 @@ export interface PortCallRecord {
   evidenceCalls: number;
   /** Updates stages in the order this task ran them (merged or split). */
   stages?: string[];
+  /** What the results answer settled, as committed: the executor, the optional
+   * recipient, the action and the direction. This is the whole record 06 and 01
+   * need — no prose check is implied, and no `名字：` label is present. */
+  facts?: Omit<SettledFact, 'playerGroup'>[];
+  /** Facts that were dropped as noise, with the reason (a denied reaction, a
+   * fact about another group). Visible so a zero-fact point is not a mystery. */
+  droppedFacts?: { memberIds: string[]; reason: string; original: string }[];
+  /** A written outcome that disagreed with the judgement and was replaced by
+   * the judgement-derived direction (d531/bed9/9eae/08f4 all lost a turn to a
+   * direction word). */
+  outcomeAdjusted?: { actorId: string; written: string; derived: string; why: string }[];
+  /** Members whose judgement row the model omitted; their outcome is derived,
+   * not asserted. */
+  implicitJudgments?: string[];
   /** How many characters the stage answers covered. The full cast is a product
    * requirement, and this is the lightweight proof 09 can read from the page.
    * `taskRows` is the full-world task-row count, never a scene-only subset. */
@@ -225,6 +239,45 @@ export function createSettlementModelPort(
           ? { supports: scope.supports as { characterId: string; taskId: string; basis: string }[] }
           : {}),
       };
+    }
+    if (task === 'results' && !outcome.error) {
+      const settled = outcome.evidence.detail as {
+        facts?: SettledFact[];
+        droppedFacts?: { memberIds?: string[]; reason?: string; original?: string }[];
+        outcomeAdjusted?: { actorId?: string; written?: string; derived?: string; why?: string }[];
+        implicitJudgments?: string[];
+      } | null;
+      if (Array.isArray(settled?.facts)) {
+        record.facts = settled.facts.map((fact) => ({
+          text: String(fact.text),
+          memberIds: (fact.memberIds ?? []).map(String),
+          actorId: String(fact.actorId),
+          ...(fact.targetId ? { targetId: String(fact.targetId) } : {}),
+          ...(fact.action ? { action: String(fact.action) } : {}),
+          outcome: fact.outcome,
+          actorSource: fact.actorSource,
+          outcomeSource: fact.outcomeSource,
+          ...(fact.implicit ? { implicit: true as const } : {}),
+        }));
+      }
+      if (Array.isArray(settled?.droppedFacts) && settled.droppedFacts.length) {
+        record.droppedFacts = settled.droppedFacts.map((row) => ({
+          memberIds: (row.memberIds ?? []).map(String),
+          reason: String(row.reason ?? ''),
+          original: String(row.original ?? ''),
+        }));
+      }
+      if (Array.isArray(settled?.outcomeAdjusted) && settled.outcomeAdjusted.length) {
+        record.outcomeAdjusted = settled.outcomeAdjusted.map((row) => ({
+          actorId: String(row.actorId ?? ''),
+          written: String(row.written ?? ''),
+          derived: String(row.derived ?? ''),
+          why: String(row.why ?? ''),
+        }));
+      }
+      if (Array.isArray(settled?.implicitJudgments) && settled.implicitJudgments.length) {
+        record.implicitJudgments = settled.implicitJudgments.map(String);
+      }
     }
     const progress = (outcome.evidence.detail as { roundProgress?: RoundProgressEvidence } | null)?.roundProgress;
     if (progress) record.roundProgress = progress;
