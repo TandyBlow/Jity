@@ -12,7 +12,7 @@
  * beat level and re-verifies.
  */
 import type { EntityDelta, Id, TimeAdvance } from '../../../types';
-import { resultSemantics } from '../../narration-generation/licensed-sense';
+import { resultSemantics, settledViolationsFromScene } from '../../narration-generation/licensed-sense';
 
 /** Character-bigram recall of `expected` inside `text`, ignoring punctuation and
  * whitespace. Used only for free-text results, which have no structured fields:
@@ -323,6 +323,33 @@ export function verifyText(text: string, options: VerifyOptions): {
         detail: fact.kind === 'result' ? `result:${fact.id}:「${fact.text}」` : `${fact.kind}:${fact.id}`,
       });
     }
+  }
+
+  // ---- 2.5 settled scene states (02's checks) -------------------------------
+  // The constrained route had its own licensing but none of 02's settled-state
+  // checks, so an invented possession («弗里嘉演习弹在手中发烫»), a re-enacted
+  // appearance or an item acting as a person passed. These compare the prose
+  // with the scene's settled descriptions; they are not word lists.
+  // Licensed quotes are someone else's words (the rule board says 护目镜必须戴好):
+  // reading them as the narrator's own claim is the aa30 false positive.
+  const quoteMasked = scene.licensed.quotes.reduce((value, quote) => (
+    quote.length >= 4 ? value.split(quote).join('「」') : value
+  ), text);
+  const settledViolations = settledViolationsFromScene(quoteMasked, {
+    inputText: scene.inputText,
+    place: { name: scene.place.name, note: scene.place.note },
+    present: scene.present.map((person) => ({ name: person.name, note: person.note })),
+    objects: scene.objects.map((object) => ({ name: object.name, note: object.note })),
+    viewpoint: { name: scene.viewpoint.name, note: scene.viewpoint.note },
+  }, [...scene.licensed.names, scene.viewpoint.name]);
+  // A sentence that reproduces a settled scene description («牌面写明：…护目镜
+  // 必须戴好») is quoting the scene, not making a new claim: the appearance checks
+  // read a rule-board line as the narrator wearing the goggles (aa30/this test).
+  const settledDetails = [...scene.licensed.details, ...scene.licensed.quotes].filter((detail) => detail.length >= 6);
+  const quotesSettled = (sentence: string) => settledDetails.some((detail) => sentence.includes(detail) || detail.includes(sentence));
+  for (const violation of settledViolations) {
+    if (quotesSettled(violation.sentence)) continue;
+    issues.push({ kind: 'unlicensed_event', severity: 'hard', beatId: null, detail: violation.detail, sentence: violation.sentence });
   }
 
   // ---- 3. licensing ---------------------------------------------------------

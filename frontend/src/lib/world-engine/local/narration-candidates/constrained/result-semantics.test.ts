@@ -67,3 +67,24 @@ describe('a structured result is checked by meaning, not wording', () => {
     expect(result.issues.map((issue) => issue.kind)).toContain('fact_missing');
   });
 });
+
+import { settledViolationsFromScene } from '../../narration-generation/licensed-sense';
+
+describe('settled scene states are wired into the constrained route', () => {
+  const scene = {
+    place: { name: '器材棚', note: '箱子里放着演习弹' },
+    present: [{ name: '诺诺', note: '红发用发圈束在脑后' }],
+    objects: [{ name: '弗里嘉演习弹', note: '在器材棚的箱子里' }, { name: '护目镜', note: '挂在胸前' }],
+    viewpoint: { name: '路明非', note: '' },
+  };
+
+  it('an item in the shed is not in his hand', () => {
+    const found = settledViolationsFromScene('弗里嘉演习弹在手中发烫。', scene, ['路明非', '诺诺']);
+    expect(found.some((violation) => violation.detail.includes('弗里嘉演习弹'))).toBe(true);
+  });
+
+  it('a rule-board quote is not read as the narrator wearing goggles', () => {
+    const found = settledViolationsFromScene('牌面写明：护目镜必须戴好。', scene, ['路明非', '诺诺']);
+    expect(found).toHaveLength(0);
+  });
+});
