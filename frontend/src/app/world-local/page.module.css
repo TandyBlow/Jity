@@ -1,0 +1,297 @@
+/* The playable page's layout. Inline styles are avoided so the stylesheet
+   invariants (raw colours/font sizes/heights) stay enforceable. */
+:root {
+  --wl-ink: #222;
+  --wl-page: #f7f3ea;
+  --wl-rule: #d8ccb8;
+  --wl-ink-muted: #7c6f5d;
+  --wl-card: #fffdf8;
+  --wl-card-line: #ded4c2;
+  --wl-ink-soft: #7b6d59;
+  --wl-ink-faint: #8a7c68;
+  --wl-entry-line: #e2d6c1;
+  --wl-meta: #9a8b74;
+  --wl-model: #6b7a5a;
+  --wl-legacy: #a2762a;
+  --wl-notice: #fff6e0;
+  --wl-notice-line: #e6cf9d;
+  --wl-notice-ink: #7a5a1c;
+  --wl-error: #ffe8e5;
+  --wl-error-line: #e7b1a9;
+  --wl-error-ink: #8b2a1e;
+  --wl-button-line: #c9bda8;
+  --wl-button-ink: #6b5d4a;
+  --wl-input-line: #cfc3ae;
+  --wl-on-accent: #fff;
+  --wl-accent: #6d5232;
+  --wl-accent-busy: #b9ac96;
+  --wl-side-ink: #5f5343;
+  --wl-side-title: #3b2f20;
+  --wl-task-done: #9b8d78;
+}
+
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+  font-family: system-ui, "Noto Serif CJK SC", serif;
+  color: var(--wl-ink);
+  background: var(--wl-page);
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--wl-rule);
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--wl-ink-muted);
+  margin-top: 4px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+}
+
+.card {
+  background: var(--wl-card);
+  border: 1px solid var(--wl-card-line);
+  border-radius: 10px;
+  padding: 18px;
+  min-height: 280px;
+}
+
+.statusRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--wl-ink-soft);
+  margin-bottom: 10px;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.empty {
+  color: var(--wl-ink-faint);
+}
+
+.entry {
+  border-left: 3px solid var(--wl-entry-line);
+  padding-left: 12px;
+}
+
+.entryMeta {
+  font-size: 12px;
+  color: var(--wl-meta);
+  margin-bottom: 6px;
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.partText {
+  white-space: pre-wrap;
+  line-height: 1.9;
+  font-size: 16px;
+}
+
+.partSource {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.partSourceModel {
+  color: var(--wl-model);
+}
+
+.partSourceLegacy {
+  color: var(--wl-legacy);
+}
+
+.segments {
+  font-size: 11px;
+  color: var(--wl-ink-faint);
+  margin-top: 2px;
+}
+
+.segment {
+  margin-right: 8px;
+}
+
+.notice {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--wl-notice);
+  border: 1px solid var(--wl-notice-line);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--wl-notice-ink);
+}
+
+.noticeError {
+  background: var(--wl-error);
+  border-color: var(--wl-error-line);
+  color: var(--wl-error-ink);
+}
+
+.noticeWrap {
+  white-space: pre-wrap;
+}
+
+.ghostButton {
+  border: 1px solid var(--wl-button-line);
+  background: transparent;
+  padding: 2px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--wl-button-ink);
+}
+
+.headerButton {
+  padding: 6px 10px;
+}
+
+.inlineButton {
+  margin-left: 10px;
+}
+
+.inlineButtonTight {
+  margin-left: 6px;
+}
+
+.inlineButtonWide {
+  margin-left: 8px;
+}
+
+.failed {
+  font-size: 12px;
+  color: var(--wl-error-ink);
+  margin-top: 6px;
+}
+
+.note {
+  font-size: 12px;
+  color: var(--wl-legacy);
+  margin-top: 6px;
+}
+
+.composer {
+  margin-top: 16px;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  font: inherit;
+  line-height: 1.6;
+  border: 1px solid var(--wl-input-line);
+  border-radius: 8px;
+  background: var(--wl-card);
+  resize: vertical;
+}
+
+.composerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--wl-ink-faint);
+}
+
+.submit {
+  padding: 9px 20px;
+  border-radius: 7px;
+  border: 0;
+  color: var(--wl-on-accent);
+  font: inherit;
+}
+
+.submitReady {
+  background: var(--wl-accent);
+  cursor: pointer;
+}
+
+.submitBusy {
+  background: var(--wl-accent-busy);
+  cursor: default;
+}
+
+.side {
+  font-size: 13px;
+  color: var(--wl-side-ink);
+}
+
+.sideCard {
+  background: var(--wl-card);
+  border: 1px solid var(--wl-card-line);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.sideCardSpaced {
+  margin-top: 12px;
+}
+
+.sideTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--wl-side-title);
+  margin-bottom: 8px;
+}
+
+.sideLabelSpaced {
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.sideRow {
+  margin-top: 4px;
+}
+
+.taskList {
+  padding-left: 18px;
+  margin: 6px 0 0;
+  line-height: 1.6;
+}
+
+.taskDone {
+  color: var(--wl-task-done);
+  text-decoration: line-through;
+}
+
+.sideMuted {
+  font-size: 12px;
+  color: var(--wl-ink-soft);
+}
+
+.sideMutedSpaced {
+  font-size: 12px;
+  color: var(--wl-ink-soft);
+  margin-top: 8px;
+}

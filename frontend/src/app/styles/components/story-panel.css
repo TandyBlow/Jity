@@ -9,7 +9,7 @@
   /* Top pad clears the fixed .game-brand, which sits at (22, 28) and is 38 tall. */
   padding: 68px var(--space-8) var(--space-6);
   overflow: hidden;
-  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.72);
+  text-shadow: var(--text-shadow-story);
 }
 
 .story-panel > .toolbar-row {
@@ -24,7 +24,7 @@
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--surface-glass);
-  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--shadow-story-top);
   backdrop-filter: blur(18px);
   text-shadow: none;
 }
@@ -274,7 +274,7 @@
   padding: var(--space-4) var(--space-4);
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 45%, transparent);
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--color-accent-2) 9%, rgba(8, 10, 14, 0.86));
+  background: color-mix(in srgb, var(--color-accent-2) 9%, var(--surface-story-tint));
 }
 
 .autoplay-banner > div { display: grid; gap: 4px; }

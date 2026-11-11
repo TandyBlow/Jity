@@ -23,7 +23,7 @@
   border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
   border-radius: var(--radius-lg);
   background: var(--surface-glass);
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.36);
+  box-shadow: var(--shadow-overlay);
 }
 
 .main-check-card-head,
@@ -136,7 +136,7 @@
 }
 
 .main-check-result.critical .main-check-result-title {
-  color: #f2ce83;
+  color: var(--color-check-gold);
 }
 
 .main-check-result.failure .main-check-result-title {

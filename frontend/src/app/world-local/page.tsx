@@ -19,6 +19,7 @@ import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/worl
 import { stateDigest } from '@/lib/world-engine/local/state';
 import { STATIC_WORLD_ASSET, STATIC_WORLD_REGISTRATION } from '@/lib/world-engine/local/static-world-registration';
 import type { WorldState } from '@/lib/world-engine/types';
+import styles from './page.module.css';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
@@ -1186,31 +1187,31 @@ export default function WorldLocalPage() {
   }, []);
 
   return (
-    <main style={{ maxWidth: 920, margin: '0 auto', padding: '28px 20px 60px', fontFamily: 'system-ui, "Noto Serif CJK SC", serif', color: '#222', background: '#f7f3ea', minHeight: '100vh' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid #d8ccb8', paddingBottom: 12, marginBottom: 18 }}>
+    <main className={styles.page}>
+      <header className={styles.header}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, letterSpacing: 1 }}>龙族 · 自由一日</h1>
-          <div style={{ fontSize: 12, color: '#7c6f5d', marginTop: 4 }}>全部在浏览器本地运行 · 服务器只负责存档</div>
+          <h1 className={styles.title}>龙族 · 自由一日</h1>
+          <div className={styles.subtitle}>全部在浏览器本地运行 · 服务器只负责存档</div>
         </div>
-        <button onClick={reset} style={{ border: '1px solid #c9bda8', background: 'transparent', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>重新开始</button>
+        <button onClick={reset} className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新开始'}</button>
       </header>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20 }}>
+      <section className={styles.layout}>
         <div>
-          <div style={{ background: '#fffdf8', border: '1px solid #ded4c2', borderRadius: 10, padding: 18, minHeight: 280 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7b6d59', marginBottom: 10 }}>
+          <div className={styles.card}>
+            <div className={styles.statusRow}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
               <span>
                 {phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}
-                {busy && <button onClick={() => void cancelTurn()} style={{ marginLeft: 10, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>取消本轮</button>}
-                {phase === 'loading' && <button onClick={() => void cancelTurn()} style={{ marginLeft: 10, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>取消加载</button>}
+                {busy && <button onClick={() => void cancelTurn()} className={`${styles.ghostButton} ${styles.inlineButton}`}>{'取消本轮'}</button>}
+                {phase === 'loading' && <button onClick={() => void cancelTurn()} className={`${styles.ghostButton} ${styles.inlineButton}`}>{'取消加载'}</button>}
               </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {entries.length === 0 && <div style={{ color: '#8a7c68' }}>{phase === 'loading' ? `正在加载本地模型，第一次会久一些（已等待 ${loadSeconds}s，上限 120s）。` : '等待输入…'}</div>}
+            <div className={styles.entries}>
+              {entries.length === 0 && <div className={styles.empty}>{phase === 'loading' ? `正在加载本地模型，第一次会久一些（已等待 ${loadSeconds}s，上限 120s）。` : '等待输入…'}</div>}
               {entries.map((entry) => (
-                <article key={entry.key} style={{ borderLeft: '3px solid #e2d6c1', paddingLeft: 12 }}>
-                  <div style={{ fontSize: 12, color: '#9a8b74', marginBottom: 6 }}>
+                <article key={entry.key} className={styles.entry}>
+                  <div className={styles.entryMeta}>
                     你：{entry.input}
                     {entry.acceptedMs != null ? ` · 正文完成 ${(entry.acceptedMs / 1000).toFixed(1)}s（原样显示，未经核对）` : ''}
                     {entry.draftMs != null ? ` · 正文出现 ${(entry.draftMs / 1000).toFixed(1)}s` : ''}
@@ -1219,11 +1220,11 @@ export default function WorldLocalPage() {
                     {entry.acceptedMs == null && entry.programMs == null && entry.draftMs != null ? ` · 草稿 ${(entry.draftMs / 1000).toFixed(1)}s（未核对）` : ''}
                   </div>
                   {entry.points && entry.points.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div className={styles.points}>
                       {entry.points.map((part) => (
                         <div key={part.pointId}>
-                          <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{part.text}</div>
-                          <div style={{ fontSize: 11, color: part.source === 'model' ? '#6b7a5a' : '#a2762a', marginTop: 2 }}>
+                          <div className={styles.partText}>{part.text}</div>
+                          <div className={`${styles.partSource} ${part.source === 'model' ? styles.partSourceModel : styles.partSourceLegacy}`}>
                             {part.source === 'model' ? '模型正文（原样显示，未做内容核对）'
                               : part.source === 'program' ? '旧存档：程序按已结算事实成文'
                                 : part.source === 'mixed' ? '旧存档：模型句与程序句混合'
@@ -1231,9 +1232,9 @@ export default function WorldLocalPage() {
                                     : '来源未记录'}
                           </div>
                           {part.segments && part.segments.length > 1 ? (
-                            <div style={{ fontSize: 11, color: '#8a7c68', marginTop: 2 }}>
+                            <div className={styles.segments}>
                               {part.segments.map((segment) => (
-                                <span key={segment.id} style={{ marginRight: 8 }}>
+                                <span key={segment.id} className={styles.segment}>
                                   {segment.kind}:{segment.source === 'model' ? '模型' : segment.source === 'draft' ? '旧草稿' : segment.source === 'program' ? '旧程序' : segment.source}
                                 </span>
                               ))}
@@ -1243,55 +1244,55 @@ export default function WorldLocalPage() {
                       ))}
                     </div>
                   ) : (
-                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 16 }}>{entry.text || (entry.failed || entry.cancelled || entry.restored ? '' : '…')}</div>
+                    <div className={styles.partText}>{entry.text || (entry.failed || entry.cancelled || entry.restored ? '' : '…')}</div>
                   )}
-                  {entry.failed && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>{entry.note ?? '本回合没有完成。'}</div>}
-                  {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字不计入正文。</div>}
-                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.note}</div>}
+                  {entry.failed && <div className={styles.failed}>{entry.note ?? '本回合没有完成。'}</div>}
+                  {entry.cancelled && <div className={styles.failed}>本轮已取消，上方文字不计入正文。</div>}
+                  {entry.note && <div className={styles.note}>{entry.note}</div>}
                 </article>
               ))}
             </div>
           </div>
 
-          {leaseBlocked && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>
+          {leaseBlocked && <div className={styles.notice}>
             存档没有被改动。另一个标签页（或刚关闭的页面）还持有写入权。
-            <button onClick={() => window.location.reload()} style={{ marginLeft: 8, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>重试</button>
-            <button onClick={() => void takeOverLease()} style={{ marginLeft: 6, border: '1px solid #c9bda8', background: 'transparent', padding: '2px 8px', borderRadius: 6, cursor: 'pointer', color: '#6b5d4a' }}>在这个标签页接管</button>
+            <button onClick={() => window.location.reload()} className={`${styles.ghostButton} ${styles.inlineButtonWide}`}>{'重试'}</button>
+            <button onClick={() => void takeOverLease()} className={`${styles.ghostButton} ${styles.inlineButtonTight}`}>{'在这个标签页接管'}</button>
           </div>}
-          {durable === false && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c' }}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
-          {warning && <div style={{ marginTop: 10, padding: '8px 10px', background: '#fff6e0', border: '1px solid #e6cf9d', borderRadius: 6, fontSize: 12, color: '#7a5a1c', whiteSpace: 'pre-wrap' }}>{warning}</div>}
-          {error && <div style={{ marginTop: 10, padding: '8px 10px', background: '#ffe8e5', border: '1px solid #e7b1a9', borderRadius: 6, fontSize: 12, color: '#8b2a1e', whiteSpace: 'pre-wrap' }}>{error}</div>}
+          {durable === false && <div className={styles.notice}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
+          {warning && <div className={`${styles.notice} ${styles.noticeWrap}`}>{warning}</div>}
+          {error && <div className={`${styles.notice} ${styles.noticeError} ${styles.noticeWrap}`}>{error}</div>}
 
-          <div style={{ marginTop: 16 }}>
+          <div className={styles.composer}>
             <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) void submit(); }} rows={3}
               placeholder="输入你要做的事，例如：我沿着车道向西回廊快走，贴着墙，注意听枪声。"
-              style={{ width: '100%', boxSizing: 'border-box', padding: 12, font: 'inherit', lineHeight: 1.6, border: '1px solid #cfc3ae', borderRadius: 8, background: '#fffdf8', resize: 'vertical' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-              <span style={{ fontSize: 12, color: '#8a7c68' }}>Ctrl/⌘ + Enter 提交 · 模型只读取已结算状态</span>
+              className={styles.input} />
+            <div className={styles.composerRow}>
+              <span className={styles.hint}>Ctrl/⌘ + Enter 提交 · 模型只读取已结算状态</span>
               <button onClick={() => void submit()} disabled={busy || phase === 'loading' || !input.trim()}
-                style={{ padding: '9px 20px', borderRadius: 7, border: 0, background: busy || phase === 'loading' ? '#b9ac96' : '#6d5232', color: '#fff', font: 'inherit', cursor: busy || phase === 'loading' ? 'default' : 'pointer' }}>
+                className={`${styles.submit} ${busy || phase === 'loading' ? styles.submitBusy : styles.submitReady}`}>
                 {busy ? '结算中…' : '行动'}
               </button>
             </div>
           </div>
         </div>
 
-        <aside style={{ fontSize: 13, color: '#5f5343' }}>
-          <div style={{ background: '#fffdf8', border: '1px solid #ded4c2', borderRadius: 10, padding: 14 }}>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#3b2f20', marginBottom: 8 }}>{view?.name ?? '路明非'}</div>
+        <aside className={styles.side}>
+          <div className={styles.sideCard}>
+            <div className={styles.sideTitle}>{view?.name ?? '路明非'}</div>
             <div>精神值：{view?.sanity ?? '—'}</div>
-            <div style={{ marginTop: 4 }}>地点：{view?.place ?? '—'}</div>
-            <div style={{ marginTop: 12, fontWeight: 600 }}>在附近</div>
-            <div style={{ marginTop: 4 }}>{view?.visible.length ? view.visible.join('、') : '没有别人'}</div>
-            <div style={{ marginTop: 12, fontWeight: 600 }}>当前任务</div>
-            <ul style={{ paddingLeft: 18, margin: '6px 0 0', lineHeight: 1.6 }}>
-              {(view?.tasks ?? []).map((task, index) => <li key={index} style={{ color: task.done ? '#9b8d78' : '#4b3d2b', textDecoration: task.done ? 'line-through' : 'none' }}>{task.goal}</li>)}
+            <div className={styles.sideRow}>地点：{view?.place ?? '—'}</div>
+            <div className={styles.sideLabelSpaced}>在附近</div>
+            <div className={styles.sideRow}>{view?.visible.length ? view.visible.join('、') : '没有别人'}</div>
+            <div className={styles.sideLabelSpaced}>当前任务</div>
+            <ul className={styles.taskList}>
+              {(view?.tasks ?? []).map((task, index) => <li key={index} className={task.done ? styles.taskDone : undefined}>{task.goal}</li>)}
             </ul>
           </div>
-          <div style={{ background: '#fffdf8', border: '1px solid #ded4c2', borderRadius: 10, padding: 14, marginTop: 12 }}>
-            <div style={{ fontWeight: 600, marginBottom: 6 }}>本地存档</div>
-            <div style={{ fontSize: 12, color: '#7b6d59' }}>每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
-            <div style={{ fontSize: 12, color: '#7b6d59', marginTop: 8 }}>已行动：{history.length} 次</div>
+          <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
+            <div className={styles.sideTitle}>本地存档</div>
+            <div className={styles.sideMuted}>每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
+            <div className={styles.sideMutedSpaced}>已行动：{history.length} 次</div>
           </div>
         </aside>
       </section>

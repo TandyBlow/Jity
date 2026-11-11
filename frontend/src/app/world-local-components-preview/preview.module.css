@@ -1,10 +1,27 @@
 /* Preview-only chrome. The playable components keep their own module CSS; this
    file only styles the clearly-marked fixture banner and state switches. */
+:root {
+  --preview-page-bg: #e9e2d4;
+  --preview-ink: #2c2318;
+  --preview-gold: #7a5b19;
+  --preview-gold-wash: #fff3d8;
+  --preview-ink-soft: #5f5343;
+  --preview-brown: #6d5232;
+  --preview-line: #d3c6b0;
+  --preview-card: #fffdf8;
+  --preview-ink-muted: #7b6d59;
+  --preview-line-strong: #c9bda8;
+  --preview-on-brown: #fff;
+  --preview-ink-strong: #4b3d2b;
+  --preview-line-warm: #e4cb91;
+}
+
+
 .shell {
   min-height: 100vh;
-  background: #e9e2d4;
+  background: var(--preview-page-bg);
   font-family: system-ui, "Noto Serif CJK SC", "Songti SC", serif;
-  color: #2c2318;
+  color: var(--preview-ink);
 }
 
 .hero,
@@ -23,10 +40,10 @@
   display: inline-block;
   margin: 0 0 6px;
   padding: 2px 8px;
-  border: 1px solid #7a5b19;
+  border: 1px solid var(--preview-gold);
   border-radius: 999px;
-  color: #7a5b19;
-  background: #fff3d8;
+  color: var(--preview-gold);
+  background: var(--preview-gold-wash);
   font-size: 12px;
 }
 
@@ -39,13 +56,13 @@
 .heroText {
   max-width: 780px;
   margin: 0 0 6px;
-  color: #5f5343;
+  color: var(--preview-ink-soft);
   font-size: 13px;
   line-height: 1.7;
 }
 
 .link {
-  color: #6d5232;
+  color: var(--preview-brown);
   font-weight: 600;
 }
 
@@ -67,13 +84,13 @@
   gap: 8px;
   min-width: 0;
   padding: 12px;
-  border: 1px solid #d3c6b0;
+  border: 1px solid var(--preview-line);
   border-radius: 10px;
-  background: #fffdf8;
+  background: var(--preview-card);
 }
 
 .groupLabel {
-  color: #7b6d59;
+  color: var(--preview-ink-muted);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -88,46 +105,46 @@
 .toggle {
   min-height: 32px;
   padding: 4px 10px;
-  border: 1px solid #c9bda8;
+  border: 1px solid var(--preview-line-strong);
   border-radius: 6px;
-  color: #2c2318;
-  background: #fffdf8;
+  color: var(--preview-ink);
+  background: var(--preview-card);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 
 .toggle:hover {
-  border-color: #6d5232;
+  border-color: var(--preview-brown);
 }
 
 .toggle[aria-pressed="true"] {
-  border-color: #6d5232;
-  color: #fff;
-  background: #6d5232;
+  border-color: var(--preview-brown);
+  color: var(--preview-on-brown);
+  background: var(--preview-brown);
 }
 
 .check {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #4b3d2b;
+  color: var(--preview-ink-strong);
   font-size: 12px;
   line-height: 1.5;
 }
 
 .check input[type="checkbox"],
 .check input[type="radio"] {
-  accent-color: #6d5232;
+  accent-color: var(--preview-brown);
 }
 
 .check select {
   min-height: 28px;
   padding: 2px 6px;
-  border: 1px solid #c9bda8;
+  border: 1px solid var(--preview-line-strong);
   border-radius: 6px;
-  color: #2c2318;
-  background: #fffdf8;
+  color: var(--preview-ink);
+  background: var(--preview-card);
   font: inherit;
   font-size: 12px;
 }
@@ -135,7 +152,7 @@
 .request,
 .note {
   margin: 0;
-  color: #5f5343;
+  color: var(--preview-ink-soft);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -145,7 +162,7 @@
 }
 
 .note {
-  color: #7b6d59;
+  color: var(--preview-ink-muted);
 }
 
 .banner {
@@ -153,19 +170,19 @@
   flex-wrap: wrap;
   gap: 6px 10px;
   padding: 9px 12px;
-  border: 1px solid #e4cb91;
+  border: 1px solid var(--preview-line-warm);
   border-radius: 8px;
-  color: #7a5b19;
-  background: #fff3d8;
+  color: var(--preview-gold);
+  background: var(--preview-gold-wash);
   font-size: 12px;
 }
 
 .metaBadge {
   padding: 2px 8px;
-  border: 1px solid #c9bda8;
+  border: 1px solid var(--preview-line-strong);
   border-radius: 999px;
-  color: #5f5343;
-  background: #fffdf8;
+  color: var(--preview-ink-soft);
+  background: var(--preview-card);
   font-size: 12px;
 }
 
