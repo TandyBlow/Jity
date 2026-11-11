@@ -91,6 +91,7 @@ def main() -> int:
     parser.add_argument("--catalog", type=Path, nargs="+", required=True)
     parser.add_argument("--allowed-goals", type=Path, required=True)
     parser.add_argument("--snapshots", type=Path, default=HERE / "snapshots")
+    parser.add_argument("--class-defaults", type=Path, default=None, help="JSON {caseId: A|B|skip} used when a case has no rowClass")
     parser.add_argument("--row-prefix", default="train13", help="rowId prefix; keep batches from colliding")
     parser.add_argument("--row-start", type=int, default=1)
     parser.add_argument("--out", type=Path, default=HERE / "rows" / "train-candidates-v1.jsonl")
@@ -104,6 +105,10 @@ def main() -> int:
     allowed_payload = json.loads(args.allowed_goals.read_text(encoding="utf-8"))
     allowed = set(allowed_payload["goalIds"])
     catalog = load_catalog(args.catalog)
+    if args.class_defaults:
+        defaults = json.loads(args.class_defaults.read_text(encoding="utf-8"))
+        for case in catalog:
+            case.setdefault("rowClass", defaults.get(case["caseId"]))
     serializer = loader.load_serializer(args.loader_serializer)
 
     rows: list[dict] = []
