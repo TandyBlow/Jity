@@ -109,7 +109,7 @@ node node_modules/vitest/vitest.mjs run --maxWorkers=1
 结果：
 
 - `tsc --noEmit`：通过。
-- point-narration：6/6 通过。`overlap.test.ts` 用真实 `LocalWorldTransport` + `ControllerDriver`：p1 正文被 deliberately hold，p2 仍完成 commit；释放 p1 后 p1 文本只落在 p1，p2 保持自己的文本；从中间 record 恢复只补正文、不发 action，不重复 commit。`policy-stop.test.ts` 在自动 continuation policy-stop 的 cancel 被 `narration_blocked` 拒绝后，先等同一 p1 正文完成再成功 cancel；没有该等待时测试会得到 driver step-limit error。
+- point-narration：6/6 通过。`overlap.test.ts` 用真实 `LocalWorldTransport` + `ControllerDriver`：p1 正文被 deliberately hold，p2 仍完成 commit；释放 p1 后 p1 文本只落在 p1，p2 保持自己的文本；从中间 record 恢复只补正文、不发 action，不重复 commit。`policy-stop.test.ts` 用两个点：p1 正文被 hold 时 p2 仍提交；自动 continuation policy-stop 的 cancel 被 `narration_blocked` 拒绝后，先等同一 p1 正文完成再成功 cancel；没有该等待时测试会得到 driver step-limit error。
 - world-engine：`968 passed / 3 skipped`。
 - 完整 frontend（**临时应用两个 06 补丁后**）：`1048 passed / 3 skipped`，74 个测试文件 72 通过、2 跳过。未应用补丁时同样 1048 通过；补丁只改变产品 session/game-model 路径，不改变既有测试预期。
 - 没有启动服务、模型、GPU 或真实页面；真实双引擎/首段/恢复测试仍由 09 执行。
