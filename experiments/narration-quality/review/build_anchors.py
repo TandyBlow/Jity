@@ -1599,6 +1599,25 @@ anchors.append({
                "notes": "program recital; the goggles act; the result panel «诺诺：因此未被阻止或反应» is a status line."},
 })
 
+
+# 6565: partial model sentences, but the board is placed both on the ground and
+# on the right wall in the same text.
+run6565 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-6565.json", encoding="utf-8"))
+t6565 = run6565["turns"][0]
+anchors.append({
+    "id": "neg/route/6565-board-two-places",
+    "source": "09 constrained-beats 2026-11-11T0041-f459 (head 6565dc0f): mixed 502 chars, partial settled sentences",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t6565["text"],
+    "options": {"minChars": 1, "action": t6565["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"], "review": ["review.self_contradiction"],
+               "notes": "the board is «在地面闪烁» and «在右墙贴着» in the same text; the player walk/read is still missing."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",

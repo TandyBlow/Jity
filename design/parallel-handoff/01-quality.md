@@ -241,3 +241,4 @@
 - 跨回合分析（两个 3-turn 真实页运行）：玩家动作/问题/路线请求均未落地；状态面板三回合退化；护目镜连续当行动者；d101 第 2 回合=第 1 回合逐字，`history_delta_0`。见 `results/quality/cross-turn-3turn.md`。
 - constrained 6e3a（head 6e3ac5e0）：第 1 回合程序 112 字；`too_long`（480-token 预算 vs 170 字默认 beatMaxChars）+ `ungrounded,low_support`；状态面板第三种措辞；FAILED 1 回合。请求见 `results/quality/requests-01-to-06-6e3a-too-long.md`。
 - 01 checker 第六遍：`name：` 面板规则补 `未被/未获得/未达成/阻止/达成目标`；448e/05e7/6e3a 三处真实面板判 `style.status_panel`；新增 6e3a 锚点（94 总数）。
+- constrained 6565（head 6565dc0f）：首次 `mixed` 502 字（部分句子按已结算事实），但无 accepted model text；走/看未落地、裸状态列表、面板、规则牌同文两处。checker 补：面板词表、同物两处 `review.self_contradiction`、`诺诺红发` 合词不误判（95 锚点）。

@@ -85,7 +85,8 @@ export type FindingKind =
   | 'review.personality_recital'
   | 'review.promise_in_dialogue'
   | 'review.natural_sanity'
-  | 'review.tone';
+  | 'review.tone'
+  | 'review.self_contradiction';
 
 export interface Finding {
   kind: FindingKind;

@@ -915,7 +915,8 @@ export function reviewNarration(args: {
         // person in the sentence is a misattribution.
         const before = narration.slice(Math.max(0, colourAt - 10), colourAt);
         // 诺诺的红发 / 诺诺发间晃动的红发: the owner is the possessive.
-        if (before.includes(owner) && /(的|发间|发上|发梢|头发|红发)$/u.test(before)) continue;
+        if (before.includes(owner)
+          && (/(的|发间|发上|发梢|头发|红发)$/u.test(before) || before.endsWith(owner))) continue;
         const hits = nameHits(narration, names, Object.keys(projection.people));
         const wrong = hits.find((hit) => hit.name !== owner);
         if (wrong) {
@@ -1715,6 +1716,28 @@ export function reviewNarration(args: {
           findings.push(finding(ctx, 'fact.state_contradiction', sentence.text,
             `the state says the container can hold ${noun}, not that it contains one`, [], []));
         }
+      }
+    }
+    // The same object cannot sit in two explicit places in one text. The
+    // 6565 program text puts the rule board «在地面闪烁» and later «在右墙贴着».
+    if (sentence === sentences[0]) {
+      const PLACE_WORDS = ['地面', '地上', '墙上', '右墙', '左墙', '桌上', '桌角', '桌下', '窗边', '窗台',
+        '门口', '门后', '巷口', '巷子里', '台阶', '石阶', '胸前', '膝上', '手里', '手中', '怀里',
+        '脚边', '脚下', '架子上', '铁架上', '盒子里', '箱底', '袋子', '书架上'];
+      for (const item of Object.keys(projection.items ?? {})) {
+        const places = new Set<string>();
+        for (const place of PLACE_WORDS) {
+          if (new RegExp(`${escapeRegExp(item)}[^。；]{0,8}(?:在|贴着|放在|摆在|挂在|躺在|落在)${place}`, 'u').test(text)) {
+            places.add(place);
+          }
+        }
+        if (places.size < 2) continue;
+        // A place inside a settled parent (巷口 inside 西侧服务巷) is the same spot.
+        const parts = [...places];
+        const nested = parts.some((a) => parts.some((b) => a !== b && (a.includes(b) || b.includes(a))));
+        if (nested) continue;
+        findings.push(finding(ctx, 'review.self_contradiction', sentences[sentences.length - 1]?.text ?? text,
+          `${item} is placed in ${parts.join(' / ')} in the same text`, [], []));
       }
     }
     // A settled identifying band stays where the state put it on the body.
