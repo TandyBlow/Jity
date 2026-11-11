@@ -1247,7 +1247,7 @@ export default function WorldLocalPage() {
                   )}
                   {entry.failed && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>{entry.note ?? '本回合没有完成。'}</div>}
                   {entry.cancelled && <div style={{ fontSize: 12, color: '#8b2a1e', marginTop: 6 }}>本轮已取消，上方文字未通过核对，不计入正文。</div>}
-                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}
+                  {entry.note && <div style={{ fontSize: 12, color: '#a2762a', marginTop: 6 }}>{entry.cancelled || entry.points?.some((part) => part.source === 'draft') ? '' : '正文已按已结算事实修正：'}{entry.note}</div>}
                 </article>
               ))}
             </div>
