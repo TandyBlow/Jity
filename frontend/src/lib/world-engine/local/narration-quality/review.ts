@@ -1502,11 +1502,14 @@ export function reviewNarration(args: {
       for (const itemName of itemNames) {
         if (itemName.length < 2 || !narration.includes(itemName)) continue;
         const item = projection.items[itemName];
-        const acting = new RegExp(`${escapeRegExp(itemName)}[^，。；]{0,8}(?:站着|站了|站在|走到|走了|走向|来到|转身|伸手|坐下|躺下|低头|抬头|看向|望着|听到|听见|说道|开口|笑|点头|摇头|起身)`, 'u');
+        // 736a: «路明非的护目镜沿服务巷往里走» — the goggles walk the alley.
+        const acting = new RegExp(`${escapeRegExp(itemName)}[^，。；]{0,12}(?:站着|站了|站在|走到|走了|走向|走过|往里走|往前|沿[^，。；]{0,8}走|来到|转身|伸手|坐下|躺下|低头|抬头|看向|望着|听到|听见|说道|开口|笑|点头|摇头|起身)`, 'u');
         const hit = acting.exec(narration);
         if (!hit) continue;
         const before = narration.slice(Math.max(0, hit.index - 10), hit.index);
         if (heldInHand.test(before) || heldInHand.test(narration.slice(0, hit.index))) continue;
+        // «把/将/让 X» makes the item the object of someone's verb, not the actor.
+        if (/(把|将|让|使|给)$/u.test(before.trimEnd())) continue;
         if (/(?:里|中|内)(?:传来|说|响|播|放)/u.test(narration.slice(hit.index + itemName.length, hit.index + itemName.length + 6))) continue;
         // «伸手够得到» is a reachability idiom, not the item reaching (human dr-0012).
         if (/(?:够得到|够得着|伸手可及|唾手可得)/u.test(narration.slice(hit.index, hit.index + itemName.length + 12))) continue;
@@ -1895,6 +1898,21 @@ export function reviewNarration(args: {
   for (const [entry, count] of sentenceCounts) {
     if (count < 2) continue;
     findings.push(finding(ctx, 'style.loop', entry, `sentence repeated ${count} times`, []));
+  }
+  // A clause repeated inside one paragraph is a loop even when the sentences
+  // differ by a prefix (736a: «护目镜沿服务巷往里走» four times in one text).
+  {
+    const clauses = text
+      .split(/[。！？；\n]+/u)
+      .flatMap((part) => part.split(/[，,]/u))
+      .map((part) => normalize(part))
+      .filter((part) => part.length >= 6);
+    const clauseCounts = new Map<string, number>();
+    for (const clause of clauses) clauseCounts.set(clause, (clauseCounts.get(clause) ?? 0) + 1);
+    for (const [clause, count] of clauseCounts) {
+      if (count < 3) continue;
+      findings.push(finding(ctx, 'style.loop', clause, `clause repeated ${count} times`, []));
+    }
   }
   if (/。。|，，|、、|；；|：：/u.test(text)) {
     const hit = sentences.find((entry) => /。。|，，|、、|；；|：：/u.test(entry.text) || entry.text === '。');

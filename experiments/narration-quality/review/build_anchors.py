@@ -1714,6 +1714,26 @@ anchors.append({
                "notes": "no panel and no goggles contradiction; the board and the walk are absent."},
 })
 
+
+# 736a (root retest): the projector selected the goggles as viewpoint, so the
+# command became «护目镜沿服务巷往里走» and looped. Hard item_actor, loop,
+# action omission; source=model.
+run_736a = json.load(io.open(ROOT + "/results/product/evidence/root-constrained-736a-retry.json", encoding="utf-8"))
+t_736a = run_736a["turns"][0]
+anchors.append({
+    "id": "neg/route/736a-item-walks-and-loops",
+    "source": "root same-input retest 2026-11-11T0226-4599 (head 736a3841): model 71 chars, accepted 97.2s",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_736a["text"],
+    "options": {"minChars": 40, "action": t_736a["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.item_actor", "fact.action_omitted"], "style": ["style.loop"],
+               "notes": "the goggles walk the alley repeatedly; the player's walk/read is gone."},
+})
+
 os.makedirs(OUT, exist_ok=True)
 batch = {
     "version": "narration-quality-anchors-v1",
