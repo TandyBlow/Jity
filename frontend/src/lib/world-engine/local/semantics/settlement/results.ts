@@ -71,6 +71,9 @@ interface ResultsAnswer {
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
   droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' }[];
+  /** Members whose judgement row the model omitted and which had no declared
+   * roll target; they are recorded as no_change and must be visible in evidence. */
+  implicitJudgments?: Id[];
 }
 
 const LABELS = new Set(['achieved', 'partial', 'not_achieved', 'blocked', 'no_change']);
@@ -161,6 +164,7 @@ export async function runResults(
       labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
       droppedNonMemberJudgments: parsedAnswer.dropped ?? [],
       droppedFacts: parsedAnswer.droppedFacts ?? [],
+      implicitJudgments: parsedAnswer.implicitJudgments ?? [],
       deniedRolls: members.flatMap((member) => member.rolls
         .filter((roll) => !roll.admitted)
         .map((roll) => ({ sourceId: member.memberId, targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible }))),
@@ -384,7 +388,24 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     }
     judgments.push({ memberId, label: label as Judgment['label'], reason: rawJudgment.reason, effects });
   }
-  for (const member of members) if (!seen.has(member.memberId)) throw new Error(`missing judgment for ${member.memberId}`);
+  // A member with no declared roll target carries no effect to settle: its
+  // judgement row is evidence, not state (the six stages read facts, never
+  // labels). 3turn 9623's turn 2 spent 59 s and failed the whole point because
+  // the model omitted the player's row in a lu+nono question group. Such a row
+  // is recorded as an explicit no_change and listed in evidence; a member whose
+  // roll target must be settled still has to answer for itself.
+  const implicit: Id[] = [];
+  for (const member of members) {
+    if (seen.has(member.memberId)) continue;
+    if (member.rolls.length) throw new Error(`missing judgment for ${member.memberId}`);
+    judgments.push({
+      memberId: member.memberId,
+      label: 'no_change',
+      reason: '模型漏写这一行；该成员没有判定目标，按无变化记录',
+      effects: [],
+    });
+    implicit.push(member.memberId);
+  }
   // A member whose action provably did not happen — the group judged it
   // not_achieved and every one of its rolls was denied — has no result to
   // narrate. Requiring a fact for it made the model copy its judgement reason
@@ -475,6 +496,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
     judgments, facts, dropped,
     ...(sanitized.length ? { sanitized } : {}),
     ...(droppedFacts.length ? { droppedFacts } : {}),
+    ...(implicit.length ? { implicitJudgments: implicit } : {}),
   };
 }
 
