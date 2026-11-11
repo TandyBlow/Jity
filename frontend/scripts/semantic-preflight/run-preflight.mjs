@@ -218,6 +218,14 @@ const PROBE_SCHEMA = {
   properties: { label: { type: 'string', enum: ['甲', '乙'] } },
 };
 const PROBE_PROMPT = '只输出 JSON，不要解释。请判断下面这句话的情感：我一点也不高兴。\n输出 {"label":"丙"}。';
+/** A single-member enum the model has no reason to pick. An output of exactly
+ * 戊 cannot come from following the prompt, which asks for 丙. */
+const PROBE_FORCED_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['label'],
+  properties: { label: { type: 'string', enum: ['戊'] } },
+};
 
 async function run() {
   const base = arg('base', 'http://127.0.0.1:3241');
@@ -319,13 +327,22 @@ async function run() {
     };
 
     // ── phase 1: is the enum actually enforced by the decoder? ─────────────
-    for (const withSchema of [true, false]) {
+    // Three conditions on the same prompt, which demands the out-of-enum label
+    // 丙: (a) a two-member enum, (b) no constraint at all, (c) a single-member
+    // enum 戊 that the model has no reason to choose. Only (c) proves the
+    // decoder, not the prompt, is deciding: a prompt-following model would say
+    // 丙, so an output of exactly 戊 can only come from the grammar.
+    for (const probe of [
+      { name: 'schema-enum-two', withSchema: true, prompt: PROBE_PROMPT, schema: PROBE_SCHEMA },
+      { name: 'no-schema', withSchema: false, prompt: PROBE_PROMPT, schema: null },
+      { name: 'schema-single-forced', withSchema: true, prompt: PROBE_PROMPT, schema: PROBE_FORCED_SCHEMA },
+    ]) {
       for (let trial = 1; trial <= 2; trial += 1) {
         const result = await call({
-          prompt: PROBE_PROMPT, maxTokens: 16, temperature: CONFIG.temperature, seed: CONFIG.seed,
-          cachePrompt: false, schema: withSchema ? PROBE_SCHEMA : null, schemaName: 'probe',
+          prompt: probe.prompt, maxTokens: 16, temperature: CONFIG.temperature, seed: CONFIG.seed,
+          cachePrompt: false, schema: probe.schema, schemaName: 'probe',
         });
-        await write({ kind: 'probe', withSchema, trial, prompt: PROBE_PROMPT, schema: withSchema ? PROBE_SCHEMA : null, ...result });
+        await write({ kind: 'probe', name: probe.name, withSchema: probe.withSchema, trial, prompt: probe.prompt, schema: probe.schema, ...result });
         if (!result.ok) consecutiveErrors += 1;
       }
     }
