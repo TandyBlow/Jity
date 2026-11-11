@@ -164,9 +164,6 @@ export type NarrationRunResult =
 
 export interface NarrationRunnerOptions {
   engine: InferenceEngine;
-  /** Constrained route only: `program` never calls the model; `model` writes
-   * one verified beat per engine call. Internal. */
-  constrainedMode?: 'program' | 'model';
   /** Trained beats route only: `beats` (default) writes one committed fact at a
    * time; `scene` asks for the whole scene from the serialized input. Internal. */
   trainedMode?: 'beats' | 'scene';

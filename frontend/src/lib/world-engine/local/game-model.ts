@@ -38,7 +38,7 @@ export interface GameModelOptions {
   narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
   /** Constrained route only: `program` never calls the model, `model` writes
    * one verified beat per call. Internal. */
-  constrainedMode?: 'program' | 'model';
+
   /** Trained route only: whole-scene vs beats. Internal evaluation switch. */
   trainedMode?: 'beats' | 'scene';
   /** Trained whole-scene prompt shape. `serialized` is the training shape for
@@ -58,19 +58,12 @@ export interface GameModelOptions {
     source: 'model' | 'program' | 'mixed' | 'draft';
     segments?: Array<{ id: string; kind: string; source: string; text: string }>;
   }) => void;
-  /** Test/evaluation hook: exposes the draft, raw model text and each repair
-   * stage. Never used to make a product decision. */
+  /** Test/evaluation hook: the raw model answer and the prompt it answered.
+   * Never used to make a product decision. */
   onNarrationDebug?: (debug: {
-    pointId: Id; draft: string; raw: string; cleaned: string; pruned: string; supported: string; text: string;
-    violations: string[]; attempts: number[];
-    /** Every model attempt's raw text, in order. Kept separately from the
-     * program draft so no one mistakes the draft for model output. */
+    pointId: Id; raw: string; text: string;
+    /** Every model attempt's raw text, in order. */
     rawAttempts: string[];
-    /** Share of accepted sentences that already appear verbatim in the program
-     * draft that was shown to the model. High values mean the "model text" is an
-     * echo of the draft, not independent generation. */
-    draftEcho: number;
-    programFallback: boolean;
     prompt: string;
   }) => void;
   /** Internal evidence sink for candidate runs: candidate id, grade, per-beat
@@ -151,7 +144,6 @@ export class LocalGameModel implements WorldModelPort {
       : createNarrationRunner({
         engine: narrationPort,
         candidate: options.narrationCandidate ?? 'auto',
-        ...(options.constrainedMode ? { constrainedMode: options.constrainedMode } : {}),
         ...(options.trainedMode ? { trainedMode: options.trainedMode } : {}),
         ...(options.trainedPromptShape ? { trainedPromptShape: options.trainedPromptShape } : {}),
         // The page's chat model expects one templated user turn; the candidates
@@ -425,11 +417,7 @@ export class LocalGameModel implements WorldModelPort {
     }
     const text = protocolText(raw);
     const empty = text.trim().length === 0;
-    this.options.onNarrationDebug?.({
-      pointId, draft: '', raw, cleaned: raw, pruned: raw, supported: text, text,
-      violations: [], attempts: [text.length], rawAttempts: [raw], draftEcho: 0, programFallback: false,
-      prompt: brief.prompt,
-    });
+    this.options.onNarrationDebug?.({ pointId, raw, text, rawAttempts: [raw], prompt: brief.prompt });
     this.options.onTask?.('narration', key, {
       ms: performance.now() - started, fallback: false,
       ...(empty ? { error: 'empty_model_output' } : {}),

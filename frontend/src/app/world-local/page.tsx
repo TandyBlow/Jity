@@ -88,8 +88,8 @@ interface WorldTurnRecord {
    * needs the raw text to fix wrong_person/low_support, and the turn record must
    * carry it without reading worker internals. Capped; no prompt. */
   narration?: {
-    pointId: string; violations: string[]; attempts: number[]; rawAttempts: string[];
-    draft: string; text: string; draftEcho: number; programFallback: boolean;
+    pointId: string; rawAttempts: string[];
+    raw: string; text: string; prompt: string;
   } | null;
   modelId: string | null;
   /** Requested narration variant and prompt shape, copied from window.__worldArm
@@ -600,7 +600,6 @@ export default function WorldLocalPage() {
           ...(arm.shape ? { trainedPromptShape: arm.shape } : {}),
           // The fact-structure candidate writes one verified beat per model
           // call; `beats` means model prose per beat (not the program realizer).
-          ...(candidate === 'constrained' ? { constrainedMode: 'model' as const } : {}),
           // Per-beat budget: 200 tokens made every 1.7B beat end at the limit
           // (8978 run); the beat prompt asks 2-6 sentences, so give it the same
           // room as the scene arm.
@@ -653,11 +652,14 @@ export default function WorldLocalPage() {
             (window as unknown as { __worldDebug?: unknown }).__worldDebug = debug;
             const liveRecord = turnRecordRef.current;
             if (liveRecord) {
+              // Full raw capture: the model's own answer and the exact prompt
+              // it answered, not a truncated excerpt.
               liveRecord.narration = {
-                pointId: debug.pointId, violations: debug.violations, attempts: debug.attempts,
-                rawAttempts: debug.rawAttempts.map((text) => text.slice(0, 2000)),
-                draft: debug.draft.slice(0, 2000), text: debug.text.slice(0, 2000),
-                draftEcho: debug.draftEcho, programFallback: debug.programFallback,
+                pointId: debug.pointId,
+                rawAttempts: debug.rawAttempts,
+                raw: debug.raw,
+                text: debug.text,
+                prompt: debug.prompt,
               };
             }
           },
