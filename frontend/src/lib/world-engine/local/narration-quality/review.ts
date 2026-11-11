@@ -1278,6 +1278,7 @@ export function reviewNarration(args: {
     const soundForms = [
       ...SOUND_WORDS.filter((sound) => narration.includes(sound)),
       ...[...narration.matchAll(/(?:摩擦|撞击|碎裂|爆裂|沙沙|嗡嗡|低语|呼喊)的(?:声响|声音|动静)/gu)].map((match) => match[0]),
+      ...[...narration.matchAll(/(?:风|雨|雪|水)(?:穿|吹|打|落|拍)[^，。；]{0,8}的(?:声响|声音|动静)|(?:风|雨|雪)声/gu)].map((match) => match[0]),
     ];
     for (const sound of soundForms) {
       if (!narration.includes(sound)) continue;
@@ -1294,7 +1295,7 @@ export function reviewNarration(args: {
       // A distant bell from a settled landmark is atmosphere, not an event:
       // 02's re-run «远处传来…钟声» changes no world fact. The sentence still
       // gets review.tone for being unbound atmosphere.
-      if ((sound === '钟声' || sound === '铃声') && /(远处|远方|远处传来|远远)/u.test(narration)) continue;
+      if ((sound === '钟声' || sound === '铃声' || sound === '钟鸣') && /(远处|远方|远处传来|远远)/u.test(narration)) continue;
       // Laughter needs someone the viewpoint can see; 孩童的笑声 with no child
       // in the scene is an invented source.
       if (sound === '笑声' && projection.visibleNames.some((name) => narration.includes(name))) continue;
@@ -1311,6 +1312,13 @@ export function reviewNarration(args: {
       if (contact && settledObjects.some((name) => narration.includes(name))) continue;
       if (reportedSounds.has(sound)) continue;
       reportedSounds.add(sound);
+      // Wind has no single source body; unwitnessed wind is atmosphere to
+      // read, not an invented event (the human pos anchors carry 风声).
+      if (/风穿过|风声/.test(sound)) {
+        findings.push(finding(ctx, 'review.tone', sentence.text,
+          'wind has no settled source; read as atmosphere', [], []));
+        continue;
+      }
       findings.push(finding(ctx, 'fact.sound_added', sentence.text,
         `${sound} has no settled source`, [], []));
     }
