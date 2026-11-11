@@ -19,9 +19,11 @@ class ScriptedEngine implements InferenceEngine {
 
   async complete(prompt: string): Promise<string> {
     this.prompts.push(prompt);
-    const output = this.outputs[this.index++];
+    // Abort tests need every retry attempt to answer: repeat the last scripted
+    // output once the list is exhausted instead of throwing a helper error.
+    const output = this.outputs[Math.min(this.index++, this.outputs.length - 1)];
     if (output instanceof Error) throw output;
-    if (output == null) throw new Error('scripted engine has no output left');
+    if (output == null) throw new Error('scripted engine has no output');
     return output;
   }
 
@@ -154,6 +156,244 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('keeps the structured result fields of a committed fact', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲把工具推过去。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙接住。', effects: [] },
+      ],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'], actorId: 'a', targetId: 'b', action: '把工具推向乙', outcome: 'completed' },
+        { text: '工具落在乙脚边。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const facts = (outcome.evidence.detail as { facts: { actorId: string; targetId?: string; action?: string; outcome: string; actorSource: string; outcomeSource: string }[] }).facts;
+    expect(facts[0]).toMatchObject({ actorId: 'a', targetId: 'b', action: '把工具推向乙', outcome: 'completed', actorSource: 'model', outcomeSource: 'model' });
+    expect(facts[1]).toMatchObject({ actorId: 'b', outcome: 'completed' });
+    expect(facts[1].targetId).toBeUndefined();
+    // An actor whose judgement row the model omitted is marked implicit: its
+    // derived outcome is not a direction claim, so 02/06 only trust the text.
+    const implicitEngine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住。', effects: [] }],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] },
+        { text: '工具落在乙脚边。', memberIds: ['b'] },
+      ],
+    })]);
+    const implicitOutcome = await createSettlementHandlers({ engine: implicitEngine }).results('g1', resultsInput());
+    const implicitFacts = (implicitOutcome.evidence.detail as { facts: { actorId: string; implicit?: true }[] }).facts;
+    expect(implicitFacts.find((fact) => fact.actorId === 'a')?.implicit).toBe(true);
+    expect(implicitFacts.find((fact) => fact.actorId === 'b')?.implicit).toBeUndefined();
+    // The prompt teaches the fields so the model can answer them.
+    expect(engine.prompts[0]).toContain('actorId=执行者（本组成员）');
+    expect(engine.prompts[0]).toContain('"outcome":"completed"');
+  });
+
+  it('accepts an old answer without structured fields and derives them from the judgement', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'not_achieved', reason: '甲没推动。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'no_change', reason: '乙没动。', effects: [] },
+      ],
+      facts: [
+        { text: '甲推了工具，工具没有离开原地。', memberIds: ['a'] },
+        { text: '乙留在房间。', memberIds: ['b'] },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const facts = (outcome.evidence.detail as { facts: { actorId: string; outcome: string; actorSource: string; outcomeSource: string }[] }).facts;
+    expect(facts[0]).toMatchObject({ actorId: 'a', outcome: 'failed', actorSource: 'derived', outcomeSource: 'derived' });
+    expect(facts[1]).toMatchObject({ actorId: 'b', outcome: 'unaffected' });
+  });
+
+  it('rejects an outcome that contradicts the judgement, a non-member actor and a task claim', async () => {
+    const contradicting = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没推动。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const engine = new ScriptedEngine([contradicting, contradicting]);
+    const failed = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(failed.value).toBeNull();
+    expect(failed.error).toContain('contradicts not_achieved');
+
+    const achievedBlocked = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+    });
+    const achievedEngine = new ScriptedEngine([achievedBlocked, achievedBlocked]);
+    const achievedOutcome = await createSettlementHandlers({ engine: achievedEngine }).results('g1', resultsInput());
+    expect(achievedOutcome.value).toBeNull();
+    expect(achievedOutcome.error).toContain('contradicts achieved');
+
+    const foreign = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'off', outcome: 'completed' }],
+    });
+    const foreignEngine = new ScriptedEngine([foreign, foreign]);
+    const foreignOutcome = await createSettlementHandlers({ engine: foreignEngine }).results('g1', resultsInput());
+    expect(foreignOutcome.value).toBeNull();
+    expect(foreignOutcome.error).toContain('is not a group member');
+
+    const goalAction = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲推动。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲推了工具。', memberIds: ['a'], actorId: 'a', action: '完成参赛选择任务', outcome: 'completed' }],
+    });
+    const goalEngine = new ScriptedEngine([goalAction, goalAction]);
+    const goalOutcome = await createSettlementHandlers({ engine: goalEngine }).results('g1', resultsInput());
+    expect(goalOutcome.value).toBeNull();
+    expect(goalOutcome.error).toContain('not what the actor did');
+
+    // A task word inside a real action is not a task claim.
+    const taskWord = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲拿起任务单。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙接过单子。', effects: [] },
+      ],
+      facts: [
+        { text: '甲拿起任务单，走到乙面前。', memberIds: ['a'], actorId: 'a', action: '拿起任务单', outcome: 'completed' },
+        { text: '乙接过单子。', memberIds: ['b'], actorId: 'b', outcome: 'completed' },
+      ],
+    });
+    const taskWordEngine = new ScriptedEngine([taskWord]);
+    const taskWordOutcome = await createSettlementHandlers({ engine: taskWordEngine }).results('g1', resultsInput());
+    expect(taskWordOutcome.value).not.toBeNull();
+  });
+
+  it('keeps a negative action result instead of stripping the negation as a task claim', async () => {
+    // The old list stripped the bare phrase 未能完成, turning “未能完成翻越，落回
+    // 巷口” into “翻越，落回巷口” — a reversed result. Only task/goal wording may
+    // be stripped now.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没翻过去。', effects: [] }],
+      facts: [{ text: '甲未能完成翻越，落回巷口。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('未能完成翻越');
+    expect(outcome.value!.a).toContain('落回巷口');
+    // A task/goal claim is still not an action result.
+    const taskEngine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没完成。', effects: [] }],
+      facts: [{ text: '甲未能完成任务。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    })]);
+    const taskOutcome = await createSettlementHandlers({ engine: taskEngine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(taskOutcome.value).toBeNull();
+    expect(taskOutcome.error).toContain('no action result left');
+  });
+
+  it('drops the tail of a mechanics clause so a judgement explanation cannot become a fact', async () => {
+    // 3turn aa30 turn 2's second answer: 路明非的骰点未被触发，因此未被接纳。
+    // Removing only the dice clause left 因此未被接纳 as if it were a result.
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没被接纳。', effects: [] }],
+      facts: [{ text: '甲的骰点未被触发，因此未被接纳。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    }), JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'not_achieved', reason: '甲没翻过去。', effects: [] }],
+      facts: [{ text: '甲被拦在墙下，没有翻过去。', memberIds: ['a'], actorId: 'a', outcome: 'failed' }],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我翻墙过去。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    // First answer is a pure mechanics tail and is rejected; the repair writes
+    // an actual visible result and is accepted.
+    expect(outcome.evidence.calls).toHaveLength(2);
+    expect(outcome.evidence.calls[0]?.error).toContain('no action result left');
+    expect(outcome.value!.a).toContain('没有翻过去');
+  });
+
+  it('keeps a negative blocked result instead of stripping it as a mechanic', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'blocked', reason: '甲被拦住。', effects: [] }],
+      facts: [{ text: '甲被拦在巷口，没有走进服务巷。', memberIds: ['a'], actorId: 'a', outcome: 'blocked' }],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我走进服务巷。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.value!.a).toContain('没有走进服务巷');
+    const facts = (outcome.evidence.detail as { facts: { outcome: string }[] }).facts;
+    expect(facts[0].outcome).toBe('blocked');
+  });
+
+  it('builds the format example with one row per member and repairs the missing member by name', async () => {
+    // 9623 turn 2 (lu+nono question group) wrote exactly one judgement row per
+    // attempt, because the example showed exactly one row.
+    const firstAttempt = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'partial', reason: '甲问了乙。', effects: [{ targetId: 'b', reacted: true }] }],
+      facts: [{ text: '甲问乙红蓝两方现在在哪。', memberIds: ['a'] }],
+    });
+    const repaired = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲问了乙。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙回答不知道。', effects: [{ targetId: 'a', reacted: true }] },
+      ],
+      facts: [
+        { text: '甲问乙红蓝两方现在在哪。', memberIds: ['a'] },
+        { text: '乙摇头说不知道。', memberIds: ['b'] },
+      ],
+    });
+    const engine = new ScriptedEngine([firstAttempt, repaired]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '我问乙现在的局势。', rollRefs: [{ targetId: 'b', rollId: 'r1', result: 12, eligible: true, admitted: true }] },
+        { memberId: 'b', actionText: '乙回答。', rollRefs: [{ targetId: 'a', rollId: 'r2', result: 9, eligible: true, admitted: true }] },
+      ],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.evidence.calls).toHaveLength(2);
+    const prompt = engine.prompts[0];
+    // Both members appear as rows and as facts in the format example.
+    expect(prompt).toContain('"memberId":"a"');
+    expect(prompt).toContain('"memberId":"b"');
+    expect(prompt).toContain('judgments 和 facts 都要每人一条');
+    const feedback = outcome.evidence.calls[1]?.prompt ?? '';
+    expect(feedback).toContain('no fact attributed to b');
+    expect(feedback).toContain('我问乙现在的局势。');
+  });
+
+  it('shows a dialogue-group example so a question is not answered with a judgement reason', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲问乙。', effects: [] },
+        { memberId: 'b', label: 'achieved', reason: '乙回答。', effects: [] },
+      ],
+      facts: [
+        { text: '甲问乙红蓝两方现在在哪，乙摇头说不知道。', memberIds: ['a', 'b'] },
+      ],
+    })]);
+    await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '我问乙现在的局势。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙回答问题。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json);
+    const prompt = engine.prompts[0];
+    // 3turn 9623 group_29 copied the judgement reason as its fact; a walk/read
+    // example alone does not teach a question group what its result looks like.
+    expect(prompt).toContain('我向诺诺问现在的局势');
+    expect(prompt).toContain('诺诺摇头说不知道');
+    expect(prompt).not.toContain('待办=');
+  });
+
   it('records a target-less member row the model omitted as no_change instead of failing the point', async () => {
     // 3turn 9623 group_29: lu asked nono a question, the answer judged nono only
     // and facts were attributed to both. lu had no roll target, so the row is
@@ -180,18 +420,32 @@ describe('common-group results', () => {
     expect(detail.implicitJudgments).toEqual(['a']);
     expect(detail.labels).toContain('a:no_change');
 
-    // A member with a declared roll target still has to answer: its reacted flag
-    // is settled state.
-    const missing = new ScriptedEngine([JSON.stringify({
+    // A missing row for a member WITH a declared target is also evidence, not
+    // state: nothing reads effects[].reacted (the reaction lane already used the
+    // frozen rolls), so the row is derived from admitted and the facts decide.
+    const rollMember = new ScriptedEngine([JSON.stringify({
       judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
-      facts: [{ text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] }],
-    }), JSON.stringify({
-      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
-      facts: [{ text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] }],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] },
+        { text: '工具落在乙脚边。', memberIds: ['b'] },
+      ],
     })]);
+    const accepted = await createSettlementHandlers({ engine: rollMember }).results('g1', resultsInput());
+    expect(accepted.value).not.toBeNull();
+    const acceptedDetail = accepted.evidence.detail as { implicitJudgments: string[] };
+    expect(acceptedDetail.implicitJudgments).toEqual(['a']);
+
+    // The hard requirement is the member's result sentence: with no fact for a,
+    // the point aborts and the repair names the missing member and the action.
+    const noFact = JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住工具。', effects: [] }],
+      facts: [{ text: '乙伸手接住工具。', memberIds: ['b'] }],
+    });
+    const missing = new ScriptedEngine([noFact, noFact]);
     const failed = await createSettlementHandlers({ engine: missing }).results('g1', resultsInput());
     expect(failed.value).toBeNull();
-    expect(failed.error).toContain('missing judgment for a');
+    expect(failed.error).toContain('no fact attributed to a');
+    expect(failed.error).toContain('甲把工具推向乙');
   });
 
   it('retries a length-truncated results answer with a shorter-answer instruction and the member list', async () => {
@@ -304,7 +558,7 @@ describe('common-group results', () => {
   });
 
   it('aborts the point after repeated invalid output instead of inventing a result', async () => {
-    const engine = new ScriptedEngine(['not json', 'still not json']);
+    const engine = new ScriptedEngine(['not json', 'still not json', 'not json either']);
     const handlers = createSettlementHandlers({ engine });
     const outcome = await handlers.results('g1', resultsInput());
     expect(outcome.value).toBeNull();
@@ -317,6 +571,48 @@ describe('common-group results', () => {
 });
 
 describe('six-stage updates', () => {
+  it('settles a whole submission in one six-stage pass when the caller unions the groups’ facts', async () => {
+    // 736a spent two full six-stage passes (19.1 s + 20.6 s) because the
+    // controller calls updates per group. The stages judge the world after the
+    // whole submission, so one pass over the union of the settled fact lines
+    // scans the same full cast (14 characters, 73 rows in the real world) half
+    // as often. Nothing in updates requires the key to be a single group.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ decisions: [
+        { characterId: 'a', achieved: [] },
+        { characterId: 'b', achieved: [] },
+        { characterId: 'off', achieved: [] },
+      ] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [] }),
+      JSON.stringify({ sanity: [] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('turn:1', {
+      groupId: 'turn:1',
+      // The controller already holds results keyed by member; a turn-level call
+      // is the union of the two groups' maps.
+      results: {
+        a: '甲沿着走廊往远处走，先看清墙上的规则牌。',
+        b: '乙没有掀开袖口，也没有看到规则牌。',
+      },
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.error ?? null).toBeNull();
+    expect(outcome.value).not.toBeNull();
+    const stages = (outcome.value as UpdatesCall[]).map((call) => call.stage);
+    expect(stages).toEqual(['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity']);
+    // Both groups' facts reach the projection: the actor from the player group
+    // and the reaction target from the second group.
+    const positionPrompt = engine.prompts[0];
+    expect(positionPrompt).toContain('甲沿着走廊往远处走');
+    expect(positionPrompt).toContain('乙没有掀开袖口');
+    const detail = outcome.evidence.detail as { taskCoverageIds: string[] };
+    expect(detail.taskCoverageIds).toEqual(['a', 'b', 'c', 'off']);
+  });
+
   it('runs the canonical six stages, moves an item, covers the full cast, and pairs personality with sanity', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [
