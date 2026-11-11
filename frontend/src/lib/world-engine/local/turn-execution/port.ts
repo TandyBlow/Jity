@@ -198,6 +198,10 @@ export function createSettlementModelPort(
 
   let roundStartState: WorldState | null = null;
   let roundActionTexts: string[] = [];
+  /** The automatic proposal that the last continuation accepted, if any. The
+   * next point's frozen action must be about that proposal; when it is not, the
+   * action lane handed the point a stale action (10turn 9711 turn 4). */
+  let acceptedProposal: { characterId: string; text: string }[] = [];
   let roundFacts: string[] = [];
   const consumedActions = new Set<string>();
   const consumedFacts = new Set<string>();
@@ -485,7 +489,10 @@ export function createSettlementModelPort(
             // and the chain ran five points (330 s) repeating the same beat. An
             // automatic round only progresses if its facts cover its proposal.
             ...(readTrigger(input) === 'automatic'
-              ? { actionSettled: settledCoversActions(roundActionTexts, settledRecords, after) }
+              ? {
+                actionSettled: settledCoversActions(roundActionTexts, settledRecords, after)
+                  && actionFollowsProposal(acceptedProposal, roundActionTexts, after),
+              }
               : {}),
           });
           for (const action of computed.newActions) consumedActions.add(action);
@@ -497,6 +504,19 @@ export function createSettlementModelPort(
         }
         try {
           const outcome = await continuation.run(key, enriched);
+          // Remember what the accepted proposal was about, so the next point can
+          // check that its frozen action is that proposal and not an old sentence.
+          const detail = outcome.evidence.detail as { candidates?: { characterId?: string; text?: string }[]; accepted?: { characterId?: string; text?: string }[] } | null;
+          const acceptedIds = new Set(
+            (Array.isArray(detail?.accepted) ? detail.accepted : [])
+              .map((row) => row?.characterId)
+              .filter((id): id is string => typeof id === 'string'),
+          );
+          const candidates = Array.isArray(detail?.candidates) ? detail.candidates : [];
+          acceptedProposal = candidates
+            .filter((row) => typeof row?.characterId === 'string' && typeof row?.text === 'string'
+              && (acceptedIds.size === 0 || acceptedIds.has(row.characterId)))
+            .map((row) => ({ characterId: row.characterId as string, text: row.text as string }));
           // The controller only accepts a Conclusion value; a null value is a
           // visible stop (policy rule or model failure), never a handback.
           return unwrap('continuation', key, null, outcome) as unknown as Json;
@@ -648,6 +668,34 @@ function settledCoversActions(
     const own = records.filter((record) => !memberId || record.memberIds.includes(memberId));
     const covered = own.some((record) => sharesContent(action, record.text, names));
     if (!covered) return false;
+  }
+  return true;
+}
+
+/** The point's frozen action must be about the proposal the continuation just
+ * accepted. 10turn 9711 turn 4: fingel was proposed «确认护目镜佩戴情况», and the
+ * action lane froze «芬格尔蹲下，掀开路明非的袖口查看伤口» — the previous point's
+ * result with a new subject — so results settled that old sentence again and the
+ * chain ran four points to the 300 s deadline. A proposal that the action does
+ * not mention means the point is not the event the chain asked for. */
+function actionFollowsProposal(
+  proposal: { characterId: string; text: string }[],
+  actions: string[],
+  state: WorldState,
+): boolean {
+  if (!proposal.length || !actions.length) return true;
+  const names = [
+    ...Object.values(state.initial.locations ?? {}).map((row) => row?.name),
+    ...Object.values(state.initial.items ?? {}).map((row) => row?.name),
+    ...Object.values(state.initial.characters ?? {}).map((row) => row?.name),
+  ].filter((name): name is string => typeof name === 'string' && name.length >= 2);
+  for (const label of actions) {
+    const separator = label.indexOf(':');
+    const memberId = separator > 0 ? label.slice(0, separator) : '';
+    const action = separator > 0 ? label.slice(separator + 1) : label;
+    const own = proposal.filter((row) => !memberId || row.characterId === memberId);
+    if (!own.length) continue;
+    if (!own.some((row) => sharesContent(row.text, action, names))) return false;
   }
   return true;
 }

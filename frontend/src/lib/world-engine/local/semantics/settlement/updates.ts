@@ -1118,11 +1118,33 @@ function positionLineFor(state: WorldState, id: Id): string {
 }
 
 function containerCatalog(state: WorldState): string[] {
-  return allEntityIds(state).map((id) => {
+  // The catalog is reference data for the whole roster (116 entities, ~3.4k
+  // chars, the largest block in the position prompt). Two forms carry no
+  // information and cost prefill on every call: `[]` for the 67 slotless items
+  // and the same five body slots printed for all 14 characters. Print the shared
+  // character slot set once and leave empty brackets out; every id and every
+  // non-empty slot id is still listed exactly once.
+  const slotIds = (id: Id): string[] => (state.initial.locations[id]?.slots
+    ?? state.initial.items[id]?.slots
+    ?? state.initial.characters[id]?.slots
+    ?? []).map((slot) => slot.id);
+  const characterSlots = Object.keys(state.initial.characters).map((id) => slotIds(id).join(','));
+  const sharedCharacterSlots = characterSlots.length > 0
+    && characterSlots.every((row) => row === characterSlots[0]) && characterSlots[0]
+    ? characterSlots[0] : null;
+  const lines: string[] = [];
+  for (const id of allEntityIds(state)) {
     const name = state.initial.locations[id]?.name ?? state.initial.items[id]?.name ?? state.initial.characters[id]?.name ?? id;
-    const slots = state.initial.locations[id]?.slots ?? state.initial.items[id]?.slots ?? state.initial.characters[id]?.slots ?? [];
-    return `${id}=${name}${slots.length ? `[${slots.map((slot) => slot.id).join(',')}]` : ''}`;
-  });
+    const slots = slotIds(id);
+    const isCharacter = Boolean(state.initial.characters[id]);
+    if (isCharacter && sharedCharacterSlots) {
+      lines.push(`${id}=${name}`);
+      continue;
+    }
+    lines.push(`${id}=${name}${slots.length ? `[${slots.join(',')}]` : ''}`);
+  }
+  if (sharedCharacterSlots) lines.push(`人物槽位统一为：${sharedCharacterSlots}`);
+  return lines;
 }
 
 function validatePositionAnswer(value: unknown, state: WorldState): void {
