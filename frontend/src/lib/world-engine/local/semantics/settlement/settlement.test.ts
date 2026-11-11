@@ -1134,6 +1134,25 @@ describe('six-stage updates', () => {
     expect(calls.find((call) => call.stage === 'sanity')!.changes).toEqual({});
   });
 
+  it('still asks the subtask stage when the merged tasks answer returns an empty array', async () => {
+    // The tasks schema always includes subtasks: [], so the merged path used to
+    // answer the subtask stage with "nothing" and its own prompt never ran.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [{ parentTaskId: 't1', goal: '把工具擦干净再放回盒子' }] }),
+      JSON.stringify({ changes: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const subtasks = calls.find((call) => call.stage === 'subtasks')!;
+    expect(subtasks.changes.a?.subtasksAdded?.[0]).toMatchObject({ parentTaskId: 'a1', status: 'pending' });
+    expect(engine.prompts.some((prompt) => prompt.includes('新增小任务判断器'))).toBe(true);
+  });
+
   it('does not re-achieve an already achieved task', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),

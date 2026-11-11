@@ -830,7 +830,11 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       const parsed = readSubtaskProposals(
         answer.value, ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
       );
-      ctx.shared.pendingSubtasks = verifier ? filterSubtasksByAccepted(parsed, changes) : parsed;
+      // Only a non-empty merged answer short-circuits the subtask stage; an
+      // empty array (which the schema always produces) used to count as an
+      // answer, so the dedicated subtask prompt never ran and no point ever
+      // proposed a subtask.
+      if (Object.keys(parsed).length) ctx.shared.pendingSubtasks = verifier ? filterSubtasksByAccepted(parsed, changes) : parsed;
     }
     const newlyAchieved = [...achievedFromChanges(changes)];
     const achievedByCharacter = Object.entries(changes)
@@ -1803,9 +1807,10 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     ...triggerLines,
     '人物个性：',
     ...scannedIds.map((id) => `- ${personalityLine(ctx.state, id)}`),
-    '- 个性变化写成长期倾向（例如「更愿意主动照顾同伴」），不要复述本轮发生了什么；照抄结算事实会被程序丢弃。',
+    '- 个性变化只写一句长期倾向，12 个字以内；不要出现人名、地名、物品名，不要复述本轮发生了什么。照抄结算事实会被程序丢弃。',
+    '- 如果这次经历不会改变性格，就把 changes 留空；不要为了有输出硬编一句。',
     '输出格式（尖括号里换成真实值；没有变化就输出空数组）：',
-    '{"changes":[{"entityId":"<人物id>","op":"add","text":"<新的个性变化>"}]}',
+    '{"changes":[{"entityId":"<人物id>","op":"add","text":"<一句性格倾向，12字以内>"}]}',
     '没有变化的人物不要写，程序默认他们保持原样。',
   ].filter(Boolean).join('\n');
 }
