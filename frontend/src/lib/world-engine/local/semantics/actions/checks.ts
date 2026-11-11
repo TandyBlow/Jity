@@ -302,27 +302,11 @@ export function checkTargets(value: { targets: { targetId: string }[] }, scene: 
   }
   if (!capped.length) {
     push(issue('empty_targets', 'info', '没有需要立即反应的在场人物'));
-  } else if (!hasAnaphora(actionText)) {
-    const unmentioned = capped.filter((id) => {
-      const name = index.byId.get(id) ?? id;
-      const alias = [...index.byAlias.entries()].filter(([, value]) => value === id).map(([key]) => key);
-      return ![name, ...alias].some((value) => actionText.includes(value));
-    });
-    if (unmentioned.length) {
-      const named = scene.visible
-        .filter((character) => actionText.includes(character.name))
-        .map((character) => character.name);
-      const targetNames = unmentioned.map((id) => index.byId.get(id)).join('、');
-      // A target the action never names (and no anaphor stands in for) breaks
-      // the causal link the reaction group depends on. Precision wins here: a
-      // phantom target forces a roll and a fabricated reaction, a missed one
-      // only means a quieter scene.
-      push(issue('target_unmentioned', 'error',
-        `目标${targetNames}既没有被行动点名，也没有指代可用${named.length ? `（行动点名的是${named.join('、')}）` : ''}`,
-        { detail: unmentioned.join(',') }),
-        `只选行动句直接触及的人；${targetNames}没有出现在行动里，不能作为目标；行动只写移动、观察或对物品操作时返回空数组`);
-    }
   }
+  // Naming the target is the model's semantic call, not a wording rule: a
+  // visible person who is actually touched can be selected even when the action
+  // says it by situation rather than by name. Membership, visibility, self and
+  // the cap are still enforced above.
   return { value: { targets: capped.map((targetId) => ({ targetId })) }, issues, repairs };
 }
 
@@ -405,16 +389,9 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
       { detail: names(mentions.absentItems) }));
   }
 
-  const sourceAliases = [sourceName, ...[...sourceName].slice(-2).join('')].filter((alias) => [...alias].length >= 2);
-  const mentionsMember = plain.includes(memberName);
-  const refersToSource = sourceAliases.some((alias) => plain.includes(alias)) || hasAnaphora(plain);
-  const tiedToThreat = refersToSource || shared.length >= 2;
-  if (!tiedToThreat && !mentionsMember) {
-    push(issue('reaction_off_topic', 'error', '反应既没有提到发起者或现场指代，也没有提到被牵连角色，读不出和这条行动的因果关系',
-      { detail: value.slice(0, 60) }), '反应要针对发起者刚才这条行动，写清被牵连角色在回应什么');
-  } else if (!tiedToThreat) {
-    push(issue('reaction_off_topic', 'warn', '反应只提到被牵连角色，没有明确呼应发起者的行动', { detail: value.slice(0, 60) }));
-  }
+  // Whether the sentence reads as a reaction to this action is semantic; the
+  // runtime keeps only the structural guards (who is named, who acts, who is
+  // invented) and shows the model's own sentence unchanged.
   if (source.roomId !== scene.roomId) {
     push(issue('reaction_member_absent', 'warn', `被牵连角色和发起者不在同一地点（${memberName}在${scene.roomName}）`,
       { detail: `${source.roomId}->${scene.roomId}` }));

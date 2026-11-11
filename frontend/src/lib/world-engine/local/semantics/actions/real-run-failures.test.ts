@@ -142,36 +142,49 @@ describe('run-1 failures stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '诺诺抬手指了指钟楼方向，没有接话。' });
   });
 
-  it('T3: moving to an absent person does not make the present bystander a target', async () => {
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}', '{"targets":[{"targetId":"nono"}]}']);
-    const handlers = createActionHandlers({ engine });
-    const result = await handlers.targets('lu', targets(base, 'lu', '我去钟楼找楚子航。'));
+  // Naming is the model's semantic call: a visible person selected without
+  // being named is kept as-is. The three shapes below used to be rejected by
+  // the wording rule; the structural checks (unknown, absent, self, duplicate,
+  // cap, visibility) still reject what they claim.
+  it('T3: a visible bystander selected by the model stays selected; the absent person is still rejected', async () => {
+    const present = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}']);
+    const accepted = await createActionHandlers({ engine: present }).targets('lu', targets(base, 'lu', '我去钟楼找楚子航。'));
+    expect(codes(accepted)).toContain('absent_character_named');
+    expect(accepted.value).toEqual({ targets: [{ targetId: 'nono' }] });
+    expect(accepted.source).toBe('model');
 
-    expect(codes(result)).toContain('target_unmentioned');
-    expect(codes(result)).toContain('absent_character_named');
-    expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
+    const absent = new ScriptedEngine(['{"targets":[{"targetId":"qin"}]}']);
+    const rejected = await createActionHandlers({ engine: absent }).targets('lu', targets(base, 'lu', '我去钟楼找楚子航。'));
+    expect(codes(rejected)).toContain('target_absent');
+    expect(rejected.value).toEqual({ targets: [] });
   });
 
-  it('T4: handing an item to one present person does not target a bystander', async () => {
+  it('T4: handing an item to one present person, with another present person selected, stays the model call', async () => {
     const state = move(move(move(base, 'lu', 'shed'), 'nono', 'shed'), 'qin', 'cage');
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"fingel"}]}', '{"targets":[{"targetId":"fingel"}]}']);
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"fingel"}]}']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.targets('lu', targets(state, 'lu', '我把货架上的备用护目镜拿下来，递给诺诺。'));
 
-    expect(codes(result)).toContain('target_unmentioned');
-    expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
+    expect(engine.prompts).toHaveLength(1);
+    expect(result.value).toEqual({ targets: [{ targetId: 'fingel' }] });
+    expect(result.source).toBe('model');
   });
 
-  it('T5: a movement action does not make the present bystander a target', async () => {
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}', '{"targets":[{"targetId":"nono"}]}']);
+  it('T5: a movement action, with the present bystander selected, keeps the model answer', async () => {
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.targets('lu', targets(base, 'lu', '我走向巷子尽头的检修口。'));
 
-    expect(codes(result)).toContain('target_unmentioned');
+    expect(result.value).toEqual({ targets: [{ targetId: 'nono' }] });
+    expect(result.source).toBe('model');
+  });
+
+  it('T5b: an unknown id is still rejected no matter the wording', async () => {
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nobody"}]}', '{"targets":[]}']);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.targets('lu', targets(base, 'lu', '我走向巷子尽头的检修口。'));
+    expect(codes(result)).toContain('target_unknown');
     expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
   });
 });
 

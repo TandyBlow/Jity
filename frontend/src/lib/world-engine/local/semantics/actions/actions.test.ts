@@ -453,17 +453,16 @@ describe('targets: anaphora, names, absence and containers', () => {
     codecAccepts(result);
   });
 
-  it('rejects a target the action never names and falls back to an empty set', async () => {
+  it('keeps a visible target the action does not name: naming is the model call', async () => {
     const state = buildTestWorld();
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"ally"}]}', '{"targets":[{"targetId":"ally"}]}']);
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"ally"}]}']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.targets('hero', targetsInput(state, 'hero', '我走向巷子尽头的检修口。'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('target_unmentioned');
-    expect(codes(result)).toContain('repair_failed');
-    expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
+    expect(result.attempts).toBe(1);
+    expect(result.value).toEqual({ targets: [{ targetId: 'ally' }] });
+    expect(result.source).toBe('model');
+    expect(result.issues.some((issue) => issue.severity === 'error')).toBe(false);
     codecAccepts(result);
   });
 });
@@ -528,15 +527,16 @@ describe('reaction: causal link, attribution and player agency', () => {
     codecAccepts(result);
   });
 
-  it('repairs a reaction that is scene description instead of a response', async () => {
+  it('keeps a reaction that names nobody: relevance is the model call', async () => {
     const state = buildTestWorld();
-    const engine = new ScriptedEngine(['窗外的雨声停了。', '阿宁把箱子往门边又推了半寸。']);
+    const engine = new ScriptedEngine(['窗外的雨声停了。']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.reaction('hero', reactionInput(state, 'hero', 'ally', '我把木箱推到门边。'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('reaction_off_topic');
-    expect(result.value).toBe('阿宁把箱子往门边又推了半寸。');
+    expect(result.attempts).toBe(1);
+    expect(result.value).toBe('窗外的雨声停了。');
+    const errors = result.issues.filter((issue) => issue.severity === 'error');
+    expect(errors).toEqual([]);
     codecAccepts(result);
   });
 
