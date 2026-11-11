@@ -477,6 +477,25 @@ try {
       historyCount: /已行动：(\d+)/.exec(panel)?.[1] ?? null,
       storageChars: (localStorage.getItem('jity.world.local.snapshot.v1') ?? '').length,
       header: document.querySelector('main section div div span')?.textContent ?? null,
+      // Per-point scheduling evidence: whatever the transport exposes per point,
+      // kept as scalars only. When 05/06 add commit/narration timestamps they
+      // appear here without the driver needing to know their names.
+      transportPoints: (() => {
+        const state = globalThis.__worldSnapshot;
+        const snapshot = typeof state === 'function' ? state() : state;
+        const points = snapshot?.transport?.points ?? snapshot?.session?.transport?.points ?? null;
+        if (!points || typeof points !== 'object') return null;
+        const rows = {};
+        for (const [id, point] of Object.entries(points)) {
+          if (!point || typeof point !== 'object') continue;
+          const scalars = {};
+          for (const [key, value] of Object.entries(point)) {
+            if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean' || value === null) scalars[key] = value;
+          }
+          rows[id] = scalars;
+        }
+        return rows;
+      })(),
     };
   });
 
