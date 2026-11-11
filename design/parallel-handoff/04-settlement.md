@@ -355,3 +355,16 @@ cd frontend && npx eslint src/lib/world-engine/local/semantics/settlement script
 测量：`prompt-size.mjs` results 2461→2526、2391→2456（+65 字符/次），updates 最大仍 4656；字符不是 token。84 focused passed | 1 expected fail；全前端 731 passed | 1 expected fail（14 个既有环境失败）；tsc 通过；eslint 0 error。
 
 边界：`f4272699` 修的是 facts-only 投影的视角锚点（护目镜被当成视点），不是本轮 04 修复；`736a`/`5810` 构建都没有 `5a015c52` 和 06 那 3 行。
+
+### 2026-11-11 `9623` 有效回合：走/读还只是“指令”（`0fa995f0`）
+
+09 在 06 `d17d6534`（build `gGQuSjufzXOTz_gf3HBIw`，chunk `page-8df80f7597394665.js`）跑同一个输入，COMPLETED：1 回合、69 字、`source=model`、history 1→1、刷新 ready 72.5s。正文：
+
+`路明非沿着服务巷往里走，时间过去一分钟。他先看清墙上的演习规则牌，护目镜必须戴好。诺诺在巷口等待，红发用发圈束在脑后，红色识别带缠在左臂。`
+
+- root `f4272699` 生效：`goggles_lu:position` 只是 at 事实，不再当视点。
+- 02 的“指令后置”生效：走/读出现在正文。
+- 仍未解决：plan 只有 `open:open:facts:time`，coverage 没有 `facts:result`。走/读来自“玩家这一回合的指令”，不是已结算事实；`护目镜必须戴好` 被列为 unverified（规则口吻）。
+- group_12 事实仍是判定理由复制且含 `骰点`，被 02 的 result 过滤整句丢弃 → result 事实为空。
+
+`0fa995f0` 让端口的已结算事实以**原句**交出（不带 `名字：`），因为 02 的 `verifyText` 要求 `text.includes(fact.text)`；带标签会要求正文出现 `路明非：路明非沿着…`。合入 `5a015c52`+`0fa995f0` 并在 `game-model.results()` 用 `settledFactLines()` 后，result beat 才会拿到 `路明非沿着服务巷往里走，先看清墙上的演习规则牌。` 并要求原样写出。
