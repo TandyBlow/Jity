@@ -60,3 +60,28 @@ python evaluate.py --rows data/validation.jsonl --base base/minirbt-h256 --head 
 - 训练只在 HPC；本机 4060 不跑；
 - 300 行一版不达标 ≠ 任务不可学；12 组命中 ≠ 完整 Y；
 - 本目录不碰产品文件、不改动作协议、不加导出/服务框架。导出这一步要等训练有结果再单独定。
+
+## Short pair experiment (2026-11-11): 13-way single logit
+
+User-authorized replacement for the long-X multi-head shape, in this directory
+only; the product action protocol is untouched.
+
+- `pairwise_serialize.py` — the only official renderer. 12 groups + 不动, one
+  short text per candidate group; step 2 prefixes `已做：<粗组>（<object>）`.
+  Lane 13 imports it. Format, omission record and metadata are documented in the
+  module docstring.
+- `measure_pairwise.py` — real BertTokenizer lengths (currently p50 162 / p100
+  201 tokens over 4290 pairs, ceil32 = 224, none over 512), repeated contexts and
+  conflicting-label contexts, with the full X comparison for each conflict.
+- `pairwise_freeze.py` — freezes base/serializer/data/split/measurement and
+  refuses (`--verify`) on any drift.
+- `pairwise_model.py` / `pairwise_train.py` — encoder + single logit head,
+  BCEWithLogits(pos_weight=12) normalised per decision (13 pairs), frozen or
+  unfrozen encoder arm, rowHit/skip metrics/per-group F1, step 2 reported apart.
+- `pairwise_cpu_measure.py` — reuses the coordinator's CPU measurement (same
+  architecture/sequence/batch/threads) with provenance instead of re-running it.
+
+Training is blocked on the four conflicting-label contexts reported in
+`results/action-short-pairs-20261111/04-pairwise-measurement.json`: their rows
+are identical in every X field, so the renderer cannot separate them without an
+invented nonce or a label change.
