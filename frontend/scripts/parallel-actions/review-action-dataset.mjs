@@ -162,6 +162,32 @@ function readJson(file) {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
+/** Packets may be a JSON array, a {rows:[...]} object or JSONL. A JSONL
+ * packet has no wrapper for the criterion hash; the frozen hash is still
+ * enforced by the tool itself. */
+const NL_RE = new RegExp(String.fromCharCode(13) + "?" + String.fromCharCode(10));
+
+function parsePacket(text, file = '') {
+  const trimmed = text.trim();
+  try {
+    return JSON.parse(trimmed);
+  } catch (error) {
+    const lines = trimmed.split(NL_RE).filter((line) => line.trim());
+    if (!file.endsWith('.jsonl') && lines.length < 2) throw error;
+    return lines.map((line, index) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        throw new Error(`packet line ${index + 1} is not JSON`);
+      }
+    });
+  }
+}
+
+function readPacket(file) {
+  return parsePacket(readFileSync(file, 'utf8'), file);
+}
+
 function readVerdicts(file) {
   const text = readFileSync(file, 'utf8');
   const rows = file.endsWith('.jsonl')
@@ -188,7 +214,7 @@ function readVerdicts(file) {
 
 function cmdPacketCheck(file) {
   const text = readFileSync(file, 'utf8');
-  const packet = JSON.parse(text);
+  const packet = parsePacket(text, file);
   const { rows, problems } = checkPacket(packet);
   const ids = rows.map((row, index) => stableRowId(row, index));
   const { sampled, k, n } = sampleRows(sha256(text), ids);
@@ -209,7 +235,7 @@ function cmdPacketCheck(file) {
 
 function cmdRender(file) {
   const text = readFileSync(file, 'utf8');
-  const packet = JSON.parse(text);
+  const packet = parsePacket(text, file);
   const vocab = loadVocabulary();
   const { rows, problems } = checkPacket(packet, vocab);
   if (problems.length) throw new Error(`packet rejected: ${problems.join('; ')}`);
@@ -242,7 +268,7 @@ function cmdRender(file) {
 
 function cmdSeal(packetFile, verdictsFile, outFile) {
   const text = readFileSync(packetFile, 'utf8');
-  const packet = JSON.parse(text);
+  const packet = parsePacket(text, packetFile);
   const vocab = loadVocabulary();
   const { rows, problems } = checkPacket(packet, vocab);
   if (problems.length) throw new Error(`packet rejected: ${problems.join('; ')}`);
@@ -280,7 +306,13 @@ function cmdSeal(packetFile, verdictsFile, outFile) {
 /** 01's labels, in any of the shapes a reviewer file may use. Missing rows are
  * reported as missing, never guessed. */
 function readLabels(file) {
-  const data = readJson(file);
+  const text = readFileSync(file, 'utf8');
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = text.split(NL_RE).filter((line) => line.trim()).map((line) => JSON.parse(line));
+  }
   const rows = Array.isArray(data) ? data : data.rows ?? data.verdicts ?? data.labels ?? [];
   const map = new Map();
   for (const row of rows) {
@@ -304,7 +336,7 @@ function cmdUnblind(packetFile, sealedFile, labelsFile, outFile) {
   if (sealed.criterionSha256 !== CRITERION_SHA256) throw new Error('sealed file used a different criterion');
   const { sealSha256, ...rest } = sealed;
   const actual = sha256(canonical(rest));
-  const packet = JSON.parse(text);
+  const packet = parsePacket(text, packetFile);
   const vocab = loadVocabulary();
   const { rows } = checkPacket(packet, vocab);
   const byId = new Map(rows.map((row, index) => [stableRowId(row, index), row]));
@@ -389,6 +421,13 @@ function selfTest() {
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '飞升', object: null }])] }, 'not one of the 115', 'predicate outside the vocabulary');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }], { yGroup: ['战斗'] })] }, 'does not contain the first step', 'yGroup mismatch');
   expectProblem({ criterionSha256: CRITERION_SHA256, rows: [row('r1', [{ action: '移动', object: null }])], vocabularySha256: 'deadbeef' }, 'vocabularySha256', 'vocabulary drift');
+
+  // 1b. A JSONL packet (one row per line) is accepted as an array.
+  const jsonl = [row('j1', []), row('j2', [{ action: '移动', object: null }])]
+    .map((entry) => JSON.stringify(entry)).join(String.fromCharCode(10));
+  const parsed = parsePacket(jsonl, 'packet.jsonl');
+  if (!Array.isArray(parsed) || parsed.length !== 2) throw new Error('JSONL packet not parsed');
+  if (checkPacket(parsed).problems.length) throw new Error('valid JSONL packet rejected');
 
   // 2. Sampling is exactly 10% and deterministic per packet.
   const ids = Array.from({ length: 30 }, (_, index) => `r${index}`);
