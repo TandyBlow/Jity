@@ -139,6 +139,8 @@ export interface SettledFact {
   outcome: ResultOutcome;
   actorSource: 'model' | 'derived';
   outcomeSource: 'model' | 'derived';
+  /** The actor's judgement row was missing; a derived outcome is not asserted. */
+  implicit?: true;
   playerGroup: boolean;
 }
 
@@ -318,6 +320,7 @@ export function createSettlementModelPort(
           outcome: fact.outcome as ResultOutcome,
           actorSource: fact.actorSource === 'model' ? 'model' : 'derived',
           outcomeSource: fact.outcomeSource === 'model' ? 'model' : 'derived',
+          ...(fact.implicit === true ? { implicit: true as const } : {}),
           playerGroup,
         });
       }

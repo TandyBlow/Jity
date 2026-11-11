@@ -173,6 +173,19 @@ describe('common-group results', () => {
     expect(facts[0]).toMatchObject({ actorId: 'a', targetId: 'b', action: '把工具推向乙', outcome: 'completed', actorSource: 'model', outcomeSource: 'model' });
     expect(facts[1]).toMatchObject({ actorId: 'b', outcome: 'completed' });
     expect(facts[1].targetId).toBeUndefined();
+    // An actor whose judgement row the model omitted is marked implicit: its
+    // derived outcome is not a direction claim, so 02/06 only trust the text.
+    const implicitEngine = new ScriptedEngine([JSON.stringify({
+      judgments: [{ memberId: 'b', label: 'achieved', reason: '乙接住。', effects: [] }],
+      facts: [
+        { text: '甲把工具推向乙，乙伸手接住。', memberIds: ['a', 'b'] },
+        { text: '工具落在乙脚边。', memberIds: ['b'] },
+      ],
+    })]);
+    const implicitOutcome = await createSettlementHandlers({ engine: implicitEngine }).results('g1', resultsInput());
+    const implicitFacts = (implicitOutcome.evidence.detail as { facts: { actorId: string; implicit?: true }[] }).facts;
+    expect(implicitFacts.find((fact) => fact.actorId === 'a')?.implicit).toBe(true);
+    expect(implicitFacts.find((fact) => fact.actorId === 'b')?.implicit).toBeUndefined();
     // The prompt teaches the fields so the model can answer them.
     expect(engine.prompts[0]).toContain('actorId=执行者（本组成员）');
     expect(engine.prompts[0]).toContain('"outcome":"completed"');

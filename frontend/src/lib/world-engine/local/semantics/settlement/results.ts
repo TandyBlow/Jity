@@ -67,6 +67,10 @@ interface Fact {
    * member list and judgement label. Kept so the page can show a derived row. */
   actorSource: 'model' | 'derived';
   outcomeSource: 'model' | 'derived';
+  /** The model omitted this actor's judgement row, so a derived outcome is not a
+   * claim about direction: 02/06 must treat `text` as the only result content
+   * for such a fact. */
+  implicit?: true;
 }
 
 interface SanitizedFact {
@@ -604,6 +608,7 @@ function readResultsAnswer(value: unknown, members: GroupMember[], state: WorldS
       outcome,
       actorSource,
       outcomeSource,
+      ...(implicit.includes(actorId) ? { implicit: true as const } : {}),
     });
     if (cleaned.removed.length) sanitized.push({ memberIds: recipientIds, original, text: cleaned.text, removed: cleaned.removed });
   }
