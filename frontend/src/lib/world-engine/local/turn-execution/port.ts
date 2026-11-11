@@ -324,6 +324,14 @@ export function createSettlementModelPort(
           playerGroup,
         });
       }
+      // The point's facts must survive the round: continuation clears the live
+      // list, so a submission snapshot taken at endSubmission() used to be empty
+      // (bed9de41's run recorded settledFacts: null although two groups had
+      // settled). Keep the current point's copy on the open submission.
+      if (submission) {
+        const facts = settledFacts();
+        if (facts.length) submission.settledFacts = facts;
+      }
     }
   }
 

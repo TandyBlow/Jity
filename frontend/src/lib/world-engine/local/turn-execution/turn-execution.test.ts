@@ -514,6 +514,9 @@ describe('settled facts for narration', () => {
     ]);
     const submission = port.endSubmission();
     expect(submission?.settledFacts?.map((fact) => fact.actorId)).toEqual(['person_c', 'person_a']);
+    // The snapshot is taken while the point is live: continuation clears the
+    // accessor's list at round end, so endSubmission used to see nothing.
+    expect(port.settledFacts()).toHaveLength(2);
     // A new submission starts empty: the same words in the next turn are a new
     // result, not a replayed one.
     port.beginSubmission('我再看一眼。');
