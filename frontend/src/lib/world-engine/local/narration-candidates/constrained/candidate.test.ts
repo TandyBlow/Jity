@@ -493,6 +493,39 @@ describe('beat provenance and cross-turn phrasing', () => {
 });
 
 describe('generateCandidate model mode', () => {
+  it('writes the time and declared action in one scene instead of three empty beats', async () => {
+    const { packet } = await productWorldFixture();
+    const action = '我沿着服务巷往里走，先看清墙上的演习规则牌。';
+    const text = '一分钟过去，路明非沿着服务巷往里走，在墙上的演习规则牌前停下，仔细读过上面的字。诺诺还在巷口，路明非没有继续往交火区走。';
+    const { engine, prompts } = scriptedEngine(() => text);
+    const result = await generateCandidate({
+      engine, committed: packet, inputText: '',
+      policy: { mode: 'model', scene: { previousAction: action } },
+    });
+    expect(result.accepted).toBe(true);
+    expect(result.plan?.beats).toHaveLength(1);
+    expect(prompts).toHaveLength(1);
+    expect(prompts[0]).toContain(action.replace(/^我/u, '路明非'));
+    expect(result.text).toBe(text);
+    expect(result.rawAttempts[0].source).toBe('model');
+    expect(result.plan?.beats[0].maxChars).toBe(150);
+  });
+
+  it('keeps rejected model drafts when a missing-time beat uses the program fallback', async () => {
+    const { packet } = await productWorldFixture();
+    const rejectedText = '路明非低头检查胸前的护目镜，目光仍停在镜片上。';
+    const { engine } = scriptedEngine(() => rejectedText);
+    const result = await generateCandidate({
+      engine, committed: packet, inputText: '', policy: { mode: 'model' },
+    });
+    const open = result.rawAttempts.find((beat) => beat.beatId === 'open');
+    expect(open?.source).toBe('program');
+    expect(open?.rejected).toHaveLength(2);
+    expect(open?.rejected?.every((draft) => draft.text === rejectedText)).toBe(true);
+    expect(open?.rejected?.every((draft) => draft.issues.some((issue) => issue.kind === 'fact_missing'))).toBe(true);
+    expect(result.verification.coverage.find((fact) => fact.kind === 'time')?.expressed).toBe(true);
+  });
+
   it('accepts per-beat model prose and reports real streaming progress', async () => {
     const { packet } = await fixture();
     const { engine, prompts } = scriptedEngine(modelReplyForPrompt);

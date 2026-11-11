@@ -91,6 +91,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     seed: policy.seed,
     minChars: 18,
     maxChars: 150,
+    combineSceneMaterial: modelRequested,
   });
   const planMs = now() - planStarted;
 
@@ -387,10 +388,10 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
   // 2. Constrained model writer (one call per beat, one feedback retry).
   let modelAttempted = false;
   let modelFailed = false;
+  const rejected: { attempt: number; text: string; issues: CandidateIssue[] }[] = [];
   if (modelEnabled && args.modelBudget().enabled) {
     modelAttempted = true;
     const maxAttempts = Math.max(1, Math.min(2, policy.model?.maxAttempts ?? 2));
-    const rejected: { attempt: number; text: string; issues: CandidateIssue[] }[] = [];
     let feedback: string | null = null;
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       const at = started();
@@ -469,6 +470,7 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
     evidence: {
       beatId: beat.id, kind: beat.kind, source: beatIssues.some((issue) => issue.severity === 'hard') ? 'fallback' : 'program',
       text, prompt: null, raw: null, attempts: 1, ms: now() - starts, issues: [...issues, ...beatIssues],
+      ...(rejected.length ? { rejected } : {}),
     },
   };
 }
