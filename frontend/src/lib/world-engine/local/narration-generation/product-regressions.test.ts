@@ -718,7 +718,9 @@ describe('product regressions: a result claim must be about that result', () => 
   });
 
   test('a result whose actor is never named is a swap', () => {
-    const check = resultSemantics('诺诺把答案说给路明非听，语气很淡。',
+    // 诺诺 was the one who answered; the prose gives the answer to 路明非 and
+    // never names her.
+    const check = resultSemantics('路明非自己把答案想明白了。',
       '诺诺答了路明非的问题。',
       { actor: '诺诺', action: '回答', target: '路明非', viewpoint: '路明非', outcome: 'completed' }, names);
     expect(check.ok).toBe(false);

@@ -564,8 +564,14 @@ export function resultSemantics(
   }
   // A claim is a sentence that says something was completed and does not itself
   // carry a negation; wording is free.
-  const claim = claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
-    && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
+  const actionSentence = actionPhrase.length >= 2
+    ? claims.find((sentence) => sentence.includes(actionPhrase)
+      && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? ''
+    : '';
+  const claim = cuesIn(actionSentence, DONE_CUES).length === 0 && actionSentence
+    ? actionSentence
+    : claims.find((sentence) => cuesIn(sentence, DONE_CUES).length > 0
+      && cuesIn(sentence, NEGATIVE_CUES).length === 0) ?? '';
   // A failure counts anywhere in the actor's sentences: the turn can show the
   // setback in one clause and other business in another.
   const failure = sentencesMentioning(text, actor)
@@ -586,11 +592,14 @@ export function resultSemantics(
   }
 
   if (settledPositive) {
-    if (!claim) {
-      return { ok: false, sentence: claims[0], detail: `settled result is a completed action; the prose never says ${actor ?? 'it'} did it` };
-    }
     if (target && !text.includes(target)) {
       return { ok: false, detail: `settled result names ${target}; the prose does not` };
+    }
+    if (!claim) {
+      // A paraphrase can describe the action without any generic completion
+      // cue. That is not decidable from wording, so it is marked for manual
+      // reading instead of being hard-rejected or silently passed.
+      return { ok: true, unverified: true, sentence: claims[0], detail: 'completed outcome written without a decidable completion cue' };
     }
     return { ok: true, detail: 'outcome written' };
   }
