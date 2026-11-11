@@ -52,7 +52,9 @@ describe('policy stop waits for the committed point prose', () => {
           if (key === 'root' || key.startsWith('point_root_')) return '根点叙事。';
           if (key === 'p1') {
             p1NarrationStarted.resolve();
-            return releaseP1.promise;
+            const text = await releaseP1.promise;
+            p1Finished = true;
+            return text;
           }
           if (key === 'p2') return '第二点的正文。';
           throw new Error(`unexpected narration ${key}`);
