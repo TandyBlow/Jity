@@ -1,0 +1,156 @@
+{
+  "kind": "short-pair dataset",
+  "serializer": {
+    "version": "action-pairwise-x2",
+    "sha256": "55bc641f18793846179831eec4a527ab2069778fab3172ee2eefab10dad6f95d",
+    "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\04-settlement\\experiments\\action-next-step\\pairwise_serialize.py"
+  },
+  "rows": {
+    "path": "experiments\\action-dataset-v1\\rows\\train13-full-candidates.jsonl",
+    "sha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188"
+  },
+  "indexSha256": "9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59",
+  "pairs": 4225,
+  "decisions": 325,
+  "positives": 325,
+  "perGroupPositive": {
+    "言语": 53,
+    "立场": 14,
+    "物品": 31,
+    "移动": 36,
+    "感知": 144,
+    "援助": 4,
+    "请求": 19,
+    "战斗": 2,
+    "不动": 22
+  },
+  "perCandidate": {
+    "感知": 325,
+    "移动": 325,
+    "战斗": 325,
+    "援助": 325,
+    "请求": 325,
+    "胁迫": 325,
+    "言语": 325,
+    "算计": 325,
+    "情绪": 325,
+    "物品": 325,
+    "身体": 325,
+    "立场": 325,
+    "不动": 325
+  },
+  "omittedTotals": {
+    "goalsClipped": 18564,
+    "presentClipped": 0,
+    "itemsClipped": 5538,
+    "recentClipped": 689
+  },
+  "indistinguishable": [
+    {
+      "textSha256": "209837b0be003998ba7307efde4e2776df8cce435f6d84f565c73432e527a923",
+      "pairIds": [
+        "b5-0035#s0#00",
+        "b6-0010#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "09282f483d2aaedf9c30fdc2a72cccff483b31c56db68776fe5e8b4ef0c0b445",
+      "pairIds": [
+        "b5-0035#s0#01",
+        "b6-0010#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "fafa8dc3207781ac834830ebc544a5cfdfef3e122900233515c3bdaf5b7a9f86",
+      "pairIds": [
+        "b5-0035#s0#02",
+        "b6-0010#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "a0056ed6f110cd3f080fd8711d28c228a88ff58cf1bdef6c29c04afe47e9f122",
+      "pairIds": [
+        "b5-0035#s0#03",
+        "b6-0010#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2adad3a6823bea16f2a0151dbabe20f025a7bf489e3b3a0b3476be1503d42ae0",
+      "pairIds": [
+        "b5-0035#s0#04",
+        "b6-0010#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "b83860619dc8c6cf3a5fa883c7200b2b581fb9d0f029f886f5f81f7899ffd012",
+      "pairIds": [
+        "b5-0035#s0#05",
+        "b6-0010#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "1b74524c79231abcbf62896b0f553cda6a1a0afea4dd2386e0bff2e532e8983b",
+      "pairIds": [
+        "b5-0035#s0#06",
+        "b6-0010#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "585cec6456fe17fff637e957455548467887f82aa550fcc964a27ebb55a7e5d4",
+      "pairIds": [
+        "b5-0035#s0#07",
+        "b6-0010#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "43cbeeb9747fb3358188fb1e8a2384b900e79d3976de4eff636e61921067e108",
+      "pairIds": [
+        "b5-0035#s0#08",
+        "b6-0010#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "5134e15f05c5a550f62fc261a539c972ca47d3be39b0dac36bf8c143c010c3b4",
+      "pairIds": [
+        "b5-0035#s0#09",
+        "b6-0010#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2650af4455df1111c91b4d04c6373d7cde97f7da5f7d18e5aeeb2e85774db5d6",
+      "pairIds": [
+        "b5-0035#s0#10",
+        "b6-0010#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "cee56655989c479e3fa9a8de2551e5b9c013e4bee7652354ff7c0496cb5b6ff3",
+      "pairIds": [
+        "b5-0035#s0#11",
+        "b6-0010#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "47e7dc5e7a865e047bf3b0dd91925004f66088e70ebd7f00da93fa46df84ee7b",
+      "pairIds": [
+        "b5-0035#s0#12",
+        "b6-0010#s0#12"
+      ],
+      "label": true
+    }
+  ],
+  "indistinguishableTexts": 13,
+  "pairsSha256": "124fc0ebadc1a31190d03132bf9e74c2480fb5973bddbe53c235d38d3f85e627"
+}

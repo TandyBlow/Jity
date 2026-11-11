@@ -62,6 +62,7 @@ def main(argv: list[str] | None = None) -> int:
             "sha256": sha(serializer_path),
             "version": report["serializer"]["version"],
             "tracked": _tracked(serializer_path),
+            "dirty": _dirty(serializer_path),
         },
         "rows": {"path": str(Path(args.rows)), "sha256": sha(Path(args.rows))},
         "model": {
@@ -87,6 +88,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(json.dumps({"pairs": freeze["pairs"], "files": freeze["files"], "serializer": freeze["serializer"]}, ensure_ascii=False))
     return 0
+
+
+def _dirty(path: Path) -> bool:
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(path.parent), "status", "--porcelain", "--", path.name],
+            capture_output=True,
+            text=True,
+        )
+        return bool(result.stdout.strip())
+    except OSError:
+        return True
 
 
 def _tracked(path: Path) -> bool:

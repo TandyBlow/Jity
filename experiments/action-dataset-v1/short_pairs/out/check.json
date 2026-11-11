@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "problems": [],
+  "pairs": 4225,
+  "decisions": 325,
+  "rowsUsed": 295,
+  "twoStepRows": 30,
+  "serializer": {
+    "version": "action-pairwise-x2",
+    "sha256": "55bc641f18793846179831eec4a527ab2069778fab3172ee2eefab10dad6f95d"
+  },
+  "tokens": {
+    "min": 137,
+    "p50": 168,
+    "p95": 191,
+    "p100": 211,
+    "ceil32": 224,
+    "overMaxLen": 0
+  },
+  "clockRows": [
+    "b1-0021",
+    "b3-0025",
+    "b3-0026",
+    "b4-0001",
+    "b5-0017",
+    "b5-0033",
+    "b5-0034",
+    "b6-0004",
+    "b6-0008"
+  ],
+  "rowsSha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188",
+  "pairsSha256": "124fc0ebadc1a31190d03132bf9e74c2480fb5973bddbe53c235d38d3f85e627"
+}

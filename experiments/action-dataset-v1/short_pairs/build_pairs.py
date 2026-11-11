@@ -147,7 +147,7 @@ def main(argv: list[str] | None = None) -> int:
         "pairs": len(pairs),
         "decisions": len(decisions),
         "positives": sum(1 for pair in pairs if pair["positive"]),
-        "perGroupPositive": _count(pairs, "labelGroup"),
+        "perGroupPositive": _count([pair for pair in pairs if pair["positive"]], "labelGroup"),
         "perCandidate": _count(pairs, "candidateGroup"),
         "omittedTotals": omitted_totals,
         "indistinguishable": indistinguishable,
