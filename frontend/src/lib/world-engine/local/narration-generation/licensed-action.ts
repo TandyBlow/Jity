@@ -16,6 +16,9 @@
 export const OBJECT_MOVE_PHRASES = ['躺在地上', '倒在地上', '放在地上', '塞进兜里', '揣进兜里'] as const;
 export const HAND_VERBS = ['握着', '握住', '拿着', '捏着', '攥着', '收起', '揣进', '摸向', '摸了摸', '摸着', '摘下', '戴上', '摘掉'] as const;
 
+/** Pickup/throw verbs that change what the protagonist physically holds. */
+export const PICKUP_VERBS = ['抓起', '拿起', '捡起', '捧起', '握住', '攥住', '抓住', '掷出', '掷', '扔出', '扔', '丢出', '丢', '抛出', '踢'] as const;
+
 export interface ActionViolation {
   sentence: string;
   kind: 'hand' | 'position' | 'state';
@@ -103,6 +106,30 @@ export function actionViolations(text: string, inputText: string): ActionViolati
         const window = inputText.slice(Math.max(0, near - 30), near + object.name.length + 30);
         if (window.includes(verb)) continue;
         found.push({ sentence, kind: 'hand', word: verb, object: object.name });
+      }
+    }
+  }
+  return found;
+}
+
+/** An object the settlement never placed: a pickup/throw sentence whose object
+ * is not one of the world's entities.
+ *
+ * The 1.7B/in-model writer turned the mechanics word 骰点 into a physical pair
+ * of dice on a table ("抓起桌上的骰子"), although no dice entity exists. The
+ * check is structural, not a word ban: the sentence must name at least one
+ * real item/character, or the same verb must be licensed by the settled text.
+ */
+export function inventedObjectActions(text: string, licensedText: string, entityNames: string[]): ActionViolation[] {
+  const found: ActionViolation[] = [];
+  for (const sentence of sentencesOf(text)) {
+    for (const verb of PICKUP_VERBS) {
+      if (!sentence.includes(verb)) continue;
+      if (licensedText.includes(verb)) continue;
+      const named = entityNames.some((name) => name.length >= 2 && sentence.includes(name));
+      if (!named) {
+        found.push({ sentence, kind: 'hand', word: verb });
+        break;
       }
     }
   }
