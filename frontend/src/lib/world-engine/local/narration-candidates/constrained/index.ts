@@ -167,12 +167,18 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
   let verification = verifyText(assembled, { ...verifyOptions, minChars, maxChars, checkPrior: true });
   verifyMs += now() - verifyStarted;
 
-  // Beat-level repair: a mandatory fact that never surfaced is re-realized by
-  // the program for the SAME beat, then the whole text is verified again.
+  // Beat-level repair: a mandatory fact that never surfaced in a PROGRAM beat is
+  // re-realized. A model-written beat (accepted or draft) is never replaced: its
+  // own words stay, the missing fact is recorded as an issue, and the paragraph
+  // remains unaccepted if the gate says so (NARRATION-BOUNDARY-20261111).
   let repairs = 0;
   while (!verification.ok && !cancelSeen && repairs < 2) {
     const missing = new Set(verification.coverage.filter((entry) => !entry.expressed && entry.mandatory).map((entry) => entry.factId));
-    const targets = beatTexts.filter(({ beat }) => beat.factIds.some((id) => missing.has(id)));
+    const targets = beatTexts.filter(({ beat }, index) => {
+      const source = beatsEvidence[index]?.source;
+      if (source === 'model' || source === 'draft' || source === 'external') return false;
+      return beat.factIds.some((id) => missing.has(id));
+    });
     if (!targets.length) break;
     repairs += 1;
     for (const target of targets) {
@@ -218,7 +224,7 @@ export async function generateCandidate(input: GenerateCandidateInput): Promise<
     source: beatsEvidence[index]?.source ?? 'program',
     text,
   })).filter((segment) => Boolean(segment.text));
-  const beatCounts = { model: 0, program: 0, external: 0, fallback: 0 };
+  const beatCounts = { model: 0, program: 0, external: 0, fallback: 0, draft: 0 };
   for (const segment of segments) beatCounts[segment.source] += 1;
   const mixed = (beatCounts.model + beatCounts.external > 0)
     && (beatCounts.program + beatCounts.fallback > 0);
@@ -453,7 +459,31 @@ async function writeBeat(beat: BeatDirective, args: WriteBeatArgs): Promise<{ ev
     issues.push({ kind: 'beat_fallback', severity: 'soft', beatId: beat.id, detail: 'turn budget spent; program wrote this beat' });
   }
 
-  // 3. Program realization of the same beat.
+  // A model wrote this beat but its gate refused it: keep the model's own words
+  // as an unverified draft. Replacing them with a program sentence would erase
+  // the written scene, which the product must not do (NARRATION-BOUNDARY-2026
+  // 1111). The draft is not accepted and carries the gate's issues.
+  if (modelAttempted && modelFailed) {
+    // Structural failures are not prose: a fact list, an English answer, a
+    // prompt echo or an empty reply must never reach the player as a draft.
+    const NON_PROSE = new Set(['fact_list', 'off_language', 'prompt_echo', 'empty_text', 'empty_narration']);
+    const draft = [...rejected].reverse().find((attempt) =>
+      attempt.text.trim().length > 0
+      && !attempt.issues.some((issue) => issue.severity === 'hard' && NON_PROSE.has(issue.kind)));
+    if (draft) {
+      return {
+        composer: 'model-unverified',
+        evidence: {
+          beatId: beat.id, kind: beat.kind, source: 'draft', text: draft.text,
+          prompt: null, raw: draft.raw ?? draft.text, attempts: draft.attempt,
+          ms: now() - starts, issues: [...issues, ...draft.issues],
+          ...(rejected.length ? { rejected } : {}),
+        },
+      };
+    }
+  }
+
+  // 3. Program realization of the same beat (only when the model wrote nothing).
   let text = realizeBeat(beat, args.ctx);
   let checkStarted = now();
   let beatIssues = verifyBeatText(text, beat, verifyOptions);

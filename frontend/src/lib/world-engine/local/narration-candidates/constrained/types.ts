@@ -207,7 +207,9 @@ export interface CandidateIssue {
 export interface BeatEvidence {
   beatId: string;
   kind: BeatDirective['kind'];
-  source: 'program' | 'model' | 'external' | 'fallback';
+  /** `draft` is model text its own gate refused: kept and labelled, never
+   * accepted and never used as prior text. */
+  source: 'program' | 'model' | 'external' | 'fallback' | 'draft';
   text: string;
   prompt: string | null;
   raw: string | null;
@@ -364,7 +366,7 @@ export interface CandidateResult {
    * wholly model-written. */
   segments: BeatSegment[];
   /** Beat provenance counts for one-line labelling. */
-  beatCounts: { model: number; program: number; external: number; fallback: number };
+  beatCounts: { model: number; program: number; external: number; fallback: number; draft?: number };
   /** True when both a model/external writer and a program fallback wrote part of
    * this text. `accepted` alone never means the whole text is model prose. */
   mixed: boolean;

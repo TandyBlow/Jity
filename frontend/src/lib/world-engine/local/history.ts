@@ -60,7 +60,7 @@ export function restoredEntries(snapshot: LocalGameSnapshot): RestoredTurn[] {
     const note = parts.length === 0
       ? '这一回合的正文没有保存成功，刷新后无法显示原文。'
       : sources.includes('draft')
-        ? '这一回合里有段落没有通过事实自检（只是草稿），不是成文正文。'
+        ? '这一回合里有模型写出的段落没有通过事实/视角校对（未通过校对草稿），不算合格正文，也不会被当作已确认前文。'
         : sources.includes('program')
           ? '这一回合里有程序按已结算事实成文的段落（降级，不是模型正文）。'
           : sources.includes('mixed')

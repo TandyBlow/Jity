@@ -611,7 +611,7 @@ export class LocalGameModel implements WorldModelPort {
           fallback: true,
           error: `未通过校对：${result.reason}`,
           raw: draft.text,
-          promptChars: draft.text.length,
+          promptChars: draft.promptChars ?? draft.text.length,
         });
         this.options.onNarrationEvidence?.({
           pointId, candidateId: draft.candidateId, route: draft.route ?? undefined, grade: 'candidate_unverified',
@@ -646,7 +646,27 @@ export class LocalGameModel implements WorldModelPort {
           pointId, candidateId: result.candidateId, grade: result.grade, rejectedBy: 'independent_fact_gate',
           reasons, sentences: fatal.map((violation) => violation.sentence), strategyVersion: result.strategyVersion,
         });
-        return null;
+        // The candidate's own gate accepted this text; the independent gate
+        // refuses a sentence it cannot ground. The prose is kept and labelled
+        // as an unverified draft instead of being replaced by program text.
+        const segments = result.segments?.map((segment) => ({
+          id: segment.id, kind: segment.kind, source: segment.source, text: segment.text,
+        }));
+        this.options.onTask?.('narration', pointId, {
+          ms: result.timings.totalMs, fallback: true,
+          error: `独立事实门拒绝：${reasons.join(',')}`, raw: result.text, promptChars: result.promptChars,
+        });
+        this.options.onNarrationEvidence?.({
+          pointId, candidateId: result.candidateId, route: result.route, grade: 'candidate_unverified',
+          strategyVersion: result.strategyVersion, segments, beatCounts: result.beatCounts,
+          issues: result.issues, timings: result.timings, detail: result.detail ?? null, rejectedBy: 'independent_fact_gate',
+        });
+        this.options.onNarrationComplete?.({
+          pointId, raw: result.text,
+          completion: { raw: result.text, finishReason: 'stop', firstTokenMs: result.timings.firstTokenMs, wallMs: result.timings.totalMs },
+          fallback: true, source: 'draft', segments,
+        });
+        return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: true };
       }
     }
     const program = result.grade === 'program';

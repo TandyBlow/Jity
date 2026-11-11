@@ -177,6 +177,8 @@ export type NarrationRunResult =
       route: NarrationCandidate['route'] | null;
       grade: 'candidate_unverified' | 'program' | 'mixed' | string;
       issues: CandidateIssueSummary[];
+      /** Full prompt size of the candidate run (never the text length). */
+      promptChars: number;
       timings: CandidateNarrationResult['timings'];
       strategyVersion: string | null;
       segments?: Array<{ id: string; kind: string; source: string; text: string }>;

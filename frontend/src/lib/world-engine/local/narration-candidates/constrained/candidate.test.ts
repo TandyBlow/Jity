@@ -569,7 +569,7 @@ describe('generateCandidate model mode', () => {
     expect(result.plan?.beats[0].maxChars).toBe(150);
   });
 
-  it('keeps rejected model drafts when an invented event uses the program fallback', async () => {
+  it('keeps a rejected model beat as a labelled draft instead of program prose', async () => {
     const { packet } = await productWorldFixture();
     const rejectedText = '路明非跳下台阶，低头检查胸前的护目镜，目光仍停在镜片上。';
     const { engine } = scriptedEngine(() => rejectedText);
@@ -577,10 +577,16 @@ describe('generateCandidate model mode', () => {
       engine, committed: packet, inputText: '', policy: { mode: 'model' },
     });
     const open = result.rawAttempts.find((beat) => beat.beatId === 'open');
-    expect(open?.source).toBe('program');
+    // The model wrote a beat and its gate refused it: the words are kept as a
+    // draft, not replaced by the program realizer (NARRATION-BOUNDARY-20261111).
+    expect(open?.source).toBe('draft');
+    expect(open?.text).toBe(rejectedText);
     expect(open?.rejected).toHaveLength(2);
     expect(open?.rejected?.every((draft) => draft.text === rejectedText)).toBe(true);
     expect(open?.rejected?.every((draft) => draft.issues.some((issue) => issue.kind === 'unlicensed_event'))).toBe(true);
+    // The paragraph is not accepted: a draft is never a pass.
+    expect(result.accepted).toBe(false);
+    expect(result.composers).toContain('model-unverified');
     expect(result.verification.coverage.find((fact) => fact.kind === 'time')?.mandatory).toBe(false);
   });
 
@@ -661,7 +667,7 @@ describe('generateCandidate model mode', () => {
     expect(prompts.some((prompt) => prompt.includes('换一个开头'))).toBe(true);
   });
 
-  it('rejects reversed direction, retries with feedback, then falls back to the program', async () => {
+  it('rejects reversed direction, retries with feedback, and keeps the model draft', async () => {
     const { packet } = await fixture();
     const { engine, prompts } = scriptedEngine((prompt) => (
       factLine(prompt, '路明非从值班室到后院') ? '路明非从后院走进值班室。' : modelReplyForPrompt(prompt)
@@ -672,12 +678,14 @@ describe('generateCandidate model mode', () => {
       inputText: '',
       policy: { mode: 'model' },
     });
-    expect(result.accepted).toBe(true);
+    // The move beat was written by the model but says the reversed direction;
+    // it is kept as a draft (not accepted, not program prose).
+    expect(result.accepted).toBe(false);
     const moveBeat = result.rawAttempts.find((beat) => beat.beatId.startsWith('move:lu'));
-    expect(moveBeat?.source).toBe('program');
+    expect(moveBeat?.source).toBe('draft');
+    expect(moveBeat?.text).toContain('从后院走进值班室');
     expect(moveBeat?.issues.some((issue) => issue.kind === 'fact_direction_reversed')).toBe(true);
-    expect(moveBeat?.issues.some((issue) => issue.kind === 'beat_fallback')).toBe(true);
-    expect(result.composers.some((name) => name.includes('model-failed'))).toBe(true);
+    expect(result.composers).toContain('model-unverified');
     // Two attempts (initial + one feedback retry) on the move beat only.
     expect(prompts.filter((prompt) => prompt.includes('路明非从值班室到后院')).length).toBe(2);
     expect(prompts.some((prompt) => prompt.includes('上一稿没有写清'))).toBe(true);

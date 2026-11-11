@@ -213,7 +213,12 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
       // Preserve the last non-empty rejected scene: the product must not replace
       // a written model paragraph with program text just because its gate
       // refused it. It is shown as an unverified draft, never as accepted prose.
-      const draftText = last?.text?.trim() ? last.text : null;
+      // Only text that contains model writing can be shown as a model draft.
+      // A program-only answer is a labelled downgrade, not a draft.
+      const lastSegments = last ? resultSegments(last) : [];
+      const hasModelText = lastSegments.some((segment) => segment.source === 'model'
+        || segment.source === 'draft' || segment.source === 'external');
+      const draftText = last?.text?.trim() && hasModelText ? last.text : null;
       return {
         kind: 'fallback',
         candidateId: plan[0]?.id ?? null,
@@ -227,6 +232,7 @@ export function createNarrationRunner(options: NarrationRunnerOptions): Narratio
             route: last.route,
             grade: last.grade,
             issues: last.issues.map((issue) => ({ kind: issue.kind, severity: issue.severity })),
+            promptChars: last.promptChars,
             timings: last.timings,
             strategyVersion: last.strategyVersion,
             segments: resultSegments(last),
