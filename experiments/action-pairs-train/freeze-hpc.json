@@ -1,0 +1,99 @@
+{
+ "version": "action-pairwise-freeze-v1",
+ "createdAt": "2026-11-11T15:41:54.795018+00:00",
+ "base": {
+  "dir": "/home/student/t330034047/action-pairs-run/base",
+  "files": {
+   "config.json": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+   "vocab.txt": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+   "pytorch_model.bin": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc"
+  },
+  "maxPositionEmbeddings": 512,
+  "hiddenSize": 256
+ },
+ "serializer": {
+  "file": "pairwise_serialize.py",
+  "sha256": "55bc641f18793846179831eec4a527ab2069778fab3172ee2eefab10dad6f95d",
+  "digest": "8f594b60ead53c45b2786454684ac8f359f1a5ad70b55f90c43c71050a89a78b",
+  "format": "action-pairwise-x2",
+  "groups": [
+   "感知",
+   "移动",
+   "战斗",
+   "援助",
+   "请求",
+   "胁迫",
+   "言语",
+   "算计",
+   "情绪",
+   "物品",
+   "身体",
+   "立场",
+   "不动"
+  ],
+  "skipIndex": 12,
+  "goalChars": 18,
+  "recentChars": 30,
+  "presentLimit": 3,
+  "itemLimit": 3
+ },
+ "data": {
+  "rows": {
+   "path": "/home/student/t330034047/action-pairs-run/data/rows300.jsonl",
+   "sha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188"
+  },
+  "labels": {
+   "path": "/home/student/t330034047/action-pairs-run/data/labels-v1.json",
+   "sha256": "41372ab43bc16ed90dd488bf334a562f6cec44e5633f07ba01d2833f85bb1829"
+  },
+  "split": {
+   "path": "/home/student/t330034047/action-pairs-run/data/split-lists.json",
+   "sha256": "d385b4acc6d294328773f1948bd25eb28269f78d2ee10ea546db984e6d121a88"
+  }
+ },
+ "training": {
+  "loss": "BCEWithLogitsLoss(pos_weight=12, reduction=sum) / (decisions * 13)",
+  "posWeight": 12,
+  "negativesPerDecision": 12,
+  "normalisation": "per original decision (13 pairs)",
+  "batchDecisions": 8,
+  "epochsMax": 12,
+  "earlyStopPatience": 3,
+  "lrHead": 0.001,
+  "lrEncoder": 1e-05,
+  "weightDecay": 0.01,
+  "warmupRatio": 0.1,
+  "dropout": 0.1,
+  "pooling": "masked mean over tokens",
+  "optimizer": "AdamW",
+  "seed": 20261111,
+  "seedRule": "set before encoder load and head init",
+  "maxLenRule": "ceil32(p100 over train+validation inputs), cap 512, over-cap rows refused",
+  "maxLenHardCap": 512,
+  "truncation": "never",
+  "keepGoals": "all unfinished goals (up to 6 in this data), never top-5"
+ },
+ "evaluation": {
+  "primary": "13-way argmax",
+  "rowHit": "step-1 argmax equals the labelled group",
+  "skipMetrics": "skipPrecision / skipRecall with skip = 不动",
+  "perGroupF1": "13 groups, worst 3 reported",
+  "step2": "reported separately, never merged into the sample count",
+  "testUse": "once, after the configuration is frozen"
+ },
+ "conflicts": "reported by measure_pairwise.py; training must not start while a conflicting-label context remains unresolved",
+ "measurement": {
+  "path": "/home/student/t330034047/action-pairs-run/data/measurement.json",
+  "sha256": "69d032f94913516b59c3fe33aaf06b166e9b484c8eea84eaeee80cb327ba4b28",
+  "maxLenCeil32": 224,
+  "tokens": {
+   "count": 4290,
+   "min": 137,
+   "p50": 168,
+   "p95": 191,
+   "p100": 211,
+   "mean": 168.2
+  },
+  "conflictingLabelContexts": 0
+ }
+}
