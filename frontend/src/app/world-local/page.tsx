@@ -1093,7 +1093,10 @@ export default function WorldLocalPage() {
   const submit = useCallback(async () => {
     const session = sessionRef.current;
     const text = input.trim();
-    if (!session || !text || busy) return;
+    if (!session || !text || busy) {
+      console.info('[world-local submit-guard]', JSON.stringify({ hasSession: Boolean(session), hasText: Boolean(text), busy }));
+      return;
+    }
     setBusy(true); setError(null); setWarning(null); setPhase('thinking');
     const globals = globalThis as unknown as { __worldTurnStartedAt?: number; __worldFirstTextAt?: number };
     globals.__worldTurnStartedAt = Date.now();
@@ -1159,9 +1162,13 @@ export default function WorldLocalPage() {
         // The previous turn is still settling; this input was not consumed.
         // Drop its placeholder and hand the text back instead of leaving an
         // empty "…" turn in the history.
+        console.info('[world-local recovery]', JSON.stringify({
+          turnInProgress: true, advance: Boolean(session.snapshot.transport.advance), busy: session.busy,
+        }));
         setEntries((list) => list.filter((entry) => entry.key !== key));
         setInput(text);
         setMessage('上一回合还在结算，等它结束再提交这一句。');
+        setPhase('ready');
         return;
       }
       if (status.kind === 'stop') setMessage(`本轮停止：${status.reason}`);
@@ -1212,16 +1219,23 @@ export default function WorldLocalPage() {
       // history count and entries are what the snapshot actually holds instead
       // of the pre-commit state the submit closure saw.
       try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after failure failed', refreshError); }
+      // Evidence for a recovery that did not land: the next run can tell a
+      // refused cancel from a refused narration from a stale running promise.
+      const recovery: Record<string, unknown> = {
+        advanceBefore: Boolean(session.snapshot.transport.advance),
+        cancels: [], starts: [],
+      };
       // A failed continuation can leave the advance open. Without this the
       // next submit is refused as turn_in_progress and the player waits with no
       // entry (3-turn d101 turn 2). Cancel it, then read the record again.
       if (session.snapshot.transport.advance) {
         try {
-          await Promise.race([
+          recovery.cancels.push(await Promise.race([
             session.cancel('turn_failed'),
             new Promise((resolve) => setTimeout(resolve, 15_000)),
-          ]);
+          ]));
         } catch (cancelError) { console.warn('[world-local] cancel after failure failed', cancelError); }
+        recovery.advanceAfterCancel = Boolean(session.snapshot.transport.advance);
         // The cancel is refused while the head point's narration is still
         // pending (checkHeadReady). A failed round can have committed a point
         // whose narration never ran, which leaves every later submit refused
@@ -1229,20 +1243,23 @@ export default function WorldLocalPage() {
         // narration, then cancel again; its prose is kept.
         if (session.snapshot.transport.advance) {
           try {
-            await Promise.race([
+            recovery.starts.push(await Promise.race([
               session.start(),
               new Promise((resolve) => setTimeout(resolve, 60_000)),
-            ]);
+            ]));
           } catch (finishError) { console.warn('[world-local] finishing narration after failure failed', finishError); }
+          recovery.advanceAfterStart = Boolean(session.snapshot.transport.advance);
           try {
-            await Promise.race([
+            recovery.cancels.push(await Promise.race([
               session.cancel('turn_failed'),
               new Promise((resolve) => setTimeout(resolve, 15_000)),
-            ]);
+            ]));
           } catch (cancelError) { console.warn('[world-local] second cancel after failure failed', cancelError); }
         }
         try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after cancel failed', refreshError); }
       }
+      recovery.advanceAfter = Boolean(session.snapshot.transport.advance);
+      console.info('[world-local recovery]', JSON.stringify(recovery));
       setEntries((list) => {
         const rebuilt = restoredEntries(session.snapshot);
         return rebuilt.length > list.length ? rebuilt : list;
@@ -1321,6 +1338,7 @@ export default function WorldLocalPage() {
       // that no longer exists while the harness waits for done.
       setStage('');
       setBusy(false);
+      console.info('[world-local submit-finally]', JSON.stringify({ turn: turnRecordRef.current?.index ?? null }));
       // A turn stopped by the deadline or by a failure never reaches refresh(),
       // so the "已行动" counter kept the previous value even though the command
       // was consumed and its point committed (run 09-overlap-move-9QTZ: prose
