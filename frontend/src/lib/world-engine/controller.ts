@@ -626,7 +626,7 @@ export class ControllerDriver {
         // says only "request_malformed".
         console.info('[world-local transport error]', JSON.stringify({
           operation, code: error.response.error.code, details: error.response.error.details ?? null,
-          message: (error.response.error as { message?: string }).message ?? null,
+          message: error.message ?? null,
         }));
         const reaction = errorReaction(error.response);
         this.adoptState(error.response);
