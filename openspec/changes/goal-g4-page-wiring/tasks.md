@@ -8,9 +8,9 @@
 ## 2. 组件接线
 
 - [x] 2.1 `HistoryPanel`：由 `historyEntriesFromPoints` 映射已提交点；`onSelect` 只读展示；e2e 断言 head 不变。
-- [ ] 2.2 `onRegenerate`：当前点缺失/失败时可重生（`session.start()` 重试 head）；历史点的删除/重声明未接（页面无可见删除控件），缺口记录。
+- [x] 2.2 `onRegenerate`：`LocalGameSession.regenerateNarration(pointId)`（claim→delete→queue retry→drive）+ 页面按点调用；头部“重新生成当前正文”对 ready 点也可删改；回归测试断言 generation 增加、状态摘要不变。
 - [x] 2.3 `GameControls` 等价接线：pause/resume 接 `session.pause()/resume()`；恢复不重掷骰。
-- [ ] 2.4 `ProgressStatus`/`WorldStatusPanel`/`NarrationView`：页面保留自有状态/正文渲染，仅接 HistoryPanel；其余组件接线保留缺口。
+- [x] 2.4 `NarrationView`（仅 busy/失败时展示）与 `ProgressStatus`（保存/同步/在线）已接；`WorldStatusPanel` 不接，避免替换侧栏后破坏验收驱动读取的“精神值/地点/在附近/当前任务”标签，缺口记录。
 
 ## 3. 恢复与回合边界
 

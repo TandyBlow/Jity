@@ -758,7 +758,10 @@ function handleCancel(record: PersistedRecord, request: RequestMap['round_conclu
   checkLease(record, request);
   checkExpected(record, request);
   checkChain(record, request.advanceId, request.roundId);
-  checkHeadReady(record);
+  // A failed narration is terminal: the round can be closed, and a later
+  // regenerate retries the text. A pending/missing head still blocks cancel.
+  const headStatus = headEntry(record).status;
+  if (headStatus !== 'ready' && headStatus !== 'failed') refuse('narration_blocked', 'the head narration is not ready');
   const abandoned: Id[] = [];
   if (record.work?.pendingGroup) abandoned.push(record.work.pendingGroup.groupId);
   record.work = null;

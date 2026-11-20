@@ -106,6 +106,26 @@ describe('LocalGameSession', () => {
       .rejects.toThrow(/local_restore_invariant:.*point_chain_broken/u);
   });
 
+  it('regenerates the head narration without changing state', async () => {
+    const initial = template();
+    const log: string[] = [];
+    const session = await LocalGameSession.create(initial, scriptedModel(log));
+    await session.start();
+    await session.submit('我走到门厅。');
+    const head = session.snapshot.transport.headPointId;
+    const digestBefore = session.snapshot.transport.pointStates[head].stateDigest;
+    const generationBefore = session.snapshot.transport.narrations[head].generation;
+    const callsBefore = log.filter((entry) => entry === `narration:${head}`).length;
+
+    const status = await session.regenerateNarration();
+    expect(status.kind).not.toBe('error');
+    const after = session.snapshot.transport;
+    expect(after.narrations[head]?.status).toBe('ready');
+    expect(after.narrations[head]?.generation).toBeGreaterThan(generationBefore);
+    expect(log.filter((entry) => entry === `narration:${head}`).length).toBeGreaterThan(callsBefore);
+    expect(after.pointStates[head]?.stateDigest).toBe(digestBefore);
+  }, 30000);
+
   it('closes an advance whose settlement failed before commit', async () => {
     const initial = template();
     const log: string[] = [];

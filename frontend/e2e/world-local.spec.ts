@@ -70,6 +70,29 @@ test.describe('world-local product page', () => {
       { timeout: 30_000 },
     );
 
+    // Delete and regenerate the current point's prose from the committed record.
+    const regenBefore = await page.evaluate(() => {
+      const snapshot = (globalThis as { __worldSnapshot?: () => { transport: { headPointId: string; pointStates: Record<string, { stateDigest: string }>; narrations: Record<string, { generation: number }> } } }).__worldSnapshot?.();
+      const transport = snapshot?.transport;
+      const head = transport?.headPointId as string;
+      return { head, digest: transport?.pointStates[head]?.stateDigest ?? null, generation: transport?.narrations[head]?.generation ?? 0 };
+    });
+    await page.click('button:has-text("重新生成当前正文")', { timeout: 30_000 });
+    await page.waitForFunction(
+      (prev) => {
+        const transport = (globalThis as { __worldSnapshot?: () => { transport: { narrations: Record<string, { status: string; generation: number }> } } }).__worldSnapshot?.().transport;
+        const entry = transport?.narrations[prev.head];
+        return entry?.status === 'ready' && entry.generation > prev.generation;
+      },
+      regenBefore,
+      { timeout: 180_000 },
+    );
+    const regenDigestAfter = await page.evaluate((head) => {
+      const transport = (globalThis as { __worldSnapshot?: () => { transport: { pointStates: Record<string, { stateDigest: string }> } } }).__worldSnapshot?.().transport;
+      return transport?.pointStates[head]?.stateDigest ?? null;
+    }, regenBefore.head);
+    expect(regenDigestAfter).toBe(regenBefore.digest);
+
     // Reload restores the committed history from IndexedDB.
     await page.reload({ waitUntil: 'domcontentloaded' });
     await ready(page);

@@ -14,7 +14,7 @@ import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/type
 import type { GenerationEvidence, ModelLoadEvidence } from '@/lib/world-engine/local/runtime-diagnostics/types';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
 import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
-import { HistoryPanel, historyEntriesFromPoints, type HistoryEntry } from '@/components/world-local';
+import { HistoryPanel, NarrationView, ProgressStatus, historyEntriesFromPoints, type HistoryEntry, type NarrationState, type SaveStatus, type SyncState } from '@/components/world-local';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
@@ -592,7 +592,18 @@ export default function WorldLocalPage() {
   const [paused, setPaused] = useState(false);
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>({ state: 'idle' });
+  const [syncState, setSyncState] = useState<SyncState | null>(null);
+  const [online, setOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine));
   const leaseWorldRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const up = () => setOnline(true);
+    const down = () => setOnline(false);
+    window.addEventListener('online', up);
+    window.addEventListener('offline', down);
+    return () => { window.removeEventListener('online', up); window.removeEventListener('offline', down); };
+  }, []);
 
   // Isolation is a product requirement, not an optimization: without the
   // COOP/COEP headers the wasm runtime drops to one thread. Keep the warning
@@ -620,7 +631,12 @@ export default function WorldLocalPage() {
           : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
           : outcome?.status === 'local-only' ? '只存本地'
           : result.note ?? null);
-      }).catch((e) => { console.warn('[world-local] sync save failed', e); });
+        setSyncState(outcome?.status === 'synced' ? 'synced'
+          : outcome?.status === 'queued' ? 'offline'
+          : outcome?.status === 'conflict' ? 'conflict'
+          : outcome?.status === 'local-only' ? 'local-only'
+          : 'failed');
+      }).catch((e) => { console.warn('[world-local] sync save failed', e); setSyncState('failed'); });
       return;
     }
     if (storeRef.current?.durable) return;
@@ -664,8 +680,12 @@ export default function WorldLocalPage() {
     // A conflict-blocked session can leave flushPersistence waiting on its own
     // drain; the page must still paint. Bounded wait, then the snapshot save is
     // best effort.
+    setSaveStatus({ state: 'saving' });
     await Promise.race([
-      session.flushPersistence().catch(() => undefined),
+      session.flushPersistence().then(
+        () => setSaveStatus({ state: 'saved', savedAtLabel: new Date().toLocaleTimeString() }),
+        (error) => setSaveStatus({ state: 'failed', error: error instanceof Error ? error.message : String(error) }),
+      ),
       new Promise<void>((resolve) => setTimeout(resolve, 8_000)),
     ]);
     save(session.snapshot);
@@ -1472,17 +1492,15 @@ export default function WorldLocalPage() {
     }
   }, [paused]);
 
-  /** Regenerate the head narration from the committed record only. Missing or
-   * failed history points are not claimed here; the panel disables them. */
-  const regenerateHead = useCallback(async () => {
+  /** Delete and regenerate one committed point's narration from the committed
+   * record only; a later refresh rebuilds the reading column from the snapshot. */
+  const regenerateNarration = useCallback(async (pointId?: string) => {
     const session = sessionRef.current;
     if (!session) return;
-    const head = session.snapshot.transport.headPointId;
-    const entry = session.snapshot.transport.narrations[head];
-    if (!entry || entry.status === 'ready') return;
     try {
-      await session.start();
+      await session.regenerateNarration(pointId);
       await refresh();
+      setEntries(restoredEntries(session.snapshot));
     } catch (e) {
       setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
     }
@@ -1502,6 +1520,22 @@ export default function WorldLocalPage() {
     window.location.reload();
   }, []);
 
+  const lastEntry = entries[entries.length - 1] ?? null;
+  const narrationState: NarrationState = lastEntry
+    ? {
+        phase: lastEntry.failed || lastEntry.cancelled || lastEntry.unfinished
+          ? 'failed'
+          : lastEntry.text.trim() && (lastEntry.acceptedMs != null || lastEntry.restored)
+            ? 'accepted'
+            : lastEntry.text.trim() ? 'streaming' : phase === 'thinking' || phase === 'streaming' ? 'streaming' : 'idle',
+        text: lastEntry.text,
+        pointId: sessionRef.current?.snapshot.transport.headPointId ?? null,
+        elapsedMs: lastEntry.acceptedMs ?? lastEntry.draftMs ?? null,
+        failureReason: lastEntry.failed || lastEntry.cancelled || lastEntry.unfinished ? lastEntry.note : null,
+        previousText: entries[entries.length - 2]?.text ?? null,
+      }
+    : { phase: 'idle', text: '', pointId: null };
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -1510,6 +1544,8 @@ export default function WorldLocalPage() {
           <div className={styles.subtitle}>全部在浏览器本地运行 · 服务器只负责存档</div>
         </div>
         <div className={styles.headerActions}>
+          <button onClick={() => void regenerateNarration()} disabled={busy || phase === 'loading'}
+            className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新生成当前正文'}</button>
           <button onClick={() => void togglePause()} disabled={!view || phase === 'loading'}
             className={`${styles.ghostButton} ${styles.headerButton}`}>{paused ? '继续' : '暂停'}</button>
           <button onClick={reset} className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新开始'}</button>
@@ -1518,6 +1554,10 @@ export default function WorldLocalPage() {
 
       <section className={styles.layout}>
         <div>
+          {(busy || lastEntry?.failed) && (
+            <NarrationView state={narrationState} onRegenerate={() => void regenerateNarration()}
+              regenerateDisabledReason={busy || phase === 'loading' ? '结算或加载中，稍后再试' : null} />
+          )}
           <div className={styles.card}>
             <div className={styles.statusRow}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
@@ -1616,13 +1656,8 @@ export default function WorldLocalPage() {
               headPointId={sessionRef.current?.snapshot.transport.headPointId ?? null}
               selectedPointId={selectedPointId}
               onSelect={(pointId) => setSelectedPointId(pointId)}
-              onRegenerate={() => void regenerateHead()}
-              regenerateDisabledReason={(() => {
-                const head = sessionRef.current?.snapshot.transport.headPointId;
-                if (!head) return '还没有可重生的点';
-                const status = sessionRef.current?.snapshot.transport.narrations[head]?.status;
-                return status === 'ready' ? '当前点正文已就绪；只对缺失或失败的当前点重生' : null;
-              })()}
+              onRegenerate={(pointId) => void regenerateNarration(pointId)}
+              regenerateDisabledReason={busy || phase === 'loading' ? '结算或加载中，稍后再试' : null}
             />
             {selectedPointId && (() => {
               const record = sessionRef.current?.snapshot.transport;
@@ -1641,6 +1676,24 @@ export default function WorldLocalPage() {
             <div className={styles.sideTitle}>本地存档</div>
             <div className={styles.sideMuted}>每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
             <div className={styles.sideMutedSpaced}>已行动：{history.length} 次</div>
+          </div>
+          <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
+            <ProgressStatus
+              online={online}
+              save={{
+                state: saveStatus.state,
+                savedAtLabel: saveStatus.savedAtLabel ?? null,
+                detail: durable === false ? '浏览器没有 IndexedDB：进度只保存在内存里，刷新会丢失。' : null,
+                error: saveStatus.error ?? null,
+                onRetry: saveStatus.state === 'failed' ? () => void refresh() : undefined,
+              }}
+              sync={syncRef.current ? {
+                state: syncState ?? 'local-only',
+                onSync: () => void syncRef.current?.flush().then((result) => {
+                  setSyncState(result.conflicts > 0 ? 'conflict' : result.offline || result.remaining > 0 ? 'offline' : 'synced');
+                }),
+              } : null}
+            />
           </div>
         </aside>
       </section>

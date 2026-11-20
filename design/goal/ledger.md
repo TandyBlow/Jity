@@ -60,7 +60,7 @@
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
 | G2 浏览器状态内核收口 | 完成（2026-11-20） | 32 操作定案（31 实现、`restore_group_work` 非产品，D-015）；取消恢复与 corrupt-restore 测试通过；restore 接 `verifySessionSnapshot`；差分夹具由 canonical/state/transport 测试逐字节断言；骰点协议冻结；全量 90 files / 1256 passed，两套 typecheck 通过；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；Change 已归档，tag `goal-g2-kernel-diff-20261120` |
 | G3 模型资产与时间包线 | 完成（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；12 个正常点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，全部过 60/300，`timing-baseline.json` 状态 PASS；自动链 0 次归 G5；Change 已归档，tag `goal-g3-model-timing-20261120` |
-| G4 单机可玩页面接线 | 进行中 | 隔离告警、pause/resume、HistoryPanel 只读选中、构建与 e2e 通过、`--block-api` 单回合通过（0 个 API 请求）；缺口：历史点删除/重生、ProgressStatus/WorldStatusPanel/NarrationView 接线、恢复路径回归 |
+| G4 单机可玩页面接线 | 进行中 | 隔离告警、pause/resume、HistoryPanel 只读选中、叙事删除/重生（head+history 路径）、NarrationView/ProgressStatus、构建与 e2e 通过、`--block-api` 单回合通过；缺口：`WorldStatusPanel` 未接、`position_invalid` 与自动轮重复的真实页面回归 |
 | G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
 | G6 叙事产品路径与质量 | 未开始 | 先原样输出；20+ 点读评；G6 后决定是否加事实门 |
 | G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链；单用户 Bearer + 本地/内网 |
@@ -71,7 +71,7 @@
 按 G 线列，作为唯一进度来源；不另建 progress 文档。
 
 - **G1**：确认文档集与 tag；用户决策已记录（D-004/D-006/D-010–D-013）；当前无 `pending-user`。
-- **G2**：完成。32 操作按 D-015 定案；取消恢复回归（`local-transport.test.ts`）与 corrupt-restore 拒绝通过；restore 已接 invariants；冻结差分夹具（LF sha `7d68a392…f977`）由 canonical/state/transport 测试消费；骰点协议见 `kernel-ops.md`；全量 1256 passed / 17 skipped，两套 typecheck 通过。已知限制：failed head 的 cancel 未放宽（需重试或删除叙事后继续）。
+- **G2**：完成。32 操作按 D-015 定案；取消恢复回归（`local-transport.test.ts`）与 corrupt-restore 拒绝通过；restore 已接 invariants；冻结差分夹具（LF sha `7d68a392…f977`）由 canonical/state/transport 测试消费；骰点协议见 `kernel-ops.md`；全量 1256 passed / 17 skipped，两套 typecheck 通过。failed head 的 cancel 已在 G4 放宽为 ready|failed。
 - **G3**：完成。资产与冷启动完成；12 个正常点全部过 60/300（最差首段 43,526 ms、最差完成−提交 13,772 ms），`timing-baseline.json` PASS；t4/t11 结算失败与 t6 刷新保留为失败证据；自动链 0 次归 G5。
 - **G4**：接 `LocalGameSession.pause()/resume()`、HistoryPanel、`narration_delete`、状态/进度、错误/重试、刷新恢复、租约提示；用 components/world-local；加 `world-local.spec.ts`；清理过期注释；修 `position_invalid`、`turn_in_progress`、自动轮重复、空占位回合。
 - **G5**：建 12–20 例冻结场景；只做 `dragon-raja-free-day`（D-011）；每任务记录原始输出/结构/语义错误/重试/耗时；用户读评；产 `artifacts/goal/semantics/`。

@@ -69,4 +69,5 @@ describe('failed-turn recovery', () => {
     expect(third).not.toEqual({ kind: 'stop', reason: 'turn_in_progress' });
     expect(narrationCalls).toBeGreaterThan(0);
   }, 60000);
+
 });

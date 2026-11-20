@@ -336,6 +336,33 @@ export class LocalGameSession {
     return snapshot;
   }
 
+  /** Delete and regenerate one committed point's narration. The claim wipes
+   * the old text first (by protocol); the queue retry is what re-enqueues a
+   * non-head point, which no other path ever does. */
+  async regenerateNarration(pointId: Id = this.transport.snapshot().headPointId): Promise<DriverStatus> {
+    const record = this.transport.snapshot();
+    const entry = record.narrations[pointId];
+    if (!entry) throw new Error('narration_point_not_committed');
+    const head = pointId === record.headPointId;
+    const memory = this.driver.getMemory();
+    if (head && (!memory.leaseToken || !record.lease)) throw new Error('narration_claim_without_lease');
+    const binding = head
+      ? { mode: 'head' as const, leaseToken: memory.leaseToken!, fenceEpoch: record.lease!.fenceEpoch }
+      : { mode: 'history' as const };
+    const base = randomId('regen');
+    const claimed = await this.transport.execute('narration_claim', {
+      protocolVersion: 2, requestId: `${base}_claim`, worldId: this.worldId, pointId, ...binding, currentClaim: null,
+    }, { worldId: this.worldId, pointId });
+    const summary = claimed.data;
+    if (!('claimToken' in summary) || !summary.claimToken) throw new Error('narration_claim_replayed_without_token');
+    await this.transport.execute('narration_delete', {
+      protocolVersion: 2, requestId: `${base}_delete`, ...binding,
+      claimToken: summary.claimToken, generation: summary.generation, issuedAtEpochMilli: summary.issuedAtEpochMilli,
+    }, { worldId: this.worldId, pointId });
+    this.driver.retryNarration(pointId);
+    return this.start();
+  }
+
   async start(): Promise<DriverStatus> {
     // A failed/empty head narration is the one point a fresh drive may retry
     // explicitly (the page's existing failed-turn recovery). The queue itself
