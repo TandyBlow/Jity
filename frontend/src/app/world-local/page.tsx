@@ -2,8 +2,8 @@
 
 /** Browser-only playable loop. No HTTP game API: the page loads the static
  * world, creates the local transport/controller, runs the two GGUF engines
- * (semantic 0.6B + narration 0.5B) and stores the committed snapshot in
- * localStorage. The server, if present, is never called. */
+ * (semantic Qwen3-0.6B + narration Qwen3-1.7B) and stores the committed
+ * snapshot in IndexedDB. The server, if present, is never called. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WllamaInferenceEngine } from '@/lib/world-engine/runtime/wllama-engine';
 import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
@@ -14,6 +14,7 @@ import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/type
 import type { GenerationEvidence, ModelLoadEvidence } from '@/lib/world-engine/local/runtime-diagnostics/types';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
 import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
+import { HistoryPanel, historyEntriesFromPoints, type HistoryEntry } from '@/components/world-local';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
@@ -587,7 +588,20 @@ export default function WorldLocalPage() {
   /** A live lease held by another tab (or by a reload that has not released
    * yet). The save is valid; it must never be archived or deleted for this. */
   const [leaseBlocked, setLeaseBlocked] = useState(false);
+  const [isolationWarning, setIsolationWarning] = useState<string | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const leaseWorldRef = useRef<string | null>(null);
+
+  // Isolation is a product requirement, not an optimization: without the
+  // COOP/COEP headers the wasm runtime drops to one thread. Keep the warning
+  // persistent instead of a one-shot toast.
+  useEffect(() => {
+    const isolated = globalThis.crossOriginIsolated === true;
+    (window as unknown as { __worldIsolation?: unknown }).__worldIsolation = { crossOriginIsolated: isolated, at: Date.now() };
+    setIsolationWarning(isolated ? null : '页面未启用跨源隔离（COOP/COEP）：本地模型只能单线程运行，会明显变慢。请确认通过站点地址打开，且文档响应带 Cross-Origin-Opener-Policy 与 Cross-Origin-Embedder-Policy。');
+  }, []);
 
   /** Fallback only: when the platform has no IndexedDB the session runs in
    * memory and the page keeps a best-effort localStorage copy so a refresh is
@@ -636,6 +650,17 @@ export default function WorldLocalPage() {
       () => structuredClone(sessionRef.current?.snapshot ?? session.snapshot);
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
+    // Read-only history view: committed points and their narration status.
+    const points = Object.values(snapshot.transport.points).map((point) => ({
+      pointId: point.id, sequence: point.sequence, kind: point.kind,
+      stateDigest: snapshot.transport.pointStates[point.id]?.stateDigest ?? null,
+      advanceId: point.advanceId ?? null,
+    }));
+    const narrationStatusById = Object.fromEntries(
+      Object.entries(snapshot.transport.narrations).map(([id, entry]) => [id, entry.status]),
+    );
+    setHistoryEntries(historyEntriesFromPoints(points, { narrationStatusById }));
+    setPaused(Boolean(snapshot.transport.control.paused));
     // A conflict-blocked session can leave flushPersistence waiting on its own
     // drain; the page must still paint. Bounded wait, then the snapshot save is
     // best effort.
@@ -1434,6 +1459,35 @@ export default function WorldLocalPage() {
     }
   }, [refresh]);
 
+  /** Pause keeps the frozen work and dice; resume continues the same round. */
+  const togglePause = useCallback(async () => {
+    const session = sessionRef.current;
+    if (!session) return;
+    try {
+      const status = paused ? await session.resume() : await session.pause();
+      setPaused(Boolean(session.snapshot.transport.control.paused));
+      setMessage(status.kind === 'stop' ? `本轮停止：${status.reason}` : paused ? '已继续。' : '已暂停；冻结的行动与骰点会保留。');
+    } catch (e) {
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+    }
+  }, [paused]);
+
+  /** Regenerate the head narration from the committed record only. Missing or
+   * failed history points are not claimed here; the panel disables them. */
+  const regenerateHead = useCallback(async () => {
+    const session = sessionRef.current;
+    if (!session) return;
+    const head = session.snapshot.transport.headPointId;
+    const entry = session.snapshot.transport.narrations[head];
+    if (!entry || entry.status === 'ready') return;
+    try {
+      await session.start();
+      await refresh();
+    } catch (e) {
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+    }
+  }, [refresh]);
+
   const reset = useCallback(async () => {
     if (!confirm('清除本地存档并重新开始？')) return;
     const session = sessionRef.current;
@@ -1455,7 +1509,11 @@ export default function WorldLocalPage() {
           <h1 className={styles.title}>龙族 · 自由一日</h1>
           <div className={styles.subtitle}>全部在浏览器本地运行 · 服务器只负责存档</div>
         </div>
-        <button onClick={reset} className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新开始'}</button>
+        <div className={styles.headerActions}>
+          <button onClick={() => void togglePause()} disabled={!view || phase === 'loading'}
+            className={`${styles.ghostButton} ${styles.headerButton}`}>{paused ? '继续' : '暂停'}</button>
+          <button onClick={reset} className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新开始'}</button>
+        </div>
       </header>
 
       <section className={styles.layout}>
@@ -1523,6 +1581,7 @@ export default function WorldLocalPage() {
           </div>}
           {durable === false && <div className={styles.notice}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
           {warning && <div className={`${styles.notice} ${styles.noticeWrap}`}>{warning}</div>}
+          {isolationWarning && <div className={`${styles.notice} ${styles.noticeError} ${styles.noticeWrap}`}>{isolationWarning}</div>}
           {error && <div className={`${styles.notice} ${styles.noticeError} ${styles.noticeWrap}`}>{error}</div>}
 
           <div className={styles.composer}>
@@ -1552,8 +1611,35 @@ export default function WorldLocalPage() {
             </ul>
           </div>
           <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
+            <HistoryPanel
+              entries={historyEntries}
+              headPointId={sessionRef.current?.snapshot.transport.headPointId ?? null}
+              selectedPointId={selectedPointId}
+              onSelect={(pointId) => setSelectedPointId(pointId)}
+              onRegenerate={() => void regenerateHead()}
+              regenerateDisabledReason={(() => {
+                const head = sessionRef.current?.snapshot.transport.headPointId;
+                if (!head) return '还没有可重生的点';
+                const status = sessionRef.current?.snapshot.transport.narrations[head]?.status;
+                return status === 'ready' ? '当前点正文已就绪；只对缺失或失败的当前点重生' : null;
+              })()}
+            />
+            {selectedPointId && (() => {
+              const record = sessionRef.current?.snapshot.transport;
+              const narration = record?.narrations[selectedPointId];
+              const point = record?.points[selectedPointId];
+              return (
+                <div className={styles.sideMutedSpaced}>
+                  选中点 {point?.sequence ?? '—'} · 正文状态 {narration?.status ?? 'missing'}
+                  {narration?.status === 'ready' && narration.text ? `：${narration.text.slice(0, 120)}…` : ''}
+                  {' '}（只读，不改当前进度）
+                </div>
+              );
+            })()}
+          </div>
+          <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
             <div className={styles.sideTitle}>本地存档</div>
-            <div className={styles.sideMuted}>每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
+            <div className={styles.sideMuted}>每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
             <div className={styles.sideMutedSpaced}>已行动：{history.length} 次</div>
           </div>
         </aside>
