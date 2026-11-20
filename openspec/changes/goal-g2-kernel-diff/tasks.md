@@ -3,7 +3,7 @@
 ## 1. 失败回合可终止
 
 - [x] 1.1 在 `controller`/`local-transport` fixture 中复现：结算失败（updates 语义拒绝）→ cancel → 新 submit；断言当前 `turn_in_progress`。
-- [x] 1.2 修复 cancel 对 failed head / 过期 bind 的处理；回归测试转绿，且 `checkpoint_start_advance` 仍要求 ready。
+- [x] 1.2 回归测试转绿：cancel 在结算失败后关闭 advance，下一次 submit 被接受；`checkpoint_start_advance` 仍要求 head ready。failed head 放宽不在本变更加。
 - [x] 1.3 页面 `turn_in_progress` 分支恢复 `phase='ready'` 并归还输入；验证按钮重新可点。
 
 ## 2. 未决操作定案

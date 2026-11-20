@@ -8,10 +8,9 @@
 
 ### 1. 失败回合必须可终止
 
-- 复现：用 `controller`/`local-transport` 的 fixture 模型构造一个 `updates` 语义失败，然后 cancel，再 submit。
-- 已知可疑点：`handleCancel` 的 `checkHeadReady` 只允许 `ready`；failed head 永远无法取消。另一可能是 controller 的 cancel 请求使用了过期的 bind/ids。
-- 决定：cancel 必须在任何活跃 phase 关闭 advance；`checkHeadReady` 对 cancel 放宽到 `ready | failed`，`checkpoint_start_advance` 仍要求 `ready`。若复现显示是 bind/ids 问题，则修 request 构造，保持传输层校验不放宽。
-- 页面：`turn_in_progress` 分支恢复 `phase='ready'` 并把文本还给玩家；恢复尝试与停止路径一致。
+- 复现结果（2026-11-20）：fixture 中「updates 抛错 → cancel → 新 submit」通过；真实 5 回合运行中 `session.cancel` 返回 `world_complete` 且 advance 清零。残留的停摆不是内核 cancel，而是页面的 `busy`/`phase` 与驱动下一回合点击的竞态：turn 2 在 98 ms 内空转（handler 被 busy 挡住，`__worldTurns` 仍是上一回合的 done 记录），之后按钮一直不可点。
+- 修复：页面 stop 路径复用 cancel→补写→cancel（`e75cd4a6`）；`turn_in_progress` 分支恢复 `phase='ready'` 并归还输入；驱动在回合间等待页面离开结算阶段，并要求终止记录属于当前回合。
+- 保留：`checkpoint_start_advance` 仍要求 head ready；failed head 不能被 cancel（已知限制，需重试或删除叙事后可继续），不在本变更加放宽。若后续页面恢复仍无法清 failed head，另开决定。
 
 ### 2. 两个未决操作
 
