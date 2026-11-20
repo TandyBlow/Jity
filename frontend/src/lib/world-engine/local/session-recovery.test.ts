@@ -23,6 +23,10 @@ interface ModelHooks {
   plan?: (input: Json) => Json;
   /** Override a targets answer for one test. */
   targets?: (key: string) => Json;
+  /** Override an action answer for one test. */
+  action?: (key: string) => Json | undefined;
+  /** Continuation answers, consumed in order; the default is a handback. */
+  continuations?: Json[];
   /** Throw after the transport write this task follows (simulated refresh). */
   crashOn?: (task: ModelTask, key: string) => Error | null;
   /** Await before answering, to hold a step in flight. */
@@ -53,9 +57,9 @@ function scriptedModel(log: string[], hooks: ModelHooks = {}): WorldModelPort {
             actorIds: (input as { round?: { order?: string[] } }).round?.order ?? ['person_a', 'person_c'] }];
         }
         case 'action':
-          return data.actor === data.workingState?.protagonistId
+          return hooks.action?.(key) ?? (data.actor === data.workingState?.protagonistId
             ? { kind: 'act', text: data.advance?.inputText ?? '我走到门厅。' }
-            : { kind: 'skip' };
+            : { kind: 'skip' });
         case 'targets':
           if (hooks.targets) return hooks.targets(key);
           return key === 'person_c' ? { targets: [{ targetId: 'person_a' }] } : { targets: [] };
@@ -66,6 +70,7 @@ function scriptedModel(log: string[], hooks: ModelHooks = {}): WorldModelPort {
         case 'updates':
           return [{ stage: 'position', changes: {} }];
         case 'continuation':
+          if (hooks.continuations?.length) return hooks.continuations.shift()!;
           return { kind: 'handback', closedBy: 'model', cancelReason: null };
         case 'narration':
           return key === 'p1' ? '门厅里安静下来，盒盖开着。' : '走廊里很安静，盒子还盖着。';
@@ -375,6 +380,31 @@ describe('LocalGameSession durability', () => {
     expect(record.advance).toBeNull();
     expect(record.round?.conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
     expect(record.narrations[record.headPointId].status).toBe('ready');
+  });
+
+  it('keeps an admitted out-of-order target out of an automatic round acted set', async () => {
+    const log: string[] = [];
+    const model = scriptedModel(log, {
+      // In the automatic round only person_c is scheduled; its reaction admits
+      // the protagonist, who has no slot in that round's frozen order.
+      action: (key) => key === 'person_c' ? { kind: 'act', text: '周宁掀开盒盖。' } : undefined,
+      targets: (key) => key === 'person_c' ? { targets: [{ targetId: 'person_a' }] } : { targets: [] },
+      continuations: [
+        { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_c'], nextRoundId: 'round_auto_test' },
+        { kind: 'handback', closedBy: 'model', cancelReason: null },
+      ],
+    });
+    const session = await LocalGameSession.create(template(), model, { leaseHeartbeat: false, roll: () => 13 });
+    await session.start();
+    const status = await session.submit('我打开盒盖。');
+    expect(status.kind).not.toBe('error');
+    const record = session.snapshot.transport;
+    expect(record.round?.trigger).toBe('automatic');
+    expect(record.round?.order).toEqual(['person_c']);
+    expect(record.round?.actedIds).toEqual(['person_c']);
+    expect(record.round?.visitedIds).toEqual(['person_c']);
+    // The record the page saves must pass the same invariants restore runs.
+    await expect(LocalGameSession.restore(session.snapshot, scriptedModel([]), { leaseHeartbeat: false })).resolves.toBeTruthy();
   });
 
   it('refuses a duplicate submit while the same turn is in flight', async () => {

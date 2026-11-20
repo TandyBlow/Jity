@@ -172,8 +172,11 @@ function consume(status: Working['intentStatus']): Working['intentStatus'] {
 function stageWorking(working: Working, unitId: Id, actors: Id[], order: Id[]): Working {
   const overlap = actors.filter((actor) => working.actedIds.includes(actor));
   if (overlap.length) refuse('request_malformed', `actors ${overlap.sort().join(',')} already acted in this round`);
-  const visited = uniqSorted([...working.visitedIds, ...actors]);
-  const acted = uniqSorted([...working.actedIds, ...actors]);
+  // A group may admit a target that has no slot in a later automatic round's
+  // frozen order; only scheduled slots may enter acted/visited.
+  const scheduled = actors.filter((actor) => order.includes(actor));
+  const visited = uniqSorted([...working.visitedIds, ...scheduled]);
+  const acted = uniqSorted([...working.actedIds, ...scheduled]);
   return { cursor: handledPrefix(visited, order), actedIds: acted, visitedIds: visited,
     settledUnitIds: [...working.settledUnitIds, unitId], intentStatus: consume(working.intentStatus) };
 }
