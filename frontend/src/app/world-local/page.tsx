@@ -1224,7 +1224,10 @@ export default function WorldLocalPage() {
       try { await refresh(); } catch (refreshError) { console.warn('[world-local] refresh after failure failed', refreshError); }
       // Evidence for a recovery that did not land: the next run can tell a
       // refused cancel from a refused narration from a stale running promise.
-      const recovery: Record<string, unknown> = {
+      const recovery: {
+        advanceBefore: boolean; cancels: unknown[]; starts: unknown[];
+        advanceAfterCancel?: boolean; advanceAfterStart?: boolean; advanceAfter?: boolean;
+      } = {
         advanceBefore: Boolean(session.snapshot.transport.advance),
         cancels: [], starts: [],
       };
