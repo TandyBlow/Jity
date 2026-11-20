@@ -61,8 +61,8 @@
 | G2 浏览器状态内核收口 | 完成（2026-11-20） | 32 操作定案（31 实现、`restore_group_work` 非产品，D-015）；取消恢复与 corrupt-restore 测试通过；restore 接 `verifySessionSnapshot`；差分夹具由 canonical/state/transport 测试逐字节断言；骰点协议冻结；全量 90 files / 1256 passed，两套 typecheck 通过；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；Change 已归档，tag `goal-g2-kernel-diff-20261120` |
 | G3 模型资产与时间包线 | 完成（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；12 个正常点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，全部过 60/300，`timing-baseline.json` 状态 PASS；自动链 0 次归 G5；Change 已归档，tag `goal-g3-model-timing-20261120` |
 | G4 单机可玩页面接线 | 完成（有缺口） | 隔离告警、pause/resume、HistoryPanel 只读选中、叙事删除/重生（head+history）、NarrationView/ProgressStatus、空占位清理、构建/e2e/block-api 通过；缺口：WorldStatusPanel 未接、`position_invalid` 与自动轮重复转 G5、无 10 轮全绿运行 |
-| G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
-| G6 叙事产品路径与质量 | 未开始 | 先原样输出；20+ 点读评；G6 后决定是否加事实门 |
+| G5 非叙事语义验收 | 进行中 | 16 例冻结套件与分类器；run1/2/4/5 共 21 个真实回合、原始调用与重试保留；unknown_entity/context_overflow/stage_unit malformed 已修并复测；run5 s03 仍 330s，deadline cancel 已修（run6 验证）；0 次 continue |
+| G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 个硬错误/4 个复述/1 干净；待 20+ 点与用户读评、G6 后事实门决定 |
 | G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链；单用户 Bearer + 本地/内网 |
 | G8 交付验收与证据 | 未开始 | 20 输入、manifest、用户签字 |
 
@@ -74,8 +74,8 @@
 - **G2**：完成。32 操作按 D-015 定案；取消恢复回归（`local-transport.test.ts`）与 corrupt-restore 拒绝通过；restore 已接 invariants；冻结差分夹具（LF sha `7d68a392…f977`）由 canonical/state/transport 测试消费；骰点协议见 `kernel-ops.md`；全量 1256 passed / 17 skipped，两套 typecheck 通过。failed head 的 cancel 已在 G4 放宽为 ready|failed。
 - **G3**：完成。资产与冷启动完成；12 个正常点全部过 60/300（最差首段 43,526 ms、最差完成−提交 13,772 ms），`timing-baseline.json` PASS；t4/t11 结算失败与 t6 刷新保留为失败证据；自动链 0 次归 G5。
 - **G4**：完成（有缺口）。隔离、pause/resume、历史只读、叙事删除/重生、NarrationView/ProgressStatus、空占位清理；构建、1257 passed、e2e（含重生）与 `--block-api` 通过。缺口：WorldStatusPanel 未接；`position_invalid`（t4 `lu receives conflicting positions`）与自动轮重复转 G5；尚无 10 轮无停止的整轮运行。
-- **G5**：建 12–20 例冻结场景；只做 `dragon-raja-free-day`（D-011）；每任务记录原始输出/结构/语义错误/重试/耗时；用户读评；产 `artifacts/goal/semantics/`。
-- **G6**：先按原样输出冻结产品路径（D-004）；核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5；用户 20+ 点读评；G6 后按实测决定是否加事实门；产 `artifacts/goal/narration/`。
+- **G5**：进行中。`turns-semantics-16` + 分类器；证据 `artifacts/goal/semantics/`（run1 9 点、run2 4 点、run4 5 点、run5 3 点）；修复：任务 characterId/basis 提示、行对象修复、fact id 归属、上下文 11,600、stage_unit 诊断、295s 引擎中止与 `turn_deadline` 放弃 pending 叙事；run6 验证 300s 上限；自动链仍 0 次，需真实 `continue` 或明确记为未达成。
+- **G6**：进行中。原样输出路径保持；12 个 G3 样本技术读评：7 个硬事实/视角错误、4 个事实清单复述、1 个干净（`artifacts/goal/narration/read-technical-20261120.json`）；样本与投影提示已收（`samples.json`）；待 20+ 点与用户读评，G6 后按实测决定事实门。
 - **G7**：接 `sync.restore()`/`choose()`；离线队列、重连 flush、CAS/父链/修订号；两设备分叉；单用户 Bearer + 本地/内网服务（D-013）；产 `artifacts/goal/sync/`。
 - **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
 
