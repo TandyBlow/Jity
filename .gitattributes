@@ -11,6 +11,10 @@ artifacts/h2-integration-d1d2de0/** text eol=lf
 artifacts/b3-short/** text eol=lf
 artifacts/rule-facts/** text eol=lf
 
+# Action-dataset rows are hashed and handed to another lane for review; the
+# bytes must not depend on the checkout platform.
+experiments/action-dataset-v1/** text eol=lf
+
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.
 nul -text

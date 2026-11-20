@@ -1,0 +1,35 @@
+{
+  "ok": false,
+  "problems": [
+    "9 clock-dependent rows do not show the time: ['b1-0021', 'b3-0025', 'b3-0026', 'b4-0001', 'b5-0017', 'b5-0033', 'b5-0034', 'b6-0004', 'b6-0008']"
+  ],
+  "pairs": 4225,
+  "decisions": 325,
+  "rowsUsed": 295,
+  "twoStepRows": 30,
+  "serializer": {
+    "version": "action-pairwise-x1",
+    "sha256": "fa95cafcd9b7d759bffc9e4303209d777961520c010fb4d5fe45ca8b121839c2"
+  },
+  "tokens": {
+    "min": 131,
+    "p50": 162,
+    "p95": 185,
+    "p100": 205,
+    "ceil32": 224,
+    "overMaxLen": 0
+  },
+  "clockRows": [
+    "b1-0021",
+    "b3-0025",
+    "b3-0026",
+    "b4-0001",
+    "b5-0017",
+    "b5-0033",
+    "b5-0034",
+    "b6-0004",
+    "b6-0008"
+  ],
+  "rowsSha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188",
+  "pairsSha256": "e2627fb11b21e88e638d4cdebabd21ee44bf3970b6958e73eda38775ba82816f"
+}

@@ -142,3 +142,13 @@ artifacts/benchmark/minirbt-h256-snapshot/
 .zcodeignore
 frontend/.next-prod/
 frontend/.next-prod*/
+
+# Lane 13: the action-dataset experiment is committed data, not local scratch.
+!experiments/
+experiments/*
+!experiments/action-dataset-v1/
+!experiments/action-dataset-v1/**
+
+# Lane 13: keep generated caches out of the committed experiment
+__pycache__/
+.pytest_cache/
