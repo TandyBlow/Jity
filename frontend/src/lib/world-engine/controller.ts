@@ -622,6 +622,11 @@ export class ControllerDriver {
           continue;
         }
         if (!(error instanceof WorldApiError)) throw error;
+        // Refusal details name the offending field; the terminal reason alone
+        // says only "request_malformed".
+        console.info('[world-local transport error]', JSON.stringify({
+          operation, code: error.response.error.code, details: error.response.error.details ?? null,
+        }));
         const reaction = errorReaction(error.response);
         this.adoptState(error.response);
         if (reaction.followup === 'retry_same_request') {

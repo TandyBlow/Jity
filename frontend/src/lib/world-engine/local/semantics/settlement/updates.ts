@@ -1860,11 +1860,18 @@ function readTaskDecisions(
   const payload = asRecord(value);
   type Entry = { taskId: string; basis?: string };
   type Row = { characterId: string; entries: Entry[] };
+  // A fact id (`f1`) is a member's result, not a person. Resolve it to that
+  // member when the caller provided the ownership map; otherwise leave it.
+  const resolveId = (raw: string): string => {
+    const repaired = repairTaskCharacterId(raw);
+    if (/^f\d+$/u.test(repaired)) return options.factOwnerFor?.get(repaired) ?? repaired;
+    return repaired;
+  };
   let decisions: Row[] | undefined;
   if (Array.isArray(payload.decisions)) {
     decisions = payload.decisions.map((raw): Row => {
       if (!isRecord(raw)) throw new Error('decision must be an object');
-      const characterId = repairTaskCharacterId(asString(raw.characterId));
+      const characterId = resolveId(asString(raw.characterId));
       if (!Array.isArray(raw.achieved)) throw new Error(`achieved must be an array for ${characterId}`);
       return { characterId, entries: raw.achieved.map((item) => ({ taskId: asString(item) })) };
     });
@@ -1874,7 +1881,7 @@ function readTaskDecisions(
     const named = new Set<string>();
     decisions = [];
     for (const raw of unchanged) {
-      const characterId = asString(raw);
+      const characterId = resolveId(asString(raw));
       if (!characterId) throw new Error('unchanged must contain character ids or full names');
       if (named.has(characterId)) throw new Error(`duplicate task decision for ${characterId}`);
       named.add(characterId);
@@ -1882,7 +1889,7 @@ function readTaskDecisions(
     }
     for (const row of achievedRows as unknown[]) {
       if (!isRecord(row)) throw new Error('achieved entries must be objects');
-      const characterId = repairTaskCharacterId(asString(row.characterId));
+      const characterId = resolveId(asString(row.characterId));
       if (!characterId) throw new Error('achieved entry needs characterId');
       if (named.has(characterId)) throw new Error(`character ${characterId} appears in both unchanged and achieved`);
       named.add(characterId);
