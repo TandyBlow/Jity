@@ -1,0 +1,3064 @@
+{
+  "kind": "jity-goal-semantics-summary",
+  "generatedAt": "2026-11-20T19:24:11.210Z",
+  "source": {
+    "runFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run19-20261121.json",
+    "runId": "2026-11-20T1903-784b",
+    "status": "COMPLETED",
+    "intent": "semantics-s13-s16-d018",
+    "turnsFile": "frontend/scripts/product-acceptance/turns-semantics-s13-s16.json"
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "texture-formats-tier1",
+        "bgra8unorm-storage",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "chromium-experimental-sampling-resource-table",
+        "core-features-and-limits",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "shader-f16",
+        "timestamp-query"
+      ]
+    },
+    "isolated": true,
+    "arm": {
+      "candidate": "auto",
+      "mode": null,
+      "shape": null,
+      "offscreenPolicy": "judge",
+      "narrationModel": "qwen3-1.7b",
+      "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationBytes": 1107409472,
+      "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+    }
+  },
+  "totals": {
+    "turns": 4,
+    "withAcceptedProse": 4,
+    "actionDecisions": 53,
+    "calls": 153,
+    "fallbacks": 4,
+    "attemptsWithError": 7,
+    "deadlineAborts": 4,
+    "continuation": {
+      "none": 4
+    },
+    "violations": 0,
+    "violationKinds": {}
+  },
+  "violations": [],
+  "turns": [
+    {
+      "turn": 1,
+      "id": "s13-already-acted",
+      "input": "等这一轮结束后，我再往前走一步，看看刚才同行的人有没有跟上来。",
+      "purpose": "已行动不重复",
+      "acceptedMs": 25347,
+      "doneMs": 297743,
+      "actionRows": 13,
+      "acts": [
+        {
+          "actorId": "lu",
+          "source": "program",
+          "issueCode": "protagonist_command"
+        },
+        {
+          "actorId": "caesar",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "chu",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "doctor",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "lin",
+          "source": "model",
+          "issueCode": null
+        },
+        {
+          "actorId": "manstein",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "nono",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "qin",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "shen",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "su",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "tang",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "zhou",
+          "source": "model",
+          "issueCode": "repair_requested"
+        }
+      ],
+      "skips": [
+        {
+          "actorId": "fingel",
+          "source": "fallback",
+          "issueCode": "repair_failed"
+        }
+      ],
+      "actionsSourceBasis": "page-recorded-source",
+      "calls": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 5084,
+          "fallback": false,
+          "error": null,
+          "rawChars": 261,
+          "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"partial\",\"reason\":\"目标诺诺的骰点资格为true，准入为false，因此部分成功\"},{\"memberId\":\"nono\",\"label\":\"not_achieved\",\"reason\":\"诺诺的骰点资格为true，准入为false，因此未达成目标\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_5#position",
+          "stage": "position",
+          "ms": 5140,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_5#appearance",
+          "stage": "appearance",
+          "ms": 2504,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_6",
+          "stage": null,
+          "ms": 4409,
+          "fallback": false,
+          "error": null,
+          "rawChars": 173,
+          "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"no_change\",\"reason\":\"凯撒让路，未被阻止\"}],\"facts\":[{\"text\":\"凯撒让路，未被阻止\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_6#position",
+          "stage": "position",
+          "ms": 5582,
+          "fallback": false,
+          "error": null,
+          "rawChars": 120,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_6#appearance",
+          "stage": "appearance",
+          "ms": 2629,
+          "fallback": false,
+          "error": null,
+          "rawChars": 77,
+          "raw": "{\"operations\":[{\"entityId\":\"caesar\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_7",
+          "stage": null,
+          "ms": 3019,
+          "fallback": false,
+          "error": null,
+          "rawChars": 177,
+          "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航确认了撤离路线并成功行动\"}],\"facts\":[{\"text\":\"楚子航查看了周围环境并确认撤离路线\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_7#position",
+          "stage": "position",
+          "ms": 4117,
+          "fallback": false,
+          "error": null,
+          "rawChars": 116,
+          "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_7#appearance",
+          "stage": "appearance",
+          "ms": 2008,
+          "fallback": false,
+          "error": null,
+          "rawChars": 84,
+          "raw": "{\"operations\":[{\"entityId\":\"blue_band_chu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_8",
+          "stage": null,
+          "ms": 9032,
+          "fallback": false,
+          "error": null,
+          "rawChars": 776,
+          "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"检查手套是否被正确佩戴\"},{\"memberId\":\"bandage\",\"label\":\"no_change\",\"reason\":\"弹力绷带未被用于固定脚踝\"},{\"memberId\":\"cold_pack\",\"label\":\"blocked\",\"reason\":\"未启用冷敷袋\"},{\"memberId\":\"empty_bed\",\"label\":\"no_change\",\"reason\":\"空床未被使用\"},{\"memberId\":\"gloves\",\"label\":\"partial\",\"reason\":\"检查手套未被正确佩戴\"},{\"memberId\":\"medical_case\",\"label\":\"no_change\",\"reason\":\"医疗箱内物品未被使用\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}\n---\n{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"partial\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"partial\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"]},{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"]}]}",
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_8#position",
+          "stage": "position",
+          "ms": 4561,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_empty_bed\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_8#appearance",
+          "stage": "appearance",
+          "ms": 1966,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_10",
+          "stage": null,
+          "ms": 5663,
+          "fallback": false,
+          "error": null,
+          "rawChars": 305,
+          "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"partial\",\"reason\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机已发送求助，电量两格，已请求帮助。\"}],\"facts\":[{\"text\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_10#position",
+          "stage": "position",
+          "ms": 4493,
+          "fallback": false,
+          "error": null,
+          "rawChars": 121,
+          "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_10#appearance",
+          "stage": "appearance",
+          "ms": 1928,
+          "fallback": false,
+          "error": null,
+          "rawChars": 87,
+          "raw": "{\"operations\":[{\"entityId\":\"broken_blue_band\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_11",
+          "stage": null,
+          "ms": 3384,
+          "fallback": false,
+          "error": null,
+          "rawChars": 248,
+          "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"no_change\",\"reason\":\"没有被阻止\"},{\"memberId\":\"manstein\",\"label\":\"achieved\",\"reason\":\"成功拦下广播\"}],\"facts\":[{\"text\":\"曼施坦因（id=manstein）拦下广播\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_11#position",
+          "stage": "position",
+          "ms": 35390,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_11#appearance",
+          "stage": "appearance",
+          "ms": 23944,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_12",
+          "stage": null,
+          "ms": 3875,
+          "fallback": false,
+          "error": null,
+          "rawChars": 155,
+          "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"blocked\",\"reason\":\"未被阻止\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_12#position",
+          "stage": "position",
+          "ms": 5302,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_12#appearance",
+          "stage": "appearance",
+          "ms": 2753,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_13",
+          "stage": null,
+          "ms": 6760,
+          "fallback": false,
+          "error": null,
+          "rawChars": 308,
+          "raw": "{\"judgments\":[{\"memberId\":\"fingel\",\"label\":\"no_change\",\"reason\":\"芬格尔将相机电池从口袋里取出\"},{\"memberId\":\"qin\",\"label\":\"no_change\",\"reason\":\"让路\"}],\"facts\":[{\"text\":\"芬格尔将相机电池从口袋里取出\",\"memberIds\":[\"fingel\"],\"actorId\":\"fingel\",\"outcome\":\"completed\"},{\"text\":\"让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_13#position",
+          "stage": "position",
+          "ms": 6776,
+          "fallback": false,
+          "error": null,
+          "rawChars": 117,
+          "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_counter\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_13#appearance",
+          "stage": "appearance",
+          "ms": 4349,
+          "fallback": false,
+          "error": null,
+          "rawChars": 86,
+          "raw": "{\"operations\":[{\"entityId\":\"spare_mag1\",\"op\":\"keep\",\"recordIds\":[],\"text\":\"通用短枪弹匣甲\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_14",
+          "stage": null,
+          "ms": 5840,
+          "fallback": false,
+          "error": null,
+          "rawChars": 347,
+          "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"not_achieved\",\"reason\":\"富山雅史低头看着手中的保温毯，神情略显紧张\"},{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"沈澄拆下了红色识别带\"}],\"facts\":[{\"text\":\"富山雅史低头看着手中的保温毯，神情略显紧张\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\",\"outcome\":\"blocked\"},{\"text\":\"沈澄拆下了红色识别带\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_14#position",
+          "stage": "position",
+          "ms": 4404,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_14#appearance",
+          "stage": "appearance",
+          "ms": 1954,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"blanket\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_15",
+          "stage": null,
+          "ms": 4248,
+          "fallback": false,
+          "error": null,
+          "rawChars": 240,
+          "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"partial\",\"reason\":\"苏茜查看了东回廊的遮光帘和相关物品\"},{\"memberId\":\"su\",\"label\":\"no_change\",\"reason\":\"苏茜的蓝方短讯机没有关于林亦舟实际伤势的详细报告\"}],\"facts\":[{\"text\":\"苏茜看懂了规则牌\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_15#position",
+          "stage": "position",
+          "ms": 4828,
+          "fallback": false,
+          "error": null,
+          "rawChars": 119,
+          "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_15#appearance",
+          "stage": "appearance",
+          "ms": 2109,
+          "fallback": false,
+          "error": null,
+          "rawChars": 83,
+          "raw": "{\"operations\":[{\"entityId\":\"canvas_blind\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_16",
+          "stage": null,
+          "ms": 5415,
+          "fallback": false,
+          "error": null,
+          "rawChars": 407,
+          "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"拦住了正在倒放长椅的长椅\"},{\"memberId\":\"tang\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"看懂了规则牌\"},{\"memberId\":\"tang\",\"label\":\"blocked\",\"reason\":\"没有/未/被阻止\"},{\"memberId\":\"tang\",\"label\":\"no_change\",\"reason\":\"没有/未/被阻止\"}],\"facts\":[{\"text\":\"〈这一步实际做了什么、谁回应了什么〉\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_16#position",
+          "stage": "position",
+          "ms": 4675,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_16#appearance",
+          "stage": "appearance",
+          "ms": 1975,
+          "fallback": false,
+          "error": null,
+          "rawChars": 82,
+          "raw": "{\"operations\":[{\"entityId\":\"bench_cover\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_18",
+          "stage": null,
+          "ms": 3619,
+          "fallback": false,
+          "error": null,
+          "rawChars": 271,
+          "raw": "{\"judgments\":[{\"memberId\":\"zhou\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"zhou\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"zhou\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"〈周映拦下靠近的行人〉\",\"memberIds\":[\"zhou\"],\"actorId\":\"zhou\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_18#position",
+          "stage": "position",
+          "ms": 4552,
+          "fallback": false,
+          "error": null,
+          "rawChars": 120,
+          "raw": "{\"positions\":[{\"entityId\":\"zhou\",\"containerId\":\"balcony\",\"slotId\":\"slot_flag_base\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_18#appearance",
+          "stage": "appearance",
+          "ms": 1947,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"balcony\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#tasks",
+          "stage": "tasks",
+          "ms": 9645,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"unchanged\": [], \"achieved\": [{\"characterId\": \"caesar\", \"tasks\": [{\"taskId\": \"t1\", \"basis\": \"f1\"}]}], \"subtasks\": []}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0,
+            "taskRows": 73,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "assertedUnchanged": 73,
+            "affectedCharacters": 14,
+            "unaffectedCharacters": [],
+            "affectedTaskIds": [
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "unaffectedTaskIds": [],
+            "rejectedTaskIds": [
+              {
+                "characterId": "caesar",
+                "taskId": "task_caesar_bridge",
+                "reason": "support_does_not_mention_goal"
+              }
+            ],
+            "supports": []
+          }
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#subtasks",
+          "stage": "subtasks",
+          "ms": 5480,
+          "fallback": true,
+          "error": "JsonCallError: model_output_invalid: AbortError: Aborted",
+          "rawChars": null,
+          "raw": null,
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": null
+        }
+      ],
+      "continuationDecision": null,
+      "stops": [
+        "updates:JsonCallError: model_output_invalid: AbortError: Aborted"
+      ],
+      "deadlineAbort": true,
+      "violations": [],
+      "problems": []
+    },
+    {
+      "turn": 2,
+      "id": "s14-auto-chain",
+      "input": "我朝钟楼门厅方向跑过去，想赶在下一波枪声前进去。",
+      "purpose": "自动链：跑向热点",
+      "acceptedMs": 31255,
+      "doneMs": 297828,
+      "actionRows": 13,
+      "acts": [
+        {
+          "actorId": "lu",
+          "source": "program",
+          "issueCode": "protagonist_command"
+        },
+        {
+          "actorId": "caesar",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "chu",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "doctor",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "lin",
+          "source": "model",
+          "issueCode": null
+        },
+        {
+          "actorId": "manstein",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "nono",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "qin",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "shen",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "su",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "tang",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "zhou",
+          "source": "model",
+          "issueCode": "repair_requested"
+        }
+      ],
+      "skips": [
+        {
+          "actorId": "fingel",
+          "source": "fallback",
+          "issueCode": "repair_failed"
+        }
+      ],
+      "actionsSourceBasis": "page-recorded-source",
+      "calls": [
+        {
+          "task": "results",
+          "key": "group_28",
+          "stage": null,
+          "ms": 4629,
+          "fallback": false,
+          "error": null,
+          "rawChars": 188,
+          "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"not_achieved\",\"reason\":\"未获得骰点资格\"}],\"facts\":[{\"text\":\"路明非（id=lu）行动：我朝钟楼门厅方向跑过去，想赶在下一波枪声前进去。\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_28#position",
+          "stage": "position",
+          "ms": 5709,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_28#appearance",
+          "stage": "appearance",
+          "ms": 2926,
+          "fallback": false,
+          "error": null,
+          "rawChars": 76,
+          "raw": "{\"operations\":[{\"entityId\":\"foyer\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_29",
+          "stage": null,
+          "ms": 4838,
+          "fallback": false,
+          "error": null,
+          "rawChars": 173,
+          "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"no_change\",\"reason\":\"凯撒让路，未被阻止\"}],\"facts\":[{\"text\":\"凯撒让路，未被阻止\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_29#position",
+          "stage": "position",
+          "ms": 5363,
+          "fallback": false,
+          "error": null,
+          "rawChars": 120,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_29#appearance",
+          "stage": "appearance",
+          "ms": 2349,
+          "fallback": false,
+          "error": null,
+          "rawChars": 77,
+          "raw": "{\"operations\":[{\"entityId\":\"caesar\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_30",
+          "stage": null,
+          "ms": 2713,
+          "fallback": false,
+          "error": null,
+          "rawChars": 163,
+          "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航确认撤离路线并行动\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_30#position",
+          "stage": "position",
+          "ms": 4168,
+          "fallback": false,
+          "error": null,
+          "rawChars": 116,
+          "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_30#appearance",
+          "stage": "appearance",
+          "ms": 1914,
+          "fallback": false,
+          "error": null,
+          "rawChars": 84,
+          "raw": "{\"operations\":[{\"entityId\":\"blue_band_chu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_31",
+          "stage": null,
+          "ms": 4769,
+          "fallback": false,
+          "error": null,
+          "rawChars": 392,
+          "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_31#position",
+          "stage": "position",
+          "ms": 4633,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_31#appearance",
+          "stage": "appearance",
+          "ms": 2005,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_33",
+          "stage": null,
+          "ms": 5403,
+          "fallback": false,
+          "error": null,
+          "rawChars": 305,
+          "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"partial\",\"reason\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机已发送求助，电量两格，已请求帮助。\"}],\"facts\":[{\"text\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_33#position",
+          "stage": "position",
+          "ms": 4444,
+          "fallback": false,
+          "error": null,
+          "rawChars": 121,
+          "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_33#appearance",
+          "stage": "appearance",
+          "ms": 1939,
+          "fallback": false,
+          "error": null,
+          "rawChars": 87,
+          "raw": "{\"operations\":[{\"entityId\":\"broken_blue_band\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_34",
+          "stage": null,
+          "ms": 3678,
+          "fallback": false,
+          "error": null,
+          "rawChars": 256,
+          "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"no_change\",\"reason\":\"没有被阻止\"},{\"memberId\":\"manstein\",\"label\":\"achieved\",\"reason\":\"成功拦下安全广播话筒\"}],\"facts\":[{\"text\":\"曼施坦因（id=manstein）拦下安全广播话筒\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_34#position",
+          "stage": "position",
+          "ms": 35511,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_34#appearance",
+          "stage": "appearance",
+          "ms": 23903,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_35",
+          "stage": null,
+          "ms": 26112,
+          "fallback": false,
+          "error": null,
+          "rawChars": 1857,
+          "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非在西侧服务巷的第三根柱子旁，精神状态良好，未发生任何行动障碍。\"},{\"memberId\":\"goggles_lu\",\"label\":\"no_change\",\"reason\":\"路明非的护目镜外貌未变，符合设定要求。\"},{\"memberId\":\"jacket_lu\",\"label\":\"no_change\",\"reason\":\"路明非的演习背心外貌完好，符合设定要求。\"},{\"memberId\":\"map\",\"label\":\"no_change\",\"reason\":\"赛区路线图外貌未变，符合设定要求。\"},{\"memberId\":\"pistol_nono\",\"label\":\"partial\",\"reason\":\"诺诺的演习短枪外貌符合设定要求，且有3发弗里嘉弹。\"},{\"memberId\":\"radio_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的故障短讯机外貌未变，符合设定要求。\"},{\"memberId\":\"red_band_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的红色识别带外貌完整，未被拆下。\"}],\"facts\":[{\"text\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"}]}\n---\n{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非未回应任何问题或行动。\"},{\"memberId\":\"goggles_lu\",\"label\":\"no_change\",\"reason\":\"路明非的护目镜未被拆下，仍保持原状。\"},{\"memberId\":\"jacket_lu\",\"label\":\"no_change\",\"reason\":\"路明非的演习背心完好无损，没有弹痕。\"},{\"memberId\":\"map\",\"label\":\"no_change\",\"reason\":\"赛区路线图未被拆下，仍保持原状。\"},{\"memberId\":\"pistol_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的短枪未被拆下，仍保持原状。\"},{\"memberId\":\"radio_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的短讯机未被拆下，仍保持原状。\"},{\"memberId\":\"red_band_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的红色识别带未被拆下，仍保持原状。\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"}]}\n---\n{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非没有回应任何问题或动作。\"},{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\"},{\"text\":\"诺诺在西侧服务巷的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\"}]}",
+          "attempts": 3,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_35#position",
+          "stage": "position",
+          "ms": 5678,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_35#appearance",
+          "stage": "appearance",
+          "ms": 2661,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_36",
+          "stage": null,
+          "ms": 5404,
+          "fallback": false,
+          "error": null,
+          "rawChars": 178,
+          "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"目标芬格尔的骰点资格为true，但准入为false，因此部分成功\"}],\"facts\":[{\"text\":\"秦越让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_36#position",
+          "stage": "position",
+          "ms": 6986,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_36#appearance",
+          "stage": "appearance",
+          "ms": 3822,
+          "fallback": false,
+          "error": null,
+          "rawChars": 106,
+          "raw": "{\"operations\":[{\"entityId\":\"spare_mag1\",\"op\":\"keep\",\"recordIds\":[],\"text\":\"装有8发弗里嘉演习弹，无阵营标记，可装入未领用演习短枪\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_37",
+          "stage": null,
+          "ms": 6564,
+          "fallback": false,
+          "error": null,
+          "rawChars": 353,
+          "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"not_achieved\",\"reason\":\"骰点资格未满足\"},{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"骰点资格满足\"}],\"facts\":[{\"text\":\"富山雅史低头查看了周围环境，眉头紧锁（看懂了规则牌）\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\",\"outcome\":\"blocked\"},{\"text\":\"沈澄在医护休息区查看了周围环境，精神=41（看懂了规则牌）\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_37#position",
+          "stage": "position",
+          "ms": 4750,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_37#appearance",
+          "stage": "appearance",
+          "ms": 2021,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"blanket\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_38",
+          "stage": null,
+          "ms": 3553,
+          "fallback": false,
+          "error": null,
+          "rawChars": 169,
+          "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"achieved\",\"reason\":\"苏茜查看了东回廊的遮光帘并记录相关信息\"}],\"facts\":[{\"text\":\"苏茜看懂了规则牌\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_38#position",
+          "stage": "position",
+          "ms": 4799,
+          "fallback": false,
+          "error": null,
+          "rawChars": 119,
+          "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_38#appearance",
+          "stage": "appearance",
+          "ms": 2204,
+          "fallback": false,
+          "error": null,
+          "rawChars": 83,
+          "raw": "{\"operations\":[{\"entityId\":\"canvas_blind\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_39",
+          "stage": null,
+          "ms": 4614,
+          "fallback": false,
+          "error": null,
+          "rawChars": 373,
+          "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"没有判定\"},{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"没有判定\"},{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"没有判定\"},{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"没有判定\"},{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_39#position",
+          "stage": "position",
+          "ms": 4523,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_39#appearance",
+          "stage": "appearance",
+          "ms": 2225,
+          "fallback": false,
+          "error": null,
+          "rawChars": 82,
+          "raw": "{\"operations\":[{\"entityId\":\"bench_cover\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_41",
+          "stage": null,
+          "ms": 3568,
+          "fallback": false,
+          "error": null,
+          "rawChars": 270,
+          "raw": "{\"judgments\":[{\"memberId\":\"zhou\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"zhou\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"zhou\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"〈周映拦下白旗锁扣〉\",\"memberIds\":[\"zhou\"],\"actorId\":\"zhou\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_41#position",
+          "stage": "position",
+          "ms": 4322,
+          "fallback": false,
+          "error": null,
+          "rawChars": 120,
+          "raw": "{\"positions\":[{\"entityId\":\"zhou\",\"containerId\":\"balcony\",\"slotId\":\"slot_flag_base\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_41#appearance",
+          "stage": "appearance",
+          "ms": 1979,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"balcony\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_26_2#tasks",
+          "stage": "tasks",
+          "ms": 2616,
+          "fallback": true,
+          "error": "JsonCallError: model_output_invalid: AbortError: Aborted",
+          "rawChars": null,
+          "raw": null,
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 0,
+            "personality": 0,
+            "taskRows": 73,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "affectedCharacters": 14,
+            "unaffectedCharacters": [],
+            "affectedTaskIds": [
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "unaffectedTaskIds": [],
+            "rejectedTaskIds": [],
+            "supports": []
+          }
+        }
+      ],
+      "continuationDecision": null,
+      "stops": [
+        "updates:JsonCallError: model_output_invalid: AbortError: Aborted"
+      ],
+      "deadlineAbort": true,
+      "violations": [],
+      "problems": []
+    },
+    {
+      "turn": 3,
+      "id": "s15-handback",
+      "input": "我站着不动，等这一轮结束，看看还有没有人行动。",
+      "purpose": "handback：原地等待",
+      "acceptedMs": 30890,
+      "doneMs": 298340,
+      "actionRows": 14,
+      "acts": [
+        {
+          "actorId": "lu",
+          "source": "program",
+          "issueCode": "protagonist_command"
+        },
+        {
+          "actorId": "caesar",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "chu",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "doctor",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "lin",
+          "source": "model",
+          "issueCode": null
+        },
+        {
+          "actorId": "manstein",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "nono",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "qin",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "shen",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "su",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "tang",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "tomiyama",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "zhou",
+          "source": "model",
+          "issueCode": "repair_requested"
+        }
+      ],
+      "skips": [
+        {
+          "actorId": "fingel",
+          "source": "fallback",
+          "issueCode": "repair_failed"
+        }
+      ],
+      "actionsSourceBasis": "page-recorded-source",
+      "calls": [
+        {
+          "task": "results",
+          "key": "group_50",
+          "stage": null,
+          "ms": 4159,
+          "fallback": false,
+          "error": null,
+          "rawChars": 177,
+          "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非没有行动或反应\"}],\"facts\":[{\"text\":\"路明非（id=lu）位置=西侧服务巷；精神=43\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_50#position",
+          "stage": "position",
+          "ms": 5099,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_50#appearance",
+          "stage": "appearance",
+          "ms": 2580,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_51",
+          "stage": null,
+          "ms": 5572,
+          "fallback": false,
+          "error": null,
+          "rawChars": 188,
+          "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"no_change\",\"reason\":\"凯撒询问红方信号旗是否已升起，未被阻止\"}],\"facts\":[{\"text\":\"凯撒询问红方信号旗是否已升起\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_51#position",
+          "stage": "position",
+          "ms": 5499,
+          "fallback": false,
+          "error": null,
+          "rawChars": 124,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_left_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_51#appearance",
+          "stage": "appearance",
+          "ms": 2404,
+          "fallback": false,
+          "error": null,
+          "rawChars": 77,
+          "raw": "{\"operations\":[{\"entityId\":\"caesar\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_52",
+          "stage": null,
+          "ms": 2905,
+          "fallback": false,
+          "error": null,
+          "rawChars": 179,
+          "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航查看了蓝色识别带并确认其存在\"}],\"facts\":[{\"text\":\"楚子航查看了蓝色识别带并确认其存在\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_52#position",
+          "stage": "position",
+          "ms": 4136,
+          "fallback": false,
+          "error": null,
+          "rawChars": 116,
+          "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_52#appearance",
+          "stage": "appearance",
+          "ms": 1885,
+          "fallback": false,
+          "error": null,
+          "rawChars": 84,
+          "raw": "{\"operations\":[{\"entityId\":\"blue_band_chu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_53",
+          "stage": null,
+          "ms": 4328,
+          "fallback": false,
+          "error": null,
+          "rawChars": 392,
+          "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_53#position",
+          "stage": "position",
+          "ms": 4459,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_53#appearance",
+          "stage": "appearance",
+          "ms": 1964,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_55",
+          "stage": null,
+          "ms": 5527,
+          "fallback": false,
+          "error": null,
+          "rawChars": 306,
+          "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"partial\",\"reason\":\"林亦舟在西回廊的第三根柱子旁向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机已发送求助，请求帮助，没有写明脚踝扭伤。\"}],\"facts\":[{\"text\":\"林亦舟在西回廊的第三根柱子旁向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_55#position",
+          "stage": "position",
+          "ms": 4618,
+          "fallback": false,
+          "error": null,
+          "rawChars": 121,
+          "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_55#appearance",
+          "stage": "appearance",
+          "ms": 1882,
+          "fallback": false,
+          "error": null,
+          "rawChars": 87,
+          "raw": "{\"operations\":[{\"entityId\":\"broken_blue_band\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_56",
+          "stage": null,
+          "ms": 3644,
+          "fallback": false,
+          "error": null,
+          "rawChars": 303,
+          "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"manstein\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"manstein\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"曼施坦因（id=manstein）拦下安全广播话筒\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_56#position",
+          "stage": "position",
+          "ms": 35508,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_56#appearance",
+          "stage": "appearance",
+          "ms": 23910,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_57",
+          "stage": null,
+          "ms": 3875,
+          "fallback": false,
+          "error": null,
+          "rawChars": 158,
+          "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"blocked\",\"reason\":\"未获得骰点资格\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_57#position",
+          "stage": "position",
+          "ms": 5401,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_57#appearance",
+          "stage": "appearance",
+          "ms": 2682,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_58",
+          "stage": null,
+          "ms": 4886,
+          "fallback": false,
+          "error": null,
+          "rawChars": 178,
+          "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"目标芬格尔的骰点资格为true，但准入为false，因此部分成功\"}],\"facts\":[{\"text\":\"秦越让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_58#position",
+          "stage": "position",
+          "ms": 6303,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_58#appearance",
+          "stage": "appearance",
+          "ms": 4049,
+          "fallback": false,
+          "error": null,
+          "rawChars": 106,
+          "raw": "{\"operations\":[{\"entityId\":\"spare_mag1\",\"op\":\"keep\",\"recordIds\":[],\"text\":\"装有8发弗里嘉演习弹，无阵营标记，可装入未领用演习短枪\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_59",
+          "stage": null,
+          "ms": 5238,
+          "fallback": false,
+          "error": null,
+          "rawChars": 242,
+          "raw": "{\"judgments\":[{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"沈澄成功拆下红色识别带并将其从身体中取出\"}],\"facts\":[{\"text\":\"沈澄（id=shen）拆下了红色识别带（id=shen_band）位置=医护休息区；外貌=红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_59#position",
+          "stage": "position",
+          "ms": 4465,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_59#appearance",
+          "stage": "appearance",
+          "ms": 2052,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"blanket\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_60",
+          "stage": null,
+          "ms": 3924,
+          "fallback": false,
+          "error": null,
+          "rawChars": 240,
+          "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"partial\",\"reason\":\"苏茜查看了东回廊的遮光帘和相关物品\"},{\"memberId\":\"su\",\"label\":\"no_change\",\"reason\":\"苏茜的蓝方短讯机没有关于林亦舟实际伤势的详细报告\"}],\"facts\":[{\"text\":\"苏茜看懂了规则牌\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_60#position",
+          "stage": "position",
+          "ms": 4714,
+          "fallback": false,
+          "error": null,
+          "rawChars": 119,
+          "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_60#appearance",
+          "stage": "appearance",
+          "ms": 2084,
+          "fallback": false,
+          "error": null,
+          "rawChars": 83,
+          "raw": "{\"operations\":[{\"entityId\":\"canvas_blind\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_61",
+          "stage": null,
+          "ms": 4009,
+          "fallback": false,
+          "error": null,
+          "rawChars": 237,
+          "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"唐骁拦下并询问是否需要支援\"},{\"memberId\":\"tang\",\"label\":\"no_change\",\"reason\":\"唐骁的演习枪未换弹匣，因此无法射击\"}],\"facts\":[{\"text\":\"唐骁看懂了规则牌\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_61#position",
+          "stage": "position",
+          "ms": 4635,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_61#appearance",
+          "stage": "appearance",
+          "ms": 1980,
+          "fallback": false,
+          "error": null,
+          "rawChars": 82,
+          "raw": "{\"operations\":[{\"entityId\":\"bench_cover\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_62",
+          "stage": null,
+          "ms": 5976,
+          "fallback": false,
+          "error": null,
+          "rawChars": 349,
+          "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"partial\",\"reason\":\"沈澄的骰点资格未获得，因此未被阻止\"},{\"memberId\":\"tomiyama\",\"label\":\"no_change\",\"reason\":\"富山雅史确认行动已成功\"}],\"facts\":[{\"text\":\"富山雅史（tomiyama）在医护休息区，骰点资格未获得，因此未被阻止\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\"},{\"text\":\"富山雅史（tomiyama）在医护休息区，骰点资格未获得，因此未被阻止\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_62#position",
+          "stage": "position",
+          "ms": 4461,
+          "fallback": false,
+          "error": null,
+          "rawChars": 116,
+          "raw": "{\"positions\":[{\"entityId\":\"tomiyama\",\"containerId\":\"rest\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_62#appearance",
+          "stage": "appearance",
+          "ms": 1954,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"blanket\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_63",
+          "stage": null,
+          "ms": 3603,
+          "fallback": false,
+          "error": null,
+          "rawChars": 238,
+          "raw": "{\"judgments\":[{\"memberId\":\"zhou\",\"label\":\"no_change\",\"reason\":\"没有被阻止\"},{\"memberId\":\"zhou\",\"label\":\"achieved\",\"reason\":\"成功拦住了护栏\"}],\"facts\":[{\"text\":\"周映（id=zhou）位置=钟楼旗台外廊；精神=46\",\"memberIds\":[\"zhou\"],\"actorId\":\"zhou\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_63#position",
+          "stage": "position",
+          "ms": 4485,
+          "fallback": false,
+          "error": null,
+          "rawChars": 120,
+          "raw": "{\"positions\":[{\"entityId\":\"zhou\",\"containerId\":\"balcony\",\"slotId\":\"slot_flag_base\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_63#appearance",
+          "stage": "appearance",
+          "ms": 2131,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"balcony\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_48_2#tasks",
+          "stage": "tasks",
+          "ms": 8808,
+          "fallback": false,
+          "error": null,
+          "rawChars": 64,
+          "raw": "{\"unchanged\": [ \n  ],\n  \"achieved\": [ \n    ],\n  \"subtasks\": []\n}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0,
+            "taskRows": 73,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "assertedUnchanged": 73,
+            "affectedCharacters": 14,
+            "unaffectedCharacters": [],
+            "affectedTaskIds": [
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "unaffectedTaskIds": [],
+            "rejectedTaskIds": [],
+            "supports": []
+          }
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_48_2#subtasks",
+          "stage": "subtasks",
+          "ms": 4591,
+          "fallback": true,
+          "error": "JsonCallError: model_output_invalid: AbortError: Aborted",
+          "rawChars": null,
+          "raw": null,
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": null
+        }
+      ],
+      "continuationDecision": null,
+      "stops": [
+        "updates:JsonCallError: model_output_invalid: AbortError: Aborted"
+      ],
+      "deadlineAbort": true,
+      "violations": [],
+      "problems": []
+    },
+    {
+      "turn": 4,
+      "id": "s16-time-check",
+      "input": "我再等一段时间，核对护目镜和识别带，记下演习还剩多久。",
+      "purpose": "时间推进与状态核对",
+      "acceptedMs": 35930,
+      "doneMs": 297949,
+      "actionRows": 13,
+      "acts": [
+        {
+          "actorId": "lu",
+          "source": "program",
+          "issueCode": "protagonist_command"
+        },
+        {
+          "actorId": "caesar",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "chu",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "doctor",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "lin",
+          "source": "model",
+          "issueCode": null
+        },
+        {
+          "actorId": "manstein",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "nono",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "qin",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "shen",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "su",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "tang",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "zhou",
+          "source": "model",
+          "issueCode": "repair_requested"
+        }
+      ],
+      "skips": [
+        {
+          "actorId": "fingel",
+          "source": "fallback",
+          "issueCode": "repair_failed"
+        }
+      ],
+      "actionsSourceBasis": "page-recorded-source",
+      "calls": [
+        {
+          "task": "results",
+          "key": "group_72",
+          "stage": null,
+          "ms": 5799,
+          "fallback": false,
+          "error": null,
+          "rawChars": 314,
+          "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非确认护目镜和识别带准备就绪\"},{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺查看了演习规则牌并确认使用弗里嘉演习弹\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非核对了护目镜和识别带并准备演习\"}],\"facts\":[{\"text\":\"路明非确认护目镜和识别带准备就绪\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_72#position",
+          "stage": "position",
+          "ms": 5164,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_72#appearance",
+          "stage": "appearance",
+          "ms": 2714,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_73",
+          "stage": null,
+          "ms": 6850,
+          "fallback": false,
+          "error": null,
+          "rawChars": 183,
+          "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"no_change\",\"reason\":\"凯撒询问红方信号旗是否已升起\"}],\"facts\":[{\"text\":\"凯撒询问红方信号旗是否已升起\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_73#position",
+          "stage": "position",
+          "ms": 5653,
+          "fallback": false,
+          "error": null,
+          "rawChars": 124,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_left_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_73#appearance",
+          "stage": "appearance",
+          "ms": 2461,
+          "fallback": false,
+          "error": null,
+          "rawChars": 77,
+          "raw": "{\"operations\":[{\"entityId\":\"caesar\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_74",
+          "stage": null,
+          "ms": 2888,
+          "fallback": false,
+          "error": null,
+          "rawChars": 163,
+          "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航确认撤离路线并行动\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_74#position",
+          "stage": "position",
+          "ms": 4211,
+          "fallback": false,
+          "error": null,
+          "rawChars": 116,
+          "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_74#appearance",
+          "stage": "appearance",
+          "ms": 1969,
+          "fallback": false,
+          "error": null,
+          "rawChars": 84,
+          "raw": "{\"operations\":[{\"entityId\":\"blue_band_chu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_75",
+          "stage": null,
+          "ms": 5392,
+          "fallback": false,
+          "error": null,
+          "rawChars": 506,
+          "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_75#position",
+          "stage": "position",
+          "ms": 4660,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_75#appearance",
+          "stage": "appearance",
+          "ms": 1971,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_77",
+          "stage": null,
+          "ms": 5781,
+          "fallback": false,
+          "error": null,
+          "rawChars": 305,
+          "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"partial\",\"reason\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机已发送求助，电量两格，已请求帮助。\"}],\"facts\":[{\"text\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_77#position",
+          "stage": "position",
+          "ms": 4648,
+          "fallback": false,
+          "error": null,
+          "rawChars": 121,
+          "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_77#appearance",
+          "stage": "appearance",
+          "ms": 2056,
+          "fallback": false,
+          "error": null,
+          "rawChars": 87,
+          "raw": "{\"operations\":[{\"entityId\":\"broken_blue_band\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_78",
+          "stage": null,
+          "ms": 3913,
+          "fallback": false,
+          "error": null,
+          "rawChars": 306,
+          "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"manstein\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"manstein\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"曼施坦因（id=manstein）行动：拦下安全广播话筒\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_78#position",
+          "stage": "position",
+          "ms": 35512,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_78#appearance",
+          "stage": "appearance",
+          "ms": 23946,
+          "fallback": false,
+          "error": null,
+          "rawChars": 74,
+          "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_79",
+          "stage": null,
+          "ms": 15487,
+          "fallback": false,
+          "error": null,
+          "rawChars": 991,
+          "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非在西侧服务巷的第三根柱子旁，精神状态良好，未发生任何行动或反应。\"},{\"memberId\":\"goggles_lu\",\"label\":\"no_change\",\"reason\":\"路明非的护目镜未被拆下，且镜带松着，位置正确。\"},{\"memberId\":\"jacket_lu\",\"label\":\"no_change\",\"reason\":\"路明非的演习背心完好，没有弹痕，胸袋能放弹匣，肩上无阵营识别带。\"},{\"memberId\":\"map\",\"label\":\"no_change\",\"reason\":\"赛区路线图上标注了西侧服务巷的路线，位置正确且未被修改。\"},{\"memberId\":\"pistol_nono\",\"label\":\"partial\",\"reason\":\"诺诺的短枪上仍有黄色演习标记，弹匣内有3发弗里嘉演习弹，保险合上。\"},{\"memberId\":\"radio_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的故障短讯机电量灯不亮，电池盖扣牢，位置正确且未被拆下。\"},{\"memberId\":\"red_band_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的红色识别带系在左臂，结头朝外，完整且未被拆下。\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"}]}\n---\n{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"not_achieved\",\"reason\":\"诺诺并未成功说明扭伤情况\"}],\"facts\":[{\"text\":\"诺诺在西侧服务巷第三根柱子旁向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"blocked\"}]}",
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_79#position",
+          "stage": "position",
+          "ms": 5308,
+          "fallback": false,
+          "error": null,
+          "rawChars": 110,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_79#appearance",
+          "stage": "appearance",
+          "ms": 2828,
+          "fallback": false,
+          "error": null,
+          "rawChars": 81,
+          "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_80",
+          "stage": null,
+          "ms": 5221,
+          "fallback": false,
+          "error": null,
+          "rawChars": 178,
+          "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"目标芬格尔的骰点资格为true，但准入为false，因此部分成功\"}],\"facts\":[{\"text\":\"秦越让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_80#position",
+          "stage": "position",
+          "ms": 6218,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_80#appearance",
+          "stage": "appearance",
+          "ms": 3711,
+          "fallback": false,
+          "error": null,
+          "rawChars": 106,
+          "raw": "{\"operations\":[{\"entityId\":\"spare_mag1\",\"op\":\"keep\",\"recordIds\":[],\"text\":\"装有8发弗里嘉演习弹，无阵营标记，可装入未领用演习短枪\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_81",
+          "stage": null,
+          "ms": 5878,
+          "fallback": false,
+          "error": null,
+          "rawChars": 345,
+          "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"not_achieved\",\"reason\":\"富山雅史低头整理衣领，眼神中带着担忧\"},{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"沈澄拆下红色识别带并离开\"}],\"facts\":[{\"text\":\"富山雅史低头整理衣领，眼神中带着担忧\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\",\"outcome\":\"blocked\"},{\"text\":\"沈澄拆下红色识别带并离开\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_81#position",
+          "stage": "position",
+          "ms": 4276,
+          "fallback": false,
+          "error": null,
+          "rawChars": 118,
+          "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_81#appearance",
+          "stage": "appearance",
+          "ms": 1934,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"blanket\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_82",
+          "stage": null,
+          "ms": 2899,
+          "fallback": false,
+          "error": null,
+          "rawChars": 165,
+          "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"partial\",\"reason\":\"苏茜观察并记录了现场细节\"}],\"facts\":[{\"text\":\"苏茜观察并记录了现场细节\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_82#position",
+          "stage": "position",
+          "ms": 4643,
+          "fallback": false,
+          "error": null,
+          "rawChars": 119,
+          "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_82#appearance",
+          "stage": "appearance",
+          "ms": 2037,
+          "fallback": false,
+          "error": null,
+          "rawChars": 83,
+          "raw": "{\"operations\":[{\"entityId\":\"canvas_blind\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_83",
+          "stage": null,
+          "ms": 2945,
+          "fallback": false,
+          "error": null,
+          "rawChars": 161,
+          "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"唐骁拦下庭院长椅\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_83#position",
+          "stage": "position",
+          "ms": 4738,
+          "fallback": false,
+          "error": null,
+          "rawChars": 113,
+          "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_83#appearance",
+          "stage": "appearance",
+          "ms": 2046,
+          "fallback": false,
+          "error": null,
+          "rawChars": 82,
+          "raw": "{\"operations\":[{\"entityId\":\"bench_cover\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_85",
+          "stage": null,
+          "ms": 3710,
+          "fallback": false,
+          "error": null,
+          "rawChars": 270,
+          "raw": "{\"judgments\":[{\"memberId\":\"zhou\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"zhou\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"zhou\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"〈周映拦下白旗锁扣〉\",\"memberIds\":[\"zhou\"],\"actorId\":\"zhou\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_85#position",
+          "stage": "position",
+          "ms": 4366,
+          "fallback": false,
+          "error": null,
+          "rawChars": 120,
+          "raw": "{\"positions\":[{\"entityId\":\"zhou\",\"containerId\":\"balcony\",\"slotId\":\"slot_flag_base\",\"relativeTo\":null}],\"appearances\":[]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "group_85#appearance",
+          "stage": "appearance",
+          "ms": 1941,
+          "fallback": false,
+          "error": null,
+          "rawChars": 78,
+          "raw": "{\"operations\":[{\"entityId\":\"balcony\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 14,
+            "personality": 0
+          }
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_70_2#tasks",
+          "stage": "tasks",
+          "ms": 7030,
+          "fallback": true,
+          "error": "JsonCallError: model_output_invalid: AbortError: Aborted",
+          "rawChars": null,
+          "raw": null,
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": {
+            "tasks": 0,
+            "personality": 0,
+            "taskRows": 73,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "affectedCharacters": 14,
+            "unaffectedCharacters": [],
+            "affectedTaskIds": [
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "unaffectedTaskIds": [],
+            "rejectedTaskIds": [],
+            "supports": []
+          }
+        }
+      ],
+      "continuationDecision": null,
+      "stops": [
+        "updates:JsonCallError: model_output_invalid: AbortError: Aborted"
+      ],
+      "deadlineAbort": true,
+      "violations": [],
+      "problems": []
+    }
+  ]
+}
