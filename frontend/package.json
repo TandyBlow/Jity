@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
+    "fetch-models": "node scripts/fetch-models.mjs",
     "review:world-s1": "node scripts/review-world-s1.mjs",
     "typecheck:world": "tsc -p tsconfig.world-contract.json",
     "test:world-contract": "vitest run src/lib/world-engine/contract.test.ts",
