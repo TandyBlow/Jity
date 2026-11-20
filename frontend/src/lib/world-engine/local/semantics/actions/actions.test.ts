@@ -320,10 +320,11 @@ describe('action: autonomous, named and failed judgement', () => {
     expect(result.attempts).toBe(2);
     expect(codes(result)).toContain('action_is_task_goal');
     expect(result.value).toEqual({ kind: 'act', text: '阿宁走到门后，把门闩扣上。' });
-    // The repair names the matched goal and the measurable 8-char rule; the
-    // 0b69 run failed twice because the old repair only said 'do not copy'.
-    expect(engine.prompts[1]).toContain(goal);
-    expect(engine.prompts[1]).toContain('连续 8 个字');
+    // The merged repair drops the task block instead of repeating the goal:
+    // repeating it under a 'do not copy' line was the 0b69 attractor.
+    expect(engine.prompts[1]).not.toContain(goal);
+    expect(engine.prompts[1]).toContain('不要写任何任务目标');
+    expect(engine.prompts[1]).not.toContain('【角色待办任务】');
     codecAccepts(result);
   });
 

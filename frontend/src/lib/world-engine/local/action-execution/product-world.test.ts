@@ -80,7 +80,7 @@ describe('the real 17:01Z nono prompt on the shipped world', () => {
     // The task-goal fix is in the same prompt: a measurable 8-char rule and a
     // concrete transformation example, because the 0b69 model copied a goal.
     expect(prompt).toContain('连续 8 个字');
-    expect(prompt).toContain('确认对方是否需要医护帮助');
+    expect(prompt).toContain('待办任务只是方向');
     expect(prompt).not.toContain('我沿着服务巷往里走');
     expect(prompt).not.toContain('路明非沿着服务巷往里走');
     expect(prompt).toContain('黄黑绳');
