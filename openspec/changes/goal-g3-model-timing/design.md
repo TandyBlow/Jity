@@ -77,9 +77,10 @@
 
 ## 结论（部分）
 
-- 时间：已测 3 个正常点首段 22.4–39.1 s、正文完成 29.3–49.2 s、整点 117–207 s，60/300 门槛在已测范围通过。
-- 覆盖：未达到 10 点；阻塞在结算失败后的 advance 清理（非模型速度），G3 保持 active，待 G2/G4 修复后补测。
-- 自动链：未观察到 `continuationDecision=continue`；第 1 点结论请求被拒 `request_malformed`，第 2/3 点自动后续在 updates 阶段停止。归 G5。
+- 时间：`points-10-final4` + `points-extra-2` 共 9 个正常点首段 15.1–43.5 s、正文完成 21.9–54.8 s、完成−提交 6.5–13.8 s，60/300 门槛全部通过。
+- 覆盖：9/10 点；t4 结算失败（`unknown character f1`）、t6 刷新不计；还差 1 个正常点补测。
+- 自动链：0 次 `continuationDecision=continue`；结论请求 `request_malformed` 或自动后续在 updates 停止。归 G5。
+- G3 保持 active；补足第 10 点且自动链有结论后再关闭。
 
 ## 不做什么
 

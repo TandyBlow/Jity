@@ -20,10 +20,10 @@
 
 ## 4. 真实点
 
-- [x] 4.1 跑 `turns-10.json` 全部 10 个输入，逐回合证据落盘；结果：3 个正常点有完整计时，t4 起被结算失败恢复缺口阻断（见 5.1）。
-- [ ] 4.2 确认至少一次自动链（`continuationDecision=continue`）与一个重负载点；缺失时追加 `turns-extra-2.json`（t11/t12）补足点数。当前 0 次 continue；重负载点已有（t1/t2 多组结算）。
-- [x] 4.3 汇总 `artifacts/goal/timing-baseline.json`：`inputAt`、`pointCommittedAt`、`narrationStartedAt`、`firstReadableAt`、`pointTextFinishedAt`、firstToken、longestStreamGapMs、stages、peakMemoryMB（3 点 + 冷启动）。
-- [x] 4.4 逐点判定：已测 3 点首段 ≤60,000 ms、`pointTextFinishedAt − pointCommittedAt ≤300,000 ms`；失败/重试/回退全部保留。
+- [x] 4.1 跑 `turns-10.json` 全部 10 个输入，逐回合证据落盘；结果：8 个正常点（t4 结算失败、t6 刷新不计）+ 补测 t12 共 9 点。
+- [ ] 4.2 确认至少一次自动链（`continuationDecision=continue`）与一个重负载点；缺失时追加 `turns-extra-2.json`（t11/t12）补足点数。当前 0 次 continue；重负载点已有；还差 1 个正常点。
+- [x] 4.3 汇总 `artifacts/goal/timing-baseline.json`：9 点 + 冷启动，字段齐全。
+- [x] 4.4 逐点判定：9 点首段 ≤60,000 ms（最差 43,526）、完成−提交 ≤300,000 ms（最差 13,772）；失败/重试/回退全部保留。
 
 ## 5. 结论
 
