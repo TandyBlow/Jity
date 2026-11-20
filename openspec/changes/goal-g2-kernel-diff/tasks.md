@@ -27,7 +27,7 @@
 ## 5. 骰点与恢复
 
 - [x] 5.1 冻结骰点阈值、程序持有、requestId 去重；测试锁定。
-- [ ] 5.2 补 linked/instant successor time 测试。
+- [x] 5.2 补 linked/instant successor time 测试。`state.test.ts` 覆盖 instant 边界/零时长/拒绝，`controller` 场景覆盖 instant 点；全量套件复核。
 - [x] 5.3 多标签租约、刷新、重复提交、取消恢复测试。
 - [ ] 5.4 全量 `npx vitest run` 与两套 typecheck 全绿。
 
