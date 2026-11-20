@@ -36,6 +36,8 @@ const turns = (evidence.turns ?? []).map((turn) => {
     stageMs: call.stageMs ?? null, coverage: call.coverage ?? null,
   }));
   const judge = turn.offscreenJudge ?? null;
+  const deadlineAbort = (turn.stages ?? []).some((stage) => /295 秒时限/.test(stage.label ?? ''))
+    || (submission?.stops ?? []).some((stop) => /AbortError/.test(stop));
   const rows = judge?.rows ?? [];
   const acts = rows.filter((row) => row.decision === 'act');
   const skips = rows.filter((row) => row.decision === 'skip');
@@ -60,6 +62,7 @@ const turns = (evidence.turns ?? []).map((turn) => {
     calls,
     continuationDecision: submission?.continuationDecision ?? null,
     stops: submission?.stops ?? [],
+    deadlineAbort,
     violations: seen,
     problems: turn.problems ?? [],
   };
@@ -78,6 +81,7 @@ const summary = {
     calls: turns.reduce((sum, turn) => sum + turn.calls.length, 0),
     fallbacks: turns.reduce((sum, turn) => sum + turn.calls.filter((call) => call.fallback).length, 0),
     attemptsWithError: turns.reduce((sum, turn) => sum + turn.calls.filter((call) => (call.attempts ?? 0) > 1).length, 0),
+    deadlineAborts: turns.filter((turn) => turn.deadlineAbort).length,
     continuation: count(turns.map((turn) => ({ decision: turn.continuationDecision })), 'decision'),
     violations: violations.length,
     violationKinds: count(violations.map((item) => ({ code: item.code })), 'code'),

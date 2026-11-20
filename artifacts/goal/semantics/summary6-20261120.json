@@ -1,6 +1,6 @@
 {
   "kind": "jity-goal-semantics-summary",
-  "generatedAt": "2026-11-20T13:23:23.456Z",
+  "generatedAt": "2026-11-20T13:55:53.562Z",
   "source": {
     "runFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run6-20261120.json",
     "runId": "2026-11-20T1312-0d4b",
@@ -58,6 +58,7 @@
     "calls": 38,
     "fallbacks": 2,
     "attemptsWithError": 21,
+    "deadlineAborts": 0,
     "continuation": {
       "none": 3
     },
@@ -1099,6 +1100,7 @@
       "stops": [
         "updates:position:JsonCallError: context_capacity_exceeded: prompt=11776 max=11600"
       ],
+      "deadlineAbort": false,
       "violations": [
         {
           "code": "context_overflow",
@@ -1983,6 +1985,7 @@
       "stops": [
         "updates:position:JsonCallError: context_capacity_exceeded: prompt=11776 max=11600"
       ],
+      "deadlineAbort": false,
       "violations": [
         {
           "code": "context_overflow",
@@ -2887,6 +2890,7 @@
       ],
       "continuationDecision": null,
       "stops": [],
+      "deadlineAbort": false,
       "violations": [
         {
           "code": "malformed_request",

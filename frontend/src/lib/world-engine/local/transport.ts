@@ -887,9 +887,10 @@ export class LocalWorldTransport implements WorldTransport {
         throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, error.code, error.details));
       }
       if (error instanceof KernelViolation) {
-        const code: ErrorCode = error.kind === 'id_unresolved' || error.kind === 'prefix_binding' ? 'version_mismatch'
-          : error.kind === 'position_invalid' ? 'request_malformed' : 'request_malformed';
-        throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, code));
+        const code: ErrorCode = error.kind === 'id_unresolved' || error.kind === 'prefix_binding' ? 'version_mismatch' : 'request_malformed';
+        const details = { kind: error.kind, detail: error.message };
+        console.info('[world-local kernel]', JSON.stringify({ operation, code, ...details }));
+        throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, code, details));
       }
       throw error;
     }
