@@ -240,6 +240,73 @@ with `turn_in_progress` and 0 model calls, but the page stayed
 runtime; 04/03 own the settlement/action failures and 06 owns the visible stop
 and retry path. The runtime load/worker contract held.
 
+## First valid product runtime evidence (2026-11-10T16:46Z)
+
+The 06 page at `81d5507a` / page sha `f861ace9` on `:3241` produced the first
+valid product-environment turn (`09-one-legal-turn.json`, runId
+`2026-11-10T1646-8c64`):
+
+- actual page console: `ggml_webgpu: adapter_info: vendor_id: 0 | vendor:
+  nvidia | architecture: lovelace`; `crossOriginIsolated` true;
+- page ready 102,137 ms, down from 142 s when the StrictMode probe mount loaded
+  both models twice; the 200 ms gate now leaves one visible round;
+- semantic: load 19,938 ms (fetch 11,591 + compile 8,344), loadCount 1,
+  workers 1/0, 17 generations; narration: load 31,037 ms (fetch 22,202 +
+  compile 8,743), loadCount 1, workers 1/0, 4 generations;
+- `lastGeneration` gave the prefill/decode split: semantic prompt 3,701
+  tokens/16.24 s, predicted 11/1.70 s, firstReadable 18.62 s, 8 chunks;
+  narration prompt 104 (+216 cached)/0.56 s, predicted 143/17.44 s,
+  firstReadable 1.45 s, 144 chunks;
+- JS heap 11.47 MB at ready, 13.42 MB after the turn; label it page JS heap,
+  not GPU VRAM.
+
+The turn itself failed content, not runtime: 04 updates accepted the group
+round but later rejected an invented task id (`task_doctor_flag`; allowed
+`task_doctor_prepare`) after 93 s; 03 nono actions fell back after repair
+failure; 02 narration used the program fallback. No accepted prose, 323 s.
+The runtime stayed at one load/worker and no hang. This is runtime evidence,
+not product acceptance.
+
+## Hard-stop cached reload browser proof (2026-11-10T17:17Z)
+
+`results/product/evidence/08-hard-stop-recheck.json` (09 Edge, `--only-hard-stop`,
+engine `3a7f3095`) now closes the old browser fetch failure:
+
+- Edge 157, crossOriginIsolated true, adapter nvidia/lovelace;
+- hard stop: `hardStopped=true`, `stoppedMs=1.435`, `needsReload=true`;
+- reload: `loadCount 1->2`, `workersCreated=2`, `workersExited=1`,
+  `fromCache=true`, `fetchMs=0`, `compileMs=34,786`, `reloadMs=34,790`,
+  no reload error; the next generation produced 9 characters;
+- cold load in this run: fetch 47,490 + compile 11,892 = 59,398 ms. The 94 s
+  and 59 s numbers are both single configurations, not a universal budget.
+
+The old `TypeError: Failed to fetch` on the second hard-stop load is historical;
+the cached-Blob path is proven in a real browser. Release/switch tests remain
+unit-level; the product 10/20-turn proof still requires a legal turn.
+
+## Call localization for the 17:01 long turn
+
+The 17:01 page run (`a5ca28d7` / page `4d05a899`) is not one stuck 162 s
+narration. The console/stage evidence is:
+
+- ready 105.8 s (semantic load 20.8 s + narration 37.0 s; one load/worker each);
+- turn: targets 2.8 s, results 15.8 s, **updates group_10 142.159 s** (the
+  six-stage aggregate, not 14 per-task JSON times), **first narration
+  point_round_3_1 57.519 s rejected wrong_person/low_support**, continuation
+  11.982 s, nono actions 17.5 s, **time_scan 64.321 s**;
+- the page's "正在写正文" stage appears at 173.686 s and a 49-char draft is
+  displayed at 173.5 s, but no prose is accepted and history_delta is 0; the
+  first segment must be measured from player submission and the stage switch
+  is not an accepted model first token.
+
+The t1 `engines[].generations=0` / `lastGeneration=null` on the semantic engine
+is a timeout snapshot: the page reads the turn record at timeout before
+finalising it, while the semantic tasks are visibly in the console. Do not
+report it as a zero-generation model. The full `__worldGenerations` global has
+the per-call evidence; 09 should capture it before the post-turn reload. The
+separate 16:46 end-of-turn run remains the source for semantic prefill/decode
+(3,701 prompt tokens/16.24 s, 11 predicted/1.70 s).
+
 ## 02/06 integration entry points
 
 - 06 per-engine generation timing: include `engine.runtime.lastGeneration` in
@@ -508,3 +575,15 @@ cancel (which still stops in ~5 ms and keeps the model loaded).
   truncates the prompt itself and leaves overflow handling to llama.cpp. The
   real runs only produced `finishReason: 'stop'`; length/missing-finish
   rejection is covered by the fake-runner tests.
+
+## 2026-11-10 17:17–18:22Z：hard-stop 重载、产品回合和 compact 构建的核对
+
+这一段是审查后的增量证据，不改变上面的运行器结论，也不是产品验收。
+
+- **硬停止后的缓存重载已由真实浏览器证明 PASS。** `results/product/evidence/08-hard-stop-recheck.json`（09 执行，Edge 157，NVIDIA/lovelace）：`hardStopped=true`，停止 1.435 ms，`needsReload=true`；重载 `loadCount 1→2`，worker 创建 2、退出 1；第二次 `fromCache=true`、`fetchMs=0`、compile 34.79 s；下一次生成 9 字。旧 `TypeError: Failed to fetch` 是历史记录，不再复现。这个证明是**同页**引擎重载；整页刷新会重新 fetch 两个权重（见下），两者不要混写。
+- **08 load-only / 94.9 s / 59.4 s 都是单配置测量。** 1.7B 的 fetch 76.6 + compile 17.3 = 94.9 s 是一次指定配置；硬停止冷加载 47.5 + 11.9 = 59.4 s；产品页 0.6B/1.5B 的 per-engine 加载在 16:46、17:01、17:37、18:12 分别为 19.9/31.0、20.8/37.0、38.4/50.4、21.3/40.3 s，fetch 和 compile 都变。compile 17.3 s 不是所有模型的常数（1.5B 曾 25.1/10.6/9.5 s；0.6B 曾 22.0/6.8 s）。
+- **0b69（17:37）**：page 0695/HEAD 0b69，ready 146.1 s（root 106.1 s program fallback）；t1 330 s 超时，updates 133.6 s（position 11.7/appearance 27.8/tasks 40.5/subtasks 18.9/personality 34.6）；第一点叙事 56.9 s 被 `wrong_person,low_support` 拒绝；nono 三次 `action_is_task_goal` repair_failed。回合后 reload 74.8 s ready，但恢复后 history 0→1、`committedEntries=1`、headPoint point_round_3_1，而回合记录 acceptedMs=null/history_delta=0；这是**未 accepted 的草稿跨刷新变成 committed** 的疑点，不能当干净的恢复。09 30b 后来把该 run 标为 FAILED。
+- **cf3d（18:12）**：首个含 04 compact answers 的构建（page 8a50/HEAD cf3d，BUILD czUvXPRhvpdn1k2wYZd_F）。ready 109.7 s（root 88.6 s program fallback）；semantic 21.3 s = 14.5 + 6.8，narration 40.3 s = 30.8 + 9.5；各一次 load/一个 worker；22 semantic / 4 narration generations。t1 的 updates 两组各 76.1 s（group_10 position 9.8 + appearance 25.8 + tasks 21.0 + subtasks 17.9 + personality 0；group_12 类似），比 0b69 的单组 133.6 s 降约 43%；tasks 40.5→21.0，personality 34.6→0。自动第二组仍把回合推到 303 s；页面 295 s deadline 后 world_complete。叙事仍 `no_product_candidate`，in-model 被 `added_event,ungrounded,low_support` 拒绝，point 58.0 s 是 **program fallback**，source=program，acceptedMs=null；不是 accepted model 正文。03 fe4 后 nono actions fallback=false，repair loop 已消失。
+- **cf3d 回合后整页 reload** 98.1 s ready，`historyCountBefore=1`、`historyCountAfter=1`、`historyStable=true`，entries 1/1，pageSaysRestored/overallRestored；t1 的 program fallback 已作为 program 历史存在，刷新稳定。它证明 program 来源可以被持久化并稳定恢复，**没有**证明 accepted model 正文合法；整页刷新仍重新 fetch 两个权重。
+- **04 的 compact 是真实提速，但还不是 acceptance**：task 40.5→21.0、personality 34.6→0；appearance 25.8/subtasks 17.9 仍是下一杠杆。04 的共享前缀没有命中：cf3d 末次 semantic 1,031 prompt/0 cached，0b69 的 4,026/0、3,740/0 也一样；不要把 `cache_prompt` 写成已复用。
+- **仍然缺**：accepted model 正文的 legal turn、10 回合（含 t6 后刷新）、20 回合 worker/JS heap 增长、真正的玩家取消产品路径，以及连续回合下的单次 load 复用。当前硬停止/缓存重载、流式、prefill/decode 和单回合 load 证据是可用的，但不能替代这些。
