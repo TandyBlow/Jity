@@ -41,6 +41,6 @@
 
 ## 差分向量
 
-- 冻结夹具：`frontend/scripts/parallel-kernel/fixtures/kernel-differential.json`（Python `fc60a603` 生成，含 canonical/positions/tasks/supersedes/time 与 normal 提交向量）。
+- 冻结夹具：`frontend/scripts/parallel-kernel/fixtures/kernel-differential.json`（Python `fc60a603` 生成，含 canonical/positions/tasks/supersedes/time 与 normal 提交向量；LF sha256 `7d68a392…f977`，工作树 CRLF sha256 `f43cbb6c…78c7`）。
 - TS 断言：`canonical.test.ts`、`state.test.ts`、`local-transport.test.ts`、`world-loader.test.ts`、`state-invariants/verify.test.ts`。
 - 证据：`artifacts/goal/kernel-diff.json`。
