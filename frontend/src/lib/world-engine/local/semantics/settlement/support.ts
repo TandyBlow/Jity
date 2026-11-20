@@ -5,7 +5,7 @@
  * controller's own preview_point calls applyPoint on the authoritative copy.
  */
 import type { Change, EntityDelta, Id, Json, Position, StoredChange, Task, WorldState } from '../../../types';
-import { applyPoint, buildTimelinePoint, clone } from '../../state';
+import { applyPoint, buildTimelinePoint, clone, stateDigest } from '../../state';
 import { activeText, locationName } from '../../prompt';
 
 export const SETTLEMENT_STAGES = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'] as const;
@@ -92,6 +92,22 @@ export function allTasks(state: WorldState): { ownerId: Id; task: Task }[] {
   return rows;
 }
 
+/** Short, stable task keys for prompts and answers. The program owns the
+ * mapping; the model never repeats long record ids for every task. */
+/** Facts with stable f1.. ids: the task answer must quote one of these (or
+ * `time`) for every new achievement, so a known task id alone is not proof. */
+export function resultFacts(results: Record<Id, string>): { id: string; memberId: Id; text: string }[] {
+  return Object.entries(results)
+    .filter(([, text]) => typeof text === 'string' && text.trim())
+    .map(([memberId, text], index) => ({ id: `f${index + 1}`, memberId, text }));
+}
+
+export function taskKeyIndex(state: WorldState): Map<Id, string> {
+  const keys = new Map<Id, string>();
+  allTasks(state).forEach(({ task }, index) => keys.set(task.id, `t${index + 1}`));
+  return keys;
+}
+
 export function taskIndex(state: WorldState): Map<Id, { ownerId: Id; task: Task }> {
   const index = new Map<Id, { ownerId: Id; task: Task }>();
   for (const row of allTasks(state)) index.set(row.task.id, row);
@@ -131,7 +147,7 @@ export function positionLine(state: WorldState, entityId: Id): string {
   return `- ${name}（id=${entityId}，${kind}）当前位置=${containerLabel(state, entityId)}`;
 }
 
-export function appearanceLine(state: WorldState, entityId: Id): string {
+export function appearanceLine(state: WorldState, entityId: Id, options: { compactTail?: number } = {}): string {
   const initial = state.initial.locations[entityId]?.initialAppearance
     ?? state.initial.items[entityId]?.initialAppearance
     ?? state.initial.characters[entityId]?.initialAppearance
@@ -144,10 +160,21 @@ export function appearanceLine(state: WorldState, entityId: Id): string {
   const records = activeRecords(state, 'appearance', entityId).filter((record) => record.active)
     .map((record) => `${record.id}=${record.text ?? '（已解除）'}`);
   const position = kind === '地点' ? '' : `；当前位置=${containerLabel(state, entityId)}`;
+  if (options.compactTail) {
+    // The appearance stage scans the whole cast (114 entities in the product
+    // world), so non-character lines must stay short enough for one call.
+    // Positions are the position stage's input, not this one's; the tail of the
+    // current text is enough for the model to write a different replacement.
+    const current = [...(initial ? [initial] : []), ...records.map((row) => row.split('=').slice(1).join('='))];
+    const tail = current.length ? current[current.length - 1] : '';
+    const cut = [...tail].slice(-options.compactTail).join('');
+    const ids = records.map((row) => row.split('=')[0]).join(',');
+    return `- ${name}（id=${entityId}，${kind}）当前外貌=${cut || '（未记录）'}；记录=[${ids}]`;
+  }
   return `- ${name}（id=${entityId}，${kind}）初始外貌=${initial}；有效变化=[${records.join('；')}]${position}`;
 }
 
-export function taskLine(state: WorldState, ownerId: Id): string {
+export function taskLine(state: WorldState, ownerId: Id, keys?: Map<Id, string>, onlyTaskIds?: Set<Id>): string {
   const name = state.initial.characters[ownerId]?.name ?? ownerId;
   const position = containerLabel(state, ownerId);
   const initial = state.initial.characters[ownerId];
@@ -155,10 +182,12 @@ export function taskLine(state: WorldState, ownerId: Id): string {
     .filter(Boolean).join('；');
   const personality = [initial?.initialPersonality ?? '', ...activeRecordText(activeRecords(state, 'personality', ownerId))]
     .filter(Boolean).join('；');
-  const tasks = Object.values(state.characters[ownerId]?.tasks ?? {});
+  const all = Object.values(state.characters[ownerId]?.tasks ?? {});
+  const tasks = onlyTaskIds ? all.filter((task) => onlyTaskIds.has(task.id)) : all;
   const prefix = `- ${name}（id=${ownerId}）位置=${position}；外貌=${appearance}；个性=${personality}`;
-  if (!tasks.length) return `${prefix}：无任务`;
-  const rows = tasks.map((task) => `${task.id}：${task.goal}（${task.status === 'achieved' ? '已完成' : '待办'}）`);
+  if (!all.length) return `${prefix}：无任务`;
+  if (!tasks.length) return `${prefix}：本组事实与这些任务的目标无关，保持原状`;
+  const rows = tasks.map((task) => `${keys?.get(task.id) ?? task.id}：${task.goal}（${task.status === 'achieved' ? '已完成' : '待办'}）`);
   return `${prefix}：${rows.join('；')}`;
 }
 
@@ -226,8 +255,103 @@ export function hasDeltaContent(delta: Partial<EntityDelta> | undefined): boolea
     || (delta.subtasksAdded?.length ?? 0) > 0;
 }
 
-export function hasRoundProgress(roundChanges: { entityDeltas?: Record<Id, EntityDelta> }[]): boolean {
-  return roundChanges.some((point) => Object.values(point.entityDeltas ?? {}).some((delta) => hasDeltaContent(delta)));
+/** What a completed round actually did, not which fields the action answer
+ * happened to fill. A position assignment that equals the current state is not
+ * progress; a real minute, a new action, a new settled fact, or any committed
+ * state change is. The port computes this from the state before the round and
+ * the state after it; the continuation runner falls back to the old field test
+ * only for callers that do not have the state (unit fixtures). */
+export interface RoundProgressEvidence {
+  progress: boolean;
+  reason: 'state_changed' | 'time_advanced' | 'new_action' | 'new_settled_fact' | 'action_not_settled' | 'no_change';
+  stateChanged: boolean;
+  timeAdvanced: boolean;
+  newActionCount: number;
+  newSettledFactCount: number;
+  beforeDigest?: string;
+  afterDigest?: string;
+  /** Automatic rounds only: did the settled facts cover the proposed action? A
+   * proposal that settled something else made no progress toward itself. */
+  actionSettled?: boolean;
+  /** The after state with the clock pinned. A candidate accepted at this world
+   * digest that is proposed again while the digest is unchanged is a repeat,
+   * not a new event (the clock alone advancing is not a change). */
+  worldDigest?: string;
+}
+
+export interface RoundProgressComputation {
+  before: WorldState | null;
+  after: WorldState | null;
+  /** Settled result facts of the completed round. */
+  facts: string[];
+  /** Actions the action lane actually resolved this round. */
+  actions: string[];
+  /** Facts/actions already consumed earlier in this submission. */
+  knownFacts: ReadonlySet<string>;
+  knownActions: ReadonlySet<string>;
+  /** Explicit real time advance when the caller already knows it. */
+  timeAdvanced?: boolean;
+  /** Automatic rounds pass false when the point settled no fact related to the
+   * action it proposed. Time passing is not progress toward that action, and
+   * counting it made a chain repeat the same beat for five points. */
+  actionSettled?: boolean;
+}
+
+/** Digest of everything except the clock, so "the world moved" and "a minute
+ * passed" are different questions. */
+export async function worldDigestOf(state: WorldState | null): Promise<string | undefined> {
+  if (!state) return undefined;
+  const pinned = JSON.parse(JSON.stringify(state)) as WorldState;
+  pinned.time = { ...pinned.time, dateTime: '1970-01-01T00:00:00' };
+  return stateDigest(pinned);
+}
+
+export async function roundProgressFromState(input: RoundProgressComputation): Promise<{
+  evidence: RoundProgressEvidence;
+  newActions: string[];
+  newFacts: string[];
+}> {
+  const before = input.before;
+  const after = input.after;
+  const beforeDigest = before ? await stateDigest(before) : undefined;
+  const afterDigest = after ? await stateDigest(after) : undefined;
+  const stateChanged = Boolean(before && after && beforeDigest !== afterDigest);
+  const timeAdvanced = input.timeAdvanced === true
+    || Boolean(before && after && before.time.dateTime !== after.time.dateTime);
+  const newActions = [...new Set(input.actions.map(normalizeChangeText).filter((text) => text && !input.knownActions.has(text)))];
+  const newFacts = [...new Set(input.facts.map(normalizeChangeText).filter((text) => text && !input.knownFacts.has(text)))];
+  const actionSettled = input.actionSettled !== false;
+  const progress = input.actionSettled === false
+    ? stateChanged
+    : stateChanged || timeAdvanced || newActions.length > 0 || newFacts.length > 0;
+  const reason: RoundProgressEvidence['reason'] = stateChanged
+    ? 'state_changed'
+    : input.actionSettled === false
+      ? 'action_not_settled'
+      : timeAdvanced
+        ? 'time_advanced'
+        : newActions.length
+          ? 'new_action'
+          : newFacts.length
+            ? 'new_settled_fact'
+            : 'no_change';
+  const worldDigest = await worldDigestOf(after);
+  return {
+    evidence: {
+      progress,
+      reason,
+      ...(worldDigest ? { worldDigest } : {}),
+      stateChanged,
+      timeAdvanced,
+      newActionCount: newActions.length,
+      newSettledFactCount: newFacts.length,
+      ...(input.actionSettled === false ? { actionSettled: false } : {}),
+      ...(beforeDigest ? { beforeDigest } : {}),
+      ...(afterDigest ? { afterDigest } : {}),
+    },
+    newActions,
+    newFacts,
+  };
 }
 
 /** Local projection only: uses the same browser state kernel so an illegal
@@ -250,6 +374,10 @@ export function projectStage(state: WorldState, stage: SettlementStage, changes:
     deltas[entityId] = delta;
   }
   if (!Object.keys(deltas).length) return clone(state);
+  // Kernel compatibility (06 tree): the product kernel requires a positive
+  // sequence and an `instant` kind for a zero-duration internal projection, and
+  // the projection is linked to the point it projects from. Values are local
+  // placeholders; the transport never commits this point.
   const point = buildTimelinePoint({
     worldId: state.worldId,
     id: `local_${stage}_${++localPointSequence}`,
@@ -270,6 +398,25 @@ export function projectStage(state: WorldState, stage: SettlementStage, changes:
 
 export function normalizeChangeText(text: string): string {
   return text.replace(/\s+/gu, '').replace(/[。！？!?；;，,、]+$/u, '').trim();
+}
+
+/** Character-bigram containment over the smaller text. Used to recognise a
+ * model answer that repeats a source sentence instead of producing a new one
+ * (9711 pair 0.93; a reworded question 0.71; a different find 0.60). */
+export function repeatsText(candidate: string, source: string, min = 0.85): boolean {
+  const bigrams = (text: string): Set<string> => {
+    const chars = [...text.replace(/[\s，。；：、！？…—,.!?:;'"“”‘’（）()]/gu, '')];
+    const set = new Set<string>();
+    for (let index = 0; index + 2 <= chars.length; index += 1) set.add(chars.slice(index, index + 2).join(''));
+    return set;
+  };
+  const mine = bigrams(candidate);
+  const theirs = bigrams(source);
+  const smaller = Math.min(mine.size, theirs.size);
+  if (!smaller) return false;
+  let shared = 0;
+  for (const gram of mine) if (theirs.has(gram)) shared += 1;
+  return shared / smaller >= min;
 }
 
 export function sameChangeText(a: string | null | undefined, b: string | null | undefined): boolean {
@@ -337,39 +484,79 @@ export function changeFromRow(id: Id, row: Record<string, unknown>): Change | nu
   return { id, text, supersedes };
 }
 
+/* ---------- model-written references ----------
+ * The model sees full names and ids in every prompt. It may answer with either,
+ * but a name is only usable when it names exactly one known entity. Unknown and
+ * ambiguous references are errors (the caller retries with that error and then
+ * aborts the point); a placeholder copied from an output example is never a
+ * default id. Program input still uses ids and does not go through here. */
 
-/** Scene scope for a single player point: the protagonist, everyone standing
- * in the same innermost location, the items in that location, and whatever
- * those characters carry. Locations stay complete because they are the
- * container vocabulary a moved entity may reference. Off-screen characters
- * keep their state; they are simply not re-judged by this point's six-stage
- * scan, which keeps a 14-actor world inside a small model's prompt budget.
- */
-export function scopedState(state: WorldState, view: Id): WorldState {
-  const room = (id: Id): Id | null => {
-    let current: Id | null = id;
-    const seen = new Set<Id>();
-    while (current && !state.locations[current]) {
-      if (seen.has(current)) return null;
-      seen.add(current);
-      const character: WorldState['characters'][Id] | undefined = state.characters[current];
-      const item: WorldState['items'][Id] | undefined = state.items[current];
-      current = character ? character.position.containerId : item ? item.position.containerId : null;
-    }
-    return current;
-  };
-  const viewRoom = room(view);
-  const inScope = new Set<Id>([view]);
-  for (const id of Object.keys(state.characters)) if (room(id) === viewRoom) inScope.add(id);
-  for (const id of Object.keys(state.items)) {
-    const holder = state.items[id].position.containerId;
-    const place = room(id);
-    if (place === viewRoom) inScope.add(id);
-    else if (inScope.has(holder)) inScope.add(id);
+const ID_PLACEHOLDERS = new Set([
+  'id', '<id>', 'entityid', 'targetid', 'characterid', 'taskid', 'memberid',
+  'parenttaskid', 'containerid', '人物id', '成员id', '目标id', '任务id',
+  '父任务id', '实体id', '人物ID', '成员ID', '目标ID', '任务ID',
+]);
+
+/** A model may keep the shape's brackets around a real id ("<lu>"). With one
+ * matching layer removed the inner text resolves like any other id; a shape
+ * placeholder ("<人物id>") still fails to resolve and is rejected. */
+export function unwrapIdBrackets(value: string): string {
+  const trimmed = value.trim();
+  const match = /^[<〈「『（(]\s*(.+?)\s*[>〉」』）)]$/u.exec(trimmed);
+  return match ? match[1].trim() : trimmed;
+}
+
+export function isPlaceholderId(value: string): boolean {
+  return ID_PLACEHOLDERS.has(value.trim());
+}
+
+function matchesName<T extends { name?: string }>(space: Record<Id, T> | undefined, value: string): Id[] {
+  if (!space) return [];
+  const wanted = value.trim();
+  return Object.keys(space).filter((id) => (space[id]?.name ?? '').trim() === wanted);
+}
+
+/** Resolve a model-written character reference to its id. Throws only for an
+ * ambiguous full name, because guessing between two characters is unsafe. */
+export function resolveCharacterId(state: WorldState, raw: string): Id | null {
+  const value = raw.trim();
+  if (!value || isPlaceholderId(value)) return null;
+  if (state.characters[value]) return value;
+  const matches = matchesName(state.initial.characters, value);
+  if (matches.length === 1) return matches[0];
+  if (matches.length > 1) throw new Error(`ambiguous character name ${value}: ${matches.sort().join(',')}`);
+  return null;
+}
+
+/** Resolve any world entity (character, item or location). A name shared by two
+ * entities of any kind is ambiguous and rejected. */
+export function resolveEntityId(state: WorldState, raw: string): Id | null {
+  const value = raw.trim();
+  if (!value || isPlaceholderId(value)) return null;
+  if (state.characters[value] || state.items[value] || state.locations[value]) return value;
+  const matches = [...new Set([
+    ...matchesName(state.initial.characters, value),
+    ...matchesName(state.initial.items, value),
+    ...matchesName(state.initial.locations, value),
+  ])];
+  if (matches.length === 1) return matches[0];
+  if (matches.length > 1) throw new Error(`ambiguous entity name ${value}: ${matches.sort().join(',')}`);
+  return null;
+}
+
+/** Build the retry instruction for a bad reference. It names the rule and one
+ * real example instead of pasting every id, so the feedback still fits beside
+ * the longest stage prompt. */
+export function referenceError(
+  state: WorldState,
+  raw: string,
+  what: 'character' | 'entity' | 'task',
+  example?: Id,
+): string {
+  const value = raw.trim();
+  const sample = example ?? (what === 'character' ? roster(state)[0] : allEntityIds(state)[0]);
+  if (isPlaceholderId(value)) {
+    return `placeholder_id:${value || '(empty)'} for ${what}; 这是输出格式里的占位符，必须换成名单里的真实 id${sample ? `（例如 ${sample}）` : ''}`;
   }
-  const characters: WorldState['characters'] = {};
-  for (const id of inScope) if (state.characters[id]) characters[id] = state.characters[id];
-  const items: WorldState['items'] = {};
-  for (const id of Object.keys(state.items)) if (inScope.has(id)) items[id] = state.items[id];
-  return { ...state, characters, items };
+  return `unknown ${what} ${value || '(empty)'}; 只能使用名单里已有的 id${sample ? `（例如 ${sample}）` : ''}，也可以写人物的唯一全名`;
 }

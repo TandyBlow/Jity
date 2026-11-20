@@ -10,12 +10,14 @@ import type { WorldModelPort } from '../controller';
 import type { EntityDelta, Id, Json, TimeAdvance, WorldState } from '../types';
 import type { CompletionEvidence, InferenceEngine } from '../runtime/engine';
 import { decodeTaskOutput } from '../runtime/structured-output';
-import { alignNarration, EVENT_VERBS } from '../runtime/narration-alignment';
 import { IncompleteGenerationError } from '../runtime/engine';
+import { alignNarration, EVENT_VERBS } from '../runtime/narration-alignment';
 import type { CommittedNarration, NarrationFact } from '../runtime/committed-narration';
 import { taskOutputSchema } from '../runtime/output-schema';
 import { createActionHandlers, type HandlerResult } from './semantics/actions';
-import { createSettlementHandlers, requireSettlementValue, continuationPolicy } from './semantics/settlement';
+import { createNarrationRunner, type NarrationRunner } from './narration-candidates/selection';
+import { requireSettlementValue } from './semantics/settlement';
+import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
 export interface GameModelOptions {
@@ -30,48 +32,159 @@ export interface GameModelOptions {
   /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
    * 'instruct' states the task for an instruction-tuned narration model. */
   narrationMode?: 'legacy' | 'instruct';
-  /** Automatic rounds after one player action. Default 0: one action = one round. */
-  maxAutoContinuations?: number;
-  /** How many non-protagonist actors may open their own frozen group in one
-   * round. Reactions to admitted threats are separate and always run. */
-  maxAutonomousActors?: number;
+  /** The player's character id. The point plan puts that character alone in
+   * the round's first point so the player's own settlement can commit and be
+   * narrated before the rest of the roster is judged (the 2026-11-11 turns
+   * spent 280 s settling one point that held every actor). */
+  protagonistId?: Id;
+  /** Internal narration candidate selection. `auto` only offers candidates
+   * whose real-model evidence is positive, so the shipped default changes
+   * nothing until one is accepted; the named routes exist for evaluation and
+   * are never a player-visible setting. */
+  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
+  /** Constrained route only: `program` never calls the model, `model` writes
+   * one verified beat per call. Internal. */
+
+  /** Trained route only: whole-scene vs beats. Internal evaluation switch. */
+  trainedMode?: 'beats' | 'scene';
+  /** Trained whole-scene prompt shape. `serialized` is the training shape for
+   * the fine-tuned checkpoints; `prose-facts` is the closed-book shape measured
+   * for the deployable instruct model. Internal. */
+  trainedPromptShape?: 'serialized' | 'prose-facts';
   /** Raw streaming text for the current narration point. */
   onNarrationProgress?: (progress: { pointId: Id; raw: string; elapsedMs: number }) => void;
-  onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence }) => void;
-  /** Test/evaluation hook: exposes the draft, raw model text and each repair
-   * stage. Never used to make a product decision. */
-  onNarrationDebug?: (debug: { pointId: Id; draft: string; text: string; violations: string[]; beats: { id: string; ask: string; facts: string[]; model: string; fallback: string; reasons: string[] }[] }) => void;
-  onTask?: (task: ModelTask, key: string, detail: { ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number }) => void;
+  onNarrationComplete?: (progress: {
+    pointId: Id; raw: string; completion: CompletionEvidence; fallback: boolean;
+    /** `mixed` = some sentences are verified model prose and some are program
+     * realizations; never counted as fully model-written. */
+    source: 'model' | 'program' | 'mixed' | 'draft';
+    segments?: Array<{ id: string; kind: string; source: string; text: string }>;
+  }) => void;
+  /** Test/evaluation hook: the raw model answer, the prompt it answered, and the
+   * beat writer's per-beat record. Never used to make a product decision. */
+  onNarrationDebug?: (debug: {
+    pointId: Id; raw: string; text: string;
+    rawAttempts: string[];
+    prompt: string;
+    draft?: string;
+    violations?: string[];
+    beats?: { id: string; ask: string; facts: string[]; model: string; fallback: string; reasons: string[] }[];
+  }) => void;
+  /** Internal evidence sink for candidate runs: candidate id, grade, per-beat
+   * segments and the candidate's own attempt record. Never rendered. */
+  onNarrationEvidence?: (record: Record<string, unknown>) => void;
+  onTask?: (task: ModelTask, key: string, detail: {
+    ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number;
+    source?: 'program' | 'model' | 'fallback';
+    issues?: { code: string; severity: string; message: string; detail?: string }[];
+    calls?: HandlerResult['calls'];
+    value?: Json;
+    stageMs?: Record<string, number>;
+    stages?: string[];
+    scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
+  }) => void;
 }
 
 interface Generated { value: Json; raw: string; ms: number; fallback: boolean; error?: string }
+
+type SettledFactRecord = {
+  text: string; actorId: string; targetId?: string; action?: string;
+  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true;
+};
+
+interface PointNarrationSnapshot {
+  resultsText: string;
+  facts: SettledFactRecord[];
+  playerInput: string;
+}
+
+/** Violations that mean the text asserts something the settlement did not
+ * produce. Style, length and wording are not in this set. */
+const FATAL_ALIGNMENT = new Set([
+  'added_event', 'actor_swap', 'direction_reversed', 'wrong_number',
+  'movement_without_fact', 'task_claimed_without_fact', 'state_claim_without_fact',
+]);
 
 
 export class LocalGameModel implements WorldModelPort {
   private readonly engine: InferenceEngine;
   private readonly narrationEngine: InferenceEngine;
+  /** One abort scope per player turn. Every engine port created here attaches
+   * this signal, so a cancel stops the device work instead of only discarding
+   * the answer the controller's cancel gate would have refused. */
+  private turnAbort: AbortController | null = null;
   private readonly options: GameModelOptions;
   private roundCounter = 0;
+  /** The player's character. Taken from the options (the page knows the static
+   * world) and refreshed from any working state a settlement handler sees. */
+  private protagonistId: Id | null = null;
   private lastPlayerInput = '';
   private lastResultsText = '';
-  private autoContinuations = 0;
+  /** Structured settled results for the current point (04's actor/action/target/
+   * outcome records), used by the candidate so it checks meaning, not wording. */
+  private lastSettledFacts: SettledFactRecord[] = [];
+  /** Per-point settlement material, frozen at commit. Narration for an older
+   * point must never read the next point's mutable lastResultsText/facts. */
+  private readonly pointResults = new Map<Id, string[]>();
+  private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
+  private readonly seenFactTexts = new Set<string>();
+  private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
   private recentEvents: string[] = [];
-  private readonly settlement;
+  private readonly narrationRunner: NarrationRunner | null;
+  /** Last accepted prose (model or candidate). Only real prose is fed back as
+   * continuation context; program/ledger paragraphs never are. */
+  private readonly settlement: SettlementModelPort;
   private readonly actionHandlers;
 
   constructor(engine: InferenceEngine, options: GameModelOptions = {}) {
-    this.engine = engine;
-    this.narrationEngine = options.narrationEngine ?? engine;
+    // The handlers below keep their own engine references, so they get the
+    // same abort-scoped port as the direct calls in this class.
+    const scoped = (inner: InferenceEngine): InferenceEngine => ({
+      get info() { return inner.info; },
+      load: (loadOptions) => inner.load(loadOptions),
+      dispose: () => inner.dispose(),
+      complete: (prompt, completeOptions) => {
+        const signal = completeOptions?.signal ?? this.turnAbort?.signal;
+        if (signal?.aborted) return Promise.reject(new DOMException('Aborted', 'AbortError'));
+        return inner.complete(prompt, signal ? { ...completeOptions, signal } : completeOptions);
+      },
+    });
+    const semanticEngine = scoped(engine);
+    const narrationPort = scoped(options.narrationEngine ?? engine);
+    this.engine = semanticEngine;
+    this.narrationEngine = narrationPort;
     this.options = options;
-    this.settlement = createSettlementHandlers({ engine, options: {
+    this.protagonistId = options.protagonistId ?? null;
+    // Lane 04's settlement port owns results/updates (six stages) and the
+    // continuation judgement. A policy stop is a visible stop; there is no
+    // product-side "one action per round" switch and no fabricated handback.
+    this.settlement = createSettlementModelPort(semanticEngine, {
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
+      // The appearance stage measures 7877 chars on the shipped world; a retry
+      // with feedback is ~7970. The guard must leave room for the repair while
+      // still refusing a runaway prompt (lane 04's measured numbers).
       maxPromptChars: 11_000,
-      sceneScope: true,
-      mergedStages: true,
-      continuation: this.options.maxAutoContinuations == null ? continuationPolicy : { ...continuationPolicy, maxAutoContinuations: this.options.maxAutoContinuations },
-    } });
-    this.actionHandlers = createActionHandlers({ engine, options: {
+    });
+    this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
+      ? null
+      : createNarrationRunner({
+        engine: narrationPort,
+        candidate: options.narrationCandidate ?? 'auto',
+        ...(options.trainedMode ? { trainedMode: options.trainedMode } : {}),
+        ...(options.trainedPromptShape ? { trainedPromptShape: options.trainedPromptShape } : {}),
+        // The page's chat model expects one templated user turn; the candidates
+        // send plain text, so the runner wraps them the same way.
+        engineTemplate: options.narrationMode === 'instruct' ? 'chatml' : 'none',
+        temperature: options.narrationTemperature ?? 0.45,
+        maxTokens: options.narrationMaxTokens ?? 240,
+        timeoutMs: options.narrationTimeoutMs ?? 150_000,
+        // Variable-length contract: a short complete paragraph is allowed, so
+        // candidates only reject a near-empty string, not a scene under a
+        // fixed character count.
+        minChars: 20,
+      });
+    this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       recentEvents: () => this.recentEvents,
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
         ms: call.elapsedMs, fallback: !call.decoded, error: call.error, raw: call.raw, promptChars: call.promptChars,
@@ -81,7 +194,39 @@ export class LocalGameModel implements WorldModelPort {
 
   get info() { return this.engine.info; }
 
-  resetAutoContinuations(): void { this.autoContinuations = 0; this.settlement.resetContinuation(); }
+  /** Open a fresh abort scope at the start of a player turn. */
+  beginTurn(): void { this.turnAbort = new AbortController(); }
+
+  /** Abort in-flight inference for the current turn. The controller's cancel
+   * command still owns the state conclusion; this only stops device work. The
+   * aborted scope stays in place so a late task cannot start a fresh generation
+   * after the cancel; `beginTurn()` opens the next scope. */
+  abortTurn(): void { this.turnAbort?.abort(); }
+
+  /** Player-submission account for the settlement side: which calls ran, per
+   * stage, with the real milliseconds. Internal evidence, not page text. */
+  beginSubmission(inputText: string): void {
+    this.settlement.beginSubmission(inputText);
+    this.pointResults.clear();
+    this.pointFacts.clear();
+    this.seenFactTexts.clear();
+    this.narrationSnapshots.clear();
+  }
+
+  /** The controller committed this point. Freeze the settlement material that
+   * belongs to it before a later point overwrites the live caches. */
+  onPointCommitted(pointId: Id): void {
+    const resultsText = (this.pointResults.get(pointId) ?? []).join('；') || this.lastResultsText;
+    const facts = this.pointFacts.get(pointId) ?? [];
+    this.narrationSnapshots.set(pointId, {
+      resultsText,
+      facts: facts.map((fact) => ({ ...fact })),
+      playerInput: this.lastPlayerInput,
+    });
+  }
+  endSubmission(): PortSubmission | null { return this.settlement.endSubmission(); }
+  settlementSummary(): SettlementPortSummary { return this.settlement.summary(); }
+  resetSettlement(): void { this.settlement.reset(); }
 
   async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
     const generated = await this.run(task, key, input);
@@ -106,35 +251,52 @@ export class LocalGameModel implements WorldModelPort {
     }
   }
 
-  /** One point per round covering the full frozen roster. Point segmentation
-   * is program-owned here; the model owns the semantic action/results work. */
+  /** Point segmentation is program-owned; the model owns the semantic
+   * action/results work.
+   *
+   * A player round becomes two points. The first holds only the player's own
+   * character, so its settlement group (the player's action, its targets and
+   * their reactions) commits and goes to narration as soon as it is done; the
+   * remaining roster is judged in a zero-duration instant point after it. The
+   * 2026-11-11 runs put all fourteen actors in one point: the first commit
+   * waited 248-280 s for six settlement groups, far past the 60 s target. No
+   * settlement group is split — the player's group keeps its targets and
+   * reactions, and every other actor's own group is settled in the second
+   * point, which is where it was already settled before.
+   *
+   * Automatic (continuation) rounds keep one point: their order is the
+   * model's candidate list and has no player slot to isolate. */
   private planPoints(input: Json): Json {
-    const round = (input as { round?: { roundId?: Id; order?: Id[] } }).round;
+    const round = (input as { round?: { roundId?: Id; order?: Id[]; trigger?: string } }).round;
     const order = round?.order ?? [];
-    return [{ pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal',
-      timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order }];
+    const roundId = round?.roundId ?? 'round';
+    const single = { pointId: `point_${roundId}_1`, kind: 'normal',
+      timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order };
+    const protagonist = this.protagonistId;
+    if (round?.trigger !== 'player' || protagonist === null || order.length < 2 || !order.includes(protagonist)) {
+      return [single];
+    }
+    const rest = order.filter((actor) => actor !== protagonist);
+    if (rest.length === 0) return [single];
+    return [
+      { ...single, actorIds: [protagonist] },
+      { pointId: `point_${roundId}_2`, kind: 'instant',
+        // An instant point must carry a zero duration; the round's time already
+        // advanced with the first point.
+        timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: rest },
+    ];
   }
 
   private async action(key: Id, input: Json): Promise<Generated> {
     const data = input as { actor?: Id; advance?: { inputText?: string | null; intentStatus?: string } | null; workingState?: WorldState };
+    this.noteProtagonist(data.workingState);
     if (data.workingState && data.actor === data.workingState.protagonistId) {
       const text = data.advance?.inputText?.trim();
       if (text) this.lastPlayerInput = text;
     }
-    // Scene budget: an unnamed same-room NPC still acts autonomously only
-    // when the player's sentence puts them in play. Without this budget every
-    // present actor becomes another frozen group and a single turn grows past
-    // the readable-text wait; reactions still cover every admitted threat.
-    if (data.workingState && data.actor && data.actor !== data.workingState.protagonistId) {
-      if ((this.options.maxAutonomousActors ?? 1) <= 0) {
-        return { value: { kind: 'skip' }, raw: '', ms: 0, fallback: false, error: 'autonomous_actor_budget' };
-      }
-      const name = data.workingState.initial.characters[data.actor]?.name ?? data.actor;
-      const advanceText = data.advance?.inputText?.trim() || this.lastPlayerInput;
-      if (!advanceText.includes(name)) {
-        return { value: { kind: 'skip' }, raw: '', ms: 0, fallback: false, error: 'scene_budget_unnamed' };
-      }
-    }
+    // Every actor the controller freezes is judged; the old "unnamed NPC is
+    // skipped" budget was a product shortcut, not a model decision. Scene scope
+    // for those judgements is owned by the settlement port, not this gate.
     return this.reportAction(await this.actionHandlers.action(key, input));
   }
 
@@ -146,10 +308,21 @@ export class LocalGameModel implements WorldModelPort {
     return this.reportAction(await this.actionHandlers.reaction(key, input));
   }
 
+  /** Any settlement input carries the working state; remember the player's id
+   * so the next round's plan can isolate the player's point even if the page
+   * did not pass one. */
+  private noteProtagonist(state: WorldState | undefined): void {
+    if (state?.protagonistId) this.protagonistId = state.protagonistId;
+  }
+
   private reportAction(result: HandlerResult): Generated {
     const error = result.issues.filter((issue) => issue.severity === 'error').map((issue) => issue.code).join(',') || undefined;
     this.options.onTask?.(result.task, result.key, {
       ms: result.elapsedMs, fallback: result.fallback, error, raw: result.raw,
+      source: result.source,
+      issues: result.issues.map((issue) => ({ code: issue.code, severity: issue.severity, message: issue.message, detail: issue.detail })),
+      calls: result.calls,
+      value: result.value,
     });
     return {
       value: result.value, raw: result.raw, ms: result.elapsedMs,
@@ -158,8 +331,9 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async results(key: Id, input: Json): Promise<Generated> {
-    const outcome = await this.settlement.results(key, input);
-    const value = requireSettlementValue(outcome);
+    const started = performance.now();
+    const value = await this.settlement.generate('results', key, input) as Record<Id, string>;
+    const outcome = { raw: '', ms: performance.now() - started, fallback: false, error: undefined as string | undefined };
     const state = (input as { workingState?: WorldState }).workingState;
     const lines = Object.entries(value).map(([id, text]) => {
       const name = state?.initial.characters[id]?.name ?? id;
@@ -171,20 +345,47 @@ export class LocalGameModel implements WorldModelPort {
       const body = prose.join('').replace(new RegExp(`^${name}[：:，,]?`, 'u'), '');
       return body ? `${name}：${body}` : '';
     }).filter(Boolean);
-    this.lastResultsText = /完成了刚才的动作|行动发生了，但没有产生新的结果/u.test(lines.join('；')) ? '' : lines.join('；');
-    for (const line of lines) this.recentEvents.push(line);
+    // Settlement-internal wording is not story material. Lane 04's results
+    // step falls back to "本组结算未能确认新的结果。" and the action lane uses
+    // "无判定"; both used to leak into the program prose as if a character said
+    // them. They stay out of the narration brief and the recent events.
+    const internal = /本组结算未能确认|未能确认新的结果|无判定|没有产生新的结果|完成了刚才的动作/u;
+    const story = lines.filter((line) => !internal.test(line));
+    this.lastResultsText = internal.test(lines.join('；')) ? '' : story.join('；');
+    // 04's structured records are the authoritative description of what the
+    // settlement produced; the free-text line above is only its rendering.
+    this.lastSettledFacts = this.settlement.settledFacts().map((fact) => ({
+      text: fact.text,
+      actorId: fact.actorId,
+      ...(fact.targetId ? { targetId: fact.targetId } : {}),
+      ...(fact.action ? { action: fact.action } : {}),
+      outcome: fact.outcome,
+      ...(fact.implicit ? { implicit: true as const } : {}),
+    }));
+    const pointId = (input as { pointId?: Id }).pointId;
+    if (pointId) {
+      this.pointResults.set(pointId, [...(this.pointResults.get(pointId) ?? []), ...story]);
+      const facts = this.pointFacts.get(pointId) ?? [];
+      for (const fact of this.lastSettledFacts) {
+        if (this.seenFactTexts.has(fact.text)) continue;
+        this.seenFactTexts.add(fact.text);
+        facts.push({ ...fact });
+      }
+      this.pointFacts.set(pointId, facts);
+    }
+    for (const line of story) this.recentEvents.push(line);
     if (this.recentEvents.length > 4) this.recentEvents = this.recentEvents.slice(-4);
     return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
   }
 
   private async updates(key: Id, input: Json): Promise<Generated> {
-    const outcome = await this.settlement.updates(key, input);
-    const value = requireSettlementValue(outcome);
+    const started = performance.now();
+    const value = await this.settlement.generate('updates', key, input);
     const state = (input as { workingState?: WorldState }).workingState;
     const results = (input as { results?: Record<Id, string> }).results ?? {};
     const stage = (input as { stage?: string }).stage;
     const merged = await this.injectMovement(state, value, results, stage);
-    return { value: merged as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
+    return { value: merged as unknown as Json, raw: '', ms: performance.now() - started, fallback: false };
   }
 
   /** A player sentence that walks to a named room is a movement the state must
@@ -195,7 +396,7 @@ export class LocalGameModel implements WorldModelPort {
   private async injectMovement(state: WorldState | undefined, value: unknown, results: Record<Id, string>, stage: string | undefined): Promise<unknown> {
     if (!state || stage) return value;
     const view = state.protagonistId;
-    if (!MOVEMENT.test(this.lastPlayerInput)) return value;
+    if (!/走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|离开|去|赶到|溜|冲|贴墙|靠近/u.test(this.lastPlayerInput)) return value;
     const calls = Array.isArray(value) ? value as { stage: string; changes: Record<Id, EntityDelta> }[] : null;
     if (!calls) return value;
     const hasMove = calls.some((call) => call.changes?.[view]?.positionSet);
@@ -258,16 +459,25 @@ export class LocalGameModel implements WorldModelPort {
   }
 
   private async continuation(key: Id, input: Json): Promise<Generated> {
-    // A one-action-per-round product setting is not a model judgement: with
-    // automatic continuation switched off there is nothing to propose, so the
-    // round is handed back without spending a model call (and without turning
-    // a model hiccup into a failed round).
-    if ((this.options.maxAutoContinuations ?? 0) <= 0) {
-      return { value: { kind: 'handback', closedBy: 'model', cancelReason: null } as unknown as Json, raw: '', ms: 0, fallback: false, error: 'continuation_disabled' };
+    // The continuation judgement is lane 04's port. A policy stop has no model
+    // conclusion value; it is passed to the controller as a typed stop so the
+    // round closes as a visible cancel (never a fabricated model handback) and
+    // the narration of the committed points still runs.
+    const started = performance.now();
+    try {
+      const value = await this.settlement.generate('continuation', key, input);
+      return { value, raw: '', ms: performance.now() - started, fallback: false };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const marker = 'settlement_failed:continuation:continuation_policy_';
+      if (message.startsWith(marker)) {
+        return {
+          value: { kind: 'policy_stop', reason: message.slice('settlement_failed:continuation:'.length) },
+          raw: '', ms: performance.now() - started, fallback: false,
+        };
+      }
+      throw error;
     }
-    const outcome = await this.settlement.continuation(key, input);
-    const value = requireSettlementValue(outcome);
-    return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
   }
 
   /** Narration is written one small beat at a time. A 1.5B writer asked for a
@@ -285,15 +495,82 @@ export class LocalGameModel implements WorldModelPort {
     const started = performance.now();
     const before = data.before ?? null;
     const delta = data.delta ?? {};
+    // Material for THIS point, frozen at its commit. A later point's live
+    // caches must not reach an older point's prose.
+    const snapshot = this.narrationSnapshots.get(pointId);
+    const playerInput = snapshot?.playerInput ?? this.lastPlayerInput;
+    const resultsText = snapshot?.resultsText ?? '';
+    const settledFacts = snapshot?.facts ?? [];
+
+    // Candidate path: one settled point in, the candidate's own beat text out.
+    // Nothing here inspects, refuses, rewrites or replaces that text.
+    if (this.narrationRunner) {
+      const adopted = await this.adoptNarrationCandidate(pointId, before, delta, after, playerInput, resultsText, settledFacts);
+      if (adopted) return adopted;
+
+
+    // In-model writer: one call with the settled state as its only material.
+    const brief = this.options.narrationMode === 'instruct'
+      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText)
+      : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
+    let raw = '';
+    let error: string | undefined;
+    try {
+      raw = await this.narrationEngine.complete(this.options.narrationMode === 'instruct' ? chatml(brief.prompt) : brief.prompt, {
+        maxTokens: this.options.narrationMaxTokens ?? 240,
+        temperature: this.options.narrationTemperature ?? 0.45,
+        timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
+        onProgress: (progress) => {
+          // The page shows the model's own text while it is written. There is no
+          // sentence filter in the stream.
+          if (progress.raw.trim()) this.options.onNarrationProgress?.({ pointId, raw: progress.raw, elapsedMs: performance.now() - started });
+        },
+        ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
+      });
+    } catch (caught) {
+      if (caught instanceof IncompleteGenerationError) {
+        // A length-limited generation still returned text: it is the content.
+        raw = caught.completion.raw;
+      } else {
+        // A transport/model failure is a run error, not a reason to invent prose.
+        throw caught;
+      }
+    }
+    const text = protocolText(raw);
+    const empty = text.trim().length === 0;
+    this.options.onNarrationDebug?.({ pointId, raw, text, rawAttempts: [raw], prompt: brief.prompt });
+    this.options.onTask?.('narration', key, {
+      ms: performance.now() - started, fallback: false,
+      ...(empty ? { error: 'empty_model_output' } : {}),
+      raw: text, promptChars: brief.prompt.length,
+    });
+    if (empty) {
+      // The only non-content case: no model text. The page shows a status note;
+      // no program narration is written.
+      this.options.onNarrationComplete?.({
+        pointId, raw: '',
+        completion: { raw, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+        fallback: false, source: 'model', segments: [],
+      });
+      return { value: '' as unknown as Json, raw, ms: performance.now() - started, fallback: false, error: 'empty_model_output' };
+    }
+    this.options.onNarrationComplete?.({
+      pointId, raw: text,
+      completion: { raw: text, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+      fallback: false, source: 'model',
+    });
+    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: false };
+    }
+
     const name = after.initial.characters[view]?.name ?? view;
-    const draft = factualNarration(before, delta, after, view, this.lastPlayerInput, this.lastResultsText);
+    const draft = factualNarration(before, delta, after, view, playerInput, resultsText);
     const packet = alignmentPacket(before, delta, after);
     const alignmentOptions = {
       roster: Object.values(after.initial.characters).map((entity) => entity.name),
       locations: Object.values(after.initial.locations).map((entity) => entity.name),
       time: delta.timeAdvance?.duration ?? null,
       knownPositions: visibleCharacters(after, view).filter((id) => id !== view).map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
-      allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
+      allowedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
     };
     const sceneNamesList = sceneNames(after, view);
 
@@ -302,7 +579,7 @@ export class LocalGameModel implements WorldModelPort {
     // it streams in.
     this.options.onNarrationProgress?.({ pointId, raw: draft, elapsedMs: performance.now() - started });
 
-    const beats = this.narrationBeats(after, before, delta, view);
+    const beats = this.narrationBeats(after, before, delta, view, playerInput, resultsText);
     if (!beats.length) {
       this.finishNarration(key, pointId, started, draft, [], draft, []);
       return { value: draft as unknown as Json, raw: draft, ms: performance.now() - started, fallback: true, error: 'empty_scene' };
@@ -317,8 +594,8 @@ export class LocalGameModel implements WorldModelPort {
     for (const beat of beats) {
       const prompt = beatPrompt(name, beat);
       let published = 0;
-      const accepted = await this.writeBeat(prompt, beat, packet, alignmentOptions, after, view, draft, (partial) => {
-        const proven = this.gateBeat(partial, beat, packet, alignmentOptions, after, view, sceneNamesList);
+      const accepted = await this.writeBeat(prompt, beat, packet, alignmentOptions, after, view, draft, playerInput, resultsText, (partial) => {
+        const proven = this.gateBeat(partial, beat, packet, alignmentOptions, after, view, sceneNamesList, playerInput, resultsText);
         if (!proven || [...proven].length <= published) return;
         published = [...proven].length;
         results.push({ ...beat, text: proven });
@@ -345,13 +622,19 @@ export class LocalGameModel implements WorldModelPort {
     draft: string,
     reasons: string[],
   ): void {
+    const modelBeats = beats.filter((beat) => beat.text).length;
+    const fallback = reasons.length > 0 || modelBeats === 0;
+    const source = modelBeats === 0 ? 'draft' as const : (reasons.length ? 'mixed' as const : 'model' as const);
     this.options.onNarrationDebug?.({
-      pointId, draft, text,
+      pointId, raw: text, text,
+      rawAttempts: beats.map((beat) => beat.text).filter(Boolean),
+      prompt: '',
+      draft,
       beats: beats.map((beat) => ({ id: beat.id, ask: beat.ask, facts: beat.facts, model: beat.text, fallback: beat.fallback, reasons: beat.reasons })),
       violations: [...new Set(reasons)],
     });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: reasons.length > 0, error: reasons.length ? [...new Set(reasons)].join(',') : undefined, raw: text });
-    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: reasons.length ? 'drafted' : 'stop', firstTokenMs: null, wallMs: performance.now() - started } });
+    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback, error: reasons.length ? [...new Set(reasons)].join(',') : undefined, raw: text });
+    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: fallback ? 'drafted' : 'stop', firstTokenMs: null, wallMs: performance.now() - started }, fallback, source });
   }
 
   /** The three facts the player is entitled to read this round: where the round
@@ -362,6 +645,8 @@ export class LocalGameModel implements WorldModelPort {
     before: WorldState | null,
     delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
     view: Id,
+    playerInput: string,
+    resultsText: string,
   ): Beat[] {
     const name = after.initial.characters[view]?.name ?? view;
     const room = roomOf(after, view);
@@ -374,8 +659,8 @@ export class LocalGameModel implements WorldModelPort {
       return `${entity?.name ?? id}${looks ? `（${pickClauses(looks, 2)}）` : ''}`;
     });
     const scenery = appearance ? pickClauses(appearance, 2) : '';
-    const declared = this.lastPlayerInput.trim().replace(/^我(?!们)/u, '');
-    const resultsText = this.lastResultsText.trim();
+    const declared = playerInput.trim().replace(/^我(?!们)/u, '');
+    const settledText = resultsText.trim();
     const change = delta.entityDeltas?.[view];
     const moved = change?.positionSet ? locationName(after, change.positionSet.containerId) : '';
 
@@ -388,16 +673,16 @@ export class LocalGameModel implements WorldModelPort {
       reasons: [],
       text: '',
     });
-    if (declared || resultsText) {
+    if (declared || settledText) {
       beats.push({
         id: 'act',
         facts: [
           `玩家这一回合让${name}做的事：${declared || '（没有说话，只是行动）'}`,
           ...(moved ? [`${name}因此到了${moved}`] : []),
-          ...(resultsText ? [`结算结果：${resultsText}`] : []),
+          ...(settledText ? [`结算结果：${settledText}`] : []),
         ],
         ask: `用一到两句写${name}刚做了什么，结果怎么样。`,
-        fallback: `${declared ? `${name}${declared}。` : ''}${resultsText ? `${resultsText.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name)}。` : ''}`,
+        fallback: `${declared ? `${name}${declared}。` : ''}${settledText ? `${settledText.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name)}。` : ''}`,
         reasons: [],
         text: '',
       });
@@ -426,6 +711,8 @@ export class LocalGameModel implements WorldModelPort {
     after: WorldState,
     view: Id,
     draft: string,
+    playerInput: string,
+    resultsText: string,
     onPartial: (text: string) => void,
   ): Promise<string> {
     try {
@@ -440,13 +727,13 @@ export class LocalGameModel implements WorldModelPort {
           onPartial(complete);
         },
       });
-      const gated = this.gateBeat(raw, beat, packet, alignmentOptions, after, view, sceneNames(after, view));
+      const gated = this.gateBeat(raw, beat, packet, alignmentOptions, after, view, sceneNames(after, view), playerInput, resultsText);
       if (gated && [...gated].length >= 6) return gated;
       beat.reasons.push('beat_unsupported');
       return '';
     } catch (error) {
       const partial = error instanceof IncompleteGenerationError ? error.completion.raw : '';
-      const gated = partial ? this.gateBeat(partial, beat, packet, alignmentOptions, after, view, sceneNames(after, view)) : '';
+      const gated = partial ? this.gateBeat(partial, beat, packet, alignmentOptions, after, view, sceneNames(after, view), playerInput, resultsText) : '';
       if (gated && [...gated].length >= 6) return gated;
       beat.reasons.push(error instanceof Error && error.name === 'TimeoutError' ? 'beat_timeout' : 'beat_failed');
       return '';
@@ -465,10 +752,12 @@ export class LocalGameModel implements WorldModelPort {
     after: WorldState,
     view: Id,
     sceneNamesList: string[],
+    playerInput: string,
+    resultsText: string,
   ): string {
     const cleaned = finishSentences(cleanNarration(raw)).trim();
     if (!cleaned) return '';
-    const allowed = [...beat.facts, this.lastPlayerInput, this.lastResultsText].join('；');
+    const allowed = [...beat.facts, playerInput, resultsText].join('；');
     const alignment = alignNarration(packet, cleaned, alignmentOptions);
     const pruned = pruneNarration(cleaned, alignment, after, view).text || cleaned;
     const supported = supportNarration(bindNarrationAttributes(pruned, after, view), allowed);
@@ -484,6 +773,43 @@ export class LocalGameModel implements WorldModelPort {
     const grounding = groundingRatio(text, sceneNamesList);
     if (grounding.count === 0 && [...text].length > 40) return '';
     return text;
+  }
+  /** Run the configured candidate for this point. The candidate's text is used
+   * exactly as returned; only an empty answer falls through. */
+  private async adoptNarrationCandidate(
+    pointId: Id,
+    before: WorldState | null,
+    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
+    after: WorldState,
+    playerInput: string,
+    resultsText: string,
+    settledFacts: SettledFactRecord[],
+  ): Promise<Generated | null> {
+    if (!this.narrationRunner) return null;
+    const result = await this.narrationRunner.generate({
+      pointId,
+      before,
+      delta,
+      after,
+      playerInput,
+      settledResults: resultsText ? [resultsText] : [],
+      settledFacts,
+    }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
+    if (result.kind !== 'adopted') {
+      return null;
+    }
+    this.options.onTask?.('narration', pointId, {
+      ms: result.timings.totalMs, fallback: false, raw: result.text, promptChars: result.promptChars,
+    });
+    this.options.onNarrationEvidence?.({
+      pointId, candidateId: result.candidateId, route: result.route,
+      strategyVersion: result.strategyVersion, segments: result.segments,
+      timings: result.timings, detail: result.detail ?? null,
+    });
+    this.options.onNarrationComplete?.({
+      pointId, raw: result.text, completion: result.completion, fallback: false, source: 'model', segments: result.segments,
+    });
+    return { value: result.text as unknown as Json, raw: result.text, ms: result.timings.totalMs, fallback: false };
   }
 
   private fallback(task: ModelTask, key: Id): Json {
@@ -517,33 +843,16 @@ function cleanNarration(raw: string): string {
     .trim();
 }
 
-function validateNarration(text: string, facts: string, after: WorldState, view: Id): { ok: boolean; reason: string } {
-  if ([...text].length < 40) return { ok: false, reason: 'too_short' };
-  // Third-person prose may use “他/她” for a whole paragraph without naming
-  // the protagonist; absence of the literal name is not a fact error.
-
-  // A field table is not prose: the page must not show field headings.
-  const fieldLines = text.split(String.fromCharCode(10)).filter((line) => /^(时间|地点|人物|事件|变化|视角|场景)[:：]/u.test(line.trim()));
-  if (fieldLines.length >= 2) return { ok: false, reason: 'structure_dump' };
-  // Copying the fact brief back is the other failure mode of a small model.
-  const probe = briefProbe(facts);
-  if (probe && text.includes(probe)) return { ok: false, reason: 'copied_brief' };
-  const numbers = text.match(/\d+/g) ?? [];
-  for (const number of numbers) if (!facts.includes(number)) return { ok: false, reason: `unverified_number:${number}` };
-  // Any known character/location/item the projector did not put in the input
-  // must not appear by name. This catches the common small-model failure of
-  // pulling a familiar name from its pretraining into a scene where that
-  // character is not present.
-  const known = [
-    ...Object.values(after.initial.characters).map((entity) => entity.name),
-    ...Object.values(after.initial.locations).map((entity) => entity.name),
-    ...Object.values(after.initial.items).map((entity) => entity.name),
-  ];
-  for (const name of known) {
-    if (name.length < 2 || facts.includes(name)) continue;
-    if (text.includes(name)) return { ok: false, reason: `unprojected_entity:${name}` };
+/** Protocol framing only: chat-template tokens and the prompt's 【正文】 marker
+ * are not story content. The text itself is returned untouched — no sentence or
+ * character is removed for style, facts or length. */
+function protocolText(raw: string): string {
+  const marker = String.fromCharCode(0x3010) + '正文' + String.fromCharCode(0x3011);
+  let text = raw.includes(marker) ? raw.split(marker).pop() ?? raw : raw;
+  for (const token of ['<|im_end|>', '<|im_start|>', '<|endoftext|>']) {
+    text = text.split(token).join('');
   }
-  return { ok: true, reason: '' };
+  return text;
 }
 
 const MOVEMENT = /走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|离开|去|赶到|溜|冲|贴墙|靠近|靠近/u;
@@ -912,7 +1221,6 @@ function beatPrompt(name: string, beat: Beat): string {
     '正文：',
   ].join(String.fromCharCode(10));
 }
-
 export function adjacentLocations(state: WorldState, current: Id, named: string[] = []): string {
   const locations = state.initial.locations;
   const parent = locations[current]?.parentLocationId ?? null;

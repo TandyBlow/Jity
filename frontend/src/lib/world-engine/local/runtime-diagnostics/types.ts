@@ -15,6 +15,8 @@ export interface ModelLoadEvidence {
   kind: 'load';
   /** Normalised absolute URL (or the configured string outside a browser). */
   modelUrl: string;
+  /** All shard URLs in load order; undefined for a single-file load. */
+  modelUrls?: string[];
   modelId: string | null;
   contextSize: number;
   gpuLayers: number;
@@ -24,10 +26,14 @@ export interface ModelLoadEvidence {
   directBlob: boolean;
   /** Time spent obtaining the bytes (fetch + blob). Null when OPFS served. */
   fetchMs: number | null;
+  /** True when a hard-stop reload reused the previously fetched Blob. */
+  fromCache?: boolean;
   /** Time spent inside wllama loadModel/loadModelFromUrl (parse + compile). */
   compileMs: number | null;
   totalMs: number;
-  outcome: 'loaded' | 'failed' | 'aborted' | 'discarded';
+  /** Abort budget for the load, null when the caller set none. */
+  loadTimeoutMs?: number | null;
+  outcome: 'loaded' | 'failed' | 'aborted' | 'discarded' | 'timeout';
   error?: string;
   /** Monotonic clock (performance.now) when the load finished. */
   at: number;
@@ -97,6 +103,9 @@ export interface RuntimeDiagnosticsSummary {
     failed: number;
     aborted: number;
     discarded: number;
+    timeout: number;
+    /** Loads that reused cached weights (hard-stop reload, no refetch). */
+    cached: number;
     lastModelId: string | null;
     lastContextSize: number | null;
     total: TimingStats;

@@ -50,6 +50,40 @@ function targets(state: WorldState, sourceId: string, actionText: string): Json 
 }
 const codes = (result: HandlerResult): string[] => result.issues.map((item) => item.code);
 
+describe('scene-word overlap is not an echo (13:21Z run)', () => {
+  it('accepts an action that only reuses registered scene names', async () => {
+    // The 13:21Z page run rejected 诺诺's action twice with npc_repeats_player
+    // and fell back to a skip. A sentence made of the scene's own names is not
+    // the player's sentence; only the predicate overlap can prove an echo.
+    const engine = new ScriptedEngine([
+      '{"kind":"act","text":"诺诺看演习规则牌，又看西侧服务巷和路明非的护目镜。"}',
+    ]);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.action('nono', action(base, 'nono', '演习规则牌，西侧服务巷，诺诺，路明非的护目镜。'));
+
+    expect(result.attempts).toBe(1);
+    expect(result.fallback).toBe(false);
+    expect(result.value).toEqual({ kind: 'act', text: '诺诺看演习规则牌，又看西侧服务巷和路明非的护目镜。' });
+    const repeat = result.issues.find((item) => item.code === 'npc_repeats_player');
+    expect(repeat?.severity).toBe('warn');
+  });
+
+  it('keeps a paraphrased player sentence an error (run-1 A1)', () => {
+    // Covered by 'A1: the player action restated without its subject...' above;
+    // this asserts the same text still produces an ERROR, not the new warning.
+    return (async () => {
+      const engine = new ScriptedEngine([
+        '{"kind":"act","text":"靠在巷口墙边，确认护目镜是否起雾"}',
+        '{"kind":"act","text":"诺诺把故障短讯机举到耳边，试了试信号。"}',
+      ]);
+      const handlers = createActionHandlers({ engine });
+      const result = await handlers.action('nono', action(base, 'nono', '我靠在巷口墙边，先确认护目镜有没有起雾。'));
+      expect(result.attempts).toBe(2);
+      expect(result.issues.filter((item) => item.code === 'npc_repeats_player' && item.severity === 'error').length).toBeGreaterThan(0);
+    })();
+  });
+});
+
 describe('run-1 failures stay rejected', () => {
   it('A1: the player action restated without its subject is not the NPC action', async () => {
     const engine = new ScriptedEngine([
@@ -77,7 +111,11 @@ describe('run-1 failures stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '芬格尔把电池从口袋里摸出来，换上相机。' });
   });
 
-  it('A6: the protagonist task goal is not a continuation', async () => {
+  it('A6: a consumed protagonist opportunity never reaches the model, so no goal can become one', async () => {
+    // run-5 produced Nono's/Lu's task goal as the protagonist's next step
+    // because the protagonist was still sent to the model after the command
+    // was consumed. The product now answers a consumed protagonist slot with
+    // a program skip, so the goal string has no path into a player action.
     const engine = new ScriptedEngine([
       '{"kind":"act","text":"向诺诺问清当前红蓝两方局势和自己是否可以保持中立"}',
       '{"kind":"act","text":"路明非把护目镜往上推了推，眯眼看向巷口。"}',
@@ -85,9 +123,10 @@ describe('run-1 failures stay rejected', () => {
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('lu', action(base, 'lu', '我把护目镜推上去，先看巷口的动静。', 'consumed'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '路明非把护目镜往上推了推，眯眼看向巷口。' });
+    expect(result.source).toBe('program');
+    expect(result.value).toEqual({ kind: 'skip' });
+    expect(engine.prompts).toHaveLength(0);
+    expect(codes(result)).toContain('protagonist_command_consumed');
   });
 
   it('A7: a copied squad goal is not an action', async () => {
@@ -103,36 +142,49 @@ describe('run-1 failures stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '诺诺抬手指了指钟楼方向，没有接话。' });
   });
 
-  it('T3: moving to an absent person does not make the present bystander a target', async () => {
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}', '{"targets":[{"targetId":"nono"}]}']);
-    const handlers = createActionHandlers({ engine });
-    const result = await handlers.targets('lu', targets(base, 'lu', '我去钟楼找楚子航。'));
+  // Naming is the model's semantic call: a visible person selected without
+  // being named is kept as-is. The three shapes below used to be rejected by
+  // the wording rule; the structural checks (unknown, absent, self, duplicate,
+  // cap, visibility) still reject what they claim.
+  it('T3: a visible bystander selected by the model stays selected; the absent person is still rejected', async () => {
+    const present = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}']);
+    const accepted = await createActionHandlers({ engine: present }).targets('lu', targets(base, 'lu', '我去钟楼找楚子航。'));
+    expect(codes(accepted)).toContain('absent_character_named');
+    expect(accepted.value).toEqual({ targets: [{ targetId: 'nono' }] });
+    expect(accepted.source).toBe('model');
 
-    expect(codes(result)).toContain('target_unmentioned');
-    expect(codes(result)).toContain('absent_character_named');
-    expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
+    const absent = new ScriptedEngine(['{"targets":[{"targetId":"qin"}]}']);
+    const rejected = await createActionHandlers({ engine: absent }).targets('lu', targets(base, 'lu', '我去钟楼找楚子航。'));
+    expect(codes(rejected)).toContain('target_absent');
+    expect(rejected.value).toEqual({ targets: [] });
   });
 
-  it('T4: handing an item to one present person does not target a bystander', async () => {
+  it('T4: handing an item to one present person, with another present person selected, stays the model call', async () => {
     const state = move(move(move(base, 'lu', 'shed'), 'nono', 'shed'), 'qin', 'cage');
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"fingel"}]}', '{"targets":[{"targetId":"fingel"}]}']);
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"fingel"}]}']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.targets('lu', targets(state, 'lu', '我把货架上的备用护目镜拿下来，递给诺诺。'));
 
-    expect(codes(result)).toContain('target_unmentioned');
-    expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
+    expect(engine.prompts).toHaveLength(1);
+    expect(result.value).toEqual({ targets: [{ targetId: 'fingel' }] });
+    expect(result.source).toBe('model');
   });
 
-  it('T5: a movement action does not make the present bystander a target', async () => {
-    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}', '{"targets":[{"targetId":"nono"}]}']);
+  it('T5: a movement action, with the present bystander selected, keeps the model answer', async () => {
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nono"}]}']);
     const handlers = createActionHandlers({ engine });
     const result = await handlers.targets('lu', targets(base, 'lu', '我走向巷子尽头的检修口。'));
 
-    expect(codes(result)).toContain('target_unmentioned');
+    expect(result.value).toEqual({ targets: [{ targetId: 'nono' }] });
+    expect(result.source).toBe('model');
+  });
+
+  it('T5b: an unknown id is still rejected no matter the wording', async () => {
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"nobody"}]}', '{"targets":[]}']);
+    const handlers = createActionHandlers({ engine });
+    const result = await handlers.targets('lu', targets(base, 'lu', '我走向巷子尽头的检修口。'));
+    expect(codes(result)).toContain('target_unknown');
     expect(result.value).toEqual({ targets: [] });
-    expect(result.fallback).toBe(true);
   });
 });
 
@@ -152,18 +204,55 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
     expect(result.value).toEqual({ kind: 'act', text: '诺诺把故障短讯机举到耳边，试了试信号。' });
   });
 
-  it('A6: another character goal is not the protagonist continuation', async () => {
-    // run-5: the model produced Nono's goal as the protagonist's next step;
-    // the actor-only goal list missed it.
+  it('a goal-copy repair leaves the task block off the second prompt', async () => {
+    // Real turn 2026-11-11T1541: six actors answered with their task goal on
+    // both attempts (caesar, doctor, manstein, nono, qin, shen). The repair used
+    // to repeat the whole prompt, goal included. The retry now rebuilds the
+    // prompt without the task block, so the copied sentence is not there.
+    const goal = base.characters.nono.tasks
+      ? Object.values(base.characters.nono.tasks)[0]!.goal
+      : '';
     const engine = new ScriptedEngine([
-      '{"kind":"act","text":"诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线"}',
-      '{"kind":"act","text":"路明非把护目镜往上推了推，眯眼看向巷口。"}',
+      JSON.stringify({ kind: 'act', text: goal }),
+      '{"kind":"act","text":"诺诺走到廊柱边，抬手示意后面的人停下。"}',
     ]);
-    const handlers = createActionHandlers({ engine });
-    const result = await handlers.action('lu', action(base, 'lu', '我把护目镜推上去，先看巷口的动静。', 'consumed'));
-
+    const result = await createActionHandlers({ engine }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
     expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '路明非把护目镜往上推了推，眯眼看向巷口。' });
+    expect(engine.prompts).toHaveLength(2);
+    expect(engine.prompts[0]).toContain('【角色待办任务】');
+    expect(engine.prompts[1]).not.toContain('【角色待办任务】');
+    expect(engine.prompts[1]).not.toContain(goal);
+    expect(engine.prompts[1]).toContain('上一次输出被拒，因为它就是任务目标本身');
+    expect(result.value).toEqual({ kind: 'act', text: '诺诺走到廊柱边，抬手示意后面的人停下。' });
+    expect(codes(result)).not.toContain('repair_failed');
+  });
+
+  it('A6: a verbatim goal and a long paraphrase of it are both rejected', async () => {
+    // run-5: the model produced Nono's goal as the protagonist's next step.
+    // The consumed-protagonist rule above closes the path from a goal string to
+    // a player action, and the all-character list still catches a verbatim copy.
+    const verbatim = base.characters.nono.tasks
+      ? Object.values(base.characters.nono.tasks)[0]!.goal
+      : '';
+    const rejected = await createActionHandlers({
+      engine: new ScriptedEngine([
+        JSON.stringify({ kind: 'act', text: verbatim }),
+        '{"kind":"act","text":"诺诺抬手指了指钟楼方向，没有接话。"}',
+      ]),
+    }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
+    expect(rejected.attempts).toBe(2);
+    expect(codes(rejected)).toContain('action_is_task_goal');
+
+    // The broad subsequence branch is back (the 20ee comparison showed the
+    // remaining real rejections were exact copies, so removing it reduced
+    // nothing). A long paraphrase is caught again, as it was before the trial.
+    const paraphrase = await createActionHandlers({
+      engine: new ScriptedEngine([
+        '{"kind":"act","text":"诺诺问清路明非的参赛意愿并说明三条接近钟楼的路线"}',
+        '{"kind":"act","text":"诺诺抬手指了指钟楼方向，没有接话。"}',
+      ]),
+    }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
+    expect(paraphrase.attempts).toBe(2);
+    expect(codes(paraphrase)).toContain('action_is_task_goal');
   });
 });

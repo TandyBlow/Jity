@@ -32,6 +32,7 @@ import { roomOf } from '../../prompt';
 import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
+import { longestSharedSpan } from './text';
 import { readActionCall, readReactionCall, readTargetsCall } from './inputs';
 import type {
   ActionCallEvidence, ActionHandlerOptions, ActionHandlers, ActionIssue, ActionTask, HandlerResult,
@@ -70,6 +71,9 @@ interface GenerateArgs<T> {
   task: ActionTask;
   key: string;
   prompt: string;
+  /** Prompt for the retry after a rejection. A goal-copy rejection rebuilds it
+   * without the task block so the copied sentence is not on the page again. */
+  repairPrompt?: (issues: ActionIssue[]) => string | null;
   maxTokens: number;
   schema?: unknown;
   decode: (raw: string) => T;
@@ -144,7 +148,10 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
           message: `第 ${attempt} 次输出被拒：${describeFailure(checked.issues)}`,
         });
         if (attempt < attempts) {
-          prompt = `${args.prompt}\n\n【上一次输出不能采用】${checked.repairs.join('；')}。请重新判断，只输出规定格式。`;
+          const base = args.repairPrompt?.(checked.issues) ?? args.prompt;
+          prompt = `${base}
+
+【上一次输出不能采用】${checked.repairs.join('；')}。请重新判断，只输出规定格式。`;
         }
       } catch (caught) {
         const incomplete = caught as { completion?: { raw?: string } };
@@ -182,17 +189,28 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     const issues: ActionIssue[] = [];
     if (!call.state.characters[call.actor]) throw new Error(`actor_unknown:${call.actor}`);
     // Off-screen means outside the player's scene, not outside the world: the
-    // actor is still judged from its own room, but it must not see or answer
-    // the protagonist's move. 'skip' keeps those actors out of the model
-    // budget; 'judge' (default) lets their own tasks and events evolve the
-    // world instead of freezing everyone who is not in the current room.
+    // actor is judged from its own room, but it must not see or answer the
+    // protagonist's move. 'judge' is the product default: the small model
+    // decides whether this actor acts, from its own tasks and its own room.
+    // 'skip' is the explicit comparison arm that keeps every off-screen actor
+    // out of the model budget (zero-call program skip); it is not the default.
     const offscreen = call.actor !== call.state.protagonistId
       && roomOf(call.state, call.actor) !== roomOf(call.state, call.state.protagonistId);
-    const judgeOffscreen = offscreen && (options.offscreenPolicy ?? 'skip') === 'judge';
+    const judgeOffscreen = offscreen && (options.offscreenPolicy ?? 'judge') === 'judge';
+    // A same-room NPC may see that the protagonist acted, but not the
+    // player's sentence: when a program/narration line repeats the command,
+    // the small model copied that line as its own action (16:46 run: nono
+    // repeated the player's walk/read on all three attempts). Events that
+    // share an 8-char span with the command are dropped for NPCs; the
+    // protagonist's own deferred action still receives every event.
+    const isNpc = call.actor !== call.state.protagonistId;
+    const events = judgeOffscreen
+      ? []
+      : (options.recentEvents?.() ?? []).filter((event) => !isNpc || !call.inputText || longestSharedSpan(event, call.inputText).length < 8);
     const scene = buildScene(call.state, call.actor, {
       playerInput: judgeOffscreen ? null : call.inputText,
       intentStatus: call.intentStatus,
-      events: judgeOffscreen ? [] : options.recentEvents?.() ?? [],
+      events,
       aliases: options.aliases,
     });
 
@@ -208,8 +226,10 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     }
 
     // Scene scope: a character in another room is not visible to the player's
-    // scene. With 'skip' it is a zero-call scope decision; with 'judge' it is a
-    // full judgement of the actor's own room (protagonist context hidden).
+    // scene. The default 'judge' sends it to the model with its own room as the
+    // only place: no protagonist input, no protagonist room name/details, no
+    // events from elsewhere and no other-room list. 'skip' is the explicit
+    // zero-call comparison arm.
     if (offscreen && !judgeOffscreen) {
       issues.push({
         code: 'actor_out_of_scene', severity: 'info',
@@ -219,12 +239,26 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
+    // The protagonist is the player's character: no model call may write their
+    // action, not even a "continuation". A consumed input means an earlier
+    // opportunity (or an automatic round) already handled it, so the correct
+    // answer is skip, never a generated second action. Replaying the frozen
+    // text here would also re-execute the player's command.
     if (scene.isProtagonist) {
-      issues.push({ code: 'protagonist_continues', severity: 'info', message: '主角的命令已执行过；只判断同一件事是否还要继续' });
+      issues.push({
+        code: 'protagonist_command_consumed', severity: 'info',
+        message: call.inputText
+          ? '主角这条输入已经被处理过；本机会不再重复执行，也不由模型代写后续动作'
+          : '主角没有新的输入；本机会不行动',
+      });
+      return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
     const generated = await generate<{ kind: 'act'; text?: string } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
+      repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')
+        ? actionPrompt(scene, { omitTasks: true })
+        : null),
       schema: taskOutputSchema('action', asJson({})),
       decode: (raw) => decodeTaskOutput('action', raw) as unknown as { kind: 'act'; text?: string } | { kind: 'skip' },
       check: (value) => {

@@ -73,6 +73,10 @@ export interface ActionScene {
   protagonistRoomId: Id;
   protagonistRoomName: string;
   sameRoomAsProtagonist: boolean;
+  /** True for a non-protagonist whose room is not the protagonist's room.
+   * Their prompt is built from their own room only: no protagonist room name,
+   * no player input, no remote events, no list of other rooms. */
+  offscreen: boolean;
   actor: SceneCharacter;
   visible: SceneCharacter[];
   absent: SceneCharacter[];
@@ -267,6 +271,7 @@ export function buildScene(state: WorldState, focusId: Id, options: BuildSceneOp
     protagonistRoomId,
     protagonistRoomName: locationName(state, protagonistRoomId),
     sameRoomAsProtagonist: roomId === protagonistRoomId,
+    offscreen: focusId !== protagonistId && roomId !== protagonistRoomId,
     actor: characterView(state, focusId, 'actor'),
     visible,
     absent,

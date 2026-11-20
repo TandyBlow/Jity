@@ -11,8 +11,9 @@ import type {
   ContinuationPolicyOptions, ModelCallEvidence, SettlementConclusion, SettlementEvidence,
   SettlementOptions, SettlementOutcome,
 } from './types';
-import { asRecord, asString, errorText, hasRoundProgress, isRecord, normalizeChangeText, toJson } from './support';
-import { describeCharacter, describeDelta, visibleCharacters } from '../../prompt';
+import { asRecord, asString, errorText, isRecord, normalizeChangeText, referenceError, resolveCharacterId, toJson } from './support';
+import type { RoundProgressEvidence } from './support';
+import { changedTexts, describeCharacter, describeDelta, visibleCharacters } from '../../prompt';
 
 interface RoundPoint {
   pointId: Id;
@@ -26,6 +27,7 @@ interface ContinuationInput {
   workingState: WorldState;
   roundChanges: RoundPoint[];
   headPointId: Id | null;
+  roundProgress: RoundProgressEvidence | null;
 }
 
 interface Candidate {
@@ -38,19 +40,31 @@ interface ContinuationPolicyState {
   repeatStreak: number;
   continues: number;
   lastAccepted: string;
+  /** Every candidate signature accepted earlier in this submission. A later
+   * round cannot replay it even if a different candidate was accepted in
+   * between; this is the consumed-action identity, not a call cap. */
+  consumed: Set<string>;
+  /** Signatures accepted in this session with the world digest they left
+   * behind. Survives `reset()`: a new player turn does not make the same
+   * automatic action new again. */
+  remembered: Map<string, string>;
 }
 
 export interface ContinuationPolicyDecision {
   allow: boolean;
-  reason: 'progress' | 'no_progress' | 'repeated_candidate' | 'safety_cap';
+  reason: 'progress' | 'no_progress' | 'repeated_candidate' | 'abstract_task_goal' | 'safety_cap';
   anomaly: boolean;
   noProgressStreak: number;
   repeatStreak: number;
   continues: number;
+  consumedCount: number;
 }
 
 export const continuationPolicy: Required<ContinuationPolicyOptions> = {
   noProgressRounds: 2,
+  // Consumed candidates stop immediately; this is only a secondary safety net
+  // for a caller that does not expose consumed identity. It is intentionally
+  // not a one-call cap: different follow-ups with real progress may continue.
   repeatRounds: 2,
   maxAutoContinuations: null,
   maxCandidates: 8,
@@ -58,7 +72,9 @@ export const continuationPolicy: Required<ContinuationPolicyOptions> = {
 
 export class ContinuationPolicy {
   private readonly options: Required<ContinuationPolicyOptions>;
-  private state: ContinuationPolicyState = { noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '' };
+  private state: ContinuationPolicyState = {
+    noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(), remembered: new Map(),
+  };
 
   constructor(options: ContinuationPolicyOptions = {}) {
     this.options = {
@@ -72,26 +88,80 @@ export class ContinuationPolicy {
   get maxCandidates(): number { return this.options.maxCandidates; }
 
   reset(): void {
-    this.state = { noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '' };
+    // `remembered` deliberately survives: the 10turn run proposed the same
+    // automatic beat in three consecutive turns because a new submission
+    // cleared every identity the previous one had consumed.
+    this.state = {
+      noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(),
+      remembered: this.state.remembered,
+    };
   }
 
-  observe(roundChanges: RoundPoint[], accepted: Candidate[]): ContinuationPolicyDecision {
-    const progress = hasRoundProgress(roundChanges);
-    this.state.noProgressStreak = progress ? 0 : this.state.noProgressStreak + 1;
-    const signature = accepted
+  /** A program rule rejected the proposal before judgment. It is a visible
+   * policy stop, not a model handback and not a fake progress observation. */
+  reject(reason: 'abstract_task_goal'): ContinuationPolicyDecision {
+    return {
+      allow: false,
+      reason,
+      anomaly: false,
+      noProgressStreak: this.state.noProgressStreak,
+      repeatStreak: this.state.repeatStreak,
+      continues: this.state.continues,
+      consumedCount: this.state.consumed.size,
+    };
+  }
+
+  observe(
+    _roundChanges: RoundPoint[],
+    accepted: Candidate[],
+    progressEvidence?: RoundProgressEvidence | null,
+    trigger = 'automatic',
+  ): ContinuationPolicyDecision {
+    // Only the port's before/after evidence counts. The old field test treated
+    // a repeated positionSet as progress; callers without evidence get a
+    // conservative no-progress observation instead of a false advance.
+    const progress = progressEvidence?.progress === true;
+    // The player's own no-state-change action (for example reading a sign) is
+    // a legitimate action, not an automatic no-progress round. Count the
+    // streak only for automatic rounds; new actions/facts/time/state reset it.
+    this.state.noProgressStreak = progress || trigger !== 'automatic'
+      ? 0
+      : this.state.noProgressStreak + 1;
+    const signatures = accepted
       .map((candidate) => `${candidate.characterId}:${normalizeChangeText(candidate.text)}`)
-      .sort()
-      .join('|');
-    this.state.repeatStreak = signature && signature === this.state.lastAccepted ? this.state.repeatStreak + 1 : 0;
+      .sort();
+    const signature = signatures.join('|');
+    const consumedRepeat = signatures.some((row) => this.state.consumed.has(row));
+    const worldDigest = progressEvidence?.worldDigest ?? '';
+    const repeatedEarlierTurn = Boolean(worldDigest)
+      && signatures.some((row) => this.state.remembered.get(row) === worldDigest);
+    this.state.repeatStreak = consumedRepeat
+      ? this.state.repeatStreak + 1
+      : signature && signature === this.state.lastAccepted
+        ? this.state.repeatStreak + 1
+        : 0;
     this.state.lastAccepted = signature;
     this.state.continues += 1;
     const base = {
       noProgressStreak: this.state.noProgressStreak,
       repeatStreak: this.state.repeatStreak,
       continues: this.state.continues,
+      consumedCount: this.state.consumed.size,
     };
     if (this.options.maxAutoContinuations != null && this.state.continues > this.options.maxAutoContinuations) {
       return { allow: false, reason: 'safety_cap', anomaly: true, ...base };
+    }
+    // Consumed identity is checked before the softer consecutive-repeat rule:
+    // A -> B -> A must stop exactly like A -> A.
+    if (consumedRepeat) {
+      return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
+    }
+    // The same automatic action, proposed in an earlier turn, with the world
+    // byte-identical apart from the clock: nothing happened since it ran, so
+    // running it again would settle the same thing. A real world change
+    // releases the signature.
+    if (repeatedEarlierTurn) {
+      return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
     }
     if (this.state.noProgressStreak >= this.options.noProgressRounds) {
       return { allow: false, reason: 'no_progress', anomaly: false, ...base };
@@ -99,7 +169,16 @@ export class ContinuationPolicy {
     if (this.state.repeatStreak >= this.options.repeatRounds) {
       return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
     }
-    return { allow: true, reason: 'progress', anomaly: false, ...base };
+    for (const row of signatures) this.state.consumed.add(row);
+    if (worldDigest) {
+      for (const row of signatures) this.state.remembered.set(row, worldDigest);
+      // Bound the memory: a long session must not grow without limit.
+      if (this.state.remembered.size > 200) {
+        const oldest = this.state.remembered.keys().next().value;
+        if (oldest != null) this.state.remembered.delete(oldest);
+      }
+    }
+    return { allow: true, reason: 'progress', anomaly: false, ...base, consumedCount: this.state.consumed.size };
   }
 }
 
@@ -173,16 +252,30 @@ export class ContinuationRunner {
         timeoutMs: 60_000,
         maxPromptChars: 8000,
         jsonSchema: CANDIDATES_SCHEMA,
-        validate: (value) => readCandidates(value, workingState, this.policy.maxCandidates),
+        validate: (value) => { readCandidates(value, workingState, this.policy.maxCandidates); },
       });
       calls = proposal.calls;
-      const candidates = readCandidates(proposal.value, workingState, this.policy.maxCandidates);
+      const read = readCandidates(proposal.value, workingState, this.policy.maxCandidates);
+      const { candidates } = read;
       if (!candidates.length) {
+        const abstractGoal = read.rejected.some((row) => row.reason === 'abstract_task_goal');
+        if (abstractGoal) {
+          const decision = this.policy.reject('abstract_task_goal');
+          return this.policyStop(key, calls, started, decision, {
+            candidates: [],
+            rejectedCandidates: read.rejected,
+            accepted: [],
+            proposalPromptChars: proposalPrompt.length,
+            roundProgress: parsed.roundProgress,
+          });
+        }
         return this.handback(key, calls, started, {
-          reason: 'model_no_candidate',
+          reason: read.rejected.length ? 'no_eligible_candidate' : 'model_no_candidate',
           candidates: [],
+          rejectedCandidates: read.rejected,
           accepted: [],
           proposalPromptChars: proposalPrompt.length,
+          roundProgress: parsed.roundProgress,
         });
       }
       const judgmentPrompt = buildJudgmentPrompt(parsed, candidates);
@@ -192,10 +285,10 @@ export class ContinuationRunner {
         timeoutMs: 60_000,
         maxPromptChars: 8000,
         jsonSchema: JUDGMENTS_SCHEMA,
-        validate: (value) => readJudgments(value, candidates),
+        validate: (value) => readJudgments(value, candidates, workingState),
       });
       calls = [...calls, ...judgment.calls];
-      const judgments = readJudgments(judgment.value, candidates);
+      const judgments = readJudgments(judgment.value, candidates, workingState);
       const accepted = acceptedCandidates(candidates, judgments);
       if (!accepted.length) {
         return this.handback(key, calls, started, {
@@ -205,18 +298,26 @@ export class ContinuationRunner {
           judgments,
           proposalPromptChars: proposalPrompt.length,
           judgmentPromptChars: judgmentPrompt.length,
+          roundProgress: parsed.roundProgress,
         });
       }
-      const decision = this.policy.observe(roundChanges, accepted);
+      const decision = this.policy.observe(roundChanges, accepted, parsed.roundProgress, parsed.trigger);
       if (!decision.allow) {
-        return this.handback(key, calls, started, {
-          reason: decision.reason,
-          policy: decision,
+        // A policy stop is NOT a model handback. The model said this follow-up
+        // is likely and protagonist-related; only the no-progress/repeat/safety
+        // rule ends the chain. The local transport hardcodes
+        // `closedBy:'model'` on every handback, so emitting a handback here
+        // would write a decision the model never made. Return a visible stop
+        // with the policy reason instead; the caller surfaces it and keeps the
+        // state exactly as committed. See `policyStop` below.
+        return this.policyStop(key, calls, started, decision, {
           candidates,
           accepted,
           judgments,
+          rejectedCandidates: read.rejected,
           proposalPromptChars: proposalPrompt.length,
           judgmentPromptChars: judgmentPrompt.length,
+          roundProgress: parsed.roundProgress,
         });
       }
       const nextRoundId = this.nextRoundId ? this.nextRoundId() : autoRoundId();
@@ -237,9 +338,11 @@ export class ContinuationRunner {
         candidates,
         accepted,
         judgments,
+        rejectedCandidates: read.rejected,
         nextRoundId,
         proposalPromptChars: proposalPrompt.length,
         judgmentPromptChars: judgmentPrompt.length,
+        roundProgress: parsed.roundProgress,
       });
       const outcome: SettlementOutcome<SettlementConclusion> = {
         value,
@@ -271,6 +374,35 @@ export class ContinuationRunner {
       raw: joinedRaw(calls),
       ms: joinedMs(calls),
       fallback: false,
+      evidence,
+    };
+    this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0));
+    return outcome;
+  }
+
+  /** The chain ended on a program rule, not on the model's judgment. The
+   * outcome has no conclusion value, so the adapter cannot accidentally record
+   * `closedBy:'model'`; the error text carries the explainable reason. */
+  private policyStop(
+    key: Id,
+    calls: ModelCallEvidence[],
+    started: number,
+    decision: ContinuationPolicyDecision,
+    detail: Record<string, unknown>,
+  ): SettlementOutcome<SettlementConclusion> {
+    const reason = `continuation_policy_${decision.reason}`;
+    const evidence = makeEvidence(key, calls, false, reason, {
+      decision: 'policy_stop',
+      anomaly: decision.anomaly,
+      policy: decision,
+      ...detail,
+    });
+    const outcome: SettlementOutcome<SettlementConclusion> = {
+      value: null,
+      raw: joinedRaw(calls),
+      ms: joinedMs(calls),
+      fallback: false,
+      error: reason,
       evidence,
     };
     this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0));
@@ -337,7 +469,33 @@ function parseContinuationInput(input: Json): ContinuationInput | { error: strin
   if (headPointId && roundChanges.length && roundChanges[roundChanges.length - 1].pointId !== headPointId) {
     return { error: `continuation_head_mismatch:${roundChanges[roundChanges.length - 1].pointId}->${headPointId}` };
   }
-  return { roundId, trigger: asString(round.trigger) || 'player', workingState: world, roundChanges, headPointId };
+  const rawProgress = asRecord(data.roundProgress);
+  const roundProgress = typeof rawProgress.progress === 'boolean'
+    ? rawProgress as unknown as RoundProgressEvidence
+    : null;
+  return {
+    roundId,
+    trigger: asString(round.trigger) || 'player',
+    workingState: world,
+    roundChanges,
+    headPointId,
+    roundProgress,
+  };
+}
+
+/** A visible character as the proposal stage needs them: where they are and
+ * what they look like, never their pending task goals. `describeCharacter(...,
+ * false)` printed `待办=task_id=goal`, and the real 0.6B answered with that goal
+ * sentence verbatim in both measured cases ("让红方的旗台行动有可执行的掩护…")
+ * — the only concrete sentence in the prompt was the one it copied, and the
+ * policy then had to stop the chain as abstract_task_goal. */
+function describeFollowUpCharacter(state: WorldState, id: Id): string {
+  const initial = state.initial.characters[id];
+  const current = state.characters[id];
+  if (!initial || !current) return `- ${id}`;
+  const appearance = [initial.initialAppearance, ...changedTexts(state, id).appearance].join('；');
+  const place = `${current.position.containerId}${current.position.slotId ? `/${current.position.slotId}` : ''}`;
+  return `- ${initial.name}（id=${id}）位置=${place}；精神值=${current.sanity}${appearance ? `；外貌=${appearance}` : ''}`;
 }
 
 function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): string {
@@ -357,40 +515,97 @@ function buildCandidatePrompt(input: ContinuationInput, maxCandidates: number): 
     '根据主角、当前世界和本轮状态变化，列出可能紧接着发生的、与主角相关的后续行动。',
     '规则：',
     '- 只列大概率真的会发生、并且和主角当前处境或目标直接相关的行动。',
-    '- 可以是主角自己的下一步，也可以是同场景人物的直接反应；普通闲聊、等待、场景切换、需要玩家决定的事都不要列。',
+    '- 只列主角同场景的其他人物；主角自己的下一步由玩家决定，不能列为自动推进。',
+    '- 普通闲聊、等待、场景切换、需要玩家决定的事都不要列。',
     '- 不要重复玩家输入，不要把候选当成已经发生；不要新增人物、地点、物品或往事。',
     '- 没有值得自动推进的行动就返回空数组。',
-    `主角：${describeCharacter(state, protagonist)}`,
-    `同地点人物：\n${visible.map((id) => describeCharacter(state, id, false)).join('\n') || '无'}`,
+    `主角：${describeFollowUpCharacter(state, protagonist)}`,
+    `同地点人物：\n${visible.map((id) => describeFollowUpCharacter(state, id)).join('\n') || '无'}`,
     `本轮状态变化：\n${changes}`,
     `当前时间：${state.time.dateTime}`,
-    `输出 {"candidates":[{"characterId":"人物id","text":"一句话行动"}]}，最多 ${maxCandidates} 条。`,
+    // A literal placeholder in the format example is copied verbatim: 35ad turn
+    // 3 answered four candidates with characterId "人物id" and died on the fatal
+    // placeholder check after two calls. Show a real id, and when nobody is in
+    // the room say so instead of offering an example.
+    visible.length
+      ? `输出 {"candidates":[{"characterId":"${visible[0]}","text":"一句话行动"}]}，最多 ${maxCandidates} 条；characterId 只能用上面人物的真实 id（如 ${visible[0]}）或全名；没有合适的人就返回空数组。`
+      : '同地点没有其他人物：返回 {"candidates":[]}，不要写任何 characterId。',
   ].join('\n');
 }
 
-function readCandidates(value: unknown, state: WorldState, maxCandidates: number): Candidate[] {
+interface CandidateRead {
+  candidates: Candidate[];
+  rejected: { characterId: string; text: string; reason: string }[];
+}
+
+/** Automatic rounds may only carry characters the action lane will actually
+ * judge. The protagonist's next action belongs to the player (the action lane
+ * refuses to let a model write it, and a consumed player command is never
+ * replayed), and a character outside the protagonist's room is skipped by that
+ * lane. Proposing either would create an empty automatic round. Such
+ * candidates are dropped with a recorded reason instead of silently becoming a
+ * "no follow-up" handback. */
+function readCandidates(value: unknown, state: WorldState, maxCandidates: number): CandidateRead {
   const rows = asRecord(value).candidates;
   if (!Array.isArray(rows)) throw new Error('candidates must be an array');
   if (rows.length > maxCandidates) throw new Error(`candidate_budget_exceeded:${rows.length}>${maxCandidates}`);
   const seen = new Set<string>();
   const candidates: Candidate[] = [];
-  const byName = new Map(Object.values(state.initial.characters).map((entity) => [entity.name, entity.id]));
+  const rejected: CandidateRead['rejected'] = [];
+  const protagonistRoom = visibleCharacters(state, state.protagonistId);
+  const inScene = new Set(protagonistRoom);
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('candidate must be an object');
-    const stated = asString(raw.characterId);
-    // A small model sometimes answers with a display name or a stray token.
-    // A named character resolves to its id; an unregistered candidate is
-    // dropped (it can never be committed), not treated as a broken round.
-    const characterId = state.characters[stated] ? stated : byName.get(stated) ?? '';
+    const rawCharacterId = asString(raw.characterId);
     const text = asString(raw.text);
-    if (!characterId) continue;
+    const characterId = resolveCharacterId(state, rawCharacterId);
+    if (!characterId) throw new Error(referenceError(state, rawCharacterId, 'character', visibleCharacters(state, state.protagonistId).find((id) => id !== state.protagonistId)));
     if (!text) throw new Error(`empty continuation text for ${characterId}`);
     const key = `${characterId}:${normalizeChangeText(text)}`;
     if (seen.has(key)) throw new Error(`duplicate continuation candidate ${characterId}`);
     seen.add(key);
+    if (characterId === state.protagonistId) {
+      rejected.push({ characterId, text, reason: 'protagonist_action_belongs_to_player' });
+      continue;
+    }
+    if (!inScene.has(characterId)) {
+      rejected.push({ characterId, text, reason: 'character_outside_protagonist_scene' });
+      continue;
+    }
+    if (isAbstractTaskGoal(state, characterId, text)) {
+      // The 21c3/95dc traces show the same task-goal sentence being proposed as
+      // an executable follow-up after it was already settled. A goal is not an
+      // action: accepting it would turn settlement into a second planner and
+      // replay the same abstract sentence. The proposal can still contain a
+      // concrete follow-up; only this row is dropped.
+      rejected.push({ characterId, text, reason: 'abstract_task_goal' });
+      continue;
+    }
     candidates.push({ characterId, text });
   }
-  return candidates;
+  return { candidates, rejected };
+}
+
+/** A candidate that is verbatim the owner's task goal is a restatement of the
+ * objective, not a new executable action. Keep the rule semantic: only the
+ * actual task-goal text counts, and only when the goal is worded as an
+ * objective/arrangement rather than a single concrete act. */
+function isAbstractTaskGoal(state: WorldState, characterId: Id, text: string): boolean {
+  const target = normalizeChangeText(text);
+  if (!target) return false;
+  const rows = [
+    ...Object.values(state.initial.characters[characterId]?.tasks ?? {}),
+    ...Object.values(state.characters[characterId]?.tasks ?? {}),
+  ];
+  const goal = rows
+    .map((task) => task.goal)
+    .find((row) => {
+      const normalized = normalizeChangeText(row);
+      return normalized === target
+        || (target.length >= 12 && (normalized.startsWith(target) || target.startsWith(normalized)));
+    });
+  if (!goal) return false;
+  return /(?:而不|以便|确保|争取|避免|让|使|可执行|掩护|能够|作为)/u.test(goal);
 }
 
 function buildJudgmentPrompt(input: ContinuationInput, candidates: Candidate[]): string {
@@ -409,7 +624,7 @@ function buildJudgmentPrompt(input: ContinuationInput, candidates: Candidate[]):
   ].join('\n');
 }
 
-function readJudgments(value: unknown, candidates: Candidate[]): Record<string, { likely: boolean; related: boolean; reason: string }> {
+function readJudgments(value: unknown, candidates: Candidate[], state: WorldState): Record<string, { likely: boolean; related: boolean; reason: string }> {
   const rows = asRecord(value).judgments;
   if (!Array.isArray(rows)) throw new Error('judgments must be an array');
   const expected = new Map(candidates.map((candidate) => [candidateKey(candidate), candidate]));
@@ -420,7 +635,8 @@ function readJudgments(value: unknown, candidates: Candidate[]): Record<string, 
     if (!isRecord(raw)) throw new Error('judgment must be an object');
     const candidateId = asString(raw.candidateId);
     const candidate = candidateId ? byCandidateId.get(candidateId) : undefined;
-    const characterId = asString(raw.characterId);
+    const rawCharacterId = asString(raw.characterId);
+    const characterId = rawCharacterId ? (resolveCharacterId(state, rawCharacterId) ?? rawCharacterId) : '';
     const text = asString(raw.text);
     const key = candidate ? candidateKey(candidate) : `${characterId}:${normalizeChangeText(text)}`;
     if (!expected.has(key)) throw new Error(`judgment for unknown candidate ${candidateId || key || '?'}`);

@@ -5,8 +5,12 @@ import {
   ProgressSyncClient,
   ProgressSyncError,
   compareLineage,
+  createProductSync,
+  createWebStorageHeadStore,
   createWebStorageQueueStore,
   MemoryQueueStore,
+  type HeadState,
+  type HeadStateStore,
   type LocalSnapshotStore,
   type OfflineQueueStore,
   type UploadRequest,
@@ -299,10 +303,22 @@ class MemoryLocalStore implements LocalSnapshotStore<unknown> {
   }
 }
 
+class MemoryHeadStore implements HeadStateStore {
+  readonly values = new Map<string, HeadState>();
+  async load(worldId: string): Promise<HeadState | null> {
+    const stored = this.values.get(worldId);
+    return stored ? structuredClone(stored) : null;
+  }
+  async save(worldId: string, head: HeadState): Promise<void> {
+    this.values.set(worldId, structuredClone(head));
+  }
+}
+
 function makeClient(
   server: FakeProgressServer,
   localStore: MemoryLocalStore = new MemoryLocalStore(),
   queueStore: OfflineQueueStore = new MemoryQueueStore(),
+  headStore: HeadStateStore | null = null,
 ): { client: ProgressSyncClient<unknown>; localStore: MemoryLocalStore; queueStore: OfflineQueueStore } {
   let counter = 0;
   return {
@@ -310,6 +326,7 @@ function makeClient(
       baseUrl: 'http://sync.test',
       fetchImpl: server.fetch,
       localStore,
+      headStore: headStore ?? undefined,
       queueStore,
       retry: { attempts: 1, baseDelayMs: 0 },
       sleep: async () => undefined,
@@ -367,6 +384,35 @@ describe('ProgressSyncClient', () => {
 
     const head = await deviceA.client.head('w1');
     expect(head.headSnapshotId).toBe(second.upload.snapshotId);
+  });
+
+  it('remembers the saved head across a reload so an offline save still descends from it', async () => {
+    const server = new FakeProgressServer();
+    const localStore = new MemoryLocalStore();
+    const headStore = new MemoryHeadStore();
+    const first = makeClient(server, localStore, new MemoryQueueStore(), headStore);
+    const root = await first.client.save('w1', snapshot(1), { requestId: 'reload-root' });
+    if (root.status !== 'synced') throw new Error('root failed');
+    expect(headStore.values.get('w1')?.headSnapshotId).toBe(root.upload.snapshotId);
+    expect(headStore.values.get('w1')?.revision).toBe(1);
+
+    // A reload: new client, same persisted local save + head, server unreachable.
+    server.offline = true;
+    const reloaded = makeClient(server, localStore, new MemoryQueueStore(), headStore);
+    const offline = await reloaded.client.save('w1', snapshot(2), { requestId: 'reload-2' });
+    expect(offline.status).toBe('queued');
+    if (offline.status !== 'queued') throw new Error('expected queued');
+    // The queued request names the stored head, not an empty world.
+    expect(offline.request.expectedHead).toBe(root.upload.snapshotId);
+    expect(offline.request.expectedRevision).toBe(1);
+    expect(offline.request.parentSnapshotIds).toEqual([root.upload.snapshotId]);
+
+    server.offline = false;
+    const flushed = await reloaded.client.flush();
+    expect(flushed.conflicts).toHaveLength(0);
+    expect(flushed.uploaded).toHaveLength(1);
+    expect(server.worlds.get('w1')!.revision).toBe(2);
+    expect(server.worlds.get('w1')!.headSnapshotId).toBe(flushed.uploaded[0].snapshotId);
   });
 
   it('queues offline saves and flushes them with the same requestId', async () => {
@@ -673,6 +719,276 @@ describe('ProgressSyncClient', () => {
     if (outcome.status !== 'queued') throw new Error('expected queue');
     expect(outcome.reason).toBe('server_error');
     expect(await client.pending()).toBe(1);
+  });
+});
+
+describe('createProductSync', () => {
+  class ProductStore {
+    values = new Map<string, { snapshot: unknown }>();
+    saves = 0;
+    async load(worldId: string) {
+      return this.values.get(worldId) ?? null;
+    }
+    async save(worldId: string, snapshot: unknown) {
+      this.saves += 1;
+      this.values.set(worldId, { snapshot: structuredClone(snapshot) });
+      return { revision: this.saves };
+    }
+  }
+
+  class MemoryStorage {
+    values = new Map<string, string>();
+    getItem(key: string) {
+      return this.values.get(key) ?? null;
+    }
+    setItem(key: string, value: string) {
+      this.values.set(key, value);
+    }
+  }
+
+  it('plays and saves locally with no service configured', async () => {
+    const store = new ProductStore();
+    const sync = createProductSync<unknown>({ store, worldId: 'w1' });
+    const saved = await sync.save(snapshot(1));
+    expect(saved.localSaved).toBe(true);
+    expect(saved.note).toContain('saved locally only');
+    const restored = await sync.restore();
+    expect(restored.source).toBe('local');
+    expect(restored.snapshot).toEqual(snapshot(1));
+    expect(await sync.pending()).toBe(0);
+    expect(await sync.flush()).toMatchObject({ uploaded: 0, remaining: 0 });
+  });
+
+  it('wires the product store and browser storage into the real client', async () => {
+    const server = new FakeProgressServer();
+    const store = new ProductStore();
+    const storage = new MemoryStorage();
+    const sync = createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage,
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+
+    const first = await sync.save(snapshot(1), { requestId: 'product-1' });
+    expect(first.localSaved).toBe(true);
+    expect(first.outcome?.status).toBe('synced');
+    expect(store.values.get('w1')?.snapshot).toEqual(snapshot(1));
+    expect(storage.getItem('jity.progress-sync.heads.v1')).toContain('headSnapshotId');
+
+    // New page, same durable store and storage: restore reads local, and the
+    // head store keeps the CAS values even though the client is fresh.
+    const reloaded = createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage,
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    const restored = await reloaded.restore();
+    expect(restored.source).toBe('local');
+    expect(restored.snapshot).toEqual(snapshot(1));
+
+    server.offline = true;
+    const offline = await reloaded.save(snapshot(2), { requestId: 'product-2' });
+    expect(offline.outcome?.status).toBe('queued');
+    expect(await reloaded.pending()).toBe(1);
+    expect(storage.getItem('jity.progress-sync.queue.v1')).toContain('product-2');
+
+    server.offline = false;
+    const flushed = await reloaded.flush();
+    expect(flushed.uploaded).toBe(1);
+    expect(flushed.remaining).toBe(0);
+    expect(server.worlds.get('w1')!.revision).toBe(2);
+
+    const other = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+    });
+    const remote = await other.restore();
+    expect(remote.source).toBe('remote');
+    expect(remote.snapshot).toEqual(snapshot(2));
+  });
+
+  it('returns a conflict for the player to decide and never overwrites silently', async () => {
+    const server = new FakeProgressServer();
+    const storageA = new MemoryStorage();
+    const a = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: storageA,
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    const storageB = new MemoryStorage();
+    const b = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: storageB,
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    await a.save(snapshot(1), { requestId: 'conf-1' });
+    // B joins after A's save: pull the head first, then play on from it.
+    expect((await b.restore()).source).toBe('remote');
+    expect((await b.save(snapshot(2), { requestId: 'conf-b' })).outcome?.status).toBe('synced');
+
+    const clashing = await a.save(snapshot(2, 'A的另一份'), { requestId: 'conf-a' });
+    expect(clashing.outcome?.status).toBe('conflict');
+    if (clashing.outcome?.status !== 'conflict') throw new Error('expected conflict');
+
+    const kept = await a.choose('keep-local-fork', clashing.outcome.conflict);
+    expect(kept.status).toBe('local-fork');
+    const graph = await a.client.graph('w1');
+    expect(graph.nodes).toHaveLength(3);
+    expect(graph.branches.length).toBe(2);
+    expect(graph.branches).toContain(kept.upload!.snapshotId);
+    expect((await a.read(kept.upload!.snapshotId)).payload).toEqual(snapshot(2, 'A的另一份'));
+  });
+
+  it('push uploads a save the caller already stored, without a second local write', async () => {
+    const server = new FakeProgressServer();
+    const store = new ProductStore();
+    const sync = createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    // The page saved through 06's repository first (one local revision).
+    await store.save('w1', snapshot(1));
+    expect(store.saves).toBe(1);
+
+    const pushed = await sync.push(snapshot(1), { requestId: 'push-1' });
+    expect(pushed.outcome?.status).toBe('synced');
+    expect(store.saves).toBe(1);
+    expect(server.worlds.get('w1')!.revision).toBe(1);
+  });
+
+  it('reports in-sync, remote-ahead, local-ahead and diverged before writing anything', async () => {
+    const server = new FakeProgressServer();
+    const storeA = new ProductStore();
+    const storageA = new MemoryStorage();
+    const make = (store: ProductStore, storage: MemoryStorage) => createProductSync<unknown>({
+      store,
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage,
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+
+    const a = make(storeA, storageA);
+    expect((await a.status()).relation).toBe('unknown');
+    await a.save(snapshot(1), { requestId: 'st-1' });
+    expect((await a.status()).relation).toBe('in-sync');
+
+    // Another device advances the remote.
+    const b = make(new ProductStore(), new MemoryStorage());
+    expect((await b.restore()).source).toBe('remote');
+    await b.save(snapshot(2), { requestId: 'st-2' });
+    expect((await a.status()).relation).toBe('remote-ahead');
+
+    // A third device forks from the root while A is still on revision 1.
+    const forked = await b.client.fork('w1', snapshot(9, '分叉'), {
+      baseSnapshotId: server.worlds.get('w1')!.headSnapshotId!,
+      expectedHead: server.worlds.get('w1')!.headSnapshotId!,
+      expectedRevision: server.worlds.get('w1')!.revision,
+      requestId: 'st-fork',
+    });
+    expect(forked.snapshotId).toBeTruthy();
+    // B is now ahead of the active head, which is still A's base + 1: A is
+    // behind but the graph has two leaves.
+    expect((await a.status()).relation).toBe('remote-ahead');
+
+    // A local save made while B moved on, then restored from an old base,
+    // reports diverged instead of silently overwriting.
+    const c = make(new ProductStore(), new MemoryStorage());
+    await c.save(snapshot(5, 'C的副本'), { requestId: 'st-c' });
+    const cStatus = await c.status();
+    expect(cStatus.relation).toBe('diverged');
+    // Nothing is written by status(); the page only learns it must ask.
+    expect(Array.isArray(cStatus.branches)).toBe(true);
+  });
+
+  it('flush returns the conflicts themselves so the page can ask the player', async () => {
+    const server = new FakeProgressServer();
+    const a = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    await a.save(snapshot(1), { requestId: 'fl-1' });
+    // Another device moves the head while A is offline with a queued save.
+    server.offline = true;
+    const queued = await a.save(snapshot(2, 'A离线'), { requestId: 'fl-2' });
+    expect(queued.outcome?.status).toBe('queued');
+    const b = createProductSync<unknown>({
+      store: new ProductStore(),
+      worldId: 'w1',
+      baseUrl: 'http://sync.test',
+      storage: new MemoryStorage(),
+      fetchImpl: server.fetch,
+      retry: { attempts: 1, baseDelayMs: 0 },
+      sleep: async () => undefined,
+      now: () => 1_700_000_000_000,
+    });
+    server.offline = false;
+    // B pulls A's first save? No: B must build on the same head A saw.
+    expect((await b.restore()).snapshot).toEqual(snapshot(1));
+    await b.save(snapshot(3, 'B在线'), { requestId: 'fl-b' });
+
+    const flushed = await a.flush();
+    expect(flushed.uploaded).toBe(0);
+    expect(flushed.conflicts).toBe(1);
+    expect(flushed.conflictList).toHaveLength(1);
+    const conflict = flushed.conflictList[0];
+    expect(conflict.code).toBeTruthy();
+    expect(conflict.remote.headSnapshotId).toBeTruthy();
+    // Both copies are preserved until the player chooses.
+    const kept = await a.choose('keep-local-fork', conflict);
+    expect(kept.status).toBe('local-fork');
+    const graph = await a.client.graph('w1');
+    expect((await a.read(kept.upload!.snapshotId)).payload).toEqual(snapshot(2, 'A离线'));
+    expect(graph.branches.length).toBe(2);
+  });
+
+  it('a head store survives malformed storage without breaking saves', async () => {
+    const storage = new MemoryStorage();
+    storage.setItem('jity.progress-sync.heads.v1', '{not json');
+    const heads = createWebStorageHeadStore(storage);
+    expect(await heads.load('w1')).toBeNull();
+    await heads.save('w1', { worldId: 'w1', headSnapshotId: 'snap_1', revision: 3 });
+    expect((await heads.load('w1'))?.revision).toBe(3);
   });
 });
 

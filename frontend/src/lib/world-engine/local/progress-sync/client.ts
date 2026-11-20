@@ -18,6 +18,7 @@ import type {
   FlushOutcome,
   GraphState,
   HeadState,
+  HeadStateStore,
   LocalSnapshotStore,
   OfflineQueueStore,
   ProgressConflictError as ProgressConflictErrorType,
@@ -52,6 +53,8 @@ export interface ProgressSyncClientOptions<P = unknown> {
   token?: string;
   timeoutMs?: number;
   localStore?: LocalSnapshotStore<P>;
+  /** Persist the last known remote head so a reload can still save correctly. */
+  headStore?: HeadStateStore;
   queueStore?: OfflineQueueStore;
   retry?: RetryOptions;
   sleep?: (milliseconds: number) => Promise<void>;
@@ -67,6 +70,9 @@ export interface SaveOptions {
   requestId?: string;
   /** Save only on the local store; useful while deliberately playing offline. */
   localOnly?: boolean;
+  /** The caller already wrote its own durable record (06's repository does),
+   * so do not write it a second time just to upload. */
+  skipLocal?: boolean;
 }
 
 export interface UploadCasOptions {
@@ -100,6 +106,7 @@ export class ProgressSyncClient<P = unknown> {
   private readonly token?: string;
   private readonly timeoutMs: number;
   private readonly localStore?: LocalSnapshotStore<P>;
+  private readonly headStore?: HeadStateStore;
   private readonly queueStore: OfflineQueueStore;
   private readonly attempts: number;
   private readonly baseDelayMs: number;
@@ -110,6 +117,7 @@ export class ProgressSyncClient<P = unknown> {
   private readonly known = new Map<WorldId, HeadState>();
   private queueCache: QueuedUpload[] | null = null;
   private queueError: unknown = null;
+  private headError: unknown = null;
 
   constructor(options: ProgressSyncClientOptions<P>) {
     const base = options.baseUrl.replace(/\/+$/, '');
@@ -118,6 +126,7 @@ export class ProgressSyncClient<P = unknown> {
     this.token = options.token;
     this.timeoutMs = options.timeoutMs ?? 10_000;
     this.localStore = options.localStore;
+    this.headStore = options.headStore;
     this.queueStore = options.queueStore ?? new MemoryQueueStore();
     this.attempts = Math.max(1, options.retry?.attempts ?? 2);
     this.baseDelayMs = Math.max(0, options.retry?.baseDelayMs ?? 250);
@@ -135,12 +144,34 @@ export class ProgressSyncClient<P = unknown> {
     return this.queueError;
   }
 
+  /** The snapshot this device last uploaded/read, best-effort (memory then
+   * whatever the product persisted). Used by the page to decide whether the
+   * remote moved ahead. */
+  async lastKnownHead(worldId: WorldId): Promise<HeadState | null> {
+    return this.knownHead(worldId);
+  }
+
+  /** Last known head-persistence failure, if any. Sync still works this page. */
+  get headPersistenceError(): unknown {
+    return this.headError;
+  }
+
   async head(worldId: WorldId): Promise<HeadState> {
     const head = await this.request<HeadState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/head`), undefined, {
       worldId,
     });
     this.remember(head);
     return head;
+  }
+
+  /** Read the remote head without teaching this client that it is in sync.
+   * Status checks must not clear the "we may be behind" knowledge. */
+  async peekHead(worldId: WorldId): Promise<HeadState> {
+    return this.request<HeadState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/head`));
+  }
+
+  async peekGraph(worldId: WorldId): Promise<GraphState> {
+    return this.request<GraphState>('GET', this.url(`/worlds/${encodeURIComponent(worldId)}/graph`));
   }
 
   async graph(worldId: WorldId): Promise<GraphState> {
@@ -175,7 +206,7 @@ export class ProgressSyncClient<P = unknown> {
 
   /** Save locally, then try the server. Network failures queue instead of throw. */
   async save(worldId: WorldId, payload: P, options: SaveOptions = {}): Promise<SaveOutcome<P>> {
-    const known = this.known.get(worldId);
+    const known = await this.knownHead(worldId);
     const expectedHead = options.expectedHead !== undefined
       ? options.expectedHead
       : known?.headSnapshotId ?? null;
@@ -192,7 +223,7 @@ export class ProgressSyncClient<P = unknown> {
       activate,
       payload,
     };
-    const localSaved = await this.saveLocal(worldId, payload);
+    const localSaved = options.skipLocal ? false : await this.saveLocal(worldId, payload);
     if (options.localOnly) return { status: 'local-only', localSaved, request };
 
     // Do not send a newer save ahead of an older unsynced save for the same
@@ -510,12 +541,46 @@ export class ProgressSyncClient<P = unknown> {
   }
 
   private remember(head: HeadState): void {
-    this.known.set(head.worldId, {
+    const entry: HeadState = {
       worldId: head.worldId,
       headSnapshotId: head.headSnapshotId,
       revision: head.revision,
       updatedAt: head.updatedAt,
-    });
+    };
+    this.known.set(head.worldId, entry);
+    void this.persistHead(entry);
+  }
+
+  private async persistHead(head: HeadState): Promise<void> {
+    if (!this.headStore) return;
+    try {
+      await this.headStore.save(head.worldId, head);
+      this.headError = null;
+    } catch (error) {
+      this.headError = error;
+    }
+  }
+
+  /** In-memory knowledge first, then whatever the product persisted. */
+  private async knownHead(worldId: WorldId): Promise<HeadState | null> {
+    const cached = this.known.get(worldId);
+    if (cached) return cached;
+    if (!this.headStore) return null;
+    try {
+      const stored = await this.headStore.load(worldId);
+      if (!stored || typeof stored.revision !== 'number' || stored.headSnapshotId === undefined) return null;
+      const entry: HeadState = {
+        worldId: stored.worldId || worldId,
+        headSnapshotId: stored.headSnapshotId ?? null,
+        revision: stored.revision,
+        updatedAt: stored.updatedAt ?? null,
+      };
+      this.known.set(worldId, entry);
+      return entry;
+    } catch (error) {
+      this.headError = error;
+      return null;
+    }
   }
 
   private childRequestId(base: string, suffix: string): string {

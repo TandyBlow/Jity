@@ -7,7 +7,7 @@ import { WorldApiError, type WorldTransport } from '../transport';
 import type {
   ClaimSummary, ControlState, CurrentClaim, DataMap, Digest, EntityDelta, ErrorCode, ErrorResponse,
   Id, InitialState, InitialTemplate, Json, NarrationStatus, PointWork, RequestMap, RollOutcome, RollSpec,
-  Scope, SettlementGroup, Success, Task, TimelinePoint, TimeAdvance, WorldContext, WorldOperation, WorldState,
+  Scope, SettlementGroup, Success, Successor, Task, TimelinePoint, TimeAdvance, WorldContext, WorldOperation, WorldState,
 } from '../types';
 import { canonicalDigest, canonicalJson } from './canonical';
 import {
@@ -25,7 +25,8 @@ interface Claim { claimToken: Id; generation: number; mode: 'head' | 'history'; 
 interface NarrationEntry { status: NarrationStatus; text: string | null; generation: number; claim: Claim | null }
 type Gate = ControlState['gate'];
 interface AdvanceRecord { advanceId: Id; inputId: Id; inputText: string; intentStatus: 'pending' | 'consumed' | 'expired' }
-interface RoundRecord { roundId: Id; trigger: 'player' | 'automatic'; order: Id[]; cursor: number; actedIds: Id[]; visitedIds: Id[]; conclusion: WorldContext['round'] extends null ? never : any }
+type RoundConclusion = NonNullable<WorldContext['round']>['conclusion'];
+interface RoundRecord { roundId: Id; trigger: 'player' | 'automatic'; order: Id[]; cursor: number; actedIds: Id[]; visitedIds: Id[]; conclusion: RoundConclusion }
 interface Working { cursor: number; actedIds: Id[]; visitedIds: Id[]; settledUnitIds: Id[]; intentStatus: 'pending' | 'consumed' | 'expired' }
 interface GroupRecord {
   groupId: Id; sourceId: Id; memberIds: Id[]; targetIds: Id[]; targetIdsBySource: Record<Id, Id[] | null>;
@@ -38,7 +39,7 @@ interface WorkRecord {
   sealed: boolean; prefixDigest: Digest | null; timeScanComplete: boolean; timeScan: SettlementGroup | null;
   baseline: { headPointId: Id; version: number; stateDigest: Digest };
   phase: 'select_actor' | 'build_group' | 'settle_group'; working: Working; units: UnitRecord[];
-  pendingGroup: GroupRecord | null; successor: any;
+  pendingGroup: GroupRecord | null; successor: Successor | null;
 }
 interface RollRecord extends RollOutcome { key: string }
 interface PersistedRecord {
@@ -805,6 +806,10 @@ export class LocalWorldTransport implements WorldTransport {
   private record: PersistedRecord;
   private readonly options: LocalOptions;
   private readonly roll: () => number;
+  /** Writes are serialized: the narration queue and the settlement loop are
+   * independent callers, and both clone/apply the same record. Reads stay
+   * synchronous and see a consistent committed record. */
+  private writeTail: Promise<void> = Promise.resolve();
 
   private constructor(record: PersistedRecord, options: LocalOptions = {}) {
     this.record = record;
@@ -843,6 +848,7 @@ export class LocalWorldTransport implements WorldTransport {
       return { ...versionBlock(), operation, world, control, work, data } as unknown as Success<K>;
     }
 
+    const runWrite = async () => {
     const write = request as unknown as { requestId?: Id };
     const requestId = write.requestId;
     if (!requestId) throw new Error(`${operation} requires requestId`);
@@ -888,8 +894,22 @@ export class LocalWorldTransport implements WorldTransport {
     if (keys.length > 200) for (const key of keys.slice(0, keys.length - 200)) delete this.record.idempotency[key];
     this.options.onPersist?.(clone(this.record));
     return response as unknown as Success<K>;
+    };
+    const previous = this.writeTail;
+    let release!: () => void;
+    this.writeTail = new Promise<void>((resolve) => { release = resolve; });
+    await previous;
+    try {
+      return await runWrite();
+    } finally {
+      release();
+    }
   }
 
+  // The write request union is narrowed by `operation` at each call site; a
+  // single precise type would need per-operation overloads, so the dispatcher
+  // keeps the union as-is and casts where the narrowed shape is used.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async handleWrite(record: PersistedRecord, operation: WriteOperation, request: any, scope: Scope): Promise<unknown> {
     switch (operation) {
       case 'create_world': {

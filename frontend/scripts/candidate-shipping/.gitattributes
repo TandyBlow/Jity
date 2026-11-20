@@ -1,0 +1,3 @@
+# Patch bytes are applied by `git apply`; checkout must never rewrite their
+# line endings, or every added line would land as CRLF inside LF source files.
+patches/** -text

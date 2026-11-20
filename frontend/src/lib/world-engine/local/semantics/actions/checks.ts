@@ -16,7 +16,7 @@ import type { Id, WorldState } from '../../../types';
 import type { SceneCharacter, ActionScene } from './scene';
 import { sceneMentions } from './scene';
 import {
-  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
+  firstPersonOutsideQuotes, hasAnaphora, longQuotes, longestSharedSpan, rewriteClauseSpeaker, sharedSubsequence, skeleton, splitQuotes, speaksAs, startsWithName,
 } from './text';
 import type { ActionIssue } from './types';
 
@@ -54,7 +54,9 @@ function interactionNear(text: string, index: number, length: number): boolean {
 /** A task goal ("把故障短讯机恢复到能与凯撒联络的状态") is a standing
  * objective, not one action a character performs now. Small models copy it
  * verbatim — the first real probe produced three such "actions" (all three
- * were goal copies), so the guard rejects equality or near-total coverage. */
+ * were goal copies). Equality, the short-goal contiguous-span rule and the
+ * broad subsequence rule are all keepers: the controlled comparison showed the
+ * remaining rejections were exact copies, not paraphrases. */
 function taskGoalCopy(text: string, goals: readonly string[]): string | null {
   const value = skeleton(text);
   if (value.length < 4) return null;
@@ -63,6 +65,10 @@ function taskGoalCopy(text: string, goals: readonly string[]): string | null {
     if (goal.length < 4) continue;
     if (value === goal) return goalText;
     if (goal.length <= 12 && longestSharedSpan(text, goalText).length >= Math.max(4, Math.ceil(goal.length * 0.6))) return goalText;
+    // Restored after the 20ee comparison: the real run showed the rejections
+    // were exact goal copies, so removing this branch reduced nothing while it
+    // would let a long paraphrase through. See
+    // results/product/evidence/06-goal-copy-ab-verdict.json.
     if (sharedSubsequence(text, goalText).coverage >= 0.85) return goalText;
   }
   return null;
@@ -76,11 +82,20 @@ function allGoals(state: WorldState): string[] {
     .flatMap((id) => Object.values(state.characters[id].tasks).map((task) => task.goal));
 }
 
+/** Small instruct models often answer a labelled prompt with the label:
+ * 「行动：…」「反应：…」. The label is formatting, not prose; keeping it would
+ * stage "行动：" into the frozen action text (and then into results/narration).
+ * Only one leading label is removed, and only when content follows. */
+export function stripOutputLabel(text: string): string {
+  const match = /^\s*(?:行动|动作|反应|回应|回复|回答|台词)\s*[:：]\s*(?=\S)/u.exec(text);
+  return match ? text.slice(match[0].length) : text;
+}
+
 /** Action text of one character. `actorIsProtagonist` relaxes exactly the
  * checks that a player-authored command is allowed to fail (the player may
  * speak as themselves and may repeat yesterday's words). */
 export function checkActionText(text: string, scene: ActionScene, state: WorldState, options: CheckOptions): CheckResult<string> {
-  const value = text.normalize('NFC').trim();
+  let value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -91,10 +106,25 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
   if ([...value].length > options.maxActionChars) {
     push(issue('action_too_long', 'warn', `行动描述 ${[...value].length} 字，超过建议长度 ${options.maxActionChars}`));
   }
+  // Person is a grammatical reference, not a semantic choice: the actor is
+  // known, so a clause-initial 我 is rewritten instead of burning a repair
+  // call (the 13:21Z run answered twice in first person and fell back to a
+  // skip). Mid-clause 我 is still an error below.
+  if (!scene.isProtagonist) {
+    const rewritten = rewriteClauseSpeaker(value, scene.actorName);
+    if (rewritten.count > 0) {
+      push(issue('first_person_rewritten', 'info',
+        `模型用了第一人称；程序把句首的“我”改成${scene.actorName}（原文：${value}）`, { detail: value }));
+      value = rewritten.text;
+    }
+  }
   const goal = taskGoalCopy(value, allGoals(state));
   if (goal) {
     push(issue('action_is_task_goal', 'error', `行动句照抄了待办任务目标：“${goal}”；这不是这一刻的具体行动`, { detail: goal }),
-      '不要照抄待办任务；写这个角色此刻具体做的这一步');
+      // The goal is kept in the issue detail for the evidence, not repeated in
+      // the repair line: the 15:41 run showed six actors copying the goal again
+      // on the retry, and quoting it put the same sentence back in the prompt.
+      `不要照抄待办任务；写${scene.actorName}此刻做的第一步（动词+对象），不要出现目标里的连续 8 个字`);
   }
   if (firstPersonOutsideQuotes(value)) {
     push(issue('action_first_person', 'error', '行动用了第一人称“我”；行动句必须是关于该角色的第三人称描述',
@@ -122,9 +152,22 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       const mostlyPlayer = valueSkeleton.length >= 6 && subsequence.coverage >= 0.8;
       const containsPlayer = subsequence.length >= 8 && playerCoverage >= 0.7;
       if (mostlyPlayer || containsPlayer) {
-        push(issue('npc_repeats_player', 'error',
-          `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
-          { detail: value }), '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
+        // Shared scene words are not an echo. An NPC near the same person
+        // necessarily reuses "巷口"/"护目镜"; remove the registered names and
+        // ask how much of the PREDICATE is left in common. If almost nothing
+        // is left, the overlap is the scene, not the player's sentence: make
+        // it a warning and let the action stand. If the verb phrase still
+        // tracks the player's sentence (run-1 A1: 「靠在巷口墙边，确认护目镜
+        // 是否起雾」 vs 「我靠在巷口墙边，先确认护目镜有没有起雾」), it is a
+        // paraphrase and stays an error that triggers repair.
+        const lexicon = sceneLexicon(state);
+        const residual = sharedSubsequence(stripLexicon(valueSkeleton, lexicon), stripLexicon(playerSkeleton, lexicon));
+        const sceneOnly = residual.length <= 3;
+        push(issue('npc_repeats_player', sceneOnly ? 'warn' : 'error',
+          sceneOnly
+            ? `行动句与玩家原话共用了现场名词（覆盖 ${Math.round(playerCoverage * 100)}%），但没有复述玩家的动作；请确认这是角色自己的行动`
+            : `行动句把玩家原话改写了一遍（覆盖玩家原话 ${Math.round(playerCoverage * 100)}%，共 ${subsequence.length} 字），不是这个角色自己的行动`,
+          { detail: value }), sceneOnly ? undefined : '不要改写玩家的原话当成角色的行动；写这个角色自己做了什么');
       }
     }
     for (const quote of longQuotes(value)) {
@@ -171,6 +214,24 @@ export function checkActionText(text: string, scene: ActionScene, state: WorldSt
       `行动句提到不在本地点、也不在身上的物品：${names(mentions.absentItems)}`, { detail: names(mentions.absentItems) }));
   }
   return { value, issues, repairs };
+}
+
+/** Registered proper names that a scene sentence naturally reuses. Only names
+ * of two characters or more: single generic characters ("门", "墙") are part of
+ * the scene vocabulary, not an entity reference. */
+function sceneLexicon(state: WorldState): string[] {
+  const names: string[] = [];
+  const add = (name: string | undefined): void => { if (name && [...name].length >= 2) names.push(name); };
+  for (const id of Object.keys(state.initial.characters)) add(state.initial.characters[id]?.name);
+  for (const id of Object.keys(state.initial.items)) add(state.initial.items[id]?.name);
+  for (const id of Object.keys(state.initial.locations)) add(state.initial.locations[id]?.name);
+  return [...new Set(names)].sort((a, b) => [...b].length - [...a].length);
+}
+
+function stripLexicon(text: string, lexicon: string[]): string {
+  let out = text;
+  for (const word of lexicon) out = out.split(word).join('');
+  return out;
 }
 
 function characterNameIndex(state: WorldState): { byId: Map<Id, string>; byAlias: Map<string, Id> } {
@@ -250,27 +311,11 @@ export function checkTargets(value: { targets: { targetId: string }[] }, scene: 
   }
   if (!capped.length) {
     push(issue('empty_targets', 'info', '没有需要立即反应的在场人物'));
-  } else if (!hasAnaphora(actionText)) {
-    const unmentioned = capped.filter((id) => {
-      const name = index.byId.get(id) ?? id;
-      const alias = [...index.byAlias.entries()].filter(([, value]) => value === id).map(([key]) => key);
-      return ![name, ...alias].some((value) => actionText.includes(value));
-    });
-    if (unmentioned.length) {
-      const named = scene.visible
-        .filter((character) => actionText.includes(character.name))
-        .map((character) => character.name);
-      const targetNames = unmentioned.map((id) => index.byId.get(id)).join('、');
-      // A target the action never names (and no anaphor stands in for) breaks
-      // the causal link the reaction group depends on. Precision wins here: a
-      // phantom target forces a roll and a fabricated reaction, a missed one
-      // only means a quieter scene.
-      push(issue('target_unmentioned', 'error',
-        `目标${targetNames}既没有被行动点名，也没有指代可用${named.length ? `（行动点名的是${named.join('、')}）` : ''}`,
-        { detail: unmentioned.join(',') }),
-        `只选行动句直接触及的人；${targetNames}没有出现在行动里，不能作为目标；行动只写移动、观察或对物品操作时返回空数组`);
-    }
   }
+  // Naming the target is the model's semantic call, not a wording rule: a
+  // visible person who is actually touched can be selected even when the action
+  // says it by situation rather than by name. Membership, visibility, self and
+  // the cap are still enforced above.
   return { value: { targets: capped.map((targetId) => ({ targetId })) }, issues, repairs };
 }
 
@@ -284,7 +329,7 @@ export interface ReactionCheckContext {
 /** Reaction text → accepted reaction or a repair request. */
 export function checkReactionText(text: string, context: ReactionCheckContext, options: CheckOptions): CheckResult<string> {
   const { scene, state, source, sourceActionText } = context;
-  const value = text.normalize('NFC').trim();
+  let value = stripOutputLabel(text).normalize('NFC').trim();
   const issues: ActionIssue[] = [];
   const repairs: string[] = [];
   const push = (item: ActionIssue, repair?: string): void => {
@@ -293,8 +338,21 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
   };
   const memberName = scene.actorName;
   const sourceName = source.name;
+  // Same grammar fix as the action text: the member is known, so a
+  // clause-initial 我 is the member speaking, not a semantic choice.
+  const rewritten = rewriteClauseSpeaker(value, memberName);
+  if (rewritten.count > 0) {
+    push(issue('first_person_rewritten', 'info',
+      `模型用了第一人称；程序把句首的“我”改成${memberName}（原文：${value}）`, { detail: value }));
+    value = rewritten.text;
+  }
 
-  const copiedGoal = taskGoalCopy(value, allGoals(state));
+  const reactionGoals = allGoals(state);
+  // This comparison changes action_is_task_goal only. Preserve the existing
+  // reaction_goal_copy behaviour instead of silently weakening a second guard.
+  const copiedGoal = taskGoalCopy(value, reactionGoals) ?? (skeleton(value).length >= 4
+    ? reactionGoals.find((goal) => skeleton(goal).length >= 4 && sharedSubsequence(value, goal).coverage >= 0.85)
+    : undefined);
   if (copiedGoal) {
     push(issue('reaction_goal_copy', 'error', `反应照抄了${memberName}的任务目标：“${copiedGoal}”`, { detail: copiedGoal }),
       '不要照抄任务目标；写这个角色此刻被这条行动逼出的具体反应');
@@ -345,16 +403,9 @@ export function checkReactionText(text: string, context: ReactionCheckContext, o
       { detail: names(mentions.absentItems) }));
   }
 
-  const sourceAliases = [sourceName, ...[...sourceName].slice(-2).join('')].filter((alias) => [...alias].length >= 2);
-  const mentionsMember = plain.includes(memberName);
-  const refersToSource = sourceAliases.some((alias) => plain.includes(alias)) || hasAnaphora(plain);
-  const tiedToThreat = refersToSource || shared.length >= 2;
-  if (!tiedToThreat && !mentionsMember) {
-    push(issue('reaction_off_topic', 'error', '反应既没有提到发起者或现场指代，也没有提到被牵连角色，读不出和这条行动的因果关系',
-      { detail: value.slice(0, 60) }), '反应要针对发起者刚才这条行动，写清被牵连角色在回应什么');
-  } else if (!tiedToThreat) {
-    push(issue('reaction_off_topic', 'warn', '反应只提到被牵连角色，没有明确呼应发起者的行动', { detail: value.slice(0, 60) }));
-  }
+  // Whether the sentence reads as a reaction to this action is semantic; the
+  // runtime keeps only the structural guards (who is named, who acts, who is
+  // invented) and shows the model's own sentence unchanged.
   if (source.roomId !== scene.roomId) {
     push(issue('reaction_member_absent', 'warn', `被牵连角色和发起者不在同一地点（${memberName}在${scene.roomName}）`,
       { detail: `${source.roomId}->${scene.roomId}` }));

@@ -17,15 +17,33 @@
  * free; a different URL is a configuration error instead of silently reusing
  * the old model. A failed or cancelled load exits the factory instance so a
  * leaked worker cannot keep wasm memory alive across retries.
+ *
+ * `chat()` is additive next to the InferenceEngine contract: `complete()`
+ * sends a single user turn, which makes an instruct checkpoint use its own
+ * default system prompt. Narrative candidates need their own system turn
+ * (2026-11-10 candidate-model registration), so `chat()` forwards a real
+ * message list and shares the same cancellation/evidence path.
  */
 import type { Wllama } from '@wllama/wllama';
 import { createWllama } from '../../benchmark/wllama-loader';
 import { abortError, IncompleteGenerationError, type CompletionEvidence, type CompleteOptions, type EngineInfo, type InferenceEngine } from './engine';
 import type { AbortCause, GenerationEvidence, ModelLoadEvidence } from '../local/runtime-diagnostics/types';
 
+/** A chat turn for `chat()`. Mirrors the parts of the OpenAI message shape
+ * the wllama adapter forwards; the GGUF's own template decides the rendering. */
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
 export interface WllamaEngineOptions {
   /** Default model source for load(); a per-call modelUrl overrides it. */
   modelUrl?: string;
+  /** Split GGUF shards, in order. Takes precedence over modelUrl. wllama
+   * renames the blobs to its canonical `model-00001-of-00002.gguf` names and
+   * llama.cpp opens the siblings from the same virtual directory. Only the
+   * directBlob browser path supports more than one file in wllama 3.8.1. */
+  modelUrls?: string[];
   contextSize?: number;
   numThreads?: number;
   /** 0 keeps CPU-only; default offloads every layer to WebGPU when the
@@ -42,6 +60,15 @@ export interface WllamaEngineOptions {
    * terminated. Default 2500 ms; 0 terminates as soon as the abort is
    * requested. A terminated worker drops the loaded model. */
   abortGraceMs?: number;
+  /** Upper bound for one model load (fetch + parse + compile). Default
+   * 120000 ms. A timeout aborts the load and exits the landing worker, so a
+   * page can retry instead of showing a frozen first turn forever. */
+  loadTimeoutMs?: number;
+  /** Expected fetched size(s) in bytes, one per shard. A truncated or wrong
+   * file is rejected before it reaches wllama instead of failing deep inside
+   * the GGUF parser. The SHA-256 check belongs to the queue/host runner; this
+   * is the cheap size check the page can do itself. */
+  expectedBytes?: number | number[];
   /** Observability hook for load and generation evidence. Own structure:
    * the shared CompletionEvidence fields stay unchanged and extra timing is
    * additive. Observer exceptions never change the call result. */
@@ -49,7 +76,8 @@ export interface WllamaEngineOptions {
 }
 
 interface LoadedIdentity {
-  modelUrl: string;
+  modelUrls: string[];
+  identity: string;
   contextSize: number;
   gpuLayers: number;
 }
@@ -93,6 +121,29 @@ export class WllamaInferenceEngine implements InferenceEngine {
   private disposePromise: Promise<void> | null = null;
   private loadCount = 0;
   private hardStops = 0;
+  private generations = 0;
+  private workersCreated = 0;
+  private workersExited = 0;
+  /** Last model a load was attempted for. Survives a hard stop, so the next
+   * request reloads the same weights instead of erroring on a missing url. */
+  private lastModelUrls: string[] | null = null;
+  /** The fetched bytes of the currently loaded model. A hard stop keeps the
+   * Blob alive so a reload can feed the same bytes to a new worker. Refetching
+   * 1.1 GB immediately after a hard stop failed in the real browser: the old
+   * Blob was still in the browser's Blob store and the second allocation hit
+   * its ~2 GB aggregate cap. Reusing one Blob avoids that second allocation
+   * and turns recovery into a compile-only reload. Cleared on dispose or a
+   * different model. */
+  private cachedBlobs: Blob[] | null = null;
+  private cachedIdentity: string | null = null;
+  /** Timings of the last successful load. The page exposes per-engine load
+   * duration next to generation timings, so 09 can separate cold model load
+   * from per-turn prefill/decode without parsing console output. */
+  private lastLoadTiming: { totalMs: number; fetchMs: number | null; compileMs: number | null; fromCache: boolean } | null = null;
+  /** Last generation evidence, exposed as a summary so the product page can
+   * publish prefill/decode and first-readable timings for 09 without wiring a
+   * second onEvidence callback. The raw text is intentionally not copied. */
+  private lastGeneration: GenerationEvidence | null = null;
   private readonly activeCalls = new Set<ActiveCall>();
   private readonly exited = new WeakMap<Wllama, Promise<void>>();
 
@@ -120,6 +171,38 @@ export class WllamaInferenceEngine implements InferenceEngine {
     loadCount: number;
     hardStops: number;
     activeCalls: number;
+    generations: number;
+    workersCreated: number;
+    workersExited: number;
+    disposed: boolean;
+    /** True when a model was loaded before, the worker is gone, and the
+     * engine can reload the same weights (e.g. after a timeout hard stop). */
+    needsReload: boolean;
+    lastModelUrl: string | null;
+    lastModelUrls: string[] | null;
+    /** True when a hard-stop reload can reuse the already fetched bytes. */
+    cachedModel: boolean;
+    cachedModelBytes: number;
+    lastLoadMs: number | null;
+    lastLoadFetchMs: number | null;
+    lastLoadCompileMs: number | null;
+    lastLoadFromCache: boolean | null;
+    lastGeneration: {
+      outcome: GenerationEvidence['outcome'];
+      finishReason: string | null;
+      wallMs: number;
+      firstChunkMs: number | null;
+      firstTokenMs: number | null;
+      firstReadableMs: number | null;
+      maxStreamGapMs: number;
+      streamChunks: number;
+      promptTokens: number | null;
+      cachedPromptTokens: number | null;
+      timings: GenerationEvidence['timings'] | null;
+      hardStopped: boolean;
+      stoppedMs: number | null;
+      abortCause: AbortCause | null;
+    } | null;
   } {
     return {
       backend: this.info.backend,
@@ -130,6 +213,35 @@ export class WllamaInferenceEngine implements InferenceEngine {
       loadCount: this.loadCount,
       hardStops: this.hardStops,
       activeCalls: this.activeCalls.size,
+      generations: this.generations,
+      workersCreated: this.workersCreated,
+      workersExited: this.workersExited,
+      disposed: this.disposed,
+      needsReload: !this.disposed && this.instance === null && this.lastModelUrls !== null,
+      lastModelUrl: this.lastModelUrls?.[0] ?? null,
+      lastModelUrls: this.lastModelUrls ? [...this.lastModelUrls] : null,
+      cachedModel: this.cachedBlobs !== null,
+      cachedModelBytes: this.cachedBlobs?.reduce((sum, blob) => sum + blob.size, 0) ?? 0,
+      lastLoadMs: this.lastLoadTiming?.totalMs ?? null,
+      lastLoadFetchMs: this.lastLoadTiming?.fetchMs ?? null,
+      lastLoadCompileMs: this.lastLoadTiming?.compileMs ?? null,
+      lastLoadFromCache: this.lastLoadTiming?.fromCache ?? null,
+      lastGeneration: this.lastGeneration === null ? null : {
+        outcome: this.lastGeneration.outcome,
+        finishReason: this.lastGeneration.finishReason,
+        wallMs: this.lastGeneration.wallMs,
+        firstChunkMs: this.lastGeneration.firstChunkMs,
+        firstTokenMs: this.lastGeneration.firstTokenMs,
+        firstReadableMs: this.lastGeneration.firstReadableMs,
+        maxStreamGapMs: this.lastGeneration.maxStreamGapMs,
+        streamChunks: this.lastGeneration.streamChunks,
+        promptTokens: this.lastGeneration.promptTokens,
+        cachedPromptTokens: this.lastGeneration.cachedPromptTokens,
+        timings: this.lastGeneration.timings ?? null,
+        hardStopped: this.lastGeneration.hardStopped,
+        stoppedMs: this.lastGeneration.stoppedMs,
+        abortCause: this.lastGeneration.abortCause,
+      },
     };
   }
 
@@ -137,26 +249,49 @@ export class WllamaInferenceEngine implements InferenceEngine {
     return typeof location !== 'undefined' ? new URL(configured, location.href).href : configured;
   }
 
-  async load(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
+  /** A single canonical first-shard URL (`...-00001-of-00002.gguf`) expands
+   * to every sibling. The GGUF split naming already carries the count, so the
+   * page/09 runner can pass one URL and the engine still loads all shards;
+   * wllama renames the blobs to its own canonical names and llama.cpp opens
+   * the siblings from the virtual models directory. */
+  private expandShards(urls: string[]): string[] {
+    if (urls.length !== 1) return urls;
+    const match = /-(\d{5})-of-(\d{5})\.gguf$/i.exec(urls[0]!);
+    if (!match) return urls;
+    const total = Number(match[2]);
+    if (!Number.isInteger(total) || total < 2 || total > 99) return urls;
+    const prefix = urls[0]!.slice(0, match.index);
+    return Array.from({ length: total }, (_, index) => `${prefix}-${String(index + 1).padStart(5, '0')}-of-${match[2]}.gguf`);
+  }
+
+  private resolveRequestedUrls(options?: { modelUrl?: string; modelUrls?: string[] }): string[] | null {
+    const configured = options?.modelUrls ?? (options?.modelUrl ? [options.modelUrl] : null)
+      ?? this.options.modelUrls ?? (this.options.modelUrl ? [this.options.modelUrl] : null)
+      ?? this.lastModelUrls;
+    if (!configured || configured.length === 0) return null;
+    return this.expandShards(configured.map((url) => this.resolveModelUrl(url)));
+  }
+
+  async load(options?: { signal?: AbortSignal; modelUrl?: string; modelUrls?: string[] }): Promise<void> {
     if (this.disposed) throw abortError();
-    const configured = options?.modelUrl ?? this.options.modelUrl;
-    if (!configured) throw new Error('wllama engine needs a modelUrl');
-    const modelUrl = this.resolveModelUrl(configured);
+    const modelUrls = this.resolveRequestedUrls(options);
+    if (!modelUrls) throw new Error('wllama engine needs a modelUrl');
+    const identity = modelUrls.join('|');
     if (this.instance) {
-      if (this.loadedIdentity?.modelUrl !== modelUrl) {
-        throw new Error(`wllama engine is already loaded with ${this.loadedIdentity?.modelUrl ?? 'another model'}; dispose it before loading ${modelUrl}`);
+      if (this.loadedIdentity?.identity !== identity) {
+        throw new Error(`wllama engine is already loaded with ${this.loadedIdentity?.modelUrls.join(', ') ?? 'another model'}; dispose it before loading ${modelUrls.join(', ')}`);
       }
       return;
     }
     if (this.loading) {
-      if (this.loadingUrl !== null && this.loadingUrl !== modelUrl) {
-        throw new Error(`wllama engine is already loading ${this.loadingUrl}; cannot also load ${modelUrl}`);
+      if (this.loadingUrl !== null && this.loadingUrl !== identity) {
+        throw new Error(`wllama engine is already loading ${this.loadingUrl}; cannot also load ${identity}`);
       }
       return this.loading;
     }
-    const inFlight = this.doLoad(modelUrl, options?.signal);
+    const inFlight = this.doLoad(modelUrls, options?.signal);
     this.loading = inFlight;
-    this.loadingUrl = modelUrl;
+    this.loadingUrl = identity;
     // A load, failed or successful, releases its memo: a successful load is
     // served by the instance check above, and a failed/cancelled load must
     // be retryable, while concurrent callers of the SAME load still share
@@ -164,31 +299,84 @@ export class WllamaInferenceEngine implements InferenceEngine {
     // callers awaiting this.loading still see it reject.
     const settle = () => {
       if (this.loading === inFlight) this.loading = null;
-      if (this.loadingUrl === modelUrl) this.loadingUrl = null;
+      if (this.loadingUrl === identity) this.loadingUrl = null;
     };
     void inFlight.then(settle, settle);
     return inFlight;
   }
 
-  private async doLoad(modelUrl: string, callerSignal?: AbortSignal): Promise<void> {
+  /** Reload the last model after a hard stop, or no-op when the same model is
+   * already live. A different explicit modelUrl is a configuration error.
+   * This is the entry 06 should call before the first turn and after a
+   * timeout/cancel that terminated the worker. */
+  async ensureLoaded(options?: { signal?: AbortSignal; modelUrl?: string; modelUrls?: string[] }): Promise<void> {
+    if (this.disposed) throw abortError();
+    if (this.instance) {
+      if (options?.modelUrl || options?.modelUrls) {
+        const requested = this.resolveRequestedUrls(options);
+        if (this.loadedIdentity?.identity !== requested?.join('|')) {
+          throw new Error(`wllama engine is loaded with ${this.loadedIdentity?.modelUrls.join(', ') ?? 'another model'}; dispose it before loading ${requested?.join(', ') ?? 'another model'}`);
+        }
+      }
+      return;
+    }
+    const modelUrls = this.resolveRequestedUrls(options);
+    if (!modelUrls) throw new Error('wllama engine has no model to reload; pass modelUrl');
+    await this.load({ signal: options?.signal, modelUrls });
+  }
+
+  /** Stop an in-flight load without disposing the engine. The load rejects
+   * with AbortError, its landing worker is exited, and a later load() is
+   * retryable. Returns false when no load is running. */
+  cancelLoad(): boolean {
+    if (!this.loading || !this.loadAbort) return false;
+    this.loadAbort.abort();
+    return true;
+  }
+
+  private async doLoad(modelUrls: string[], callerSignal?: AbortSignal): Promise<void> {
     const started = performance.now();
+    const identity = modelUrls.join('|');
+    this.lastModelUrls = modelUrls;
+    // Only one model's bytes may stay cached: switching weights must release the
+    // old Blob before the new fetch, or the two allocations hit the same ~2 GB
+    // Blob-store cap that a hard-stop refetch hit.
+    if (this.cachedIdentity !== null && this.cachedIdentity !== identity) {
+      this.cachedBlobs = null;
+      this.cachedIdentity = null;
+    }
     const controller = new AbortController();
     this.loadAbort = controller;
+    const loadTimeoutMs = this.options.loadTimeoutMs ?? 120_000;
+    if (!Number.isFinite(loadTimeoutMs) || loadTimeoutMs <= 0) throw new Error('loadTimeoutMs must be positive and finite');
+    let timedOut = false;
+    let instance: Wllama | null = null;
+    let cacheAfterLoad: Blob[] | null = null;
+    const deadline = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+      // A load can sit inside a native compile step that ignores the abort.
+      // Terminating the landing worker is the only guaranteed stop; the
+      // pending loadModel/loadModelFromUrl then rejects and the catch path
+      // reports a timeout. The page can retry with a fresh worker.
+      if (instance) void this.exitInstance(instance);
+    }, loadTimeoutMs);
     const onCallerAbort = () => controller.abort(callerSignal?.reason);
     if (callerSignal?.aborted) onCallerAbort();
     else callerSignal?.addEventListener('abort', onCallerAbort, { once: true });
-    let instance: Wllama | null = null;
     // The blob path needs a page URL to resolve a relative model path, so it
     // is the browser default; outside a browser the OPFS/url path is used.
     const directBlob = this.options.directBlob ?? (typeof location !== 'undefined');
     let fetchMs: number | null = null;
     let compileMs: number | null = null;
+    let fromCache = false;
     let outcome: ModelLoadEvidence['outcome'] = 'failed';
     let failure: unknown = null;
     try {
       instance = await this.factory();
-      if (this.disposed) {
-        outcome = 'discarded';
+      this.workersCreated += 1;
+      if (this.disposed || timedOut) {
+        outcome = this.disposed ? 'discarded' : 'timeout';
         throw abortError();
       }
       const params = {
@@ -198,17 +386,58 @@ export class WllamaInferenceEngine implements InferenceEngine {
         signal: controller.signal,
       };
       if (directBlob) {
-        const fetchStarted = performance.now();
-        const response = await fetch(modelUrl, { signal: controller.signal });
-        if (!response.ok) throw new Error(`model fetch failed: ${response.status} ${modelUrl}`);
-        const blob = await response.blob();
-        fetchMs = performance.now() - fetchStarted;
+        let blobs: Blob[];
+        if (this.cachedBlobs && this.cachedIdentity === identity) {
+          // Same weights, already fetched: reuse the Blob instead of allocating
+          // a second 1.1 GB Blob immediately after a hard stop (the browser's
+          // Blob store rejects that aggregate in the real browser).
+          blobs = this.cachedBlobs;
+          fetchMs = 0;
+          fromCache = true;
+        } else {
+          const fetchStarted = performance.now();
+          blobs = [];
+          const expected = this.options.expectedBytes === undefined
+            ? null
+            : Array.isArray(this.options.expectedBytes) ? this.options.expectedBytes : [this.options.expectedBytes];
+          for (const [index, url] of modelUrls.entries()) {
+            try {
+              const response = await fetch(url, { signal: controller.signal });
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const blob = await response.blob();
+              if (expected && expected[index] !== undefined && blob.size !== expected[index]) {
+                throw new Error(`size ${blob.size}, expected ${expected[index]}`);
+              }
+              blobs.push(blob);
+            } catch (error) {
+              // Keep an abort as an abort (the catch path classifies by signal),
+              // but name the exact shard for a real fetch/body failure: a 2.5 GB
+              // split otherwise reports only "Failed to fetch".
+              if (controller.signal.aborted) throw error;
+              const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+              throw new Error(`model shard ${index + 1}/${modelUrls.length} fetch failed (${url}): ${reason}`);
+            }
+          }
+          fetchMs = performance.now() - fetchStarted;
+        }
         const loadStarted = performance.now();
-        await instance.loadModel([blob], params);
+        try {
+          await instance.loadModel(blobs, params);
+        } catch (error) {
+          // A cached Blob can fail if the browser evicted it; drop the cache so
+          // a caller retry refetches instead of replaying the same bad bytes.
+          this.cachedBlobs = null;
+          this.cachedIdentity = null;
+          throw error;
+        }
         compileMs = performance.now() - loadStarted;
+        cacheAfterLoad = blobs;
       } else {
+        if (modelUrls.length > 1) {
+          throw new Error('split models need the directBlob path; wllama 3.8.1 loadModelFromUrl takes one url');
+        }
         const loadStarted = performance.now();
-        await instance.loadModelFromUrl(modelUrl, { ...params, useCache: this.options.useCache ?? false });
+        await instance.loadModelFromUrl(modelUrls[0]!, { ...params, useCache: this.options.useCache ?? false });
         compileMs = performance.now() - loadStarted;
       }
       if (this.disposed) {
@@ -218,28 +447,46 @@ export class WllamaInferenceEngine implements InferenceEngine {
         throw abortError();
       }
       this.instance = instance;
-      this.loadedIdentity = { modelUrl, contextSize: this.contextSize, gpuLayers: this.gpuLayers };
-      this.info.modelId = modelUrl.split('/').pop() ?? modelUrl;
+      if (cacheAfterLoad) {
+        this.cachedBlobs = cacheAfterLoad;
+        this.cachedIdentity = identity;
+      }
+      this.loadedIdentity = { modelUrls, identity: modelUrls.join('|'), contextSize: this.contextSize, gpuLayers: this.gpuLayers };
+      this.info.modelId = decodeURIComponent(modelUrls[0]!.split('/').pop() ?? modelUrls[0]!);
       this.loadCount += 1;
       outcome = 'loaded';
     } catch (error) {
       failure = error;
       if (outcome !== 'discarded') {
-        outcome = this.disposed ? 'discarded' : controller.signal.aborted || callerSignal?.aborted ? 'aborted' : 'failed';
+        outcome = this.disposed ? 'discarded'
+          : timedOut ? 'timeout'
+          : controller.signal.aborted || callerSignal?.aborted ? 'aborted' : 'failed';
       }
       // The factory instance is not registered unless load completed. Exit
       // it on every failure path: a dropped wllama instance still owns a
       // wasm worker and its model buffers.
       if (instance && this.instance !== instance) await this.exitInstance(instance);
       if (outcome === 'aborted' || outcome === 'discarded') throw abortError();
+      if (outcome === 'timeout') {
+        const timeoutError = new Error(`model load timed out after ${loadTimeoutMs} ms`);
+        timeoutError.name = 'TimeoutError';
+        failure = timeoutError; // evidence says timeout, not the abort that delivered it
+        throw timeoutError;
+      }
       throw error;
     } finally {
+      clearTimeout(deadline);
       callerSignal?.removeEventListener('abort', onCallerAbort);
       if (this.loadAbort === controller) this.loadAbort = null;
-      if (this.loadingUrl === modelUrl) this.loadingUrl = null;
+      if (this.loadingUrl === modelUrls.join('|')) this.loadingUrl = null;
+      const totalMs = performance.now() - started;
+      if (outcome === 'loaded') {
+        this.lastLoadTiming = { totalMs, fetchMs, compileMs, fromCache };
+      }
       this.emit({
         kind: 'load',
-        modelUrl,
+        modelUrl: modelUrls[0]!,
+        modelUrls,
         modelId: outcome === 'loaded' ? this.info.modelId : null,
         contextSize: this.contextSize,
         gpuLayers: this.gpuLayers,
@@ -248,7 +495,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
         directBlob,
         fetchMs,
         compileMs,
-        totalMs: performance.now() - started,
+        totalMs,
+        loadTimeoutMs,
+        fromCache,
         outcome,
         ...(failure !== null && outcome !== 'loaded' ? { error: errorText(failure) } : {}),
         at: performance.now(),
@@ -257,6 +506,19 @@ export class WllamaInferenceEngine implements InferenceEngine {
   }
 
   async complete(prompt: string, options?: CompleteOptions): Promise<string> {
+    return this.generate([{ role: 'user', content: prompt }], options);
+  }
+
+  /** Chat completion with a real message list, so an instruct model receives
+   * the caller's system prompt instead of the checkpoint's default system
+   * turn. Additive to the InferenceEngine contract: the interface keeps
+   * complete() and callers that only know the interface still work. */
+  async chat(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
+    if (messages.length === 0) throw new Error('chat needs at least one message');
+    return this.generate(messages, options);
+  }
+
+  private async generate(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
     if (options?.signal?.aborted || this.disposed) throw abortError();
@@ -266,6 +528,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     if (!Number.isFinite(graceMs) || graceMs < 0) throw new Error('abortGraceMs must be finite and non-negative');
     const maxTokens = options?.maxTokens ?? 256;
     const cachePrompt = options?.cachePrompt ?? true;
+    this.generations += 1;
     const started = performance.now();
     const evidence: GenerationEvidence = {
       kind: 'generation',
@@ -332,7 +595,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
     let enginePromise: Promise<unknown>;
     try {
       enginePromise = Promise.resolve(instance.createChatCompletion({
-        messages: [{ role: 'user', content: prompt }],
+        messages: messages.map((message) => ({ role: message.role, content: message.content })),
         chat_template_kwargs: { enable_thinking: false },
         cache_prompt: cachePrompt,
         stream: true,
@@ -413,6 +676,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       evidence.abortRequestedMs = call.abortRequestedAt === null ? null : call.abortRequestedAt - started;
       evidence.hardStopped = call.hardStopped;
       evidence.at = performance.now();
+      this.lastGeneration = evidence;
       this.emit(evidence);
       try {
         options?.onCompletion?.(evidence);
@@ -464,6 +728,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
         } catch {
           // Worker termination is best effort; the device is stopped either
           // way. Never let a teardown hiccup mask the caller's abort.
+        } finally {
+          this.workersExited += 1;
         }
       })();
       this.exited.set(instance, exiting);
@@ -486,6 +752,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
    * path does not depend on a signal being threaded through every task.
    * Returns the number of calls asked to stop. */
   cancelActive(): number {
+    // The load is the first 30-45 s of a cold session; a stop button must
+    // stop it too. cancelLoad() is non-terminal, so the page can retry.
+    this.cancelLoad();
     const calls = [...this.activeCalls];
     for (const call of calls) call.abort('caller');
     return calls.length;
@@ -499,6 +768,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
     this.instance = null;
     this.loadedIdentity = null;
     this.info.modelId = null;
+    this.cachedBlobs = null;
+    this.cachedIdentity = null;
     const inFlight = this.loading;
     this.loading = null;
     this.loadingUrl = null;

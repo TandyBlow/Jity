@@ -140,3 +140,5 @@ artifacts/benchmark/minirbt-h256-snapshot/
 
 # === Local tooling ignore list (ZCode); duplicates .gitignore ===
 .zcodeignore
+frontend/.next-prod/
+frontend/.next-prod*/

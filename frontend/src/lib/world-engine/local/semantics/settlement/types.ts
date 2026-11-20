@@ -30,13 +30,6 @@ export interface SettlementOptions {
   timeoutMs?: number;
   /** Reject a prompt that does not fit instead of silently truncating state. */
   maxPromptChars?: number;
-  /** Judge only the protagonist's scene (protagonist, same-room characters,
-   * their carried items and room items) instead of the whole cast. The rest of
-   * the world keeps its state untouched by this point. */
-  sceneScope?: boolean;
-  /** Ask one model call for all six stage sections instead of six calls. The
-   * stage validators and projection order stay the same. */
-  mergedStages?: boolean;
   /** New task budget for one updates call. Exceeding it is a visible failure,
    * never a partial success. */
   maxNewTasks?: number;
@@ -44,6 +37,24 @@ export interface SettlementOptions {
    * uses a timestamp plus a local counter. */
   nextRoundId?: () => Id;
   onTask?: (task: SettlementTask, key: string, detail: ModelTaskDetail) => void;
+  /** Product default: a new task achievement must cite a settled result fact
+   * (or a time basis). Unit fixtures may leave this off, but the page port
+   * never does. */
+  requireTaskSupport?: boolean;
+  /** How the tasks stage asks for its answer.
+   *
+   * 'roster': the prompt prints a complete answer that names every affected
+   * character under `unchanged`, and the model must reproduce the roster. A 0.6B
+   * copies that skeleton: across 171 recorded task-stage answers it never once
+   * moved a character out of `unchanged`, and no real 0.6B run produced an
+   * achievement either (2/2 probes, 2026-11-11).
+   *
+   * 'achieved' (default): the model asserts only the characters whose task
+   * condition is now met (with a fact basis); the program applies "everyone else
+   * unchanged", which is the conservative default it already knows. The same
+   * probes achieve the right task under this contract; keep 'roster' only as a
+   * comparison arm. */
+  tasksContract?: 'roster' | 'achieved';
 }
 
 export interface ModelTaskDetail {
@@ -52,6 +63,12 @@ export interface ModelTaskDetail {
   error?: string;
   raw?: string;
   promptChars?: number;
+  /** Per-stage model time for an updates task, so a slow turn can be attributed
+   * without waiting for the whole submission to close. */
+  stageMs?: Record<string, number>;
+  stages?: string[];
+  /** Affected projection for this updates group (which owners/rows were judged). */
+  scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
 }
 
 export interface ModelCallEvidence {
@@ -60,6 +77,11 @@ export interface ModelCallEvidence {
   ms: number;
   attempt: number;
   error?: string;
+  /** A truncated/interrupted call keeps its partial text here instead of
+   * throwing the paid output away (the task book requires every truncation to
+   * be explicit in evidence). */
+  truncated?: boolean;
+  finishReason?: string | null;
 }
 
 export interface SettlementEvidence {
@@ -75,8 +97,9 @@ export interface SettlementEvidence {
 }
 
 /** value=null means no candidate may be committed (hard input/protocol/model
- * failure). results/updates may return a conservative no-change candidate with
- * fallback=true and an error; continuation never converts failure to handback. */
+ * failure). results and updates abort the point after a failed repair instead
+ * of inventing a conservative result or committing empty stage deltas;
+ * continuation never converts a failure into a handback. */
 export interface SettlementOutcome<T> {
   value: T | null;
   raw: string;

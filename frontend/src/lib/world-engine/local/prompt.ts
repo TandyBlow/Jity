@@ -196,7 +196,14 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   const sentences: string[] = [];
   const declared = actionText.trim().replace(/^我/u, name);
   if (declared) sentences.push(`玩家这回合让${name}做的事：${declared}。`);
-  if (resultsText.trim()) sentences.push(`这一回合的结算结果：${squash(resultsText).slice(0, 120)}。`);
+  // Judgment clauses («…的骰点资格为false», «…未被掀开袖口，未获得任何效果») are
+  // settlement mechanics, not scene facts; feeding them to the writer made it
+  // dramatize dice (d101) and print judgments (page runs 2026-11-10). Keep only
+  // clauses that describe what changed.
+  const settled = squash(resultsText).split(/[；;]/u).map((part) => part.trim())
+    .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
+    .join('；');
+  if (settled) sentences.push(`这一回合的结算结果：${settled.slice(0, 120)}。`);
   const time = after.time.dateTime.slice(11, 16);
   if (delta.timeAdvance) sentences.push(`时间到了${time}，过去${delta.timeAdvance.duration.amount}${timeUnitName(delta.timeAdvance.duration.unit)}。`);
   const own = delta.entityDeltas?.[view];
@@ -233,15 +240,15 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   const prompt = draft
     ? [
       mode === 'repair'
-        ? `你是中文小说作者。上一稿没能全部落在已结算事实上。请只把下面这段草稿改写成 ${name} 视角的小说正文，140 到 220 字。`
-        : `你是中文小说作者。请把下面这段已经结算的事实草稿改写成 ${name} 视角的小说正文，160 到 240 字。`,
+        ? `你是中文小说作者。上一稿没能全部落在已结算事实上。请只把下面这段草稿改写成 ${name} 视角的小说正文，按这一回合的内容决定长短。`
+        : `你是中文小说作者。请把下面这段已经结算的事实草稿改写成 ${name} 视角的小说正文，按这一回合的内容决定长短。`,
       '要求：只能使用草稿里明确写出的动作、位置、外观和结果；可以调整语序、连接词和短句节奏，但不得新增任何动作、对白、物品、人物、地点、数字、伤情、往事、心理活动或比喻；每个人物的伤势、衣物和物品只属于本人，不要用“他/她”把一个人的特征挪到另一个人身上；不要逐条复述草稿，不要把人物外貌列成清单；以动作为主线写成一个连续场景，环境和人物只保留与当前动作有关的一两笔；不要写标题、列表或 Markdown；分 2 到 3 段。',
       '事实草稿：',
       draft,
       '正文：',
     ].join(String.fromCharCode(10))
     : [
-      `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，160 到 240 字。`,
+      `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，按这一回合的内容决定长短。`,
       '要求：只写事实里明确出现的动作、位置、外观和结果；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要新增人物、地点、物品、事件、数字、伤情、往事或心理活动；事实里没有直接引用的原话时不要写对白；短句，分 2 到 3 段。',
       '事实：',
       brief,
