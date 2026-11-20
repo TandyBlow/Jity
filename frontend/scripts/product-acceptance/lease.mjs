@@ -11,7 +11,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const leaseScript = resolve(here, '../../../../../resource_lease.py');
+const leaseScript = resolve(here, '../../..', 'resource_lease.py');
 
 export function acquireLease({ lane = '09-ui', purpose = 'local inference', ttlSeconds = 1800 } = {}) {
   const token = randomBytes(16).toString('hex');

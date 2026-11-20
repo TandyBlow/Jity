@@ -1,0 +1,44 @@
+{
+  "kind": "goal-product-integration",
+  "generatedAt": "2026-11-20T16:10:00.000000+00:00",
+  "role": "Single-tree goal mode: the product is this repository's /world-local page; the acceptance driver only reads it.",
+  "product": {
+    "page": "/world-local",
+    "pageFile": "frontend/src/app/world-local/page.tsx",
+    "worktree": ".",
+    "branch": "agent",
+    "commit": "801f5524",
+    "url": "http://127.0.0.1:3177/world-local",
+    "port": 3177,
+    "start": {
+      "frontendDev": {
+        "cwd": "frontend",
+        "command": "npm run dev -- --port 3177",
+        "url": "http://127.0.0.1:3177/world-local"
+      }
+    },
+    "notes": [
+      "The page works with every /api/** request refused: saves stay in IndexedDB (--block-api).",
+      "COOP/COEP are served by next.config for /world-local; the driver records crossOriginIsolated.",
+      "Models are fetched by frontend/scripts/fetch-models.mjs and served from frontend/public/models/."
+    ]
+  },
+  "models": {
+    "semantic": {
+      "file": "Qwen3-0.6B-Q4_K_M.gguf",
+      "sourceSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+      "bytes": 396705472,
+      "license": "Apache-2.0"
+    },
+    "narration": {
+      "file": "Qwen3-1.7B-Q4_K_M.gguf",
+      "sourceSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+      "bytes": 1107409472,
+      "license": "Apache-2.0"
+    }
+  },
+  "stateAuthority": {
+    "applyMergeCommitReplay": "frontend/src/lib/world-engine/local/{state,transport,schedule,controller,session}.ts",
+    "modelPorts": "frontend/src/lib/world-engine/local/game-model.ts + page.tsx"
+  }
+}

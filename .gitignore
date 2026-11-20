@@ -307,3 +307,6 @@ frontend/artifacts/
 
 # === Private presentations (never tracked) ===
 *.pptx
+
+# Local inference lease lock (resource_lease.py)
+/resources/

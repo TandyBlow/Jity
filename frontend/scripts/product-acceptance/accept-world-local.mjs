@@ -31,7 +31,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { acquireLease } from './lease.mjs';
 
-const require = createRequire(resolve('package.json'));
+const require = createRequire(new URL('../../package.json', import.meta.url));
 const { chromium } = require('@playwright/test');
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -65,7 +65,8 @@ if (!preflightOnly && (!Array.isArray(turns) || turns.length === 0)) {
 }
 
 // The integrator's contract. Without it there is no product to accept.
-const integrationPath = resolve(here, '../../../../../results/product/integration.json');
+const repoRoot = resolve(here, '../../..');
+const integrationPath = resolve(repoRoot, 'results/product/integration.json');
 let integration = null;
 if (existsSync(integrationPath)) {
   integration = JSON.parse(readFileSync(integrationPath, 'utf8'));
@@ -293,8 +294,8 @@ try {
     turnEvidenceAvailable: Array.isArray(globalThis.__worldTurns),
   })).catch(() => ({ turnEvidenceAvailable: false }));
   try {
-    const rootDir = resolve(here, '../../../../..');
-    const declared = integration?.product?.worktree ?? 'worktrees/06-recovery';
+    const rootDir = repoRoot;
+    const declared = integration?.product?.worktree ?? '.';
     const productWorktree = existsSync(resolve(declared, 'frontend'))
       ? resolve(declared)
       : resolve(rootDir, declared);
