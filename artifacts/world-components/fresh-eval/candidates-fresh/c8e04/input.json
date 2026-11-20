@@ -1,0 +1,115 @@
+{
+ "packVersion": 3,
+ "pointId": "point_36",
+ "worldId": "world_30",
+ "stateDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452",
+ "timeAdvance": {
+  "amount": 30,
+  "unit": "second"
+ },
+ "perspective": {
+  "type": "protagonist",
+  "entityId": "fe_wen",
+  "at": "砾脊校准间",
+  "atPath": [
+   "fy_cal",
+   "fy_yard"
+  ]
+ },
+ "mustExpress": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "actorKind": "character",
+   "name": "闻澈岑",
+   "fromId": "fy_pump",
+   "from": "玄藻泵舱",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position",
+   "factId": "fe_wen:position",
+   "n2Class": "must",
+   "n2Ground": "self-position",
+   "n2Reason": "视角人物自己的位置变化，必述",
+   "expression": "must",
+   "requirementSource": "n2-must"
+  },
+  {
+   "kind": "moved_entity",
+   "phase": "change",
+   "entityId": "fi_gauge",
+   "actor": "fi_gauge",
+   "actorKind": "item",
+   "name": "瓷铯量规",
+   "fromId": "fy_cal",
+   "from": "砾脊校准间",
+   "fromKind": "location",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "toKind": "location",
+   "holderChanged": false,
+   "relativeTo": {
+    "entityId": "fe_nie",
+    "name": "聂汀穗",
+    "relation": "beside"
+   },
+   "fieldPath": "state.items.fi_gauge.position",
+   "factId": "fi_gauge:position",
+   "n2Class": "may",
+   "n2Ground": "co-location",
+   "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+   "expression": "must",
+   "requirementSource": "scenario-requirement"
+  }
+ ],
+ "mayMention": [],
+ "currentState": [
+  {
+   "entityId": "fe_nie",
+   "name": "聂汀穗",
+   "kind": "at",
+   "value": "砾脊校准间"
+  },
+  {
+   "entityId": "fe_wen",
+   "name": "闻澈岑",
+   "kind": "sanity",
+   "value": 43
+  },
+  {
+   "entityId": "fe_wen",
+   "name": "闻澈岑",
+   "kind": "task_pending",
+   "value": "核验瓷铯量规的双区刻度"
+  },
+  {
+   "entityId": "fe_wen",
+   "name": "闻澈岑",
+   "kind": "task_pending",
+   "value": "登记量规右区的第三条刻线"
+  },
+  {
+   "entityId": "fe_wen",
+   "name": "闻澈岑",
+   "kind": "task_pending",
+   "value": "更换绛纹阀芯上的锆丝封签"
+  },
+  {
+   "entityId": "fe_yu",
+   "name": "郁棠序",
+   "kind": "at",
+   "value": "苔铎栈桥"
+  }
+ ],
+ "playerInstruction": null,
+ "rules": {
+  "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+  "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+  "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+  "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+ },
+ "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+}

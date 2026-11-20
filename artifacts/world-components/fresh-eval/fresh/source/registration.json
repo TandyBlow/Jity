@@ -1,0 +1,22 @@
+{
+ "id": "c8-eval-geothermal-v1",
+ "status": "registered-before-service-creation",
+ "createdUtc": "2026-11-08T07:55:58.132062+00:00",
+ "author": "Codex in this user-authorized C8 session",
+ "purpose": "evaluation-only",
+ "sourceKind": "newly-authored-synthetic-registered-fixture",
+ "trainingOrTuningUse": "none in this session; not supplied to tuning agents",
+ "isR01ModelOutput": false,
+ "isRealPlayerTranscript": false,
+ "humanReviewer": "user (identity/date/conclusions pending)",
+ "auditSha256": "10bc32d7fd5786eb3badb7135a66d694bf0e081fbeac4ed7d18eea5861e66cc4",
+ "protocolSha256": "49823c3016f18cc77bacd9681135af302d64ef9b6a15280a08a37133d5b5a994",
+ "templateSha256": "241fde2bf18a8215db232a780ee69f41864efc487c6a33fb1e26be92fdd11ae2",
+ "specsSha256": "10d3c0fabc34b2f2320e9248e5275d1b7e449a9d68987147c649e6efa202c28e",
+ "generatorSha256": "9319147218963855accb0a4be84017dd4cd44697bdda4fe98ebc71997f1ec6a8",
+ "parentC8Commit": "7706026bb1449ef22804221b9f9081efe7682955",
+ "authorityCommit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
+ "python": "3.11.15 (main, Jun 23 2026, 15:20:37) [MSC v.1944 64 bit (AMD64)]",
+ "device": "Windows-10-10.0.26200-SP0",
+ "modelCalls": 0
+}
