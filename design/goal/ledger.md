@@ -1,0 +1,102 @@
+# Jity Goal v11 能力账本（R01–R16）
+
+状态：active。日期：2026-11-20。基线：`agent@695e6bd4`。
+
+本文是 R01–R16 的唯一状态来源。旧文档里的「已有」「已验收」只作来源记录，状态以本表为准。
+
+## 1. 状态词表
+
+| 状态 | 判定 |
+|---|---|
+| 未实现 | 没有产品路径代码，或只有设计文档 |
+| 实现中 | 有代码，但真实模型、真实页面或恢复证据不完整 |
+| 固定输出通过 | 仅夹具、脚本、规则或模板通过，不能证明模型能力 |
+| 真实模型部分通过 | 真实模型跑过部分场景，仍有未覆盖分支 |
+| 真实模型按范围通过 | 指定范围内真实模型、页面与证据齐全，范围写明 |
+
+规则：
+
+- 机制存在不等于能力完成；函数名叫 `generate` 不等于调用过模型。
+- 固定输出、模板、规则通过只能记「固定输出通过」，不能记「真实模型通过」。
+- 每行必须有代码路径、证据、缺口、归属 G 线；没有证据就写「待 Gx 复核」，不编测试结果。
+
+## 2. R01–R16 主表
+
+| 编号 | 能力 | 状态 | 代码路径@695e6bd4 | 证据 | 缺口 / 归属 |
+|---|---|---|---|---|---|
+| R01 | 开局固定地点、物品、人物；运行中只更新登记实体；允许在既有大任务下新增小任务 | 实现中 | `local/world-loader.ts`、`local/static-world-registration.ts`、`local/state.ts:83` | `world-loader.test.ts`、`state.test.ts`；`data/worlds/README.md`；摘要 `3f65452d…` / `6262d5fc…` | 真实模型引用未知实体、非法新实体的正反例；未知实体不能靠叙事变成事实。G2/G5 |
+| R02 | 地点嵌套、人物/物品容纳与相对位置；自然语言外貌、任务、个性、理智 | 实现中 | `local/state.ts`、`types.ts`、`world-loader.ts` | 静态世界 26 地点/14 人物/74 物品/73 任务；state 测试 | 嵌套移动、物品移动、地点外貌、相对位置的真实模型场景与页面展示。G2/G5/G6 |
+| R03 | 初始外貌与个性不改写；变化保留历史；位置结构化 | 实现中 | `local/state.ts` 的 initial/current、`pointEntityDeltas` | state 测试；静态世界 README | 真模型合法变化、替代引用、原文保留、纯解除分支。G5 |
+| R04 | 世界事实由 S₀＋Δ 构成；状态/摘要/检查点可重建 | 实现中 | `state.ts:83/906/952`、`canonical.ts`、`history.ts`、`persistence/` | `state.test.ts`、`history.test.ts`、`session-recovery.test.ts`；旧 Python/SQLite H2 是独立冻结范围 | Python–TS 冻结差分向量；缓存与模型切换不能改变事实来源。G2 |
+| R05 | 同点同实体合并为一份增量 | 实现中 | `state.ts` 的 `applyPoint` 合并、`transport.ts` 的 work 记录 | state、local-transport 测试 | 真实多组与连续阶段的最终投影一致。G2/G5 |
+| R06 | 非关联新轮按理智排序；关联点沿用冻结顺序 | 实现中 | `controller.ts`、`schedule.ts`、`local/session.ts` | controller、schedule 测试 | 真实多人物行动与续轮、逐人判断、重排、关联顺序不变。G2/G5 |
+| R07 | 骰点驱动被迫行动准入；先冻结全组再统一结算 | 实现中；真实模型未验 | `local/transport.ts` 的 group/work、`turn-execution/`、`controller.ts` | turn-execution 测试；旧脚本候选只作对照 | 模型分析目标、生成反应与共同结果；多级、未准入、环、已冻结成员；不以脚本文本代替。G5 |
+| R08 | 已行动人物不重复行动；后续骰点仍影响攻击者结果 | 实现中 | `local/transport.ts` 的 `actedIds`/round、`turn-execution/` | transport、turn-execution、recovery 测试 | 真实模型组场景；恢复不重掷、不重采样。G2/G5 |
+| R09 | 位置→外貌→任务→新增小任务→个性→理智；任务与个性全人物覆盖 | 实现中 | `local/state.ts` 的阶段 apply、`turn-execution/`、`game-model.ts` | state 测试；旧六阶段 preview 只作参考 | 真模型候选按依赖逐阶段；任务扫描全人物；任务达成后个性扫描全人物；允许合法不变化。G5 |
+| R10 | 仅由大概率发生且与主角关联的后续行动触发自动推进 | 实现中 | `controller.ts`、`schedule.ts`、`local/session.ts` | controller 测试；旧固定 handback 只作对照 | 真模型 continue/handback；多轮不重复消费输入；预算暂停不伪装 handback。G5 |
+| R11 | 每点只读叙事；可省略/暗示/隐藏秘密；不虚构已结算事实 | 实现中；raw-output 边界已定 | `local/point-narration/`、`narration-input/`、`narration-generation/`、`narration-candidates/` | `design/parallel-handoff/01-quality.md:279`（2026-11-11 原样输出）、`02-narration.md`；旧 B3/叙事实验只作参考 | 产品路径正文逐字等于模型返回；20+ 点无硬事实错误；视角/秘密/选择。G6 |
+| R12 | 不另维护人物知识状态；模型从当前世界判断认知 | 实现中 | 无独立知识库；叙事只读已提交状态 | `architecture.md` 第 6 节；local 目录无 knowledge store | 确认提示/模型无隐藏知识真值库；可见性投影规则。G6 |
+| R13 | 行动描述仅作本次分析；不建长期行动历史 | 实现中 | `local/transport.ts` 的 `actionTexts`、`persistence/` 快照、`history.ts` | transport、persistence 测试 | 原文只按工作态生命周期保存；调试归档与世界存档分开。G2/G4 |
+| R14 | 工作职责不等于模型数或调用数 | 实现中 | `game-model.ts` 的 options、`controller.ts` 的 `ModelTask`、`schedule.ts` | `architecture.md` 第 6 节；模型变体清单 | 按质量/成本选择单/多模型；记录每任务贡献。G3/G6 |
+| R15 | 开局生成 | 已改写：静态载入/校验/封存，实现中 | `world-loader.ts`、`static-world-registration.ts`、`data/worlds/` | loader/registration 测试；摘要与计数；2026-11-10 用户澄清 | 静态世界供给与 held-out 决定；开局校验与页面。G1/G2/G4 |
+| R16 | 小世界完整可玩；≥20 输入；自动链、共同结算、恢复、历史、删叙事重生 | 未实现 | `world-local/page.tsx`、`frontend/scripts/product-acceptance/accept-world-local.mjs`、`turns-10.json` | 10 轮驱动已存在；没有 20 输入真实模型通过记录 | 20 输入、离线、服务器关闭、两设备分叉、用户签字。G8 |
+
+## 3. R15 改写说明
+
+原 R15 要求分批生成初始实体、描述、任务、个性和理智，确认后封存。用户 2026-11-10 明确：初始世界来自预置静态文件，开局只读取、校验并封存，不动态生成世界。因此本版 R15 的交付是：
+
+- 静态 `WorldState`/`WorldInitialState` 文件；
+- 严格加载、实体/位置/任务/个性/理智引用校验；
+- 从 `initial` 重建 S₀；
+- `stateDigest`、`fileSha256Lf`、`initialDigest` 登记与不一致拒绝；
+- 页面只加载已登记资产。
+
+动态生成、草稿修订、生成训练不在本版范围。
+
+## 4. G1–G8 状态摘要
+
+| 目标线 | 状态 | 说明 |
+|---|---|---|
+| G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
+| G2 浏览器状态内核收口 | 未开始 | 32 操作定案、差分向量、restore/invariants、骰点恢复 |
+| G3 模型资产与时间包线 | 未开始；执行顺序第一 | 先测 60/300；未通过不带病进 G4/G8 |
+| G4 单机可玩页面接线 | 未开始 | pause/resume/history/delete/regenerate/e2e |
+| G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景 |
+| G6 叙事产品路径与质量 | 未开始 | raw-output 冻结、20+ 点读评 |
+| G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链 |
+| G8 交付验收与证据 | 未开始 | 20 输入、manifest、用户签字 |
+
+## 5. 开放任务
+
+按 G 线列，作为唯一进度来源；不另建 progress 文档。
+
+- **G1**：确认文档集与 tag；向用户发一次性决策请求；未答项标 `pending-user`。
+- **G2**：定案 `checkpoint_restore_group_work`、`get_context.recovery:null`；生成 Python 冻结差分向量；接 `state-invariants` 到 restore；补 linked/instant successor time；冻结骰点协议；补多标签/刷新/重复提交/取消恢复测试。
+- **G3**：取得或重建语义/叙事 GGUF 与 tokenizer；写 sha256/bytes/license/获取方式；目标设备 3 次冷启动 + 10 个真实点；产 `timing-baseline.json`；不达标改模型/调度并复测。
+- **G4**：接 `LocalGameSession.pause()/resume()`、HistoryPanel、`narration_delete`、状态/进度、错误/重试、刷新恢复、租约提示；用 components/world-local；加 `world-local.spec.ts`；清理过期注释；修 `position_invalid`、`turn_in_progress`、自动轮重复、空占位回合。
+- **G5**：建 12–20 例冻结场景；每任务记录原始输出/结构/语义错误/重试/耗时；独立复核；产 `artifacts/goal/semantics/`。
+- **G6**：冻结 raw-output 产品路径；核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5；20+ 点读评；产 `artifacts/goal/narration/`。
+- **G7**：接 `sync.restore()`/`choose()`；离线队列、重连 flush、CAS/父链/修订号；两设备分叉；产 `artifacts/goal/sync/`。
+- **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
+
+## 6. 证据索引
+
+当前可作为来源的：
+
+- `artifacts/world-page/`：`/world` 552148c 验收，历史参考。
+- `artifacts/a3-2-signoff-d1d2de0.md`、`artifacts/h2-freeze-d1d2de0.json`、`artifacts/h2-integration-d1d2de0/`：H2/A3-2 冻结范围，独立有效，不作浏览器本地验收。
+- `artifacts/narration-eval/`：叙事批次记录，历史参考。
+- `artifacts/world-components/`：组件/模型实验，历史参考。
+- `docs/tasks/full-merge-20261120.md`：合并记录；backend 1470 passed、frontend 602 passed / 17 skipped 是当时的记录，不是本版重跑结果。
+
+G1 之后新增：
+
+- `artifacts/goal/timing-baseline.json`
+- `artifacts/goal/kernel-diff.json`、`kernel-ops.md`
+- `artifacts/goal/semantics/`
+- `artifacts/goal/narration/`
+- `artifacts/goal/sync/`
+- `artifacts/local-game-delivery/manifest.json`
+- `design/world-engine-reports/local-game-acceptance.md`
+
+大文件、权重、原始日志不入 git；在仓库内保存清单、哈希、取得方法与必要证据。
