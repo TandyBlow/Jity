@@ -1,0 +1,325 @@
+{
+ "boundary-confirm40": [
+  {
+   "unitId": "b101",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "帽檐沾了泥",
+   "text": "沈砚的帽檐沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b102",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "帽檐落着灰",
+   "text": "沈砚的帽檐落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b103",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "帽檐冻得发僵",
+   "text": "沈砚的帽檐冻得发僵,袖口发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b104",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "帽檐蹭破了皮",
+   "text": "沈砚的帽檐蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b105",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "围巾湿了",
+   "text": "沈砚的围巾湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b106",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "围巾沾了泥",
+   "text": "沈砚的围巾沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b107",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "围巾落着灰",
+   "text": "沈砚的围巾落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b108",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "围巾冻得发僵",
+   "text": "沈砚的围巾冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b109",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "围巾蹭破了皮",
+   "text": "沈砚的围巾蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b110",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "腰侧湿了",
+   "text": "沈砚的腰侧湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b111",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "腰侧沾了泥",
+   "text": "沈砚的腰侧沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b112",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "腰侧结了盐霜",
+   "text": "沈砚的腰侧结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "b113",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "腰侧冻得发僵",
+   "text": "沈砚的腰侧冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b114",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "腰侧蹭破了皮",
+   "text": "沈砚的腰侧蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b115",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "发梢湿了",
+   "text": "沈砚的发梢湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b116",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "发梢沾了泥",
+   "text": "沈砚发梢沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b117",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "发梢落着灰",
+   "text": "沈砚的发梢落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b118",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "发梢冻得发僵",
+   "text": "沈砚的发梢冻得发僵,发梢发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b119",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "发梢蹭破了皮",
+   "text": "沈砚的发梢蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b120",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "掌心湿了",
+   "text": "沈砚的掌心湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b121",
+   "factId": null,
+   "name": "叶知微",
+   "expected": "下摆落着灰，膝盖也落着灰",
+   "text": "叶知微下摆落着灰,膝盖也落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b122",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "指尖冻得发僵，腰侧也冻得发僵",
+   "text": "阿棠的指尖冻得发僵,腰侧也冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b123",
+   "factId": null,
+   "name": "韩渡",
+   "expected": "膝盖蹭破了皮，耳后也蹭破了皮",
+   "text": "韩渡的膝盖蹭破了皮,耳后也蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b124",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "腰侧湿了，前襟也湿了",
+   "text": "沈砚的腰侧湿了,前襟也湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b125",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "耳后沾了泥，下摆也沾了泥",
+   "text": "顾行舟的耳后沾了泥,下摆也沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b126",
+   "factId": null,
+   "name": "叶知微",
+   "expected": "前襟结了盐霜，指尖也结了盐霜",
+   "text": "叶知微的前襟结了盐霜,指尖也结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "b127",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "下摆落着灰，膝盖也落着灰",
+   "text": "阿棠的下摆落着灰,膝盖也落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b128",
+   "factId": null,
+   "name": "韩渡",
+   "expected": "指尖冻得发僵，腰侧也冻得发僵",
+   "text": "韩渡的指尖冻得发僵,腰侧也冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b129",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "膝盖蹭破了皮，耳后也蹭破了皮",
+   "text": "沈砚的膝盖蹭破了皮,耳后也蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b130",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "腰侧湿了，前襟也湿了",
+   "text": "顾行舟的腰侧湿了,前襟也湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b131",
+   "factId": null,
+   "name": "叶知微",
+   "expected": "耳后沾了泥，下摆也沾了泥",
+   "text": "叶知微的耳后沾了泥,下摆也沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b132",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "前襟结了盐霜，指尖也结了盐霜",
+   "text": "阿棠的前襟结了盐霜,指尖也结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "b133",
+   "factId": null,
+   "name": "韩渡",
+   "expected": "下摆落着灰，膝盖也落着灰",
+   "text": "韩渡下摆落着灰,膝盖也落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b134",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "指尖冻得发僵，腰侧也冻得发僵",
+   "text": "沈砚的指尖冻得发僵,腰侧也冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "b135",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "膝盖蹭破了皮，耳后也蹭破了皮",
+   "text": "顾行舟的膝盖蹭破了皮,耳后也蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "b136",
+   "factId": null,
+   "name": "叶知微",
+   "expected": "腰侧湿了，前襟也湿了",
+   "text": "叶知微的腰侧湿了,前襟也湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "b137",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "耳后沾了泥，下摆也沾了泥",
+   "text": "阿棠的耳后沾了泥,下摆也沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "b138",
+   "factId": null,
+   "name": "韩渡",
+   "expected": "前襟结了盐霜，指尖也结了盐霜",
+   "text": "韩渡的前襟结了盐霜,指尖也结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "b139",
+   "factId": null,
+   "name": "沈砚",
+   "expected": "下摆落着灰，膝盖也落着灰",
+   "text": "沈砚下摆落着灰,膝盖也落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "b140",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "指尖冻得发僵，腰侧也冻得发僵",
+   "text": "顾行舟的指尖冻得发僵,腰侧也冻得发僵。",
+   "complete": true
+  }
+ ],
+ "wallSeconds": 4.7
+}

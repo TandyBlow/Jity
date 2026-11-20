@@ -1,0 +1,34 @@
+{
+  "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "worldId": "world_89",
+  "rootId": "root_91",
+  "pointA": {
+    "id": "point_95",
+    "previousPointId": "root_91",
+    "elapsedSeconds": 2,
+    "deltas": [
+      "person_a"
+    ]
+  },
+  "pointB": {
+    "id": "point_101",
+    "previousPointId": "point_95",
+    "elapsedSeconds": 3,
+    "deltas": [
+      "person_b"
+    ]
+  },
+  "evidenceRefs": [
+    {
+      "pointId": "point_95",
+      "evidenceId": "point_95/person_a/appearance/change_97",
+      "text": "袖口沾了雨"
+    },
+    {
+      "pointId": "point_101",
+      "evidenceId": "point_101/person_b/appearance/change_103",
+      "text": "斗篷下摆湿了一片"
+    }
+  ],
+  "beforeAuthorized": true
+}

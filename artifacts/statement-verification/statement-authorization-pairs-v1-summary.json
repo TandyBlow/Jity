@@ -1,0 +1,58 @@
+{
+  "version": "statement-authorization-pairs-v1",
+  "created": "2026-11-05",
+  "rows": 20,
+  "supported": 10,
+  "unsupported": 10,
+  "distinctSources": 20,
+  "subjectStatus": {
+    "explicit": 5,
+    "recovered": 11,
+    "unresolved": 4
+  },
+  "gapTypes": [
+    "extra-action",
+    "missing-state",
+    "negative-state",
+    "object-mismatch",
+    "position-relation",
+    "result-state"
+  ],
+  "evidenceItemCounts": {
+    "U01": 16,
+    "U02": 16,
+    "U03": 14,
+    "U04": 7,
+    "U05": 7,
+    "U06": 7,
+    "U07": 7,
+    "U08": 14,
+    "U09": 14,
+    "U10": 15,
+    "L01": 3,
+    "L02": 2,
+    "L03": 14,
+    "L04": 15,
+    "L05": 3,
+    "L06": 3,
+    "L07": 16,
+    "L08": 20,
+    "L09": 14,
+    "L10": 14
+  },
+  "sha256": "62b2b803003a4d46afe5de04ae5ec81829c3304eebff0ee0a2def530c1d64282",
+  "auditProblems": [],
+  "notSameAsBinaryExperiment": true,
+  "differencesFromBinaryExperiment": [
+    "judgment unit is a single explicit statement, not the whole paragraph",
+    "evidence is a fixed related package; retrieval is removed as a variable",
+    "subject is a field with explicit/recovered/unresolved, not inferred by the model",
+    "output is gap type + verdict, not one binary score"
+  ],
+  "noTraining": true,
+  "noRetrieval": true,
+  "noNewTemplates": true,
+  "sourceStatus": "not_implemented",
+  "service": false,
+  "autoDelete": false
+}

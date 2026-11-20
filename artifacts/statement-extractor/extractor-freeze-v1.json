@@ -1,0 +1,39 @@
+{
+  "version": "statement-extractor-freeze-v1",
+  "created": "2026-11-05",
+  "protocol": "artifacts\\statement-extractor\\extractor-training-protocol-v1.json",
+  "protocolSha256": "ca03b2bd1e57892c372566171674896e7af26702a3ef460b12784b04c7fb5f1f",
+  "materialSha256": "ae45ef2c5b557d42b58bdcd4d7b8cd577ddbe7edae37a63f05fea55d64952562",
+  "regressionSha256": "abc8512591c5983725ed3bd12abaf19663472eb10f4367493e9d51dac132731b",
+  "counts": {
+    "train": 50,
+    "dev": 20,
+    "test": 10,
+    "regressionSources": 20,
+    "trainStatements": 52,
+    "devStatements": 30,
+    "testStatements": 11,
+    "regressionStatements": 95,
+    "unresolvedTraining": 0
+  },
+  "budget": {
+    "updates": 300,
+    "batch": 8,
+    "lr": 0.0001,
+    "seed": 20261104,
+    "evalEvery": 25,
+    "maxInput": 256,
+    "maxOutput": 256,
+    "earlyStop": false,
+    "modelSweep": false,
+    "ratioSearch": false,
+    "epochs": null
+  },
+  "devSelection": {
+    "primary": "statement span-set F1 (exact normalized spans)",
+    "secondary": "subjectStatusAccuracy on matched statements",
+    "tertiary": "JSON valid rate",
+    "tie": "earliest step",
+    "threshold": null
+  }
+}
