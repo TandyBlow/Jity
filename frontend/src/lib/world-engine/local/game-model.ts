@@ -1208,7 +1208,7 @@ interface Beat {
   text: string;
 }
 
-interface BeatResult extends Beat {}
+type BeatResult = Beat;
 
 function beatPrompt(name: string, beat: Beat): string {
   return [
