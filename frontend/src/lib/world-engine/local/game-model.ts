@@ -164,7 +164,9 @@ export class LocalGameModel implements WorldModelPort {
       // The appearance stage measures 7877 chars on the shipped world; a retry
       // with feedback is ~7970. The guard must leave room for the repair while
       // still refusing a runaway prompt (lane 04's measured numbers).
-      maxPromptChars: 11_000,
+      // 11,600 admits the measured settlement prompt (11,578) plus the repair
+      // feedback; the engine context is 12,288 tokens.
+      maxPromptChars: 11_600,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null

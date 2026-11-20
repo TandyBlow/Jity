@@ -731,11 +731,11 @@ try {
         if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
         // A submit can be refused synchronously (e.g. progress_conflict): the
         // page shows 本轮停止 and no narration will ever stream. Waiting out the
-        // full turn budget would misreport a 300 s timeout. The line must belong
-        // to this turn: a previous turn's stop/note is still on screen while the
-        // new submit starts (2026-11-20: turn 5 ended in 145 ms on turn 4's note).
+        // full turn budget would misreport a 300 s timeout. The line must be new
+        // since this submit start; a previous turn's identical line is stale.
         const newEntry = sample.count > beforeCount;
-        if (newEntry && sample.done && /本轮停止/.test(sample.doneText ?? '')) break;
+        const stopLine = sample.doneText ?? '';
+        if (stopLine && /本轮停止/.test(stopLine) && (newEntry || !beforeBody.includes(stopLine))) break;
         // A recoverable settlement failure is a stopped turn too: the page keeps
         // the history and asks for a retry, so waiting 330 s would misreport it
         // as a timeout and as empty prose.

@@ -495,6 +495,12 @@ export class ControllerDriver {
           this.nextRequestId();
           return undefined;
         }
+        if (!outcome.ok) {
+          // Name the operation behind a terminal stop; the reason alone cannot
+          // tell a malformed conclude from a malformed successor prep.
+          const reason = outcome.terminal && 'reason' in outcome.terminal ? outcome.terminal.reason : null;
+          console.info('[world-local transport]', JSON.stringify({ operation: decision.operation, reason }));
+        }
         return outcome.terminal ? this.settleNarration(outcome.terminal) : undefined;
       }
     }

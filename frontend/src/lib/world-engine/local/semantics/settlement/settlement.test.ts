@@ -681,7 +681,7 @@ describe('common-group results', () => {
     const prompt = engine.prompts[0];
     expect(prompt).toContain('没有变化的人物不要写');
     expect(prompt).not.toContain('"unchanged":[');
-    expect(prompt).toContain('"achieved":[{"characterId":"<人物id>"');
+    expect(prompt).toContain('"achieved":[{"characterId":"a"');
     // The model asserted one change and said nothing about the other owner; the
     // reader must apply unchanged instead of failing coverage, and record it.
     const detail = outcome.evidence.detail as {

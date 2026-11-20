@@ -1762,6 +1762,8 @@ function buildTasksPrompt(
       '规则：',
       '- achieved 只列本轮**新达成**的任务；没有达成任何任务就输出空数组。没有变化的人物不要写，程序默认他们不变。',
       '- 每个任务写成 {"characterId":"人物id","tasks":[{"taskId":"t1","basis":"f1"}]}：taskId 逐字复制该人物行开头的编号，basis 引用本轮结算结果里的 f1、f2…；只有目标确实由时间推移直接触发时才可写 basis: "time"。',
+      '- characterId 必须是人物 id（如 lu、fingel），不能写 f1 这类事实编号；f1 只能出现在 basis 里。',
+      '- 同一人物只能出现一次，不要在 achieved 里写两遍。',
       '- 只有结算结果明确表明目标条件已经满足，才列入 achieved；尝试、接近、部分完成、被制止、行动成功但目标未满足，都留空。',
       '- 一条事实只能用来达成它自己那位人物的任务：f1 是第一个人物的结果，只能写那个人物；除非事实正文里明确写了另一个人的名字，才可以写那个人。',
       '- 只有结算结果里明确提到该人物的事实，才可列入 achieved；不能因为时间过去就替不在场人物完成任务。',
@@ -1772,8 +1774,8 @@ function buildTasksPrompt(
       '- 没有新的具体目标就输出空数组，不要为了凑数量新增。',
       '人物和任务：',
       ...rows,
-      '输出格式（尖括号里换成真实值；没有达成就是空数组）：',
-      '{"achieved":[{"characterId":"<人物id>","tasks":[{"taskId":"<任务编号，如 t1>","basis":"<依据，如 f1>"}]}],"subtasks":[]}',
+      `输出格式（尖括号里换成真实值；没有达成就是空数组）：`,
+      `{"achieved":[{"characterId":"${required[0] ?? 'lu'}","tasks":[{"taskId":"t1","basis":"f1"}]}],"subtasks":[]}`,
     ].join(String.fromCharCode(10));
   }
   return [
@@ -1782,6 +1784,8 @@ function buildTasksPrompt(
     `下面只列本轮可能受影响的人物和任务（${required.length} 人）；程序已按依赖投影保留其余 ${projection.unaffectedTasks.length} 条任务，未列出的人物/任务不需要判断，也不要为它们写 unchanged。`,
     '规则：',
     '- 每个列出的人物必须出现一次：没有变化的放进 unchanged（人物 id 或全名），有变化的放进 achieved；不能只写其中一部分，也不能两边都写。',
+    '- characterId 必须是人物 id（如 lu、fingel），不能写 f1 这类事实编号；f1 只能出现在 basis 里。',
+    '- 同一人物只能出现一次，不能在 achieved 里写两遍。',
     '- achieved 只列本轮新达成的任务编号（每行开头的 t1、t2…）；该人物其余任务保持原状，不要逐条输出 pending。',
     '- 没有新达成就写空数组；已完成的任务保持 achieved，不能改回 pending，也不要在 achieved 里重复列出。',
     '- 只有结算结果明确表明目标已经达成，才列入 achieved；只是尝试、接近、部分完成、被制止，都保持原状。',
@@ -1821,6 +1825,20 @@ interface TaskDecisionRead {
  * in evidence. In product mode every new achievement must also cite the settled
  * fact it rests on (f1.. or time); a known task id alone is not proof of goal
  * satisfaction. */
+/** A small model sometimes writes the whole row object into characterId
+ * (`{"characterId":"fingel",...`), or a truncated fragment of it. Recover the
+ * intended id deterministically; anything else stays as written. */
+function repairTaskCharacterId(raw: string): string {
+  const text = raw.trim();
+  if (!text.startsWith('{')) return raw;
+  try {
+    const parsed = JSON.parse(text) as { characterId?: unknown };
+    if (typeof parsed.characterId === 'string') return parsed.characterId;
+  } catch { /* truncated fragment */ }
+  const match = /"characterId"\s*:\s*"([^"]+)"/u.exec(text);
+  return match?.[1] ?? raw;
+}
+
 function readTaskDecisions(
   value: unknown,
   state: WorldState,
@@ -1846,7 +1864,7 @@ function readTaskDecisions(
   if (Array.isArray(payload.decisions)) {
     decisions = payload.decisions.map((raw): Row => {
       if (!isRecord(raw)) throw new Error('decision must be an object');
-      const characterId = asString(raw.characterId);
+      const characterId = repairTaskCharacterId(asString(raw.characterId));
       if (!Array.isArray(raw.achieved)) throw new Error(`achieved must be an array for ${characterId}`);
       return { characterId, entries: raw.achieved.map((item) => ({ taskId: asString(item) })) };
     });
@@ -1864,7 +1882,7 @@ function readTaskDecisions(
     }
     for (const row of achievedRows as unknown[]) {
       if (!isRecord(row)) throw new Error('achieved entries must be objects');
-      const characterId = asString(row.characterId);
+      const characterId = repairTaskCharacterId(asString(row.characterId));
       if (!characterId) throw new Error('achieved entry needs characterId');
       if (named.has(characterId)) throw new Error(`character ${characterId} appears in both unchanged and achieved`);
       named.add(characterId);
