@@ -1,0 +1,232 @@
+{
+  "version": "statement-extractor-run-manifest-v1",
+  "created": "2026-11-05",
+  "selected": {
+    "step": 75,
+    "dev": {
+      "n": 20,
+      "goldStatements": 30,
+      "predStatements": 20,
+      "matched": 12,
+      "precision": 0.6,
+      "recall": 0.4,
+      "f1": 0.48,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 12
+    }
+  },
+  "budget": {
+    "updates": 300,
+    "batch": 8,
+    "lr": 0.0001,
+    "seed": 20261104,
+    "evalEvery": 25,
+    "maxInput": 256,
+    "maxOutput": 256,
+    "earlyStop": false,
+    "modelSweep": false,
+    "ratioSearch": false
+  },
+  "data": 50,
+  "dataCounts": {
+    "train": 50,
+    "dev": 20,
+    "test": 10,
+    "regressionSources": 20
+  },
+  "dev": {
+    "model": {
+      "n": 20,
+      "goldStatements": 30,
+      "predStatements": 20,
+      "matched": 12,
+      "precision": 0.6,
+      "recall": 0.4,
+      "f1": 0.48,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 12
+    },
+    "baseline": {
+      "n": 20,
+      "goldStatements": 30,
+      "predStatements": 40,
+      "matched": 20,
+      "precision": 0.5,
+      "recall": 0.6666666666666666,
+      "f1": 0.5714285714285715,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 20
+    }
+  },
+  "test": {
+    "model": {
+      "n": 10,
+      "goldStatements": 11,
+      "predStatements": 10,
+      "matched": 10,
+      "precision": 1.0,
+      "recall": 0.9090909090909091,
+      "f1": 0.9523809523809523,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 10
+    },
+    "baseline": {
+      "n": 10,
+      "goldStatements": 11,
+      "predStatements": 11,
+      "matched": 11,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 11
+    }
+  },
+  "regressionA0": {
+    "model": {
+      "n": 20,
+      "goldStatements": 95,
+      "predStatements": 19,
+      "matched": 9,
+      "precision": 0.47368421052631576,
+      "recall": 0.09473684210526316,
+      "f1": 0.15789473684210525,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 9
+    },
+    "baseline": {
+      "n": 20,
+      "goldStatements": 95,
+      "predStatements": 97,
+      "matched": 93,
+      "precision": 0.9587628865979382,
+      "recall": 0.9789473684210527,
+      "f1": 0.96875,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 93
+    }
+  },
+  "focus": {
+    "test": {
+      "negation": [
+        0,
+        0
+      ],
+      "continuation": [
+        0,
+        0
+      ],
+      "location": [
+        0,
+        0
+      ],
+      "multiSpan": [
+        0,
+        0
+      ]
+    },
+    "regressionA0": {
+      "negation": [
+        3,
+        0
+      ],
+      "continuation": [
+        1,
+        0
+      ],
+      "location": [
+        2,
+        0
+      ],
+      "multiSpan": [
+        2,
+        2
+      ]
+    }
+  },
+  "result": "not passed; baseline dominates; model only wins two same-state 也 multi-span statements; added second clause missed",
+  "sourceStatus": "not_implemented",
+  "sourceHead": false,
+  "service": false,
+  "autoDelete": false,
+  "files": {
+    "material": {
+      "path": "artifacts/statement-extractor/material-v1.jsonl",
+      "sha256": "ae45ef2c5b557d42b58bdcd4d7b8cd577ddbe7edae37a63f05fea55d64952562"
+    },
+    "materialFreeze": {
+      "path": "artifacts/statement-extractor/material-v1-freeze.json",
+      "sha256": "22451695d0c419c20b07f62b6a4936562dda0e6ce115218ad9344060af1402ed"
+    },
+    "regression": {
+      "path": "artifacts/statement-extractor/regression-a0-v1.jsonl",
+      "sha256": "abc8512591c5983725ed3bd12abaf19663472eb10f4367493e9d51dac132731b"
+    },
+    "regressionFreeze": {
+      "path": "artifacts/statement-extractor/regression-a0-v1-freeze.json",
+      "sha256": "be02169ae70c526c9005a2c1eab4b3653865241826b768b8abf8811df3097a69"
+    },
+    "protocol": {
+      "path": "artifacts/statement-extractor/extractor-training-protocol-v1.json",
+      "sha256": "ca03b2bd1e57892c372566171674896e7af26702a3ef460b12784b04c7fb5f1f"
+    },
+    "freeze": {
+      "path": "artifacts/statement-extractor/extractor-freeze-v1.json",
+      "sha256": "8e01d147a396aeeb4bc01b64a544f9696e7144fd2e144ea16c77330b46496d14"
+    },
+    "report": {
+      "path": "artifacts/statement-extractor/extractor-train-report.json",
+      "sha256": "d39f2f9144c14c4f25c5b2288beb4669952daacd5972c53d042609c8015534ab"
+    },
+    "devBaseline": {
+      "path": "artifacts/statement-extractor/extractor-dev-baseline.jsonl",
+      "sha256": "e1b4495ac39b7eb91972b43eda11a57e72f306132aa985ab664ca8dce841eca9"
+    },
+    "testModel": {
+      "path": "artifacts/statement-extractor/extractor-test-model.jsonl",
+      "sha256": "1b01f73a50b2cc7b57a56db31dff1cff39b38085e7a9e65d91e25a9e33347764"
+    },
+    "testBaseline": {
+      "path": "artifacts/statement-extractor/extractor-test-baseline.jsonl",
+      "sha256": "a64d936c2bebe39c6af418da89b126cbe2c3525b351869ec727748c8ba5e217c"
+    },
+    "regModel": {
+      "path": "artifacts/statement-extractor/extractor-regression-a0-model.jsonl",
+      "sha256": "f1bb1db44b6f007bd0274453e7d94a86c152ed063cdf4343cfd970ce98fef77b"
+    },
+    "regBaseline": {
+      "path": "artifacts/statement-extractor/extractor-regression-a0-baseline.jsonl",
+      "sha256": "a2f4b53e8ea9d36ef3cbcc0832289ef67cd753e53752fd2e924aaf0949181396"
+    },
+    "model": {
+      "path": ".local/world-components-worktree/experiments/world-components/n4_corpus_v2/ckpt-extractor-v1/model.safetensors",
+      "sha256": "4d7171bf52ae7bcee2d3056ab89935a3524d25a1eb7cf1c10b3cceae51e7e6ad"
+    },
+    "script": {
+      "path": ".local/world-components-worktree/experiments/world-components/n4_corpus_v2/train_extractor.py",
+      "sha256": "9078154b27700aac7efcfdf40e02027447e64173d3f17b8b1096923738bf2d2d"
+    },
+    "log": {
+      "path": ".local/world-components-worktree/experiments/world-components/n4_corpus_v2/extractor-train.log",
+      "sha256": "49bf5a28695ee3c855cd6778705ee51e450d1c4429bac5fe980d773b05e6d82f"
+    },
+    "base": {
+      "path": ".local/world-components-worktree/experiments/world-components/assets/randeng-t5-77m/model.safetensors",
+      "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557"
+    }
+  }
+}

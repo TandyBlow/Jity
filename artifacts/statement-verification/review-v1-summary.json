@@ -1,0 +1,49 @@
+{
+  "version": "statement-verification-review-v1",
+  "reviewDate": "2026-11-04",
+  "reviewer": "assistant (same model)",
+  "reviewType": "复看 / re-read, not independent human gold",
+  "scope": {
+    "confirmAll": 125,
+    "trainDevTargetedAll": 56,
+    "generalSample": {
+      "pairsTrain": 20,
+      "pairsDev": 20,
+      "examples": 80
+    },
+    "totalExamples": 261,
+    "regression": {
+      "included": false,
+      "note": "20-source/A1/target regression is separate and was not used for training review"
+    }
+  },
+  "files": {
+    "sheetJsonl": "artifacts/statement-verification/review-v1.jsonl",
+    "sheetMd": "artifacts/statement-verification/review-v1.md",
+    "sheetJsonlSha256": "d19457faaca92f78feb0556955b37992ed5c61a988e900ce67ff9c6274634b50",
+    "sheetMdSha256": "f13d900fedc6367890c81c491c3af7644fbb2872881e90d1f02d2aa98c957199"
+  },
+  "findings": [
+    {
+      "exampleId": "n5:v2-a-quay:alternating-20minute:v0:f0:auth:unsup",
+      "flag": "residual-overlap:F3:0.73",
+      "decision": "not an error: F3 is 陈九, candidate subject is 顾北汀; same route is not support"
+    }
+  ],
+  "labelChangesBeforeReview": [
+    "skipped 3 N5 source groups with an equivalent duplicate fact (conflict-shared-goal A/B/C); otherwise the unsupported label would be supported by the remaining duplicate"
+  ],
+  "labelChangesAfterReview": [],
+  "decision": "keep labels; refreeze current pairs/regression/metrics",
+  "notIndependent": true,
+  "limitations": [
+    "the same assistant performed the review; it is not independent human gold",
+    "confirm C family was used in N5 eval (not N5 training); source-isolated but not unseen to the project",
+    "targeted categories are small (4-8 per split); category results are observations, not stable generalization",
+    "N5-derived unsupported is mostly authorization-removal, not near-miss extra statements"
+  ],
+  "frozenHashes": {
+    "pairs-v1.jsonl": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e",
+    "regression-v1.jsonl": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58"
+  }
+}

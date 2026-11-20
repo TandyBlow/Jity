@@ -304,3 +304,6 @@ __pycache__/
 # Runs stay local. Promote selected immutable records to artifacts/next-acceptance/.
 artifacts/next-runs/
 frontend/artifacts/
+
+# === Private presentations (never tracked) ===
+*.pptx

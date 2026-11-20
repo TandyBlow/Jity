@@ -1,0 +1,24 @@
+{
+  "version": "extractor-regression-a0-v1",
+  "created": "2026-11-05",
+  "source": "D:\\others\\Jity\\artifacts\\cohesion-split\\a1.jsonl",
+  "material": "D:\\others\\Jity\\artifacts\\statement-extractor\\regression-a0-v1.jsonl",
+  "sha256": "abc8512591c5983725ed3bd12abaf19663472eb10f4367493e9d51dac132731b",
+  "counts": {
+    "sources": 20,
+    "statements": 95,
+    "subjectStatus": {
+      "explicit": 65,
+      "recovered": 27,
+      "unresolved": 3
+    },
+    "unresolved": 3,
+    "multiSpan": 2,
+    "sourcesWithUnresolved": [
+      "v03",
+      "v05"
+    ]
+  },
+  "use": "regression only; not training/dev selection",
+  "noTwentySourceTraining": true
+}

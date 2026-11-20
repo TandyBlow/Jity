@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
   // (SharedArrayBuffer): /benchmark for the inference benchmarks and /world
   // for the page's narration model — single-threaded prompt eval measured
   // ~200ms/token, which no deadline can absorb. Game pages stay unaffected.
+  // Dev proxy to the local narration service: the page never talks to the
+  // service host directly, and the world protocol stays untouched.
+  async rewrites() {
+    return [
+      {
+        source: "/narration-api/:path*",
+        destination: "http://127.0.0.1:8031/:path*",
+      },
+    ];
+  },
   async headers() {
     const isolation = [
       { key: "Cross-Origin-Opener-Policy", value: "same-origin" },

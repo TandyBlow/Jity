@@ -1,0 +1,487 @@
+{
+  "version": "statement-authorization-overlap-v1",
+  "created": "2026-11-05",
+  "pairs": "D:\\others\\Jity\\artifacts\\statement-verification\\statement-authorization-pairs-v1.jsonl",
+  "comparedAgainst": [
+    "D:\\others\\Jity\\artifacts\\statement-verification\\regression-v1.jsonl",
+    "D:\\others\\Jity\\artifacts\\statement-verification\\pairs-target-v1.jsonl"
+  ],
+  "rows": [
+    {
+      "pairId": "U01",
+      "candidate": "小雨落在天窗外",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:t01:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "U02",
+      "candidate": "在铜灯下",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:t01:1",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "U03",
+      "candidate": "清晨的薄雾还没散",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:v02:1",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "U04",
+      "candidate": "，袖口被雨浸透",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:fixture-r5:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        },
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:train-r5:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "U05",
+      "candidate": "，手腕上沾着盐沫",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:train-r2:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "U06",
+      "candidate": "，手背上沾着水沫",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:train-r2:unsup:1",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "U07",
+      "candidate": "，袖口被雨浸透",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:fixture-r5:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        },
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:train-r5:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "U08",
+      "candidate": "，蹲到雾堤的钟架下",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:v01:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "U09",
+      "candidate": "，钟绳绷直了",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:v01:unsup:1",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "U10",
+      "candidate": "，玻璃上不再有雾",
+      "label": "unsupported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:v05:unsup:0",
+          "label": "unsupported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "L01",
+      "candidate": "清晨的薄雾里",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:t19:0",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "外袍下摆沾了泥水",
+            "帆布棚",
+            "把油纸伞收拢靠在摊棚边",
+            "把银鳞鱼装进鱼筐",
+            "案板",
+            "油纸伞",
+            "白汽",
+            "石板",
+            "袖口沾了鱼鳞",
+            "银鳞鱼",
+            "鱼筐"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "L02",
+      "candidate": "浓雾里",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:train-r1:0",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "指节发白",
+            "斗篷下摆湿了一片",
+            "潮汐簿",
+            "笔架",
+            "袖口沾了雨",
+            "袖口湿到肘部",
+            "铜灯",
+            "长桌",
+            "门槛",
+            "鞋底沾了泥"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "L03",
+      "candidate": "清晨的薄雾",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:v02:0",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "L04",
+      "candidate": "沈砚的手背上也沾了铜油",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg-target:v05:0",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "L05",
+      "candidate": "衣领湿了，肩头也湿了",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:double-d010:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "L06",
+      "candidate": "手背沾了泥，帽檐也沾了泥",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:double-d011:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": [
+            "墨",
+            "天窗",
+            "干纸",
+            "潮汐簿",
+            "笔架",
+            "铜灯",
+            "长桌",
+            "门槛"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "L07",
+      "candidate": "指尖沾了墨",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:t01:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        },
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:v03:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": false,
+          "evidenceOnlyInMine": [
+            "把簿子合上推到桌角"
+          ],
+          "evidenceOnlyInBaseline": [
+            "一切如旧",
+            "把干纸码成一小摞"
+          ]
+        }
+      ]
+    },
+    {
+      "pairId": "L08",
+      "candidate": "手背上沾着盐沫",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:t05:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "L09",
+      "candidate": "袖口沾了盐沫",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:v01:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    },
+    {
+      "pairId": "L10",
+      "candidate": "鞋底沾了湿石板的水",
+      "label": "supported",
+      "matches": [
+        {
+          "source": "regression-v1",
+          "exampleId": "reg:v06:sup:appearance",
+          "label": "supported",
+          "labelMatches": true,
+          "evidenceIdentical": true,
+          "evidenceOnlyInMine": [],
+          "evidenceOnlyInBaseline": []
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "question": "are these 20 inputs substantively the same comparison unit as the earlier binary experiments?",
+    "answer": "mostly yes: the judgment unit (one candidate span) and the evidence-format are the same; the changed parts are the output form (gap type) and the subject being given as input",
+    "stats": {
+      "candidateOverlap": 20,
+      "evidenceIdentical": 12,
+      "evidenceChanged": 8,
+      "noCandidateOverlap": 0,
+      "labelAgreement": 20,
+      "labelDisagreement": 0
+    },
+    "conclusion": {
+      "reasonsNotToTrainNow": [
+        "the comparison unit is still \"one candidate span vs a fact list\"",
+        "for rows whose evidence is identical to a previous example, a new run would reuse the same inputs under a different output label",
+        "n=20 with 2 evidence-identical repeats is far below any training budget, and there is no dev/test split outside these rows"
+      ],
+      "whatWouldJustifyATrainingRound": [
+        "a held-out split outside the 20 alignment sources",
+        "output labels that cannot be derived from the given subject field",
+        "enough rows per gap type to fit and to select a checkpoint"
+      ],
+      "trainingStarted": false,
+      "materialExpanded": false
+    }
+  }
+}

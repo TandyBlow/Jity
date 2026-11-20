@@ -1,0 +1,2019 @@
+{
+  "purpose": "statement extractor, independent T5-77M, one fixed run",
+  "base": {
+    "dir": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557"
+  },
+  "data": {
+    "material": "D:\\others\\Jity\\artifacts\\statement-extractor\\material-v1.jsonl",
+    "materialSha256": "ae45ef2c5b557d42b58bdcd4d7b8cd577ddbe7edae37a63f05fea55d64952562",
+    "freeze": {
+      "version": "statement-extractor-material-v1",
+      "created": "2026-11-05",
+      "source": [
+        "D:\\others\\Jity\\artifacts\\world-provenance\\confirm-u240.json",
+        "D:\\others\\Jity\\artifacts\\world-provenance\\confirm2-u240.json"
+      ],
+      "material": "D:\\others\\Jity\\artifacts\\statement-extractor\\material-v1.jsonl",
+      "sha256": "ae45ef2c5b557d42b58bdcd4d7b8cd577ddbe7edae37a63f05fea55d64952562",
+      "counts": {
+        "examples": 80,
+        "train": 50,
+        "dev": 20,
+        "test": 10,
+        "statements": 93,
+        "bySplit": {
+          "train": {
+            "examples": 50,
+            "statements": 52
+          },
+          "dev": {
+            "examples": 20,
+            "statements": 30
+          },
+          "test": {
+            "examples": 10,
+            "statements": 11
+          }
+        },
+        "subjectStatus": {
+          "dev:explicit": 20,
+          "dev:recovered": 10,
+          "test:explicit": 10,
+          "test:recovered": 1,
+          "train:explicit": 50,
+          "train:recovered": 2
+        },
+        "statementKind": {
+          "dev:expected": 30,
+          "test:added": 1,
+          "test:expected": 10,
+          "train:added": 1,
+          "train:duplicate": 1,
+          "train:expected": 50
+        },
+        "multiSpanStatements": {
+          "train": 20,
+          "dev": 10
+        },
+        "unresolved": 0,
+        "sourceGroups": {
+          "train": [
+            "B1",
+            "B2",
+            "C2"
+          ],
+          "dev": [
+            "C1"
+          ],
+          "test": [
+            "C3"
+          ]
+        }
+      },
+      "splitRule": "whole source group: B1/B2/C2 train; C1 dev; C3 test",
+      "statementRule": "one predicate/state per statement; coordinated same-state 也 clauses = one statement with multiple spans; second clause without subject = recovered",
+      "noTwentySource": true,
+      "noRewrites": true,
+      "noNewTemplates": true
+    },
+    "regression": "D:\\others\\Jity\\artifacts\\statement-extractor\\regression-a0-v1.jsonl",
+    "regressionSha256": "abc8512591c5983725ed3bd12abaf19663472eb10f4367493e9d51dac132731b",
+    "regressionFreeze": {
+      "version": "extractor-regression-a0-v1",
+      "created": "2026-11-05",
+      "source": "D:\\others\\Jity\\artifacts\\cohesion-split\\a1.jsonl",
+      "material": "D:\\others\\Jity\\artifacts\\statement-extractor\\regression-a0-v1.jsonl",
+      "sha256": "abc8512591c5983725ed3bd12abaf19663472eb10f4367493e9d51dac132731b",
+      "counts": {
+        "sources": 20,
+        "statements": 95,
+        "subjectStatus": {
+          "explicit": 65,
+          "recovered": 27,
+          "unresolved": 3
+        },
+        "unresolved": 3,
+        "multiSpan": 2,
+        "sourcesWithUnresolved": [
+          "v03",
+          "v05"
+        ]
+      },
+      "use": "regression only; not training/dev selection",
+      "noTwentySourceTraining": true
+    },
+    "train": 50,
+    "dev": 20,
+    "test": 10,
+    "regressionN": 20,
+    "statementCounts": {
+      "train": 52,
+      "dev": 30,
+      "test": 11
+    }
+  },
+  "budget": {
+    "updates": 300,
+    "batch": 8,
+    "lr": 0.0001,
+    "seed": 20261104,
+    "evalEvery": 25,
+    "maxInput": 256,
+    "maxOutput": 256,
+    "earlyStop": false,
+    "modelSweep": false,
+    "ratioSearch": false
+  },
+  "selected": {
+    "step": 75,
+    "dev": {
+      "n": 20,
+      "goldStatements": 30,
+      "predStatements": 20,
+      "matched": 12,
+      "precision": 0.6,
+      "recall": 0.4,
+      "f1": 0.48,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 12
+    }
+  },
+  "devLog": [
+    {
+      "step": 25,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "jsonValidRate": 0.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": null,
+      "matched": 0,
+      "goldStatements": 30,
+      "predStatements": 0
+    },
+    {
+      "step": 50,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "jsonValidRate": 0.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": null,
+      "matched": 0,
+      "goldStatements": 30,
+      "predStatements": 0
+    },
+    {
+      "step": 75,
+      "precision": 0.6,
+      "recall": 0.4,
+      "f1": 0.48,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 12,
+      "goldStatements": 30,
+      "predStatements": 20
+    },
+    {
+      "step": 100,
+      "precision": 0.55,
+      "recall": 0.36666666666666664,
+      "f1": 0.43999999999999995,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 11,
+      "goldStatements": 30,
+      "predStatements": 20
+    },
+    {
+      "step": 125,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    },
+    {
+      "step": 150,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    },
+    {
+      "step": 175,
+      "precision": 0.5555555555555556,
+      "recall": 0.3333333333333333,
+      "f1": 0.4166666666666667,
+      "jsonValidRate": 0.9,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 18
+    },
+    {
+      "step": 200,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    },
+    {
+      "step": 225,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    },
+    {
+      "step": 250,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    },
+    {
+      "step": 275,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    },
+    {
+      "step": 300,
+      "precision": 0.5263157894736842,
+      "recall": 0.3333333333333333,
+      "f1": 0.4081632653061224,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "matched": 10,
+      "goldStatements": 30,
+      "predStatements": 19
+    }
+  ],
+  "test": {
+    "model": {
+      "n": 10,
+      "goldStatements": 11,
+      "predStatements": 10,
+      "matched": 10,
+      "precision": 1.0,
+      "recall": 0.9090909090909091,
+      "f1": 0.9523809523809523,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 10
+    },
+    "baseline": {
+      "n": 10,
+      "goldStatements": 11,
+      "predStatements": 11,
+      "matched": 11,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 11
+    },
+    "modelFocus": {
+      "negation": [
+        0,
+        0
+      ],
+      "continuation": [
+        0,
+        0
+      ],
+      "location": [
+        0,
+        0
+      ],
+      "multiSpan": [
+        0,
+        0
+      ]
+    },
+    "baselineFocus": {
+      "negation": [
+        0,
+        0
+      ],
+      "continuation": [
+        0,
+        0
+      ],
+      "location": [
+        0,
+        0
+      ],
+      "multiSpan": [
+        0,
+        0
+      ]
+    },
+    "perExample": [
+      {
+        "exampleId": "c3_00a",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_00b",
+        "goldStatements": 2,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected",
+          "added"
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_01a",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_01b",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_02a",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_02b",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_03a",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_03b",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_04a",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "c3_04b",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          "expected"
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      }
+    ]
+  },
+  "regressionA0": {
+    "model": {
+      "n": 20,
+      "goldStatements": 95,
+      "predStatements": 19,
+      "matched": 9,
+      "precision": 0.47368421052631576,
+      "recall": 0.09473684210526316,
+      "f1": 0.15789473684210525,
+      "jsonValidRate": 0.95,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 9
+    },
+    "baseline": {
+      "n": 20,
+      "goldStatements": 95,
+      "predStatements": 97,
+      "matched": 93,
+      "precision": 0.9587628865979382,
+      "recall": 0.9789473684210527,
+      "f1": 0.96875,
+      "jsonValidRate": 1.0,
+      "spanLocalizationRate": 1.0,
+      "subjectStatusAccuracy": 1.0,
+      "subjectStatusMatched": 93
+    },
+    "modelFocus": {
+      "negation": [
+        3,
+        0
+      ],
+      "continuation": [
+        1,
+        0
+      ],
+      "location": [
+        2,
+        0
+      ],
+      "multiSpan": [
+        2,
+        2
+      ]
+    },
+    "baselineFocus": {
+      "negation": [
+        3,
+        3
+      ],
+      "continuation": [
+        1,
+        1
+      ],
+      "location": [
+        2,
+        2
+      ],
+      "multiSpan": [
+        2,
+        0
+      ]
+    },
+    "perExample": [
+      {
+        "exampleId": "fixture-r1",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "fixture-r2",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "fixture-r3",
+        "goldStatements": 5,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "fixture-r4",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "fixture-r5",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "explicit",
+          "recovered",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "train-r1",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "train-r2",
+        "goldStatements": 7,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit",
+          "recovered"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "train-r3",
+        "goldStatements": 5,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "train-r4",
+        "goldStatements": 7,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit",
+          "recovered"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "train-r5",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "explicit",
+          "recovered",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "v01",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "explicit",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "v02",
+        "goldStatements": 3,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "explicit",
+          "recovered"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "v03",
+        "goldStatements": 5,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "explicit",
+          "recovered",
+          "unresolved",
+          "unresolved"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "v05",
+        "goldStatements": 6,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "explicit",
+          "explicit",
+          "explicit",
+          "explicit",
+          "unresolved"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "v06",
+        "goldStatements": 3,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "t01",
+        "goldStatements": 3,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "t05",
+        "goldStatements": 3,
+        "predStatements": 0,
+        "parseOk": false,
+        "spanLocalized": true,
+        "matched": 0,
+        "goldKinds": [
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "recovered",
+          "recovered"
+        ],
+        "predStatus": []
+      },
+      {
+        "exampleId": "t19",
+        "goldStatements": 4,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "goldStatus": [
+          "explicit",
+          "explicit",
+          "explicit",
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "double-d010",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      },
+      {
+        "exampleId": "double-d011",
+        "goldStatements": 1,
+        "predStatements": 1,
+        "parseOk": true,
+        "spanLocalized": true,
+        "matched": 1,
+        "goldKinds": [
+          null
+        ],
+        "goldStatus": [
+          "explicit"
+        ],
+        "predStatus": [
+          "explicit"
+        ]
+      }
+    ]
+  },
+  "wallSeconds": 865.5,
+  "sourceStatus": "not_implemented",
+  "devBaseline": {
+    "n": 20,
+    "goldStatements": 30,
+    "predStatements": 40,
+    "matched": 20,
+    "precision": 0.5,
+    "recall": 0.6666666666666666,
+    "f1": 0.5714285714285715,
+    "jsonValidRate": 1.0,
+    "spanLocalizationRate": 1.0,
+    "subjectStatusAccuracy": 1.0,
+    "subjectStatusMatched": 20,
+    "perExample": [
+      {
+        "exampleId": "c1_00",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的衣领沾了泥",
+              "下摆也沾了泥"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "衣领",
+            "state": "沾了泥",
+            "kind": "expected",
+            "normalized": "顾行舟的衣领沾了泥下摆也沾了泥"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的衣领沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "下摆也沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_01",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的衣领结了盐霜"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "衣领",
+            "state": "结了盐霜",
+            "kind": "expected",
+            "normalized": "顾行舟的衣领结了盐霜"
+          },
+          {
+            "spans": [
+              "下摆湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "下摆",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "下摆湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的衣领结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "下摆湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_02",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的衣领落着灰",
+              "下摆也落着灰"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "衣领",
+            "state": "落着灰",
+            "kind": "expected",
+            "normalized": "顾行舟的衣领落着灰下摆也落着灰"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的衣领落着灰"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "下摆也落着灰"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_03",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的衣领冻得发僵"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "衣领",
+            "state": "冻得发僵",
+            "kind": "expected",
+            "normalized": "顾行舟的衣领冻得发僵"
+          },
+          {
+            "spans": [
+              "下摆沾了泥"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "下摆",
+            "state": "沾了泥",
+            "kind": "expected",
+            "normalized": "下摆沾了泥"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的衣领冻得发僵"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "下摆沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_04",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的衣领蹭破了皮",
+              "下摆也蹭破了皮"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "衣领",
+            "state": "蹭破了皮",
+            "kind": "expected",
+            "normalized": "顾行舟的衣领蹭破了皮下摆也蹭破了皮"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的衣领蹭破了皮"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "下摆也蹭破了皮"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_05",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟下摆结了盐霜"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "下摆",
+            "state": "结了盐霜",
+            "kind": "expected",
+            "normalized": "顾行舟下摆结了盐霜"
+          },
+          {
+            "spans": [
+              "鞋面湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "鞋面",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "鞋面湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟下摆结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "鞋面湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_06",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟下摆冻得发僵",
+              "鞋面也冻得发僵"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "下摆",
+            "state": "冻得发僵",
+            "kind": "expected",
+            "normalized": "顾行舟下摆冻得发僵鞋面也冻得发僵"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟下摆冻得发僵"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "鞋面也冻得发僵"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_07",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鞋面沾了泥"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鞋面",
+            "state": "沾了泥",
+            "kind": "expected",
+            "normalized": "顾行舟的鞋面沾了泥"
+          },
+          {
+            "spans": [
+              "手背湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "手背",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "手背湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鞋面沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "手背湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_08",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鞋面结了盐霜",
+              "手背也结了盐霜"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鞋面",
+            "state": "结了盐霜",
+            "kind": "expected",
+            "normalized": "顾行舟的鞋面结了盐霜手背也结了盐霜"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鞋面结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "手背也结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_09",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鞋面落着灰"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鞋面",
+            "state": "落着灰",
+            "kind": "expected",
+            "normalized": "顾行舟的鞋面落着灰"
+          },
+          {
+            "spans": [
+              "手背湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "手背",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "手背湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鞋面落着灰"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "手背湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_10",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鞋面蹭破了皮",
+              "指尖也蹭破了皮"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鞋面",
+            "state": "蹭破了皮",
+            "kind": "expected",
+            "normalized": "顾行舟的鞋面蹭破了皮指尖也蹭破了皮"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鞋面蹭破了皮"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "指尖也蹭破了皮"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_11",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的手背沾了泥"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "手背",
+            "state": "沾了泥",
+            "kind": "expected",
+            "normalized": "顾行舟的手背沾了泥"
+          },
+          {
+            "spans": [
+              "指尖湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "指尖",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "指尖湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的手背沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "指尖湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_12",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鬓角沾了泥",
+              "肩头也沾了泥"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鬓角",
+            "state": "沾了泥",
+            "kind": "expected",
+            "normalized": "顾行舟的鬓角沾了泥肩头也沾了泥"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鬓角沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "肩头也沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_13",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鬓角结了盐霜"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鬓角",
+            "state": "结了盐霜",
+            "kind": "expected",
+            "normalized": "顾行舟的鬓角结了盐霜"
+          },
+          {
+            "spans": [
+              "肩头湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "肩头",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "肩头湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鬓角结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "肩头湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_14",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鬓角落着灰",
+              "膝盖也落着灰"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鬓角",
+            "state": "落着灰",
+            "kind": "expected",
+            "normalized": "顾行舟的鬓角落着灰膝盖也落着灰"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鬓角落着灰"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "膝盖也落着灰"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_15",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鬓角冻得发僵"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鬓角",
+            "state": "冻得发僵",
+            "kind": "expected",
+            "normalized": "顾行舟的鬓角冻得发僵"
+          },
+          {
+            "spans": [
+              "肩头沾了泥"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "肩头",
+            "state": "沾了泥",
+            "kind": "expected",
+            "normalized": "肩头沾了泥"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鬓角冻得发僵"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "肩头沾了泥"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_16",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的鬓角蹭破了皮",
+              "肩头也蹭破了皮"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "鬓角",
+            "state": "蹭破了皮",
+            "kind": "expected",
+            "normalized": "顾行舟的鬓角蹭破了皮肩头也蹭破了皮"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的鬓角蹭破了皮"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "肩头也蹭破了皮"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_17",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的肩头结了盐霜"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "肩头",
+            "state": "结了盐霜",
+            "kind": "expected",
+            "normalized": "顾行舟的肩头结了盐霜"
+          },
+          {
+            "spans": [
+              "膝盖湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "膝盖",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "膝盖湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的肩头结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "膝盖湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_18",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的肩头冻得发僵",
+              "膝盖也冻得发僵"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "肩头",
+            "state": "冻得发僵",
+            "kind": "expected",
+            "normalized": "顾行舟的肩头冻得发僵膝盖也冻得发僵"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的肩头冻得发僵"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "膝盖也冻得发僵"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 0,
+        "goldN": 1,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 1,
+        "multiSpanMatched": 0
+      },
+      {
+        "exampleId": "c1_19",
+        "gold": [
+          {
+            "spans": [
+              "顾行舟的膝盖结了盐霜"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "explicit",
+            "body": "膝盖",
+            "state": "结了盐霜",
+            "kind": "expected",
+            "normalized": "顾行舟的膝盖结了盐霜"
+          },
+          {
+            "spans": [
+              "帽檐湿了"
+            ],
+            "subjectText": "顾行舟",
+            "subjectStatus": "recovered",
+            "body": "帽檐",
+            "state": "湿了",
+            "kind": "expected",
+            "normalized": "帽檐湿了"
+          }
+        ],
+        "pred": [
+          {
+            "spans": [
+              "顾行舟的膝盖结了盐霜"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "explicit"
+          },
+          {
+            "spans": [
+              "帽檐湿了"
+            ],
+            "subject": "顾行舟",
+            "subjectStatus": "recovered"
+          }
+        ],
+        "parseOk": true,
+        "json": "",
+        "matched": 2,
+        "goldN": 2,
+        "predN": 2,
+        "spanLocalized": true,
+        "multiSpanGold": 0,
+        "multiSpanMatched": 0
+      }
+    ]
+  }
+}

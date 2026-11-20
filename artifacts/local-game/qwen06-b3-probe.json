@@ -1,0 +1,287 @@
+{
+  "status": "COMPLETED",
+  "layer": "local real-browser/wllama baseline; review pending",
+  "recordedAt": "2026-11-09T17:11:16.423Z",
+  "wallMs": 899,
+  "config": {
+    "model": "D:/software/Git/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "contextSize": 4096,
+    "maxTokens": 1024,
+    "temperature": 0,
+    "seed": 42,
+    "channel": "msedge"
+  },
+  "browser": "157.0.4341.42",
+  "origin": "http://127.0.0.1:60185",
+  "engineInfo": {
+    "backend": "wllama",
+    "modelId": null
+  },
+  "summary": "B3 评测 wllama（no model）：结构 0/20，底线 0/20\naction: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\ntargets: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\nresults: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\nupdates: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\ncontinuation: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\ninitial: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\ntime: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\npointPlan: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\nnarration: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms\nreaction: 结构 0/2，底线 0/2，调用 0，排队 0ms / 推理 0ms",
+  "report": {
+    "engine": {
+      "backend": "wllama",
+      "modelId": null
+    },
+    "totals": {
+      "samples": 20,
+      "structureOk": 0,
+      "semanticFloorOk": 0,
+      "calls": 0
+    },
+    "perTask": [
+      {
+        "task": "action",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "targets",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "results",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "updates",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "continuation",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "initial",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "time",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "pointPlan",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "narration",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      },
+      {
+        "task": "reaction",
+        "samples": 2,
+        "structureOk": 0,
+        "structureRate": 0,
+        "semanticFloorOk": 0,
+        "semanticFloorRate": 0,
+        "calls": 0,
+        "avgQueuedMs": 0,
+        "avgRunMs": 0
+      }
+    ],
+    "results": [
+      {
+        "id": "action-1",
+        "task": "action",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "action-2",
+        "task": "action",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "targets-1",
+        "task": "targets",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "targets-2",
+        "task": "targets",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "results-1",
+        "task": "results",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "results-2",
+        "task": "results",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "updates-batch-1",
+        "task": "updates",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "updates-split-1",
+        "task": "updates",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "continuation-1",
+        "task": "continuation",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "continuation-2",
+        "task": "continuation",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "initial-1",
+        "task": "initial",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "initial-2",
+        "task": "initial",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "time-1",
+        "task": "time",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "time-2",
+        "task": "time",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "pointPlan-1",
+        "task": "pointPlan",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "pointPlan-2",
+        "task": "pointPlan",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "narration-1",
+        "task": "narration",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "narration-2",
+        "task": "narration",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "reaction-1",
+        "task": "reaction",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      },
+      {
+        "id": "reaction-2",
+        "task": "reaction",
+        "failure": "engine",
+        "structureError": "TypeError: Failed to fetch",
+        "timing": null
+      }
+    ]
+  }
+}
