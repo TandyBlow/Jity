@@ -9,17 +9,23 @@
 
 - [x] 2.1 `summarize-semantics.mjs` 从驱动 JSON 提取 actions/submission calls/continuation/stops/timing，输出 `artifacts/goal/semantics/<stamp>.json`。
 - [x] 2.2 分类器标出硬违规：unknown character、duplicate task decision、context_capacity_exceeded、request_malformed conclusion、conflicting positions、同一 actor 重复行动。
-- [x] 2.3 跑真实 `/world-local`，保留原始输出、失败、重试、回退（run1 9 点 + run2 4 点；run3 因 HMR 作废）。
+- [x] 2.3 跑真实 `/world-local`，保留原始输出、失败、重试、回退（run1–run15；run3 因 HMR 作废，run16 因宿主机内存回收作废）。
 
 ## 3. 修复
 
-- [x] 3.1 针对实测硬违规修提示/输入投影/校验/重试预算：任务提示 characterId/basis、行对象修复、fact id 归属解析、上下文 11,600、295s 引擎中止、stage_unit 拒绝细节日志。
+- [x] 3.1 针对实测硬违规修提示/输入投影/校验/重试预算：任务提示 characterId/basis、行对象修复、fact id 归属解析、上下文 11,900、295s 引擎中止、stage_unit 拒绝细节、个性-理智配对、自动轮 order 外目标不进 acted/visited、恢复时间比较、多成员 results 末次改归。
 - [x] 3.2 不使用固定 handback、固定 targets 为空或预写结果。
-- [ ] 3.3 重跑并更新分类与证据；未通过项保留为问题清单（run4 进行中）。
+- [ ] 3.3 全量 16 例未跑完：run15 只到 s03（驱动超时中止，已改为超时继续），run16 被宿主机内存回收。已确认：skip 臂下 s01 297 s（首段>60 s）、s03 330 s；语义违规 0；每组合六阶段 updates 是计时主因。剩余：内存恢复后重跑全量；`position_invalid`/自动链长度/首段>60 s 进问题清单。
 
 ## 4. 用户抽检
 
-- [ ] 4.1 给用户抽检清单（原始输出 + 分类）；技术自检与用户验收分别署名。
+- [ ] 4.1 给用户抽检清单（原始输出 + 分类）；技术自检与用户验收分别署名。清单待全量重跑后生成。
+- [ ] 4.2 场外策略决定（D-017，pending-user）：skip 臂证据已齐；默认仍 judge。
+
+## 运行与阻塞（2026-11-20）
+
+- 全量套件依赖 dev server + 浏览器 + 两个 GGUF；宿主机内存告急时会被回收。恢复后需用户示意重启。
+- 已释放被杀驱动留下的 `resources/local-inference.lock`。
 
 ## Workflow follow-up
 
