@@ -32,7 +32,9 @@ function scriptedModel(log: string[]): WorldModelPort {
       if (task === 'targets') return { targets: [] };
       if (task === 'results') return { person_c: '周宁从走廊走进门厅。' };
       if (task === 'updates') {
-        return [{ stage: 'position', changes: { person_c: { entityId: 'person_c', positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } } }];
+        const changes = { person_c: { entityId: 'person_c', positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } };
+        const stage = (input as { stage?: string }).stage;
+        return stage ? { stage, changes: stage === 'position' ? changes : {} } : [{ stage: 'position', changes }];
       }
       if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
       if (task === 'narration') return key === 'p1' ? '门厅里安静下来。周宁在门厅停下脚步，回头看了一眼走廊。' : '走廊里很安静，盒子还盖着。';
@@ -180,7 +182,10 @@ describe('free-day static world', () => {
         }
         if (task === 'targets') return { targets: [] };
         if (task === 'results') return {};
-        if (task === 'updates') return [];
+        if (task === 'updates') {
+          const stage = (input as { stage?: string }).stage;
+          return stage ? { stage, changes: {} } : [];
+        }
         if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
         if (task === 'narration') return '西侧服务巷里，路明非停了一下。远处钟楼的影子还压在操场上。';
         throw new Error(`unexpected ${task}`);
@@ -221,10 +226,12 @@ function t01Model(log: string[]): WorldModelPort {
       if (task === 'targets') return { targets: [] };
       if (task === 'results') return {};
       if (task === 'updates') {
-        return [{ stage: 'position', changes: { person_a: {
+        const changes = { person_a: {
           entityId: 'person_a',
           positionSet: { containerId: 'corridor', slotId: null, relativeTo: null },
-        } } }];
+        } };
+        const stage = (input as { stage?: string }).stage;
+        return stage ? { stage, changes: stage === 'position' ? changes : {} } : [{ stage: 'position', changes }];
       }
       if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
       if (task === 'narration') return '走廊里空着，只有门缝下的光。';

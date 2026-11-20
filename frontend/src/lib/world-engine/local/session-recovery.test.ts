@@ -67,8 +67,12 @@ function scriptedModel(log: string[], hooks: ModelHooks = {}): WorldModelPort {
           return '林川侧过身，让开半步。';
         case 'results':
           return { person_c: '周宁掀开盒盖。', person_a: '林川侧过身。' };
-        case 'updates':
-          return [{ stage: 'position', changes: {} }];
+        case 'updates': {
+          // The product session splits the point: scene stages per group, the
+          // rest stages once per point. A staged call answers one call.
+          const stage = (input as { stage?: string }).stage;
+          return stage ? { stage, changes: {} } : [{ stage: 'position', changes: {} }];
+        }
         case 'continuation':
           if (hooks.continuations?.length) return hooks.continuations.shift()!;
           return { kind: 'handback', closedBy: 'model', cancelReason: null };
@@ -426,6 +430,31 @@ describe('LocalGameSession durability', () => {
     await expect(LocalGameSession.restore(session.snapshot, scriptedModel([]), { leaseHeartbeat: false })).resolves.toBeTruthy();
   });
 
+  it('runs the scene stages per group and the rest stages once per point', async () => {
+    const log: string[] = [];
+    const model = scriptedModel(log, {
+      plan: (input) => {
+        const round = (input as { round?: { roundId?: string; order?: string[] } }).round;
+        return [{ pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal' as const,
+          timeAdvance: { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } },
+          actorIds: round?.order ?? [] }];
+      },
+      action: (key) => key === 'person_a' ? { kind: 'act', text: '林川掀开盒盖。' } : undefined,
+      targets: () => ({ targets: [] }),
+    });
+    const session = await LocalGameSession.create(template(), model, { leaseHeartbeat: false, roll: () => 13 });
+    await session.start();
+    const status = await session.submit('我打开盒盖。');
+    expect(status.kind).not.toBe('error');
+    const updates = log.filter((row) => row.startsWith('updates:'));
+    expect(updates.some((row) => row.endsWith('#position'))).toBe(true);
+    for (const stage of ['#tasks', '#subtasks', '#personality', '#sanity']) {
+      expect(updates.filter((row) => row.endsWith(stage))).toHaveLength(1);
+    }
+    // The point's rest batch is keyed once; scene stages repeat per group.
+    expect(updates.filter((row) => row.includes('point_rest:')).length).toBe(4);
+  });
+
   it('refuses a duplicate submit while the same turn is in flight', async () => {
     const log: string[] = [];
     let release!: () => void;
@@ -635,7 +664,7 @@ describe('LocalGameSession durability', () => {
 
   it('stops when the planner keeps naming a committed point instead of spinning', async () => {
     const stuck: WorldModelPort = {
-      async generate(task): Promise<Json> {
+      async generate(task, _key, input): Promise<Json> {
         if (task === 'pointPlan') {
           return [{ pointId: 'point_fixed', kind: 'normal',
             timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_a', 'person_c'] }];
@@ -643,7 +672,10 @@ describe('LocalGameSession durability', () => {
         if (task === 'action') return { kind: 'skip' };
         if (task === 'targets') return { targets: [] };
         if (task === 'results') return {};
-        if (task === 'updates') return [];
+        if (task === 'updates') {
+          const stage = (input as { stage?: string }).stage;
+          return stage ? { stage, changes: {} } : [];
+        }
         if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
         if (task === 'narration') return '安静。';
         throw new Error(`unexpected ${task}`);

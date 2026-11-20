@@ -183,7 +183,7 @@ export class LocalGameSession {
         const pointId = (event.request as { pointId?: Id }).pointId;
         if (pointId) productModel.onPointCommitted?.(pointId);
       },
-    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true });
+    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: true });
     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
   }
 
