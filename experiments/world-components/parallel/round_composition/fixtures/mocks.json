@@ -1,0 +1,119 @@
+{
+ "version": "round-composition-mocks-v0.1",
+ "source": "scripted mock port responses; NOT model outputs and NOT evidence of model capability",
+ "ports": {
+  "selection": "returns selectedFactIds over the N1 fact ids",
+  "organization": "returns the narrow N3 plan shape (sentences/factIds/coreference/time)",
+  "sentence": "returns one narration candidate per attempt; an entry with 'error' simulates a port failure"
+ },
+ "cases": {
+  "normal-move-task": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。", "finishReason": "eos"}
+   ]
+  },
+  "normal-two-actors": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0"], "coreference": [], "time": null}, {"index": 1, "factIds": ["f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。管线乙从管线镇来到了钟楼。", "finishReason": "eos"}
+   ]
+  },
+  "normal-inner-change": {
+   "selection": {"selectedFactIds": ["f0", "f1", "f2"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1", "f2"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲的外貌变了：外袍被雨浸透。管线甲变得「话少了许多」。管线甲的精神值从10升到了14。", "finishReason": "eos"}
+   ]
+  },
+  "fail-n2-invalid": {
+   "selection": {"selectedFactIds": ["f0", "f99"]}
+  },
+  "fail-n2-missing-must": {
+   "selection": {"selectedFactIds": ["f1"]}
+  },
+  "fail-n2-empty": {
+   "selection": {"selectedFactIds": []}
+  },
+  "fail-n3-coverage": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}}
+  },
+  "fail-n3-unknown": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1", "f99"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}}
+  },
+  "retry-n5-success": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。", "finishReason": "eos"},
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。", "finishReason": "eos"}
+   ]
+  },
+  "reject-n5": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。", "finishReason": "eos"},
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」", "finishReason": "length"}
+   ]
+  },
+  "fail-n5-extra-actor": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。", "finishReason": "eos"},
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。管线甲站在原地没动。", "finishReason": "eos"}
+   ]
+  },
+  "fail-sentence-port": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"error": "model-timeout", "detail": "scripted sentence-port timeout (attempt 1)"},
+    {"error": "model-timeout", "detail": "scripted sentence-port timeout (attempt 2)"}
+   ]
+  },
+  "contract-time-conflict": {
+   "selection": {"selectedFactIds": ["f0", "f1", "f2"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1", "f2"], "coreference": [], "time": {"amount": 8, "unit": "minute"}}], "edges": {"consecutive-time": true}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。", "finishReason": "eos"},
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。过了一会儿。", "finishReason": "eos"}
+   ]
+  },
+  "fail-sentence-empty": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "", "finishReason": "eos"},
+    {"text": "   ", "finishReason": "eos"}
+   ]
+  },
+  "fail-n2-invisible": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。", "finishReason": "eos"}
+   ]
+  },
+  "fallback-unsupported-kind": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。", "finishReason": "eos"},
+    {"text": "管线甲从管线镇来到了钟楼。", "finishReason": "eos"}
+   ]
+  },
+  "n5-false-pass-unregistered-actor": {
+   "selection": {"selectedFactIds": ["f0", "f1"]},
+   "organization": {"sentences": [{"index": 0, "factIds": ["f0", "f1"], "coreference": [], "time": null}], "edges": {"consecutive-time": false}},
+   "sentence": [
+    {"text": "管线甲从管线镇来到了钟楼。管线甲完成了任务「把铜铃挂回钟楼」。这时管线丙从巷口走来。", "finishReason": "eos", "annotations": {"addsUnregisteredEntity": "管线丙", "addsEvent": true}}
+   ]
+  }
+ }
+}

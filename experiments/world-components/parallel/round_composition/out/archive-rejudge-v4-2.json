@@ -1,0 +1,1378 @@
+{
+ "version": "archive-rejudge-v4.2",
+ "judge": "n5-v4.2",
+ "note": "old archives are read-only here; v3 verdicts are kept for comparison and were not recomputed into the archives",
+ "batches": {
+  "real-batch-v1": {
+   "samples": [
+    {
+     "caseId": "rb-move-outcome",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "outcome": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-time-vague",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "uncovered:time (no vague expression and no value)",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": false,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "uncovered:time (no vague expression and no value)",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "outcome": {
+        "missing": 1
+       },
+       "time": {
+        "time": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-inner-change",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:appearance_changed",
+       "uncovered:f1:personality_changed",
+       "uncovered:f2:sanity_changed",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:appearance_changed",
+       "uncovered:f1:personality_changed",
+       "uncovered:f2:sanity_changed",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 3
+       }
+      ],
+      "factsByKind": {
+       "appearance_changed": {
+        "missing": 1
+       },
+       "personality_changed": {
+        "missing": 1
+       },
+       "sanity_changed": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-two-actors-move",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 2
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-same-name",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "uncovered:f2:moved",
+       "residue-name:管线甲",
+       "same-name-actors-not-all-named:管线乙 needs 2 mentions",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "undetermined",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false,
+       "G4_conflict_names": "undetermined"
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "uncovered:f2:moved",
+       "same-name-evidence-missing:管线乙 ['char_pb', 'char_pc']",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 3
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-subtask",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:subtask_added",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:subtask_added",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "subtask_added": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-sanity-only",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:personality_changed",
+       "uncovered:f1:sanity_changed",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:personality_changed",
+       "uncovered:f1:sanity_changed",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "personality_changed": {
+        "missing": 1
+       },
+       "sanity_changed": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-time-only",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f1:no_change",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f1:no_change",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [],
+      "factsByKind": {
+       "time": {
+        "time": 1
+       },
+       "no_change": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-conflict-two-actors",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:outcome",
+       "uncovered:f1:outcome",
+       "time-value-unparseable:一年",
+       "residue-name:管线甲",
+       "residue-name:管线乙",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": false,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:outcome",
+       "uncovered:f1:outcome",
+       "time-value-unparseable:一年",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       },
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "outcome": {
+        "missing": 2
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-move-other-appearance",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "residue-name:管线甲",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       }
+      }
+     }
+    }
+   ],
+   "v3HardPass": 0,
+   "v4HardPass": 0,
+   "v4Status": {
+    "judged": 9,
+    "needs-semantic-review": 0,
+    "undetermined": 1
+   },
+   "v4Blocked": 0,
+   "goalResidueSamples": 0,
+   "residueNameDiagnostics": 16,
+   "sameNameUndetermined": 0
+  },
+  "real-batch-v2": {
+   "samples": [
+    {
+     "caseId": "rb-move-outcome",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "outcome": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-time-vague",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "uncovered:time (no vague expression and no value)",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": false,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "uncovered:time (no vague expression and no value)"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "outcome": {
+        "missing": 1
+       },
+       "time": {
+        "time": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-inner-change",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:appearance_changed",
+       "uncovered:f1:personality_changed",
+       "uncovered:f2:sanity_changed",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:appearance_changed",
+       "uncovered:f1:personality_changed",
+       "uncovered:f2:sanity_changed"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 3
+       }
+      ],
+      "factsByKind": {
+       "appearance_changed": {
+        "missing": 1
+       },
+       "personality_changed": {
+        "missing": 1
+       },
+       "sanity_changed": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-two-actors-move",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "residue-name:管线甲",
+       "residue-name:管线乙",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       },
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 2
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-same-name",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "uncovered:f2:moved",
+       "residue-name:管线甲",
+       "residue-name:管线乙",
+       "residue-name:管线乙"
+      ]
+     },
+     "v4": {
+      "status": "undetermined",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true,
+       "G4_conflict_names": "undetermined"
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "uncovered:f2:moved",
+       "same-name-evidence-missing:管线乙 ['char_pb', 'char_pc']"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       },
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 3
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-subtask",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:subtask_added",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:subtask_added"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "subtask_added": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-sanity-only",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:personality_changed",
+       "uncovered:f1:sanity_changed",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:personality_changed",
+       "uncovered:f1:sanity_changed"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "personality_changed": {
+        "missing": 1
+       },
+       "sanity_changed": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-time-only",
+     "finishReason": "length",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f1:no_change",
+       "truncated-or-unfinished"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": false
+      },
+      "problems": [
+       "uncovered:f1:no_change",
+       "finish-length",
+       "truncated-or-unfinished"
+      ],
+      "diagnostics": [],
+      "factsByKind": {
+       "time": {
+        "time": 1
+       },
+       "no_change": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-conflict-two-actors",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:outcome",
+       "uncovered:f1:outcome",
+       "residue-name:管线甲",
+       "residue-name:管线乙"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:outcome",
+       "uncovered:f1:outcome"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       },
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "outcome": {
+        "missing": 2
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-move-other-appearance",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       }
+      }
+     }
+    }
+   ],
+   "v3HardPass": 0,
+   "v4HardPass": 0,
+   "v4Status": {
+    "judged": 9,
+    "needs-semantic-review": 0,
+    "undetermined": 1
+   },
+   "v4Blocked": 0,
+   "goalResidueSamples": 0,
+   "residueNameDiagnostics": 19,
+   "sameNameUndetermined": 0
+  },
+  "real-batch-v3": {
+   "samples": [
+    {
+     "caseId": "rb-move-outcome",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "outcome": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-time-vague",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:outcome"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "outcome": {
+        "missing": 1
+       },
+       "time": {
+        "time": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-inner-change",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:appearance_changed",
+       "uncovered:f1:personality_changed",
+       "uncovered:f2:sanity_changed",
+       "residue-name:管线甲",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:appearance_changed",
+       "uncovered:f1:personality_changed",
+       "uncovered:f2:sanity_changed"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 3
+       }
+      ],
+      "factsByKind": {
+       "appearance_changed": {
+        "missing": 1
+       },
+       "personality_changed": {
+        "missing": 1
+       },
+       "sanity_changed": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-two-actors-move",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "residue-name:管线甲",
+       "residue-name:管线乙"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       },
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 2
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-same-name",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "uncovered:f2:moved",
+       "residue-name:管线甲",
+       "residue-name:管线乙",
+       "residue-name:管线乙"
+      ]
+     },
+     "v4": {
+      "status": "undetermined",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true,
+       "G4_conflict_names": "undetermined"
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:moved",
+       "uncovered:f2:moved",
+       "same-name-evidence-missing:管线乙 ['char_pb', 'char_pc']"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       },
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 3
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-subtask",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:subtask_added",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved",
+       "uncovered:f1:subtask_added"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       },
+       "subtask_added": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-sanity-only",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:personality_changed",
+       "uncovered:f1:sanity_changed",
+       "residue-name:管线甲",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:personality_changed",
+       "uncovered:f1:sanity_changed"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 2
+       }
+      ],
+      "factsByKind": {
+       "personality_changed": {
+        "missing": 1
+       },
+       "sanity_changed": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-time-only",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f1:no_change"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f1:no_change"
+      ],
+      "diagnostics": [],
+      "factsByKind": {
+       "time": {
+        "time": 1
+       },
+       "no_change": {
+        "missing": 1
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-conflict-two-actors",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:outcome",
+       "uncovered:f1:outcome",
+       "residue-name:管线乙"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:outcome",
+       "uncovered:f1:outcome"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线乙",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "outcome": {
+        "missing": 2
+       }
+      }
+     }
+    },
+    {
+     "caseId": "rb-move-other-appearance",
+     "finishReason": "stop",
+     "v3": {
+      "status": "judged",
+      "hardPass": false,
+      "problems": [
+       "uncovered:f0:moved",
+       "residue-name:管线甲"
+      ]
+     },
+     "v4": {
+      "status": "judged",
+      "hardPass": false,
+      "gates": {
+       "G1_alignment": false,
+       "G2_goal_residue": true,
+       "G3_time": true,
+       "G6_completion": true
+      },
+      "problems": [
+       "uncovered:f0:moved"
+      ],
+      "diagnostics": [
+       {
+        "code": "residue-name",
+        "name": "管线甲",
+        "count": 1
+       }
+      ],
+      "factsByKind": {
+       "moved": {
+        "missing": 1
+       }
+      }
+     }
+    }
+   ],
+   "v3HardPass": 0,
+   "v4HardPass": 0,
+   "v4Status": {
+    "judged": 9,
+    "needs-semantic-review": 0,
+    "undetermined": 1
+   },
+   "v4Blocked": 0,
+   "goalResidueSamples": 0,
+   "residueNameDiagnostics": 18,
+   "sameNameUndetermined": 0
+  }
+ }
+}
