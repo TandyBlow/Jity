@@ -5,7 +5,6 @@ idempotent replay, branch preservation and device recovery. They do not load
 the world engine or run model inference.
 """
 
-from __future__ import annotations
 
 import hashlib
 import json

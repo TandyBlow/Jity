@@ -11,7 +11,6 @@ Environment:
     LOCAL_PROGRESS_MAX_SNAPSHOTS      default 5000 per world
 """
 
-from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

@@ -12,7 +12,6 @@ Two different things are kept apart on purpose:
 A fact bound to more than one point is a sustained state seen at several
 commits. It has no single occurrence time, so it can never be ordered.
 """
-from __future__ import annotations
 
 POINT, EVENT = 'point', 'event'
 UNIT_SECONDS = {'second': 1, 'minute': 60, 'hour': 3600}

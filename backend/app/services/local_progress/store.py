@@ -6,7 +6,6 @@ rewrites game state. The only checks are protocol checks: identifiers, byte
 size, parent existence, lineage shape, revision/head CAS and idempotent replay.
 """
 
-from __future__ import annotations
 
 import hashlib
 import json

@@ -9,7 +9,6 @@ The router owns no game semantics. It stores an opaque LocalGameSnapshot and
 answers head/read/upload-CAS/fork/select requests.
 """
 
-from __future__ import annotations
 
 import hmac
 import threading

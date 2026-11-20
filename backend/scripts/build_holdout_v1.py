@@ -30,7 +30,6 @@ Usage:
     python -X utf8 backend/scripts/build_holdout_v1.py <outDir>
 """
 
-from __future__ import annotations
 
 import copy
 import hashlib

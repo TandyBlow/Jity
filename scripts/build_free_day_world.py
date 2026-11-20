@@ -5,7 +5,6 @@ JSON is the existing WorldState type, including its existing initial projection.
 Run with --write to publish the authored snapshot; default mode checks it.
 """
 
-from __future__ import annotations
 
 import argparse
 import hashlib

@@ -9,7 +9,6 @@ Rules this module keeps:
   * evidence is derived from ``point.entityDeltas`` only, so it cannot drift
     from the state that was applied at commit time.
 """
-from __future__ import annotations
 
 import json
 from pathlib import Path

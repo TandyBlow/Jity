@@ -14,7 +14,6 @@ Usage:
     python -X utf8 backend/scripts/report_holdout_similarity.py artifacts/holdout-a-v1
 """
 
-from __future__ import annotations
 
 import json
 import sys
