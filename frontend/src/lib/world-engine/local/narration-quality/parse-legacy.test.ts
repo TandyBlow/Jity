@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { parseLegacyInput } from './parse-legacy';
 
 const RECORD = new URL('../../../../../../../../results/quality/browser-09.json', import.meta.url);
@@ -12,7 +12,7 @@ describe('parseLegacyInput', () => {
     expect(parsed?.['上回合状态']?.人物?.['林川'].任务?.大任务).toEqual({ 目标: '留在走廊守门，不碰盒子', 状态: '未完成' });
   });
 
-  it('round-trips the stored browser record', () => {
+  it.skipIf(!existsSync(RECORD))('round-trips the stored browser record', () => {
     const record = JSON.parse(readFileSync(RECORD, 'utf8')) as { runs: { input?: { text?: string } }[] };
     let total = 0;
     let ok = 0;

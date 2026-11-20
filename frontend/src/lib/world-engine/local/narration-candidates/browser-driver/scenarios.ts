@@ -141,11 +141,16 @@ export async function applyProjectedPoint(state: WorldState, args: {
   timeAdvance: TimeAdvance;
   entityDeltas: Record<Id, EntityDelta>;
 }): Promise<ProjectedPoint> {
+  // The consolidated kernel requires every normal point to open a round with
+  // an elapsed boundary; the probe scenarios pass instant advances.
+  const timeAdvance = args.timeAdvance.boundary === 'elapsed'
+    ? args.timeAdvance
+    : { ...args.timeAdvance, boundary: 'elapsed' as const };
   const point = buildTimelinePoint({
     worldId: state.worldId, id: args.id, sequence: args.sequence, kind: 'normal',
     previousPointId: `point_before_${args.sequence}`, roundId: 'round_projection',
     advanceId: 'advance_projection', trigger: 'player', linkedFromPointId: null,
-    timeAdvance: args.timeAdvance, entityDeltas: args.entityDeltas,
+    timeAdvance, entityDeltas: args.entityDeltas,
   });
   const after = applyPoint(state, point);
   const digest = await stateDigest(after);

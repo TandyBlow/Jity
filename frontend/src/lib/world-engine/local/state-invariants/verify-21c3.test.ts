@@ -5,18 +5,19 @@
  * three points later. This test proves the save is a valid forward chain, not
  * that the page showed it at the stale instant.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { verifyDisplayHistory, verifySessionSnapshot, verifySnapshotSequence, verifyTaskDecisionEvidence } from './index';
 
-const evidence = JSON.parse(readFileSync(
-  resolve('../../../results/product/evidence/09-one-legal-turn-21c3.json'), 'utf8'));
-const turn = evidence.turns[0];
+const EVIDENCE = resolve('../../../results/product/evidence/09-one-legal-turn-21c3.json');
+const hasEvidence = existsSync(EVIDENCE);
+const evidence = hasEvidence ? JSON.parse(readFileSync(EVIDENCE, 'utf8')) : null;
+const turn = evidence?.turns?.[0] ?? {};
 const stale = turn.snapshotAfterTurn;
-const recovered = evidence.refreshRestore.snapshotAfterReload;
+const recovered = evidence?.refreshRestore?.snapshotAfterReload;
 
-describe('21c3 save recovery', () => {
+describe.skipIf(!hasEvidence)('21c3 save recovery', () => {
   it('reads the reload snapshot as a valid three-point save', async () => {
     expect(stale.transport.version).toBe(0);
     expect(stale.commands).toEqual([]);

@@ -20,8 +20,7 @@
 import type { EntityDelta, Id, Position, TimeAdvance, WorldState } from '../../../types';
 import type { CommittedNarration, NarrationFact } from '../../../runtime/committed-narration';
 import type { BeatSceneContext, NarrationPolicy } from '../../narration-generation/types';
-import { projectNarrationInput } from '../../narration-input';
-import { renderResultInput } from '../../narration-input';
+import { projectNarrationInput, renderNarrationInput } from '../../narration-input';
 import type { NarrationPoint, PreparedNarration } from './types';
 
 const INSTANT: TimeAdvance = { boundary: 'instant', duration: { amount: 0, unit: 'second' } };
@@ -263,7 +262,7 @@ export function serializeNarrationInput(point: NarrationPoint): { text: string |
       timeAdvance: point.delta.timeAdvance ?? INSTANT,
       viewpointId: point.after.protagonistId,
     });
-    const rendered = renderResultInput(projected.projection);
+    const rendered = renderNarrationInput(projected.projection);
     return { text: rendered.text, error: null };
   } catch (error) {
     const code = error instanceof Error ? `${error.name}:${error.message}` : String(error);
