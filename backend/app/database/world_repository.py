@@ -86,6 +86,11 @@ def _save_point(connection, record, point_id):
     if existing is not None and tuple(values[key] for key in _POINT_IMMUTABLE) != tuple(existing):
         raise LedgerMismatch('Committed point content cannot change')
     _upsert(connection, 'world_points', ('world_id', 'id'), values)
+    # Evidence ledger rides in the same transaction as the point itself, so a
+    # committed point and its recorded change items can never disagree.
+    if record.get('points', {}).get(point_id) is not None:
+        from app.database.world_evidence_store import record_point
+        record_point(connection, world_id, record['points'][point_id])
     # Verify changed checkpoints here; check_core also verifies retained history.
     if state_digest(checkpoint['state']) != checkpoint['stateDigest']:
         raise LedgerMismatch('State checkpoint digest differs from its content')
