@@ -22,6 +22,7 @@ for (const file of runs) {
   for (const turn of evidence.turns ?? []) {
     const text = (turn.text ?? '').trim();
     if (!text) continue;
+    const narration = turn.product?.narration ?? null;
     samples.push({
       id: `${evidence.runId}:${turn.id}`,
       run: evidence.runId,
@@ -41,6 +42,9 @@ for (const file of runs) {
       continuationDecision: turn.submission?.continuationDecision ?? null,
       problems: turn.problems ?? [],
       note: turn.note ?? null,
+      // The projection the model saw, so a reviewer can compare prose vs facts.
+      narrationPrompt: typeof narration?.prompt === 'string' ? narration.prompt.slice(0, 4000) : null,
+      narrationRaw: typeof narration?.raw === 'string' ? narration.raw.slice(0, 2000) : null,
     });
   }
 }
