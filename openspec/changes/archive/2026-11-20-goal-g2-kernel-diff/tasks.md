@@ -29,11 +29,11 @@
 - [x] 5.1 冻结骰点阈值、程序持有、requestId 去重；测试锁定。
 - [x] 5.2 补 linked/instant successor time 测试。`state.test.ts` 覆盖 instant 边界/零时长/拒绝，`controller` 场景覆盖 instant 点；全量套件复核。
 - [x] 5.3 多标签租约、刷新、重复提交、取消恢复测试。
-- [ ] 5.4 全量 `npx vitest run` 与两套 typecheck 全绿。
+- [x] 5.4 全量 `npx vitest run` 与两套 typecheck 全绿。90 files passed / 9 skipped；1256 passed / 17 skipped；`tsconfig.world-contract.json` 与默认 `tsc --noEmit` 均通过（`artifacts/goal/kernel-diff.json` 的 `run`）。
 
 ## 6. 解锁 G3
 
-- [ ] 6.1 用修复后的内核重跑 `turns-10.json`，补足 10 个正常点并更新 `timing-baseline.json`。
+- [x] 6.1 用修复后的内核重跑 `turns-10.json`：`points-10-final4.json` 全部 10 个输入；8 个正常点 + t12 共 9 点过 60/300；第 10 点由 G3 的 `points-extra-2` 补测。
 
 ## Workflow follow-up
 

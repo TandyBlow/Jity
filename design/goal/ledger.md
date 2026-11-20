@@ -58,8 +58,8 @@
 | 目标线 | 状态 | 说明 |
 |---|---|---|
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
-| G2 浏览器状态内核收口 | 进行中 | 32 操作定案（31 实现、restore_group_work 非产品）；取消恢复与 corrupt-restore 测试通过；restore 已接 invariants；差分夹具已由 canonical/state/transport 测试消费；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；待全量 suite 与 G3 补测 |
-| G3 模型资产与时间包线 | 阻塞（9/10 点通过） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；`points-10-final4` + `points-extra-2` 共 9 个正常点首段 15.1–43.5 s、正文完成 21.9–54.8 s、完成−提交 6.5–13.8 s，全部过 60/300；t4 结算失败、t6 刷新不计；自动链 0 次（G5）；还差 1 个正常点补测 |
+| G2 浏览器状态内核收口 | 完成（2026-11-20） | 32 操作定案（31 实现、`restore_group_work` 非产品，D-015）；取消恢复与 corrupt-restore 测试通过；restore 接 `verifySessionSnapshot`；差分夹具由 canonical/state/transport 测试逐字节断言；骰点协议冻结；全量 90 files / 1256 passed，两套 typecheck 通过；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；Change 已归档，tag `goal-g2-kernel-diff-20261120` |
+| G3 模型资产与时间包线 | 完成（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；12 个正常点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，全部过 60/300，`timing-baseline.json` 状态 PASS；自动链 0 次归 G5；Change 已归档，tag `goal-g3-model-timing-20261120` |
 | G4 单机可玩页面接线 | 未开始 | pause/resume/history/delete/regenerate/e2e |
 | G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
 | G6 叙事产品路径与质量 | 未开始 | 先原样输出；20+ 点读评；G6 后决定是否加事实门 |
@@ -71,8 +71,8 @@
 按 G 线列，作为唯一进度来源；不另建 progress 文档。
 
 - **G1**：确认文档集与 tag；用户决策已记录（D-004/D-006/D-010–D-013）；当前无 `pending-user`。
-- **G2**：定案 `checkpoint_restore_group_work`、`get_context.recovery:null`；生成 Python 冻结差分向量；接 `state-invariants` 到 restore；补 linked/instant successor time；冻结骰点协议；补多标签/刷新/重复提交/取消恢复测试。接手取消恢复：结算失败后 `round_conclusion_cancel` 未清 advance，后续提交恒 `turn_in_progress`（证据 `artifacts/goal/timing-runs/points-10-rerun.json` t4–t10）。
-- **G3**：资产与冷启动完成；已测 3 点 60/300 通过；补测 10 点前置为 G2/G4 的结算失败恢复；自动链 0 次（G5）。
+- **G2**：完成。32 操作按 D-015 定案；取消恢复回归（`local-transport.test.ts`）与 corrupt-restore 拒绝通过；restore 已接 invariants；冻结差分夹具（LF sha `7d68a392…f977`）由 canonical/state/transport 测试消费；骰点协议见 `kernel-ops.md`；全量 1256 passed / 17 skipped，两套 typecheck 通过。已知限制：failed head 的 cancel 未放宽（需重试或删除叙事后继续）。
+- **G3**：完成。资产与冷启动完成；12 个正常点全部过 60/300（最差首段 43,526 ms、最差完成−提交 13,772 ms），`timing-baseline.json` PASS；t4/t11 结算失败与 t6 刷新保留为失败证据；自动链 0 次归 G5。
 - **G4**：接 `LocalGameSession.pause()/resume()`、HistoryPanel、`narration_delete`、状态/进度、错误/重试、刷新恢复、租约提示；用 components/world-local；加 `world-local.spec.ts`；清理过期注释；修 `position_invalid`、`turn_in_progress`、自动轮重复、空占位回合。
 - **G5**：建 12–20 例冻结场景；只做 `dragon-raja-free-day`（D-011）；每任务记录原始输出/结构/语义错误/重试/耗时；用户读评；产 `artifacts/goal/semantics/`。
 - **G6**：先按原样输出冻结产品路径（D-004）；核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5；用户 20+ 点读评；G6 后按实测决定是否加事实门；产 `artifacts/goal/narration/`。

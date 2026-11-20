@@ -44,7 +44,11 @@
   ],
   "run": {
     "command": "cd frontend && npx vitest run",
-    "result": null,
-    "note": "filled after the G2 full run"
+    "at": "2026-11-20T10:03:00Z",
+    "result": "90 files passed, 9 skipped; 1256 passed, 17 skipped",
+    "typecheck": {
+      "world-contract": "pass",
+      "default": "pass"
+    }
   }
 }

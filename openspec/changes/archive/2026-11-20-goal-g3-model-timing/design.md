@@ -75,12 +75,13 @@
 
 复跑第 3 点：首段 31.4 s，正文完成 40.6 s，整点 117 s；第 4 点结算在 `updates tasks` 被内核拒绝（模型给出未登记角色 `f1`），未提交点；此后 advance 未关闭，第 5–10 点全部 `turn_in_progress`/按钮不可点。后续定位：内核 cancel 实际能清 advance；停摆是页面 `busy`/`phase` 与驱动下一回合点击的竞态，驱动把上一回合的停止提示/失败提示当成本回合结束，以及 Windows 上证据文件读取与原子 rename 的锁冲突。修复：`e75cd4a6`（stop 路径恢复）、`1990dc91`（phase ready + 日志）、`c05b7653`/`376b0a29`/`c6b52812`（驱动等待、记录索引、失败提示只看最后一条 article）、`d20afc47`（rename 重试）。最终运行写 `points-10-final4.json`，前三点均 60/300 内。该恢复缺口归 G2/G4（取消恢复）。
 
-## 结论（部分）
+## 结论
 
-- 时间：`points-10-final4` + `points-extra-2` 共 9 个正常点首段 15.1–43.5 s、正文完成 21.9–54.8 s、完成−提交 6.5–13.8 s，60/300 门槛全部通过。
-- 覆盖：9/10 点；t4 结算失败（`unknown character f1`）、t6 刷新不计；还差 1 个正常点补测。
-- 自动链：0 次 `continuationDecision=continue`；结论请求 `request_malformed` 或自动后续在 updates 停止。归 G5。
-- G3 保持 active；补足第 10 点且自动链有结论后再关闭。
+- 时间：12 个正常点（`points-10-final4` 8 点 + `points-extra-2` 的 t12 + `points-extra-4` 的 e1–e3）首段 9.4–43.5 s，正文完成−提交 6.4–13.8 s，全部过 60/300；`timing-baseline.json` 状态 PASS。
+- 冷启动：24.7/18.9/19.3 s，isolated、RTX 4060、2×200，独立报告。
+- 覆盖：t4 结算失败（`unknown character f1`）、t6 刷新、t11 两次结算失败不计入；均保留原始运行。
+- 自动链：0 次 `continuationDecision=continue`；结论请求 `request_malformed` 或自动后续在 updates 停止。归 G5，不阻塞 G3 的时间结论。
+- G3 以时间包线通过关闭；R10 自动链缺口留在账本，由 G5 关闭。
 
 ## 不做什么
 
