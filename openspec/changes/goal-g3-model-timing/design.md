@@ -71,6 +71,8 @@
 
 处置：在 `world-local/page.tsx` 的 stop 路径复用失败路径的 cancel→补写→cancel 恢复（commit `e75cd4a6`）。这是 G4 清单里的已知交互缺陷，为完成 G3 十点测量前置修复；G4 仍负责该交互的完整验收。原始失败运行保留在 `artifacts/goal/timing-runs/points-10.json`，复跑写 `points-10-rerun.json`。
 
+复跑前两点：首段 22.4 s / 39.1 s，正文完成 29.3 s / 49.2 s，整点 120 s / 207 s，均在门槛内。第二点的自动后续在第 7 个结算组后因 `updates context_capacity_exceeded: prompt=11578 max=11000` 停止（未完成 continuation 判断），记为 G5/G4 缺口，不改变时间门槛。
+
 ## 不做什么
 
 - 不换模型权重；如实测必须替换，按 D-007 记录 sha256/bytes/license/前后实测。
