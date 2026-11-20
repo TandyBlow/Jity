@@ -70,6 +70,13 @@ for (const file of runs) {
     const finishMinusCommit = finished != null ? finished - (commit ?? 0) : null;
     const firstReadablePass = record?.firstReadableAtMs != null && record.firstReadableAtMs <= FIRST_READABLE_LIMIT_MS;
     const pointPass = finishMinusCommit != null && finishMinusCommit <= POINT_LIMIT_MS;
+    // A point clock only proves timing when the turn actually finished. A stop
+    // after the first point's prose means the round's later point never
+    // committed; counting that as a timing pass hid the settlement failure.
+    const turnIncomplete = String(turn.message ?? '').startsWith('本轮停止')
+      || (turn.problems ?? []).some((problem) => /submit_refused|over_300s|turn_timeout|deadline/i.test(problem))
+      || (turn.stages ?? []).some((stage) => /295 秒时限/.test(String(stage.label ?? '')))
+      || (turn.submission?.stops ?? []).some((stop) => /AbortError|settlement_failed/.test(stop));
     points.push({
       run: evidence.runId, turn: turn.turn, id: turn.id, input: turn.input, purpose: turn.purpose,
       inputAt: turn.submittedAt,
@@ -98,6 +105,7 @@ for (const file of runs) {
       continuationDecision: turn.submission?.continuationDecision ?? record?.submission?.continuationDecision ?? null,
       submissionCalls: (turn.submission?.calls ?? []).length,
       problems: turn.problems ?? [],
+      turnIncomplete,
       excluded: turn.refreshMidSettle ? 'mid_settle_refresh' : (turn.cancelled ? 'cancelled' : null),
     });
   }
@@ -112,6 +120,7 @@ const timed = [...byId.values()];
 const firstGate = timed.map((point) => point.clocks.firstReadableAtMs).filter((value) => value != null);
 const pointGate = timed.map((point) => point.clocks.pointTextFinishedMinusCommitMs).filter((value) => value != null);
 const pass = timed.length >= 10
+  && timed.every((point) => !point.turnIncomplete)
   && timed.every((point) => point.clocks.firstReadableAtMs != null && point.clocks.firstReadableAtMs <= FIRST_READABLE_LIMIT_MS)
   && timed.every((point) => point.clocks.pointTextFinishedMinusCommitMs != null && point.clocks.pointTextFinishedMinusCommitMs <= POINT_LIMIT_MS);
 
@@ -131,6 +140,11 @@ const summary = {
     pointText: {
       evaluated: pointGate.length, failed: timed.filter((point) => !(point.clocks.pointTextFinishedMinusCommitMs != null && point.clocks.pointTextFinishedMinusCommitMs <= POINT_LIMIT_MS)).length,
       worstMs: pointGate.length ? Math.max(...pointGate) : null,
+    },
+    turnCompletion: {
+      evaluated: timed.length,
+      failed: timed.filter((point) => point.turnIncomplete).length,
+      ids: timed.filter((point) => point.turnIncomplete).map((point) => point.id),
     },
     autoChainPoints: timed.filter((point) => point.continuationDecision === 'continue').length,
     status: pass ? 'PASS' : 'FAIL_OR_INCOMPLETE',

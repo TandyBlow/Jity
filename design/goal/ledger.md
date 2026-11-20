@@ -59,7 +59,7 @@
 |---|---|---|
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
 | G2 浏览器状态内核收口 | 完成（2026-11-20） | 32 操作定案（31 实现、`restore_group_work` 非产品，D-015）；取消恢复与 corrupt-restore 测试通过；restore 接 `verifySessionSnapshot`；差分夹具由 canonical/state/transport 测试逐字节断言；骰点协议冻结；全量 90 files / 1256 passed，两套 typecheck 通过；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；Change 已归档，tag `goal-g2-kernel-diff-20261120` |
-| G3 模型资产与时间包线 | 完成（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；12 个正常点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，全部过 60/300，`timing-baseline.json` 状态 PASS；自动链 0 次归 G5；Change 已归档，tag `goal-g3-model-timing-20261120` |
+| G3 模型资产与时间包线 | 复核不通过（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；原 12 个计分点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，但新增回合完成门后 7/12 回合在首点正文后停止，`timing-baseline.json` 状态 `FAIL_OR_INCOMPLETE`；原因是旧门只统计已提交首点的朗读，未提交的 instant 尾点不可见；自动链 0 次归 G5。D-016 记录复核修正，原 tag 保留 |
 | G4 单机可玩页面接线 | 完成（有缺口） | 隔离告警、pause/resume、HistoryPanel 只读选中、叙事删除/重生（head+history）、NarrationView/ProgressStatus、空占位清理、构建/e2e/block-api 通过；缺口：WorldStatusPanel 未接、`position_invalid` 与自动轮重复转 G5、无 10 轮全绿运行 |
 | G5 非叙事语义验收 | 进行中 | 16 例冻结套件与分类器；run1/2/4/5/6/7/8 共 28 个真实回合；unknown_entity/context_overflow/task 格式已修；KernelViolation→request_malformed 丢详情已修（run9 待验）；run6 三回合 146–206 s 完成，run7 s01/s02、run8 s03 触顶 295 s：尾点全名册串行组是主因；0 次 continue |
 | G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 个硬错误/4 个复述/1 干净；待 20+ 点与用户读评、G6 后事实门决定 |
@@ -72,7 +72,7 @@
 
 - **G1**：确认文档集与 tag；用户决策已记录（D-004/D-006/D-010–D-013）；当前无 `pending-user`。
 - **G2**：完成。32 操作按 D-015 定案；取消恢复回归（`local-transport.test.ts`）与 corrupt-restore 拒绝通过；restore 已接 invariants；冻结差分夹具（LF sha `7d68a392…f977`）由 canonical/state/transport 测试消费；骰点协议见 `kernel-ops.md`；全量 1256 passed / 17 skipped，两套 typecheck 通过。failed head 的 cancel 已在 G4 放宽为 ready|failed。
-- **G3**：完成。资产与冷启动完成；12 个正常点全部过 60/300（最差首段 43,526 ms、最差完成−提交 13,772 ms），`timing-baseline.json` PASS；t4/t11 结算失败与 t6 刷新保留为失败证据；自动链 0 次归 G5。
+- **G3**：复核不通过。原 `timing-baseline.json` 只统计已提交首点的朗读时钟，未提交的尾点不可见；加回合完成门后 12 个计分点中 7 个回合中途停止（`t1/t3/t5/t9/t12/e1/e3`，`request_malformed` 或结算失败），状态改为 `FAIL_OR_INCOMPLETE`。60 秒首段（最差 43,526 ms）与单点正文（最差 13,772 ms）本身仍通过；t4/t11 结算失败、t6 刷新保留为失败证据；自动链 0 次归 G5。修正见 D-016；原 change 已归档、tag 保留。
 - **G4**：完成（有缺口）。隔离、pause/resume、历史只读、叙事删除/重生、NarrationView/ProgressStatus、空占位清理；构建、1257 passed、e2e（含重生）与 `--block-api` 通过。缺口：WorldStatusPanel 未接；`position_invalid`（t4 `lu receives conflicting positions`）与自动轮重复转 G5；尚无 10 轮无停止的整轮运行。
 - **G5**：进行中。`turns-semantics-16` + 分类器；证据 `artifacts/goal/semantics/`（run1/2/4/5/6/7/8）；已修：任务 characterId/basis、行对象修复、fact id 归属、上下文 11,900、295 s 引擎中止、`turn_deadline` 放弃 pending 叙事、KernelViolation 响应详情。run6 三回合 146–206 s；run7 s01/s02 与 run8 s03 触顶 295 s，尾点 10–12 组串行（results+六阶段 updates）是主因；run7/8 s03 的 `stage_unit` malformed 等 run9 详情；自动链仍 0 次；场外 actor 默认 judge 与 60/300 冲突，待对照臂实测后交用户定策略。
 - **G6**：进行中。原样输出路径保持；12 个 G3 样本技术读评：7 个硬事实/视角错误、4 个事实清单复述、1 个干净（`artifacts/goal/narration/read-technical-20261120.json`）；样本与投影提示已收（`samples.json`）；待 20+ 点与用户读评，G6 后按实测决定事实门。

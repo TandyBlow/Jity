@@ -1,6 +1,6 @@
 {
   "kind": "jity-goal-timing-baseline",
-  "generatedAt": "2026-11-20T10:18:31.340Z",
+  "generatedAt": "2026-11-20T13:58:09.026Z",
   "thresholds": {
     "firstReadableMs": 60000,
     "pointTextMs": 300000
@@ -366,6 +366,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -535,6 +536,7 @@
       "problems": [
         "internal_note_in_prose"
       ],
+      "turnIncomplete": false,
       "excluded": null
     },
     {
@@ -694,6 +696,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -771,6 +774,7 @@
         "source_unknown",
         "no_accepted_model_text"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -924,6 +928,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -963,6 +968,7 @@
       "problems": [
         "mid_settle_refresh"
       ],
+      "turnIncomplete": false,
       "excluded": "mid_settle_refresh"
     },
     {
@@ -1126,6 +1132,7 @@
       "problems": [
         "internal_note_in_prose"
       ],
+      "turnIncomplete": false,
       "excluded": null
     },
     {
@@ -1281,6 +1288,7 @@
       "problems": [
         "internal_note_in_prose"
       ],
+      "turnIncomplete": false,
       "excluded": null
     },
     {
@@ -1436,6 +1444,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -1587,6 +1596,7 @@
       "problems": [
         "internal_note_in_prose"
       ],
+      "turnIncomplete": false,
       "excluded": null
     },
     {
@@ -1675,6 +1685,7 @@
         "source_unknown",
         "no_accepted_model_text"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -1828,6 +1839,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -1981,6 +1993,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     },
     {
@@ -2132,6 +2145,7 @@
       "problems": [
         "internal_note_in_prose"
       ],
+      "turnIncomplete": false,
       "excluded": null
     },
     {
@@ -2277,6 +2291,7 @@
       "problems": [
         "submit_refused:fix_request:request_malformed"
       ],
+      "turnIncomplete": true,
       "excluded": null
     }
   ],
@@ -2292,7 +2307,20 @@
       "failed": 0,
       "worstMs": 13772
     },
+    "turnCompletion": {
+      "evaluated": 12,
+      "failed": 7,
+      "ids": [
+        "t1-look-lane",
+        "t3-talk-lin",
+        "t5-wait-listen",
+        "t9-ask-nono",
+        "t12-talk-doctor",
+        "e1-stand-listen",
+        "e3-check-time"
+      ]
+    },
     "autoChainPoints": 0,
-    "status": "PASS"
+    "status": "FAIL_OR_INCOMPLETE"
   }
 }
