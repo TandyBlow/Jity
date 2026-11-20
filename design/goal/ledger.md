@@ -63,7 +63,7 @@
 | G4 单机可玩页面接线 | 完成（有缺口） | 隔离告警、pause/resume、HistoryPanel 只读选中、叙事删除/重生（head+history）、NarrationView/ProgressStatus、空占位清理、构建/e2e/block-api 通过；缺口：WorldStatusPanel 未接、`position_invalid` 与自动轮重复转 G5、无 10 轮全绿运行；run11 自动链存档刷新曾因 invariants 拒绝，kernel 已修；run15 s03 页面在时限取消后停留 `streaming`（“正在写正文”不消失），已修为提交结束必离开计算阶段 |
 | G5 非叙事语义验收 | 进行中 | 16 例冻结套件与分类器；run1/2/4/5/6/7/8/9/10 共 30 个真实回合；unknown_entity/context_overflow/task 格式/个性-理智配对已修；run10 无语义拒绝但触顶 295 s：尾点 9 个场外组串行；`?offscreenPolicy=skip` 对照臂已接线；0 次 continue |
 | G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 个硬错误/4 个复述/1 干净；t5 根因：行动原文地点与结算位置冲突且无位移时仍被当作事实，已修为丢弃冲突地点子句与重复结果句（prompt 测试）；待 20+ 点与用户读评、G6 后事实门决定 |
-| G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链；单用户 Bearer + 本地/内网 |
+| G7 进度同步与跨设备 | 进行中（小步） | 客户端/适配器与离线队列已有测试；`status().localRevision` 已从 store 元数据返回；页面 startup `restore()`、冲突分叉选择 UI 与两设备证据未做；单用户 Bearer + 本地/内网（D-013） |
 | G8 交付验收与证据 | 未开始 | 20 输入、manifest、用户签字 |
 
 ## 5. 开放任务
@@ -76,7 +76,7 @@
 - **G4**：完成（有缺口）。隔离、pause/resume、历史只读、叙事删除/重生、NarrationView/ProgressStatus、空占位清理；构建、1257 passed、e2e（含重生）与 `--block-api` 通过。缺口：WorldStatusPanel 未接；`position_invalid`（t4 `lu receives conflicting positions`）与自动轮重复转 G5；尚无 10 轮无停止的整轮运行；自动链（4 点含两个 automatic）在刷新时被 invariants 拒绝，恢复失败转 G4/G5。
 - **G5**：进行中。`turns-semantics-16` + 分类器；证据 `artifacts/goal/semantics/`（run1–run15；run16 全量在跑）；已修：任务 characterId/basis、行对象修复、fact id 归属、上下文 11,900、295 s 引擎中止、`turn_deadline` 放弃 pending 叙事、KernelViolation 响应详情、个性-理智配对、自动轮 order 外目标、恢复时间比较、多成员 results 末次改归。run11 201 s、run13 268.6 s 交还并有 automatic 点；run14 恢复通过；run15 前三例语义违规 0，s01 297 s 首段超 60、s03 330 s 超 300。计时主因：每组合都跑六阶段 updates（任务阶段扫全名册），每点 3–5 组串行。
 - **G6**：进行中。原样输出路径保持；12 个 G3 样本技术读评：7 个硬事实/视角错误、4 个事实清单复述、1 个干净（`artifacts/goal/narration/read-technical-20261120.json`）；样本与投影提示已收（`samples.json`）；待 20+ 点与用户读评，G6 后按实测决定事实门。
-- **G7**：接 `sync.restore()`/`choose()`；离线队列、重连 flush、CAS/父链/修订号；两设备分叉；单用户 Bearer + 本地/内网服务（D-013）；产 `artifacts/goal/sync/`。
+- **G7**：进行中（小步）。`progress-sync` 客户端/适配器、离线队列、CAS/父链已有单元测试；`status().localRevision` 已修（从 store 元数据读取）。剩余：页面启动 `sync.restore()`（本地优先、否则远端头）、冲突分叉展示与 `sync.choose`、重连 flush 的页面状态、两设备分叉证据（`artifacts/goal/sync/`）；单用户 Bearer + 本地/内网服务（D-013）。
 - **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
 
 ## 6. 证据索引
