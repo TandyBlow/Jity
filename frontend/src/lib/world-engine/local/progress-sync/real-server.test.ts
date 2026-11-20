@@ -84,4 +84,61 @@ describe.skipIf(!baseUrl)('real progress-sync service', () => {
     expect(recovered.snapshot?.payload).toEqual(snapshot(2, 'B'));
     expect(deviceA.local.values.get(worldId)).toEqual(snapshot(2, 'B'));
   });
+
+  it('keeps the whole snapshot, including played commands and narration history', async () => {
+    // The page shows its readable entries from the snapshot. A sync round trip
+    // that dropped or rewrote any field would show a shorter history after a
+    // refresh, which is exactly the symptom 06 is chasing.
+    const worldId = `history_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    const token = process.env.PROGRESS_SYNC_TOKEN;
+    const local = new MemoryLocalStore();
+    const client = new ProgressSyncClient<unknown>({
+      baseUrl: baseUrl!,
+      token,
+      fetchImpl: fetch,
+      localStore: local,
+      retry: { attempts: 1 },
+    });
+    const withHistory = {
+      transport: {
+        worldId,
+        version: 3,
+        headPointId: 'p3',
+        control: { revision: 9, phase: 'idle', paused: false },
+        pointStates: {
+          p1: { stateDigest: 'd1', text: '第一回合正文' },
+          p2: { stateDigest: 'd2', text: '第二回合正文' },
+          p3: { stateDigest: 'd3', text: '第三回合正文' },
+        },
+        narrations: {
+          p1: { status: 'accepted', text: '第一回合正文', source: 'model' },
+          p2: { status: 'accepted', text: '第二回合正文', source: 'program' },
+          p3: { status: 'missing' },
+        },
+        state: { characters: { lu: { position: 'lane' } } },
+      },
+      commands: ['我走进服务巷。', '我看墙上的规则牌。', '我向诺诺问话。'],
+      checkpoint: { roundId: 'r3', plan: { steps: ['a', 'b'] } },
+    };
+
+    const saved = await client.save(worldId, withHistory, { requestId: `hist-${worldId}` });
+    expect(saved.status).toBe('synced');
+    if (saved.status !== 'synced') throw new Error('history save failed');
+
+    const reader = new ProgressSyncClient<unknown>({
+      baseUrl: baseUrl!,
+      token,
+      fetchImpl: fetch,
+      localStore: new MemoryLocalStore(),
+      retry: { attempts: 1 },
+    });
+    const pulled = await reader.pullLatest(worldId);
+    expect(pulled.snapshot?.payload).toEqual(withHistory);
+    const commands = (pulled.snapshot?.payload as { commands: string[] }).commands;
+    expect(commands).toHaveLength(3);
+    const narrations = (pulled.snapshot?.payload as { transport: { narrations: Record<string, unknown> } })
+      .transport.narrations;
+    expect(Object.keys(narrations)).toEqual(['p1', 'p2', 'p3']);
+    expect((pulled.snapshot?.payload as { checkpoint?: unknown }).checkpoint).toEqual(withHistory.checkpoint);
+  });
 });

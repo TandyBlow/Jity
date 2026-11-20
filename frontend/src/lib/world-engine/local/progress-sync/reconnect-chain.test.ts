@@ -19,7 +19,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { MemoryQueueStore, ProgressSyncClient, type HeadStateStore, type LocalSnapshotStore } from './index';
+import {
+  MemoryQueueStore, ProgressSyncClient, createProductSync,
+  type HeadStateStore, type LocalSnapshotStore,
+} from './index';
 
 const baseUrl = process.env.PROGRESS_SYNC_URL;
 const token = process.env.PROGRESS_SYNC_TOKEN;
@@ -170,5 +173,110 @@ describe.skipIf(!baseUrl)('real progress-sync service: offline reconnect', () =>
     expect(selected.headSnapshotId).toBe((fromA as { upload: { snapshotId: string } }).upload.snapshotId);
     expect(selected.nodes).toHaveLength(3);
     expect((await b.read(worldId, kept.upload!.snapshotId)).payload).toEqual(snapshot(2, 'B-fork'));
+  });
+
+  it('lets a session-owned, revision-checked store stay the only writer', async () => {
+    const worldId = `owned_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    // 06's durable store checks the revision the session holds. A second writer
+    // moves it behind the session and the session's next save fails as a
+    // conflict before any model call, which is exactly what 04 hit on the page.
+    const records = new Map<string, { snapshot: unknown; revision: number }>();
+    const store = {
+      records,
+      async load(id: string) {
+        return records.get(id) ?? null;
+      },
+      async save(id: string, payload: unknown, options?: { expectedRevision?: number }) {
+        const current = records.get(id);
+        const expected = options?.expectedRevision;
+        if (expected !== undefined && current && current.revision !== expected) {
+          throw new Error('revision_conflict');
+        }
+        const next = { snapshot: structuredClone(payload), revision: (current?.revision ?? 0) + 1 };
+        records.set(id, next);
+        return { revision: next.revision };
+      },
+    };
+    const sync = createProductSync<unknown>({
+      store,
+      worldId,
+      baseUrl,
+      token,
+      storage: null,
+      retry: { attempts: 2, baseDelayMs: 10 },
+      sleep: async () => undefined,
+    });
+
+    // The session saves with the revision it owns, then asks for an upload.
+    await store.save(worldId, snapshot(1, 'session-write'), { expectedRevision: 0 });
+    const uploaded = await sync.save(snapshot(1, 'session-write'), { requestId: `owned-${worldId}-1` });
+    expect(uploaded.localSaved).toBe(false);
+    expect(uploaded.outcome?.status).toBe('synced');
+    expect(records.get(worldId)?.revision).toBe(1);
+
+    // The session keeps saving against its own revision, with no conflict.
+    await expect(store.save(worldId, snapshot(2, 'session-continues'), { expectedRevision: 1 }))
+      .resolves.toBeTruthy();
+  });
+
+  it('continues a restored history instead of replacing it', async () => {
+    const worldId = `continue_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    const history = (entries: string[]) => ({
+      transport: {
+        worldId,
+        points: Object.fromEntries(entries.map((entry, index) => [
+          `p${index + 1}`, { id: `p${index + 1}`, sequence: index + 1, trigger: 'player' },
+        ])),
+        narrations: Object.fromEntries(entries.map((entry, index) => [
+          `p${index + 1}`, { status: 'ready', text: entry },
+        ])),
+        state: { characters: { lu: { position: 'lane' } } },
+      },
+      commands: entries,
+    });
+    // The product store returns a record; keep the payload here instead.
+    const productStore = () => {
+      const values = new Map<string, unknown>();
+      return {
+        values,
+        async load(id: string) {
+          return values.has(id) ? { snapshot: values.get(id) } : null;
+        },
+        async save(id: string, payload: unknown) {
+          values.set(id, structuredClone(payload));
+        },
+      };
+    };
+    const a = createProductSync<unknown>({
+      store: productStore(), worldId, baseUrl, token, storage: null,
+      retry: { attempts: 2, baseDelayMs: 10 }, sleep: async () => undefined,
+    });
+    const first = await a.save(history(['第一回合', '第二回合']), { requestId: `cont-a-${worldId}` });
+    expect(first.outcome?.status).toBe('synced');
+
+    // A second device has no local save: it restores the remote copy, appends
+    // one turn and saves. The result must be a child of A's snapshot and keep
+    // both earlier entries.
+    const b = createProductSync<unknown>({
+      store: productStore(), worldId, baseUrl, token, storage: null,
+      retry: { attempts: 2, baseDelayMs: 10 }, sleep: async () => undefined,
+    });
+    const restored = await b.restore();
+    expect(restored.source).toBe('remote');
+    const restoredHistory = restored.snapshot as { commands: string[] };
+    expect(restoredHistory.commands).toEqual(['第一回合', '第二回合']);
+    const grown = await b.save(history(['第一回合', '第二回合', '第三回合']), { requestId: `cont-b-${worldId}` });
+    expect(grown.outcome?.status).toBe('synced');
+    if (grown.outcome?.status !== 'synced') throw new Error('second device save failed');
+    expect(grown.outcome.upload.parentSnapshotIds).toHaveLength(1);
+
+    const reader = new ProgressSyncClient<unknown>({
+      baseUrl: baseUrl!, token, fetchImpl: fetch, localStore: new MemoryLocalStore(),
+    });
+    const graph = await reader.graph(worldId);
+    const leaf = await reader.read(worldId, graph.headSnapshotId!);
+    const payload = leaf.payload as { commands: string[] };
+    expect(payload.commands).toEqual(['第一回合', '第二回合', '第三回合']);
+    expect(leaf.parentSnapshotIds).toContain(grown.outcome.upload.parentSnapshotIds[0]);
   });
 });
