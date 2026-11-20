@@ -60,9 +60,9 @@
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
 | G2 浏览器状态内核收口 | 完成（2026-11-20） | 32 操作定案（31 实现、`restore_group_work` 非产品，D-015）；取消恢复与 corrupt-restore 测试通过；restore 接 `verifySessionSnapshot`；差分夹具由 canonical/state/transport 测试逐字节断言；骰点协议冻结；全量 90 files / 1256 passed，两套 typecheck 通过；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；Change 已归档，tag `goal-g2-kernel-diff-20261120` |
 | G3 模型资产与时间包线 | 复核不通过（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；原 12 个计分点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，但新增回合完成门后 7/12 回合在首点正文后停止，`timing-baseline.json` 状态 `FAIL_OR_INCOMPLETE`；原因是旧门只统计已提交首点的朗读，未提交的 instant 尾点不可见；自动链 0 次归 G5。D-016 记录复核修正，原 tag 保留 |
-| G4 单机可玩页面接线 | 完成（有缺口） | 隔离告警、pause/resume、HistoryPanel 只读选中、叙事删除/重生（head+history）、NarrationView/ProgressStatus、空占位清理、构建/e2e/block-api 通过；缺口：WorldStatusPanel 未接、`position_invalid` 与自动轮重复转 G5、无 10 轮全绿运行；run11 自动链存档刷新被 `local_restore_invariant:time_invalid,round_invalid,round_invalid` 拒绝，自动链恢复未通过 |
+| G4 单机可玩页面接线 | 完成（有缺口） | 隔离告警、pause/resume、HistoryPanel 只读选中、叙事删除/重生（head+history）、NarrationView/ProgressStatus、空占位清理、构建/e2e/block-api 通过；缺口：WorldStatusPanel 未接、`position_invalid` 与自动轮重复转 G5、无 10 轮全绿运行；run11 自动链存档刷新曾因 invariants 拒绝，kernel 已修；run15 s03 页面在时限取消后停留 `streaming`（“正在写正文”不消失），已修为提交结束必离开计算阶段 |
 | G5 非叙事语义验收 | 进行中 | 16 例冻结套件与分类器；run1/2/4/5/6/7/8/9/10 共 30 个真实回合；unknown_entity/context_overflow/task 格式/个性-理智配对已修；run10 无语义拒绝但触顶 295 s：尾点 9 个场外组串行；`?offscreenPolicy=skip` 对照臂已接线；0 次 continue |
-| G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 个硬错误/4 个复述/1 干净；待 20+ 点与用户读评、G6 后事实门决定 |
+| G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 个硬错误/4 个复述/1 干净；t5 根因：行动原文地点与结算位置冲突且无位移时仍被当作事实，已修为丢弃冲突地点子句与重复结果句（prompt 测试）；待 20+ 点与用户读评、G6 后事实门决定 |
 | G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链；单用户 Bearer + 本地/内网 |
 | G8 交付验收与证据 | 未开始 | 20 输入、manifest、用户签字 |
 
