@@ -14,9 +14,9 @@
 
 ## 3. 恢复与回合边界
 
-- [ ] 3.1 `turn_in_progress`/结算失败后按钮与输入恢复；空占位回合删除；已提交正文保留。
-- [ ] 3.2 自动轮重复与 `position_invalid` 回归；失败保留。
-- [ ] 3.3 刷新恢复：10/10 条目、head、摘要一致。
+- [x] 3.1 `turn_in_progress`/结算失败后按钮与输入恢复；空占位回合删除（submit 与 cancel 路径）；已提交正文保留。
+- [ ] 3.2 自动轮重复与 `position_invalid` 回归：final4 t4 仍有 `lu receives conflicting positions in one point`，根因是语义投影跨组位置冲突（G5），G4 只保证失败被记录、恢复可继续。缺口转 G5。
+- [x] 3.3 刷新恢复：10/10 条目、head 一致（final4 与 e2e 均通过）。
 
 ## 4. e2e
 
