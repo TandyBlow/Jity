@@ -34,7 +34,7 @@ import type {
 /** The subset of 06's `LocalProgressStore` this adapter reads. Structural on
  * purpose: no cross-lane import and no second copy of the record shape. */
 export interface ProductProgressStore<P = unknown> {
-  load(worldId: string): Promise<{ snapshot: P } | null>;
+  load(worldId: string): Promise<{ snapshot: P; metadata?: { revision?: number } } | null>;
   save(worldId: string, snapshot: P, options?: Record<string, unknown>): Promise<unknown>;
 }
 
@@ -276,12 +276,14 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       };
     },
     async status() {
-      const local = await client.loadLocal(worldId);
+      const localRecord = await options.store.load(worldId).catch(() => null);
+      const local = localRecord?.snapshot ?? null;
+      const localRevision = typeof localRecord?.metadata?.revision === 'number' ? localRecord.metadata.revision : null;
       const base = (await client.lastKnownHead(worldId))?.headSnapshotId ?? null;
       if (!baseUrl) {
         return {
           relation: local ? 'local-only' : 'unknown',
-          localRevision: null,
+          localRevision,
           baseSnapshotId: base,
           remote: null,
           note: 'progress service is not configured',
@@ -293,14 +295,14 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       } catch (error) {
         return {
           relation: local ? 'local-only' : 'unknown',
-          localRevision: null,
+          localRevision,
           baseSnapshotId: base,
           remote: null,
           note: error instanceof Error ? error.message : String(error),
         };
       }
       const remote = { headSnapshotId: head.headSnapshotId, revision: head.revision };
-      if (!local) return { relation: remote.headSnapshotId ? 'remote-ahead' : 'unknown', localRevision: null, baseSnapshotId: base, remote };
+      if (!local) return { relation: remote.headSnapshotId ? 'remote-ahead' : 'unknown', localRevision, baseSnapshotId: base, remote };
       // A queued upload is local work the server has not seen yet. Without it,
       // a device that saved offline while the tab was closed would read
       // "in-sync" (or "remote-ahead") and the page would never offer a choice.
@@ -313,44 +315,44 @@ export function createProductSync<P>(options: ProductSyncOptions<P>): ProductSyn
       };
       if (!base) {
         if (!remote.headSnapshotId) {
-          return { relation: 'local-ahead', localRevision: null, baseSnapshotId: null, remote };
+          return { relation: 'local-ahead', localRevision, baseSnapshotId: null, remote };
         }
         try {
           const graph = await client.peekGraph(worldId);
           return {
             relation: 'diverged',
-            localRevision: null,
+            localRevision,
             baseSnapshotId: null,
             remote,
             branches: graph.branches,
             note: 'the local save has no recorded remote base; both copies stay stored',
           };
         } catch {
-          return { relation: 'diverged', localRevision: null, baseSnapshotId: null, remote };
+          return { relation: 'diverged', localRevision, baseSnapshotId: null, remote };
         }
       }
       if (remote.headSnapshotId === base) {
-        return { relation: withQueue('in-sync'), localRevision: null, baseSnapshotId: base, remote };
+        return { relation: withQueue('in-sync'), localRevision, baseSnapshotId: base, remote };
       }
       try {
         const graph = await client.peekGraph(worldId);
         if (!remote.headSnapshotId) {
-          return { relation: 'local-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+          return { relation: 'local-ahead', localRevision, baseSnapshotId: base, remote, branches: graph.branches };
         }
         const comparison = compareLineage(base, remote.headSnapshotId, graph.nodes);
         if (comparison.leftIsAncestorOfRight) {
-          return { relation: withQueue('remote-ahead'), localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+          return { relation: withQueue('remote-ahead'), localRevision, baseSnapshotId: base, remote, branches: graph.branches };
         }
         if (comparison.rightIsAncestorOfLeft) {
-          return { relation: 'local-ahead', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+          return { relation: 'local-ahead', localRevision, baseSnapshotId: base, remote, branches: graph.branches };
         }
-        return { relation: 'diverged', localRevision: null, baseSnapshotId: base, remote, branches: graph.branches };
+        return { relation: 'diverged', localRevision, baseSnapshotId: base, remote, branches: graph.branches };
       } catch (error) {
         // The base may be a snapshot this device never uploaded (e.g. storage
         // cleared elsewhere); the relation is genuinely unknown, not a guess.
         return {
           relation: 'unknown',
-          localRevision: null,
+          localRevision,
           baseSnapshotId: base,
           remote,
           note: error instanceof Error ? error.message : String(error),
