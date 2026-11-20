@@ -103,7 +103,12 @@ for (const file of runs) {
   }
 }
 
-const timed = points.filter((point) => point.excluded == null && point.clocks.pointTextFinishedAtMs != null);
+const timedAll = points.filter((point) => point.excluded == null && point.clocks.pointTextFinishedAtMs != null);
+// One scenario counted once: a rerun of the same turn id supersedes the earlier
+// attempt (the input is the unit, not the page load).
+const byId = new Map();
+for (const point of timedAll) byId.set(point.id, point);
+const timed = [...byId.values()];
 const firstGate = timed.map((point) => point.clocks.firstReadableAtMs).filter((value) => value != null);
 const pointGate = timed.map((point) => point.clocks.pointTextFinishedMinusCommitMs).filter((value) => value != null);
 const pass = timed.length >= 10
