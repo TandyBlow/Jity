@@ -1182,6 +1182,13 @@ export default function WorldLocalPage() {
     turnDeadlineRef.current = setTimeout(() => {
       deadlineHitRef.current = true;
       console.info('[world-local] 295 s turn deadline: stopping automatic follow-up work');
+      // A cancel alone waits for the in-flight model call (up to its own
+      // timeout). Abort the engines first so the round closes inside 300 s.
+      modelRef.current?.abortTurn();
+      for (const engine of [semanticRef.current, narrationRef.current]) {
+        const typed = engine as unknown as { cancelActive?: () => number } | null;
+        try { typed?.cancelActive?.(); } catch { /* best effort */ }
+      }
       void session.cancel('turn_deadline').catch((error) => console.warn('[world-local] deadline cancel failed', error));
     }, 295_000);
     save(session.snapshot);
