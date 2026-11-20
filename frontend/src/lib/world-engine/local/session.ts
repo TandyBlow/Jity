@@ -12,6 +12,7 @@ import type { WorldTransport } from '../transport';
 import { LocalWorldTransport } from './transport';
 import { DEFAULT_LEASE_TTL_MS } from './persistence/store';
 import { rebuildSessionMemory, type LocalSchedulerCheckpoint, type ResumeServedState } from './persistence/resume';
+import { verifySessionSnapshot } from './state-invariants';
 import {
   ProgressConflictError, SessionLeaseHeldError, SessionLeaseLostError,
   type LocalProgressStore, type ProgressMetadata, type SavedLocalProgress,
@@ -226,6 +227,13 @@ export class LocalGameSession {
       const claim = await options.storage.claimLease(worldId, sessionId, options.leaseTtlMs);
       if (!claim.acquired) throw new SessionLeaseHeldError(worldId, claim.holderId, claim.expiresAtEpochMilli);
     }
+    // A record that fails point continuity, task hierarchy, visibility or
+    // replay must never be played: the stored projections are re-derived from
+    // S0 + Δ and the head digest is checked before any state is applied.
+    const invariant = await verifySessionSnapshot(snapshot);
+    if (!invariant.ok) {
+      throw new Error(`local_restore_invariant:${invariant.errors.map((issue) => issue.code).join(',')}`);
+    }
     let session: LocalGameSession | null = null;
     let memory: ControllerMemory | null = null;
     let context: ResumeServedState | null = null;
@@ -304,6 +312,9 @@ export class LocalGameSession {
   // ---------- public view ----------
 
   get worldId(): Id { return this.transport.worldId; }
+  /** True while a drive or submit owns the session; a submit refused with
+   * turn_in_progress must report which one is still outstanding. */
+  get busy(): boolean { return Boolean(this.running || this.submitLock); }
   get commandsPlayed(): string[] { return [...this.commands]; }
   get memory(): ControllerMemory { return this.driver.getMemory(); }
   get sessionIdUsed(): string { return this.sessionId; }

@@ -94,6 +94,51 @@ describe('LocalGameSession', () => {
     const state2 = await restored.state();
     expect(state2.characters.person_c.position.containerId).toBe('hall');
   });
+
+  it('refuses to restore a record whose point chain is broken', async () => {
+    const initial = template();
+    const session = await LocalGameSession.create(initial, scriptedModel([]));
+    await session.start();
+    await session.submit('我走到门厅。');
+    const snapshot = structuredClone(session.snapshot);
+    snapshot.transport.points[snapshot.transport.headPointId].previousPointId = 'missing_point';
+    await expect(LocalGameSession.restore(snapshot, scriptedModel([])))
+      .rejects.toThrow(/local_restore_invariant:.*point_chain_broken/u);
+  });
+
+  it('closes an advance whose settlement failed before commit', async () => {
+    const initial = template();
+    const log: string[] = [];
+    let failUpdates = false;
+    const base = scriptedModel(log);
+    let pointSeq = 0;
+    const model: WorldModelPort = {
+      async generate(task, key, input): Promise<Json> {
+        // Each round needs its own point id; the shared fixture always says p1.
+        if (task === 'pointPlan') {
+          pointSeq += 1;
+          return [{ pointId: `p_seq_${pointSeq}`, kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_a', 'person_c'] }];
+        }
+        // A settlement failure before the point commits is what left the
+        // 2026-11-20 ten-turn run stuck: every later submit was turn_in_progress.
+        if (failUpdates && task === 'updates') throw new Error('settlement_failed:updates:tasks:model_output_invalid');
+        return base.generate(task, key, input);
+      },
+    };
+    const session = await LocalGameSession.create(initial, model);
+    await session.start();
+    const first = await session.submit('我走到门厅。');
+    expect(first.kind).not.toBe('error');
+    failUpdates = true;
+    await expect(session.submit('我跑向西回廊。')).rejects.toThrow(/settlement_failed/u);
+    expect(session.snapshot.transport.advance).not.toBeNull();
+    failUpdates = false;
+    const cancelled = await session.cancel('turn_failed');
+    expect(cancelled.kind).not.toBe('error');
+    expect(session.snapshot.transport.advance).toBeNull();
+    const next = await session.submit('我留在门厅。');
+    expect(next.kind).not.toBe('error');
+  }, 30000);
 });
 
 
