@@ -1192,6 +1192,8 @@ export default function WorldLocalPage() {
     turnDeadlineRef.current = setTimeout(() => {
       deadlineHitRef.current = true;
       console.info('[world-local] 295 s turn deadline: stopping automatic follow-up work');
+      setMessage('本轮已到 295 秒时限：已停止后续自动推进；已结算的状态和已写出的正文都保留。');
+      setStage('');
       // A cancel alone waits for the in-flight model call (up to its own
       // timeout). Abort the engines first so the round closes inside 300 s.
       modelRef.current?.abortTurn();
@@ -1406,6 +1408,11 @@ export default function WorldLocalPage() {
       // that no longer exists while the harness waits for done.
       setStage('');
       setBusy(false);
+      // The streaming phase is only cleared by a successful refresh; a turn
+      // that ended on the deadline or a failed cancel kept painting
+      // “正在写正文…” forever, so the player and the acceptance driver never
+      // saw the turn end. Every submission exit leaves the computing phases.
+      setPhase((current) => (current === 'streaming' || current === 'thinking' ? 'ready' : current));
       console.info('[world-local submit-finally]', JSON.stringify({ turn: turnRecordRef.current?.index ?? null }));
       // A turn stopped by the deadline or by a failure never reaches refresh(),
       // so the "已行动" counter kept the previous value even though the command
