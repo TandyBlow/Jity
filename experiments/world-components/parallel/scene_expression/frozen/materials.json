@@ -1,0 +1,882 @@
+{
+ "ns-appear-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "item:item_key:change:chg_key_1",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "after.items.item_key.appearanceChanges[chg_key_1].text",
+    "text": "黄铜钥匙的表面蒙上了一层灰尘",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_a:initialPersonality",
+    "entityId": "person_a",
+    "name": "学生A",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_a.initialPersonality",
+    "text": "谨慎",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙；黄铜钥匙的表面蒙上了一层灰尘\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙；黄铜钥匙的表面蒙上了一层灰尘\n学生A｜性格=谨慎\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-loc-appear-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "loc:corridor:change:chg_corr_1",
+    "entityId": "corridor",
+    "fieldPath": "after.locations.corridor.appearanceChanges[chg_corr_1].text",
+    "text": "两侧的储物柜都被关上了",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_a:initialPersonality",
+    "entityId": "person_a",
+    "name": "学生A",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_a.initialPersonality",
+    "text": "谨慎",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜；两侧的储物柜都被关上了\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜；两侧的储物柜都被关上了\n钥匙外貌=一把黄铜钥匙\n学生A｜性格=谨慎\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-task-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_a:initialPersonality",
+    "entityId": "person_a",
+    "name": "学生A",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_a.initialPersonality",
+    "text": "谨慎",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生A｜性格=谨慎\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇\n"
+  }
+ },
+ "ns-task-time-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_a:initialPersonality",
+    "entityId": "person_a",
+    "name": "学生A",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_a.initialPersonality",
+    "text": "谨慎",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:00"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:00"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生A｜性格=谨慎\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-pers-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_a:initialPersonality",
+    "entityId": "person_a",
+    "name": "学生A",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_a.initialPersonality",
+    "text": "谨慎",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:personalityChange:chg_b_1",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "after.characters.person_b.personalityChanges[chg_b_1].text",
+    "text": "变得健谈",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生A｜性格=谨慎\n学生B｜性格=外向；变得健谈\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-multi-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "item:item_key:change:chg_key_1",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "after.items.item_key.appearanceChanges[chg_key_1].text",
+    "text": "黄铜钥匙的表面蒙上了一层灰尘",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙；黄铜钥匙的表面蒙上了一层灰尘\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙；黄铜钥匙的表面蒙上了一层灰尘\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇\n"
+  }
+ },
+ "ns-empty-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_a:initialPersonality",
+    "entityId": "person_a",
+    "name": "学生A",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_a.initialPersonality",
+    "text": "谨慎",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生A｜性格=谨慎\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-cont-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:00:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-cont-2": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:02:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:02:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-cont-3": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:07:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:07:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ },
+ "ns-pos-1": {
+  "place": "corridor",
+  "placeName": "走廊",
+  "location": [
+   {
+    "sourceId": "loc:corridor:initialAppearance",
+    "entityId": "corridor",
+    "fieldPath": "initial.locations.corridor.initialAppearance",
+    "text": "两侧是储物柜。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "items": [
+   {
+    "sourceId": "item:item_key:initialAppearance",
+    "entityId": "item_key",
+    "name": "钥匙",
+    "fieldPath": "initial.items.item_key.initialAppearance",
+    "text": "一把黄铜钥匙。",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   }
+  ],
+  "characters": [
+   {
+    "sourceId": "char:person_b:initialPersonality",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_b.initialPersonality",
+    "text": "外向",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_b:task:task_intro:goal",
+    "entityId": "person_b",
+    "name": "学生B",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_b.tasks.task_intro.goal",
+    "text": "帮主角熟悉校园",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   },
+   {
+    "sourceId": "char:person_c:initialPersonality",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "personality",
+    "fieldPath": "initial.characters.person_c.initialPersonality",
+    "text": "好奇",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "state-initial"
+   },
+   {
+    "sourceId": "char:person_c:task:task_shelf:goal",
+    "entityId": "person_c",
+    "name": "主角",
+    "kind": "taskGoal",
+    "fieldPath": "after.characters.person_c.tasks.task_shelf.goal",
+    "text": "取回柜子里的东西",
+    "visibleToPerspective": true,
+    "effectiveAtPoint": "2026-09-01T12:01:02"
+   }
+  ],
+  "previousNarration": [],
+  "previousNarrationNote": "样本无上一段叙事字段；C 臂不含前文，缺口如实登记",
+  "headers": {
+   "A": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n",
+   "B": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n",
+   "C": "地点=走廊\n地点可见=钥匙\n场景=中午\n视角=主角；第三人称\n地点外貌=两侧是储物柜\n钥匙外貌=一把黄铜钥匙\n学生B｜性格=外向｜任务=帮主角熟悉校园\n主角｜性格=好奇｜任务=取回柜子里的东西\n"
+  }
+ }
+}

@@ -1,0 +1,238 @@
+{
+ "question": "在事实表达不越权的前提下，哪份文字作为游戏当前时间点的叙事更连贯、读起来更像完整段落？不要因为长度更长就判优。",
+ "optionNoDifference": "看不出差别",
+ "instruction": "每题从 甲/乙/丙 中选一份，或选「看不出差别」；可写一句理由。不显示臂名。",
+ "seed": 20261108,
+ "items": [
+  {
+   "sampleId": "ns-appear-1",
+   "programOnly": false,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约一分钟过去了。钥匙外貌的变化,黄铜钥匙的表面蒙上了一层灰尘。",
+     "sha256": "0c5db0f2aab6510631afb59de7b90f71dde9d75d0118b18896c8474331c46d9c"
+    },
+    {
+     "label": "乙",
+     "text": "约一分钟过去了。钥匙的表面蒙上了一层灰尘。",
+     "sha256": "10be5b69579c22931d65b9700d0a8a2d290e9697a423b3c2ba4214024505f3de"
+    },
+    {
+     "label": "丙",
+     "text": "约一分钟过去了。钥匙的表面蒙上了一层灰尘。",
+     "sha256": "10be5b69579c22931d65b9700d0a8a2d290e9697a423b3c2ba4214024505f3de"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-loc-appear-1",
+   "programOnly": false,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约一分钟过去了。走廊的两侧的储物柜都被关上了。",
+     "sha256": "5c24cb6b4e158b90d9c363668d6540371b507df6bb48e32ce0b81ba777243c67"
+    },
+    {
+     "label": "乙",
+     "text": "约一分钟过去了。走廊的储物柜都被关上了。",
+     "sha256": "64bff871552a6efdf56402fec20b8beb45fc3f8d769c47cbfa29870adf2d6d80"
+    },
+    {
+     "label": "丙",
+     "text": "约一分钟过去了。走廊的储物柜都被关上了。",
+     "sha256": "64bff871552a6efdf56402fec20b8beb45fc3f8d769c47cbfa29870adf2d6d80"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-task-1",
+   "programOnly": true,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约两分钟过去了。主角完成了任务「取回柜子里的东西」。",
+     "sha256": "9a08e21c30bf04bc65a7b602f2acfcd78ade16069e945a91567189ef96d6f3b5"
+    },
+    {
+     "label": "乙",
+     "text": "约两分钟过去了。主角完成了任务「取回柜子里的东西」。",
+     "sha256": "9a08e21c30bf04bc65a7b602f2acfcd78ade16069e945a91567189ef96d6f3b5"
+    },
+    {
+     "label": "丙",
+     "text": "约两分钟过去了。主角完成了任务「取回柜子里的东西」。",
+     "sha256": "9a08e21c30bf04bc65a7b602f2acfcd78ade16069e945a91567189ef96d6f3b5"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-task-time-1",
+   "programOnly": true,
+   "options": [
+    {
+     "label": "甲",
+     "text": "时间已到中午。学生A完成了任务「坚持到中午」。约一分钟过去了。",
+     "sha256": "6fffbe73244ac61bd526d9154b322cc22e5d09f03492a45ac66162813c933098"
+    },
+    {
+     "label": "乙",
+     "text": "时间已到中午。学生A完成了任务「坚持到中午」。约一分钟过去了。",
+     "sha256": "6fffbe73244ac61bd526d9154b322cc22e5d09f03492a45ac66162813c933098"
+    },
+    {
+     "label": "丙",
+     "text": "时间已到中午。学生A完成了任务「坚持到中午」。约一分钟过去了。",
+     "sha256": "6fffbe73244ac61bd526d9154b322cc22e5d09f03492a45ac66162813c933098"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-pers-1",
+   "programOnly": false,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约一分钟过去了。学生B完成了任务「帮主角熟悉校园」。学生B的外向,变得健谈。学生B的外向,有些发紧,有些发紧的感觉散了。学生B的理智值升为12。",
+     "sha256": "fb8c036b91807b0c61cf05d416a0d5d7600940f67e4229612cf8e4dffec8d40d"
+    },
+    {
+     "label": "乙",
+     "text": "约一分钟过去了。学生B完成了任务「帮主角熟悉校园」。学生B的性格变化变得健谈。学生B的呼吸慢慢匀下来,胸口那点发紧的感觉散了。学生B的理智值升为12。",
+     "sha256": "66c7b573148c92b4b9fee14600dac3fa75cd6053cf38aa0b415cc92bec29b9b3"
+    },
+    {
+     "label": "丙",
+     "text": "约一分钟过去了。学生B完成了任务「帮主角熟悉校园」。学生B的性格变化变得健谈。学生B的呼吸慢慢匀下来,胸口那点发紧的感觉散了。学生B的理智值升为12。",
+     "sha256": "66c7b573148c92b4b9fee14600dac3fa75cd6053cf38aa0b415cc92bec29b9b3"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-multi-1",
+   "programOnly": false,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约两分钟过去了。学生A从走廊过来,把钥匙放在门外。钥匙的表面蒙上了一层灰尘。主角完成了任务「取回柜子里的东西」。",
+     "sha256": "8b6c2c8aa1390e3c843e5af21b84af153f949abdd1223ff55f5a56747959f5d4"
+    },
+    {
+     "label": "乙",
+     "text": "约两分钟过去了。学生A从走廊一路走到大厅,钥匙从门槛上到大厅。钥匙的表面蒙上了一层灰尘。主角完成了任务「取回柜子里的东西」。",
+     "sha256": "eedf075645c67e0af9b2d4b2a3a14adc5bcfcff787a4f7a750ce2f153269cee5"
+    },
+    {
+     "label": "丙",
+     "text": "约两分钟过去了。学生A从走廊过来,把钥匙从门外挪到两侧。钥匙的表面蒙上了一层灰尘。主角完成了任务「取回柜子里的东西」。",
+     "sha256": "bf81a25a5cfb85e1cbfbe8f7812949096a3968f1bbcd9f283b78004d034d67e3"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-empty-1",
+   "programOnly": true,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约两分钟过去了。",
+     "sha256": "c2b58b6fc77bc9fa55b4c16e8d1f5573fb17e8a96ad93975e6b40145962836bb"
+    },
+    {
+     "label": "乙",
+     "text": "约两分钟过去了。",
+     "sha256": "c2b58b6fc77bc9fa55b4c16e8d1f5573fb17e8a96ad93975e6b40145962836bb"
+    },
+    {
+     "label": "丙",
+     "text": "约两分钟过去了。",
+     "sha256": "c2b58b6fc77bc9fa55b4c16e8d1f5573fb17e8a96ad93975e6b40145962836bb"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-cont-1",
+   "programOnly": false,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约两秒过去了。学生A从走廊一路走到大厅,钥匙从门槛上到大厅。",
+     "sha256": "58bc6beb8bc972844ef86a995e829e0ebc14ffb3f50689ee26778fc615d1123a"
+    },
+    {
+     "label": "乙",
+     "text": "约两秒过去了。学生A从走廊过来,把钥匙放在柜子里。",
+     "sha256": "a6ee1b72f599c6168ad28f44ea9059139afa0137bfeaa0eb3dce5cd2edb224cc"
+    },
+    {
+     "label": "丙",
+     "text": "约两秒过去了。学生A从走廊过来,把钥匙从门外挪到两侧。",
+     "sha256": "34268d66ae11368957ed8cdde92c5f386effdf9b1645ce158d7c262204634ce5"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-cont-2",
+   "programOnly": false,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约两分钟过去了。学生B的额头上渗出了汗珠。",
+     "sha256": "3eedc5873a80d76534a1f314cdaa29c359377d93ed853a9186787dc3ceb0d9ea"
+    },
+    {
+     "label": "乙",
+     "text": "约两分钟过去了。学生B的额头上渗出了汗珠。",
+     "sha256": "3eedc5873a80d76534a1f314cdaa29c359377d93ed853a9186787dc3ceb0d9ea"
+    },
+    {
+     "label": "丙",
+     "text": "约两分钟过去了。学生B的额头上渗出了汗珠。",
+     "sha256": "3eedc5873a80d76534a1f314cdaa29c359377d93ed853a9186787dc3ceb0d9ea"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  },
+  {
+   "sampleId": "ns-cont-3",
+   "programOnly": true,
+   "options": [
+    {
+     "label": "甲",
+     "text": "约五分钟过去了。",
+     "sha256": "64a38d80b945d90331fa9f7247879d56722d694b89ab68bc5ce282a99f955a22"
+    },
+    {
+     "label": "乙",
+     "text": "约五分钟过去了。",
+     "sha256": "64a38d80b945d90331fa9f7247879d56722d694b89ab68bc5ce282a99f955a22"
+    },
+    {
+     "label": "丙",
+     "text": "约五分钟过去了。",
+     "sha256": "64a38d80b945d90331fa9f7247879d56722d694b89ab68bc5ce282a99f955a22"
+    }
+   ],
+   "choice": null,
+   "reason": null
+  }
+ ]
+}

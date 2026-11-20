@@ -1,0 +1,55 @@
+{
+ "parentCommit": "0d0b19e28a7ba534f1642fcd87d7e0d7aff63e8a",
+ "note": "提交本清单的提交即冻结提交；清单不记录自身提交号以免自指。",
+ "samplesExport": {
+  "path": "experiments\\world-components\\parallel\\scene_expression\\step1\\narration-split-samples.export.json",
+  "sha256": "7ed461f12146b56098751520e8b9fdff79789e3f5ba9b28597adbbb80f397f62",
+  "sourceSha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12"
+ },
+ "materials": {
+  "path": "experiments\\world-components\\parallel\\scene_expression\\frozen\\materials.json",
+  "sha256": "790e1d136e8fb304ee188f3207ee1b1917c932e03105c42587459a270ba82738"
+ },
+ "inputs": {
+  "path": "experiments\\world-components\\parallel\\scene_expression\\frozen\\inputs.json",
+  "sha256": "13a086d309fbea01639524209950b638bb61f7ac83490b5aadac9e8ef3f52037"
+ },
+ "targets": [
+  "ns-appear-1",
+  "ns-loc-appear-1",
+  "ns-task-1",
+  "ns-task-time-1",
+  "ns-pers-1",
+  "ns-multi-1",
+  "ns-empty-1",
+  "ns-cont-1",
+  "ns-cont-2",
+  "ns-cont-3"
+ ],
+ "devOnly": [
+  "ns-pos-1"
+ ],
+ "modelCallCounts": {
+  "ns-appear-1": 1,
+  "ns-loc-appear-1": 1,
+  "ns-task-1": 0,
+  "ns-task-time-1": 0,
+  "ns-pers-1": 2,
+  "ns-multi-1": 2,
+  "ns-empty-1": 0,
+  "ns-cont-1": 1,
+  "ns-cont-2": 1,
+  "ns-cont-3": 0
+ },
+ "builder": {
+  "path": "experiments\\world-components\\parallel\\scene_expression\\build_inputs.py",
+  "sha256": "574384e865026b01c6a79d2603a0c56226d1308be02c38990954df15ec31b2d5"
+ },
+ "docs": {
+  "freeze-protocol.md": "48c763eeacc35748234e05a5ec32daaa3da5befa1d10baf6cb93d915be5dcccb",
+  "README.md": "0e8d9efca55c72ef0dd07c4f141f0d55816535fbb3df1d48210b89962a473197",
+  "frozen/prompt-tokens.json": "68c1f1bf35a37c66ebe08c9ba34937aa800c391c0bfc15f130a27c4b24c53248",
+  "step1/step1-verify.json": "5e1794cbf32ee20252ed16115c87ad2c74b61f7a5031d7721ef1b7b1650468a6",
+  "step1/step1-token-probe.json": "e22b70bc9ae2e8df78fb51c2876c31bfad7bede6ce0d10d2fa6fe881b7e22a60"
+ }
+}

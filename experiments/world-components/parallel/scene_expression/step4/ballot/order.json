@@ -1,0 +1,56 @@
+{
+ "seed": 20261108,
+ "note": "顺序映射与选票分开保存；评审只看 ballot.json",
+ "permutations": {
+  "ns-appear-1": [
+   "C",
+   "B",
+   "A"
+  ],
+  "ns-loc-appear-1": [
+   "B",
+   "A",
+   "C"
+  ],
+  "ns-task-1": [
+   "A",
+   "C",
+   "B"
+  ],
+  "ns-task-time-1": [
+   "A",
+   "C",
+   "B"
+  ],
+  "ns-pers-1": [
+   "C",
+   "B",
+   "A"
+  ],
+  "ns-multi-1": [
+   "C",
+   "A",
+   "B"
+  ],
+  "ns-empty-1": [
+   "B",
+   "A",
+   "C"
+  ],
+  "ns-cont-1": [
+   "A",
+   "C",
+   "B"
+  ],
+  "ns-cont-2": [
+   "B",
+   "C",
+   "A"
+  ],
+  "ns-cont-3": [
+   "A",
+   "C",
+   "B"
+  ]
+ }
+}

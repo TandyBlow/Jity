@@ -1,0 +1,24 @@
+{
+  "version": "c6-n4-context-v0.1",
+  "fixture": "art-room-three-points.json",
+  "points": [
+    {
+      "pointId": "p1",
+      "file": "p1.txt",
+      "sha256": "7e420f9660fbf5d49092507d0aa0be2b1d4d330aee3b228b59a5157446d366fa",
+      "diagnostics": []
+    },
+    {
+      "pointId": "p2",
+      "file": "p2.txt",
+      "sha256": "1c6c530c600cb2e4015913f2e2d4aebb48a6be03597bf0adfbef7cd75e77e73e",
+      "diagnostics": []
+    },
+    {
+      "pointId": "p3",
+      "file": "p3.txt",
+      "sha256": "9f0d450e882e2196ed276156792fe0ff33d2c7d0beded46f7cfe2713e9e8abcc",
+      "diagnostics": []
+    }
+  ]
+}
