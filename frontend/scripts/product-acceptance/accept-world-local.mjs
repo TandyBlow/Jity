@@ -138,12 +138,26 @@ function sha256Buffer(buffer) {
   return createHash('sha256').update(buffer).digest('hex');
 }
 
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
 function save() {
   evidence.updatedAt = new Date().toISOString();
   mkdirSync(dirname(out), { recursive: true });
   const tmp = `${evidenceFile}.tmp-${process.pid}`;
   writeFileSync(tmp, JSON.stringify(evidence, null, 2));
-  renameSync(tmp, evidenceFile);
+  // Windows refuses the rename while a reader has the file open; a status
+  // reader (human or monitor) must not crash the run.
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      renameSync(tmp, evidenceFile);
+      return;
+    } catch (error) {
+      if ((error.code !== 'EPERM' && error.code !== 'EBUSY') || attempt >= 20) throw error;
+      sleepSync(50);
+    }
+  }
 }
 
 function noteFailure(scope, message, detail = null) {
