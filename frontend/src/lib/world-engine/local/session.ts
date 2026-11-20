@@ -67,6 +67,9 @@ export interface LocalGameOptions {
   /** Run a committed point's narration while the next point settles
    * (default true in the product session). */
   narrationOverlap?: boolean;
+  /** D-018: scene stages per group, the rest of the six stages once per point
+   * (default true; false keeps the merged per-group batch for comparison). */
+  splitPointUpdates?: boolean;
   /** Evidence sink for the exact commit_point request (see ControllerIo). */
   onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
   onEvent?: (event: LocalSessionEvent) => void;
@@ -183,7 +186,7 @@ export class LocalGameSession {
         const pointId = (event.request as { pointId?: Id }).pointId;
         if (pointId) productModel.onPointCommitted?.(pointId);
       },
-    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: true });
+    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: options.splitPointUpdates ?? true });
     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
   }
 

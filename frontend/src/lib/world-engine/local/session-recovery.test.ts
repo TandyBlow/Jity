@@ -27,6 +27,8 @@ interface ModelHooks {
   action?: (key: string) => Json | undefined;
   /** Continuation answers, consumed in order; the default is a handback. */
   continuations?: Json[];
+  /** Character that moves to the hall in the position stage (split or merged). */
+  move?: string;
   /** Throw after the transport write this task follows (simulated refresh). */
   crashOn?: (task: ModelTask, key: string) => Error | null;
   /** Await before answering, to hold a step in flight. */
@@ -71,7 +73,11 @@ function scriptedModel(log: string[], hooks: ModelHooks = {}): WorldModelPort {
           // The product session splits the point: scene stages per group, the
           // rest stages once per point. A staged call answers one call.
           const stage = (input as { stage?: string }).stage;
-          return stage ? { stage, changes: {} } : [{ stage: 'position', changes: {} }];
+          const changes = hooks.move
+            ? { [hooks.move]: { entityId: hooks.move, positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } }
+            : {};
+          if (stage) return { stage, changes: stage === 'position' ? changes : {} };
+          return [{ stage: 'position', changes }];
         }
         case 'continuation':
           if (hooks.continuations?.length) return hooks.continuations.shift()!;
@@ -453,6 +459,35 @@ describe('LocalGameSession durability', () => {
     }
     // The point's rest batch is keyed once; scene stages repeat per group.
     expect(updates.filter((row) => row.includes('point_rest:')).length).toBe(4);
+  });
+
+  it('commits the same point with split and merged updates', async () => {
+    const run = async (splitPointUpdates: boolean) => {
+      const model = scriptedModel([], {
+        plan: (input) => {
+          const round = (input as { round?: { roundId?: string; order?: string[] } }).round;
+          return [{ pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal' as const,
+            timeAdvance: { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } },
+            actorIds: round?.order ?? [] }];
+        },
+        action: (key) => key === 'person_a' ? { kind: 'act', text: '林川走到门厅。' } : undefined,
+        targets: () => ({ targets: [] }),
+        move: 'person_a',
+      });
+      const session = await LocalGameSession.create(template(), model, { leaseHeartbeat: false, roll: () => 13, splitPointUpdates });
+      await session.start();
+      await session.submit('我打开盒盖。');
+      return session.snapshot.transport;
+    };
+    const split = await run(true);
+    const merged = await run(false);
+    const deltas = (record: typeof split) => Object.values(record.points).map((point) => point.entityDeltas);
+    expect(deltas(split)).toEqual(deltas(merged));
+    // World ids are random per session; compare the committed facts only.
+    const facts = (state: typeof split.state) => ({
+      characters: state.characters, items: state.items, locations: state.locations, time: state.time,
+    });
+    expect(facts(split.state)).toEqual(facts(merged.state));
   });
 
   it('refuses a duplicate submit while the same turn is in flight', async () => {
