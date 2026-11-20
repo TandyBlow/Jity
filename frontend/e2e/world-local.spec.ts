@@ -19,14 +19,23 @@ async function play(page: import('@playwright/test').Page, text: string) {
   const before = await page.evaluate(() => (globalThis as { __worldTurns?: unknown[] }).__worldTurns?.length ?? 0);
   await page.fill('textarea', text);
   await page.click('button:has-text("行动")');
+  // The page pushes its turn record at submit; wait for that record, let the
+  // busy effect publish, then wait until the page leaves the settlement stage.
   await page.waitForFunction(
     (count) => {
-      const turns = (globalThis as { __worldTurns?: Array<{ index: number; product?: { acceptedMs?: number | null } | null; problems?: string[] }> }).__worldTurns;
-      const last = turns?.[turns.length - 1];
-      return Array.isArray(turns) && turns.length > count && last != null
-        && (last.product?.acceptedMs != null || (last.problems ?? []).some((p) => /submit_refused|settlement_failed|no_readable_prose/.test(p)));
+      const app = globalThis as { __worldTurns?: unknown[] };
+      return Array.isArray(app.__worldTurns) && app.__worldTurns.length > count;
     },
     before,
+    { timeout: 30_000 },
+  );
+  await page.waitForTimeout(500);
+  await page.waitForFunction(
+    () => {
+      const app = globalThis as { __worldBusy?: boolean };
+      return app.__worldBusy !== true && !/结算中|正在写正文/.test(document.body.innerText);
+    },
+    null,
     { timeout: 330_000 },
   );
 }

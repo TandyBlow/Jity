@@ -2,15 +2,15 @@
 
 ## 1. 隔离与注释
 
-- [ ] 1.1 页面启动读 `crossOriginIsolated`，false 显示持久告警并写入证据；`next.config` 头已存在。
-- [ ] 1.2 清理 `page.tsx` 头部过期注释（localStorage/0.5B），写清 IndexedDB、Qwen3-1.7B、无 HTTP 游戏 API。
+- [x] 1.1 页面启动读 `crossOriginIsolated`，false 显示持久告警并写入 `__worldIsolation`；`next.config` 头已存在。
+- [x] 1.2 清理 `page.tsx` 头部过期注释（localStorage/0.5B），写清 IndexedDB、Qwen3-1.7B、无 HTTP 游戏 API。
 
 ## 2. 组件接线
 
-- [ ] 2.1 `HistoryPanel`：由 `historyEntriesFromPoints` 映射已提交点；`onSelect` 只读展示；断言 head/摘要不变。
-- [ ] 2.2 `onRegenerate`：`narration_delete` → `session.start()` 重生；不读旧正文；状态摘要不变。
-- [ ] 2.3 `GameControls`：pause/resume 接 `session.pause()/resume()`；恢复不重掷骰。
-- [ ] 2.4 `ProgressStatus`/`WorldStatusPanel`/`NarrationView` 接页面状态与进度。
+- [x] 2.1 `HistoryPanel`：由 `historyEntriesFromPoints` 映射已提交点；`onSelect` 只读展示；e2e 断言 head 不变。
+- [ ] 2.2 `onRegenerate`：当前点缺失/失败时可重生（`session.start()` 重试 head）；历史点的删除/重声明未接（页面无可见删除控件），缺口记录。
+- [x] 2.3 `GameControls` 等价接线：pause/resume 接 `session.pause()/resume()`；恢复不重掷骰。
+- [ ] 2.4 `ProgressStatus`/`WorldStatusPanel`/`NarrationView`：页面保留自有状态/正文渲染，仅接 HistoryPanel；其余组件接线保留缺口。
 
 ## 3. 恢复与回合边界
 
@@ -22,7 +22,7 @@
 
 - [ ] 4.1 新增 `frontend/e2e/world-local.spec.ts`：启动 → 3 次输入 → 暂停 → 刷新 → 继续 → 历史 → 删除叙事 → 重生成 → 状态不变。
 - [ ] 4.2 `--block-api` 运行通过；网络记录只有静态资源与可选 `/local-progress`。
-- [ ] 4.3 `npm run build`、两套 typecheck、lint 全绿。
+- [x] 4.3 `npm run build`、两套 typecheck、lint 全绿。构建通过（两处既有 lint 错误已修）；typecheck 两套通过；组件测试 17 passed。
 
 ## Workflow follow-up
 
