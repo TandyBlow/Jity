@@ -913,7 +913,7 @@ try {
       // updates; keep it even when the settlement later aborts.
       entry.snapshotAfterTurn = await page.evaluate(() => {
         const snapshot = globalThis.__worldSnapshot;
-        return snapshot ?? null;
+        return typeof snapshot === 'function' ? snapshot() : (snapshot ?? null);
       }).catch(() => null);
       entry.actions = await page.evaluate(() => {
         const turns = globalThis.__worldTurns;
