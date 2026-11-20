@@ -58,7 +58,7 @@
 | 目标线 | 状态 | 说明 |
 |---|---|---|
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
-| G2 浏览器状态内核收口 | 进行中 | 32 操作定案、差分向量、restore/invariants、骰点恢复；接手 G3 暴露的结算失败后取消失效 |
+| G2 浏览器状态内核收口 | 进行中 | 32 操作定案（31 实现、restore_group_work 非产品）；取消恢复与 corrupt-restore 测试通过；restore 已接 invariants；差分夹具已由 canonical/state/transport 测试消费；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；待全量 suite 与 G3 补测 |
 | G3 模型资产与时间包线 | 阻塞（已测点通过） | 资产已取并逐字节校验（`model-manifest.json`）；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；已测 3 个正常点首段 22.4–39.1 s、正文完成 29.3–49.2 s、整点 117–207 s；10 点覆盖被结算失败后的 advance 未清理阻断（t4 `unknown character f1` → t5–10 `turn_in_progress`），转 G2/G4 后补测 |
 | G4 单机可玩页面接线 | 未开始 | pause/resume/history/delete/regenerate/e2e |
 | G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
