@@ -1,5 +1,7 @@
 # 世界引擎开发分工（A / B / C）
 
+> **状态：superseded（2026-11-20）。** A/B 分工、双工作树、Python 权威与 C 任务书均已失效；所有线已合并回 `agent`。当前执行见 [`goal/goal.md`](goal/goal.md)。
+
 > **产品方向更新（2026-10-28，用户最新要求）：** A/B/C均以[完整原设计](browser-world-state-workflow.md)为交付目标。B承担普通行动点和连锁共同结算的真实模型整链；C先确定组件职责、输入输出和小模型候选，再验证叙事拆分。规则或脚本输出仅作明确标记的对照，不代替最终能力。未完成项见[实施方向清单](world-engine-reports/full-design-implementation-direction.md)。
 
 **分支约定（2026-10-28，用户最新要求，取代此前仅两条分支的限制）：** `world-server` 负责服务端；`world-browser` 负责现有浏览器应用和整链验收；新增 `world-components`，工作树 `.local/world-components-worktree`，负责组件接口、小模型选型和叙事拆分验证。C从B已提交的 `50c1c22` 建立，不继承B未提交的页面、脚本和运行产物。联调继续使用指定提交或 detached checkout，不自行增建其他集成/实验分支。联合验收材料维护一份，不强推改写已发布历史。

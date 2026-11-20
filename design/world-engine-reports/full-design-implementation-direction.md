@@ -1,5 +1,7 @@
 # 按完整原设计推进：开发方向与未完成任务
 
+> **状态：superseded（局部，2026-11-20）。** R01–R14/R16 语义与 fail-fast 证据纪律保留；P0–P3、A/B/C 归属、Python 运行期权威、动态 R15 由 [`../goal/goal.md`](../goal/goal.md) 与 [`../goal/decisions.md`](../goal/decisions.md) 取代。状态以 [`../goal/ledger.md`](../goal/ledger.md) 为准。
+
 日期：2026-10-28。状态：用户最新方向要求，优先于历史实验中的收窄安排。
 
 > **任务拆分更新：** 用户随后明确先确定组件结构、模型任务和几十M至几百M候选，并授权新增 `world-components` 分支及 `.local/world-components-worktree`。C先做接口/选型与叙事拆分验证，B现有整链工作继续在其分支推进；涉及C方案的接入先明确组件接口和候选验证，不把组件设计推迟到整链之后。下文P0–P3是B产品整链的顺序，不是要求C等待这些阶段完成。

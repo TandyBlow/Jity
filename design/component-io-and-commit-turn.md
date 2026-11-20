@@ -1,5 +1,7 @@
 # 组件 I/O 字段说明与 commit-turn 设计稿（v3.5）
 
+> **状态：historical（2026-11-20）。** CAMP/Needle 3 时期的组件 I/O 与 commit-turn 设计稿；不是浏览器本地产品契约。当前架构见 [`goal/architecture.md`](goal/architecture.md)。
+
 状态：**第七轮反例修复已落码，等待独立复验**（2026-10-12，v3.5；
 Needle 3 继续暂缓）。历史测试通过不等于验收通过，六轮覆盖声明的纠正
 见 §9，当前契约与验证见 §10。v3.1 修复：§3.4 顺序（开事务 →

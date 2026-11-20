@@ -1,5 +1,7 @@
 # 世界引擎协议 v2：共同接口基线
 
+> **状态：reference（2026-11-20）。** 协议 v2 的契约、规范编码与冻结向量保留为差分基线；运行期权威是浏览器 TS 内核，Python 仅差分预言机。见 [`../../goal/architecture.md`](../../goal/architecture.md) 与 D-001。
+
 日期：2026-10-22。**IF-01～IF-08 已完成，A0/B0 共同前置正式验收。** v1 为 `26011c8`，S1 验收为 `cabb04c`；共同接口实现提交为 **`e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`**。共同前置先在同一棵树完成，再从冻结记录提交拆成 `world-server` / `world-browser`；冻结记录随本轮文档提交推送，两条开发分支自该提交建立并同步远端。
 
 契约摘要：`480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`。双方核对依据见 [共同前置最终验收](change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)、[server 报告](../../world-engine-reports/server.md)、[browser 报告](../../world-engine-reports/browser.md)。运行环境为 Windows、Python 3.12.3 / SQLite 3.50.4 / Pydantic 2.13.4 / jsonschema 4.26.0、Node 22.20.0 / npm 10.9.3 / TypeScript 5.9.3 / Ajv 8.20.0 / Vitest 5.0.1；CI 配置使用 Python 3.12、Node 22。
