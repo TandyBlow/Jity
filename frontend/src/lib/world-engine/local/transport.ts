@@ -882,6 +882,8 @@ export class LocalWorldTransport implements WorldTransport {
       data = await this.handleWrite(draft, operation as WriteOperation, request as never, scope);
     } catch (error) {
       if (error instanceof Refusal) {
+        // The response carries the code, not the handler's specific reason.
+        console.info('[world-local refusal]', JSON.stringify({ operation, code: error.code, detail: error.message, details: error.details }));
         throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, error.code, error.details));
       }
       if (error instanceof KernelViolation) {
