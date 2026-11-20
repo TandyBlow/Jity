@@ -49,7 +49,15 @@ interface StageContext {
   priorChanges: Partial<Record<SettlementStage, Record<Id, Partial<EntityDelta>>>>;
   /** One merged answer can carry tasks and their new subtasks; the cache keeps
    * the subtasks stage from re-prefilling the same task list. */
-  shared?: { pendingSubtasks?: Record<Id, Partial<EntityDelta>> };
+  shared?: {
+    pendingSubtasks?: Record<Id, Partial<EntityDelta>>;
+    /** Appearance changes read from the merged position call. */
+    pendingAppearance?: {
+      changes: Record<Id, Partial<EntityDelta>>;
+      lenientDrops: { entityId: string; op: string; droppedText: string }[];
+      ids: Id[];
+    };
+  };
 }
 
 interface StageOutcome {
@@ -125,6 +133,17 @@ const OPERATIONS_SCHEMA = {
     },
   },
 };
+
+const SCENE_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['positions', 'appearances'],
+  properties: {
+    positions: (POSITION_SCHEMA.properties as Record<string, unknown>).changes,
+    appearances: (OPERATIONS_SCHEMA.properties as Record<string, unknown>).operations,
+  },
+} as const;
+
 
 const TASKS_SCHEMA = {
   type: 'object',
@@ -650,6 +669,10 @@ function sameCurrentPosition(state: WorldState, entityId: Id, next: { containerI
 async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   const scanned = projection.affectedMovable;
+  // The appearance list is read before the call so both questions travel in one
+  // prompt; the appearance stage reuses these ids when its own projection is a
+  // subset (it usually is: positions move actors, who were already affected).
+  const appearanceIds = projection.affectedAppearance;
   const scope = {
     mode: 'affected_projection',
     affectedEntityIds: scanned,
@@ -663,26 +686,30 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
   if (!scanned.length) {
     return { changes: {}, detail: { scannedEntityIds: [], positionScope: scope, skipped: 'no_affected_position' }, fallback: false, calls: [] };
   }
-  const prompt = buildPositionPrompt(ctx.state, ctx.results, scanned);
+  const prompt = appearanceIds.length
+    ? buildScenePrompt(ctx.state, ctx.results, scanned, appearanceIds)
+    : buildPositionPrompt(ctx.state, ctx.results, scanned);
   const slotDrops: { entityId: unknown; slotId: string }[] = [];
   try {
     // The missing-move check only forces a repair on the first attempt: if the
     // second answer still leaves the actor where they were, the point keeps the
     // answer and records it, instead of aborting the whole point over a stage
     // the model cannot do.
+    const merged = appearanceIds.length > 0;
     const answer = await callJson(ctx.engine, prompt, {
-      maxTokens: stageTokens(ctx, 240),
+      maxTokens: stageTokens(ctx, merged ? 620 : 240),
       temperature: ctx.options.temperature ?? 0,
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
-      jsonSchema: POSITION_SCHEMA,
+      jsonSchema: merged ? SCENE_SCHEMA : POSITION_SCHEMA,
       maxAttempts: 3,
       validate: (value, attempt) => {
+        if (merged) validateSceneAnswer(value, ctx.state);
         // A fact-backed walk whose container is right but whose slot is noise
         // ("containerId":"control","slotId":"lane") loses only the slot: the
         // destination was named by the fact and confirmed by the model. An
         // entry with no fact behind it keeps the strict rejection.
-        const rows = asRecord(value).changes;
+        const rows = merged ? positionsOfSceneAnswer(asRecord(value)) : asRecord(value).changes;
         for (const row of Array.isArray(rows) ? rows : []) {
           if (!isRecord(row)) continue;
           const entityId = resolveEntityId(ctx.state, asString(row.entityId));
@@ -699,7 +726,7 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
           slotDrops.push({ entityId: row.entityId, slotId });
           row.slotId = null;
         }
-        const read = readPositionChanges(value, ctx.state);
+        const read = readPositionChanges(merged ? { changes: positionsOfSceneAnswer(asRecord(value)) } : value, ctx.state);
         if (attempt >= 3) return;
         const missing = missingMoves(ctx.state, ctx.results, read.changes);
         if (!missing.length) return;
@@ -709,12 +736,28 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
           'slotId 只能是该容器的槽位 id（不能填地点或人物 id），不确定就省略 slotId。');
       },
     });
-    const read = readPositionChanges(answer.value, ctx.state, new Set(scanned));
+    const positionsValue = merged ? { changes: positionsOfSceneAnswer(asRecord(answer.value)) } : answer.value;
+    const read = readPositionChanges(positionsValue, ctx.state, new Set(scanned));
     const changes = read.changes;
     const stillMissing = missingMoves(ctx.state, ctx.results, changes);
     projectStage(ctx.state, 'position', changes);
+    if (merged && asRecord(answer.value).appearances != null) {
+      // Read the appearance half with the same rules (and the same lenient
+      // collector) the separate stage used; it is projected by that stage, not
+      // here, so the stage order and evidence stay as before.
+      const lenientDrops: { entityId: string; op: string; droppedText: string }[] = [];
+      const appearance = readDescriptionOperations(
+        { operations: asRecord(answer.value).appearances }, ctx.state, 'appearance',
+        ctx.allocator, false, new Set(appearanceIds), [], [], lenientDrops,
+      );
+      // The batch loop hands every stage its own context copy; the `shared`
+      // object is the one instance they all point at, so the appearance answer
+      // has to be stored in it, not on this stage's copy.
+      if (ctx.shared) ctx.shared.pendingAppearance = { changes: appearance, lenientDrops, ids: appearanceIds };
+    }
     const detail: Record<string, unknown> = {
       scannedEntityIds: scanned,
+      ...(merged ? { mergedWithAppearance: appearanceIds } : {}),
       ...(slotDrops.length ? { slotDropped: slotDrops } : {}),
       ...(stillMissing.length ? { missingMoves: stillMissing.map((row) => ({ factId: row.factId, entityId: row.entityId, locationId: row.locationId })) } : {}),
 
@@ -744,7 +787,37 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
   if (!scanned.length) {
     return { changes: {}, detail: { scannedEntityIds: [], appearanceScope: scope, skipped: 'no_affected_appearance' }, fallback: false, calls: [] };
   }
-  const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance', scanned);
+  const pending = ctx.shared?.pendingAppearance;
+  let reused: Record<Id, Partial<EntityDelta>> = {};
+  let reusedDrops: { entityId: string; op: string; droppedText: string }[] = [];
+  let leftover = scanned;
+  if (pending) {
+    // Already answered by the merged position call: project that half instead of
+    // paying a second prefill for the same facts and the same entity lines.
+    const covered = scanned.filter((id) => pending.ids.includes(id));
+    leftover = scanned.filter((id) => !pending.ids.includes(id));
+    reused = Object.fromEntries(Object.entries(pending.changes).filter(([id]) => covered.includes(id)));
+    reusedDrops = pending.lenientDrops.filter((row) => covered.includes(row.entityId));
+  }
+  if (pending && !leftover.length) {
+    projectStage(ctx.state, 'appearance', reused);
+    return {
+      changes: reused,
+      detail: {
+        scannedEntityIds: scanned,
+        changedEntityIds: Object.keys(reused).sort(),
+        appearanceScope: scope,
+        lenientDrops: reusedDrops,
+        mergedWithPosition: true,
+      },
+      fallback: false,
+      calls: [],
+    };
+  }
+  // A move can drag a new entity into view (a character walked into the room the
+  // merged prompt did not list), so the leftover ids get their own small
+  // question; the answer covers only those ids.
+  const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance', leftover);
   const lenientDrops: { entityId: string; op: string; droppedText: string }[] = [];
   try {
     const answer = await callJson(ctx.engine, prompt, {
@@ -753,14 +826,15 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: OPERATIONS_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned), [], [], []),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(leftover), [], [], []),
     });
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(scanned), [], [], lenientDrops);
+    const fresh = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(leftover), [], [], lenientDrops);
+    const changes = { ...reused, ...fresh };
     projectStage(ctx.state, 'appearance', changes);
     return {
       changes,
       detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope,
-        lenientDrops },
+        lenientDrops: [...reusedDrops, ...lenientDrops], ...(pending ? { mergedWithPosition: true, leftoverIds: leftover } : {}) },
       fallback: false,
       calls: answer.calls,
     };
@@ -1199,6 +1273,68 @@ function sharedHeader(state: WorldState, results: Record<Id, string>): string {
       }).join(String.fromCharCode(10))
       : '（无）',
   ].join('\n');
+}
+
+/** Position and appearance are two questions about the same entity list and the
+ * same settled facts, and the runtime paid two prefills for them (10.4 s + 9.1 s
+ * per point on the real 0.6B). They are asked in one call and reported as two
+ * stages; the appearance stage reuses this answer instead of calling again. */
+/** Structural check of the merged answer: both halves must be arrays of the
+ * shapes the two separate stages accept. */
+function validateSceneAnswer(value: unknown, state: WorldState): void {
+  const payload = asRecord(value);
+  const positions = positionsOfSceneAnswer(payload);
+  if (!Array.isArray(positions)) throw new Error('positions must be an array');
+  readPositionChanges({ changes: positions }, state);
+  if (payload.appearances != null && !Array.isArray(payload.appearances)) throw new Error('appearances must be an array');
+}
+
+/** The merged answer's two halves. A model (or a recorded older answer) may
+ * still use the single-stage names, so `changes` is read as positions and a
+ * missing `appearances` key means "not answered here": the appearance stage then
+ * asks its own question instead of silently recording "no change". */
+function positionsOfSceneAnswer(payload: Record<string, unknown>): unknown {
+  return payload.positions ?? payload.changes;
+}
+
+function buildScenePrompt(
+  state: WorldState,
+  results: Record<Id, string>,
+  positionIds: Id[],
+  appearanceIds: Id[],
+): string {
+  const allMovable = movableIds(state);
+  const listed = allMovable.filter((id) => positionIds.includes(id));
+  const entities = listed.map((id) => `- ${positionLineFor(state, id)}`);
+  const sampleId = listed.find((id) => state.characters[id]) ?? listed[0] ?? '';
+  const sampleContainer = state.characters[sampleId]?.position.containerId
+    ?? state.items[sampleId]?.position.containerId
+    ?? allEntityIds(state)[0] ?? '';
+  const allIds = allEntityIds(state);
+  const looks = allIds.filter((id) => appearanceIds.includes(id));
+  const tail = Math.max(20, Math.min(88, Math.floor(2400 / Math.max(1, looks.length))));
+  const lookLines = looks.map((id) => appearanceLine(state, id, { compactTail: tail }));
+  return [
+    sharedHeader(state, results),
+    '你是中文跑团游戏的位置结算器，同一次回答里顺带结算外貌。只输出 JSON，不要解释。',
+    '第一部分：位置。下面只列本轮可能受影响的可移动实体（人物和物品）的当前位置；未列出的由程序记录为依赖未触发，不要为它们写判断。根据本组结算结果，判断哪些实体改变了位置；没有移动就不要列出。',
+    '- entityId 必须是下面实体之一；containerId 必须是已登记实体 id；slotId 只能填该容器的槽位 id；relativeTo 只能指向同一地点的实体。',
+    '- 不要新增地点、物品或人物；不要重复列出同一实体。位置变化是同时发生的，最终结构不能成环。',
+    '可移动实体：',
+    ...entities,
+    '地点和容器（id=名字，槽位）：',
+    ...containerCatalog(state),
+    '第二部分：外貌。下面只列本轮可能受影响的实体（人物、物品、地点）；未列出的不要写判断。判断是否需要新增、解除或替换外貌变化；没有变化就留空。',
+    '- 不能修改初始外貌；remove/replace 只能用 recordIds 引用该实体已有的有效变化 id。',
+    '- add 的 text 必须非空，recordIds 为空；replace 的 text 必须与旧文本不同；remove 的 text 为 null。',
+    '- 同一个有效记录不能被重复 keep/remove/replace；如果一个实体有操作，它的全部有效记录都必须被 keep 或替换/解除覆盖，否则整段拒绝。',
+    '- 不要新增实体；没有实际变化就不要写，不要为了凑变化而改写。',
+    '外貌：',
+    ...lookLines,
+    `输出 {"positions":[{"entityId":"${sampleId}","containerId":"${sampleContainer}"}],"appearances":[]}；` +
+      '进入槽位再加 "slotId"（必须是该容器的槽位 id），贴在某实体旁再加 "relativeTo"；' +
+      '外貌操作用 {"entityId":"实体id","op":"keep|add|remove|replace","recordIds":[],"text":null} 写进 appearances；两边都没有变化输出 {"positions":[],"appearances":[]}。',
+  ].join(String.fromCharCode(10));
 }
 
 function buildPositionPrompt(state: WorldState, results: Record<Id, string>, onlyIds?: Id[]): string {
