@@ -139,6 +139,13 @@
 - 取代：无；细化为 D-005/D-007 的实测记录。
 - 影响文件：`design/goal/ledger.md` G2/G3、`artifacts/goal/timing-baseline.json`、`artifacts/goal/timing-runs/`、`frontend/src/app/world-local/page.tsx`（`e75cd4a6`）、`frontend/src/lib/world-engine/local/session.ts`（待 G2）。
 
+## D-015 两个 v2 操作的定案
+
+- 状态：`signed`（2026-11-20，G2）。
+- 决定：`checkpoint_restore_group_work` 声明为**非产品语义**——产品恢复只走本地 checkpoint 与 `__worldRestore`，不使用「恢复组工作」；保留 `frozen_work_missing` 拒绝，不补实现。`get_context.recovery` 保持 `null`——本地恢复不依赖服务端 recovery，`null` 表示没有服务器恢复信息，不是缺失。两者都有明确语义，不留「以后再说」。
+- 理由：运行期无服务器游戏计算，补一条未使用的恢复路径只会增加状态面。
+- 影响文件：`frontend/src/lib/world-engine/local/transport.ts`、`artifacts/goal/kernel-ops.md`、`design/goal/ledger.md` G2。
+
 ## 已确认（2026-11-20）
 本轮 8 个待确认项已全部有答案，记录在 D-004、D-006、D-010–D-013。当前没有 `pending-user` 项。
 
