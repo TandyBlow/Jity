@@ -1,0 +1,82 @@
+node=hpcgpu10 start=Tue Nov 10 11:30:58 CST 2026 config=configs/yuyan-lora-v2.json out=runs/yuyan-result-v2-r1
+NVIDIA GeForce RTX 4090 D, 24564 MiB
+Python 3.11.17
+{
+ "config": "hpc:~/narr_v2/configs/yuyan-lora-v2.json",
+ "backend": "yuyan",
+ "status": "active",
+ "data": {
+  "path": "hpc:~/narr_v2/data/rows-yuyan-v2.jsonl",
+  "sha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+  "rows": 199,
+  "manifest": "hpc:~/narr_v2/data/manifest.json",
+  "manifestSha256": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378"
+ },
+ "splits": {
+  "path": "hpc:~/narr_v2/splits/v1.json",
+  "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836"
+ },
+ "sourceChecks": {
+  "skipped": "frozen source directory is not present",
+  "sourceDir": "hpc:~/world-components/narration-dataset-v1"
+ },
+ "tokenizer": {
+  "name": "yuyan-char-v1",
+  "source": "hpc:~/narr_rows/dict.txt",
+  "path": "tokenizers/yuyan-v1/dict.txt",
+  "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+  "bytes": 119884,
+  "vocabSize": 13668,
+  "specialTokens": [
+   "<end>",
+   "<mask>",
+   "<sep>",
+   "<hold>"
+  ],
+  "hasSpaceToken": false,
+  "hasTabToken": false,
+  "hasNewlineToken": false
+ },
+ "base": {
+  "path": "hpc:~/narr_rows/checkpoint_best.pt",
+  "exists": true,
+  "sha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106"
+ },
+ "lengths": {
+  "ok": true,
+  "problems": [],
+  "vocabSize": 13672,
+  "eos": 2,
+  "lengths": {
+   "prompt": {
+    "min": 197,
+    "max": 915,
+    "mean": 430.8
+   },
+   "target": {
+    "min": 177,
+    "max": 1467,
+    "mean": 417.7
+   },
+   "input": {
+    "min": 481,
+    "max": 2382,
+    "mean": 848.4
+   }
+  },
+  "rowsOverMaxLen": 0
+ },
+ "ok": true,
+ "problems": []
+}
+hashing base checkpoint: hpc:~/narr_rows/checkpoint_best.pt
+{"rows": 199, "train": 139, "dev": 40, "test": 20, "trainableParams": 13271040, "params": 743390720, "dataSha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc", "baseSha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106", "dictSha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4", "seed": 20261109, "mode": "lora", "maxLen": 2560}
+{"epoch": 1, "loss": 1.732, "devLoss": 1.5239, "devPerRow": [{"id": "row-0006", "loss": 1.6876, "tokens": 687}, {"id": "row-0007", "loss": 1.8191, "tokens": 709}, {"id": "row-0011", "loss": 1.5682, "tokens": 691}, {"id": "row-0014", "loss": 1.6068, "tokens": 612}, {"id": "row-0022", "loss": 1.8739, "tokens": 303}, {"id": "row-0029", "loss": 1.5363, "tokens": 414}, {"id": "row-0030", "loss": 1.538, "tokens": 365}, {"id": "row-0040", "loss": 1.6108, "tokens": 347}, {"id": "row-0043", "loss": 1.3828, "tokens": 357}, {"id": "row-0047", "loss": 1.639, "tokens": 357}, {"id": "row-0062", "loss": 1.6413, "tokens": 466}, {"id": "row-0072", "loss": 1.5278, "tokens": 389}, {"id": "row-0075", "loss": 1.5055, "tokens": 497}, {"id": "row-0085", "loss": 1.6465, "tokens": 324}, {"id": "row-0093", "loss": 1.4261, "tokens": 410}, {"id": "row-0094", "loss": 1.4496, "tokens": 370}, {"id": "row-0099", "loss": 1.4649, "tokens": 442}, {"id": "row-0104", "loss": 1.4387, "tokens": 401}, {"id": "row-0107", "loss": 1.425, "tokens": 303}, {"id": "row-0108", "loss": 1.708, "tokens": 210}, {"id": "row-0113", "loss": 1.7389, "tokens": 280}, {"id": "row-0116", "loss": 1.4107, "tokens": 362}, {"id": "row-0126", "loss": 1.4142, "tokens": 428}, {"id": "row-0127", "loss": 1.5506, "tokens": 409}, {"id": "row-0128", "loss": 1.3016, "tokens": 445}, {"id": "row-0131", "loss": 1.6811, "tokens": 440}, {"id": "row-0139", "loss": 1.5181, "tokens": 349}, {"id": "row-0140", "loss": 1.3008, "tokens": 356}, {"id": "row-0146", "loss": 1.4686, "tokens": 478}, {"id": "row-0147", "loss": 1.2636, "tokens": 351}, {"id": "row-0151", "loss": 1.6396, "tokens": 291}, {"id": "row-0153", "loss": 1.6488, "tokens": 445}, {"id": "row-0154", "loss": 1.3095, "tokens": 396}, {"id": "row-0159", "loss": 1.5035, "tokens": 474}, {"id": "row-0168", "loss": 1.3959, "tokens": 425}, {"id": "row-0170", "loss": 1.3528, "tokens": 448}, {"id": "row-0179", "loss": 1.4301, "tokens": 431}, {"id": "row-0186", "loss": 1.3985, "tokens": 553}, {"id": "row-0193", "loss": 1.6933, "tokens": 360}, {"id": "row-0198", "loss": 1.3467, "tokens": 435}], "elapsedSec": 25.0, "peakAllocatedMb": 11089}
+{"epoch": 2, "loss": 1.4147, "devLoss": 1.4231, "devPerRow": [{"id": "row-0006", "loss": 1.6488, "tokens": 687}, {"id": "row-0007", "loss": 1.6664, "tokens": 709}, {"id": "row-0011", "loss": 1.4671, "tokens": 691}, {"id": "row-0014", "loss": 1.5907, "tokens": 612}, {"id": "row-0022", "loss": 1.8281, "tokens": 303}, {"id": "row-0029", "loss": 1.4919, "tokens": 414}, {"id": "row-0030", "loss": 1.4682, "tokens": 365}, {"id": "row-0040", "loss": 1.4906, "tokens": 347}, {"id": "row-0043", "loss": 1.3022, "tokens": 357}, {"id": "row-0047", "loss": 1.5912, "tokens": 357}, {"id": "row-0062", "loss": 1.5264, "tokens": 466}, {"id": "row-0072", "loss": 1.4378, "tokens": 389}, {"id": "row-0075", "loss": 1.4236, "tokens": 497}, {"id": "row-0085", "loss": 1.5916, "tokens": 324}, {"id": "row-0093", "loss": 1.2763, "tokens": 410}, {"id": "row-0094", "loss": 1.4067, "tokens": 370}, {"id": "row-0099", "loss": 1.4147, "tokens": 442}, {"id": "row-0104", "loss": 1.3426, "tokens": 401}, {"id": "row-0107", "loss": 1.2745, "tokens": 303}, {"id": "row-0108", "loss": 1.5552, "tokens": 210}, {"id": "row-0113", "loss": 1.5264, "tokens": 280}, {"id": "row-0116", "loss": 1.3015, "tokens": 362}, {"id": "row-0126", "loss": 1.3519, "tokens": 428}, {"id": "row-0127", "loss": 1.495, "tokens": 409}, {"id": "row-0128", "loss": 1.2635, "tokens": 445}, {"id": "row-0131", "loss": 1.6008, "tokens": 440}, {"id": "row-0139", "loss": 1.4023, "tokens": 349}, {"id": "row-0140", "loss": 1.1971, "tokens": 356}, {"id": "row-0146", "loss": 1.4, "tokens": 478}, {"id": "row-0147", "loss": 1.0881, "tokens": 351}, {"id": "row-0151", "loss": 1.3374, "tokens": 291}, {"id": "row-0153", "loss": 1.5459, "tokens": 445}, {"id": "row-0154", "loss": 1.1013, "tokens": 396}, {"id": "row-0159", "loss": 1.4296, "tokens": 474}, {"id": "row-0168", "loss": 1.2241, "tokens": 425}, {"id": "row-0170", "loss": 1.2014, "tokens": 448}, {"id": "row-0179", "loss": 1.2579, "tokens": 431}, {"id": "row-0186", "loss": 1.3088, "tokens": 553}, {"id": "row-0193", "loss": 1.6306, "tokens": 360}, {"id": "row-0198", "loss": 1.2061, "tokens": 435}], "elapsedSec": 22.0, "peakAllocatedMb": 11089}
+{"epoch": 3, "loss": 1.1844, "devLoss": 1.4106, "devPerRow": [{"id": "row-0006", "loss": 1.6485, "tokens": 687}, {"id": "row-0007", "loss": 1.6676, "tokens": 709}, {"id": "row-0011", "loss": 1.4735, "tokens": 691}, {"id": "row-0014", "loss": 1.6041, "tokens": 612}, {"id": "row-0022", "loss": 1.8424, "tokens": 303}, {"id": "row-0029", "loss": 1.5372, "tokens": 414}, {"id": "row-0030", "loss": 1.4514, "tokens": 365}, {"id": "row-0040", "loss": 1.506, "tokens": 347}, {"id": "row-0043", "loss": 1.2848, "tokens": 357}, {"id": "row-0047", "loss": 1.6338, "tokens": 357}, {"id": "row-0062", "loss": 1.5142, "tokens": 466}, {"id": "row-0072", "loss": 1.4143, "tokens": 389}, {"id": "row-0075", "loss": 1.3834, "tokens": 497}, {"id": "row-0085", "loss": 1.633, "tokens": 324}, {"id": "row-0093", "loss": 1.2584, "tokens": 410}, {"id": "row-0094", "loss": 1.448, "tokens": 370}, {"id": "row-0099", "loss": 1.4331, "tokens": 442}, {"id": "row-0104", "loss": 1.3229, "tokens": 401}, {"id": "row-0107", "loss": 1.2725, "tokens": 303}, {"id": "row-0108", "loss": 1.5341, "tokens": 210}, {"id": "row-0113", "loss": 1.4185, "tokens": 280}, {"id": "row-0116", "loss": 1.2745, "tokens": 362}, {"id": "row-0126", "loss": 1.357, "tokens": 428}, {"id": "row-0127", "loss": 1.4944, "tokens": 409}, {"id": "row-0128", "loss": 1.2797, "tokens": 445}, {"id": "row-0131", "loss": 1.574, "tokens": 440}, {"id": "row-0139", "loss": 1.3761, "tokens": 349}, {"id": "row-0140", "loss": 1.181, "tokens": 356}, {"id": "row-0146", "loss": 1.4211, "tokens": 478}, {"id": "row-0147", "loss": 0.9416, "tokens": 351}, {"id": "row-0151", "loss": 1.2311, "tokens": 291}, {"id": "row-0153", "loss": 1.5179, "tokens": 445}, {"id": "row-0154", "loss": 1.009, "tokens": 396}, {"id": "row-0159", "loss": 1.4316, "tokens": 474}, {"id": "row-0168", "loss": 1.1901, "tokens": 425}, {"id": "row-0170", "loss": 1.1265, "tokens": 448}, {"id": "row-0179", "loss": 1.2376, "tokens": 431}, {"id": "row-0186", "loss": 1.322, "tokens": 553}, {"id": "row-0193", "loss": 1.641, "tokens": 360}, {"id": "row-0198", "loss": 1.1759, "tokens": 435}], "elapsedSec": 22.1, "peakAllocatedMb": 11089}
+{"epoch": 4, "loss": 0.9934, "devLoss": 1.4438, "devPerRow": [{"id": "row-0006", "loss": 1.6543, "tokens": 687}, {"id": "row-0007", "loss": 1.7342, "tokens": 709}, {"id": "row-0011", "loss": 1.499, "tokens": 691}, {"id": "row-0014", "loss": 1.6696, "tokens": 612}, {"id": "row-0022", "loss": 1.9554, "tokens": 303}, {"id": "row-0029", "loss": 1.5724, "tokens": 414}, {"id": "row-0030", "loss": 1.5059, "tokens": 365}, {"id": "row-0040", "loss": 1.5451, "tokens": 347}, {"id": "row-0043", "loss": 1.3432, "tokens": 357}, {"id": "row-0047", "loss": 1.6367, "tokens": 357}, {"id": "row-0062", "loss": 1.5582, "tokens": 466}, {"id": "row-0072", "loss": 1.5036, "tokens": 389}, {"id": "row-0075", "loss": 1.4289, "tokens": 497}, {"id": "row-0085", "loss": 1.6653, "tokens": 324}, {"id": "row-0093", "loss": 1.267, "tokens": 410}, {"id": "row-0094", "loss": 1.5684, "tokens": 370}, {"id": "row-0099", "loss": 1.5098, "tokens": 442}, {"id": "row-0104", "loss": 1.3751, "tokens": 401}, {"id": "row-0107", "loss": 1.3386, "tokens": 303}, {"id": "row-0108", "loss": 1.5186, "tokens": 210}, {"id": "row-0113", "loss": 1.3763, "tokens": 280}, {"id": "row-0116", "loss": 1.3373, "tokens": 362}, {"id": "row-0126", "loss": 1.4237, "tokens": 428}, {"id": "row-0127", "loss": 1.534, "tokens": 409}, {"id": "row-0128", "loss": 1.3471, "tokens": 445}, {"id": "row-0131", "loss": 1.5991, "tokens": 440}, {"id": "row-0139", "loss": 1.4177, "tokens": 349}, {"id": "row-0140", "loss": 1.1887, "tokens": 356}, {"id": "row-0146", "loss": 1.4512, "tokens": 478}, {"id": "row-0147", "loss": 0.8304, "tokens": 351}, {"id": "row-0151", "loss": 1.1583, "tokens": 291}, {"id": "row-0153", "loss": 1.592, "tokens": 445}, {"id": "row-0154", "loss": 0.9788, "tokens": 396}, {"id": "row-0159", "loss": 1.4737, "tokens": 474}, {"id": "row-0168", "loss": 1.1939, "tokens": 425}, {"id": "row-0170", "loss": 1.0916, "tokens": 448}, {"id": "row-0179", "loss": 1.2289, "tokens": 431}, {"id": "row-0186", "loss": 1.3414, "tokens": 553}, {"id": "row-0193", "loss": 1.7001, "tokens": 360}, {"id": "row-0198", "loss": 1.2083, "tokens": 435}], "elapsedSec": 22.2, "peakAllocatedMb": 11089}
+{"epoch": 5, "loss": 0.828, "devLoss": 1.5239, "devPerRow": [{"id": "row-0006", "loss": 1.7546, "tokens": 687}, {"id": "row-0007", "loss": 1.8031, "tokens": 709}, {"id": "row-0011", "loss": 1.6062, "tokens": 691}, {"id": "row-0014", "loss": 1.7686, "tokens": 612}, {"id": "row-0022", "loss": 2.1012, "tokens": 303}, {"id": "row-0029", "loss": 1.6598, "tokens": 414}, {"id": "row-0030", "loss": 1.6163, "tokens": 365}, {"id": "row-0040", "loss": 1.6342, "tokens": 347}, {"id": "row-0043", "loss": 1.4391, "tokens": 357}, {"id": "row-0047", "loss": 1.7161, "tokens": 357}, {"id": "row-0062", "loss": 1.66, "tokens": 466}, {"id": "row-0072", "loss": 1.5973, "tokens": 389}, {"id": "row-0075", "loss": 1.5399, "tokens": 497}, {"id": "row-0085", "loss": 1.7426, "tokens": 324}, {"id": "row-0093", "loss": 1.3682, "tokens": 410}, {"id": "row-0094", "loss": 1.6737, "tokens": 370}, {"id": "row-0099", "loss": 1.5485, "tokens": 442}, {"id": "row-0104", "loss": 1.4632, "tokens": 401}, {"id": "row-0107", "loss": 1.4284, "tokens": 303}, {"id": "row-0108", "loss": 1.6665, "tokens": 210}, {"id": "row-0113", "loss": 1.3469, "tokens": 280}, {"id": "row-0116", "loss": 1.4327, "tokens": 362}, {"id": "row-0126", "loss": 1.4908, "tokens": 428}, {"id": "row-0127", "loss": 1.6319, "tokens": 409}, {"id": "row-0128", "loss": 1.4602, "tokens": 445}, {"id": "row-0131", "loss": 1.659, "tokens": 440}, {"id": "row-0139", "loss": 1.4278, "tokens": 349}, {"id": "row-0140", "loss": 1.2566, "tokens": 356}, {"id": "row-0146", "loss": 1.5328, "tokens": 478}, {"id": "row-0147", "loss": 0.8191, "tokens": 351}, {"id": "row-0151", "loss": 1.1377, "tokens": 291}, {"id": "row-0153", "loss": 1.7227, "tokens": 445}, {"id": "row-0154", "loss": 0.9559, "tokens": 396}, {"id": "row-0159", "loss": 1.5609, "tokens": 474}, {"id": "row-0168", "loss": 1.2413, "tokens": 425}, {"id": "row-0170", "loss": 1.1343, "tokens": 448}, {"id": "row-0179", "loss": 1.3174, "tokens": 431}, {"id": "row-0186", "loss": 1.4079, "tokens": 553}, {"id": "row-0193", "loss": 1.8276, "tokens": 360}, {"id": "row-0198", "loss": 1.3132, "tokens": 435}], "elapsedSec": 22.2, "peakAllocatedMb": 11089}
+{"epoch": 6, "loss": 0.6781, "devLoss": 1.6242, "devPerRow": [{"id": "row-0006", "loss": 1.8781, "tokens": 687}, {"id": "row-0007", "loss": 1.9812, "tokens": 709}, {"id": "row-0011", "loss": 1.7354, "tokens": 691}, {"id": "row-0014", "loss": 1.9169, "tokens": 612}, {"id": "row-0022", "loss": 2.2487, "tokens": 303}, {"id": "row-0029", "loss": 1.8035, "tokens": 414}, {"id": "row-0030", "loss": 1.6897, "tokens": 365}, {"id": "row-0040", "loss": 1.7416, "tokens": 347}, {"id": "row-0043", "loss": 1.5443, "tokens": 357}, {"id": "row-0047", "loss": 1.853, "tokens": 357}, {"id": "row-0062", "loss": 1.7635, "tokens": 466}, {"id": "row-0072", "loss": 1.674, "tokens": 389}, {"id": "row-0075", "loss": 1.6335, "tokens": 497}, {"id": "row-0085", "loss": 1.895, "tokens": 324}, {"id": "row-0093", "loss": 1.5023, "tokens": 410}, {"id": "row-0094", "loss": 1.8339, "tokens": 370}, {"id": "row-0099", "loss": 1.6988, "tokens": 442}, {"id": "row-0104", "loss": 1.5647, "tokens": 401}, {"id": "row-0107", "loss": 1.5039, "tokens": 303}, {"id": "row-0108", "loss": 1.7483, "tokens": 210}, {"id": "row-0113", "loss": 1.3784, "tokens": 280}, {"id": "row-0116", "loss": 1.5581, "tokens": 362}, {"id": "row-0126", "loss": 1.5979, "tokens": 428}, {"id": "row-0127", "loss": 1.7491, "tokens": 409}, {"id": "row-0128", "loss": 1.5817, "tokens": 445}, {"id": "row-0131", "loss": 1.7879, "tokens": 440}, {"id": "row-0139", "loss": 1.5144, "tokens": 349}, {"id": "row-0140", "loss": 1.3092, "tokens": 356}, {"id": "row-0146", "loss": 1.6427, "tokens": 478}, {"id": "row-0147", "loss": 0.7783, "tokens": 351}, {"id": "row-0151", "loss": 1.1451, "tokens": 291}, {"id": "row-0153", "loss": 1.8347, "tokens": 445}, {"id": "row-0154", "loss": 0.9451, "tokens": 396}, {"id": "row-0159", "loss": 1.6711, "tokens": 474}, {"id": "row-0168", "loss": 1.3187, "tokens": 425}, {"id": "row-0170", "loss": 1.1428, "tokens": 448}, {"id": "row-0179", "loss": 1.3206, "tokens": 431}, {"id": "row-0186", "loss": 1.5261, "tokens": 553}, {"id": "row-0193", "loss": 1.906, "tokens": 360}, {"id": "row-0198", "loss": 1.3781, "tokens": 435}], "elapsedSec": 22.2, "peakAllocatedMb": 11089}
+reloaded best epoch 3 dev 1.4106
+{"runId": "yuyan-lora-result-v2-r1", "best": {"epoch": 3, "devLoss": 1.4106}, "final": {"trainLoss": 1.0582, "devLoss": 1.4106, "testLoss": 1.4241}, "seconds": 375.6}
+end=Tue Nov 10 11:37:28 CST 2026 rc=0

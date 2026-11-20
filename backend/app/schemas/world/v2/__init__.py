@@ -1,0 +1,241 @@
+"""v2 protocol contracts, including the unfrozen R1 recovery read candidate.
+
+R1 retains protocolVersion 2, moves the response envelope schemaVersion 1 -> 2
+(old B clients reject new-version responses at the first response) and
+publishes a new candidate contract digest; it does not claim that B has
+consumed or jointly frozen that digest. The state model (WorldState, creation
+templates) and the trace format stay on their own schemaVersion 1 /
+world-engine-v1 axes. The v1 package remains authoritative for WorldState.
+"""
+
+from app.schemas.world.contracts import CONTRACT_MODELS as _v1_models
+
+from .base import (
+    CANONICAL_VERSION,
+    ENGINE_VERSION,
+    PROTOCOL_VERSION,
+    SCHEMA_VERSION,
+    STATE_SCHEMA_VERSION,
+    TRACE_FORMAT_VERSION,
+    Envelope,
+    EpochMilli,
+    Hex64,
+    ProtocolVersion,
+    StateSchemaVersion,
+    TraceFormatVersion,
+)
+from .contexts import (
+    AdvanceSummary,
+    BaselineView,
+    BlockedReason,
+    ControlPhase,
+    ControlState,
+    GateView,
+    HeadSummary,
+    LeaseSummary,
+    NarrationStatus,
+    PendingGroupView,
+    PointWorkView,
+    RoundSummary,
+    SettledUnitView,
+    SuccessorSummary,
+    WorkingProgress,
+    WorldContext,
+)
+from .errors import ClientAction, ErrorCode, ERROR_CODES
+from .envelopes import (
+    ActiveInput,
+    ContextResponse,
+    ErrorBody,
+    ErrorResponse,
+    OperationResult,
+    ReadResult,
+)
+from .registry import (
+    BINDING_FIELDS,
+    OPERATION_BY_NAME,
+    OPERATIONS,
+    OperationName,
+    OperationSpec,
+    PRECONDITION_KINDS,
+    Precondition,
+    SIDE_EFFECTS,
+)
+from .requests import (
+    AcquireLeaseData,
+    AcquireLeaseRequest,
+    AcquireLeaseSuccess,
+    AllocateIdsData,
+    AllocateIdsRequest,
+    AllocateIdsSuccess,
+    Allocation,
+    AllocationSlot,
+    BeginPointData,
+    BeginPointRequest,
+    BeginPointSuccess,
+    CancelRoundData,
+    CancelRoundRequest,
+    CancelRoundSuccess,
+    CloseGroupData,
+    CloseGroupRequest,
+    CloseGroupSuccess,
+    CommitPointData,
+    CommitPointRequest,
+    CommitPointSuccess,
+    ConcludeRoundData,
+    ConcludeRoundRequest,
+    ConcludeRoundSuccess,
+    CreateRollsData,
+    CreateRollsRequest,
+    CreateRollsSuccess,
+    CreateWorldData,
+    CreateWorldRequest,
+    CreateWorldSuccess,
+    CurrentClaim,
+    DiscoverGroupData,
+    DiscoverGroupRequest,
+    DiscoverGroupSuccess,
+    ExtendGroupData,
+    ExtendGroupRequest,
+    ExtendGroupSuccess,
+    GetStateData,
+    GetStateSuccess,
+    LeaseGrant,
+    ListPointsData,
+    ListPointsSuccess,
+    MemberAdmission,
+    NarrationClaimData,
+    NarrationClaimRenewRequest,
+    NarrationClaimRenewSuccess,
+    NarrationClaimRequest,
+    NarrationClaimSuccess,
+    NarrationDeleteData,
+    NarrationDeleteRequest,
+    NarrationDeleteSuccess,
+    NarrationGetData,
+    NarrationGetSuccess,
+    NarrationSubmitData,
+    NarrationSubmitRequest,
+    NarrationSubmitSuccess,
+    PauseData,
+    PauseRequest,
+    PauseSuccess,
+    PointCheckpointRequest,
+    PointSummary,
+    PrepareSuccessorData,
+    PrepareSuccessorRequest,
+    PrepareSuccessorSuccess,
+    PreviewData,
+    PreviewPointRequest,
+    PreviewPointSuccess,
+    RecordSkipRequest,
+    RecordSkipSuccess,
+    RestoreGroupWorkData,
+    RestoreGroupWorkRequest,
+    RestoreGroupWorkSuccess,
+    ResumeData,
+    ResumeRequest,
+    ResumeSuccess,
+    RollOutcome,
+    RollRef,
+    RollSpec,
+    SealPointData,
+    SealPointRequest,
+    SealPointSuccess,
+    SetPointTimeData,
+    SetPointTimeRequest,
+    SetPointTimeSuccess,
+    SettlementGroup,
+    StageTimeScanRequest,
+    StageTimeScanSuccess,
+    StageUnitData,
+    StageUnitRequest,
+    StageUnitSuccess,
+    TargetSpec,
+    WorkManifestItem,
+    WorkProgressData,
+    RenewLeaseData,
+    RenewLeaseRequest,
+    RenewLeaseSuccess,
+    ReleaseLeaseData,
+    ReleaseLeaseRequest,
+    ReleaseLeaseSuccess,
+)
+
+# S1 revision additions are explicitly part of the exported field snapshot.
+from .contexts import PointRecoveryView, RecoveryView
+from .work import (
+    AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource,
+    GroupProgress, PendingRollThreat, ReactionPendingThreat, HandledThreat,
+)
+from .requests import (
+    StartAdvanceRequest, StartAdvanceData, StartAdvanceSuccess,
+    WorldInitialTemplate, CheckpointDispatch, RoundConclusionDispatch,
+    NarrationClaimSummary, ListPointsRequest, GetStateRequest, GetContextRequest,
+)
+
+
+# The exact model set behind the exported v2 schema, shared by the export
+# script and the contract test so neither can drift from the other.
+SCHEMA_MODELS: tuple = tuple(
+    [
+        # requests
+        CreateWorldRequest,
+        BeginPointRequest, SetPointTimeRequest, DiscoverGroupRequest,
+        ExtendGroupRequest, CloseGroupRequest, StageUnitRequest,
+        RecordSkipRequest, StageTimeScanRequest, SealPointRequest,
+        PrepareSuccessorRequest, RestoreGroupWorkRequest,
+        PauseRequest, ResumeRequest,
+        ConcludeRoundRequest, CancelRoundRequest,
+        AcquireLeaseRequest, RenewLeaseRequest, ReleaseLeaseRequest,
+        AllocateIdsRequest, PreviewPointRequest, CreateRollsRequest,
+        CommitPointRequest,
+        NarrationClaimRequest, NarrationClaimRenewRequest,
+        NarrationSubmitRequest, NarrationDeleteRequest,
+        # shared views and pieces
+        ContextResponse, ErrorResponse, ErrorBody, ActiveInput,
+        WorldContext, PointWorkView, ControlState, GateView,
+        SettlementGroup, TargetSpec, RollRef, MemberAdmission,
+        WorkManifestItem, CurrentClaim, RollSpec, AllocationSlot,
+        LeaseGrant, SuccessorSummary, PendingGroupView,
+        SettledUnitView, WorkingProgress, BaselineView,
+        HeadSummary, AdvanceSummary, RoundSummary, LeaseSummary,
+        Allocation, RollOutcome, PointSummary,
+        # data payloads
+        CreateWorldData, BeginPointData, SetPointTimeData,
+        DiscoverGroupData, ExtendGroupData, CloseGroupData,
+        StageUnitData, WorkProgressData, SealPointData,
+        PrepareSuccessorData, RestoreGroupWorkData, PauseData,
+        ResumeData, ConcludeRoundData, CancelRoundData,
+        AcquireLeaseData, RenewLeaseData, ReleaseLeaseData,
+        AllocateIdsData, PreviewData, CreateRollsData,
+        CommitPointData, ListPointsData, GetStateData,
+        NarrationClaimData, NarrationSubmitData, NarrationGetData,
+        NarrationDeleteData,
+        # concrete success envelopes
+        CreateWorldSuccess, BeginPointSuccess, SetPointTimeSuccess,
+        DiscoverGroupSuccess, ExtendGroupSuccess, CloseGroupSuccess,
+        StageUnitSuccess, RecordSkipSuccess, StageTimeScanSuccess,
+        SealPointSuccess, PrepareSuccessorSuccess,
+        RestoreGroupWorkSuccess, PauseSuccess, ResumeSuccess,
+        ConcludeRoundSuccess, CancelRoundSuccess,
+        AcquireLeaseSuccess, RenewLeaseSuccess, ReleaseLeaseSuccess,
+        AllocateIdsSuccess, PreviewPointSuccess, CreateRollsSuccess,
+        CommitPointSuccess, ListPointsSuccess, GetStateSuccess,
+        NarrationClaimSuccess, NarrationClaimRenewSuccess,
+        NarrationSubmitSuccess, NarrationGetSuccess,
+        NarrationDeleteSuccess,
+    ]
+    + list(_v1_models)
+)
+
+SCHEMA_MODELS += (
+    StartAdvanceRequest, StartAdvanceData, StartAdvanceSuccess, WorldInitialTemplate,
+    CheckpointDispatch, RoundConclusionDispatch, NarrationClaimSummary,
+    ListPointsRequest, GetStateRequest, GetContextRequest,
+    PointRecoveryView, RecoveryView, AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource,
+    GroupProgress, PendingRollThreat, ReactionPendingThreat, HandledThreat,
+)
+from .projections import PrefixProjection
+SCHEMA_MODELS += (PrefixProjection,)
+__all__ = [name for name in globals() if not name.startswith("_")]

@@ -1,0 +1,1312 @@
+{
+  "status": "PASS_BOTH",
+  "recordedAt": "2026-10-28T15:44:33.994Z",
+  "phase": "both",
+  "browserSource": {
+    "head": "376d12075910bf16ee4c71b6ea4c37b5f8e1e6dc",
+    "status": "M frontend/src/app/world/page.tsx\n?? artifacts/a4-browser-transport.json\n?? artifacts/world-chain-first-round-attempt2.json\n?? artifacts/world-chain/\n?? frontend/scripts/review-world-a4-transport.mjs\n?? frontend/scripts/run-world-chain-full.mjs\n?? frontend/src/app/world/narration-polisher.ts",
+    "sha256": {
+      "frontend/scripts/run-world-chain-full.mjs": "f63835bfa749751133398f1bd9bd7dd42228e9ec80e02a86e6098d68c127d314",
+      "frontend/src/app/world/page.tsx": "f8b077c564216e4e777444ccb7f2e937eea322ee73875d10657822807170a55f",
+      "frontend/src/app/world/narration-polisher.ts": "8f3bd4fe68e1112116e4a2132a6f0939976f4d5b8615d17c2ae5d7a614e73603",
+      "frontend/src/lib/world-engine/runtime/rule-session.ts": "b3652b317e5d9eeffd631ba84b7f3877c727d7cfa942ef645e0fbcb8bd74bcb4",
+      "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+      "frontend/src/lib/world-engine/runtime/committed-narration.ts": "309ca19fd2f2fa8f22f8d4b1e1cbb22f67cad902da7a418102d8a9422ee4c9cd",
+      "frontend/src/lib/world-engine/runtime/prompts.ts": "e5c666b64949ea21a9e840d6823b5b4c857c37e09c5661f3d0d27609cc70151f",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+      "frontend/src/lib/world-engine/controller.ts": "fc68f5e248226c57389d27c621ff125cebe828f86729ad3372d73f851650214d",
+      "frontend/src/lib/world-engine/schedule.ts": "7e55809b1e5da53b35e8f8b6037d9d374335f9b835d7f13bd8cdc0761d0b7f8c",
+      "frontend/src/lib/world-engine/http-transport.ts": "60b1ee3158e6d8d41c491a7234e140dfe95f5d786fd110d1806444eb3f9dcd58",
+      "frontend/src/lib/world-engine/recovery.ts": "0fa60c7609d6ee93e0b6ebef4a42ca50ff7552242c9b795203331f7e0ab1088b"
+    }
+  },
+  "serverSource": {
+    "head": "4a25f5f931c0467653b32026909325e49e575561",
+    "status": "M backend/scripts/check_world_http_scenarios.py\n?? backend/_proj_create.json"
+  },
+  "modelLoad": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "loadMs": 12215,
+    "topology": {
+      "multithread": true,
+      "numThreads": 10
+    }
+  },
+  "action": {
+    "worldId": "world_1",
+    "attach": {
+      "ms": 10885,
+      "status": {
+        "kind": "await",
+        "reason": "player_input"
+      },
+      "narrations": [
+        {
+          "kind": "narration",
+          "pointId": "root_3",
+          "version": 0,
+          "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+          "polished": true,
+          "polishReason": null,
+          "attempts": 1,
+          "at": 1793202301697
+        }
+      ],
+      "modelAttempts": [
+        {
+          "at": 1793202301697,
+          "attempt": 1,
+          "ms": 10391,
+          "chars": 34,
+          "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+        }
+      ]
+    },
+    "inputs": [
+      {
+        "command": "走到门厅",
+        "wallMs": 10779,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "走到门厅",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁从走廊走到门厅。",
+          "at": 1793202302306
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_7",
+            "version": 1,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202312321,
+            "attempt": 1,
+            "ms": 9576,
+            "chars": 46,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。"
+          }
+        ],
+        "serverOps": 17
+      },
+      {
+        "command": "完成压力试验",
+        "wallMs": 9908,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "完成压力试验",
+          "outcome": "refused",
+          "reason": "milestone_location_mismatch",
+          "text": "规则拒绝执行（milestone_location_mismatch）；没有位置或数值变化。",
+          "at": 1793202313028
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_13",
+            "version": 2,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202322333,
+            "attempt": 1,
+            "ms": 8917,
+            "chars": 34,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。"
+          }
+        ],
+        "serverOps": 17
+      },
+      {
+        "command": "走到走廊",
+        "wallMs": 10914,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "走到走廊",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁从门厅走到走廊。",
+          "at": 1793202323039
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_19",
+            "version": 3,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202333195,
+            "attempt": 1,
+            "ms": 9592,
+            "chars": 46,
+            "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。"
+          }
+        ],
+        "serverOps": 17
+      },
+      {
+        "command": "完成压力试验",
+        "wallMs": 16278,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "完成压力试验",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。",
+          "at": 1793202334166
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_25",
+            "version": 4,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202349394,
+            "attempt": 1,
+            "ms": 14165,
+            "chars": 74,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+          }
+        ],
+        "serverOps": 18
+      },
+      {
+        "command": "完成恢复练习",
+        "wallMs": 16990,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "完成恢复练习",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁完成任务「完成恢复练习」，完成恢复练习后更善于自我调节；精神值从8变为9。",
+          "at": 1793202350546
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_32",
+            "version": 5,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202366343,
+            "attempt": 1,
+            "ms": 14693,
+            "chars": 77,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+          }
+        ],
+        "serverOps": 18
+      },
+      {
+        "command": "上下打量四周",
+        "wallMs": 10417,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": null,
+        "unparsed": true,
+        "narration": [
+          {
+            "pointId": "point_39",
+            "version": 6,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202376726,
+            "attempt": 1,
+            "ms": 8670,
+            "chars": 33,
+            "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+          }
+        ],
+        "serverOps": 15
+      },
+      {
+        "command": "走到门厅",
+        "wallMs": 11287,
+        "terminal": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "wireCaptures": [],
+        "decision": {
+          "kind": "decision",
+          "inputText": "走到门厅",
+          "outcome": "allowed",
+          "reason": null,
+          "text": "周宁从走廊走到门厅。",
+          "at": 1793202378153
+        },
+        "unparsed": false,
+        "narration": [
+          {
+            "pointId": "point_45",
+            "version": 7,
+            "polished": true,
+            "polishReason": null,
+            "attempts": 1,
+            "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+          }
+        ],
+        "polishFallback": [],
+        "modelAttempts": [
+          {
+            "at": 1793202387941,
+            "attempt": 1,
+            "ms": 8882,
+            "chars": 36,
+            "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+          }
+        ],
+        "serverOps": 18
+      }
+    ],
+    "finalState": {
+      "version": 7,
+      "location": "hall",
+      "sanity": 9,
+      "tasks": [
+        {
+          "goal": "完成压力试验",
+          "status": "achieved"
+        },
+        {
+          "goal": "完成恢复练习",
+          "status": "achieved"
+        }
+      ],
+      "personality": [
+        "经历压力试验后更谨慎",
+        "完成恢复练习后更善于自我调节"
+      ]
+    },
+    "points": [
+      {
+        "pointId": "root_3",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_7",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_13",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_19",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。"
+      },
+      {
+        "pointId": "point_25",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+      },
+      {
+        "pointId": "point_32",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+      },
+      {
+        "pointId": "point_39",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+      },
+      {
+        "pointId": "point_45",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+      }
+    ],
+    "totals": {
+      "modelAttempts": 7,
+      "serverOps": 124,
+      "completionEvidence": 8
+    },
+    "opLog": [
+      {
+        "op": "create_world",
+        "ms": 194
+      },
+      {
+        "op": "narration_claim",
+        "ms": 89
+      },
+      {
+        "op": "get_state",
+        "ms": 115
+      },
+      {
+        "op": "narration_submit",
+        "ms": 89
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 59
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 47
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 50
+      },
+      {
+        "op": "preview_point",
+        "ms": 53
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 67
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 71
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 96
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 68
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 72
+      },
+      {
+        "op": "preview_point",
+        "ms": 32
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 76
+      },
+      {
+        "op": "commit_point",
+        "ms": 146
+      },
+      {
+        "op": "narration_claim",
+        "ms": 53
+      },
+      {
+        "op": "get_state",
+        "ms": 32
+      },
+      {
+        "op": "get_state",
+        "ms": 25
+      },
+      {
+        "op": "narration_submit",
+        "ms": 75
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 169
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 53
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 46
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 54
+      },
+      {
+        "op": "preview_point",
+        "ms": 25
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 47
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 58
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 113
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 62
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 67
+      },
+      {
+        "op": "preview_point",
+        "ms": 34
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 85
+      },
+      {
+        "op": "commit_point",
+        "ms": 64
+      },
+      {
+        "op": "narration_claim",
+        "ms": 48
+      },
+      {
+        "op": "get_state",
+        "ms": 30
+      },
+      {
+        "op": "get_state",
+        "ms": 58
+      },
+      {
+        "op": "narration_submit",
+        "ms": 78
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 64
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 63
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 67
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 73
+      },
+      {
+        "op": "preview_point",
+        "ms": 70
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 90
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 61
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 73
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 64
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 222
+      },
+      {
+        "op": "preview_point",
+        "ms": 26
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 99
+      },
+      {
+        "op": "commit_point",
+        "ms": 63
+      },
+      {
+        "op": "narration_claim",
+        "ms": 90
+      },
+      {
+        "op": "get_state",
+        "ms": 32
+      },
+      {
+        "op": "get_state",
+        "ms": 29
+      },
+      {
+        "op": "narration_submit",
+        "ms": 113
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 80
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 142
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 88
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 73
+      },
+      {
+        "op": "preview_point",
+        "ms": 26
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 135
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 107
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 103
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 102
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 183
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 140
+      },
+      {
+        "op": "preview_point",
+        "ms": 46
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 188
+      },
+      {
+        "op": "commit_point",
+        "ms": 161
+      },
+      {
+        "op": "narration_claim",
+        "ms": 136
+      },
+      {
+        "op": "get_state",
+        "ms": 53
+      },
+      {
+        "op": "get_state",
+        "ms": 88
+      },
+      {
+        "op": "narration_submit",
+        "ms": 132
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 140
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 178
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 85
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 92
+      },
+      {
+        "op": "preview_point",
+        "ms": 65
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 144
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 126
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 188
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 125
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 149
+      },
+      {
+        "op": "preview_point",
+        "ms": 91
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 127
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 206
+      },
+      {
+        "op": "commit_point",
+        "ms": 159
+      },
+      {
+        "op": "narration_claim",
+        "ms": 98
+      },
+      {
+        "op": "get_state",
+        "ms": 94
+      },
+      {
+        "op": "get_state",
+        "ms": 50
+      },
+      {
+        "op": "narration_submit",
+        "ms": 126
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 187
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 112
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 134
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 106
+      },
+      {
+        "op": "preview_point",
+        "ms": 33
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 155
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 87
+      },
+      {
+        "op": "checkpoint_stage_time_scan",
+        "ms": 172
+      },
+      {
+        "op": "preview_point",
+        "ms": 33
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 107
+      },
+      {
+        "op": "commit_point",
+        "ms": 180
+      },
+      {
+        "op": "narration_claim",
+        "ms": 154
+      },
+      {
+        "op": "get_state",
+        "ms": 74
+      },
+      {
+        "op": "get_state",
+        "ms": 48
+      },
+      {
+        "op": "narration_submit",
+        "ms": 173
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 175
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 201
+      },
+      {
+        "op": "checkpoint_start_advance",
+        "ms": 160
+      },
+      {
+        "op": "checkpoint_begin_point",
+        "ms": 198
+      },
+      {
+        "op": "preview_point",
+        "ms": 41
+      },
+      {
+        "op": "checkpoint_discover_group",
+        "ms": 127
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 176
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 174
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 132
+      },
+      {
+        "op": "preview_point",
+        "ms": 42
+      },
+      {
+        "op": "checkpoint_record_skip",
+        "ms": 146
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 157
+      },
+      {
+        "op": "commit_point",
+        "ms": 117
+      },
+      {
+        "op": "narration_claim",
+        "ms": 210
+      },
+      {
+        "op": "get_state",
+        "ms": 54
+      },
+      {
+        "op": "get_state",
+        "ms": 43
+      },
+      {
+        "op": "lease_renew",
+        "ms": 289
+      },
+      {
+        "op": "narration_submit",
+        "ms": 224
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 196
+      }
+    ],
+    "modelAttempts": [
+      {
+        "at": 1793202312321,
+        "attempt": 1,
+        "ms": 9576,
+        "chars": 46,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。"
+      },
+      {
+        "at": 1793202322333,
+        "attempt": 1,
+        "ms": 8917,
+        "chars": 34,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。"
+      },
+      {
+        "at": 1793202333195,
+        "attempt": 1,
+        "ms": 9592,
+        "chars": 46,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。"
+      },
+      {
+        "at": 1793202349394,
+        "attempt": 1,
+        "ms": 14165,
+        "chars": 74,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+      },
+      {
+        "at": 1793202366343,
+        "attempt": 1,
+        "ms": 14693,
+        "chars": 77,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。"
+      },
+      {
+        "at": 1793202376726,
+        "attempt": 1,
+        "ms": 8670,
+        "chars": 33,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。"
+      },
+      {
+        "at": 1793202387941,
+        "attempt": 1,
+        "ms": 8882,
+        "chars": 36,
+        "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。"
+      }
+    ],
+    "events": [
+      {
+        "kind": "decision",
+        "inputText": "走到门厅",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁从走廊走到门厅。",
+        "at": 1793202302306
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_7",
+        "version": 1,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从走廊走到门厅。  \n周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202312322
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202312567
+      },
+      {
+        "kind": "decision",
+        "inputText": "完成压力试验",
+        "outcome": "refused",
+        "reason": "milestone_location_mismatch",
+        "text": "规则拒绝执行（milestone_location_mismatch）；没有位置或数值变化。",
+        "at": 1793202313028
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_13",
+        "version": 2,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202322333
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202322475
+      },
+      {
+        "kind": "decision",
+        "inputText": "走到走廊",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁从门厅走到走廊。",
+        "at": 1793202323039
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_19",
+        "version": 3,
+        "text": "林川位于走廊。  \n林川的精神值为10。  \n周宁从门厅走到走廊。  \n周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202333195
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202333389
+      },
+      {
+        "kind": "decision",
+        "inputText": "完成压力试验",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。",
+        "at": 1793202334166
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_25",
+        "version": 4,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202349394
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202349667
+      },
+      {
+        "kind": "decision",
+        "inputText": "完成恢复练习",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁完成任务「完成恢复练习」，完成恢复练习后更善于自我调节；精神值从8变为9。",
+        "at": 1793202350546
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_32",
+        "version": 5,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202366343
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202366657
+      },
+      {
+        "kind": "unparsed",
+        "inputText": "上下打量四周",
+        "at": 1793202367042
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_39",
+        "version": 6,
+        "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202376726
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202377074
+      },
+      {
+        "kind": "decision",
+        "inputText": "走到门厅",
+        "outcome": "allowed",
+        "reason": null,
+        "text": "周宁从走廊走到门厅。",
+        "at": 1793202378153
+      },
+      {
+        "kind": "narration",
+        "pointId": "point_45",
+        "version": 7,
+        "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202387941
+      },
+      {
+        "kind": "terminal",
+        "status": {
+          "kind": "stop",
+          "reason": "world_complete"
+        },
+        "at": 1793202388361
+      }
+    ]
+  },
+  "chain": {
+    "worldId": "world_48",
+    "attempts": 2,
+    "firstRoll": {
+      "admitted": true,
+      "rollId": "roll_57",
+      "result": 14,
+      "ruleVersion": "reaction-d20-v1"
+    },
+    "secondRoll": null,
+    "status": "COMPLETED",
+    "setupMs": 415,
+    "walkMs": 15983,
+    "modelTasks": [
+      {
+        "task": "targets",
+        "key": "person_c",
+        "at": 1793202389528
+      },
+      {
+        "task": "results",
+        "key": "group_55",
+        "at": 1793202389780
+      },
+      {
+        "task": "updates",
+        "key": "group_55",
+        "at": 1793202389780
+      },
+      {
+        "task": "narration",
+        "key": "point_54",
+        "at": 1793202390108
+      },
+      {
+        "task": "continuation",
+        "key": "round_53",
+        "at": 1793202405199
+      }
+    ],
+    "narrationEvents": [
+      {
+        "kind": "narration",
+        "pointId": "point_54",
+        "version": 1,
+        "text": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。",
+        "polished": true,
+        "polishReason": null,
+        "attempts": 1,
+        "at": 1793202405069
+      }
+    ],
+    "modelAttempts": [
+      {
+        "at": 1793202405069,
+        "attempt": 1,
+        "ms": 14960,
+        "chars": 78,
+        "text": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。"
+      }
+    ],
+    "commitCount": 1,
+    "rollsRolled": [
+      {
+        "sourceId": "person_c",
+        "targetId": "person_a",
+        "admitted": false,
+        "result": 2
+      }
+    ],
+    "points": [
+      {
+        "pointId": "root_50",
+        "narrationStatus": "ready",
+        "text": "根点模板叙事（脚本引导，不计入模型成本）。"
+      },
+      {
+        "pointId": "point_54",
+        "narrationStatus": "ready",
+        "text": "林川位于走廊。林川的精神值从10变为8。林川完成了任务「留在走廊守门，不碰盒子」。林川的人格变化为「撑住重门后更加沉稳」。周宁位于走廊。周宁的精神值为10。"
+      }
+    ],
+    "finalState": {
+      "version": 1,
+      "time": "2026-10-27T09:00:02",
+      "appearances": {
+        "person_a": [],
+        "person_c": []
+      }
+    },
+    "totals": {
+      "modelAttempts": 1,
+      "serverOps": 20
+    },
+    "opLog": [
+      {
+        "op": "lease_renew",
+        "ms": 38
+      },
+      {
+        "op": "get_context",
+        "ms": 113
+      },
+      {
+        "op": "list_points",
+        "ms": 22
+      },
+      {
+        "op": "get_state",
+        "ms": 26
+      },
+      {
+        "op": "get_context",
+        "ms": 21
+      },
+      {
+        "op": "preview_point",
+        "ms": 21
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 65
+      },
+      {
+        "op": "checkpoint_extend_group",
+        "ms": 80
+      },
+      {
+        "op": "create_rolls",
+        "ms": 50
+      },
+      {
+        "op": "checkpoint_close_group",
+        "ms": 55
+      },
+      {
+        "op": "allocate_ids",
+        "ms": 48
+      },
+      {
+        "op": "checkpoint_stage_unit",
+        "ms": 53
+      },
+      {
+        "op": "preview_point",
+        "ms": 23
+      },
+      {
+        "op": "checkpoint_seal_point",
+        "ms": 52
+      },
+      {
+        "op": "commit_point",
+        "ms": 61
+      },
+      {
+        "op": "narration_claim",
+        "ms": 45
+      },
+      {
+        "op": "get_state",
+        "ms": 25
+      },
+      {
+        "op": "get_state",
+        "ms": 19
+      },
+      {
+        "op": "narration_submit",
+        "ms": 130
+      },
+      {
+        "op": "round_conclusion_conclude",
+        "ms": 66
+      }
+    ]
+  },
+  "lifecycle": {
+    "apiOrigin": "http://127.0.0.1:58953",
+    "viteOrigin": "http://127.0.0.1:58954",
+    "serviceReady": true
+  }
+}

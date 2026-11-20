@@ -1,0 +1,22 @@
+[world_1 root_3 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_7 seq=1] prev=root_3 delta={"person_c": {"entityId": "person_c", "personalityChanges": [{"id": "change_10", "text": "经历压力试验后更谨慎", "supersedes": []}], "sanitySet": 8, "tasksAchieved": ["task_pressure"]}}
+    show  周宁的理智下降（10→8）。
+          source=replay fields=personalityChanges,sanitySet,tasksAchieved,previous.sanity replayOk=True agrees=True
+    show  周宁：经历压力试验后更谨慎。
+          source=replay fields=personalityChanges,sanitySet,tasksAchieved,personalityChanges replayOk=True agrees=True
+    show  周宁达成任务：完成压力试验。
+          source=replay fields=personalityChanges,sanitySet,tasksAchieved,tasks.task_pressure.goal,tasks.task_pressure.status replayOk=True agrees=True
+[world_1 point_14 seq=2] prev=point_7 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}}}
+    show  周宁从走廊到门厅。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True
+[world_1 point_20 seq=3] prev=point_14 delta={}
+    show  第3点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_26 seq=4] prev=point_20 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "corridor", "slotId": null, "relativeTo": null}}}
+    show  周宁从门厅到走廊。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True
+[world_1 point_32 seq=5] prev=point_26 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}}}
+    show  周宁从走廊到门厅。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True

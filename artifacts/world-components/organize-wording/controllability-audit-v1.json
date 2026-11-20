@@ -1,0 +1,286 @@
+{
+ "purpose": "manual per-source audit of the frozen 10 holdout sources; both plans must be fact-faithful, plan-implemented, and show the expected difference",
+ "counts": {
+  "pairedSuccess": 0,
+  "factBothPass": 8,
+  "planAPass": 1,
+  "planBPass": 6,
+  "outputsIdentical": 8
+ },
+ "rows": [
+  {
+   "sourceId": "v07",
+   "A": {
+    "factPass": true,
+    "planPass": true,
+    "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+    "new_tokens": 49,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": false,
+    "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+    "new_tokens": 49,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A implements [f0,f1][f2]; B repeats the same A grouping, so B fails; outputs identical",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "v18",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+    "new_tokens": 49,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": true,
+    "text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+    "new_tokens": 49,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A merges all three, output has three sentences; B all-separate; identical",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "t22",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+    "new_tokens": 49,
+    "stop": "eos",
+    "factSupported": 4,
+    "factTotal": 4,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": true,
+    "text": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+    "new_tokens": 49,
+    "stop": "eos",
+    "factSupported": 4,
+    "factTotal": 4,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A pairs [f0,f1] and [f2,f3], output all separate; B all-separate; grammar: 系泊绳的/木桩的",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "fixture-r5",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+    "new_tokens": 50,
+    "stop": "eos",
+    "factSupported": 5,
+    "factTotal": 5,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": true,
+    "text": "林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+    "new_tokens": 50,
+    "stop": "eos",
+    "factSupported": 5,
+    "factTotal": 5,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A merges f0/f1, output all separate; B all-separate; relation 随后 present",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "t03",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "叶知微把灯罩擦得透亮,袖口沾了铜油。叶知微把抹布搭回梯脚。",
+    "new_tokens": 50,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": true,
+    "text": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+    "new_tokens": 50,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A should be one group, output splits f2; B all-separate; A/B differ but A not implemented",
+   "outputsIdentical": false
+  },
+  {
+   "sourceId": "t08",
+   "A": {
+    "factPass": false,
+    "planPass": false,
+    "text": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。",
+    "new_tokens": 50,
+    "stop": "eos",
+    "factSupported": 4,
+    "factTotal": 4,
+    "omissions": []
+   },
+   "B": {
+    "factPass": false,
+    "planPass": false,
+    "text": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。",
+    "new_tokens": 50,
+    "stop": "eos",
+    "factSupported": 4,
+    "factTotal": 4,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "f1 顾行舟 and f3 顾行舟 attributed to 阿棠; both outputs one sentence; facts and plans fail",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "t24",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "纸灯笼的被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+    "new_tokens": 52,
+    "stop": "eos",
+    "factSupported": 4,
+    "factTotal": 4,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": true,
+    "text": "纸灯笼的被风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+    "new_tokens": 52,
+    "stop": "eos",
+    "factSupported": 4,
+    "factTotal": 4,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A group2 [f2,f3] split; B all-separate; grammar: 纸灯笼的/排水沟的; A/B differ but A not implemented",
+   "outputsIdentical": false
+  },
+  {
+   "sourceId": "train-r4",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+    "new_tokens": 52,
+    "stop": "eos",
+    "factSupported": 5,
+    "factTotal": 5,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": false,
+    "text": "沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+    "new_tokens": 52,
+    "stop": "eos",
+    "factSupported": 5,
+    "factTotal": 5,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "both outputs all separate and both omit 随后; A grouping fails; B required edge fails",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "v14",
+   "A": {
+    "factPass": true,
+    "planPass": false,
+    "text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+    "new_tokens": 52,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "B": {
+    "factPass": true,
+    "planPass": true,
+    "text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+    "new_tokens": 52,
+    "stop": "eos",
+    "factSupported": 3,
+    "factTotal": 3,
+    "omissions": []
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "A one group, output three sentences; B all-separate; identical",
+   "outputsIdentical": true
+  },
+  {
+   "sourceId": "v20",
+   "A": {
+    "factPass": false,
+    "planPass": false,
+    "text": "沈砚从潮生巷走到潮渡。沈砚把渡船推离栈桥。",
+    "new_tokens": 22,
+    "stop": "eos",
+    "factSupported": 2,
+    "factTotal": 3,
+    "omissions": [
+     "f1"
+    ]
+   },
+   "B": {
+    "factPass": false,
+    "planPass": false,
+    "text": "沈砚从潮生巷走到潮渡。沈砚把渡船推离栈桥。",
+    "new_tokens": 22,
+    "stop": "eos",
+    "factSupported": 2,
+    "factTotal": 3,
+    "omissions": [
+     "f1"
+    ]
+   },
+   "expectedDifference": false,
+   "pairedSuccess": false,
+   "issues": "both omit f1 sanity; A and B plans fail; identical",
+   "outputsIdentical": true
+  }
+ ]
+}

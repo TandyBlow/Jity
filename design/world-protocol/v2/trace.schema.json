@@ -1,0 +1,492 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "TraceAssertion": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "enum": [
+                  "eq",
+                  "ne",
+                  "type",
+                  "set",
+                  "ordered",
+                  "delta"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "expected"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "op": {
+                "enum": [
+                  "delta",
+                  "time_window"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "baseline"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "op": {
+          "enum": [
+            "eq",
+            "ne",
+            "type",
+            "range",
+            "set",
+            "ordered",
+            "delta",
+            "time_window",
+            "absent"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "path": {
+          "pattern": "^(/.*)?$",
+          "title": "Path",
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "baseline": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "minimum": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum"
+        },
+        "maximum": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum"
+        }
+      },
+      "required": [
+        "op",
+        "path"
+      ],
+      "title": "TraceAssertion",
+      "type": "object"
+    },
+    "TraceCapture": {
+      "additionalProperties": false,
+      "properties": {
+        "variable": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Variable",
+          "type": "string"
+        },
+        "path": {
+          "pattern": "^(/.*)?$",
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variable",
+        "path"
+      ],
+      "title": "TraceCapture",
+      "type": "object"
+    },
+    "TraceSample": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "values": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/JsonValue"
+            }
+          },
+          "title": "Values",
+          "type": "object"
+        },
+        "expectedDigests": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          "title": "Expecteddigests",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "values",
+        "expectedDigests"
+      ],
+      "title": "TraceSample",
+      "type": "object"
+    },
+    "TraceStep": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "create_world",
+            "get_context",
+            "checkpoint_start_advance",
+            "checkpoint_begin_point",
+            "checkpoint_set_point_time",
+            "checkpoint_discover_group",
+            "checkpoint_extend_group",
+            "checkpoint_close_group",
+            "checkpoint_stage_unit",
+            "checkpoint_record_skip",
+            "checkpoint_stage_time_scan",
+            "checkpoint_seal_point",
+            "checkpoint_prepare_successor",
+            "checkpoint_restore_group_work",
+            "checkpoint_pause",
+            "checkpoint_resume",
+            "round_conclusion_conclude",
+            "round_conclusion_cancel",
+            "lease_acquire",
+            "lease_renew",
+            "lease_release",
+            "allocate_ids",
+            "preview_point",
+            "create_rolls",
+            "commit_point",
+            "list_points",
+            "get_state",
+            "narration_claim",
+            "narration_claim_renew",
+            "narration_submit",
+            "narration_get",
+            "narration_delete"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "request": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "response": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "responseKind": {
+          "enum": [
+            "success",
+            "error"
+          ],
+          "title": "Responsekind",
+          "type": "string"
+        },
+        "httpStatus": {
+          "maximum": 499,
+          "minimum": 200,
+          "title": "Httpstatus",
+          "type": "integer"
+        },
+        "captures": {
+          "items": {
+            "$ref": "#/$defs/TraceCapture"
+          },
+          "title": "Captures",
+          "type": "array"
+        },
+        "assertions": {
+          "items": {
+            "$ref": "#/$defs/TraceAssertion"
+          },
+          "minItems": 1,
+          "title": "Assertions",
+          "type": "array"
+        },
+        "projectionPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Projectionpath"
+        },
+        "digestPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Digestpath"
+        },
+        "expectedProjection": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "nextAction": {
+          "enum": [
+            "continue",
+            "compute",
+            "read",
+            "stop",
+            "retry_same_request",
+            "reacquire_lease",
+            "refresh_context",
+            "wait_narration",
+            "regenerate_narration",
+            "resolve_gate",
+            "pause",
+            "fix_request",
+            "none"
+          ],
+          "title": "Nextaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "operation",
+        "scope",
+        "request",
+        "response",
+        "responseKind",
+        "httpStatus",
+        "captures",
+        "assertions",
+        "projectionPath",
+        "digestPath",
+        "nextAction"
+      ],
+      "title": "TraceStep",
+      "type": "object"
+    },
+    "TraceVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "identity",
+            "clock",
+            "ownership",
+            "business"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "valueType": {
+          "enum": [
+            "string",
+            "integer",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ],
+          "title": "Valuetype",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "input",
+            "capture"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "captureStep": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Capturestep"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "valueType",
+        "origin",
+        "captureStep"
+      ],
+      "title": "TraceVariable",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "properties": {
+        "steps": {
+          "contains": {
+            "properties": {
+              "expectedProjection": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "expectedProjection"
+            ]
+          },
+          "minContains": 1
+        }
+      }
+    }
+  ],
+  "properties": {
+    "traceFormatVersion": {
+      "const": 1,
+      "title": "Traceformatversion",
+      "type": "integer"
+    },
+    "protocolVersion": {
+      "const": 2,
+      "title": "Protocolversion",
+      "type": "integer"
+    },
+    "contractDigest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Contractdigest",
+      "type": "string"
+    },
+    "scenario": {
+      "enum": [
+        "T01",
+        "T02",
+        "T03",
+        "T04",
+        "T05",
+        "T06",
+        "T07",
+        "T08",
+        "T09"
+      ],
+      "title": "Scenario",
+      "type": "string"
+    },
+    "acceptanceLayer": {
+      "const": "contract",
+      "title": "Acceptancelayer",
+      "type": "string"
+    },
+    "runtimeTarget": {
+      "enum": [
+        "runtime-A2",
+        "runtime-A3"
+      ],
+      "title": "Runtimetarget",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "preconditions": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "variables": {
+      "items": {
+        "$ref": "#/$defs/TraceVariable"
+      },
+      "title": "Variables",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/TraceStep"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "samples": {
+      "items": {
+        "$ref": "#/$defs/TraceSample"
+      },
+      "minItems": 2,
+      "title": "Samples",
+      "type": "array"
+    }
+  },
+  "required": [
+    "traceFormatVersion",
+    "protocolVersion",
+    "contractDigest",
+    "scenario",
+    "acceptanceLayer",
+    "runtimeTarget",
+    "description",
+    "preconditions",
+    "variables",
+    "steps",
+    "samples"
+  ],
+  "title": "Jity shared contract traces",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jity:world-trace:v1"
+}

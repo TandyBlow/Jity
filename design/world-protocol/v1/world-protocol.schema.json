@@ -1,0 +1,2134 @@
+{
+  "$defs": {
+    "AdvanceContext": {
+      "additionalProperties": false,
+      "properties": {
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "inputId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Inputid",
+          "type": "string"
+        },
+        "inputText": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Inputtext"
+        },
+        "intentStatus": {
+          "enum": [
+            "pending",
+            "consumed",
+            "expired"
+          ],
+          "title": "Intentstatus",
+          "type": "string"
+        }
+      },
+      "required": [
+        "advanceId",
+        "inputId",
+        "inputText",
+        "intentStatus"
+      ],
+      "title": "AdvanceContext",
+      "type": "object"
+    },
+    "CancelHandback": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "handback",
+          "title": "Kind",
+          "type": "string"
+        },
+        "closedBy": {
+          "const": "cancel",
+          "title": "Closedby",
+          "type": "string"
+        },
+        "cancelReason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Cancelreason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "closedBy",
+        "cancelReason"
+      ],
+      "title": "CancelHandback",
+      "type": "object"
+    },
+    "CharacterState": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "appearanceChanges": {
+          "items": {
+            "$ref": "#/$defs/StoredDescriptionChange"
+          },
+          "title": "Appearancechanges",
+          "type": "array"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "personalityChanges": {
+          "items": {
+            "$ref": "#/$defs/StoredDescriptionChange"
+          },
+          "title": "Personalitychanges",
+          "type": "array"
+        },
+        "sanity": {
+          "ge": 0,
+          "le": 100,
+          "title": "Sanity",
+          "type": "integer"
+        },
+        "tasks": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/Task"
+            }
+          },
+          "title": "Tasks",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "position",
+        "sanity",
+        "tasks"
+      ],
+      "title": "CharacterState",
+      "type": "object"
+    },
+    "ContinueConclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "continue",
+          "title": "Kind",
+          "type": "string"
+        },
+        "closedBy": {
+          "const": "model",
+          "title": "Closedby",
+          "type": "string"
+        },
+        "cancelReason": {
+          "title": "Cancelreason",
+          "type": "null"
+        },
+        "candidateCharacterIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Candidatecharacterids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "nextRoundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Nextroundid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "closedBy",
+        "cancelReason",
+        "candidateCharacterIds",
+        "nextRoundId"
+      ],
+      "title": "ContinueConclusion",
+      "type": "object"
+    },
+    "DescriptionChange": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "text": {
+            "type": "null"
+          }
+        }
+      },
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "supersedes": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Supersedes",
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "supersedes"
+      ],
+      "then": {
+        "properties": {
+          "supersedes": {
+            "minItems": 1
+          }
+        }
+      },
+      "title": "DescriptionChange",
+      "type": "object"
+    },
+    "Duration": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "unit": {
+          "enum": [
+            "second",
+            "minute",
+            "hour",
+            "day",
+            "month",
+            "year"
+          ],
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "unit"
+      ],
+      "title": "Duration",
+      "type": "object"
+    },
+    "EntityDelta": {
+      "additionalProperties": false,
+      "properties": {
+        "entityId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "positionSet": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Position"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "appearanceChanges": {
+          "items": {
+            "$ref": "#/$defs/DescriptionChange"
+          },
+          "title": "Appearancechanges",
+          "type": "array"
+        },
+        "personalityChanges": {
+          "items": {
+            "$ref": "#/$defs/DescriptionChange"
+          },
+          "title": "Personalitychanges",
+          "type": "array"
+        },
+        "sanitySet": {
+          "anyOf": [
+            {
+              "ge": 0,
+              "le": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sanityset"
+        },
+        "tasksAchieved": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Tasksachieved",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "subtasksAdded": {
+          "items": {
+            "$ref": "#/$defs/Task"
+          },
+          "title": "Subtasksadded",
+          "type": "array"
+        }
+      },
+      "required": [
+        "entityId"
+      ],
+      "title": "EntityDelta",
+      "type": "object"
+    },
+    "HeadNarrationClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "advanceId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Advanceid"
+        },
+        "generation": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Generation",
+          "type": "integer"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "expiresAt": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Expiresat",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "head",
+          "title": "Mode",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Fenceepoch",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "worldId",
+        "pointId",
+        "advanceId",
+        "generation",
+        "claimToken",
+        "expiresAt",
+        "mode",
+        "fenceEpoch"
+      ],
+      "title": "HeadNarrationClaim",
+      "type": "object"
+    },
+    "HistoryNarrationClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "advanceId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Advanceid"
+        },
+        "generation": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Generation",
+          "type": "integer"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "expiresAt": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Expiresat",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "history",
+          "title": "Mode",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "null"
+        }
+      },
+      "required": [
+        "worldId",
+        "pointId",
+        "advanceId",
+        "generation",
+        "claimToken",
+        "expiresAt",
+        "mode",
+        "fenceEpoch"
+      ],
+      "title": "HistoryNarrationClaim",
+      "type": "object"
+    },
+    "InitialCharacter": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "initialPosition": {
+          "$ref": "#/$defs/Position"
+        },
+        "initialAppearance": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Initialappearance",
+          "type": "string"
+        },
+        "slots": {
+          "items": {
+            "$ref": "#/$defs/SpatialSlot"
+          },
+          "title": "Slots",
+          "type": "array"
+        },
+        "initialPersonality": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Initialpersonality",
+          "type": "string"
+        },
+        "initialSanity": {
+          "ge": 0,
+          "le": 100,
+          "title": "Initialsanity",
+          "type": "integer"
+        },
+        "tasks": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/Task"
+            }
+          },
+          "title": "Tasks",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "initialPosition",
+        "initialAppearance",
+        "initialPersonality",
+        "initialSanity",
+        "tasks"
+      ],
+      "title": "InitialCharacter",
+      "type": "object"
+    },
+    "InitialItem": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "initialPosition": {
+          "$ref": "#/$defs/Position"
+        },
+        "initialAppearance": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Initialappearance",
+          "type": "string"
+        },
+        "slots": {
+          "items": {
+            "$ref": "#/$defs/SpatialSlot"
+          },
+          "title": "Slots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "initialPosition",
+        "initialAppearance"
+      ],
+      "title": "InitialItem",
+      "type": "object"
+    },
+    "InitialLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "parentLocationId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Parentlocationid"
+        },
+        "initialAppearance": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Initialappearance",
+          "type": "string"
+        },
+        "slots": {
+          "items": {
+            "$ref": "#/$defs/SpatialSlot"
+          },
+          "title": "Slots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "parentLocationId",
+        "initialAppearance"
+      ],
+      "title": "InitialLocation",
+      "type": "object"
+    },
+    "ItemState": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "appearanceChanges": {
+          "items": {
+            "$ref": "#/$defs/StoredDescriptionChange"
+          },
+          "title": "Appearancechanges",
+          "type": "array"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        }
+      },
+      "required": [
+        "id",
+        "position"
+      ],
+      "title": "ItemState",
+      "type": "object"
+    },
+    "LocationState": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "appearanceChanges": {
+          "items": {
+            "$ref": "#/$defs/StoredDescriptionChange"
+          },
+          "title": "Appearancechanges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LocationState",
+      "type": "object"
+    },
+    "ModelHandback": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "handback",
+          "title": "Kind",
+          "type": "string"
+        },
+        "closedBy": {
+          "const": "model",
+          "title": "Closedby",
+          "type": "string"
+        },
+        "cancelReason": {
+          "title": "Cancelreason",
+          "type": "null"
+        }
+      },
+      "required": [
+        "kind",
+        "closedBy",
+        "cancelReason"
+      ],
+      "title": "ModelHandback",
+      "type": "object"
+    },
+    "PendingGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "initiatorId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Initiatorid",
+          "type": "string"
+        },
+        "memberIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Memberids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "frontierIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Frontierids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "reactions": {
+          "items": {
+            "$ref": "#/$defs/Reaction"
+          },
+          "title": "Reactions",
+          "type": "array"
+        },
+        "closed": {
+          "title": "Closed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "groupId",
+        "initiatorId",
+        "memberIds",
+        "frontierIds",
+        "reactions",
+        "closed"
+      ],
+      "title": "PendingGroup",
+      "type": "object"
+    },
+    "PendingTask": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "ownerId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Ownerid",
+          "type": "string"
+        },
+        "parentTaskId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Parenttaskid"
+        },
+        "goal": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Goal",
+          "type": "string"
+        },
+        "status": {
+          "const": "pending",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "ownerId",
+        "parentTaskId",
+        "goal",
+        "status"
+      ],
+      "title": "PendingTask",
+      "type": "object"
+    },
+    "PointCommitRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "expectedPointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Expectedpointid",
+          "type": "string"
+        },
+        "expectedVersion": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Expectedversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "expectedCheckpointRevision": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Expectedcheckpointrevision",
+          "type": "integer"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Fenceepoch",
+          "type": "integer"
+        },
+        "point": {
+          "$ref": "#/$defs/TimelinePoint"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/RoundCheckpoint"
+        },
+        "stageCandidates": {
+          "items": {
+            "$ref": "#/$defs/SettlementCandidates"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Stagecandidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "worldId",
+        "advanceId",
+        "expectedPointId",
+        "expectedVersion",
+        "requestId",
+        "roundId",
+        "expectedCheckpointRevision",
+        "leaseToken",
+        "fenceEpoch",
+        "point",
+        "checkpoint",
+        "stageCandidates"
+      ],
+      "title": "PointCommitRequest",
+      "type": "object"
+    },
+    "Position": {
+      "additionalProperties": false,
+      "properties": {
+        "containerId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Containerid",
+          "type": "string"
+        },
+        "slotId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slotid"
+        },
+        "relativeTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RelativePosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "containerId"
+      ],
+      "title": "Position",
+      "type": "object"
+    },
+    "PreviewRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "expectedPointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Expectedpointid",
+          "type": "string"
+        },
+        "expectedVersion": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Expectedversion",
+          "type": "integer"
+        },
+        "expectedCheckpointRevision": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Expectedcheckpointrevision",
+          "type": "integer"
+        },
+        "timeAdvance": {
+          "$ref": "#/$defs/TimeAdvance"
+        },
+        "stageCandidates": {
+          "items": {
+            "$ref": "#/$defs/SettlementCandidates"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Stagecandidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "worldId",
+        "advanceId",
+        "roundId",
+        "pointId",
+        "expectedPointId",
+        "expectedVersion",
+        "expectedCheckpointRevision",
+        "timeAdvance",
+        "stageCandidates"
+      ],
+      "title": "PreviewRequest",
+      "type": "object"
+    },
+    "Reaction": {
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Sourceid",
+          "type": "string"
+        },
+        "targetId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Targetid",
+          "type": "string"
+        },
+        "triggerKey": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Triggerkey",
+          "type": "string"
+        },
+        "rollId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Rollid",
+          "type": "string"
+        },
+        "admitted": {
+          "title": "Admitted",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sourceId",
+        "targetId",
+        "triggerKey",
+        "rollId",
+        "admitted"
+      ],
+      "title": "Reaction",
+      "type": "object"
+    },
+    "RelativePosition": {
+      "additionalProperties": false,
+      "properties": {
+        "entityId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "under",
+            "above",
+            "beside",
+            "in_front_of",
+            "behind"
+          ],
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entityId",
+        "relation"
+      ],
+      "title": "RelativePosition",
+      "type": "object"
+    },
+    "RollRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "groupId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "sourceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Sourceid",
+          "type": "string"
+        },
+        "targetId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Targetid",
+          "type": "string"
+        },
+        "triggerKey": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Triggerkey",
+          "type": "string"
+        },
+        "ruleVersion": {
+          "enum": [
+            "reaction-fixture-v1",
+            "reaction-d20-v1"
+          ],
+          "title": "Ruleversion",
+          "type": "string"
+        },
+        "target": {
+          "ge": 1,
+          "le": 20,
+          "title": "Target",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "worldId",
+        "advanceId",
+        "roundId",
+        "groupId",
+        "sourceId",
+        "targetId",
+        "triggerKey",
+        "ruleVersion",
+        "target"
+      ],
+      "title": "RollRequest",
+      "type": "object"
+    },
+    "RootPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "sequence": {
+          "const": 0,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "root",
+          "title": "Kind",
+          "type": "string"
+        },
+        "previousPointId": {
+          "title": "Previouspointid",
+          "type": "null"
+        },
+        "roundId": {
+          "title": "Roundid",
+          "type": "null"
+        },
+        "advanceId": {
+          "title": "Advanceid",
+          "type": "null"
+        },
+        "trigger": {
+          "title": "Trigger",
+          "type": "null"
+        },
+        "linkedFromPointId": {
+          "title": "Linkedfrompointid",
+          "type": "null"
+        },
+        "timeAdvance": {
+          "title": "Timeadvance",
+          "type": "null"
+        },
+        "entityDeltas": {
+          "title": "Entitydeltas",
+          "type": "null"
+        }
+      },
+      "required": [
+        "worldId",
+        "id",
+        "sequence",
+        "kind",
+        "previousPointId",
+        "roundId",
+        "advanceId",
+        "trigger",
+        "linkedFromPointId",
+        "timeAdvance",
+        "entityDeltas"
+      ],
+      "title": "RootPoint",
+      "type": "object"
+    },
+    "RoundCheckpoint": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "resumePhase": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "phase": {
+                "enum": [
+                  "await_narration",
+                  "paused"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "resumePhase": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "conclusion": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "complete"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "conclusion": {
+                "type": "object"
+              },
+              "pendingGroup": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "trigger": {
+                "const": "automatic"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "advance": {
+                "properties": {
+                  "intentStatus": {
+                    "const": "consumed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "enum": [
+                  "build_group",
+                  "settle_group"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "pendingGroup": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "advance": {
+          "$ref": "#/$defs/AdvanceContext"
+        },
+        "trigger": {
+          "enum": [
+            "player",
+            "automatic"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "order": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Order",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "cursor": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "actedIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Actedids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "visitedIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Visitedids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "phase": {
+          "enum": [
+            "select_actor",
+            "build_group",
+            "settle_group",
+            "await_narration",
+            "continue_round",
+            "assess_continuation",
+            "paused",
+            "complete"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "resumePhase": {
+          "anyOf": [
+            {
+              "enum": [
+                "select_actor",
+                "build_group",
+                "settle_group",
+                "continue_round",
+                "assess_continuation",
+                "complete"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resumephase"
+        },
+        "pendingGroup": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PendingGroup"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conclusion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContinueConclusion"
+            },
+            {
+              "$ref": "#/$defs/ModelHandback"
+            },
+            {
+              "$ref": "#/$defs/CancelHandback"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Conclusion"
+        }
+      },
+      "required": [
+        "roundId",
+        "advance",
+        "trigger",
+        "order",
+        "cursor",
+        "actedIds",
+        "visitedIds",
+        "phase",
+        "resumePhase",
+        "pendingGroup",
+        "conclusion"
+      ],
+      "title": "RoundCheckpoint",
+      "type": "object"
+    },
+    "RoundConclusionRequest": {
+      "additionalProperties": false,
+      "else": {
+        "properties": {
+          "conclusion": {
+            "properties": {
+              "closedBy": {
+                "const": "model"
+              }
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cancel"
+          }
+        }
+      },
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "expectedPointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Expectedpointid",
+          "type": "string"
+        },
+        "expectedVersion": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Expectedversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "expectedCheckpointRevision": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Expectedcheckpointrevision",
+          "type": "integer"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Fenceepoch",
+          "type": "integer"
+        },
+        "operation": {
+          "enum": [
+            "conclude",
+            "cancel"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "conclusion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContinueConclusion"
+            },
+            {
+              "$ref": "#/$defs/ModelHandback"
+            },
+            {
+              "$ref": "#/$defs/CancelHandback"
+            }
+          ],
+          "title": "Conclusion"
+        }
+      },
+      "required": [
+        "worldId",
+        "advanceId",
+        "roundId",
+        "expectedPointId",
+        "expectedVersion",
+        "requestId",
+        "expectedCheckpointRevision",
+        "leaseToken",
+        "fenceEpoch",
+        "operation",
+        "conclusion"
+      ],
+      "then": {
+        "properties": {
+          "conclusion": {
+            "properties": {
+              "closedBy": {
+                "const": "cancel"
+              }
+            }
+          }
+        }
+      },
+      "title": "RoundConclusionRequest",
+      "type": "object"
+    },
+    "SettlementCandidates": {
+      "additionalProperties": false,
+      "description": "Six ordered state stages; no natural-language action history.",
+      "properties": {
+        "scopeId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Scopeid",
+          "type": "string"
+        },
+        "actorIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Actorids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "pureTime": {
+          "title": "Puretime",
+          "type": "boolean"
+        },
+        "positions": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "title": "Positions",
+          "type": "object"
+        },
+        "appearances": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "$ref": "#/$defs/DescriptionChange"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "title": "Appearances",
+          "type": "object"
+        },
+        "tasksAchieved": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "title": "Tasksachieved",
+          "type": "object"
+        },
+        "subtasksAdded": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "$ref": "#/$defs/PendingTask"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "title": "Subtasksadded",
+          "type": "object"
+        },
+        "personalities": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "items": {
+                "$ref": "#/$defs/DescriptionChange"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "title": "Personalities",
+          "type": "object"
+        },
+        "sanities": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "ge": 0,
+              "le": 100,
+              "type": "integer"
+            }
+          },
+          "title": "Sanities",
+          "type": "object"
+        },
+        "taskCoverageIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Taskcoverageids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "personalityCoverageIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Personalitycoverageids",
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "scopeId",
+        "actorIds",
+        "pureTime",
+        "positions",
+        "appearances",
+        "tasksAchieved",
+        "subtasksAdded",
+        "personalities",
+        "sanities",
+        "taskCoverageIds",
+        "personalityCoverageIds"
+      ],
+      "title": "SettlementCandidates",
+      "type": "object"
+    },
+    "SpatialSlot": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "SpatialSlot",
+      "type": "object"
+    },
+    "StoredDescriptionChange": {
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "text": {
+            "type": "null"
+          }
+        }
+      },
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "supersedes": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Supersedes",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "sourcePointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Sourcepointid",
+          "type": "string"
+        },
+        "sourceSequence": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Sourcesequence",
+          "type": "integer"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "supersedes",
+        "sourcePointId",
+        "sourceSequence",
+        "active"
+      ],
+      "then": {
+        "properties": {
+          "supersedes": {
+            "minItems": 1
+          }
+        }
+      },
+      "title": "StoredDescriptionChange",
+      "type": "object"
+    },
+    "Task": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "ownerId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Ownerid",
+          "type": "string"
+        },
+        "parentTaskId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Parenttaskid"
+        },
+        "goal": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Goal",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "achieved"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "ownerId",
+        "parentTaskId",
+        "goal",
+        "status"
+      ],
+      "title": "Task",
+      "type": "object"
+    },
+    "TimeAdvance": {
+      "additionalProperties": false,
+      "properties": {
+        "boundary": {
+          "enum": [
+            "elapsed",
+            "instant"
+          ],
+          "title": "Boundary",
+          "type": "string"
+        },
+        "duration": {
+          "$ref": "#/$defs/Duration"
+        }
+      },
+      "required": [
+        "boundary",
+        "duration"
+      ],
+      "title": "TimeAdvance",
+      "type": "object"
+    },
+    "TimelinePoint": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "linkedFromPointId": {
+                "type": "string"
+              },
+              "timeAdvance": {
+                "properties": {
+                  "boundary": {
+                    "const": "instant"
+                  }
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "normal"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "linkedFromPointId": {
+                "type": "null"
+              },
+              "timeAdvance": {
+                "properties": {
+                  "boundary": {
+                    "const": "elapsed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "instant"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "timeAdvance": {
+                "properties": {
+                  "duration": {
+                    "properties": {
+                      "amount": {
+                        "const": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "sequence": {
+          "ge": 1,
+          "le": 9007199254740991,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "normal",
+            "instant",
+            "linked"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "previousPointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Previouspointid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "trigger": {
+          "enum": [
+            "player",
+            "automatic"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        },
+        "linkedFromPointId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Linkedfrompointid"
+        },
+        "timeAdvance": {
+          "$ref": "#/$defs/TimeAdvance"
+        },
+        "entityDeltas": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/EntityDelta"
+            }
+          },
+          "title": "Entitydeltas",
+          "type": "object"
+        }
+      },
+      "required": [
+        "worldId",
+        "id",
+        "sequence",
+        "kind",
+        "previousPointId",
+        "roundId",
+        "advanceId",
+        "trigger",
+        "linkedFromPointId",
+        "timeAdvance",
+        "entityDeltas"
+      ],
+      "title": "TimelinePoint",
+      "type": "object"
+    },
+    "WorldInitialState": {
+      "additionalProperties": false,
+      "properties": {
+        "engineVersion": {
+          "const": "world-engine-v1",
+          "title": "Engineversion",
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "protagonistId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Protagonistid",
+          "type": "string"
+        },
+        "initialTime": {
+          "$ref": "#/$defs/WorldTime"
+        },
+        "locations": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/InitialLocation"
+            }
+          },
+          "title": "Locations",
+          "type": "object"
+        },
+        "items": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/InitialItem"
+            }
+          },
+          "title": "Items",
+          "type": "object"
+        },
+        "characters": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/InitialCharacter"
+            }
+          },
+          "title": "Characters",
+          "type": "object"
+        }
+      },
+      "required": [
+        "engineVersion",
+        "schemaVersion",
+        "worldId",
+        "protagonistId",
+        "initialTime",
+        "locations",
+        "items",
+        "characters"
+      ],
+      "title": "WorldInitialState",
+      "type": "object"
+    },
+    "WorldState": {
+      "additionalProperties": false,
+      "description": "The exact hash projection; contains no execution or narration metadata.",
+      "properties": {
+        "engineVersion": {
+          "const": "world-engine-v1",
+          "title": "Engineversion",
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "protagonistId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Protagonistid",
+          "type": "string"
+        },
+        "time": {
+          "$ref": "#/$defs/WorldTime"
+        },
+        "initial": {
+          "$ref": "#/$defs/WorldInitialState"
+        },
+        "locations": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/LocationState"
+            }
+          },
+          "title": "Locations",
+          "type": "object"
+        },
+        "items": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/ItemState"
+            }
+          },
+          "title": "Items",
+          "type": "object"
+        },
+        "characters": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/CharacterState"
+            }
+          },
+          "title": "Characters",
+          "type": "object"
+        }
+      },
+      "required": [
+        "engineVersion",
+        "schemaVersion",
+        "worldId",
+        "protagonistId",
+        "time",
+        "initial",
+        "locations",
+        "items",
+        "characters"
+      ],
+      "title": "WorldState",
+      "type": "object"
+    },
+    "WorldTime": {
+      "additionalProperties": false,
+      "properties": {
+        "calendar": {
+          "const": "gregorian",
+          "title": "Calendar",
+          "type": "string"
+        },
+        "dateTime": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+          "title": "Datetime",
+          "type": "string"
+        },
+        "instantOrdinal": {
+          "ge": 0,
+          "le": 9007199254740991,
+          "title": "Instantordinal",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "calendar",
+        "dateTime",
+        "instantOrdinal"
+      ],
+      "title": "WorldTime",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jity:world-protocol:v1",
+  "title": "Jity world protocol v1 (plan v0.3.1)"
+}

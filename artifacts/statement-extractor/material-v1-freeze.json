@@ -1,0 +1,70 @@
+{
+  "version": "statement-extractor-material-v1",
+  "created": "2026-11-05",
+  "source": [
+    "D:\\others\\Jity\\artifacts\\world-provenance\\confirm-u240.json",
+    "D:\\others\\Jity\\artifacts\\world-provenance\\confirm2-u240.json"
+  ],
+  "material": "D:\\others\\Jity\\artifacts\\statement-extractor\\material-v1.jsonl",
+  "sha256": "ae45ef2c5b557d42b58bdcd4d7b8cd577ddbe7edae37a63f05fea55d64952562",
+  "counts": {
+    "examples": 80,
+    "train": 50,
+    "dev": 20,
+    "test": 10,
+    "statements": 93,
+    "bySplit": {
+      "train": {
+        "examples": 50,
+        "statements": 52
+      },
+      "dev": {
+        "examples": 20,
+        "statements": 30
+      },
+      "test": {
+        "examples": 10,
+        "statements": 11
+      }
+    },
+    "subjectStatus": {
+      "dev:explicit": 20,
+      "dev:recovered": 10,
+      "test:explicit": 10,
+      "test:recovered": 1,
+      "train:explicit": 50,
+      "train:recovered": 2
+    },
+    "statementKind": {
+      "dev:expected": 30,
+      "test:added": 1,
+      "test:expected": 10,
+      "train:added": 1,
+      "train:duplicate": 1,
+      "train:expected": 50
+    },
+    "multiSpanStatements": {
+      "train": 20,
+      "dev": 10
+    },
+    "unresolved": 0,
+    "sourceGroups": {
+      "train": [
+        "B1",
+        "B2",
+        "C2"
+      ],
+      "dev": [
+        "C1"
+      ],
+      "test": [
+        "C3"
+      ]
+    }
+  },
+  "splitRule": "whole source group: B1/B2/C2 train; C1 dev; C3 test",
+  "statementRule": "one predicate/state per statement; coordinated same-state 也 clauses = one statement with multiple spans; second clause without subject = recovered",
+  "noTwentySource": true,
+  "noRewrites": true,
+  "noNewTemplates": true
+}

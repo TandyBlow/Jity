@@ -1,0 +1,364 @@
+{
+ "cases": [
+  {
+   "caseId": "d000",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖湿了",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜膝盖湿了\n短句：\n"
+  },
+  {
+   "caseId": "d001",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖结了盐霜",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜膝盖结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d002",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖落着灰",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜膝盖落着灰\n短句：\n"
+  },
+  {
+   "caseId": "d003",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖冻得发僵",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜膝盖冻得发僵\n短句：\n"
+  },
+  {
+   "caseId": "d004",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "帽檐结了盐霜",
+   "input": "短句任务。\n地点=潮生巷\n地点可见=油纸伞、鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=入夜；小雨；纸灯笼\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜帽檐结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d005",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "围巾结了盐霜",
+   "input": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、案板、抹布、帆布棚、石板、白汽\n场景=清晨；薄雾；棚下散光\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜围巾结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d006",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "发梢结了盐霜",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜发梢结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d007",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心沾了泥",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜掌心沾了泥\n短句：\n"
+  },
+  {
+   "caseId": "d008",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心结了盐霜",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜掌心结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d009",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心落着灰",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜掌心落着灰\n短句：\n"
+  },
+  {
+   "caseId": "d010",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "衣领湿了，肩头也湿了",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜衣领湿了，肩头也湿了\n短句：\n"
+  },
+  {
+   "caseId": "d011",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "手背沾了泥，帽檐也沾了泥",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=顾行舟；第三人称\n事实=顾行舟｜外貌变化｜手背沾了泥，帽檐也沾了泥\n短句：\n"
+  },
+  {
+   "caseId": "d012",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "肩头结了盐霜，发梢也结了盐霜",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n事实=叶知微｜外貌变化｜肩头结了盐霜，发梢也结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d013",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "阿棠",
+   "factText": "围巾落着灰，脚踝也落着灰",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=阿棠；第三人称\n事实=阿棠｜外貌变化｜围巾落着灰，脚踝也落着灰\n短句：\n"
+  },
+  {
+   "caseId": "d014",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "韩渡",
+   "factText": "掌心冻得发僵，背脊也冻得发僵",
+   "input": "短句任务。\n地点=潮生巷\n地点可见=油纸伞、鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=入夜；小雨；纸灯笼\n视角=韩渡；第三人称\n事实=韩渡｜外貌变化｜掌心冻得发僵，背脊也冻得发僵\n短句：\n"
+  },
+  {
+   "caseId": "d015",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "裤脚蹭破了皮，鞋面沾了泥",
+   "input": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、案板、抹布、帆布棚、石板、白汽\n场景=清晨；薄雾；棚下散光\n视角=沈砚；第三人称\n事实=沈砚｜外貌变化｜裤脚蹭破了皮，鞋面沾了泥\n短句：\n"
+  },
+  {
+   "caseId": "d016",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "衣领湿了，鬓角结了盐霜",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=顾行舟；第三人称\n事实=顾行舟｜外貌变化｜衣领湿了，鬓角结了盐霜\n短句：\n"
+  },
+  {
+   "caseId": "d017",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "手背沾了泥，帽檐落着灰",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=叶知微；第三人称\n事实=叶知微｜外貌变化｜手背沾了泥，帽檐落着灰\n短句：\n"
+  },
+  {
+   "caseId": "d018",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "阿棠",
+   "factText": "肩头结了盐霜，发梢冻得发僵",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=阿棠；第三人称\n事实=阿棠｜外貌变化｜肩头结了盐霜，发梢冻得发僵\n短句：\n"
+  },
+  {
+   "caseId": "d019",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "韩渡",
+   "factText": "围巾落着灰，脚踝蹭破了皮",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=韩渡；第三人称\n事实=韩渡｜外貌变化｜围巾落着灰，脚踝蹭破了皮\n短句：\n"
+  },
+  {
+   "caseId": "d020",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "潮渡→雾堤",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=沈砚；第三人称\n方向=上\n事实=沈砚｜移动｜潮渡→雾堤\n短句：\n"
+  },
+  {
+   "caseId": "d021",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "顾行舟",
+   "factText": "雾堤→潮渡",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=顾行舟；第三人称\n方向=下\n事实=顾行舟｜移动｜雾堤→潮渡\n短句：\n"
+  },
+  {
+   "caseId": "d022",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "潮生巷→早市",
+   "input": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、案板、抹布、帆布棚、石板、白汽\n场景=清晨；薄雾；棚下散光\n视角=叶知微；第三人称\n方向=平\n事实=叶知微｜移动｜潮生巷→早市\n短句：\n"
+  },
+  {
+   "caseId": "d023",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "早市→潮生巷",
+   "input": "短句任务。\n地点=潮生巷\n地点可见=油纸伞、鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=入夜；小雨；纸灯笼\n视角=阿棠；第三人称\n方向=平\n事实=阿棠｜移动｜早市→潮生巷\n短句：\n"
+  },
+  {
+   "caseId": "d024",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "韩渡",
+   "factText": "潮汐档案馆→潮渡",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=韩渡；第三人称\n方向=平\n事实=韩渡｜移动｜潮汐档案馆→潮渡\n短句：\n"
+  },
+  {
+   "caseId": "d025",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "潮渡→潮汐档案馆",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n方向=平\n事实=沈砚｜移动｜潮渡→潮汐档案馆\n短句：\n"
+  },
+  {
+   "caseId": "d026",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "顾行舟",
+   "factText": "旧灯塔→雾堤",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=顾行舟；第三人称\n方向=平\n事实=顾行舟｜移动｜旧灯塔→雾堤\n短句：\n"
+  },
+  {
+   "caseId": "d027",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "雾堤→旧灯塔",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n方向=平\n事实=叶知微｜移动｜雾堤→旧灯塔\n短句：\n"
+  },
+  {
+   "caseId": "d028",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "早市→潮渡",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=阿棠；第三人称\n方向=平\n事实=阿棠｜移动｜早市→潮渡\n短句：\n"
+  },
+  {
+   "caseId": "d029",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "韩渡",
+   "factText": "潮生巷→潮汐档案馆",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=韩渡；第三人称\n方向=平\n事实=韩渡｜移动｜潮生巷→潮汐档案馆\n短句：\n"
+  },
+  {
+   "caseId": "d030",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "铜灯罩",
+   "factText": "蒙了盐雾",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=铜灯罩；第三人称\n事实=铜灯罩｜外貌变化｜蒙了盐雾\n短句：\n"
+  },
+  {
+   "caseId": "d031",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "抹布",
+   "factText": "裂了缝",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=抹布；第三人称\n事实=抹布｜外貌变化｜裂了缝\n短句：\n"
+  },
+  {
+   "caseId": "d032",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "潮汐簿",
+   "factText": "边角磨破",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=潮汐簿；第三人称\n事实=潮汐簿｜外貌变化｜边角磨破\n短句：\n"
+  },
+  {
+   "caseId": "d033",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "钟绳",
+   "factText": "生了锈",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=钟绳；第三人称\n事实=钟绳｜外貌变化｜生了锈\n短句：\n"
+  },
+  {
+   "caseId": "d034",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "警示灯",
+   "factText": "沾了铜油",
+   "input": "短句任务。\n地点=潮生巷\n地点可见=油纸伞、鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=入夜；小雨；纸灯笼\n视角=警示灯；第三人称\n事实=警示灯｜外貌变化｜沾了铜油\n短句：\n"
+  },
+  {
+   "caseId": "d035",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "铁链",
+   "factText": "落着灰",
+   "input": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、案板、抹布、帆布棚、石板、白汽\n场景=清晨；薄雾；棚下散光\n视角=铁链；第三人称\n事实=铁链｜外貌变化｜落着灰\n短句：\n"
+  },
+  {
+   "caseId": "d036",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "案板",
+   "factText": "蒙了盐雾",
+   "input": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=案板；第三人称\n事实=案板｜外貌变化｜蒙了盐雾\n短句：\n"
+  },
+  {
+   "caseId": "d037",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "鱼筐",
+   "factText": "裂了缝",
+   "input": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、铁链、钟架、石壁、铁皮、石阶\n场景=夜；浓雾；警示灯\n视角=鱼筐；第三人称\n事实=鱼筐｜外貌变化｜裂了缝\n短句：\n"
+  },
+  {
+   "caseId": "d038",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "油纸伞",
+   "factText": "边角磨破",
+   "input": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、灯芯、抹布、擦铜油、玻璃罩、火苗、石阶、旋梯\n场景=夜；夜雾，海风；铜灯已点亮\n视角=油纸伞；第三人称\n事实=油纸伞｜外貌变化｜边角磨破\n短句：\n"
+  },
+  {
+   "caseId": "d039",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "缆绳",
+   "factText": "生了锈",
+   "input": "短句任务。\n地点=潮汐档案馆>长桌\n地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n场景=夜；小雨；铜灯\n视角=缆绳；第三人称\n事实=缆绳｜外貌变化｜生了锈\n短句：\n"
+  }
+ ]
+}

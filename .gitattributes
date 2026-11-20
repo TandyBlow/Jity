@@ -1,0 +1,92 @@
+# Protocol artifacts are hashed byte-for-byte; checkout and commit must not
+# rewrite line endings on any platform. See design/world-protocol/v2/.
+design/world-protocol/** text eol=lf
+frontend/src/lib/world-engine/contract-digest.json text eol=lf
+
+# The packaged storage SQL is byte-compared against its frozen specification
+# on every test run; its working-copy bytes must match the committed LF blob
+# on Windows checkouts too.
+backend/app/database/world_storage_v2.sql text eol=lf
+
+# H2 evidence manifests bind file bytes, including the recorded orchestrator.
+artifacts/h2-full-6b809dc-0cb1951/** text eol=lf
+artifacts/h2-integration-d1d2de0/** text eol=lf
+
+# The short browser evaluation records byte hashes for replay and review.
+artifacts/b3-short/** text eol=lf
+artifacts/rule-facts/** text eol=lf
+
+# Action-dataset rows are hashed and handed to another lane for review; the
+# bytes must not depend on the checkout platform.
+experiments/action-dataset-v1/** text eol=lf
+
+# Windows reserved device names written by shell redirects (e.g. `>nul`).
+# They cannot be checked out on Windows, so they must never be tracked.
+nul -text
+
+# D (components-logic) byte-binds its dev inputs/drafts, the generator and
+# the review packet; checkout and commit must not rewrite line endings.
+experiments/world-components-logic/** text eol=lf
+artifacts/world-components-logic/** text eol=lf
+
+# c2 attention-selection v2: freeze input/evidence bytes (hash checks)
+artifacts/world-components/parallel/fact-selection-v2/** -text
+experiments/world-components/parallel/fact_selection/** -text
+design/world-engine-reports/components/attention-selection-v2.md -text
+# Target audit, target revision and the new movement set are re-hashed when read.
+artifacts/target-audit-r1/** -text
+artifacts/target-revision-r1/** -text
+artifacts/validation-freeze-r1/** -text
+artifacts/three-arm-r1/** -text
+
+# Submission scripts run on Linux under bash; keep LF in the repository and out.
+experiments/world-components/*.sh text eol=lf
+artifacts/next-acceptance/three-arm-r1/** -text
+artifacts/next-acceptance/eval-r1/** -text
+artifacts/next-acceptance/syntax-gap-r1/** -text
+artifacts/next-inputs/world-components/n4-probe-r1-rule.json -text
+artifacts/moved-fix-r1/** -text
+artifacts/next-acceptance/moved-fix-r1/** -text
+artifacts/scoring-rule-r3/** -text
+artifacts/next-acceptance/scoring-rule-r3/** -text
+artifacts/next-acceptance/relation-r1/** -text
+artifacts/next-inputs/world-components/n4-relation-r1-rule.json -text
+artifacts/scoring-rule-r4/** -text
+artifacts/next-acceptance/frame-r1/** -text
+artifacts/aug-r1/** -text
+artifacts/next-acceptance/aug-r1/** -text
+artifacts/namepair-r1/** -text
+artifacts/next-acceptance/namepair-r1/** -text
+artifacts/mixed-r1/** -text
+artifacts/next-acceptance/mixed-r1/** -text
+artifacts/next-acceptance/rolepair-r1/** -text
+artifacts/next-inputs/world-components/n4-rolepair-r1-rule.json -text
+artifacts/next-acceptance/semantic-review-r1/** -text
+artifacts/next-acceptance/explicit-r1/** -text
+artifacts/next-inputs/world-components/n4-explicit-r1-rule.json -text
+artifacts/dirpair-r1/** -text
+artifacts/next-acceptance/dirpair-r1/** -text
+artifacts/next-acceptance/consolidation-r1/** -text
+artifacts/optdiag-r1/** -text
+artifacts/next-acceptance/optdiag-r1/** -text
+artifacts/seedrep-r1/** -text
+artifacts/next-acceptance/seedrep-r1/** -text
+artifacts/constraint-spec-r1/** -text
+artifacts/calibration-r1/** -text
+artifacts/next-acceptance/calibration-r1/** -text
+artifacts/relation-direction-r1/** -text
+artifacts/next-acceptance/reldir-r1/** -text
+artifacts/next-acceptance/dircheck-r1/** -text
+artifacts/margin-r1/** -text
+artifacts/next-acceptance/margin-r1/** -text
+artifacts/next-acceptance/display-r1/** -text
+artifacts/next-acceptance/display-r2/** -text
+artifacts/next-acceptance/adapt-r1/** -text
+artifacts/next-acceptance/adapt-r2/** -text
+artifacts/next-acceptance/adapt-r3/** -text
+artifacts/next-acceptance/adapt-r4/** -text
+artifacts/next-acceptance/integration-r1/** -text
+artifacts/next-acceptance/task-display-r1/** -text
+artifacts/next-acceptance/appearance-display-r1/** -text
+artifacts/next-acceptance/alignment-fix-r1/** -text
+artifacts/next-acceptance/narration-model-r1/** -text

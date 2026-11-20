@@ -1,0 +1,10 @@
+{
+ "n4-expand-train80.jsonl": "0ec054e9d1bb3182e39f9dc512ef8286f7f3a176c50e3d02ea082fdff118c7c2",
+ "n4-object-train40.jsonl": "dec8d67362d2c48d429fec4e2084c7d14d133920c8c6f788d9221d91ebfffe96",
+ "n4-object-confirm24-units.jsonl": "c77b2428142d14bde5d7b16ad749357b47294f666340ad7ce56f5f7987970335",
+ "n4-expand-confirm40-units.jsonl": "f5b22b3a6d9fae00197ec27e043357aa3702d6c5f594b47d785d6643099506a1",
+ "run_expand2_arm.py": "f7946cee35e965301bc73f65fa160f258c01a10af9ffdc6cea8bb2a3bf2ad4dc",
+ "sequence_policy.py": "283203fd88fba3a5e92d45ef4e431ce8e0a1285d308e43ea3fbf451e4b55523f",
+ "object_data.py": "8f3653c32f525f32e7ea88b74d63ebbfc8e0615ce7112215ef895e7e86f83322",
+ "object_pairs.py": "0b30186ade751f743f50db782e9a5ee66ff41e7fd3d82d5af3c2d096126470f5"
+}

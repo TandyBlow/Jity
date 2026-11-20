@@ -1,0 +1,115 @@
+{
+  "protocol": "c1-n2-wiring-v1",
+  "rows": [
+    {
+      "caseId": "W01",
+      "worldRef": "W1",
+      "utterance": "钥匙表面的灰还在吗？",
+      "state": "resolved",
+      "targets": [
+        {
+          "entityId": "item_key",
+          "scope": "part",
+          "surface": "钥匙",
+          "scopeCue": "表面",
+          "part": "表面",
+          "partAnchored": true
+        }
+      ],
+      "reason": null
+    },
+    {
+      "caseId": "W02",
+      "worldRef": "W1",
+      "utterance": "走廊的样子变了吗？",
+      "state": "resolved",
+      "targets": [
+        {
+          "entityId": "corridor",
+          "scope": "appearance",
+          "surface": "走廊",
+          "scopeCue": "样子"
+        }
+      ],
+      "reason": null
+    },
+    {
+      "caseId": "W03",
+      "worldRef": "W1",
+      "utterance": "学生A现在在哪儿？",
+      "state": "resolved",
+      "targets": [
+        {
+          "entityId": "person_a",
+          "scope": "position",
+          "surface": "学生A",
+          "scopeCue": "在哪儿"
+        }
+      ],
+      "reason": null
+    },
+    {
+      "caseId": "W04",
+      "worldRef": "W1",
+      "utterance": "学生B的鞋底沾了泥吗？",
+      "state": "resolved",
+      "targets": [
+        {
+          "entityId": "person_b",
+          "scope": "part",
+          "surface": "学生B",
+          "scopeCue": "鞋底",
+          "part": "鞋底",
+          "partAnchored": false
+        }
+      ],
+      "reason": null
+    },
+    {
+      "caseId": "W05",
+      "worldRef": "W1",
+      "utterance": "那个学生怎么样了？",
+      "state": "ambiguous",
+      "targets": [],
+      "reason": "shared_name_stem"
+    },
+    {
+      "caseId": "W06",
+      "worldRef": "W1",
+      "utterance": "继续。",
+      "state": "none",
+      "targets": [],
+      "reason": "no_attention_mention"
+    },
+    {
+      "caseId": "W07",
+      "worldRef": "W1",
+      "utterance": "学生A怎么样了？",
+      "state": "resolved",
+      "targets": [
+        {
+          "entityId": "person_a",
+          "scope": "object",
+          "surface": "学生A",
+          "scopeCue": null
+        }
+      ],
+      "reason": null
+    },
+    {
+      "caseId": "W08",
+      "worldRef": "W1",
+      "utterance": "学生B的任务怎样了？",
+      "state": "resolved",
+      "targets": [
+        {
+          "entityId": "person_b",
+          "scope": "task",
+          "surface": "学生B",
+          "scopeCue": "任务"
+        }
+      ],
+      "reason": null
+    }
+  ]
+}

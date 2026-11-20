@@ -1,0 +1,35 @@
+{
+  "schema": "hpc-connectivity/1",
+  "date": "2026-11-05",
+  "sourceCommit": "f79261d",
+  "scope": "read-only connection and remote prerequisite checks",
+  "connection": {
+    "helper": "main-worktree:frontend/scripts/_hpc_crf.py:Hpc",
+    "client": "Paramiko",
+    "authentication": "existing local password credential loaded by project helper",
+    "attempts": 1,
+    "authenticated": true,
+    "newCredentialsRequested": false,
+    "credentialsCopiedOrPrinted": false
+  },
+  "localEnvironment": {
+    "anacondaPythonParamikoAvailable": true,
+    "defaultPythonParamikoAvailable": false
+  },
+  "remoteChecks": {
+    "slurmVersion": "22.05.6",
+    "projectCrfPythonExists": true,
+    "historicalBaseWeightsExist": true,
+    "checkExitCode": 0,
+    "stderrPresent": false
+  },
+  "limits": {
+    "gpuPartitionAvailabilityVerified": false,
+    "gpuAllocationVerified": false,
+    "threeArmU240WeightsVerified": false,
+    "jobSubmitted": false,
+    "trainingExecuted": false,
+    "remoteFilesWritten": false
+  },
+  "correction": "Default SSH key authentication failure did not establish that the project's existing HPC access was unavailable."
+}

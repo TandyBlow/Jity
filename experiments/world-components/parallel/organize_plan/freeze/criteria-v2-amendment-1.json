@@ -1,0 +1,38 @@
+{
+ "protocol": "c3-criteria-v2-amendment-1",
+ "created": "2026-11-08T06:55:34.778870+00:00",
+ "supersedes": "the earlier version of this amendment, which described the 'fail' values as the reviewer's choice",
+ "appliesTo": {
+  "file": "freeze/criteria-v2.json",
+  "sha256": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
+  "contractVersion": "c3-text-conformance-v2"
+ },
+ "whatHappened": {
+  "step1": "run_experiment.py generated the queue and wrote verdict \"fail\" on 2 rows (code archived-output-hard-fail). Those rows are archived base-model outputs that already fail the program's hard checks; the generator set the value so the queue would look finished.",
+  "step2": "freeze/criteria-v2.json lists only paraphrase-ok / new-content-fail / unsure. \"fail\" is therefore off-contract, and the generator was at fault, not the reviewer.",
+  "step3": "the reviewer preserved the two existing values while filling the remaining 8 rows and did not flag the contract conflict at that time.",
+  "step4": "the generator no longer writes any verdict for those rows; it writes verdict=null plus alreadyFailedHard=true. Re-runs keep whatever verdict a reviewer already entered."
+ },
+ "affectedRows": [
+  "smoke:fixture-r1:P1",
+  "smoke:fixture-r1:P2"
+ ],
+ "resolution": {
+  "rule": "apply_review.py accepts \"fail\" ONLY when the row's code is archived-output-hard-fail, and maps it to new-content-fail; any other use of \"fail\" is reported as a deviation and treated as pending",
+  "notChanged": [
+   "22 hard rules",
+   "2 review rules",
+   "itemAccepted definition",
+   "pairedSuccess definition",
+   "gate line",
+   "maxRowsPerBatch=10"
+  ],
+  "effectOnProbes": "none: the two aliased rows belong to archived outputs, not to the 11 probes",
+  "recordedIn": "runs/r2/acceptance.json deviations[]"
+ },
+ "reviewFileAtAmendment": {
+  "file": "runs/r2/manual-review.json",
+  "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74"
+ },
+ "note": "a frozen criteria file is not rewritten retroactively; this amendment records the gap and the narrow bridge, so a later reviewer can see exactly what was stretched and by whom."
+}

@@ -1,0 +1,313 @@
+{
+ "kind": "pairwise-run",
+ "freeze": "/home/student/t330034047/action-pairs-run/freeze.json",
+ "freezeSha256": "2ba3684548f4b815a05fd2049bef8a619dbc9757137523e61353067808223095",
+ "serializerDigest": "8f594b60ead53c45b2786454684ac8f359f1a5ad70b55f90c43c71050a89a78b",
+ "rows": 300,
+ "splitCounts": {
+  "TRAIN": 295,
+  "VALIDATION": 0,
+  "TEST": 0,
+  "_pairs": 4225
+ },
+ "maxLen": 224,
+ "arms": {
+  "frozen": {
+   "bestEpoch": 1,
+   "history": [
+    {
+     "epoch": 1,
+     "train": {
+      "loss": 1.2793561801677797,
+      "batches": 41
+     },
+     "validRowHit": 0.1333
+    },
+    {
+     "epoch": 2,
+     "train": {
+      "loss": 1.28164467578981,
+      "batches": 41
+     },
+     "validRowHit": 0.1333
+    },
+    {
+     "epoch": 3,
+     "train": {
+      "loss": 1.2793174952995487,
+      "batches": 41
+     },
+     "validRowHit": 0.0667
+    },
+    {
+     "epoch": 4,
+     "train": {
+      "loss": 1.2732286249719016,
+      "batches": 41
+     },
+     "validRowHit": 0.0667
+    }
+   ],
+   "validation": {
+    "step1": {
+     "decisions": 15,
+     "rowHit": 0.1333,
+     "skipPrecision": 0.0,
+     "skipRecall": 0.0,
+     "perGroup": {
+      "感知": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "移动": {
+       "support": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "战斗": {
+       "support": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "援助": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "请求": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "胁迫": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "言语": {
+       "support": 4,
+       "precision": 0.5,
+       "recall": 0.25,
+       "f1": 0.3333
+      },
+      "算计": {
+       "support": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "情绪": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "物品": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "身体": {
+       "support": 1,
+       "precision": 0.1,
+       "recall": 1.0,
+       "f1": 0.1818
+      },
+      "立场": {
+       "support": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "不动": {
+       "support": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      }
+     },
+     "worstThreeGroups": [
+      {
+       "group": "感知",
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      {
+       "group": "移动",
+       "support": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      {
+       "group": "援助",
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      }
+     ],
+     "stepDecisions": {
+      "0": 15
+     },
+     "predictedGroups": {
+      "身体": 10,
+      "胁迫": 1,
+      "请求": 1,
+      "言语": 2,
+      "不动": 1
+     }
+    },
+    "step2": {
+     "decisions": 0
+    },
+    "all": {
+     "decisions": 15,
+     "rowHit": 0.1333,
+     "skipPrecision": 0.0,
+     "skipRecall": 0.0,
+     "perGroup": {
+      "感知": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "移动": {
+       "support": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "战斗": {
+       "support": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "援助": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "请求": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "胁迫": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "言语": {
+       "support": 4,
+       "precision": 0.5,
+       "recall": 0.25,
+       "f1": 0.3333
+      },
+      "算计": {
+       "support": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "情绪": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "物品": {
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "身体": {
+       "support": 1,
+       "precision": 0.1,
+       "recall": 1.0,
+       "f1": 0.1818
+      },
+      "立场": {
+       "support": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      "不动": {
+       "support": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      }
+     },
+     "worstThreeGroups": [
+      {
+       "group": "感知",
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      {
+       "group": "移动",
+       "support": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      },
+      {
+       "group": "援助",
+       "support": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "f1": 0.0
+      }
+     ],
+     "stepDecisions": {
+      "0": 15
+     },
+     "predictedGroups": {
+      "身体": 10,
+      "胁迫": 1,
+      "请求": 1,
+      "言语": 2,
+      "不动": 1
+     }
+    }
+   },
+   "checkpoint": "runs/pairs-x2-frozen2/pairwise-frozen.pt"
+  }
+ },
+ "startedAt": "2026-11-11T16:05:22Z",
+ "pairs": {
+  "train": 4225,
+  "validation": 195
+ },
+ "device": {
+  "requested": "cuda",
+  "used": "cuda",
+  "name": "NVIDIA GeForce RTX 4090 D",
+  "torch": "2.5.1+cu124",
+  "cudaAvailable": true,
+  "cudaVersion": "12.4",
+  "peakMemoryMb": 349.5
+ },
+ "wallSeconds": 44.3,
+ "finishedAt": "2026-11-11T16:06:06Z"
+}

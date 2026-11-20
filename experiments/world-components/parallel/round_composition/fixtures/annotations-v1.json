@@ -1,0 +1,47 @@
+{
+ "version": "round-composition-annotations-v1",
+ "purpose": "D4 first manual batch: unregistered named entities in the judged text. count=null means NOT CHECKED (never guessed); a checked text with nothing found is 0.",
+ "labeler": "assistant-manual (single labeler, same session that built the archive)",
+ "reviewStatus": "pending-independent-review",
+ "batchLimit": 10,
+ "batchLabeled": 10,
+ "fields": {
+  "snippet": "verbatim text fragment naming the entity",
+  "position": "where in the text",
+  "source": "who produced the label (human)",
+  "reviewStatus": "pending-independent-review | confirmed | rejected",
+  "isError": "true when the labeler believes the name is a genuine unregistered entity"
+ },
+ "cases": {
+  "normal-move-task": {"textKind": "accepted", "annotations": []},
+  "normal-two-actors": {"textKind": "accepted", "annotations": []},
+  "normal-inner-change": {"textKind": "accepted", "annotations": []},
+  "retry-n5-success": {"textKind": "accepted (attempt 2)", "annotations": []},
+  "reject-n5": {"textKind": "fallback", "annotations": []},
+  "fail-n5-extra-actor": {"textKind": "fallback", "annotations": []},
+  "contract-time-conflict": {"textKind": "last attempt", "annotations": []},
+  "n5-false-pass-unregistered-actor": {
+   "textKind": "accepted",
+   "annotations": [
+    {"snippet": "这时管线丙从巷口走来", "position": "第3句",
+     "source": "human", "reviewStatus": "pending-independent-review",
+     "isError": true}
+   ]
+  },
+  "d1-outcome-result": {"textKind": "primary", "annotations": []},
+  "d5-same-name-actors": {"textKind": "primary", "annotations": []}
+ },
+ "unlabeled": "every case not listed here has count=null: no label exists, so nothing can be concluded about missed names there",
+ "counting": {
+  "falsePositive": "a labeled snippet that is actually a registered name or a generic noun",
+  "falseNegative": "a text that names a new entity but carries no label",
+  "thisBatch": {
+   "labeled": 10,
+   "positives": 1,
+   "labeledNegatives": 9,
+   "falsePositives": 0,
+   "falseNegatives": null,
+   "note": "false negatives need a second, independent labeler over the unlabeled texts; a single labeler cannot measure their own misses"
+  }
+ }
+}

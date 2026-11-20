@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-11-08T05:37:20+00:00",
+  "commit": "0df57f413a1321cdfe7a1eb9da65e81666d5fb4f",
+  "branch": "exp/c-attention-parse",
+  "trackedDirty": false,
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "files": {
+    "attention_parse.py": "3796118a00c9d28c747002c556cdc203e104dbf5008aa8ba9140c2fe389ae2bb",
+    "build_rosters.py": "ad5839d5336b62070e43b72c55abf93073abc7b98a6f4a6074df3b4c6a706fab",
+    "run_experiment.py": "c06dbc3677fe413e8e6618f6dd7a47dd7b30b122b7c8998b6a8f777815f0706f",
+    "freeze/rosters.json": "2e498291130a23c1bd5cb3c256d140196fb68c338276f8b132fc079631845d82",
+    "freeze/samples.json": "e853f127f45ddebead2a99497dd5d70cab29fda508c00f35be1b2a79c75becdd",
+    "freeze/rule-cases.json": "a49dd6cba375292bc819fe1c4b66890b87744fd64c6a8f92a4b5846e830df05e",
+    "freeze/stress-probes.json": "ca64e67cff98658d8507384011de2de0d8d7de98c83c45330dbd0fcec8e8cfda",
+    "rosterSourceW1": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+    "rosterSourceW2": "c7bde5867e7be2bb0e7222a7360ea82fa4d8abe4a33832f20fae6332f7d8d7f5"
+  }
+}

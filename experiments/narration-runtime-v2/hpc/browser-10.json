@@ -1,0 +1,1169 @@
+{
+ "device": {
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "logicalCpus": 20,
+  "platform": "win32",
+  "browser": "157.0.4341.42",
+  "crossOriginIsolated": true,
+  "webgpuAvailable": true
+ },
+ "candidates": {
+  "10-beat": {
+   "id": "10-beat",
+   "owner": "10-beat",
+   "module": "D:/others/Jity/.local/parallel-local-game/worktrees/10-training/experiments/narration-runtime-v2/browser/candidate.ts",
+   "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/10-training/experiments/narration-runtime-v2/browser/candidate.ts",
+   "moduleSha256": "9fddd8d3deec55a3f2c7cf642c0dae4b0d633c342b0b53dfd2cfbd2003190ada",
+   "source": {
+    "commit": "543b5ce915c57e9f9b83e2235f26480fb621897d",
+    "toplevel": "D:/others/Jity/.local/parallel-local-game/worktrees/10-training",
+    "dirty": true
+   },
+   "exportName": "generateCandidate",
+   "modelUrl": "/models/model-Q4_K_M.gguf",
+   "loader": null,
+   "notes": null,
+   "firstSeenAt": "2026-11-10T09:20:56.676Z",
+   "engine": {
+    "modelUrl": "/models/model-Q4_K_M.gguf",
+    "loadMs": 29888.979999542236,
+    "info": {
+     "backend": "wllama",
+     "modelId": "model-Q4_K_M.gguf"
+    },
+    "diagnostics": {
+     "multithread": true,
+     "numThreads": 8
+    },
+    "webgpuAvailable": true,
+    "gpuRequested": false,
+    "backendNote": "CPU-only by explicit request (nGpuLayers=0); no WebGPU claim",
+    "coldStart": true,
+    "reloadReason": null,
+    "modelFile": {
+     "url": "/models/model-Q4_K_M.gguf",
+     "servedPath": "D:\\others\\Jity\\.local\\models-narration\\qwen15b-beat-v2\\model-Q4_K_M.gguf",
+     "exists": true,
+     "bytes": 986048064,
+     "sha256": "5ab4668ac2afe867bf2075b7bfea0ad2f133dae2a58aba3495078f5f4a33fa0a",
+     "mtime": "2026-11-10T08:17:38.469Z"
+    }
+   },
+   "queuedAt": "2026-11-10T09:25:51.171Z",
+   "latest": {
+    "free-day-move": {
+     "runId": "10-beat::free-day-move::mwahovt3",
+     "at": "2026-11-10T09:25:51.279Z",
+     "accepted": false,
+     "chars": 96,
+     "wallMs": 269783,
+     "firstParagraph": "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。",
+     "textLocation": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\browser-10.json#runs[10-beat::free-day-move::mwahovt3]",
+     "contractOk": true,
+     "error": null
+    }
+   }
+  }
+ },
+ "runs": [
+  {
+   "runId": "10-beat::free-day-move::mwahhxtx",
+   "candidateId": "10-beat",
+   "owner": "10-beat",
+   "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/10-training/experiments/narration-runtime-v2/browser/candidate.ts",
+   "exportName": "generateCandidate",
+   "modelUrl": "/models/model-Q4_K_M.gguf",
+   "scenarioId": "free-day-move",
+   "startedAt": "2026-11-10T09:20:56.694Z",
+   "wallMs": 240396.02999973297,
+   "coldStart": false,
+   "loadMs": 32878.03499984741,
+   "identity": {
+    "worldId": "world_dragon_raja_free_day",
+    "pointId": "point_free_day_move",
+    "version": 1,
+    "stateDigest": "ba93e9ea3fb6c38f6c21117bf3327460b41e905812787a466429faec2e2b5736",
+    "previousPointId": "root_free_day",
+    "viewpointId": "lu",
+    "viewpointName": "路明非",
+    "changeKinds": [
+     "position"
+    ],
+    "timeAdvance": {
+     "boundary": "elapsed",
+     "duration": {
+      "amount": 1,
+      "unit": "minute"
+     }
+    }
+   },
+   "input": {
+    "textChars": 1403,
+    "text": "【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护通道悬白旗，不属于交火区。场内使用弗里嘉演习弹，实弹与攻击医护人员均被禁止。西回廊（在卡塞尔学院演习区里）：廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。【人物】林亦舟：在西回廊/slot_pillar3，精神值29，外貌蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳，个性蓝方低年级队员，怕被看成拖累，一开始只报了位置而没有讲清伤势。与同队的苏茜说得上话，信任楚子航会来接应；不愿用假装中弹的方式掩盖真实扭伤，任务在不加重脚踝伤势的情况下到达演习医护处置室（未完成）；向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能（未完成）；把自己的演习枪交给可信的人或移出医护搬运路线（未完成）；得到明确愿意帮忙的搬运者，并沿白线撤离（未完成）；用蓝方短讯机发出自己位于第三根廊柱的求助（已完成）。路明非：在西回廊，精神值43，外貌校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩，个性习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人，任务在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场（未完成）；向诺诺问清当前红蓝两方局势和自己是否可以保持中立（未完成）；在进入交火区前拿到可用的护目镜与演习装备（未完成）；把胸前护目镜戴好并确认镜片没有裂纹（未完成）；在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线（未完成）；得到至少一名在场者明确同意的协作，不替他人擅自承诺（未完成）；读过服务巷规则牌，知道医护白线内禁止交火（已完成）。诺诺：在西回廊，精神值58，外貌红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面，个性看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实，任务让红方的旗台行动有可执行的掩护，而不把路明非当诱饵（未完成）；问清路明非的参赛意愿并说明三条接近钟楼的路线（未完成）；把故障短讯机恢复到能与凯撒联络的状态（未完成）；确认西回廊的蓝方伤员是否需要真正的医护帮助（未完成）；与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷（未完成）。【物品】林亦舟放下的演习枪（在西回廊里）：枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。路明非的护目镜（在路明非里）：镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。路明非的演习背心（在路明非里）：背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。折断的蓝布带（在西回廊里）：蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。【变化】时间推进1 minute。路明非（人物）：移动到西回廊。诺诺（人物）：移动到西回廊。【正文】",
+    "scene": {
+     "location": "西回廊",
+     "placeNotes": [
+      "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+     ],
+     "present": [
+      {
+       "id": "lu",
+       "name": "路明非",
+       "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+      },
+      {
+       "id": "nono",
+       "name": "诺诺",
+       "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+      },
+      {
+       "id": "lin",
+       "name": "林亦舟",
+       "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+      }
+     ],
+     "objects": [
+      {
+       "id": "lin_gun",
+       "name": "林亦舟放下的演习枪",
+       "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+      },
+      {
+       "id": "broken_blue_band",
+       "name": "折断的蓝布带",
+       "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+      }
+     ],
+     "inventory": [
+      {
+       "id": "goggles_lu",
+       "name": "路明非的护目镜",
+       "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+      },
+      {
+       "id": "jacket_lu",
+       "name": "路明非的演习背心",
+       "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+      }
+     ],
+     "exits": []
+    },
+    "policy": {
+     "viewpoint": {
+      "id": "lu",
+      "name": "路明非"
+     },
+     "viewpointId": "lu",
+     "roster": [
+      "路明非",
+      "诺诺",
+      "芬格尔",
+      "楚子航",
+      "凯撒",
+      "苏茜",
+      "林亦舟",
+      "唐骁",
+      "周映",
+      "秦越",
+      "顾岚",
+      "沈澄",
+      "富山雅史",
+      "曼施坦因"
+     ],
+     "locations": [
+      "卡塞尔学院演习区",
+      "西侧器材区",
+      "西侧服务巷",
+      "器材棚",
+      "器材笼内",
+      "中央庭院",
+      "停水喷泉池",
+      "西回廊",
+      "东回廊",
+      "跨溪小桥",
+      "钟楼",
+      "钟楼门厅",
+      "钟楼下层楼梯",
+      "钟楼二层平台",
+      "值钟间",
+      "钟楼上层楼梯",
+      "钟楼顶层",
+      "钟楼旗台外廊",
+      "红方集结点",
+      "蓝方集结点",
+      "地下检修通道",
+      "服务巷检修口",
+      "医护附楼",
+      "演习医护处置室",
+      "医护休息区",
+      "演习观察席"
+     ],
+     "knownPositions": [
+      {
+       "id": "nono",
+       "name": "诺诺",
+       "location": "西回廊"
+      },
+      {
+       "id": "fingel",
+       "name": "芬格尔",
+       "location": "器材棚"
+      },
+      {
+       "id": "chu",
+       "name": "楚子航",
+       "location": "钟楼二层平台"
+      },
+      {
+       "id": "caesar",
+       "name": "凯撒",
+       "location": "红方集结点"
+      },
+      {
+       "id": "su",
+       "name": "苏茜",
+       "location": "东回廊"
+      },
+      {
+       "id": "lin",
+       "name": "林亦舟",
+       "location": "西回廊"
+      },
+      {
+       "id": "tang",
+       "name": "唐骁",
+       "location": "中央庭院"
+      },
+      {
+       "id": "zhou",
+       "name": "周映",
+       "location": "钟楼旗台外廊"
+      },
+      {
+       "id": "qin",
+       "name": "秦越",
+       "location": "器材棚"
+      },
+      {
+       "id": "doctor",
+       "name": "顾岚",
+       "location": "演习医护处置室"
+      },
+      {
+       "id": "shen",
+       "name": "沈澄",
+       "location": "医护休息区"
+      },
+      {
+       "id": "tomiyama",
+       "name": "富山雅史",
+       "location": "医护休息区"
+      },
+      {
+       "id": "manstein",
+       "name": "曼施坦因",
+       "location": "演习观察席"
+      }
+     ],
+     "knownEntities": [
+      "路明非",
+      "诺诺",
+      "芬格尔",
+      "楚子航",
+      "凯撒",
+      "苏茜",
+      "林亦舟",
+      "唐骁",
+      "周映",
+      "秦越",
+      "顾岚",
+      "沈澄",
+      "富山雅史",
+      "曼施坦因",
+      "演习规则牌",
+      "赛区路线图",
+      "路明非的护目镜",
+      "路明非的演习背心",
+      "诺诺的演习短枪",
+      "诺诺的故障短讯机",
+      "诺诺的红色识别带",
+      "芬格尔的相机",
+      "芬格尔的饭票夹",
+      "相机备用电池",
+      "楚子航的演习枪",
+      "楚子航的蓝方短讯机",
+      "楚子航的蓝色识别带",
+      "红方地图桌",
+      "凯撒的庭院平面图",
+      "凯撒的演习枪",
+      "红方信号旗",
+      "凯撒的红色识别带",
+      "凯撒的红方短讯机",
+      "苏茜的演习长枪",
+      "苏茜的蓝方短讯机",
+      "苏茜的备用弹匣",
+      "低窗软垫",
+      "东回廊遮光帘",
+      "林亦舟放下的演习枪",
+      "林亦舟的短讯机",
+      "折断的蓝布带",
+      "唐骁的演习枪",
+      "唐骁的满弹匣",
+      "庭院空弹匣",
+      "倒放长椅",
+      "南端石花槽",
+      "钟楼旗台底座",
+      "中立白旗",
+      "旗台短安全绳",
+      "蓝方信号旗",
+      "顶层玻璃门",
+      "旗台机械检修图",
+      "值钟间工作台",
+      "门厅翻倒长桌",
+      "钟楼地下检修门",
+      "服务巷检修盖",
+      "绝缘手电",
+      "小桥松动护栏",
+      "医护通道标牌",
+      "器材领用台",
+      "器材领用簿",
+      "未领用演习短枪",
+      "备用护目镜",
+      "备用红色识别带",
+      "备用蓝色识别带",
+      "开盖演习弹药箱",
+      "通用短枪弹匣甲",
+      "通用短枪弹匣乙",
+      "器材笼挂锁",
+      "器材笼钥匙",
+      "折叠担架",
+      "折叠梯",
+      "备用安全绳",
+      "短讯机电池盒",
+      "R型短讯电池甲",
+      "R型短讯电池乙",
+      "医护箱",
+      "未启用冷敷袋",
+      "弹力绷带",
+      "检查手套",
+      "医护空床",
+      "伤情登记夹",
+      "沈澄拆下的红色识别带",
+      "休息区饮水杯",
+      "保温毯",
+      "安全广播话筒",
+      "旗台状态面板",
+      "安全事件记录单",
+      "卡塞尔学院演习区",
+      "西侧器材区",
+      "西侧服务巷",
+      "器材棚",
+      "器材笼内",
+      "中央庭院",
+      "停水喷泉池",
+      "西回廊",
+      "东回廊",
+      "跨溪小桥",
+      "钟楼",
+      "钟楼门厅",
+      "钟楼下层楼梯",
+      "钟楼二层平台",
+      "值钟间",
+      "钟楼上层楼梯",
+      "钟楼顶层",
+      "钟楼旗台外廊",
+      "红方集结点",
+      "蓝方集结点",
+      "地下检修通道",
+      "服务巷检修口",
+      "医护附楼",
+      "演习医护处置室",
+      "医护休息区",
+      "演习观察席"
+     ],
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "minute"
+      }
+     },
+     "requireTime": true,
+     "scene": {
+      "location": "西回廊",
+      "placeNotes": [
+       "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+      ],
+      "present": [
+       {
+        "id": "lu",
+        "name": "路明非",
+        "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+       },
+       {
+        "id": "nono",
+        "name": "诺诺",
+        "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+       },
+       {
+        "id": "lin",
+        "name": "林亦舟",
+        "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+       }
+      ],
+      "objects": [
+       {
+        "id": "lin_gun",
+        "name": "林亦舟放下的演习枪",
+        "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+       },
+       {
+        "id": "broken_blue_band",
+        "name": "折断的蓝布带",
+        "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+       }
+      ],
+      "inventory": [
+       {
+        "id": "goggles_lu",
+        "name": "路明非的护目镜",
+        "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+       },
+       {
+        "id": "jacket_lu",
+        "name": "路明非的演习背心",
+        "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+       }
+      ],
+      "exits": []
+     },
+     "targetChars": 240
+    },
+    "priorText": null,
+    "committedExtras": [
+     "state",
+     "beforeState",
+     "timeAdvance",
+     "entityDeltas"
+    ]
+   },
+   "result": {
+    "text": "",
+    "chars": 0,
+    "paragraphs": [],
+    "firstParagraph": "",
+    "lastParagraph": "",
+    "accepted": false,
+    "status": null,
+    "strategyVersion": null,
+    "timings": null,
+    "issues": [],
+    "attempts": [],
+    "extraKeys": []
+   },
+   "progress": {
+    "count": 4,
+    "firstAtMs": 85338,
+    "lastAtMs": 220496,
+    "firstReadableAtMs": null,
+    "tail": [
+     {
+      "status": "beat",
+      "text": "路明非紧皱眉头，从西侧服务巷走向西回廊。空气中弥漫着陈旧的气息，脚步声渐渐成为唯一的声音。",
+      "verified": true,
+      "elapsedMs": 85336.92500019073,
+      "beatId": "lu:position"
+     },
+     {
+      "status": "beat",
+      "text": "诺诺把脚步放轻，从西侧服务巷走向西回廊。空气中弥漫着陈旧气味，几声微弱的犬吠从远处传来。",
+      "verified": true,
+      "elapsedMs": 153552.22999954224,
+      "beatId": "nono:position"
+     },
+     {
+      "status": "beat",
+      "text": "路明非站在西回廊的栏杆边，目光停留在地上的那滩血迹上，时间一分一秒地过去。",
+      "verified": false,
+      "elapsedMs": 204828.86999988556,
+      "beatId": "time"
+     },
+     {
+      "status": "beat",
+      "text": "一分钟过去，西回廊的阴影在地面上移动。",
+      "verified": false,
+      "elapsedMs": 220494.5450000763,
+      "beatId": "time"
+     }
+    ]
+   },
+   "engineAfter": {
+    "alive": true,
+    "modelId": "model-Q4_K_M.gguf"
+   },
+   "contract": {
+    "ok": false,
+    "missing": [
+     "result_object"
+    ],
+    "notes": [
+     "continuation_source_missing",
+     "error:runner_timeout:240000ms"
+    ]
+   },
+   "error": "runner_timeout:240000ms",
+   "repeat": 1,
+   "moduleSha256": "a92b93653694ea6fdde105cc80772965ae7464fcc313a72da178933d9c4c90d2",
+   "engine": {
+    "modelUrl": "/models/model-Q4_K_M.gguf",
+    "loadMs": 32878.03499984741,
+    "info": {
+     "backend": "wllama",
+     "modelId": "model-Q4_K_M.gguf"
+    },
+    "diagnostics": {
+     "multithread": true,
+     "numThreads": 4
+    },
+    "webgpuAvailable": true,
+    "gpuRequested": false,
+    "backendNote": "CPU-only by explicit request (nGpuLayers=0); no WebGPU claim",
+    "coldStart": true,
+    "reloadReason": null,
+    "modelFile": {
+     "url": "/models/model-Q4_K_M.gguf",
+     "servedPath": "D:\\others\\Jity\\.local\\models-narration\\qwen15b-beat-v2\\model-Q4_K_M.gguf",
+     "exists": true,
+     "bytes": 986048064,
+     "sha256": "5ab4668ac2afe867bf2075b7bfea0ad2f133dae2a58aba3495078f5f4a33fa0a",
+     "mtime": "2026-11-10T08:17:38.469Z"
+    }
+   },
+   "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\browser-10.json"
+  },
+  {
+   "runId": "10-beat::free-day-move::mwahovt3",
+   "candidateId": "10-beat",
+   "owner": "10-beat",
+   "moduleUrl": "/@fs/D:/others/Jity/.local/parallel-local-game/worktrees/10-training/experiments/narration-runtime-v2/browser/candidate.ts",
+   "exportName": "generateCandidate",
+   "modelUrl": "/models/model-Q4_K_M.gguf",
+   "scenarioId": "free-day-move",
+   "startedAt": "2026-11-10T09:25:51.279Z",
+   "wallMs": 269782.85499954224,
+   "coldStart": false,
+   "loadMs": 29888.979999542236,
+   "identity": {
+    "worldId": "world_dragon_raja_free_day",
+    "pointId": "point_free_day_move",
+    "version": 1,
+    "stateDigest": "ba93e9ea3fb6c38f6c21117bf3327460b41e905812787a466429faec2e2b5736",
+    "previousPointId": "root_free_day",
+    "viewpointId": "lu",
+    "viewpointName": "路明非",
+    "changeKinds": [
+     "position"
+    ],
+    "timeAdvance": {
+     "boundary": "elapsed",
+     "duration": {
+      "amount": 1,
+      "unit": "minute"
+     }
+    }
+   },
+   "input": {
+    "textChars": 1403,
+    "text": "【视角】主角视角（路明非）【地点】卡塞尔学院演习区：自由一日的演习边界用黄黑绳围定，范围包括钟楼、中央庭院、两侧回廊和西侧器材区；北侧医护通道悬白旗，不属于交火区。场内使用弗里嘉演习弹，实弹与攻击医护人员均被禁止。西回廊（在卡塞尔学院演习区里）：廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。【人物】林亦舟：在西回廊/slot_pillar3，精神值29，外貌蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳，个性蓝方低年级队员，怕被看成拖累，一开始只报了位置而没有讲清伤势。与同队的苏茜说得上话，信任楚子航会来接应；不愿用假装中弹的方式掩盖真实扭伤，任务在不加重脚踝伤势的情况下到达演习医护处置室（未完成）；向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能（未完成）；把自己的演习枪交给可信的人或移出医护搬运路线（未完成）；得到明确愿意帮忙的搬运者，并沿白线撤离（未完成）；用蓝方短讯机发出自己位于第三根廊柱的求助（已完成）。路明非：在西回廊，精神值43，外貌校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩，个性习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人，任务在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场（未完成）；向诺诺问清当前红蓝两方局势和自己是否可以保持中立（未完成）；在进入交火区前拿到可用的护目镜与演习装备（未完成）；把胸前护目镜戴好并确认镜片没有裂纹（未完成）；在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线（未完成）；得到至少一名在场者明确同意的协作，不替他人擅自承诺（未完成）；读过服务巷规则牌，知道医护白线内禁止交火（已完成）。诺诺：在西回廊，精神值58，外貌红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面，个性看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实，任务让红方的旗台行动有可执行的掩护，而不把路明非当诱饵（未完成）；问清路明非的参赛意愿并说明三条接近钟楼的路线（未完成）；把故障短讯机恢复到能与凯撒联络的状态（未完成）；确认西回廊的蓝方伤员是否需要真正的医护帮助（未完成）；与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷（未完成）。【物品】林亦舟放下的演习枪（在西回廊里）：枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。路明非的护目镜（在路明非里）：镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。路明非的演习背心（在路明非里）：背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。折断的蓝布带（在西回廊里）：蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。【变化】时间推进1 minute。路明非（人物）：移动到西回廊。诺诺（人物）：移动到西回廊。【正文】",
+    "scene": {
+     "location": "西回廊",
+     "placeNotes": [
+      "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+     ],
+     "present": [
+      {
+       "id": "lu",
+       "name": "路明非",
+       "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+      },
+      {
+       "id": "nono",
+       "name": "诺诺",
+       "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+      },
+      {
+       "id": "lin",
+       "name": "林亦舟",
+       "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+      }
+     ],
+     "objects": [
+      {
+       "id": "lin_gun",
+       "name": "林亦舟放下的演习枪",
+       "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+      },
+      {
+       "id": "broken_blue_band",
+       "name": "折断的蓝布带",
+       "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+      }
+     ],
+     "inventory": [
+      {
+       "id": "goggles_lu",
+       "name": "路明非的护目镜",
+       "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+      },
+      {
+       "id": "jacket_lu",
+       "name": "路明非的演习背心",
+       "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+      }
+     ],
+     "exits": []
+    },
+    "policy": {
+     "viewpoint": {
+      "id": "lu",
+      "name": "路明非"
+     },
+     "viewpointId": "lu",
+     "roster": [
+      "路明非",
+      "诺诺",
+      "芬格尔",
+      "楚子航",
+      "凯撒",
+      "苏茜",
+      "林亦舟",
+      "唐骁",
+      "周映",
+      "秦越",
+      "顾岚",
+      "沈澄",
+      "富山雅史",
+      "曼施坦因"
+     ],
+     "locations": [
+      "卡塞尔学院演习区",
+      "西侧器材区",
+      "西侧服务巷",
+      "器材棚",
+      "器材笼内",
+      "中央庭院",
+      "停水喷泉池",
+      "西回廊",
+      "东回廊",
+      "跨溪小桥",
+      "钟楼",
+      "钟楼门厅",
+      "钟楼下层楼梯",
+      "钟楼二层平台",
+      "值钟间",
+      "钟楼上层楼梯",
+      "钟楼顶层",
+      "钟楼旗台外廊",
+      "红方集结点",
+      "蓝方集结点",
+      "地下检修通道",
+      "服务巷检修口",
+      "医护附楼",
+      "演习医护处置室",
+      "医护休息区",
+      "演习观察席"
+     ],
+     "knownPositions": [
+      {
+       "id": "nono",
+       "name": "诺诺",
+       "location": "西回廊"
+      },
+      {
+       "id": "fingel",
+       "name": "芬格尔",
+       "location": "器材棚"
+      },
+      {
+       "id": "chu",
+       "name": "楚子航",
+       "location": "钟楼二层平台"
+      },
+      {
+       "id": "caesar",
+       "name": "凯撒",
+       "location": "红方集结点"
+      },
+      {
+       "id": "su",
+       "name": "苏茜",
+       "location": "东回廊"
+      },
+      {
+       "id": "lin",
+       "name": "林亦舟",
+       "location": "西回廊"
+      },
+      {
+       "id": "tang",
+       "name": "唐骁",
+       "location": "中央庭院"
+      },
+      {
+       "id": "zhou",
+       "name": "周映",
+       "location": "钟楼旗台外廊"
+      },
+      {
+       "id": "qin",
+       "name": "秦越",
+       "location": "器材棚"
+      },
+      {
+       "id": "doctor",
+       "name": "顾岚",
+       "location": "演习医护处置室"
+      },
+      {
+       "id": "shen",
+       "name": "沈澄",
+       "location": "医护休息区"
+      },
+      {
+       "id": "tomiyama",
+       "name": "富山雅史",
+       "location": "医护休息区"
+      },
+      {
+       "id": "manstein",
+       "name": "曼施坦因",
+       "location": "演习观察席"
+      }
+     ],
+     "knownEntities": [
+      "路明非",
+      "诺诺",
+      "芬格尔",
+      "楚子航",
+      "凯撒",
+      "苏茜",
+      "林亦舟",
+      "唐骁",
+      "周映",
+      "秦越",
+      "顾岚",
+      "沈澄",
+      "富山雅史",
+      "曼施坦因",
+      "演习规则牌",
+      "赛区路线图",
+      "路明非的护目镜",
+      "路明非的演习背心",
+      "诺诺的演习短枪",
+      "诺诺的故障短讯机",
+      "诺诺的红色识别带",
+      "芬格尔的相机",
+      "芬格尔的饭票夹",
+      "相机备用电池",
+      "楚子航的演习枪",
+      "楚子航的蓝方短讯机",
+      "楚子航的蓝色识别带",
+      "红方地图桌",
+      "凯撒的庭院平面图",
+      "凯撒的演习枪",
+      "红方信号旗",
+      "凯撒的红色识别带",
+      "凯撒的红方短讯机",
+      "苏茜的演习长枪",
+      "苏茜的蓝方短讯机",
+      "苏茜的备用弹匣",
+      "低窗软垫",
+      "东回廊遮光帘",
+      "林亦舟放下的演习枪",
+      "林亦舟的短讯机",
+      "折断的蓝布带",
+      "唐骁的演习枪",
+      "唐骁的满弹匣",
+      "庭院空弹匣",
+      "倒放长椅",
+      "南端石花槽",
+      "钟楼旗台底座",
+      "中立白旗",
+      "旗台短安全绳",
+      "蓝方信号旗",
+      "顶层玻璃门",
+      "旗台机械检修图",
+      "值钟间工作台",
+      "门厅翻倒长桌",
+      "钟楼地下检修门",
+      "服务巷检修盖",
+      "绝缘手电",
+      "小桥松动护栏",
+      "医护通道标牌",
+      "器材领用台",
+      "器材领用簿",
+      "未领用演习短枪",
+      "备用护目镜",
+      "备用红色识别带",
+      "备用蓝色识别带",
+      "开盖演习弹药箱",
+      "通用短枪弹匣甲",
+      "通用短枪弹匣乙",
+      "器材笼挂锁",
+      "器材笼钥匙",
+      "折叠担架",
+      "折叠梯",
+      "备用安全绳",
+      "短讯机电池盒",
+      "R型短讯电池甲",
+      "R型短讯电池乙",
+      "医护箱",
+      "未启用冷敷袋",
+      "弹力绷带",
+      "检查手套",
+      "医护空床",
+      "伤情登记夹",
+      "沈澄拆下的红色识别带",
+      "休息区饮水杯",
+      "保温毯",
+      "安全广播话筒",
+      "旗台状态面板",
+      "安全事件记录单",
+      "卡塞尔学院演习区",
+      "西侧器材区",
+      "西侧服务巷",
+      "器材棚",
+      "器材笼内",
+      "中央庭院",
+      "停水喷泉池",
+      "西回廊",
+      "东回廊",
+      "跨溪小桥",
+      "钟楼",
+      "钟楼门厅",
+      "钟楼下层楼梯",
+      "钟楼二层平台",
+      "值钟间",
+      "钟楼上层楼梯",
+      "钟楼顶层",
+      "钟楼旗台外廊",
+      "红方集结点",
+      "蓝方集结点",
+      "地下检修通道",
+      "服务巷检修口",
+      "医护附楼",
+      "演习医护处置室",
+      "医护休息区",
+      "演习观察席"
+     ],
+     "time": {
+      "boundary": "elapsed",
+      "duration": {
+       "amount": 1,
+       "unit": "minute"
+      }
+     },
+     "requireTime": true,
+     "scene": {
+      "location": "西回廊",
+      "placeNotes": [
+       "廊柱连接器材区与钟楼西门，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带；钟楼方向的石板湿滑，不能直接奔跑过去。"
+      ],
+      "present": [
+       {
+        "id": "lu",
+        "name": "路明非",
+        "note": "校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩。"
+       },
+       {
+        "id": "nono",
+        "name": "诺诺",
+        "note": "红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。"
+       },
+       {
+        "id": "lin",
+        "name": "林亦舟",
+        "note": "蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳。"
+       }
+      ],
+      "objects": [
+       {
+        "id": "lin_gun",
+        "name": "林亦舟放下的演习枪",
+        "note": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。"
+       },
+       {
+        "id": "broken_blue_band",
+        "name": "折断的蓝布带",
+        "note": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。"
+       }
+      ],
+      "inventory": [
+       {
+        "id": "goggles_lu",
+        "name": "路明非的护目镜",
+        "note": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。"
+       },
+       {
+        "id": "jacket_lu",
+        "name": "路明非的演习背心",
+        "note": "背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。"
+       }
+      ],
+      "exits": []
+     },
+     "targetChars": 240
+    },
+    "priorText": null,
+    "committedExtras": [
+     "state",
+     "beforeState",
+     "timeAdvance",
+     "entityDeltas"
+    ]
+   },
+   "result": {
+    "text": "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。\n\n诺诺踩着吱吱作响的石板街，从西侧服务巷走向西回廊。\n\n1分钟过去，屋子里没有别的声音。",
+    "chars": 96,
+    "paragraphs": [
+     "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。",
+     "诺诺踩着吱吱作响的石板街，从西侧服务巷走向西回廊。",
+     "1分钟过去，屋子里没有别的声音。"
+    ],
+    "firstParagraph": "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。",
+    "lastParagraph": "1分钟过去，屋子里没有别的声音。",
+    "accepted": false,
+    "status": null,
+    "strategyVersion": "lane10-beat-v1",
+    "timings": {
+     "totalMs": 269781,
+     "beats": 3
+    },
+    "issues": [
+     "time: amount_missing",
+     "time: subject_missing",
+     "time: amount_missing",
+     "time: amount_missing",
+     "time: template_fallback"
+    ],
+    "attempts": [
+     {
+      "index": 0,
+      "prompt": "【本拍事实】路明非从西侧服务巷走到西回廊【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【示例】事实：诺诺从器材棚门外走进器材棚。正文：诺诺把枪口压低，从器材棚门外走进去，靴底碾过一层薄灰。【写法】一到两句。写这个人从旧位置走到新位置的过程；可以带一个环境细节；不要写别的事、别人的动作或对白。【正文】",
+      "promptChars": 215,
+      "raw": "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。",
+      "cleaned": null,
+      "finishReason": null,
+      "error": null,
+      "durationMs": null,
+      "firstTokenMs": null,
+      "accepted": null,
+      "issues": [],
+      "source": {
+       "beatId": "lu:position",
+       "attempt": 0,
+       "prompt": "【本拍事实】路明非从西侧服务巷走到西回廊【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【示例】事实：诺诺从器材棚门外走进器材棚。正文：诺诺把枪口压低，从器材棚门外走进去，靴底碾过一层薄灰。【写法】一到两句。写这个人从旧位置走到新位置的过程；可以带一个环境细节；不要写别的事、别人的动作或对白。【正文】",
+       "raw": "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。",
+       "issues": [],
+       "ms": 70735
+      }
+     },
+     {
+      "index": 0,
+      "prompt": "【本拍事实】诺诺从西侧服务巷走到西回廊【主体】诺诺：这一段的动作属于诺诺，不要换成别人。【场景】路明非在西回廊【在场】林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【示例】事实：诺诺从器材棚门外走进器材棚。正文：诺诺把枪口压低，从器材棚门外走进去，靴底碾过一层薄灰。【写法】一到两句。写这个人从旧位置走到新位置的过程；可以带一个环境细节；不要写别的事、别人的动作或对白。【正文】",
+      "promptChars": 209,
+      "raw": "诺诺踩着吱吱作响的石板街，从西侧服务巷走向西回廊。",
+      "cleaned": null,
+      "finishReason": null,
+      "error": null,
+      "durationMs": null,
+      "firstTokenMs": null,
+      "accepted": null,
+      "issues": [],
+      "source": {
+       "beatId": "nono:position",
+       "attempt": 0,
+       "prompt": "【本拍事实】诺诺从西侧服务巷走到西回廊【主体】诺诺：这一段的动作属于诺诺，不要换成别人。【场景】路明非在西回廊【在场】林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【示例】事实：诺诺从器材棚门外走进器材棚。正文：诺诺把枪口压低，从器材棚门外走进去，靴底碾过一层薄灰。【写法】一到两句。写这个人从旧位置走到新位置的过程；可以带一个环境细节；不要写别的事、别人的动作或对白。【正文】",
+       "raw": "诺诺踩着吱吱作响的石板街，从西侧服务巷走向西回廊。",
+       "issues": [],
+       "ms": 52177
+      }
+     },
+     {
+      "index": 0,
+      "prompt": "【本拍事实】时间过去1分钟【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【时间】1分钟过去了【示例】事实：时间过去5分钟。正文：五分钟过去，回廊尽头始终没有脚步声。【写法】一到两句。写出这段时间过去了，落在环境或动作上；不要写新的事情发生。【正文】",
+      "promptChars": 189,
+      "raw": "路明非站在西回廊的栏杆边，目光停留在林亦舟放下的演习枪上，久久未移。时间过去一分钟，他没有追下去，只觉得那股冷意从指尖慢慢蔓延至掌心。",
+      "cleaned": null,
+      "finishReason": null,
+      "error": null,
+      "durationMs": null,
+      "firstTokenMs": null,
+      "accepted": null,
+      "issues": [
+       "amount_missing"
+      ],
+      "source": {
+       "beatId": "time",
+       "attempt": 0,
+       "prompt": "【本拍事实】时间过去1分钟【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【时间】1分钟过去了【示例】事实：时间过去5分钟。正文：五分钟过去，回廊尽头始终没有脚步声。【写法】一到两句。写出这段时间过去了，落在环境或动作上；不要写新的事情发生。【正文】",
+       "raw": "路明非站在西回廊的栏杆边，目光停留在林亦舟放下的演习枪上，久久未移。时间过去一分钟，他没有追下去，只觉得那股冷意从指尖慢慢蔓延至掌心。",
+       "issues": [
+        "amount_missing"
+       ],
+       "ms": 71343
+      }
+     },
+     {
+      "index": 1,
+      "prompt": "【本拍事实】时间过去1分钟【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【时间】1分钟过去了【示例】事实：时间过去5分钟。正文：五分钟过去，回廊尽头始终没有脚步声。【写法】一到两句。写出这段时间过去了，落在环境或动作上；不要写新的事情发生。【正文】【纠正】上一句没有守住事实；主语必须是路明非，事实是：时间过去1分钟。",
+      "promptChars": 224,
+      "raw": "一分钟过去，西回廊的阴影在地面上移动。",
+      "cleaned": null,
+      "finishReason": null,
+      "error": null,
+      "durationMs": null,
+      "firstTokenMs": null,
+      "accepted": null,
+      "issues": [
+       "subject_missing",
+       "amount_missing"
+      ],
+      "source": {
+       "beatId": "time",
+       "attempt": 1,
+       "prompt": "【本拍事实】时间过去1分钟【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【时间】1分钟过去了【示例】事实：时间过去5分钟。正文：五分钟过去，回廊尽头始终没有脚步声。【写法】一到两句。写出这段时间过去了，落在环境或动作上；不要写新的事情发生。【正文】【纠正】上一句没有守住事实；主语必须是路明非，事实是：时间过去1分钟。",
+       "raw": "一分钟过去，西回廊的阴影在地面上移动。",
+       "issues": [
+        "subject_missing",
+        "amount_missing"
+       ],
+       "ms": 21254
+      }
+     },
+     {
+      "index": 2,
+      "prompt": "【本拍事实】时间过去1分钟【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【时间】1分钟过去了【示例】事实：时间过去5分钟。正文：五分钟过去，回廊尽头始终没有脚步声。【写法】一到两句。写出这段时间过去了，落在环境或动作上；不要写新的事情发生。【正文】【纠正】只写这一句事实：时间过去1分钟。主语是路明非。",
+      "promptChars": 216,
+      "raw": "路明非站在西回廊的栏杆边，目光停留在手中的演习枪和折断的蓝布带上。一分钟过去，他没有抬头；风从走廊另一端过来，把栏杆上的积尘吹得更明显。",
+      "cleaned": null,
+      "finishReason": null,
+      "error": null,
+      "durationMs": null,
+      "firstTokenMs": null,
+      "accepted": null,
+      "issues": [
+       "amount_missing"
+      ],
+      "source": {
+       "beatId": "time",
+       "attempt": 2,
+       "prompt": "【本拍事实】时间过去1分钟【主体】路明非：这一段的动作属于路明非，不要换成别人。【场景】路明非在西回廊【在场】诺诺、林亦舟（只作为在场的人，不写他们的动作和对白）【手边】林亦舟放下的演习枪、折断的蓝布带【时间】1分钟过去了【示例】事实：时间过去5分钟。正文：五分钟过去，回廊尽头始终没有脚步声。【写法】一到两句。写出这段时间过去了，落在环境或动作上；不要写新的事情发生。【正文】【纠正】只写这一句事实：时间过去1分钟。主语是路明非。",
+       "raw": "路明非站在西回廊的栏杆边，目光停留在手中的演习枪和折断的蓝布带上。一分钟过去，他没有抬头；风从走廊另一端过来，把栏杆上的积尘吹得更明显。",
+       "issues": [
+        "amount_missing"
+       ],
+       "ms": 54271
+      }
+     }
+    ],
+    "extraKeys": [
+     "beats"
+    ]
+   },
+   "progress": {
+    "count": 5,
+    "firstAtMs": 70737,
+    "lastAtMs": 269783,
+    "firstReadableAtMs": null,
+    "tail": [
+     {
+      "status": "beat",
+      "text": "路明非紧握着林亦舟放下的演习枪，从西侧服务巷走向西回廊。每一步都显得格外谨慎，空气中弥漫着紧张的气息。",
+      "verified": true,
+      "elapsedMs": 70735.52499961853,
+      "beatId": "lu:position"
+     },
+     {
+      "status": "beat",
+      "text": "诺诺踩着吱吱作响的石板街，从西侧服务巷走向西回廊。",
+      "verified": true,
+      "elapsedMs": 122912.18000030518,
+      "beatId": "nono:position"
+     },
+     {
+      "status": "beat",
+      "text": "路明非站在西回廊的栏杆边，目光停留在林亦舟放下的演习枪上，久久未移。时间过去一分钟，他没有追下去，只觉得那股冷意从指尖慢慢蔓延至掌心。",
+      "verified": false,
+      "elapsedMs": 194255.3949995041,
+      "beatId": "time"
+     },
+     {
+      "status": "beat",
+      "text": "一分钟过去，西回廊的阴影在地面上移动。",
+      "verified": false,
+      "elapsedMs": 215509.5349998474,
+      "beatId": "time"
+     },
+     {
+      "status": "beat",
+      "text": "路明非站在西回廊的栏杆边，目光停留在手中的演习枪和折断的蓝布带上。一分钟过去，他没有抬头；风从走廊另一端过来，把栏杆上的积尘吹得更明显。",
+      "verified": false,
+      "elapsedMs": 269780.970000267,
+      "beatId": "time"
+     }
+    ]
+   },
+   "engineAfter": {
+    "alive": true,
+    "modelId": "model-Q4_K_M.gguf"
+   },
+   "contract": {
+    "ok": true,
+    "missing": [],
+    "notes": [
+     "continuation_source_missing"
+    ]
+   },
+   "error": null,
+   "repeat": 1,
+   "moduleSha256": "9fddd8d3deec55a3f2c7cf642c0dae4b0d633c342b0b53dfd2cfbd2003190ada",
+   "engine": {
+    "modelUrl": "/models/model-Q4_K_M.gguf",
+    "loadMs": 29888.979999542236,
+    "info": {
+     "backend": "wllama",
+     "modelId": "model-Q4_K_M.gguf"
+    },
+    "diagnostics": {
+     "multithread": true,
+     "numThreads": 8
+    },
+    "webgpuAvailable": true,
+    "gpuRequested": false,
+    "backendNote": "CPU-only by explicit request (nGpuLayers=0); no WebGPU claim",
+    "coldStart": true,
+    "reloadReason": null,
+    "modelFile": {
+     "url": "/models/model-Q4_K_M.gguf",
+     "servedPath": "D:\\others\\Jity\\.local\\models-narration\\qwen15b-beat-v2\\model-Q4_K_M.gguf",
+     "exists": true,
+     "bytes": 986048064,
+     "sha256": "5ab4668ac2afe867bf2075b7bfea0ad2f133dae2a58aba3495078f5f4a33fa0a",
+     "mtime": "2026-11-10T08:17:38.469Z"
+    }
+   },
+   "evidenceFile": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2\\hpc\\browser-10.json"
+  }
+ ],
+ "failures": [
+  {
+   "at": "2026-11-10T09:24:57.105Z",
+   "candidateId": "10-beat",
+   "scenarioId": "free-day-move",
+   "error": "contract: result_object",
+   "runId": "10-beat::free-day-move::mwahhxtx"
+  }
+ ],
+ "note": "Lane 10's own run through 09's shared runner, written here rather than into 09's file. Real Edge+wllama CPU text; not a quality verdict."
+}

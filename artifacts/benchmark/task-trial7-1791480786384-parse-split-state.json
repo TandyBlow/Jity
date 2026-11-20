@@ -1,0 +1,1976 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "parse",
+  "arm": "split-state",
+  "runParams": {
+    "model": {
+      "tag": "qwen3-0.6b",
+      "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_ubatch": 128,
+    "n_gpu_layers": 0,
+    "n_threads": 4,
+    "temperature": 0,
+    "seed": 4711,
+    "cache_prompt": false,
+    "enable_thinking": false
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "old": {
+      "withinTargetRate": "0/8",
+      "correctRate": "0/8",
+      "fieldCorrectRate": {
+        "action_type": "7/8",
+        "item_used": "3/8",
+        "target": "5/8",
+        "feasible": "8/8"
+      },
+      "totalWallMs": {
+        "min": 42479,
+        "max": 45256,
+        "median": 43901
+      },
+      "componentMedianMs": {
+        "action_type": 15924,
+        "item_used": 14998,
+        "target": 13094
+      },
+      "componentMedianPromptMs": {
+        "action_type": 14779,
+        "item_used": 13920,
+        "target": 12210
+      }
+    },
+    "new": {
+      "withinTargetRate": "0/4",
+      "correctRate": "0/4",
+      "fieldCorrectRate": {
+        "action_type": "4/4",
+        "item_used": "2/4",
+        "target": "2/4",
+        "feasible": "4/4"
+      },
+      "totalWallMs": {
+        "min": 43466,
+        "max": 44507,
+        "median": 44185
+      },
+      "componentMedianMs": {
+        "action_type": 15755,
+        "item_used": 15015,
+        "target": 13452
+      },
+      "componentMedianPromptMs": {
+        "action_type": 14723,
+        "item_used": 13796,
+        "target": 12451
+      }
+    }
+  },
+  "runs": [
+    {
+      "batch": "old",
+      "action": "我用铜钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "大门",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "铜钥匙"
+      },
+      "wallMs": 43503,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用铜钥匙打开大门。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 16118,
+          "promptTokens": 243,
+          "completionTokens": 8,
+          "promptMs": 14967,
+          "predictedMs": 1080,
+          "promptPerSecond": 16.23559817255314,
+          "predictedPerSecond": 6.483498569925458,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用铜钥匙打开大门。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 14716,
+          "promptTokens": 227,
+          "completionTokens": 8,
+          "promptMs": 13742,
+          "predictedMs": 930,
+          "promptPerSecond": 16.518233000227763,
+          "predictedPerSecond": 7.530533624370528,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用铜钥匙打开大门。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 12668,
+          "promptTokens": 200,
+          "completionTokens": 7,
+          "promptMs": 11818,
+          "predictedMs": 819,
+          "promptPerSecond": 16.923901507631918,
+          "predictedPerSecond": 7.3303572083067605,
+          "finishReason": "stop",
+          "text": "{\"target\":\"铜钥匙\"}",
+          "parsed": {
+            "target": "铜钥匙"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 43502,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我和诺诺打听图书馆的传闻。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "诺诺",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "npc_talk",
+        "item_used": "铜钥匙",
+        "target": "诺诺"
+      },
+      "wallMs": 44511,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我和诺诺打听图书馆的传闻。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15816,
+          "promptTokens": 244,
+          "completionTokens": 9,
+          "promptMs": 14590,
+          "predictedMs": 1174,
+          "promptPerSecond": 16.724355411470206,
+          "predictedPerSecond": 6.81643510668573,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"npc_talk\"}",
+          "parsed": {
+            "action_type": "npc_talk"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我和诺诺打听图书馆的传闻。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15324,
+          "promptTokens": 228,
+          "completionTokens": 8,
+          "promptMs": 14214,
+          "predictedMs": 1059,
+          "promptPerSecond": 16.041070769616102,
+          "predictedPerSecond": 6.612257235698632,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我和诺诺打听图书馆的传闻。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13371,
+          "promptTokens": 201,
+          "completionTokens": 7,
+          "promptMs": 12478,
+          "predictedMs": 844,
+          "promptPerSecond": 16.108234513455184,
+          "predictedPerSecond": 7.105258483382576,
+          "finishReason": "stop",
+          "text": "{\"target\":\"诺诺\"}",
+          "parsed": {
+            "target": "诺诺"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 44511,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我去二楼档案室查资料。",
+      "expect": {
+        "action_type": "move",
+        "item_used": null,
+        "target": "二楼档案室",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "move",
+        "item_used": "铜钥匙",
+        "target": "二楼档案室"
+      },
+      "wallMs": 44149,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我去二楼档案室查资料。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 16031,
+          "promptTokens": 243,
+          "completionTokens": 7,
+          "promptMs": 15043,
+          "predictedMs": 938,
+          "promptPerSecond": 16.153699190467005,
+          "predictedPerSecond": 6.39750923640396,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"move\"}",
+          "parsed": {
+            "action_type": "move"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我去二楼档案室查资料。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15080,
+          "promptTokens": 227,
+          "completionTokens": 8,
+          "promptMs": 14064,
+          "predictedMs": 964,
+          "promptPerSecond": 16.14042597214959,
+          "predictedPerSecond": 7.261440918841988,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我去二楼档案室查资料。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13038,
+          "promptTokens": 200,
+          "completionTokens": 8,
+          "promptMs": 12039,
+          "predictedMs": 938,
+          "promptPerSecond": 16.613137752400288,
+          "predictedPerSecond": 7.464238301139363,
+          "finishReason": "stop",
+          "text": "{\"target\":\"二楼档案室\"}",
+          "parsed": {
+            "target": "二楼档案室"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 44149,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我使用生锈的铁门钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "铁门钥匙",
+        "target": "大门",
+        "feasible": false
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "生锈的铁门钥匙",
+        "target": "铁门钥匙"
+      },
+      "wallMs": 45256,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我使用生锈的铁门钥匙打开大门。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 16134,
+          "promptTokens": 247,
+          "completionTokens": 8,
+          "promptMs": 15042,
+          "predictedMs": 1042,
+          "promptPerSecond": 16.421026066816555,
+          "predictedPerSecond": 6.719436642431899,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我使用生锈的铁门钥匙打开大门。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15649,
+          "promptTokens": 231,
+          "completionTokens": 12,
+          "promptMs": 14005,
+          "predictedMs": 1602,
+          "promptPerSecond": 16.493851327851424,
+          "predictedPerSecond": 6.865127089104981,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"生锈的铁门钥匙\"}",
+          "parsed": {
+            "item_used": "生锈的铁门钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我使用生锈的铁门钥匙打开大门。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13474,
+          "promptTokens": 204,
+          "completionTokens": 8,
+          "promptMs": 12497,
+          "predictedMs": 927,
+          "promptPerSecond": 16.323858960258203,
+          "predictedPerSecond": 7.554296506137866,
+          "finishReason": "stop",
+          "text": "{\"target\":\"铁门钥匙\"}",
+          "parsed": {
+            "target": "铁门钥匙"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 45257,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "old",
+      "action": "我和执行部学生搭话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "npc_talk",
+        "item_used": "铜钥匙",
+        "target": "执行部学生"
+      },
+      "wallMs": 43653,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我和执行部学生搭话。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15250,
+          "promptTokens": 243,
+          "completionTokens": 9,
+          "promptMs": 14074,
+          "predictedMs": 1143,
+          "promptPerSecond": 17.265590828518153,
+          "predictedPerSecond": 6.998610775761011,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"npc_talk\"}",
+          "parsed": {
+            "action_type": "npc_talk"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我和执行部学生搭话。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 14888,
+          "promptTokens": 227,
+          "completionTokens": 8,
+          "promptMs": 13815,
+          "predictedMs": 1029,
+          "promptPerSecond": 16.431093999610574,
+          "predictedPerSecond": 6.803944343735267,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我和执行部学生搭话。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13515,
+          "promptTokens": 200,
+          "completionTokens": 8,
+          "promptMs": 12475,
+          "predictedMs": 985,
+          "promptPerSecond": 16.031992160997113,
+          "predictedPerSecond": 7.103281716152862,
+          "finishReason": "stop",
+          "text": "{\"target\":\"执行部学生\"}",
+          "parsed": {
+            "target": "执行部学生"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 43653,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我检查那扇书架后的暗门。",
+      "expect": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "暗门",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "inspect",
+        "item_used": "铜钥匙",
+        "target": "暗门"
+      },
+      "wallMs": 44534,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我检查那扇书架后的暗门。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 16396,
+          "promptTokens": 246,
+          "completionTokens": 7,
+          "promptMs": 15450,
+          "predictedMs": 888,
+          "promptPerSecond": 15.922675346035009,
+          "predictedPerSecond": 6.755265729636251,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"inspect\"}",
+          "parsed": {
+            "action_type": "inspect"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我检查那扇书架后的暗门。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15084,
+          "promptTokens": 230,
+          "completionTokens": 8,
+          "promptMs": 14019,
+          "predictedMs": 1014,
+          "promptPerSecond": 16.40621678632743,
+          "predictedPerSecond": 6.90634989541813,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我检查那扇书架后的暗门。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13055,
+          "promptTokens": 203,
+          "completionTokens": 7,
+          "promptMs": 12206,
+          "predictedMs": 796,
+          "promptPerSecond": 16.63177680384933,
+          "predictedPerSecond": 7.5384555463558485,
+          "finishReason": "stop",
+          "text": "{\"target\":\"暗门\"}",
+          "parsed": {
+            "target": "暗门"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 44535,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我拔剑攻击诺诺。",
+      "expect": {
+        "action_type": "other",
+        "item_used": "剑",
+        "target": "诺诺",
+        "feasible": false
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "剑",
+        "target": "诺诺"
+      },
+      "wallMs": 42479,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我拔剑攻击诺诺。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15119,
+          "promptTokens": 243,
+          "completionTokens": 8,
+          "promptMs": 14195,
+          "predictedMs": 878,
+          "promptPerSecond": 17.11919340560216,
+          "predictedPerSecond": 7.9712579214375605,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我拔剑攻击诺诺。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 14582,
+          "promptTokens": 227,
+          "completionTokens": 7,
+          "promptMs": 13645,
+          "predictedMs": 880,
+          "promptPerSecond": 16.63594757111501,
+          "predictedPerSecond": 6.814813132144906,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"剑\"}",
+          "parsed": {
+            "item_used": "剑"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我拔剑攻击诺诺。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 12778,
+          "promptTokens": 200,
+          "completionTokens": 7,
+          "promptMs": 11883,
+          "predictedMs": 850,
+          "promptPerSecond": 16.830071230751972,
+          "predictedPerSecond": 7.06181441551716,
+          "finishReason": "stop",
+          "text": "{\"target\":\"诺诺\"}",
+          "parsed": {
+            "target": "诺诺"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 42479,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "old",
+      "action": "我在原地休息一会儿。",
+      "expect": {
+        "action_type": "other",
+        "item_used": null,
+        "target": null,
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "other",
+        "item_used": "铜钥匙",
+        "target": "原地"
+      },
+      "wallMs": 43498,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我在原地休息一会儿。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15449,
+          "promptTokens": 242,
+          "completionTokens": 7,
+          "promptMs": 14519,
+          "predictedMs": 879,
+          "promptPerSecond": 16.668062559509117,
+          "predictedPerSecond": 6.827725115786839,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"other\"}",
+          "parsed": {
+            "action_type": "other"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我在原地休息一会儿。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 14916,
+          "promptTokens": 226,
+          "completionTokens": 8,
+          "promptMs": 13834,
+          "predictedMs": 1033,
+          "promptPerSecond": 16.335984654004932,
+          "predictedPerSecond": 6.777849214156797,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我在原地休息一会儿。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13133,
+          "promptTokens": 199,
+          "completionTokens": 7,
+          "promptMs": 12213,
+          "predictedMs": 861,
+          "promptPerSecond": 16.294226235096207,
+          "predictedPerSecond": 6.970470762360387,
+          "finishReason": "stop",
+          "text": "{\"target\":\"原地\"}",
+          "parsed": {
+            "target": "原地"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 43498,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我仔细查看旧笔记里的字迹。",
+      "expect": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "旧笔记",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "inspect",
+        "item_used": "旧笔记",
+        "target": "旧笔记"
+      },
+      "wallMs": 44283,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我仔细查看旧笔记里的字迹。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15464,
+          "promptTokens": 245,
+          "completionTokens": 7,
+          "promptMs": 14553,
+          "predictedMs": 858,
+          "promptPerSecond": 16.83451479561456,
+          "predictedPerSecond": 6.9894633839486975,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"inspect\"}",
+          "parsed": {
+            "action_type": "inspect"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我仔细查看旧笔记里的字迹。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15236,
+          "promptTokens": 229,
+          "completionTokens": 8,
+          "promptMs": 14152,
+          "predictedMs": 1027,
+          "promptPerSecond": 16.181921543119344,
+          "predictedPerSecond": 6.815935657567392,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"旧笔记\"}",
+          "parsed": {
+            "item_used": "旧笔记"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我仔细查看旧笔记里的字迹。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13583,
+          "promptTokens": 202,
+          "completionTokens": 7,
+          "promptMs": 12710,
+          "predictedMs": 828,
+          "promptPerSecond": 15.893472818227453,
+          "predictedPerSecond": 7.245116791282676,
+          "finishReason": "stop",
+          "text": "{\"target\":\"旧笔记\"}",
+          "parsed": {
+            "target": "旧笔记"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 44283,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我用旧笔记垫住门缝。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "旧笔记",
+        "target": "门缝",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "旧笔记",
+        "target": "旧笔记"
+      },
+      "wallMs": 44087,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用旧笔记垫住门缝。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 16045,
+          "promptTokens": 245,
+          "completionTokens": 8,
+          "promptMs": 14892,
+          "predictedMs": 1098,
+          "promptPerSecond": 16.451902192434208,
+          "predictedPerSecond": 6.37293505523969,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用旧笔记垫住门缝。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 14980,
+          "promptTokens": 229,
+          "completionTokens": 8,
+          "promptMs": 13922,
+          "predictedMs": 995,
+          "promptPerSecond": 16.448254437976075,
+          "predictedPerSecond": 7.037729266598232,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"旧笔记\"}",
+          "parsed": {
+            "item_used": "旧笔记"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用旧笔记垫住门缝。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13062,
+          "promptTokens": 202,
+          "completionTokens": 7,
+          "promptMs": 12225,
+          "predictedMs": 789,
+          "promptPerSecond": 16.52350521786937,
+          "predictedPerSecond": 7.603878484952558,
+          "finishReason": "stop",
+          "text": "{\"target\":\"旧笔记\"}",
+          "parsed": {
+            "target": "旧笔记"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 44087,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我去找执行部学生问话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "npc_talk",
+        "item_used": "铜钥匙",
+        "target": "执行部学生"
+      },
+      "wallMs": 43466,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我去找执行部学生问话。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15209,
+          "promptTokens": 244,
+          "completionTokens": 9,
+          "promptMs": 14038,
+          "predictedMs": 1132,
+          "promptPerSecond": 17.381865115444434,
+          "predictedPerSecond": 7.064042610305025,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"npc_talk\"}",
+          "parsed": {
+            "action_type": "npc_talk"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我去找执行部学生问话。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 14731,
+          "promptTokens": 228,
+          "completionTokens": 8,
+          "promptMs": 13669,
+          "predictedMs": 1007,
+          "promptPerSecond": 16.680370664173584,
+          "predictedPerSecond": 6.95117494717107,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我去找执行部学生问话。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13525,
+          "promptTokens": 201,
+          "completionTokens": 8,
+          "promptMs": 12498,
+          "predictedMs": 978,
+          "promptPerSecond": 16.08257964577518,
+          "predictedPerSecond": 7.159946034463889,
+          "finishReason": "stop",
+          "text": "{\"target\":\"执行部学生\"}",
+          "parsed": {
+            "target": "执行部学生"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 43465,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我用路明非的校徽刷开闸机。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "校徽",
+        "target": "闸机",
+        "feasible": false
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "路明非的校徽",
+        "target": "路明非"
+      },
+      "wallMs": 44507,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用路明非的校徽刷开闸机。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 16079,
+          "promptTokens": 249,
+          "completionTokens": 8,
+          "promptMs": 15051,
+          "predictedMs": 970,
+          "promptPerSecond": 16.54345996831496,
+          "predictedPerSecond": 7.216227026625817,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用路明非的校徽刷开闸机。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 15050,
+          "promptTokens": 233,
+          "completionTokens": 12,
+          "promptMs": 13560,
+          "predictedMs": 1441,
+          "promptPerSecond": 17.183023909845907,
+          "predictedPerSecond": 7.631601769144046,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"路明非的校徽\"}",
+          "parsed": {
+            "item_used": "路明非的校徽"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "当前地点：卡塞尔学院图书馆。\n已知地点：卡塞尔学院图书馆、二楼档案室。\n持有物品：铜钥匙（owned）、旧笔记（owned）。\n在场 NPC：诺诺、执行部学生。\n体力 88/100，血统稳定 72/100。\n\n玩家行动：我用路明非的校徽刷开闸机。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13378,
+          "promptTokens": 206,
+          "completionTokens": 8,
+          "promptMs": 12403,
+          "predictedMs": 932,
+          "promptPerSecond": 16.609495600257496,
+          "predictedPerSecond": 7.50718544892969,
+          "finishReason": "stop",
+          "text": "{\"target\":\"路明非\"}",
+          "parsed": {
+            "target": "路明非"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 44507,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": false
+    }
+  ],
+  "exportedAt": "2026-10-08T17:33:06.385Z"
+}

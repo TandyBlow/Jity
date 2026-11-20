@@ -1,0 +1,70 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_commit_p1",
+  "worldId": "world_school",
+  "advanceId": "advance_1",
+  "roundId": "round_1",
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 8,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "pointId": "p1",
+  "point": {
+    "worldId": "world_school",
+    "id": "p1",
+    "sequence": 1,
+    "kind": "normal",
+    "previousPointId": "root_0",
+    "roundId": "round_1",
+    "advanceId": "advance_1",
+    "trigger": "player",
+    "linkedFromPointId": null,
+    "timeAdvance": {
+      "boundary": "elapsed",
+      "duration": {
+        "amount": 2,
+        "unit": "second"
+      }
+    },
+    "entityDeltas": {}
+  },
+  "settlementGroups": [
+    {
+      "groupId": "group_cd",
+      "actorIds": [
+        "person_c",
+        "person_d"
+      ],
+      "positions": {
+        "person_d": {
+          "containerId": "corridor",
+          "slotId": null,
+          "relativeTo": null
+        }
+      },
+      "appearances": {
+        "person_c": [
+          {
+            "id": "change_c_door",
+            "text": "C 站在门边，一手扶着重门。",
+            "supersedes": []
+          }
+        ]
+      },
+      "tasksAchieved": {},
+      "subtasksAdded": {},
+      "personalities": {},
+      "sanities": {},
+      "taskCoverageIds": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "personalityCoverageIds": []
+    }
+  ]
+}

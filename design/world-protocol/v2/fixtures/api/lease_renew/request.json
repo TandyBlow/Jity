@@ -1,0 +1,7 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_renew",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7
+}

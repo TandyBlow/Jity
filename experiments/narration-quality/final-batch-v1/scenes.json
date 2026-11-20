@@ -1,0 +1,433 @@
+{
+  "world": {
+    "dataset": "dragon-raja-free-day",
+    "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
+    "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
+    "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
+    "premise": "Initial world snapshot plus one authored turn per case. These are final-batch inputs, authored by 01 and frozen before any candidate output; 01 therefore recuses from reviewing them and 05/03 review instead."
+  },
+  "scenes": [
+    {
+      "id": "fb-01-move-su-bridge",
+      "slug": "move-su-bridge",
+      "sourceRowId": "final-batch:dragon-raja-free-day#move-su-bridge",
+      "worldFamily": "dragon-raja-free-day-final",
+      "viewpointId": "su",
+      "locations": [
+        "east_arcade",
+        "bridge"
+      ],
+      "characters": [
+        "su"
+      ],
+      "items": [
+        "rifle_su",
+        "bridge_rail"
+      ],
+      "time": "3 分钟",
+      "delta": {
+        "苏茜": {
+          "位置": "跨溪小桥"
+        }
+      },
+      "targetText": "三分钟过去，苏茜从东回廊北端走上跨溪小桥。她把长枪换到靠桥内侧的一边，空出的手按住中段护栏，指节能感觉到那段铁件在轻轻摆。桥下的排水沟很浅，站不下人。她没有再往钟楼那头走。",
+      "categories": [
+        "movement"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "3 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "苏茜",
+          "from": "东回廊",
+          "to": "跨溪小桥"
+        }
+      ],
+      "licensedDetails": [
+        "长枪",
+        "桥面",
+        "排水沟",
+        "钟楼"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "苏茜",
+        "canKnow": [
+          "桥上护栏的松动",
+          "桥下排水沟"
+        ],
+        "mustNotReveal": [
+          "楚子航此刻在二层平台做什么"
+        ]
+      },
+      "forbiddenInventions": [
+        "桥面断裂",
+        "有人从桥上经过",
+        "钟楼内部的情况"
+      ],
+      "styleReferenceIds": [
+        "short2-0034-carved-line-worn"
+      ],
+      "notes": "Pure move plus time; every other sentence must stay on settled environment.",
+      "reviewState": "final-batch-frozen"
+    },
+    {
+      "id": "fb-02-no-change-chu",
+      "slug": "no-change-chu",
+      "sourceRowId": "final-batch:dragon-raja-free-day#no-change-chu",
+      "worldFamily": "dragon-raja-free-day-final",
+      "viewpointId": "chu",
+      "locations": [
+        "landing"
+      ],
+      "characters": [
+        "chu"
+      ],
+      "items": [
+        "rifle_chu",
+        "blue_radio"
+      ],
+      "time": "2 分钟",
+      "delta": {},
+      "targetText": "两分钟过去，楚子航没有离开二层平台。窗下的射击盲区仍旧空着，楼梯口那条蓝色识别带垂在原地，风把它掀起一角又放下。他把蓝方短讯机重新握稳，没有再看第二遍。",
+      "categories": [
+        "no_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "2 分钟"
+        }
+      ],
+      "licensedDetails": [
+        "二层平台",
+        "窗下盲区",
+        "楼梯口的蓝色识别带",
+        "蓝方短讯机"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "楚子航",
+        "canKnow": [
+          "平台窗口与盲区",
+          "楼梯口识别带"
+        ],
+        "mustNotReveal": [
+          "庭院里其他人的具体位置"
+        ]
+      },
+      "forbiddenInventions": [
+        "有人上楼",
+        "枪声",
+        "旗台已经被占"
+      ],
+      "styleReferenceIds": [
+        "dr-0021-no-change-three-people"
+      ],
+      "notes": "No settled change except time; any posture or event beyond the settled appearance is an addition.",
+      "reviewState": "final-batch-frozen"
+    },
+    {
+      "id": "fb-03-item-cup-tomiyama",
+      "slug": "item-cup-tomiyama",
+      "sourceRowId": "final-batch:dragon-raja-free-day#item-cup-tomiyama",
+      "worldFamily": "dragon-raja-free-day-final",
+      "viewpointId": "shen",
+      "locations": [
+        "rest"
+      ],
+      "characters": [
+        "shen",
+        "tomiyama"
+      ],
+      "items": [
+        "water",
+        "shen_band",
+        "blanket"
+      ],
+      "time": "2 分钟",
+      "delta": {
+        "休息区饮水杯": {
+          "位置": "富山雅史"
+        },
+        "富山雅史": {
+          "新增外貌": [
+            "手里端着半杯温水"
+          ]
+        }
+      },
+      "targetText": "两分钟过去，沈澄把杯子递过去。富山雅史接住，端在手里，没有立刻喝。叠好的红色识别带还放在长椅旁边，谁也没有去碰。",
+      "categories": [
+        "item_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "2 分钟"
+        },
+        {
+          "kind": "item_transfer",
+          "item": "休息区饮水杯",
+          "from": "沈澄",
+          "to": "富山雅史"
+        }
+      ],
+      "licensedDetails": [
+        "温水",
+        "红色识别带",
+        "长椅"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "沈澄",
+        "canKnow": [
+          "杯子的温度",
+          "富山雅史在接过杯子"
+        ],
+        "mustNotReveal": [
+          "富山雅史心里的判断"
+        ]
+      },
+      "forbiddenInventions": [
+        "水洒了",
+        "保温毯被挪动",
+        "有人进门"
+      ],
+      "styleReferenceIds": [
+        "fixture-goggles-transfer"
+      ],
+      "notes": "Only the cup changes hands. Moving the blanket or the band would be an added event.",
+      "reviewState": "final-batch-frozen"
+    },
+    {
+      "id": "fb-04-task-doctor-cold-pack",
+      "slug": "task-doctor-cold-pack",
+      "sourceRowId": "final-batch:dragon-raja-free-day#task-doctor-cold-pack",
+      "worldFamily": "dragon-raja-free-day-final",
+      "viewpointId": "doctor",
+      "locations": [
+        "aid"
+      ],
+      "characters": [
+        "doctor"
+      ],
+      "items": [
+        "medical_case",
+        "cold_pack",
+        "empty_bed"
+      ],
+      "time": "4 分钟",
+      "delta": {
+        "顾岚": {
+          "完成任务": [
+            "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+          ]
+        },
+        "未启用冷敷袋": {
+          "解除外貌": [
+            "封口完整，未揉开制冷层"
+          ],
+          "新增外貌": [
+            "已经揉开，外裹一层干布袋，放在空床床尾"
+          ]
+        }
+      },
+      "targetText": "四分钟过去，顾岚把冷敷袋揉开，隔着干布袋放到空床床尾，又把床脚的制动轮挨个踩实。空床与冷敷材料都备好了，她这才直起腰。桌角的伤情登记夹还空着林亦舟那一栏。",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "4 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "顾岚",
+          "goal": "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+        },
+        {
+          "kind": "item_state",
+          "item": "未启用冷敷袋",
+          "add": "已经揉开，外裹一层干布袋",
+          "remove": "封口完整，未揉开制冷层"
+        }
+      ],
+      "licensedDetails": [
+        "空床",
+        "制动轮",
+        "伤情登记夹"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "顾岚",
+        "canKnow": [
+          "处置室内的物品与登记夹",
+          "空床状态"
+        ],
+        "mustNotReveal": [
+          "林亦舟在路上会遇到什么"
+        ]
+      },
+      "forbiddenInventions": [
+        "林亦舟已经进门",
+        "冷敷已经用在谁身上",
+        "广播响起"
+      ],
+      "styleReferenceIds": [
+        "dr-0003-task-goggles"
+      ],
+      "notes": "Task completion carried by the object state, not by a field sentence; the registration blank stays blank because nothing settled filled it.",
+      "reviewState": "final-batch-frozen",
+      "taskGoals": [
+        "task_doctor_prepare"
+      ]
+    },
+    {
+      "id": "fb-05-sanity-shen-rest",
+      "slug": "sanity-shen-rest",
+      "sourceRowId": "final-batch:dragon-raja-free-day#sanity-shen-rest",
+      "worldFamily": "dragon-raja-free-day-final",
+      "viewpointId": "shen",
+      "locations": [
+        "rest"
+      ],
+      "characters": [
+        "shen",
+        "tomiyama"
+      ],
+      "items": [
+        "water",
+        "blanket"
+      ],
+      "time": "3 分钟",
+      "delta": {
+        "沈澄": {
+          "精神值": 46
+        }
+      },
+      "targetText": "三分钟过去，沈澄捧着杯子，手指在杯壁上慢慢活动。麻感退下去一点，她才把这句话说出口。富山雅史听完，只点了一下头，把保温毯往空位里折好。沈澄的肩膀比刚才松了些。",
+      "categories": [
+        "sanity_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "3 分钟"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "沈澄",
+          "from": 41,
+          "to": 46
+        }
+      ],
+      "licensedDetails": [
+        "温水",
+        "保温毯",
+        "长椅空位"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "沈澄",
+        "canKnow": [
+          "自己手指的麻感",
+          "富山雅史在听"
+        ],
+        "mustNotReveal": [
+          "富山雅史对伤情的私下判断"
+        ]
+      },
+      "forbiddenInventions": [
+        "医生进来",
+        "伤势恶化",
+        "有人被淘汰"
+      ],
+      "styleReferenceIds": [
+        "dr-0019-tomiyama-shen-symptom"
+      ],
+      "notes": "Sanity rises through a visible exchange; no number in the prose.",
+      "reviewState": "final-batch-frozen"
+    },
+    {
+      "id": "fb-06-move-task-lin-aid",
+      "slug": "move-task-lin-aid",
+      "sourceRowId": "final-batch:dragon-raja-free-day#move-task-lin-aid",
+      "worldFamily": "dragon-raja-free-day-final",
+      "viewpointId": "lin",
+      "locations": [
+        "west_arcade",
+        "annex",
+        "aid"
+      ],
+      "characters": [
+        "lin",
+        "doctor",
+        "shen"
+      ],
+      "items": [
+        "lin_gun",
+        "triage_clipboard"
+      ],
+      "time": "5 分钟",
+      "delta": {
+        "林亦舟": {
+          "位置": "演习医护处置室",
+          "完成任务": [
+            "在不加重脚踝伤势的情况下到达演习医护处置室"
+          ]
+        }
+      },
+      "targetText": "五分钟过去，林亦舟扶着西回廊的墙站起来，沿白线一格一格挪到医护附楼门口，再迈进演习医护处置室。进门时他把演习枪收在身侧，没让枪口对着人。顾岚在空床那边，他停在登记夹前面。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "5 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "林亦舟",
+          "from": "西回廊",
+          "to": "演习医护处置室"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "林亦舟",
+          "goal": "在不加重脚踝伤势的情况下到达演习医护处置室"
+        }
+      ],
+      "licensedDetails": [
+        "白线",
+        "演习枪",
+        "空床",
+        "伤情登记夹"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "林亦舟",
+        "canKnow": [
+          "自己脚踝的感觉",
+          "医护附楼的门口与登记夹"
+        ],
+        "mustNotReveal": [
+          "顾岚对伤情的判断"
+        ]
+      },
+      "forbiddenInventions": [
+        "有人扶他",
+        "伤口流血",
+        "沈澄开口说话"
+      ],
+      "styleReferenceIds": [
+        "short2-0034-carved-line-worn"
+      ],
+      "notes": "Movement and arrival are one settled fact; a porter or a blood detail would be an addition.",
+      "reviewState": "final-batch-frozen",
+      "taskGoals": [
+        "task_lin_leave"
+      ]
+    }
+  ]
+}

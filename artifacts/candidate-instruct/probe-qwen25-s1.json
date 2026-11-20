@@ -1,0 +1,287 @@
+{
+  "status": "COMPLETED",
+  "recordedAt": "2026-11-10T05:37:33.515Z",
+  "candidate": "instruct-narration-candidate",
+  "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "config": {
+    "contextSize": 4096,
+    "numThreads": 6,
+    "temperature": 0.7,
+    "retryTemperature": 0.4,
+    "maxTokens": 340,
+    "maxAttempts": 2,
+    "targetChars": 260,
+    "seed": 42,
+    "styleSample": null
+  },
+  "source": {
+    "head": "7bf860ea6a096ce5bb5f130b1c84d9aafe036468",
+    "status": "?? artifacts/candidate-instruct/\n?? design/narration-single-model-goal.md\n?? frontend/scripts/candidate-instruct/\n?? frontend/src/lib/world-engine/local/narration-candidates/",
+    "sha256": {
+      "src/lib/world-engine/local/narration-candidates/instruct/index.ts": "ddb823868e95d8eb7555dbebff544e7fb72cbb4eda2b3c220244038fa80979b6",
+      "src/lib/world-engine/local/narration-candidates/instruct/projection.ts": "0d06ad5090573b7d327879a544aaf65c20be240c3fde9f4696d0676cd2ca4afe",
+      "src/lib/world-engine/local/narration-candidates/instruct/prompt.ts": "411b382e85f02266dcc380b715d2d7c37b3ff165d249f0eeae69200172c6adbd",
+      "src/lib/world-engine/local/narration-candidates/instruct/verify.ts": "a7d19ab3b34689b29a9392842796fadcb1025af1e1732e5559844838b7c0d2f8",
+      "src/lib/world-engine/local/narration-candidates/instruct/facts.ts": "74b1f175b046c8642ea100e825bc8f66012046c584fe87d7112969a713260cce",
+      "src/lib/world-engine/local/narration-candidates/instruct/template.ts": "4c9305d54cfdfe2869fd4c4be6b3dbcc48b782c9894f8bebe3ab9651ef88d10c",
+      "src/lib/world-engine/local/narration-candidates/instruct/clean.ts": "562a51101d47b16f6610cea7be1dc14e39765a1e04ceedd9c0aa68d60aad3c2d",
+      "src/lib/world-engine/local/state.ts": "024b61fb63f2bec78c46a1cd4ed158a5798b4e28c31293b2d3765acbb6497b43",
+      "src/lib/world-engine/local/prompt.ts": "a21489ca6480d479d83a97cb750cf93011b468fa80e29e74aed8d1558d5f98b8",
+      "src/lib/world-engine/runtime/narration-alignment.ts": "42d163fcf7789ab7e0b163a4f7de1e5fa18164251fc6aa01ea76304a03d42cf6",
+      "src/lib/world-engine/runtime/committed-narration.ts": "a57656648aa9d4ea92cc5fdfb257de28122a3acc9530596642a9172b6040ad32"
+    }
+  },
+  "assets": {
+    "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "modelSha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "modelBytes": 1117320736,
+    "wllamaSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "cases": [
+    {
+      "id": "S1-move-time",
+      "note": "主角从服务巷走到器材棚，时间 2 分钟；棚里有人和器材"
+    }
+  ],
+  "runs": [
+    {
+      "caseId": "S1-move-time",
+      "note": "主角从服务巷走到器材棚，时间 2 分钟；棚里有人和器材",
+      "playerInput": "我把护目镜推上去，朝器材棚走过去。",
+      "time": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "minute"
+        }
+      },
+      "wallMs": 36882,
+      "accepted": false,
+      "status": "rejected",
+      "text": "我从西侧服务巷走到器材棚，时间过去 2 分钟。枪声在远处回荡，我下意识缩着肩膀，但很快又调整好姿态。",
+      "template": "qwen2.5-instruct",
+      "strategyVersion": "instruct-narration-candidate-v1",
+      "timings": {
+        "totalMs": 36871.74499988556,
+        "attemptMs": [
+          29326.14499950409,
+          7516.170000076294
+        ],
+        "firstTokenMs": 22794.34500026703,
+        "deadlineExceeded": false
+      },
+      "issues": [
+        {
+          "kind": "too_short",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "50 chars < 90"
+        },
+        {
+          "kind": "first_person_narrator",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "first person outside dialogue (2)"
+        },
+        {
+          "kind": "movement_without_fact",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "claims movement involving 西侧服务巷",
+          "sentence": "我从西侧服务巷走到器材棚，时间过去 2 分钟"
+        },
+        {
+          "kind": "fact_omitted",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "路明非从西侧服务巷走到器材棚"
+        },
+        {
+          "kind": "too_short",
+          "severity": "hard",
+          "attempt": 2,
+          "detail": "50 chars < 90"
+        },
+        {
+          "kind": "first_person_narrator",
+          "severity": "hard",
+          "attempt": 2,
+          "detail": "first person outside dialogue (2)"
+        },
+        {
+          "kind": "movement_without_fact",
+          "severity": "hard",
+          "attempt": 2,
+          "detail": "claims movement involving 西侧服务巷",
+          "sentence": "我从西侧服务巷走到器材棚，时间过去 2 分钟"
+        },
+        {
+          "kind": "fact_omitted",
+          "severity": "hard",
+          "attempt": 2,
+          "detail": "路明非从西侧服务巷走到器材棚"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "durationMs": 29326,
+          "firstTokenMs": 22794,
+          "raw": "我从西侧服务巷走到器材棚，时间过去 2 分钟。枪声在远处回荡，我下意识缩着肩膀，但很快又调整好姿态。",
+          "cleaned": "我从西侧服务巷走到器材棚，时间过去 2 分钟。枪声在远处回荡，我下意识缩着肩膀，但很快又调整好姿态。",
+          "accepted": false,
+          "finishReason": null,
+          "error": null,
+          "issues": [
+            {
+              "kind": "too_short",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "50 chars < 90"
+            },
+            {
+              "kind": "first_person_narrator",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "first person outside dialogue (2)"
+            },
+            {
+              "kind": "movement_without_fact",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "claims movement involving 西侧服务巷",
+              "sentence": "我从西侧服务巷走到器材棚，时间过去 2 分钟"
+            },
+            {
+              "kind": "fact_omitted",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "路明非从西侧服务巷走到器材棚"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "durationMs": 7516,
+          "firstTokenMs": 3246,
+          "raw": "我从西侧服务巷走到器材棚，时间过去 2 分钟。枪声在远处回荡，我下意识缩着肩膀，但很快又调整好姿态。",
+          "cleaned": "我从西侧服务巷走到器材棚，时间过去 2 分钟。枪声在远处回荡，我下意识缩着肩膀，但很快又调整好姿态。",
+          "accepted": false,
+          "finishReason": null,
+          "error": null,
+          "issues": [
+            {
+              "kind": "too_short",
+              "severity": "hard",
+              "attempt": 2,
+              "detail": "50 chars < 90"
+            },
+            {
+              "kind": "first_person_narrator",
+              "severity": "hard",
+              "attempt": 2,
+              "detail": "first person outside dialogue (2)"
+            },
+            {
+              "kind": "movement_without_fact",
+              "severity": "hard",
+              "attempt": 2,
+              "detail": "claims movement involving 西侧服务巷",
+              "sentence": "我从西侧服务巷走到器材棚，时间过去 2 分钟"
+            },
+            {
+              "kind": "fact_omitted",
+              "severity": "hard",
+              "attempt": 2,
+              "detail": "路明非从西侧服务巷走到器材棚"
+            }
+          ]
+        }
+      ],
+      "projection": {
+        "viewpoint": "路明非",
+        "place": "器材棚",
+        "time": "2009年10月17日 15:22（推进 2 分钟）",
+        "characters": [
+          "路明非",
+          "芬格尔",
+          "秦越"
+        ],
+        "items": [
+          "路明非的护目镜",
+          "路明非的演习背心",
+          "开盖演习弹药箱",
+          "器材笼挂锁",
+          "器材领用簿",
+          "备用蓝色识别带"
+        ],
+        "facts": [
+          {
+            "kind": "time",
+            "statement": "时间过去 2 分钟（正文里要让人看出大概过了2分钟）",
+            "mandatory": true
+          },
+          {
+            "kind": "moved",
+            "statement": "路明非从西侧服务巷走到器材棚",
+            "mandatory": true
+          }
+        ],
+        "playerAction": "我把护目镜推上去，朝器材棚走过去。"
+      },
+      "progressTail": [
+        {
+          "status": "streaming",
+          "chars": 50,
+          "elapsedMs": 36866
+        },
+        {
+          "status": "streaming",
+          "chars": 50,
+          "elapsedMs": 36869
+        },
+        {
+          "status": "rejected",
+          "chars": 50,
+          "elapsedMs": 36872
+        }
+      ],
+      "progressEvents": 79
+    }
+  ],
+  "browser": "157.0.4341.42",
+  "loadMs": 49524,
+  "topology": {
+    "multithread": true,
+    "numThreads": 6
+  },
+  "engineInfo": {
+    "backend": "wllama",
+    "modelId": "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+  },
+  "summary": {
+    "cases": 1,
+    "calls": 2,
+    "accepted": 0,
+    "meanCallMs": 18421,
+    "p50CallMs": 29326,
+    "maxCallMs": 29326,
+    "p50FirstTokenMs": 22794,
+    "issueCounts": {
+      "too_short": 2,
+      "first_person_narrator": 2,
+      "movement_without_fact": 2,
+      "fact_omitted": 2
+    }
+  },
+  "completedAt": "2026-11-10T05:39:07.399Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}

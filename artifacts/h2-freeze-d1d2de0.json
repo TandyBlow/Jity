@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-10-28T07:30:00Z",
+  "status": "FROZEN",
+  "scope": "A3-2 closed and the agreed H2 acceptance matrix frozen on the pinned integration combination",
+  "authorization": "User reviewed the archive hashes, source identity, 10 phases, 8 start/stop pairs, four databases and the redacted 35 frozen rows, then agreed to close A3-2 and freeze this H2 scope",
+  "baseline": {
+    "aCommit": "1ef34e7c959c5addc803ea91aea7992e005d27ef",
+    "aBase": "3734a52",
+    "bCommit": "21a95f0",
+    "bBase": "552148c",
+    "integrationCommit": "d1d2de0cf2805d0f3ce1d182cde57821800d3bef",
+    "integrationTree": "6f16783c834b758d4f8a907f7a972e1836e0ed16",
+    "base": "79f8120",
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+    "contractArtifacts": 149,
+    "protocolVersion": 2,
+    "responseSchemaVersion": 2,
+    "stateSchemaVersion": 1,
+    "traceFormatVersion": 1,
+    "rollRuleVersion": "reaction-d20-v1",
+    "rollTarget": 11
+  },
+  "evidence": {
+    "archiveCommit": "a41a9d4",
+    "directory": "artifacts/h2-integration-d1d2de0",
+    "manifest": "artifacts/h2-integration-d1d2de0/manifest.json",
+    "manifestSha256": "1a92a165740a861cf8a8b89504bd54a730bdc9d27dfbe5a3de8ed64b64efe21d",
+    "manifestFiles": 14,
+    "archivePrecedesFreeze": true,
+    "allManifestFileHashesMatchGitBlobs": true,
+    "credentialScrubPassed": true,
+    "frozenWorkRows": 35,
+    "frozenWorkRowsMatchingAcceptedHash": 34,
+    "deliberateMismatch": "corrupt.db/world_1 (injected action_bytes, kept original accepted hash)",
+    "candidateDigestsRecomputed": 6,
+    "candidateDigestMismatches": 0,
+    "settledUnitDigestsRecomputed": 3,
+    "settledUnitDigestMismatches": 0,
+    "serviceStarts": 8,
+    "serviceStops": 8,
+    "remainingAcceptanceServiceProcesses": 0,
+    "remoteCi": {
+      "run": 40649575022,
+      "head": "a41a9d4",
+      "jobs": ["backend", "frontend", "world-interface"],
+      "result": "success"
+    }
+  },
+  "acceptance": {
+    "main": "PASS_MAIN",
+    "successor": "PASS_SUCCESSOR",
+    "postRestart": "PASS_POST_RESTART",
+    "missingFrozenPayload": "PASS_FROZEN_MISSING",
+    "corruptFrozenBytes": "PASS_FROZEN_CORRUPT",
+    "corruptActiveGroup": "PASS_FROZEN_CORRUPT",
+    "agreedFullH2Matrix": "PASSED"
+  },
+  "boundaries": {
+    "takeover": "release/acquire epoch handover with controlled restore and sealed-point commit",
+    "restart": "same SQLite database and held lease; saved DFS stack and roll identity survive; no subsequent run in that world",
+    "successor": "sealed predecessor with reserved successor, before successor begin",
+    "model": "scripted model through the real controller and real HTTP transport",
+    "wallClockTtlExpiryTakeover": "not exercised by this matrix",
+    "realModelBrowserEvaluation": "not exercised by this matrix",
+    "b3FullEvaluation": "deferred",
+    "longTermActionHistory": "not added"
+  },
+  "priorFreeze": {
+    "record": "artifacts/h2-freeze-6b809dc-0cb1951.json",
+    "status": "retained with its original scope; not replaced or widened by this record"
+  },
+  "signoff": "artifacts/a3-2-signoff-d1d2de0.md",
+  "immutability": "Freeze binds integration d1d2de0 and archive a41a9d4. Later documentation commits do not change the frozen content; any change to product sources, the contract or the H2 harness assertions requires a newly pinned combination and a re-run."
+}

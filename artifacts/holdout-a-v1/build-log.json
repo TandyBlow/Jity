@@ -1,0 +1,37 @@
+{
+ "status": "built",
+ "sources": 12,
+ "facts": 60,
+ "verdicts": {
+  "h01": "pass",
+  "h02": "pass",
+  "h03": "pass",
+  "h04": "pass",
+  "h05": "pass",
+  "h06": "pass",
+  "h07": "pass",
+  "h08": "pass",
+  "h09": "pass",
+  "h10": "pass",
+  "h11": "pass",
+  "h12": "pass"
+ },
+ "relations": {
+  "h01": 1,
+  "h02": 1,
+  "h03": 3,
+  "h04": 1,
+  "h05": 1,
+  "h06": 3,
+  "h07": 1,
+  "h08": 3,
+  "h09": 1,
+  "h10": 3,
+  "h11": 1,
+  "h12": 3
+ },
+ "nearDuplicateScreen": "pass",
+ "dbSha256": "9d7f26a8bf1028cdf0da3e43d849c02b4649a877cee3b24bd2c04b56b50a735e",
+ "packageSha256": "9dc9615482fe2d796be3aa12ba983eb20852c46d65246d7cf2b36979087737eb",
+ "packageSha256Reproducible": true
+}

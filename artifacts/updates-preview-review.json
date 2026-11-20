@@ -1,0 +1,841 @@
+{
+  "status": "REVIEW_FINDINGS",
+  "recordedAt": "2026-10-25T17:31:28.831Z",
+  "layer": "real A FastAPI/uvicorn fixture service + B ControllerDriver/HttpWorldTransport",
+  "cases": [
+    {
+      "mode": "position_appearance",
+      "reachedLastStage": true,
+      "stepsExecuted": 3,
+      "endedByReviewStepLimit": false,
+      "calls": [
+        {
+          "key": "group_2#position",
+          "position": "lobby"
+        },
+        {
+          "key": "group_2#appearance",
+          "position": "classroom1"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {
+                "person_a": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ]
+        }
+      ],
+      "failure": null
+    },
+    {
+      "mode": "time_scan",
+      "reachedLastStage": false,
+      "stepsExecuted": 2,
+      "endedByReviewStepLimit": false,
+      "calls": [
+        {
+          "key": "time_scan:point_1#tasks",
+          "position": "lobby"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "time_scan:point_1",
+              "actorIds": [],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "error": {
+            "name": "ProtocolError",
+            "code": null
+          }
+        }
+      ],
+      "failure": "ProtocolError: PreviewPointRequest: data/settlementGroups/0/actorIds must NOT have fewer than 1 items, data/settlementGroups/0 must match \"then\" schema"
+    },
+    {
+      "mode": "personality_sanity",
+      "reachedLastStage": false,
+      "stepsExecuted": 4,
+      "endedByReviewStepLimit": false,
+      "calls": [
+        {
+          "key": "group_2#tasks",
+          "position": "lobby"
+        },
+        {
+          "key": "group_2#personality",
+          "position": "lobby"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "task_a_root"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ]
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "task_a_root"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {
+                "person_a": [
+                  {
+                    "id": "review_change",
+                    "text": "review personality",
+                    "supersedes": []
+                  }
+                ]
+              },
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "request_malformed"
+          }
+        }
+      ],
+      "terminal": {
+        "kind": "stop",
+        "reason": "fix_request:request_malformed"
+      },
+      "failure": null
+    },
+    {
+      "mode": "forward_task_reference",
+      "reachedLastStage": false,
+      "stepsExecuted": 15,
+      "endedByReviewStepLimit": true,
+      "calls": [
+        {
+          "key": "group_2#tasks",
+          "position": "lobby"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "review_future_task"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context"
+        }
+      ],
+      "failure": null
+    }
+  ]
+}

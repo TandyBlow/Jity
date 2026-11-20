@@ -1,0 +1,87 @@
+{
+ "pack": "cf24-t1-batch-08",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0137",
+   "verdict": "fail",
+   "categories": [
+    "repetition"
+   ],
+   "flags": [],
+   "reason": "“擦得透亮”与“玻璃罩透亮起来”重复"
+  },
+  {
+   "code": "c0027",
+   "verdict": "fail",
+   "categories": [
+    "repetition"
+   ],
+   "flags": [],
+   "reason": "同 c0137"
+  },
+  {
+   "code": "c0099",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0139",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "追加“铜灯罩还亮着”，事实之外新增状态"
+  },
+  {
+   "code": "c0160",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0028",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0156",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "移动句里追加“抱起一叠纸”，纸不在可见清单"
+  },
+  {
+   "code": "c0152",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state",
+    "position"
+   ],
+   "flags": [],
+   "reason": "追加“抱着一叠纸在石板上站住”：新增动作与物件，并断言在石板上停留"
+  },
+  {
+   "code": "c0162",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0054",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}

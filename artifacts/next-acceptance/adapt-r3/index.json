@@ -1,0 +1,176 @@
+{
+ "purpose": "adapter version bump for the integrity boundary, plus the read-only preview page that calls it",
+ "noTraining": true,
+ "readOnly": true,
+ "modelSentencesNotUsed": true,
+ "versionBump": {
+  "reason": "replay found a digest inconsistency must not fall back to a checkpoint",
+  "previous": "adapt-r2 b706b1c used a matching checkpoint whenever replay failed, masking LedgerMismatch",
+  "now": "classify_replay_failure separates ledger inconsistency from replay unavailable; the ledger case withholds the checkpoint"
+ },
+ "boundaryCases": {
+  "ledgerWithCheckpoint": {
+   "world": "world_3",
+   "point": "t2",
+   "evidence": {
+    "worldId": "world_3",
+    "pointId": "t2",
+    "sequence": 2,
+    "kind": "normal",
+    "previousPointId": "t1",
+    "delta": {
+     "person_a": {
+      "entityId": "person_a",
+      "sanitySet": 2
+     }
+    },
+    "sentences": [],
+    "notDisplayed": [],
+    "gaps": [
+     "replay found an inconsistency; the checkpoint is not used to mask it"
+    ],
+    "provenance": []
+   },
+   "reading": "checkpointFound true and checkpointDigestMatchesPoint true, still a gap"
+  },
+  "replayUnavailableWithCheckpoint": {
+   "world": "world_4",
+   "point": "u1",
+   "evidence": {
+    "worldId": "world_4",
+    "pointId": "u1",
+    "sequence": 1,
+    "kind": "normal",
+    "previousPointId": "root_w4",
+    "delta": {
+     "person_a": {
+      "entityId": "person_a",
+      "sanitySet": 8
+     }
+    },
+    "sentences": [
+     "林川的理智下降（10→8）。"
+    ],
+    "notDisplayed": [],
+    "gaps": [],
+    "provenance": [
+     {
+      "entityId": "person_a",
+      "stateSource": "checkpoint",
+      "fieldsRead": [
+       "sanitySet",
+       "previous.sanity"
+      ],
+      "checkpointDigestMatchesPoint": true,
+      "replayOk": false,
+      "replayAgreesWithCheckpoint": null
+     }
+    ]
+   },
+   "reading": "replay cannot run (missing round row), the checkpoint answers and the fact says source=checkpoint"
+  },
+  "replayUnavailableWithoutCheckpoint": {
+   "world": "world_4",
+   "point": "u2",
+   "evidence": {
+    "worldId": "world_4",
+    "pointId": "u2",
+    "sequence": 2,
+    "kind": "normal",
+    "previousPointId": "u1",
+    "delta": {
+     "person_a": {
+      "entityId": "person_a",
+      "sanitySet": 5
+     }
+    },
+    "sentences": [],
+    "notDisplayed": [],
+    "gaps": [
+     "state not recoverable"
+    ],
+    "provenance": []
+   }
+  },
+  "ledgerWithoutCheckpoint": {
+   "world": "world_1",
+   "point": "p7",
+   "evidence": {
+    "worldId": "world_1",
+    "pointId": "p7",
+    "sequence": 7,
+    "kind": "normal",
+    "previousPointId": "p6",
+    "delta": {
+     "person_a": {
+      "entityId": "person_a",
+      "sanitySet": 3
+     }
+    },
+    "sentences": [],
+    "notDisplayed": [],
+    "gaps": [
+     "replay found an inconsistency; the checkpoint is not used to mask it"
+    ],
+    "provenance": []
+   }
+  }
+ },
+ "fixture": {
+  "worlds": 4,
+  "points": 16,
+  "facts": 13,
+  "gaps": 4,
+  "notDisplayed": 1
+ },
+ "realHistory": {
+  "worlds": 5,
+  "points": 10,
+  "facts": 10,
+  "gaps": 0,
+  "note": "every committed delta is empty, so only point scoped no-change sentences appear"
+ },
+ "page": {
+  "route": "/world/preview",
+  "source": "frontend/src/app/world/preview/page.tsx",
+  "stateLogic": "preview-state.ts, five unit tests",
+  "build": "next build ok, route 2.01 kB",
+  "tests": "608 passed",
+  "typecheck": "tsc clean",
+  "lint": "no new warnings from the preview files",
+  "server": "experiments/world-components/preview_server.py, read-only, CORS, /worlds and /preview",
+  "notClaimed": "no browser screenshot; the page was served and its shell rendered, the data path was exercised over HTTP with curl"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/adapt-r3/fixture-preview.txt",
+   "bytes": 3466,
+   "sha256": "b2278ad88872088cd959910670b6aee4fdb6c296bdf8829690c9e4e160838c33"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r3/fixture-preview.json",
+   "bytes": 8894,
+   "sha256": "6634a06e41bdb8c419e25c461d443b5b8174a229c284756d6c9c72373d3f08b1"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r3/fixture-gaps.json",
+   "bytes": 1374,
+   "sha256": "1adc7eca2b7fe4e374ff9894494e052f99a9f2710c986ba974b45136b1051c31"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r3/fixture-not-displayed.json",
+   "bytes": 684,
+   "sha256": "362f0450551e957ecdc7753d7bab3e5dbfd680d39b99da6ffa06ad7933eb3198"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r3/real-preview.txt",
+   "bytes": 1537,
+   "sha256": "75dd6c3fd88e50580e3a35a4ab4603e4cd335b2a947e2f2ec0461db49564e645"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r3/real-preview.json",
+   "bytes": 4876,
+   "sha256": "49861402aa9809b2c93ce697b11a90c85b3d59b65f17dd70ec360025ba09ca07"
+  }
+ ]
+}

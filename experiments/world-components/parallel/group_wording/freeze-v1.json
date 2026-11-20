@@ -1,0 +1,1080 @@
+{
+ "protocol": "group-wording-v1",
+ "created": "2026-11-08",
+ "question": "Per-fact calls + deterministic organizer (arm S) vs joint group call (arm J), same checkpoint, no training.",
+ "material": {
+  "path": "artifacts\\world-components\\organize-wording\\sentence-scale-v1.jsonl",
+  "sha256": "2f537830797986b7678566d0f90ff605749a7ad8f0aadef34cf7c6cd27f43816",
+  "local_raw_sha256": "712db524c2e0fdf671e763ae81998e49b9bf91d591ee43babc55c9d47090981a",
+  "note": "checkout is CRLF; canonical hash is over LF-normalized bytes, same as HPC copy and the recorded freeze"
+ },
+ "checkpoint": {
+  "name": "sentence-base-784m ckpt-final",
+  "remote_path": "~/sentence784_run/out/ckpt-final",
+  "model_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+  "spiece_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "why": "the only surviving checkpoint behind either recorded 2/19 result; B77 weights were never saved"
+ },
+ "decoding": {
+  "max_input": 512,
+  "max_new": 128,
+  "num_beams": 1,
+  "do_sample": false,
+  "batch": 6,
+  "stop_on_eos": true
+ },
+ "organizer": {
+  "file": "organizer_v1.py",
+  "sha256": "867dd6dd424f022d736ff5217b25b289827348e7f7db68becf72adfe0d23678f",
+  "version": "v1: same-entity continuation merge, group join with '。', edge target gets '随后，'"
+ },
+ "rows": [
+  {
+   "sourceId": "n4n-109",
+   "split": "fixed",
+   "sceneGroup": "loc_seawall",
+   "context": {
+    "place": "雾堤·堤面",
+    "visible": "雾警钟、钟绳、警示灯、外袍",
+    "scene": "黄昏；雾，浪大",
+    "viewpoint": "第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_han",
+     "name": "韩渡",
+     "from": "潮渡",
+     "to": "雾堤",
+     "at": "雾堤",
+     "source": {
+      "field": "positionSet"
+     },
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "moved",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "from": "潮渡",
+     "to": "雾堤",
+     "at": "雾堤",
+     "source": {
+      "field": "positionSet"
+     },
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f2",
+     "kind": "personality_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "开始愿意先开口",
+     "at": "雾堤",
+     "source": {
+      "field": "personalityChanges"
+     },
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f1",
+       "f2"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name",
+     "f2": "omit"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "n4n-109:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 3
+    },
+    {
+     "callId": "n4n-109:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 3
+    },
+    {
+     "callId": "n4n-109:f2",
+     "factIds": [
+      "f2"
+     ],
+     "idx": 3,
+     "total": 3
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "n4n-109:g1",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "n4n-109:g2",
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "recorded_784_assembled": "韩渡从潮渡走到雾堤。沈砚从潮渡走到雾堤,开始愿意先开口。",
+   "recorded_B77_assembled": "韩渡从潮渡走到雾堤。沈砚从潮渡走到雾堤,开始愿意先开口。",
+   "recorded_A77_assembled": "韩渡从潮渡走到雾堤。沈砚从潮渡走到雾堤。沈砚开始愿意先开口。"
+  },
+  {
+   "sourceId": "n4n-64",
+   "split": "fixed",
+   "sceneGroup": "loc_ferry",
+   "context": {
+    "place": "潮渡·石阶·浅滩",
+    "visible": "系泊绳、外袍、油布包、油纸伞",
+    "scene": "黎明；低潮，海风，湿冷",
+    "viewpoint": "第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "taskId": "task_rope",
+     "goal": "找回被潮水冲走的系泊绳",
+     "resultText": "把系泊绳从浅滩拖了回来",
+     "at": "潮渡",
+     "source": {
+      "field": "tasksAchieved",
+      "taskId": "task_rope"
+     },
+     "text": "把系泊绳从浅滩拖了回来",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "sanity_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "from": 11,
+     "to": 9,
+     "at": "潮渡",
+     "source": {
+      "field": "sanitySet"
+     },
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "n4n-64:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "n4n-64:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "n4n-64:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 1
+    }
+   ],
+   "recorded_784_assembled": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+   "recorded_B77_assembled": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+   "recorded_A77_assembled": "沈砚把系泊绳从浅滩拖了回来。沈砚心里发紧。"
+  },
+  {
+   "sourceId": "n4n-65",
+   "split": "fixed",
+   "sceneGroup": "loc_archive",
+   "context": {
+    "place": "潮汐档案馆·长桌",
+    "visible": "潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞",
+    "scene": "午后；雨，天窗漏雨",
+    "viewpoint": "第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "taskId": "task_log",
+     "goal": "补全潮汐簿缺页",
+     "resultText": "把潮汐簿缺的那页补全了",
+     "at": "潮汐档案馆",
+     "source": {
+      "field": "tasksAchieved",
+      "taskId": "task_log"
+     },
+     "text": "把潮汐簿缺的那页补全了",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "sanity_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "from": 9,
+     "to": 11,
+     "at": "潮汐档案馆",
+     "source": {
+      "field": "sanitySet"
+     },
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "n4n-65:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "n4n-65:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "n4n-65:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 1
+    }
+   ],
+   "recorded_784_assembled": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+   "recorded_B77_assembled": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+   "recorded_A77_assembled": "沈砚把潮汐簿缺的那页补全了。沈砚心里发紧。"
+  },
+  {
+   "sourceId": "n4n-74",
+   "split": "fixed",
+   "sceneGroup": "loc_lighthouse",
+   "context": {
+    "place": "旧灯塔·石阶·旋梯·塔顶",
+    "visible": "油布包、备用灯芯、铜灯罩、抹布、擦铜油",
+    "scene": "夜；海雾，海风",
+    "viewpoint": "第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "taskId": "task_wipe",
+     "goal": "把灯塔的灯罩擦干净",
+     "resultText": "把灯罩擦得透亮",
+     "at": "旧灯塔",
+     "source": {
+      "field": "tasksAchieved",
+      "taskId": "task_wipe"
+     },
+     "text": "把灯罩擦得透亮",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "袖口沾了铜油",
+     "at": "旧灯塔",
+     "source": {
+      "field": "appearanceChanges"
+     },
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "n4n-74:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "n4n-74:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "n4n-74:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 1
+    }
+   ],
+   "recorded_784_assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+   "recorded_B77_assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+   "recorded_A77_assembled": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。"
+  },
+  {
+   "sourceId": "n4n-75",
+   "split": "fixed",
+   "sceneGroup": "loc_archive",
+   "context": {
+    "place": "潮汐档案馆·长桌",
+    "visible": "潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞",
+    "scene": "午后；雨，天窗漏雨",
+    "viewpoint": "第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "entityId": "char_atang",
+     "name": "阿棠",
+     "taskId": "task_paper",
+     "goal": "把干纸送到档案馆",
+     "resultText": "把一叠干纸放在桌角",
+     "at": "潮汐档案馆",
+     "source": {
+      "field": "tasksAchieved",
+      "taskId": "task_paper"
+     },
+     "text": "把一叠干纸放在桌角",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "entityId": "char_atang",
+     "name": "阿棠",
+     "text": "鞋底带着早市的泥水",
+     "at": "潮汐档案馆",
+     "source": {
+      "field": "appearanceChanges"
+     },
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "n4n-75:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "n4n-75:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "n4n-75:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 1
+    }
+   ],
+   "recorded_784_assembled": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+   "recorded_B77_assembled": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+   "recorded_A77_assembled": "阿棠把一叠干纸放在桌角。阿棠的鞋底带着早市的泥水。"
+  },
+  {
+   "sourceId": "n4n-87",
+   "split": "fixed",
+   "sceneGroup": "loc_seawall",
+   "context": {
+    "place": "雾堤·堤面",
+    "visible": "雾警钟、钟绳、警示灯、外袍",
+    "scene": "黄昏；雾，浪大",
+    "viewpoint": "第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "entityId": "char_han",
+     "name": "韩渡",
+     "from": "潮渡",
+     "to": "雾堤",
+     "at": "雾堤",
+     "source": {
+      "field": "positionSet"
+     },
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "entityId": "char_han",
+     "name": "韩渡",
+     "taskId": "task_bell_rope",
+     "goal": "把雾警钟的绳子系紧",
+     "resultText": "把松脱的钟绳重新系紧",
+     "at": "雾堤",
+     "source": {
+      "field": "tasksAchieved",
+      "taskId": "task_bell_rope"
+     },
+     "text": "把松脱的钟绳重新系紧",
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "n4n-87:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "n4n-87:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "n4n-87:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 1
+    }
+   ],
+   "recorded_784_assembled": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+   "recorded_B77_assembled": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+   "recorded_A77_assembled": "韩渡从潮渡走到雾堤。韩渡把松脱的钟绳重新系紧。"
+  },
+  {
+   "sourceId": "t24",
+   "split": "regression",
+   "sceneGroup": "潮生巷",
+   "context": {
+    "place": "潮生巷",
+    "visible": "鱼筐、石板、纸灯笼、排水沟、墙根、水洼",
+    "scene": "雨后；雨停；纸灯笼",
+    "viewpoint": "沈砚；第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "name": "纸灯笼",
+     "text": "被风扯破一角",
+     "entityGroup": "items"
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "name": "排水沟",
+     "text": "里面积了泥",
+     "entityGroup": "items"
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "name": "沈砚",
+     "text": "把纸灯笼扶正",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "name": "阿棠",
+     "text": "把鱼筐放在门槛边",
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "parallel"
+      ]
+     },
+     {
+      "facts": [
+       "f2",
+       "f3"
+      ],
+      "links": [
+       "parallel"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name",
+     "f2": "name",
+     "f3": "name"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "t24:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 4
+    },
+    {
+     "callId": "t24:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 4
+    },
+    {
+     "callId": "t24:f2",
+     "factIds": [
+      "f2"
+     ],
+     "idx": 3,
+     "total": 4
+    },
+    {
+     "callId": "t24:f3",
+     "factIds": [
+      "f3"
+     ],
+     "idx": 4,
+     "total": 4
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "t24:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "t24:g2",
+     "factIds": [
+      "f2",
+      "f3"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "recorded_784_assembled": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+   "recorded_B77_assembled": "纸灯笼被风扯破一角,排水沟的里面积了泥。阿棠把鱼筐放在门槛边。",
+   "recorded_A77_assembled": "纸灯笼的被风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。"
+  },
+  {
+   "sourceId": "v20",
+   "split": "regression",
+   "sceneGroup": "潮渡>栈桥",
+   "context": {
+    "place": "潮渡>栈桥",
+    "visible": "缆绳、渡船、船灯、系泊绳、木桩、缆绳、船灯、水面、栈桥",
+    "scene": "清晨；薄雾；船灯",
+    "viewpoint": "沈砚；第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "name": "沈砚",
+     "from": "潮生巷",
+     "to": "潮渡",
+     "direction": "平",
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f1",
+     "kind": "sanity_changed",
+     "name": "沈砚",
+     "from": 9,
+     "to": 12,
+     "entityGroup": "characters"
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "name": "沈砚",
+     "text": "把渡船推离栈桥",
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "links": [
+       "continuation",
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name",
+     "f2": "name"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "v20:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 3
+    },
+    {
+     "callId": "v20:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 3
+    },
+    {
+     "callId": "v20:f2",
+     "factIds": [
+      "f2"
+     ],
+     "idx": 3,
+     "total": 3
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "v20:g1",
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "idx": 1,
+     "total": 1
+    }
+   ],
+   "recorded_784_assembled": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+   "recorded_B77_assembled": "沈砚从潮生巷走到潮渡,心里松快了些。",
+   "recorded_A77_assembled": "沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。"
+  },
+  {
+   "sourceId": "v07",
+   "split": "regression",
+   "sceneGroup": "潮汐档案馆",
+   "context": {
+    "place": "潮汐档案馆",
+    "visible": "铜灯、蜡烛、潮汐簿、冷茶、天窗、长桌、门槛、铜灯",
+    "scene": "夜；小雨；铜灯",
+    "viewpoint": "沈砚；第三人称"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "name": "铜灯",
+     "text": "灯罩上积了灰",
+     "entityGroup": "items"
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "name": "潮汐簿",
+     "text": "封面蒙了一层灰",
+     "entityGroup": "items"
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "name": "沈砚",
+     "text": "把铜灯擦亮",
+     "entityGroup": "characters"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "parallel"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name",
+     "f2": "name"
+    },
+    "edges": []
+   },
+   "A_calls": [
+    {
+     "callId": "v07:f0",
+     "factIds": [
+      "f0"
+     ],
+     "idx": 1,
+     "total": 3
+    },
+    {
+     "callId": "v07:f1",
+     "factIds": [
+      "f1"
+     ],
+     "idx": 2,
+     "total": 3
+    },
+    {
+     "callId": "v07:f2",
+     "factIds": [
+      "f2"
+     ],
+     "idx": 3,
+     "total": 3
+    }
+   ],
+   "B_calls": [
+    {
+     "callId": "v07:g1",
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "idx": 1,
+     "total": 2
+    },
+    {
+     "callId": "v07:g2",
+     "factIds": [
+      "f2"
+     ],
+     "idx": 2,
+     "total": 2
+    }
+   ],
+   "recorded_784_assembled": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+   "recorded_B77_assembled": "铜灯的灯罩上积了灰,封面蒙了一层灰。沈砚把铜灯擦亮。",
+   "recorded_A77_assembled": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。"
+  }
+ ],
+ "samples": [
+  {
+   "sampleId": "GW-01",
+   "sourceId": "n4n-109",
+   "groupFacts": [
+    "f1",
+    "f2"
+   ],
+   "role": "fixed-multi"
+  },
+  {
+   "sampleId": "GW-02",
+   "sourceId": "n4n-64",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi"
+  },
+  {
+   "sampleId": "GW-03",
+   "sourceId": "n4n-65",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi"
+  },
+  {
+   "sampleId": "GW-04",
+   "sourceId": "n4n-74",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi"
+  },
+  {
+   "sampleId": "GW-05",
+   "sourceId": "n4n-75",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi"
+  },
+  {
+   "sampleId": "GW-06",
+   "sourceId": "n4n-87",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "fixed-multi"
+  },
+  {
+   "sampleId": "GW-07",
+   "sourceId": "t24",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi"
+  },
+  {
+   "sampleId": "GW-08",
+   "sourceId": "t24",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "role": "regression-multi"
+  },
+  {
+   "sampleId": "GW-09",
+   "sourceId": "v20",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "role": "regression-multi"
+  },
+  {
+   "sampleId": "GW-10",
+   "sourceId": "v07",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi"
+  }
+ ],
+ "prompts": {
+  "A:n4n-109:f0": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=1/3\n事实（只列本组，按顺序）：\nf0｜移动｜韩渡｜潮渡→雾堤｜方向=平\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-109:f1": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=2/3\n事实（只列本组，按顺序）：\nf1｜移动｜沈砚｜潮渡→雾堤｜方向=平\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-109:f2": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=3/3\n事实（只列本组，按顺序）：\nf2｜personality_changed｜沈砚｜开始愿意先开口\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-109:g1": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜移动｜韩渡｜潮渡→雾堤｜方向=平\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-109:g2": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf1｜移动｜沈砚｜潮渡→雾堤｜方向=平\nf2｜personality_changed｜沈砚｜开始愿意先开口\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-64:f0": "叙事任务。\n地点=潮渡·石阶·浅滩\n地点可见=系泊绳、外袍、油布包、油纸伞\n场景=黎明；低潮，海风，湿冷\n视角=第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜结果｜沈砚｜把系泊绳从浅滩拖了回来\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-64:f1": "叙事任务。\n地点=潮渡·石阶·浅滩\n地点可见=系泊绳、外袍、油布包、油纸伞\n场景=黎明；低潮，海风，湿冷\n视角=第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf1｜理智｜沈砚｜11→9\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-64:g1": "叙事任务。\n地点=潮渡·石阶·浅滩\n地点可见=系泊绳、外袍、油布包、油纸伞\n场景=黎明；低潮，海风，湿冷\n视角=第三人称\n本组=1/1\n事实（只列本组，按顺序）：\nf0｜结果｜沈砚｜把系泊绳从浅滩拖了回来\nf1｜理智｜沈砚｜11→9\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-65:f0": "叙事任务。\n地点=潮汐档案馆·长桌\n地点可见=潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞\n场景=午后；雨，天窗漏雨\n视角=第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜结果｜沈砚｜把潮汐簿缺的那页补全了\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-65:f1": "叙事任务。\n地点=潮汐档案馆·长桌\n地点可见=潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞\n场景=午后；雨，天窗漏雨\n视角=第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf1｜理智｜沈砚｜9→11\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-65:g1": "叙事任务。\n地点=潮汐档案馆·长桌\n地点可见=潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞\n场景=午后；雨，天窗漏雨\n视角=第三人称\n本组=1/1\n事实（只列本组，按顺序）：\nf0｜结果｜沈砚｜把潮汐簿缺的那页补全了\nf1｜理智｜沈砚｜9→11\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-74:f0": "叙事任务。\n地点=旧灯塔·石阶·旋梯·塔顶\n地点可见=油布包、备用灯芯、铜灯罩、抹布、擦铜油\n场景=夜；海雾，海风\n视角=第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜结果｜叶知微｜把灯罩擦得透亮\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-74:f1": "叙事任务。\n地点=旧灯塔·石阶·旋梯·塔顶\n地点可见=油布包、备用灯芯、铜灯罩、抹布、擦铜油\n场景=夜；海雾，海风\n视角=第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf1｜外观｜叶知微｜袖口沾了铜油\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-74:g1": "叙事任务。\n地点=旧灯塔·石阶·旋梯·塔顶\n地点可见=油布包、备用灯芯、铜灯罩、抹布、擦铜油\n场景=夜；海雾，海风\n视角=第三人称\n本组=1/1\n事实（只列本组，按顺序）：\nf0｜结果｜叶知微｜把灯罩擦得透亮\nf1｜外观｜叶知微｜袖口沾了铜油\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-75:f0": "叙事任务。\n地点=潮汐档案馆·长桌\n地点可见=潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞\n场景=午后；雨，天窗漏雨\n视角=第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜结果｜阿棠｜把一叠干纸放在桌角\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-75:f1": "叙事任务。\n地点=潮汐档案馆·长桌\n地点可见=潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞\n场景=午后；雨，天窗漏雨\n视角=第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf1｜外观｜阿棠｜鞋底带着早市的泥水\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-75:g1": "叙事任务。\n地点=潮汐档案馆·长桌\n地点可见=潮汐簿、干纸、墨、笔、铜灯、冷茶、油纸伞\n场景=午后；雨，天窗漏雨\n视角=第三人称\n本组=1/1\n事实（只列本组，按顺序）：\nf0｜结果｜阿棠｜把一叠干纸放在桌角\nf1｜外观｜阿棠｜鞋底带着早市的泥水\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-87:f0": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜移动｜韩渡｜潮渡→雾堤｜方向=平\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:n4n-87:f1": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf1｜结果｜韩渡｜把松脱的钟绳重新系紧\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:n4n-87:g1": "叙事任务。\n地点=雾堤·堤面\n地点可见=雾警钟、钟绳、警示灯、外袍\n场景=黄昏；雾，浪大\n视角=第三人称\n本组=1/1\n事实（只列本组，按顺序）：\nf0｜移动｜韩渡｜潮渡→雾堤｜方向=平\nf1｜结果｜韩渡｜把松脱的钟绳重新系紧\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:t24:f0": "叙事任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n本组=1/4\n事实（只列本组，按顺序）：\nf0｜外观｜纸灯笼｜被风扯破一角\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:t24:f1": "叙事任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n本组=2/4\n事实（只列本组，按顺序）：\nf1｜外观｜排水沟｜里面积了泥\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:t24:f2": "叙事任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n本组=3/4\n事实（只列本组，按顺序）：\nf2｜结果｜沈砚｜把纸灯笼扶正\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:t24:f3": "叙事任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n本组=4/4\n事实（只列本组，按顺序）：\nf3｜结果｜阿棠｜把鱼筐放在门槛边\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:t24:g1": "叙事任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜外观｜纸灯笼｜被风扯破一角\nf1｜外观｜排水沟｜里面积了泥\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:t24:g2": "叙事任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf2｜结果｜沈砚｜把纸灯笼扶正\nf3｜结果｜阿棠｜把鱼筐放在门槛边\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:v20:f0": "叙事任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、缆绳、船灯、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n本组=1/3\n事实（只列本组，按顺序）：\nf0｜移动｜沈砚｜潮生巷→潮渡｜方向=平\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:v20:f1": "叙事任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、缆绳、船灯、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n本组=2/3\n事实（只列本组，按顺序）：\nf1｜理智｜沈砚｜9→12\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:v20:f2": "叙事任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、缆绳、船灯、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n本组=3/3\n事实（只列本组，按顺序）：\nf2｜结果｜沈砚｜把渡船推离栈桥\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:v20:g1": "叙事任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、系泊绳、木桩、缆绳、船灯、水面、栈桥\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n本组=1/1\n事实（只列本组，按顺序）：\nf0｜移动｜沈砚｜潮生巷→潮渡｜方向=平\nf1｜理智｜沈砚｜9→12\nf2｜结果｜沈砚｜把渡船推离栈桥\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:v07:f0": "叙事任务。\n地点=潮汐档案馆\n地点可见=铜灯、蜡烛、潮汐簿、冷茶、天窗、长桌、门槛、铜灯\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n本组=1/3\n事实（只列本组，按顺序）：\nf0｜外观｜铜灯｜灯罩上积了灰\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:v07:f1": "叙事任务。\n地点=潮汐档案馆\n地点可见=铜灯、蜡烛、潮汐簿、冷茶、天窗、长桌、门槛、铜灯\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n本组=2/3\n事实（只列本组，按顺序）：\nf1｜外观｜潮汐簿｜封面蒙了一层灰\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "A:v07:f2": "叙事任务。\n地点=潮汐档案馆\n地点可见=铜灯、蜡烛、潮汐簿、冷茶、天窗、长桌、门槛、铜灯\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n本组=3/3\n事实（只列本组，按顺序）：\nf2｜结果｜沈砚｜把铜灯擦亮\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:v07:g1": "叙事任务。\n地点=潮汐档案馆\n地点可见=铜灯、蜡烛、潮汐簿、冷茶、天窗、长桌、门槛、铜灯\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n本组=1/2\n事实（只列本组，按顺序）：\nf0｜外观｜铜灯｜灯罩上积了灰\nf1｜外观｜潮汐簿｜封面蒙了一层灰\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n",
+  "B:v07:g2": "叙事任务。\n地点=潮汐档案馆\n地点可见=铜灯、蜡烛、潮汐簿、冷茶、天窗、长桌、门槛、铜灯\n场景=夜；小雨；铜灯\n视角=沈砚；第三人称\n本组=2/2\n事实（只列本组，按顺序）：\nf2｜结果｜沈砚｜把铜灯擦亮\n要求：只写本组；组内可联合多条事实；组间边界由程序负责；不新增人物、物品、地点、动作、关系；不写代词、数字、字段名；需要称呼时用姓名。\n正文：\n"
+ },
+ "prompts_sha256": "099abfbfe00e4fa2e75fb125839b81dd819ac56f96bfa6ed6d926ab6c67b942d",
+ "determinism_check": "arm J must reproduce recorded_784_assembled byte-for-byte on all 9 rows"
+}

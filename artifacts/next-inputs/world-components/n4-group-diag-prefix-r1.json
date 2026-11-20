@@ -1,0 +1,670 @@
+{
+ "note": "前缀=复读起点之前的文本；用来区分“复读前就错”与“复读后才没写完”",
+ "rows": [
+  {
+   "sourceId": "t01",
+   "pattern": "P1-same-subject",
+   "prefixChars": 46,
+   "fullChars": 294,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 1,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t02",
+   "pattern": "P1-same-subject",
+   "prefixChars": 27,
+   "fullChars": 27,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 0,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t03",
+   "pattern": "P1-same-subject",
+   "prefixChars": 52,
+   "fullChars": 52,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 3,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t04",
+   "pattern": "P1-same-subject",
+   "prefixChars": 21,
+   "fullChars": 21,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 1,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t05",
+   "pattern": "P1-same-subject",
+   "prefixChars": 49,
+   "fullChars": 49,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t06",
+   "pattern": "P1-same-subject",
+   "prefixChars": 40,
+   "fullChars": 40,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t07",
+   "pattern": "P2-two-actor",
+   "prefixChars": 118,
+   "fullChars": 118,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 4,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t08",
+   "pattern": "P2-two-actor",
+   "prefixChars": 70,
+   "fullChars": 70,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 4,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t09",
+   "pattern": "P2-two-actor",
+   "prefixChars": 68,
+   "fullChars": 68,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 3,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t10",
+   "pattern": "P2-two-actor",
+   "prefixChars": 114,
+   "fullChars": 114,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "sanity_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 4,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t11",
+   "pattern": "P2-two-actor",
+   "prefixChars": 109,
+   "fullChars": 109,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 4,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t12",
+   "pattern": "P2-two-actor",
+   "prefixChars": 79,
+   "fullChars": 79,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 4,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t13",
+   "pattern": "P3-move-then-act",
+   "prefixChars": 108,
+   "fullChars": 108,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 3,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t14",
+   "pattern": "P3-move-then-act",
+   "prefixChars": 90,
+   "fullChars": 90,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t15",
+   "pattern": "P3-move-then-act",
+   "prefixChars": 22,
+   "fullChars": 22,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 1,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t16",
+   "pattern": "P3-move-then-act",
+   "prefixChars": 17,
+   "fullChars": 397,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t17",
+   "pattern": "P3-move-then-act",
+   "prefixChars": 29,
+   "fullChars": 29,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 3
+  },
+  {
+   "sourceId": "t18",
+   "pattern": "P3-move-then-act",
+   "prefixChars": 54,
+   "fullChars": 54,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "moved",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 3,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t19",
+   "pattern": "P4-multi-object",
+   "prefixChars": 59,
+   "fullChars": 70,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 4,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t20",
+   "pattern": "P4-multi-object",
+   "prefixChars": 146,
+   "fullChars": 161,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t21",
+   "pattern": "P4-multi-object",
+   "prefixChars": 114,
+   "fullChars": 114,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t22",
+   "pattern": "P4-multi-object",
+   "prefixChars": 160,
+   "fullChars": 160,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 3,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t23",
+   "pattern": "P4-multi-object",
+   "prefixChars": 78,
+   "fullChars": 78,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": false
+    }
+   ],
+   "factsEvidencedInPrefix": 1,
+   "factsTotal": 4
+  },
+  {
+   "sourceId": "t24",
+   "pattern": "P4-multi-object",
+   "prefixChars": 63,
+   "fullChars": 157,
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "evidenceInPrefix": false
+    },
+    {
+     "factId": "f2",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    },
+    {
+     "factId": "f3",
+     "kind": "outcome",
+     "evidenceInPrefix": true
+    }
+   ],
+   "factsEvidencedInPrefix": 2,
+   "factsTotal": 4
+  }
+ ]
+}

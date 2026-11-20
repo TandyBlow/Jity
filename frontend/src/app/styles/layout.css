@@ -19,7 +19,7 @@
   align-items: baseline;
   gap: var(--space-3);
   pointer-events: none;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
+  text-shadow: var(--text-shadow-title);
 }
 
 .game-brand span { font-size: var(--fs-brand); font-weight: var(--fw-black); letter-spacing: 0.03em; }
@@ -44,8 +44,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(9, 9, 9, 0.68), rgba(9, 9, 9, 0.28) 34%, rgba(9, 9, 9, 0.34) 68%, rgba(9, 9, 9, 0.72)),
-    linear-gradient(180deg, rgba(8, 8, 8, 0.2), rgba(8, 8, 8, 0.66));
+    linear-gradient(90deg, var(--scrim-scene-a), var(--scrim-scene-b) 34%, var(--scrim-scene-c) 68%, var(--scrim-scene-d)),
+    linear-gradient(180deg, var(--scrim-scene-top), var(--scrim-scene-bottom));
 }
 
 .has-scene-background .scene-background {

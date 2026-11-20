@@ -1,0 +1,1456 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 动作判断与更小编码器</title><style>body{background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui;margin:0}main{max-width:1150px;margin:auto;padding:24px}section{background:white;border-radius:12px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}</style><main><p>D / L3 · 2026-11-02 · 开发探索</p><h1>动作单独看，编码器缩小后会怎样？</h1><p>三种方案同机、同题、相同训练设置；旧版直接加载原检查点，两个新版本重新拟合小判断头。完整资料与全部人物均保留，不靠关键词规则决定目标。</p><section><h2>这次结果能说明什么</h2><p>只有4个反复看过的开发场景，每方案每题重复5次，共60次推理；重复不等于新题。拟合使用16组，另4组不参与梯度。新90组未使用，来源核验和独立新题训练仍待。</p><p class="bad">这是开发诊断，不能据此宣布泛化或组件可用。D02仅判断做/不做，没有生成行动；反应、共同结果及完整500毫秒流程仍未测试。</p></section><section><h2>判断是否正确</h2><div class="scroll"><table><tr><th>方案</th><th>任务</th><th>拟合题命中</th><th>已公开开发题命中</th><th>目标漏选 / 多选</th></tr><tr><td>上一版：6层、混合动作表示</td><td>D02</td><td>8/8</td><td>2/2</td><td>—</td></tr><tr><td>上一版：6层、混合动作表示</td><td>D03</td><td>8/8</td><td>1/2</td><td>0 / 2</td></tr><tr><td>独立动作表示、6层</td><td>D02</td><td>8/8</td><td>2/2</td><td>—</td></tr><tr><td>独立动作表示、6层</td><td>D03</td><td>8/8</td><td>1/2</td><td>2 / 0</td></tr><tr><td>独立动作表示、2层</td><td>D02</td><td>8/8</td><td>2/2</td><td>—</td></tr><tr><td>独立动作表示、2层</td><td>D03</td><td>8/8</td><td>2/2</td><td>0 / 0</td></tr></table></div></section><section><h2>速度：每次从输入到结束存档</h2><p>本批完整单项耗时包含开始和结束存档，旧页未包含结束存档，不能直接拿两页数字比较。以下均为本批同条件数字。窗口仍≤512，未缓存输入特征。</p><div class="scroll"><table><tr><th>方案 / 题目</th><th>中位 / 最大毫秒</th><th>编码器平均</th><th>输入平均</th><th>两次快照存档平均</th><th>局部50毫秒</th></tr><tr><td>上一版：6层、混合动作表示<br>dev-d02-03</td><td>461.32 / 544.68</td><td>241.20</td><td>20.44</td><td>192.59</td><td>fail</td></tr><tr><td>上一版：6层、混合动作表示<br>dev-d02-05</td><td>457.72 / 565.38</td><td>235.24</td><td>18.65</td><td>204.78</td><td>fail</td></tr><tr><td>上一版：6层、混合动作表示<br>dev-d03-02</td><td>512.88 / 593.05</td><td>246.86</td><td>19.45</td><td>242.11</td><td>fail</td></tr><tr><td>上一版：6层、混合动作表示<br>dev-d03-06</td><td>490.53 / 596.83</td><td>247.93</td><td>19.63</td><td>228.67</td><td>fail</td></tr><tr><td>独立动作表示、6层<br>dev-d02-03</td><td>447.39 / 565.27</td><td>237.49</td><td>19.38</td><td>194.29</td><td>fail</td></tr><tr><td>独立动作表示、6层<br>dev-d02-05</td><td>451.34 / 555.17</td><td>233.26</td><td>19.28</td><td>206.69</td><td>fail</td></tr><tr><td>独立动作表示、6层<br>dev-d03-02</td><td>486.92 / 690.73</td><td>273.25</td><td>20.45</td><td>222.71</td><td>fail</td></tr><tr><td>独立动作表示、6层<br>dev-d03-06</td><td>511.95 / 619.08</td><td>250.99</td><td>19.92</td><td>229.78</td><td>fail</td></tr><tr><td>独立动作表示、2层<br>dev-d02-03</td><td>300.33 / 401.23</td><td>80.87</td><td>18.74</td><td>194.33</td><td>fail</td></tr><tr><td>独立动作表示、2层<br>dev-d02-05</td><td>319.44 / 407.69</td><td>80.37</td><td>18.41</td><td>207.13</td><td>fail</td></tr><tr><td>独立动作表示、2层<br>dev-d03-02</td><td>330.37 / 436.38</td><td>84.31</td><td>19.51</td><td>220.42</td><td>fail</td></tr><tr><td>独立动作表示、2层<br>dev-d03-06</td><td>346.19 / 444.35</td><td>85.05</td><td>20.15</td><td>232.12</td><td>fail</td></tr></table></div><p>判断头、张量、池化/哈希、逐窗日志及其他开销见下方完整明细，所有分项使用平均数，合计等于平均总耗时。小批观测不能签正式性能通过。</p></section><section><details><summary>dev-d02-03 · 原判据 skip · 展开每次预测</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 298.477333,
+    &quot;elapsedIncludingEndJournalMs&quot;: 344.889875
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 298.646084,
+    &quot;elapsedIncludingEndJournalMs&quot;: 348.166125
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;elapsedMs&quot;: 150.878458,
+    &quot;elapsedIncludingEndJournalMs&quot;: 203.007833
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;elapsedMs&quot;: 170.592959,
+    &quot;elapsedIncludingEndJournalMs&quot;: 242.120334
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 334.049958,
+    &quot;elapsedIncludingEndJournalMs&quot;: 408.420875
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 350.605708,
+    &quot;elapsedIncludingEndJournalMs&quot;: 426.743
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 365.698041,
+    &quot;elapsedIncludingEndJournalMs&quot;: 461.324583
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 351.127709,
+    &quot;elapsedIncludingEndJournalMs&quot;: 447.386125
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;elapsedMs&quot;: 200.670417,
+    &quot;elapsedIncludingEndJournalMs&quot;: 300.328709
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;elapsedMs&quot;: 219.444083,
+    &quot;elapsedIncludingEndJournalMs&quot;: 339.528917
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 380.502,
+    &quot;elapsedIncludingEndJournalMs&quot;: 502.9765
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 387.336542,
+    &quot;elapsedIncludingEndJournalMs&quot;: 511.4535
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 400.374167,
+    &quot;elapsedIncludingEndJournalMs&quot;: 544.679667
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;elapsedMs&quot;: 415.836958,
+    &quot;elapsedIncludingEndJournalMs&quot;: 565.274458
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;elapsedMs&quot;: 252.341667,
+    &quot;elapsedIncludingEndJournalMs&quot;: 401.231542
+  }
+]</pre></details></section><section><details><summary>dev-d02-05 · 原判据 act · 展开每次预测</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 314.325833,
+    &quot;elapsedIncludingEndJournalMs&quot;: 367.613166
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 302.653667,
+    &quot;elapsedIncludingEndJournalMs&quot;: 357.360875
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;elapsedMs&quot;: 154.025167,
+    &quot;elapsedIncludingEndJournalMs&quot;: 210.251084
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;elapsedMs&quot;: 180.884416,
+    &quot;elapsedIncludingEndJournalMs&quot;: 258.636125
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 341.125667,
+    &quot;elapsedIncludingEndJournalMs&quot;: 420.133167
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 329.133958,
+    &quot;elapsedIncludingEndJournalMs&quot;: 410.620958
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 356.275958,
+    &quot;elapsedIncludingEndJournalMs&quot;: 457.71775
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 347.765916,
+    &quot;elapsedIncludingEndJournalMs&quot;: 451.338583
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;elapsedMs&quot;: 207.401292,
+    &quot;elapsedIncludingEndJournalMs&quot;: 319.443167
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;elapsedMs&quot;: 225.317458,
+    &quot;elapsedIncludingEndJournalMs&quot;: 349.899375
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 395.904875,
+    &quot;elapsedIncludingEndJournalMs&quot;: 529.338333
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 378.653541,
+    &quot;elapsedIncludingEndJournalMs&quot;: 508.649333
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 412.662375,
+    &quot;elapsedIncludingEndJournalMs&quot;: 565.384875
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;elapsedMs&quot;: 403.824166,
+    &quot;elapsedIncludingEndJournalMs&quot;: 555.165083
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;elapsedMs&quot;: 253.621417,
+    &quot;elapsedIncludingEndJournalMs&quot;: 407.693708
+  }
+]</pre></details></section><section><details><summary>dev-d03-02 · 原判据 [] · 展开每次预测</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;elapsedMs&quot;: 323.033041,
+    &quot;elapsedIncludingEndJournalMs&quot;: 512.877541
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.013753868639469147,
+      0.05444543808698654,
+      0.03028927370905876
+    ],
+    &quot;elapsedMs&quot;: 345.136792,
+    &quot;elapsedIncludingEndJournalMs&quot;: 406.062417
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;elapsedMs&quot;: 164.070542,
+    &quot;elapsedIncludingEndJournalMs&quot;: 227.080084
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;elapsedMs&quot;: 189.626792,
+    &quot;elapsedIncludingEndJournalMs&quot;: 272.884584
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.013753868639469147,
+      0.05444543808698654,
+      0.03028927370905876
+    ],
+    &quot;elapsedMs&quot;: 349.354125,
+    &quot;elapsedIncludingEndJournalMs&quot;: 434.358083
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;elapsedMs&quot;: 348.11125,
+    &quot;elapsedIncludingEndJournalMs&quot;: 434.291458
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;elapsedMs&quot;: 370.426209,
+    &quot;elapsedIncludingEndJournalMs&quot;: 477.793292
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.013753868639469147,
+      0.05444543808698654,
+      0.03028927370905876
+    ],
+    &quot;elapsedMs&quot;: 376.760625,
+    &quot;elapsedIncludingEndJournalMs&quot;: 486.916
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;elapsedMs&quot;: 219.304916,
+    &quot;elapsedIncludingEndJournalMs&quot;: 330.372541
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;elapsedMs&quot;: 237.464125,
+    &quot;elapsedIncludingEndJournalMs&quot;: 371.834458
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.013753868639469147,
+      0.05444543808698654,
+      0.03028927370905876
+    ],
+    &quot;elapsedMs&quot;: 557.232458,
+    &quot;elapsedIncludingEndJournalMs&quot;: 690.731792
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;elapsedMs&quot;: 405.4265,
+    &quot;elapsedIncludingEndJournalMs&quot;: 541.5875
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;elapsedMs&quot;: 436.820875,
+    &quot;elapsedIncludingEndJournalMs&quot;: 593.050542
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.013753868639469147,
+      0.05444543808698654,
+      0.03028927370905876
+    ],
+    &quot;elapsedMs&quot;: 423.64425,
+    &quot;elapsedIncludingEndJournalMs&quot;: 581.693708
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;elapsedMs&quot;: 269.95575,
+    &quot;elapsedIncludingEndJournalMs&quot;: 436.376792
+  }
+]</pre></details></section><section><details><summary>dev-d03-06 · 原判据 [&#x27;p2&#x27;, &#x27;p3&#x27;] · 展开每次预测</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;elapsedMs&quot;: 337.506292,
+    &quot;elapsedIncludingEndJournalMs&quot;: 401.639542
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01622907817363739,
+      0.43583300709724426,
+      0.1213902086019516
+    ],
+    &quot;elapsedMs&quot;: 328.405,
+    &quot;elapsedIncludingEndJournalMs&quot;: 396.458791
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;elapsedMs&quot;: 172.026375,
+    &quot;elapsedIncludingEndJournalMs&quot;: 241.82475
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;elapsedMs&quot;: 197.610042,
+    &quot;elapsedIncludingEndJournalMs&quot;: 287.047584
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01622907817363739,
+      0.43583300709724426,
+      0.1213902086019516
+    ],
+    &quot;elapsedMs&quot;: 356.841833,
+    &quot;elapsedIncludingEndJournalMs&quot;: 448.503791
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;elapsedMs&quot;: 357.64125,
+    &quot;elapsedIncludingEndJournalMs&quot;: 451.26775
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;elapsedMs&quot;: 376.819625,
+    &quot;elapsedIncludingEndJournalMs&quot;: 490.532
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01622907817363739,
+      0.43583300709724426,
+      0.1213902086019516
+    ],
+    &quot;elapsedMs&quot;: 395.24125,
+    &quot;elapsedIncludingEndJournalMs&quot;: 511.951209
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;elapsedMs&quot;: 227.885541,
+    &quot;elapsedIncludingEndJournalMs&quot;: 346.187375
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;elapsedMs&quot;: 249.122375,
+    &quot;elapsedIncludingEndJournalMs&quot;: 385.996
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01622907817363739,
+      0.43583300709724426,
+      0.1213902086019516
+    ],
+    &quot;elapsedMs&quot;: 407.232334,
+    &quot;elapsedIncludingEndJournalMs&quot;: 546.542584
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;elapsedMs&quot;: 415.396708,
+    &quot;elapsedIncludingEndJournalMs&quot;: 559.072875
+  },
+  {
+    &quot;arm&quot;: &quot;baseline&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;elapsedMs&quot;: 433.785792,
+    &quot;elapsedIncludingEndJournalMs&quot;: 596.831292
+  },
+  {
+    &quot;arm&quot;: &quot;event&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;probabilities&quot;: [
+      0.01622907817363739,
+      0.43583300709724426,
+      0.1213902086019516
+    ],
+    &quot;elapsedMs&quot;: 454.905416,
+    &quot;elapsedIncludingEndJournalMs&quot;: 619.080583
+  },
+  {
+    &quot;arm&quot;: &quot;event2&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;elapsedMs&quot;: 275.099208,
+    &quot;elapsedIncludingEndJournalMs&quot;: 444.34825
+  }
+]</pre></details></section><section><h2>更小模型的边界</h2><p>两层版从同一M01保留前两层与全部嵌入，未做蒸馏、未重新训练编码器，不保证语义等价。实际参数和逐项耗时如下。CPU单线程、并发1、120秒/2048MiB监督上限。</p><details><summary>全部汇总和耗时分项</summary><pre>{
+  &quot;runId&quot;: &quot;m01-event-dev42-20261102-r1&quot;,
+  &quot;quality&quot;: {
+    &quot;baseline&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 8,
+          &quot;groups&quot;: 8
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 8,
+          &quot;groups&quot;: 8,
+          &quot;requiredTargets&quot;: 8,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 1,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 2
+        }
+      }
+    },
+    &quot;event&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 8,
+          &quot;groups&quot;: 8
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 8,
+          &quot;groups&quot;: 8,
+          &quot;requiredTargets&quot;: 8,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 1,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 2,
+          &quot;extraTargets&quot;: 0
+        }
+      }
+    },
+    &quot;event2&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 8,
+          &quot;groups&quot;: 8
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 8,
+          &quot;groups&quot;: 8,
+          &quot;requiredTargets&quot;: 8,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        }
+      }
+    }
+  },
+  &quot;timing&quot;: [
+    {
+      &quot;arm&quot;: &quot;baseline&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 461.324583,
+      &quot;maxMs&quot;: 544.679667,
+      &quot;meanMs&quot;: 457.818125,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 241.1990333814174,
+        &quot;packMs&quot;: 20.439292199444026,
+        &quot;poolAndDigestMs&quot;: 1.171892008278519,
+        &quot;tensorMs&quot;: 0.3190999967046082,
+        &quot;windowJournalMs&quot;: 1.00975843379274,
+        &quot;headMs&quot;: 0.25169160799123347,
+        &quot;startJournalMs&quot;: 95.28321660473011,
+        &quot;endJournalMs&quot;: 97.30911680380814,
+        &quot;otherMs&quot;: 0.8350239638332368
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;kind&quot;: &quot;skip&quot;
+      },
+      &quot;probabilities&quot;: [
+        0.08529818803071976
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;baseline&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 457.71775,
+      &quot;maxMs&quot;: 565.384875,
+      &quot;meanMs&quot;: 461.9972164,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 235.24338298593648,
+        &quot;packMs&quot;: 18.654525000602007,
+        &quot;poolAndDigestMs&quot;: 1.1420156108215451,
+        &quot;tensorMs&quot;: 0.30539160943590105,
+        &quot;windowJournalMs&quot;: 0.9302748017944396,
+        &quot;headMs&quot;: 0.24669139529578388,
+        &quot;startJournalMs&quot;: 101.00240839528851,
+        &quot;endJournalMs&quot;: 103.77684179111384,
+        &quot;otherMs&quot;: 0.6956848097115085
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;kind&quot;: &quot;act&quot;
+      },
+      &quot;probabilities&quot;: [
+        0.9695144891738892
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;baseline&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 512.877541,
+      &quot;maxMs&quot;: 593.050542,
+      &quot;meanMs&quot;: 511.9200666,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 246.85501679196022,
+        &quot;packMs&quot;: 19.450983207207173,
+        &quot;poolAndDigestMs&quot;: 1.181966793956235,
+        &quot;tensorMs&quot;: 0.30634181457571685,
+        &quot;windowJournalMs&quot;: 0.9291505964938551,
+        &quot;headMs&quot;: 0.290783605305478,
+        &quot;startJournalMs&quot;: 106.96909160469659,
+        &quot;endJournalMs&quot;: 135.1454666000791,
+        &quot;otherMs&quot;: 0.7912655857256254
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;targets&quot;: [
+          {
+            &quot;targetId&quot;: &quot;p2&quot;
+          },
+          {
+            &quot;targetId&quot;: &quot;p3&quot;
+          }
+        ]
+      },
+      &quot;probabilities&quot;: [
+        0.018044568598270416,
+        0.5487032532691956,
+        0.7279428243637085
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;baseline&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 490.532,
+      &quot;maxMs&quot;: 596.831292,
+      &quot;meanMs&quot;: 499.86869179999997,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 247.92936680023558,
+        &quot;packMs&quot;: 19.630424992647022,
+        &quot;poolAndDigestMs&quot;: 1.1870998016092926,
+        &quot;tensorMs&quot;: 0.30945001053623855,
+        &quot;windowJournalMs&quot;: 0.9321077959612012,
+        &quot;headMs&quot;: 0.33073320519179106,
+        &quot;startJournalMs&quot;: 113.04008339648135,
+        &quot;endJournalMs&quot;: 115.62710839789361,
+        &quot;otherMs&quot;: 0.8823173994438775
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;targets&quot;: [
+          {
+            &quot;targetId&quot;: &quot;p2&quot;
+          },
+          {
+            &quot;targetId&quot;: &quot;p3&quot;
+          }
+        ]
+      },
+      &quot;probabilities&quot;: [
+        0.019564399495720863,
+        0.8203742504119873,
+        0.7377943396568298
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 447.386125,
+      &quot;maxMs&quot;: 565.274458,
+      &quot;meanMs&quot;: 454.4448166,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 237.49409100273624,
+        &quot;packMs&quot;: 19.37617539661005,
+        &quot;poolAndDigestMs&quot;: 1.0936750040855259,
+        &quot;tensorMs&quot;: 0.2981588011607528,
+        &quot;windowJournalMs&quot;: 0.8986748056486249,
+        &quot;headMs&quot;: 0.29357499442994595,
+        &quot;startJournalMs&quot;: 95.89284179965034,
+        &quot;endJournalMs&quot;: 98.40158359729685,
+        &quot;otherMs&quot;: 0.6960411983816925
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;kind&quot;: &quot;skip&quot;
+      },
+      &quot;probabilities&quot;: [
+        0.08529818803071976
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 451.338583,
+      &quot;maxMs&quot;: 555.165083,
+      &quot;meanMs&quot;: 462.6672082,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 233.26334159937687,
+        &quot;packMs&quot;: 19.283058802830055,
+        &quot;poolAndDigestMs&quot;: 1.106583612272516,
+        &quot;tensorMs&quot;: 0.3057077992707491,
+        &quot;windowJournalMs&quot;: 0.9361006144899875,
+        &quot;headMs&quot;: 0.2558918029535562,
+        &quot;startJournalMs&quot;: 102.2901336022187,
+        &quot;endJournalMs&quot;: 104.40060820546933,
+        &quot;otherMs&quot;: 0.8257821611182408
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;kind&quot;: &quot;act&quot;
+      },
+      &quot;probabilities&quot;: [
+        0.9695144891738892
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 486.916,
+      &quot;maxMs&quot;: 690.731792,
+      &quot;meanMs&quot;: 519.9524,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 273.25054940884,
+        &quot;packMs&quot;: 20.45484179398045,
+        &quot;poolAndDigestMs&quot;: 1.1947001970838755,
+        &quot;tensorMs&quot;: 0.31335921376012266,
+        &quot;windowJournalMs&quot;: 0.9571088070515543,
+        &quot;headMs&quot;: 0.3133583930321038,
+        &quot;startJournalMs&quot;: 113.19355838932097,
+        &quot;endJournalMs&quot;: 109.51691700029187,
+        &quot;otherMs&quot;: 0.7580067966390516
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;targets&quot;: []
+      },
+      &quot;probabilities&quot;: [
+        0.013753868639469147,
+        0.05444543808698654,
+        0.03028927370905876
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 511.951209,
+      &quot;maxMs&quot;: 619.080583,
+      &quot;meanMs&quot;: 504.5073916,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 250.9884832019452,
+        &quot;packMs&quot;: 19.9157580093015,
+        &quot;poolAndDigestMs&quot;: 1.1815419886261225,
+        &quot;tensorMs&quot;: 0.31586599070578814,
+        &quot;windowJournalMs&quot;: 0.9669420076534152,
+        &quot;headMs&quot;: 0.34707498853094876,
+        &quot;startJournalMs&quot;: 113.81049999617971,
+        &quot;endJournalMs&quot;: 115.97064159577712,
+        &quot;otherMs&quot;: 1.0105838212801928
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;targets&quot;: []
+      },
+      &quot;probabilities&quot;: [
+        0.01622907817363739,
+        0.43583300709724426,
+        0.1213902086019516
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event2&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 300.328709,
+      &quot;maxMs&quot;: 401.231542,
+      &quot;meanMs&quot;: 297.243467,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 80.86586678982712,
+        &quot;packMs&quot;: 18.7403165968135,
+        &quot;poolAndDigestMs&quot;: 1.0777583869639784,
+        &quot;tensorMs&quot;: 0.30210898839868605,
+        &quot;windowJournalMs&quot;: 0.9090078005101532,
+        &quot;headMs&quot;: 0.27734979521483183,
+        &quot;startJournalMs&quot;: 95.88017500354908,
+        &quot;endJournalMs&quot;: 98.44850820372812,
+        &quot;otherMs&quot;: 0.7423754349945284
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;kind&quot;: &quot;skip&quot;
+      },
+      &quot;probabilities&quot;: [
+        0.020226359367370605
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event2&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 319.443167,
+      &quot;maxMs&quot;: 407.693708,
+      &quot;meanMs&quot;: 309.1846918,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 80.37008281680755,
+        &quot;packMs&quot;: 18.413366592722014,
+        &quot;poolAndDigestMs&quot;: 1.1178327957168221,
+        &quot;tensorMs&quot;: 0.30022499267943203,
+        &quot;windowJournalMs&quot;: 0.8934832061640918,
+        &quot;headMs&quot;: 0.24712479789741337,
+        &quot;startJournalMs&quot;: 102.20043339650147,
+        &quot;endJournalMs&quot;: 104.92503319401294,
+        &quot;otherMs&quot;: 0.7171100074982633
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;kind&quot;: &quot;act&quot;
+      },
+      &quot;probabilities&quot;: [
+        0.9756626486778259
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event2&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 330.372541,
+      &quot;maxMs&quot;: 436.376792,
+      &quot;meanMs&quot;: 327.70969180000003,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 84.31464181048796,
+        &quot;packMs&quot;: 19.506883388385177,
+        &quot;poolAndDigestMs&quot;: 1.0835166031029075,
+        &quot;tensorMs&quot;: 0.2992086054291576,
+        &quot;windowJournalMs&quot;: 0.892341195140034,
+        &quot;headMs&quot;: 0.3245247935410589,
+        &quot;startJournalMs&quot;: 108.80788320209831,
+        &quot;endJournalMs&quot;: 111.61492499522865,
+        &quot;otherMs&quot;: 0.8657672065867814
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;targets&quot;: []
+      },
+      &quot;probabilities&quot;: [
+        0.01315467432141304,
+        0.023671815171837807,
+        0.01782318577170372
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;event2&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 346.187375,
+      &quot;maxMs&quot;: 444.34825,
+      &quot;meanMs&quot;: 341.0807918,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 85.05362519645132,
+        &quot;packMs&quot;: 20.1524586067535,
+        &quot;poolAndDigestMs&quot;: 1.1510833981446922,
+        &quot;tensorMs&quot;: 0.30606641666963696,
+        &quot;windowJournalMs&quot;: 0.9531913790851831,
+        &quot;headMs&quot;: 0.37698340020142496,
+        &quot;startJournalMs&quot;: 115.39960000081919,
+        &quot;endJournalMs&quot;: 116.71999979880638,
+        &quot;otherMs&quot;: 0.9677836030686535
+      },
+      &quot;windows&quot;: 4,
+      &quot;predicted&quot;: {
+        &quot;targets&quot;: [
+          {
+            &quot;targetId&quot;: &quot;p2&quot;
+          },
+          {
+            &quot;targetId&quot;: &quot;p3&quot;
+          }
+        ]
+      },
+      &quot;probabilities&quot;: [
+        0.022675814107060432,
+        0.912228524684906,
+        0.9493820667266846
+      ],
+      &quot;local50ms&quot;: &quot;fail&quot;
+    }
+  ],
+  &quot;encoderVariants&quot;: {
+    &quot;baseline&quot;: {
+      &quot;layers&quot;: 6,
+      &quot;parameters&quot;: 10279424,
+      &quot;tensorSha256&quot;: &quot;4bb06712a75ab1e2e3f8eff11f8f93e79fda3d41a0aed8cf0f6e8097e522cb1d&quot;
+    },
+    &quot;event&quot;: {
+      &quot;layers&quot;: 6,
+      &quot;parameters&quot;: 10279424,
+      &quot;tensorSha256&quot;: &quot;4bb06712a75ab1e2e3f8eff11f8f93e79fda3d41a0aed8cf0f6e8097e522cb1d&quot;
+    },
+    &quot;event2&quot;: {
+      &quot;layers&quot;: 2,
+      &quot;parameters&quot;: 7120384,
+      &quot;tensorSha256&quot;: &quot;6bbafd3213e907abef347a0fd96179bf4282d987c1b3000d0498aca1feafb40b&quot;
+    }
+  },
+  &quot;headParametersPerArm&quot;: {
+    &quot;baseline&quot;: 180418,
+    &quot;event&quot;: 180418,
+    &quot;event2&quot;: 180418
+  },
+  &quot;checkpoint&quot;: {
+    &quot;contains&quot;: &quot;four_event_anchor_heads_only&quot;,
+    &quot;path&quot;: &quot;.local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt&quot;,
+    &quot;sha256&quot;: &quot;a390a148c81f6a1300908c876a7de905d3af90abd75332fa926189fb86380b56&quot;
+  },
+  &quot;supervisor&quot;: {
+    &quot;error&quot;: null,
+    &quot;exitCode&quot;: 0,
+    &quot;measurement&quot;: &quot;ps_rss_every250ms&quot;,
+    &quot;observedPeakResidentMiB&quot;: 548.71875,
+    &quot;stopReason&quot;: null,
+    &quot;wallMs&quot;: 40627.803042007145
+  },
+  &quot;forwardWindowsIncludingFitFeatures&quot;: 406,
+  &quot;timedInferenceItems&quot;: 60,
+  &quot;fitLossFirstLast&quot;: {
+    &quot;event&quot;: {
+      &quot;D02&quot;: [
+        0.6955406665802002,
+        0.02944815345108509
+      ],
+      &quot;D03&quot;: [
+        0.9342605471611023,
+        0.0289608146995306
+      ]
+    },
+    &quot;event2&quot;: {
+      &quot;D02&quot;: [
+        0.7318658828735352,
+        0.024779267609119415
+      ],
+      &quot;D03&quot;: [
+        0.9286923408508301,
+        0.02532108686864376
+      ]
+    }
+  }
+}</pre></details><p><a href="m01-fitting/m01-event-dev42-20261102-r1.plan.json">冻结计划</a> · <a href="m01-fitting/m01-event-dev42-20261102-r1.record.json.gz">完整记录</a> · <a href="m01-fitting/m01-event-dev42-20261102-r1.record.windows.jsonl.gz">窗口事件</a> · <a href="l3-7-m01-event-summary.json">机器汇总</a> · <a href="l3-6-m01-shared-results.html">上一批</a></p></section></main></html>

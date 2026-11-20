@@ -1,0 +1,463 @@
+{
+  "status": "COMPLETED",
+  "recordedAt": "2026-11-10T05:44:11.239Z",
+  "candidate": "instruct-narration-candidate",
+  "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "config": {
+    "contextSize": 4096,
+    "numThreads": 6,
+    "temperature": 0.7,
+    "retryTemperature": 0.4,
+    "maxTokens": 340,
+    "maxAttempts": 2,
+    "targetChars": 260,
+    "seed": 42,
+    "styleSample": null
+  },
+  "source": {
+    "head": "7bf860ea6a096ce5bb5f130b1c84d9aafe036468",
+    "status": "?? artifacts/candidate-instruct/\n?? design/narration-single-model-goal.md\n?? frontend/scripts/candidate-instruct/\n?? frontend/src/lib/world-engine/local/narration-candidates/",
+    "sha256": {
+      "src/lib/world-engine/local/narration-candidates/instruct/index.ts": "9751289fa25e9312113ecebf08c3aa3438381a1db8bb020f0a5c06dede8ec883",
+      "src/lib/world-engine/local/narration-candidates/instruct/projection.ts": "384d404dfaffea58ca5058b4a8280efdbf07bd2bd7c1f8ab880e219c716adb5a",
+      "src/lib/world-engine/local/narration-candidates/instruct/prompt.ts": "730e3691b8909d1ffa5129435ba5e5c84fc34c0669df071446fc4d86cfea8869",
+      "src/lib/world-engine/local/narration-candidates/instruct/verify.ts": "6ac4c98fc521b7f6d146a77cbe6fd666e1d7af402f488a606cdf5a15e01930fd",
+      "src/lib/world-engine/local/narration-candidates/instruct/facts.ts": "74b1f175b046c8642ea100e825bc8f66012046c584fe87d7112969a713260cce",
+      "src/lib/world-engine/local/narration-candidates/instruct/template.ts": "4c9305d54cfdfe2869fd4c4be6b3dbcc48b782c9894f8bebe3ab9651ef88d10c",
+      "src/lib/world-engine/local/narration-candidates/instruct/clean.ts": "562a51101d47b16f6610cea7be1dc14e39765a1e04ceedd9c0aa68d60aad3c2d",
+      "src/lib/world-engine/local/state.ts": "024b61fb63f2bec78c46a1cd4ed158a5798b4e28c31293b2d3765acbb6497b43",
+      "src/lib/world-engine/local/prompt.ts": "a21489ca6480d479d83a97cb750cf93011b468fa80e29e74aed8d1558d5f98b8",
+      "src/lib/world-engine/runtime/narration-alignment.ts": "42d163fcf7789ab7e0b163a4f7de1e5fa18164251fc6aa01ea76304a03d42cf6",
+      "src/lib/world-engine/runtime/committed-narration.ts": "a57656648aa9d4ea92cc5fdfb257de28122a3acc9530596642a9172b6040ad32"
+    }
+  },
+  "assets": {
+    "model": "/models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "modelSha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "modelBytes": 1117320736,
+    "wllamaSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "cases": [
+    {
+      "id": "S1-move-time",
+      "note": "主角从服务巷走到器材棚，时间 2 分钟；棚里有人和器材"
+    },
+    {
+      "id": "S2-task-sanity",
+      "note": "诺诺修好短讯机（任务达成），精神值 58→60；两人都在服务巷"
+    },
+    {
+      "id": "S4-empty-time",
+      "note": "空增量点：没有实体变化，只有 1 分钟时间推进"
+    }
+  ],
+  "runs": [
+    {
+      "caseId": "S1-move-time",
+      "note": "主角从服务巷走到器材棚，时间 2 分钟；棚里有人和器材",
+      "playerInput": "我把护目镜推上去，朝器材棚走过去。",
+      "time": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "minute"
+        }
+      },
+      "wallMs": 124673,
+      "accepted": false,
+      "status": "rejected",
+      "text": "路明非从西侧服务巷走到器材棚，空气中弥漫着混合的尘土和汗水的味道。他的护目镜挂在胸前，虽然松着，但他习惯性地推了推，以缓解长时间佩戴的不适。枪声似乎还在远处响起，但路明非已经习惯了这种环境下的紧张感。他深吸一口气，调整呼吸，尽量让自己冷静下来。\n\n大约过了两分钟，路明非从西侧服务巷走到器材棚。他习惯性地将护目镜推上去，朝器材棚走去。",
+      "template": "qwen2.5-instruct",
+      "strategyVersion": "instruct-narration-candidate-v1",
+      "timings": {
+        "totalMs": 124670.69499969482,
+        "attemptMs": [
+          52923.900000572205,
+          71714.18500041962
+        ],
+        "firstTokenMs": 22652.145000457764,
+        "deadlineExceeded": false
+      },
+      "issues": [
+        {
+          "kind": "movement_without_fact",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "claims movement involving 器材棚",
+          "sentence": "他习惯性地将护目镜推上去，朝器材棚走去"
+        },
+        {
+          "kind": "engine_error",
+          "severity": "hard",
+          "attempt": 2,
+          "detail": "generation ended with length"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "durationMs": 52924,
+          "firstTokenMs": 22652,
+          "raw": "路明非从西侧服务巷走到器材棚，空气中弥漫着混合的尘土和汗水的味道。他的护目镜挂在胸前，虽然松着，但他习惯性地推了推，以缓解长时间佩戴的不适。枪声似乎还在远处响起，但路明非已经习惯了这种环境下的紧张感。他深吸一口气，调整呼吸，尽量让自己冷静下来。\n\n大约过了两分钟，路明非从西侧服务巷走到器材棚。他习惯性地将护目镜推上去，朝器材棚走去。枪声似乎还在远处响起，但路明非已经习惯了这种环境下的紧张感。他深吸一口气，调整呼吸，尽量让自己冷静下来。",
+          "cleaned": "路明非从西侧服务巷走到器材棚，空气中弥漫着混合的尘土和汗水的味道。他的护目镜挂在胸前，虽然松着，但他习惯性地推了推，以缓解长时间佩戴的不适。枪声似乎还在远处响起，但路明非已经习惯了这种环境下的紧张感。他深吸一口气，调整呼吸，尽量让自己冷静下来。\n\n大约过了两分钟，路明非从西侧服务巷走到器材棚。他习惯性地将护目镜推上去，朝器材棚走去。",
+          "accepted": false,
+          "finishReason": null,
+          "error": null,
+          "issues": [
+            {
+              "kind": "movement_without_fact",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "claims movement involving 器材棚",
+              "sentence": "他习惯性地将护目镜推上去，朝器材棚走去"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "durationMs": 71714,
+          "firstTokenMs": 3190,
+          "raw": "",
+          "cleaned": "",
+          "accepted": false,
+          "finishReason": null,
+          "error": "generation ended with length",
+          "issues": [
+            {
+              "kind": "engine_error",
+              "severity": "hard",
+              "attempt": 2,
+              "detail": "generation ended with length"
+            }
+          ]
+        }
+      ],
+      "projection": {
+        "viewpoint": "路明非",
+        "place": "器材棚",
+        "time": "2009年10月17日 15:22（推进 2 分钟）",
+        "characters": [
+          "路明非",
+          "芬格尔",
+          "秦越"
+        ],
+        "items": [
+          "路明非的护目镜",
+          "路明非的演习背心",
+          "开盖演习弹药箱",
+          "器材笼挂锁",
+          "器材领用簿",
+          "备用蓝色识别带"
+        ],
+        "facts": [
+          {
+            "kind": "time",
+            "statement": "大约过了 2 分钟（用动作或环境带出来，不要直接写“时间过去”）",
+            "mandatory": true
+          },
+          {
+            "kind": "moved",
+            "statement": "路明非从西侧服务巷走到器材棚",
+            "mandatory": true
+          }
+        ],
+        "playerAction": "我把护目镜推上去，朝器材棚走过去。"
+      },
+      "progressTail": [
+        {
+          "status": "streaming",
+          "chars": 388,
+          "elapsedMs": 124665
+        },
+        {
+          "status": "streaming",
+          "chars": 388,
+          "elapsedMs": 124668
+        },
+        {
+          "status": "rejected",
+          "chars": 167,
+          "elapsedMs": 124671
+        }
+      ],
+      "progressEvents": 482
+    },
+    {
+      "caseId": "S2-task-sanity",
+      "note": "诺诺修好短讯机（任务达成），精神值 58→60；两人都在服务巷",
+      "playerInput": "我看着她把电池按进短讯机。",
+      "time": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "minute"
+        }
+      },
+      "wallMs": 75346,
+      "accepted": false,
+      "status": "error",
+      "text": "",
+      "template": "qwen2.5-instruct",
+      "strategyVersion": "instruct-narration-candidate-v1",
+      "timings": {
+        "totalMs": 75343.91499996185,
+        "attemptMs": [
+          75343.21000003815
+        ],
+        "firstTokenMs": 24875.474999427795,
+        "deadlineExceeded": false
+      },
+      "issues": [
+        {
+          "kind": "engine_error",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "generation ended with length"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "durationMs": 75343,
+          "firstTokenMs": 24875,
+          "raw": "",
+          "cleaned": "",
+          "accepted": false,
+          "finishReason": null,
+          "error": "generation ended with length",
+          "issues": [
+            {
+              "kind": "engine_error",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "generation ended with length"
+            }
+          ]
+        }
+      ],
+      "projection": {
+        "viewpoint": "路明非",
+        "place": "西侧服务巷",
+        "time": "2009年10月17日 15:21（推进 1 分钟）",
+        "characters": [
+          "路明非",
+          "诺诺"
+        ],
+        "items": [
+          "路明非的护目镜",
+          "路明非的演习背心",
+          "赛区路线图",
+          "演习规则牌"
+        ],
+        "facts": [
+          {
+            "kind": "time",
+            "statement": "大约过了 1 分钟（用动作或环境带出来，不要直接写“时间过去”）",
+            "mandatory": true
+          },
+          {
+            "kind": "sanity_changed",
+            "statement": "诺诺的精神状态有了变化（写成情绪或神色的变化，不要写数值）",
+            "mandatory": true
+          },
+          {
+            "kind": "task_achieved",
+            "statement": "诺诺做成了这件事：把故障短讯机恢复到能与凯撒联络的状态（写结果，不要写“完成任务”这类话）",
+            "mandatory": true
+          },
+          {
+            "kind": "personality_changed",
+            "statement": "诺诺此后说话时不再把注意力全压在短讯机上",
+            "mandatory": true
+          }
+        ],
+        "playerAction": "我看着她把电池按进短讯机。"
+      },
+      "progressTail": [
+        {
+          "status": "streaming",
+          "chars": 412,
+          "elapsedMs": 75321
+        },
+        {
+          "status": "streaming",
+          "chars": 413,
+          "elapsedMs": 75322
+        },
+        {
+          "status": "streaming",
+          "chars": 413,
+          "elapsedMs": 75338
+        }
+      ],
+      "progressEvents": 342
+    },
+    {
+      "caseId": "S4-empty-time",
+      "note": "空增量点：没有实体变化，只有 1 分钟时间推进",
+      "playerInput": "我靠着墙，听巷口的动静。",
+      "time": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "minute"
+        }
+      },
+      "wallMs": 80447,
+      "accepted": false,
+      "status": "rejected",
+      "text": "路明非靠着墙，听巷口的动静。风轻轻拂过，吹动了巷口绳子的松动声。诺诺站在巷子尽头，手中短枪的枪口压向地面。诺诺的红发在风中飘扬，红发上的红痕是她扶过石墙时蹭上的。诺诺的短枪上没有标记，只是简单的故障短讯机。诺诺的手下意识地压向地面，仿佛在准备随时发射。诺诺的红色识别带缠在左臂，这是她本队的标志。诺诺的演习背心前襟完好，没有演习弹痕。路明非的护目镜挂在胸前，镜带松着。诺诺的短枪枪口压向地面，她下意识地压向地面，仿佛准备随时发射。",
+      "template": "qwen2.5-instruct",
+      "strategyVersion": "instruct-narration-candidate-v1",
+      "timings": {
+        "totalMs": 80446.76000022888,
+        "attemptMs": [
+          38266.305000305176,
+          42129.47500038147
+        ],
+        "firstTokenMs": 3015.3150005340576,
+        "deadlineExceeded": false
+      },
+      "issues": [
+        {
+          "kind": "fact_omitted",
+          "severity": "soft",
+          "attempt": 1,
+          "detail": "路明非位于西侧服务巷 (not stated)"
+        },
+        {
+          "kind": "time_missing",
+          "severity": "hard",
+          "attempt": 1,
+          "detail": "time advance 1 minute not narrated"
+        },
+        {
+          "kind": "engine_error",
+          "severity": "hard",
+          "attempt": 2,
+          "detail": "generation ended with length"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "durationMs": 38266,
+          "firstTokenMs": 3015,
+          "raw": "路明非靠着墙，听巷口的动静。风轻轻拂过，吹动了巷口绳子的松动声。诺诺站在巷子尽头，手中短枪的枪口压向地面。诺诺的红发在风中飘扬，红发上的红痕是她扶过石墙时蹭上的。诺诺的短枪上没有标记，只是简单的故障短讯机。诺诺的手下意识地压向地面，仿佛在准备随时发射。诺诺的红色识别带缠在左臂，这是她本队的标志。诺诺的演习背心前襟完好，没有演习弹痕。路明非的护目镜挂在胸前，镜带松着。诺诺的短枪枪口压向地面，她下意识地压向地面，仿佛准备随时发射。诺诺的红色识别带缠在左臂，这是她本队的标志。诺诺的手下意识地压向地面，仿佛在准备随时发射。诺诺的手下意识地压向地面，仿佛在准备随时发射。",
+          "cleaned": "路明非靠着墙，听巷口的动静。风轻轻拂过，吹动了巷口绳子的松动声。诺诺站在巷子尽头，手中短枪的枪口压向地面。诺诺的红发在风中飘扬，红发上的红痕是她扶过石墙时蹭上的。诺诺的短枪上没有标记，只是简单的故障短讯机。诺诺的手下意识地压向地面，仿佛在准备随时发射。诺诺的红色识别带缠在左臂，这是她本队的标志。诺诺的演习背心前襟完好，没有演习弹痕。路明非的护目镜挂在胸前，镜带松着。诺诺的短枪枪口压向地面，她下意识地压向地面，仿佛准备随时发射。",
+          "accepted": false,
+          "finishReason": null,
+          "error": null,
+          "issues": [
+            {
+              "kind": "fact_omitted",
+              "severity": "soft",
+              "attempt": 1,
+              "detail": "路明非位于西侧服务巷 (not stated)"
+            },
+            {
+              "kind": "time_missing",
+              "severity": "hard",
+              "attempt": 1,
+              "detail": "time advance 1 minute not narrated"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "durationMs": 42129,
+          "firstTokenMs": 2487,
+          "raw": "",
+          "cleaned": "",
+          "accepted": false,
+          "finishReason": null,
+          "error": "generation ended with length",
+          "issues": [
+            {
+              "kind": "engine_error",
+              "severity": "hard",
+              "attempt": 2,
+              "detail": "generation ended with length"
+            }
+          ]
+        }
+      ],
+      "projection": {
+        "viewpoint": "路明非",
+        "place": "西侧服务巷",
+        "time": "2009年10月17日 15:21（推进 1 分钟）",
+        "characters": [
+          "路明非",
+          "诺诺"
+        ],
+        "items": [
+          "路明非的护目镜",
+          "路明非的演习背心",
+          "赛区路线图",
+          "演习规则牌"
+        ],
+        "facts": [
+          {
+            "kind": "time",
+            "statement": "大约过了 1 分钟（用动作或环境带出来，不要直接写“时间过去”）",
+            "mandatory": true
+          }
+        ],
+        "playerAction": "我靠着墙，听巷口的动静。"
+      },
+      "progressTail": [
+        {
+          "status": "streaming",
+          "chars": 365,
+          "elapsedMs": 80445
+        },
+        {
+          "status": "streaming",
+          "chars": 365,
+          "elapsedMs": 80446
+        },
+        {
+          "status": "rejected",
+          "chars": 215,
+          "elapsedMs": 80447
+        }
+      ],
+      "progressEvents": 571
+    }
+  ],
+  "browser": "157.0.4341.42",
+  "loadMs": 42096,
+  "topology": {
+    "multithread": true,
+    "numThreads": 6
+  },
+  "engineInfo": {
+    "backend": "wllama",
+    "modelId": "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+  },
+  "summary": {
+    "cases": 3,
+    "calls": 5,
+    "accepted": 0,
+    "meanCallMs": 56075,
+    "p50CallMs": 52924,
+    "maxCallMs": 75343,
+    "p50FirstTokenMs": 3190,
+    "issueCounts": {
+      "movement_without_fact": 1,
+      "engine_error": 3,
+      "fact_omitted": 1,
+      "time_missing": 1
+    }
+  },
+  "completedAt": "2026-11-10T05:50:00.265Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}

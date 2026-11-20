@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-26T07:26:26.132Z",
+  "scope": "H2 contract proposal coordination only",
+  "aThreadId": "01a1674c-45a7-71c0-97ff-22590ce54b38",
+  "bThreadId": "01a176cd-7850-7811-bbf4-1e9e759a702f",
+  "pendingActionObserved": {
+    "source": "A task terminal approval prompt, inspected directly",
+    "server": "codex_tui",
+    "tool": "send_message_to_thread",
+    "targetThreadId": "01a176cd-7850-7811-bbf4-1e9e759a702f",
+    "payload": "Six read-only contract review messages, starting with review 1/6",
+    "displayedPrompt": "Allow the codex_tui MCP server to run tool \"send_message_to_thread\"?",
+    "displayedChoices": [
+      "Allow: Run the tool and continue",
+      "Cancel: Cancel this tool call"
+    ],
+    "reason": null,
+    "reasonAvailability": "UI requested permission for this MCP tool; neither UI nor cancellation result supplied a more specific policy or escalation reason",
+    "notACommandOrFileChange": true
+  },
+  "resolution": {
+    "approved": false,
+    "cancelledMessageToolCalls": 6,
+    "permissionPolicyChanged": false,
+    "aStatusAfterCancellation": {
+      "type": "active",
+      "activeFlags": []
+    },
+    "nextCommunication": "A responded in its own task; B read the final text with read_thread",
+    "aFinalReview": "artifacts/h2-a-read-contract-review.json",
+    "aFinalStatus": "idle"
+  },
+  "acceptance": {
+    "clientFirstBatch": "accepted",
+    "r1": "not_frozen",
+    "fullH2": "not_accepted"
+  },
+  "runtimeSourceModifiedThisRound": false,
+  "acceptedSourceTestsRerunThisRound": false
+}

@@ -1,0 +1,384 @@
+{
+ "summary": {
+  "scoringVersion": "cf24-mechanical-v2-strict-moved",
+  "note": "mechanical first pass; flags need review",
+  "facts": {
+   "S": 24,
+   "O": 0,
+   "A": 0,
+   "REVIEW": 0
+  },
+  "sources": 24,
+  "cleanSources": 23,
+  "sourcesWithFlags": 1
+ },
+ "rows": [
+  {
+   "unitId": "m01:f0",
+   "sourceId": "m01",
+   "kind": "moved",
+   "text": "沈砚从早市上来,蹲到雾堤的钟架下。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m02:f0",
+   "sourceId": "m02",
+   "kind": "moved",
+   "text": "沈砚从早市出来,回到潮渡。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m03:f0",
+   "sourceId": "m03",
+   "kind": "moved",
+   "text": "沈砚从潮渡上来,走进早市。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m04:f0",
+   "sourceId": "m04",
+   "kind": "moved",
+   "text": "沈砚从旧灯塔下来,回到早市。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m05:f0",
+   "sourceId": "m05",
+   "kind": "moved",
+   "text": "沈砚从潮汐档案馆出来,回到早市。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m06:f0",
+   "sourceId": "m06",
+   "kind": "moved",
+   "text": "沈砚从旧灯塔下来,回到雾堤。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m07:f0",
+   "sourceId": "m07",
+   "kind": "moved",
+   "text": "叶知微从潮生巷过来,推开档案馆的门。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m08:f0",
+   "sourceId": "m08",
+   "kind": "moved",
+   "text": "叶知微从潮汐档案馆出来,回到旧灯塔。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m09:f0",
+   "sourceId": "m09",
+   "kind": "moved",
+   "text": "叶知微从潮渡上来,走进雾堤。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m10:f0",
+   "sourceId": "m10",
+   "kind": "moved",
+   "text": "叶知微从旧灯塔下来,回到潮汐档案馆。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m11:f0",
+   "sourceId": "m11",
+   "kind": "moved",
+   "text": "叶知微从早市出来,回到潮渡。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m12:f0",
+   "sourceId": "m12",
+   "kind": "moved",
+   "text": "阿棠从早市过来,走进栈桥。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m13:f0",
+   "sourceId": "m13",
+   "kind": "moved",
+   "text": "阿棠从潮渡上来,走进旧灯塔。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m14:f0",
+   "sourceId": "m14",
+   "kind": "moved",
+   "text": "阿棠从潮汐档案馆出来,回到早市。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m15:f0",
+   "sourceId": "m15",
+   "kind": "moved",
+   "text": "阿棠从潮生巷过来,推开档案馆的门。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m16:f0",
+   "sourceId": "m16",
+   "kind": "moved",
+   "text": "阿棠从旧灯塔下来,走进早市。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m17:f0",
+   "sourceId": "m17",
+   "kind": "moved",
+   "text": "韩渡从潮渡过来,走进档案馆。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m18:f0",
+   "sourceId": "m18",
+   "kind": "moved",
+   "text": "韩渡从潮汐档案馆出来,在雾堤的钟架下站住。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m19:f0",
+   "sourceId": "m19",
+   "kind": "moved",
+   "text": "韩渡从雾堤上来,走进旧灯塔。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m20:f0",
+   "sourceId": "m20",
+   "kind": "moved",
+   "text": "韩渡从早市过来,走进潮生巷。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m21:f0",
+   "sourceId": "m21",
+   "kind": "moved",
+   "text": "韩渡从雾堤下到潮渡,栈桥边的水面晃了晃。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m22:f0",
+   "sourceId": "m22",
+   "kind": "moved",
+   "text": "顾行舟从潮渡到了河心,船灯从雾里透出来。",
+   "verdict": "S",
+   "note": "",
+   "flags": [
+    "extra-tail:船灯从雾里透出来"
+   ]
+  },
+  {
+   "unitId": "m23:f0",
+   "sourceId": "m23",
+   "kind": "moved",
+   "text": "顾行舟从潮渡上来,走进早市。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "m24:f0",
+   "sourceId": "m24",
+   "kind": "moved",
+   "text": "顾行舟从早市出来,船头抵住潮渡的栈桥。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  }
+ ],
+ "perSource": {
+  "m01": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m02": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m03": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m04": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m05": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m06": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m07": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m08": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m09": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m10": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m11": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m12": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m13": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m14": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m15": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m16": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m17": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m18": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m19": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m20": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m21": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m22": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": [
+    "extra-tail:船灯从雾里透出来"
+   ]
+  },
+  "m23": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  },
+  "m24": {
+   "verdicts": {
+    "f0": "S"
+   },
+   "flags": []
+  }
+ },
+ "scoredFile": "moved24-baseline.json"
+}

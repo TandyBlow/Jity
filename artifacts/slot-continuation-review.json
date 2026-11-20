@@ -1,0 +1,42 @@
+{
+  "status": "REVIEW_FINDINGS",
+  "recordedAt": "2026-10-26T05:25:25.321Z",
+  "layer": "real scheduler/controller with deterministic boundary probes",
+  "rows": [
+    {
+      "probe": "empty_plan_with_unvisited_frozen_slots",
+      "frozenOrder": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "visitedIds": [],
+      "plannedActorIds": [],
+      "decision": "model",
+      "task": "updates",
+      "inputMode": "time_scan"
+    },
+    {
+      "probe": "nonempty_plan_control",
+      "decision": "model",
+      "task": "action",
+      "actor": "person_a"
+    },
+    {
+      "probe": "continuation_without_world_or_round_history",
+      "modelCalls": 1,
+      "workingState": null,
+      "roundChanges": null,
+      "submittedDecision": "round_conclusion_conclude",
+      "conclusion": {
+        "kind": "handback",
+        "closedBy": "model",
+        "cancelReason": null
+      }
+    }
+  ]
+}

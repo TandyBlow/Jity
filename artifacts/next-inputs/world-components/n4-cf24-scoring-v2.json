@@ -1,0 +1,1346 @@
+{
+ "scoringVersion": "v2-strict-moved",
+ "rule": {
+  "moved": "起点与终点都要写出，只写终点记 O",
+  "reason": "与确认集 c3a 的判定统一；v1 把“到了X”“走进X”“穿过X的人”都算支持"
+ },
+ "arms": {
+  "base": {
+   "verdicts": {
+    "S": 76,
+    "O": 6,
+    "C": 1,
+    "A": 2
+   },
+   "total": 85,
+   "clean": 12,
+   "movedS": 6,
+   "movedTotal": 10
+  },
+  "arm1": {
+   "verdicts": {
+    "S": 80,
+    "O": 2,
+    "C": 1,
+    "A": 2
+   },
+   "total": 85,
+   "clean": 19,
+   "movedS": 9,
+   "movedTotal": 10
+  },
+  "arm2": {
+   "verdicts": {
+    "S": 77,
+    "O": 7,
+    "C": 1,
+    "A": 0
+   },
+   "total": 85,
+   "clean": 15,
+   "movedS": 3,
+   "movedTotal": 10
+  },
+  "422": {
+   "verdicts": {
+    "S": 83,
+    "O": 2,
+    "C": 0,
+    "A": 0
+   },
+   "total": 85,
+   "clean": 20,
+   "movedS": 8,
+   "movedTotal": 10
+  },
+  "431": {
+   "verdicts": {
+    "S": 84,
+    "O": 1,
+    "C": 0,
+    "A": 0
+   },
+   "total": 85,
+   "clean": 22,
+   "movedS": 10,
+   "movedTotal": 10
+  }
+ },
+ "perFact": {
+  "base": [
+   {
+    "sourceId": "t01",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t02",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t03",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t04",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t05",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t06",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t07",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t08",
+    "verdicts": {
+     "f0": "S",
+     "f1": "A",
+     "f2": "S",
+     "f3": "A"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t09",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t10",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t11",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t12",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t13",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t14",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t15",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t16",
+    "verdicts": {
+     "f0": "S",
+     "f1": "C",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t17",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t18",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t19",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t20",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t21",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t22",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t23",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t24",
+    "verdicts": {
+     "f0": "S",
+     "f1": "O",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   }
+  ],
+  "arm1": [
+   {
+    "sourceId": "t01",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t02",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t03",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t04",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t05",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t06",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t07",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t08",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t09",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t10",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t11",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t12",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t13",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t14",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t15",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t16",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t17",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t18",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t19",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t20",
+    "verdicts": {
+     "f0": "A",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t21",
+    "verdicts": {
+     "f0": "A",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t22",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t23",
+    "verdicts": {
+     "f0": "S",
+     "f1": "C",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t24",
+    "verdicts": {
+     "f0": "S",
+     "f1": "O",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   }
+  ],
+  "arm2": [
+   {
+    "sourceId": "t01",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t02",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t03",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t04",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t05",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t06",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t07",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t08",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t09",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t10",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t11",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t12",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t13",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t14",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t15",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t16",
+    "verdicts": {
+     "f0": "C",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t17",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t18",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t19",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t20",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t21",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t22",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t23",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t24",
+    "verdicts": {
+     "f0": "S",
+     "f1": "O",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   }
+  ],
+  "422": [
+   {
+    "sourceId": "t01",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t02",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t03",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t04",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t05",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t06",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t07",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t08",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t09",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t10",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t11",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t12",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t13",
+    "verdicts": {
+     "f0": "O",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": false
+   },
+   {
+    "sourceId": "t14",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t15",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t16",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t17",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t18",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t19",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t20",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t21",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t22",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t23",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t24",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   }
+  ],
+  "431": [
+   {
+    "sourceId": "t01",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t02",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t03",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t04",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t05",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t06",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t07",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t08",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t09",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t10",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "O"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t11",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t12",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": true,
+    "clean": false
+   },
+   {
+    "sourceId": "t13",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t14",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t15",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t16",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t17",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t18",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t19",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t20",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t21",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t22",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t23",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   },
+   {
+    "sourceId": "t24",
+    "verdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S",
+     "f3": "S"
+    },
+    "unsupported": false,
+    "clean": true
+   }
+  ]
+ }
+}

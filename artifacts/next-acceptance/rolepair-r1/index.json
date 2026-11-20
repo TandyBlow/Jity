@@ -1,0 +1,118 @@
+{
+ "purpose": "role contrast: same name as possessor in one member and as location reference in the other, name absent from both values",
+ "job": {
+  "id": 241116,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "units": 36,
+  "arms": [
+   "moved",
+   "ctl",
+   "mix"
+  ]
+ },
+ "frozenBeforeRun": {
+  "probes": "7f8154128cacb1cec75ed26761286de6c20615628a7365ee2a341c091508f18a",
+  "rule": "9fafe7cb365081d6de3878c8a909d40a4390a45ea96f2b9ef877ccf4bf01d358"
+ },
+ "summary": {
+  "moved": {
+   "pass": "11/12",
+   "possessorPass": "5/6",
+   "locationPass": "6/6",
+   "entityKept": "11/12",
+   "roleErrors": 1,
+   "roleErrorDetail": {
+    "replaced": 1,
+    "flip": 0,
+    "missing": 0
+   },
+   "relationKept": "6/6",
+   "syntaxBroken": 0,
+   "factS": "12/12"
+  },
+  "ctl": {
+   "pass": "7/12",
+   "possessorPass": "6/6",
+   "locationPass": "1/6",
+   "entityKept": "12/12",
+   "roleErrors": 0,
+   "roleErrorDetail": {
+    "replaced": 0,
+    "flip": 0,
+    "missing": 0
+   },
+   "relationKept": "6/6",
+   "syntaxBroken": 1,
+   "factS": "8/12"
+  },
+  "mix": {
+   "pass": "9/12",
+   "possessorPass": "6/6",
+   "locationPass": "3/6",
+   "entityKept": "10/12",
+   "roleErrors": 1,
+   "roleErrorDetail": {
+    "replaced": 0,
+    "flip": 1,
+    "missing": 2
+   },
+   "relationKept": "6/6",
+   "syntaxBroken": 1,
+   "factS": "10/12"
+  }
+ },
+ "declaredDecision": "role errors of 4 or more would point at paired role exemplars; 1 or fewer with syntax dominant would point at input expression; otherwise report the counts and pick the larger class",
+ "outcome": {
+  "roleErrors": {
+   "moved": 1,
+   "ctl": 0,
+   "mix": 1,
+   "total": 2,
+   "of": 36
+  },
+  "dominantFailure": "required noun omitted: 6 of 9 failed member-runs (ctl drops the name 4 times, mix drops the object twice)",
+  "hypothesisStatus": "the idea that insertion and possession share one slot is not supported - role substitution is rare, not widespread",
+  "secondary": "moved passes 6/6 on the location side using 名称+关系着+的 in all six rows; the frozen rule cannot tell whether that is a location or an agent reading, so its score may be over-credited. Counted as an observation, not as a change to the verdict",
+  "notClaimed": [
+   "this set was written for the current hypothesis, not an independent generalisation test",
+   "a single correct member does not show the role distinction is learned"
+  ]
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/rolepair-moved/rolepair-baseline.json",
+   "bytes": 19883,
+   "sha256": "0fc0e009f14edb43559545523dcddeca43b448367fdbb554711732fd4b7b49c6"
+  },
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/rolepair-ctl/rolepair-baseline.json",
+   "bytes": 19860,
+   "sha256": "c2da0825f9d0fa2828fe1bdc08c1e3c3ce47da8c103712f6f41a55edebdd10ca"
+  },
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/rolepair-mix/rolepair-baseline.json",
+   "bytes": 19899,
+   "sha256": "36f3b84856dc70dfc5b847ade4b6d41baf29d8c88734e467c3791b2994dd67c4"
+  },
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/rolepair-judged.json",
+   "bytes": 14808,
+   "sha256": "51817d4e8062b0fa314fbb53e614149fde4e5af078147119fc2ea2254853499b"
+  },
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/rolepair-summary.json",
+   "bytes": 809,
+   "sha256": "09f6752138bbeb9ef6803f982d546672e945fc3216c6f42aa4439889610019dc"
+  },
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/n4-rolepair-r1.jsonl",
+   "bytes": 12798,
+   "sha256": "7f8154128cacb1cec75ed26761286de6c20615628a7365ee2a341c091508f18a"
+  },
+  {
+   "path": "artifacts/next-acceptance/rolepair-r1/n4-rolepair-r1-rule.json",
+   "bytes": 2492,
+   "sha256": "9fafe7cb365081d6de3878c8a909d40a4390a45ea96f2b9ef877ccf4bf01d358"
+  }
+ ]
+}

@@ -1,0 +1,72 @@
+{
+  "results": [
+    {
+      "name": "old_B_rejects_ordinary_first_response_version",
+      "passed": true,
+      "schemaVersion": 2
+    },
+    {
+      "name": "live_get_state_response2_nested_state1",
+      "passed": true
+    },
+    {
+      "name": "creation_template1_accepted",
+      "passed": true
+    },
+    {
+      "name": "creation_template2_rejected",
+      "passed": true
+    },
+    {
+      "name": "trace_format1_still_valid",
+      "passed": true
+    },
+    {
+      "name": "response_rejects_True",
+      "passed": true
+    },
+    {
+      "name": "response_rejects_'1'",
+      "passed": true
+    },
+    {
+      "name": "state_rejects_True",
+      "passed": true
+    },
+    {
+      "name": "state_rejects_'1'",
+      "passed": true
+    },
+    {
+      "name": "trace_rejects_True",
+      "passed": true
+    },
+    {
+      "name": "trace_rejects_'1'",
+      "passed": true
+    },
+    {
+      "name": "trace_entry_rejects_True",
+      "passed": true
+    },
+    {
+      "name": "prior_integer_guard_rejects_True",
+      "passed": true
+    },
+    {
+      "name": "JSON_schema_rejects_trace_format_True",
+      "passed": true
+    },
+    {
+      "name": "all_authored_version_fields_classified",
+      "passed": true,
+      "counts": {
+        "envelopes": 293,
+        "stateModels": 58
+      },
+      "bad": []
+    }
+  ],
+  "passed": 15,
+  "failed": []
+}

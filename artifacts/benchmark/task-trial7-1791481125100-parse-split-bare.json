@@ -1,0 +1,1976 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "parse",
+  "arm": "split-bare",
+  "runParams": {
+    "model": {
+      "tag": "qwen3-0.6b",
+      "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_ubatch": 128,
+    "n_gpu_layers": 0,
+    "n_threads": 4,
+    "temperature": 0,
+    "seed": 4711,
+    "cache_prompt": false,
+    "enable_thinking": false
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "old": {
+      "withinTargetRate": "0/8",
+      "correctRate": "0/8",
+      "fieldCorrectRate": {
+        "action_type": "6/8",
+        "item_used": "3/8",
+        "target": "4/8",
+        "feasible": "8/8"
+      },
+      "totalWallMs": {
+        "min": 23982,
+        "max": 35230,
+        "median": 29600
+      },
+      "componentMedianMs": {
+        "action_type": 11788,
+        "item_used": 10046,
+        "target": 7969
+      },
+      "componentMedianPromptMs": {
+        "action_type": 10969,
+        "item_used": 9258,
+        "target": 7097
+      }
+    },
+    "new": {
+      "withinTargetRate": "0/4",
+      "correctRate": "0/4",
+      "fieldCorrectRate": {
+        "action_type": "3/4",
+        "item_used": "2/4",
+        "target": "2/4",
+        "feasible": "4/4"
+      },
+      "totalWallMs": {
+        "min": 24535,
+        "max": 26961,
+        "median": 25750
+      },
+      "componentMedianMs": {
+        "action_type": 9724,
+        "item_used": 8464,
+        "target": 6900
+      },
+      "componentMedianPromptMs": {
+        "action_type": 9048,
+        "item_used": 7805,
+        "target": 6256
+      }
+    }
+  },
+  "runs": [
+    {
+      "batch": "old",
+      "action": "我用铜钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "大门",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "二楼档案室"
+      },
+      "wallMs": 33579,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用铜钥匙打开大门。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 12889,
+          "promptTokens": 177,
+          "completionTokens": 8,
+          "promptMs": 11919,
+          "predictedMs": 923,
+          "promptPerSecond": 14.849798067915426,
+          "predictedPerSecond": 7.587746872764326,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用铜钥匙打开大门。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 11711,
+          "promptTokens": 161,
+          "completionTokens": 8,
+          "promptMs": 10721,
+          "predictedMs": 941,
+          "promptPerSecond": 15.016730596588589,
+          "predictedPerSecond": 7.43608946677927,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用铜钥匙打开大门。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8978,
+          "promptTokens": 134,
+          "completionTokens": 8,
+          "promptMs": 8177,
+          "predictedMs": 757,
+          "promptPerSecond": 16.387869063372136,
+          "predictedPerSecond": 9.250082590023124,
+          "finishReason": "stop",
+          "text": "{\"target\":\"二楼档案室\"}",
+          "parsed": {
+            "target": "二楼档案室"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 33578,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我和诺诺打听图书馆的传闻。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "诺诺",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "npc_talk",
+        "item_used": "铜钥匙",
+        "target": "诺诺"
+      },
+      "wallMs": 34122,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我和诺诺打听图书馆的传闻。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13160,
+          "promptTokens": 178,
+          "completionTokens": 9,
+          "promptMs": 12009,
+          "predictedMs": 1105,
+          "promptPerSecond": 14.822063624290996,
+          "predictedPerSecond": 7.242007991555819,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"npc_talk\"}",
+          "parsed": {
+            "action_type": "npc_talk"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我和诺诺打听图书馆的传闻。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 11967,
+          "promptTokens": 162,
+          "completionTokens": 8,
+          "promptMs": 11090,
+          "predictedMs": 826,
+          "promptPerSecond": 14.60756505957001,
+          "predictedPerSecond": 8.472012102874434,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我和诺诺打听图书馆的传闻。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8995,
+          "promptTokens": 135,
+          "completionTokens": 7,
+          "promptMs": 8184,
+          "predictedMs": 762,
+          "promptPerSecond": 16.495458067262614,
+          "predictedPerSecond": 7.8705555956370885,
+          "finishReason": "stop",
+          "text": "{\"target\":\"诺诺\"}",
+          "parsed": {
+            "target": "诺诺"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 34122,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我去二楼档案室查资料。",
+      "expect": {
+        "action_type": "move",
+        "item_used": null,
+        "target": "二楼档案室",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "inspect",
+        "item_used": "铜钥匙",
+        "target": "二楼档案室"
+      },
+      "wallMs": 33169,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我去二楼档案室查资料。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 12773,
+          "promptTokens": 177,
+          "completionTokens": 7,
+          "promptMs": 11901,
+          "predictedMs": 813,
+          "promptPerSecond": 14.872954716642482,
+          "predictedPerSecond": 7.378086345744504,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"inspect\"}",
+          "parsed": {
+            "action_type": "inspect"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我去二楼档案室查资料。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 11512,
+          "promptTokens": 161,
+          "completionTokens": 8,
+          "promptMs": 10595,
+          "predictedMs": 866,
+          "promptPerSecond": 15.195812675837264,
+          "predictedPerSecond": 8.082618214064679,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我去二楼档案室查资料。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8884,
+          "promptTokens": 134,
+          "completionTokens": 8,
+          "promptMs": 7957,
+          "predictedMs": 877,
+          "promptPerSecond": 16.840325189192885,
+          "predictedPerSecond": 7.982447737774311,
+          "finishReason": "stop",
+          "text": "{\"target\":\"二楼档案室\"}",
+          "parsed": {
+            "target": "二楼档案室"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 33169,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我使用生锈的铁门钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "铁门钥匙",
+        "target": "大门",
+        "feasible": false
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "铁门钥匙",
+        "target": "铁门钥匙"
+      },
+      "wallMs": 35230,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我使用生锈的铁门钥匙打开大门。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 13288,
+          "promptTokens": 181,
+          "completionTokens": 8,
+          "promptMs": 12283,
+          "predictedMs": 962,
+          "promptPerSecond": 14.73617364260301,
+          "predictedPerSecond": 7.2793070099726505,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我使用生锈的铁门钥匙打开大门。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 12150,
+          "promptTokens": 165,
+          "completionTokens": 9,
+          "promptMs": 11028,
+          "predictedMs": 1068,
+          "promptPerSecond": 14.961588162609068,
+          "predictedPerSecond": 7.48840000037442,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铁门钥匙\"}",
+          "parsed": {
+            "item_used": "铁门钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我使用生锈的铁门钥匙打开大门。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9793,
+          "promptTokens": 138,
+          "completionTokens": 8,
+          "promptMs": 8817,
+          "predictedMs": 935,
+          "promptPerSecond": 15.651175669816448,
+          "predictedPerSecond": 7.4870233841131775,
+          "finishReason": "stop",
+          "text": "{\"target\":\"铁门钥匙\"}",
+          "parsed": {
+            "target": "铁门钥匙"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 35231,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "old",
+      "action": "我和执行部学生搭话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "npc_talk",
+        "item_used": "铜钥匙",
+        "target": "执行部学生"
+      },
+      "wallMs": 26030,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我和执行部学生搭话。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 10802,
+          "promptTokens": 177,
+          "completionTokens": 9,
+          "promptMs": 10037,
+          "predictedMs": 721,
+          "promptPerSecond": 17.63549816545983,
+          "predictedPerSecond": 11.091546854853245,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"npc_talk\"}",
+          "parsed": {
+            "action_type": "npc_talk"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我和执行部学生搭话。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8428,
+          "promptTokens": 161,
+          "completionTokens": 8,
+          "promptMs": 7722,
+          "predictedMs": 670,
+          "promptPerSecond": 20.849923159615486,
+          "predictedPerSecond": 10.449398786376971,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我和执行部学生搭话。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 6800,
+          "promptTokens": 134,
+          "completionTokens": 8,
+          "promptMs": 6150,
+          "predictedMs": 617,
+          "promptPerSecond": 21.787572791223834,
+          "predictedPerSecond": 11.344575267205265,
+          "finishReason": "stop",
+          "text": "{\"target\":\"执行部学生\"}",
+          "parsed": {
+            "target": "执行部学生"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 26030,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我检查那扇书架后的暗门。",
+      "expect": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "暗门",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "inspect",
+        "item_used": "铜钥匙",
+        "target": "书架后的暗门"
+      },
+      "wallMs": 25130,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查那扇书架后的暗门。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9498,
+          "promptTokens": 180,
+          "completionTokens": 7,
+          "promptMs": 8922,
+          "predictedMs": 546,
+          "promptPerSecond": 20.174936877666248,
+          "predictedPerSecond": 10.980363450030197,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"inspect\"}",
+          "parsed": {
+            "action_type": "inspect"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查那扇书架后的暗门。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8579,
+          "promptTokens": 164,
+          "completionTokens": 8,
+          "promptMs": 7920,
+          "predictedMs": 625,
+          "promptPerSecond": 20.70699227149392,
+          "predictedPerSecond": 11.202975510295536,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查那扇书架后的暗门。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 7054,
+          "promptTokens": 137,
+          "completionTokens": 10,
+          "promptMs": 6236,
+          "predictedMs": 785,
+          "promptPerSecond": 21.97080000493942,
+          "predictedPerSecond": 11.461828925835599,
+          "finishReason": "stop",
+          "text": "{\"target\":\"书架后的暗门\"}",
+          "parsed": {
+            "target": "书架后的暗门"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 25131,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我拔剑攻击诺诺。",
+      "expect": {
+        "action_type": "other",
+        "item_used": "剑",
+        "target": "诺诺",
+        "feasible": false
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "剑",
+        "target": "诺诺"
+      },
+      "wallMs": 24422,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我拔剑攻击诺诺。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9533,
+          "promptTokens": 177,
+          "completionTokens": 8,
+          "promptMs": 8867,
+          "predictedMs": 637,
+          "promptPerSecond": 19.96077763580941,
+          "predictedPerSecond": 10.992462311557789,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我拔剑攻击诺诺。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8292,
+          "promptTokens": 161,
+          "completionTokens": 7,
+          "promptMs": 7716,
+          "predictedMs": 546,
+          "promptPerSecond": 20.865365773749968,
+          "predictedPerSecond": 10.987924271225923,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"剑\"}",
+          "parsed": {
+            "item_used": "剑"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我拔剑攻击诺诺。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 6598,
+          "promptTokens": 134,
+          "completionTokens": 7,
+          "promptMs": 6057,
+          "predictedMs": 509,
+          "promptPerSecond": 22.121669512492883,
+          "predictedPerSecond": 11.797994734161684,
+          "finishReason": "stop",
+          "text": "{\"target\":\"诺诺\"}",
+          "parsed": {
+            "target": "诺诺"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 24423,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "old",
+      "action": "我在原地休息一会儿。",
+      "expect": {
+        "action_type": "other",
+        "item_used": null,
+        "target": null,
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "other",
+        "item_used": "铜钥匙",
+        "target": "原地休息一会儿"
+      },
+      "wallMs": 23982,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我在原地休息一会儿。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9121,
+          "promptTokens": 176,
+          "completionTokens": 7,
+          "promptMs": 8539,
+          "predictedMs": 552,
+          "promptPerSecond": 20.61215524560027,
+          "predictedPerSecond": 10.863582374923956,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"other\"}",
+          "parsed": {
+            "action_type": "other"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我在原地休息一会儿。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8166,
+          "promptTokens": 160,
+          "completionTokens": 8,
+          "promptMs": 7512,
+          "predictedMs": 621,
+          "promptPerSecond": 21.299070229024906,
+          "predictedPerSecond": 11.280588524418446,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我在原地休息一会儿。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 6695,
+          "promptTokens": 133,
+          "completionTokens": 9,
+          "promptMs": 5973,
+          "predictedMs": 691,
+          "promptPerSecond": 22.268172419277874,
+          "predictedPerSecond": 11.580256242119997,
+          "finishReason": "stop",
+          "text": "{\"target\":\"原地休息一会儿\"}",
+          "parsed": {
+            "target": "原地休息一会儿"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 23982,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我仔细查看旧笔记里的字迹。",
+      "expect": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "旧笔记",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "inspect",
+        "item_used": "旧笔记",
+        "target": "旧笔记"
+      },
+      "wallMs": 24535,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我仔细查看旧笔记里的字迹。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9471,
+          "promptTokens": 179,
+          "completionTokens": 7,
+          "promptMs": 8897,
+          "predictedMs": 543,
+          "promptPerSecond": 20.118302361450368,
+          "predictedPerSecond": 11.041102343657991,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"inspect\"}",
+          "parsed": {
+            "action_type": "inspect"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我仔细查看旧笔记里的字迹。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8379,
+          "promptTokens": 163,
+          "completionTokens": 8,
+          "promptMs": 7723,
+          "predictedMs": 623,
+          "promptPerSecond": 21.106214239210324,
+          "predictedPerSecond": 11.236856890601171,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"旧笔记\"}",
+          "parsed": {
+            "item_used": "旧笔记"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我仔细查看旧笔记里的字迹。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 6685,
+          "promptTokens": 136,
+          "completionTokens": 7,
+          "promptMs": 6133,
+          "predictedMs": 521,
+          "promptPerSecond": 22.173820250860906,
+          "predictedPerSecond": 11.509466536226046,
+          "finishReason": "stop",
+          "text": "{\"target\":\"旧笔记\"}",
+          "parsed": {
+            "target": "旧笔记"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 24535,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我用旧笔记垫住门缝。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "旧笔记",
+        "target": "门缝",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "旧笔记",
+        "target": "旧笔记"
+      },
+      "wallMs": 26961,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用旧笔记垫住门缝。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9611,
+          "promptTokens": 179,
+          "completionTokens": 8,
+          "promptMs": 8942,
+          "predictedMs": 638,
+          "promptPerSecond": 20.016941713237742,
+          "predictedPerSecond": 10.974280988625942,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用旧笔记垫住门缝。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8504,
+          "promptTokens": 163,
+          "completionTokens": 8,
+          "promptMs": 7830,
+          "predictedMs": 644,
+          "promptPerSecond": 20.81714576752944,
+          "predictedPerSecond": 10.874968928660204,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"旧笔记\"}",
+          "parsed": {
+            "item_used": "旧笔记"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用旧笔记垫住门缝。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8846,
+          "promptTokens": 136,
+          "completionTokens": 7,
+          "promptMs": 8091,
+          "predictedMs": 723,
+          "promptPerSecond": 16.807792389159715,
+          "predictedPerSecond": 8.30122373873282,
+          "finishReason": "stop",
+          "text": "{\"target\":\"旧笔记\"}",
+          "parsed": {
+            "target": "旧笔记"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 26961,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我去找执行部学生问话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "执行部学生"
+      },
+      "wallMs": 25590,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我去找执行部学生问话。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 10340,
+          "promptTokens": 178,
+          "completionTokens": 8,
+          "promptMs": 9655,
+          "predictedMs": 645,
+          "promptPerSecond": 18.43596712183481,
+          "predictedPerSecond": 10.85061034683201,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我去找执行部学生问话。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 8423,
+          "promptTokens": 162,
+          "completionTokens": 8,
+          "promptMs": 7780,
+          "predictedMs": 607,
+          "promptPerSecond": 20.821468630722386,
+          "predictedPerSecond": 11.52559340340894,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"铜钥匙\"}",
+          "parsed": {
+            "item_used": "铜钥匙"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我去找执行部学生问话。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 6827,
+          "promptTokens": 135,
+          "completionTokens": 8,
+          "promptMs": 6191,
+          "predictedMs": 602,
+          "promptPerSecond": 21.805371712941163,
+          "predictedPerSecond": 11.625299974258263,
+          "finishReason": "stop",
+          "text": "{\"target\":\"执行部学生\"}",
+          "parsed": {
+            "target": "执行部学生"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 25590,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": false,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我用路明非的校徽刷开闸机。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "校徽",
+        "target": "闸机",
+        "feasible": false
+      },
+      "combined": {
+        "action_type": "item_use",
+        "item_used": "路明非的校徽",
+        "target": "路明非"
+      },
+      "wallMs": 25910,
+      "calls": [
+        {
+          "subtask": "action_type",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"inspect\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"action_type\":\"move\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用路明非的校徽刷开闸机。\n\n判断玩家行动属于哪一类，输出 JSON：{\"action_type\":\"...\"}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分\"查看\"与\"使用\"：\"检查/查看某物\"是 inspect；只有\"用某物品去达成别的目的\"才是 item_use。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9837,
+          "promptTokens": 183,
+          "completionTokens": 8,
+          "promptMs": 9154,
+          "predictedMs": 652,
+          "promptPerSecond": 19.991913653286254,
+          "predictedPerSecond": 10.730929605101789,
+          "finishReason": "stop",
+          "text": "{\"action_type\":\"item_use\"}",
+          "parsed": {
+            "action_type": "item_use"
+          },
+          "error": null
+        },
+        {
+          "subtask": "item_used",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用扫帚把纸团扫出门口。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":\"扫帚\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"item_used\":null}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用路明非的校徽刷开闸机。\n\n从玩家行动中摘录被使用的物品名，输出 JSON：{\"item_used\":\"...\"}。只有行动\"用某物品去达成别的目的\"时才摘录物品名；\"检查/查看某物\"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 9101,
+          "promptTokens": 167,
+          "completionTokens": 12,
+          "promptMs": 8063,
+          "predictedMs": 1000,
+          "promptPerSecond": 20.710737959558255,
+          "predictedPerSecond": 11.003686234888688,
+          "finishReason": "stop",
+          "text": "{\"item_used\":\"路明非的校徽\"}",
+          "parsed": {
+            "item_used": "路明非的校徽"
+          },
+          "error": null
+        },
+        {
+          "subtask": "target",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是文字冒险游戏的输入解析器。"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我检查铜钥匙的齿纹。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"铜钥匙\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我沿着楼梯走到二楼档案室。"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"target\":\"二楼档案室\"}"
+            },
+            {
+              "role": "user",
+              "content": "玩家行动：我用路明非的校徽刷开闸机。\n\n从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{\"target\":\"...\"}。摘录原文，不要改写；没有则为 null。只输出 JSON。"
+            }
+          ],
+          "contractPass": true,
+          "wallMs": 6973,
+          "promptTokens": 140,
+          "completionTokens": 8,
+          "promptMs": 6320,
+          "predictedMs": 620,
+          "promptPerSecond": 22.15219666720201,
+          "predictedPerSecond": 11.291506367603056,
+          "finishReason": "stop",
+          "text": "{\"target\":\"路明非\"}",
+          "parsed": {
+            "target": "路明非"
+          },
+          "error": null
+        }
+      ],
+      "error": null,
+      "withinTarget": false,
+      "totalWallMs": 25911,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": false
+    }
+  ],
+  "exportedAt": "2026-10-08T17:38:45.100Z"
+}

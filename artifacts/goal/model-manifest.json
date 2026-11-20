@@ -1,0 +1,32 @@
+{
+  "kind": "jity-model-manifest",
+  "generatedAt": "2026-11-20T08:13:50.516Z",
+  "note": "Weights are gitignored; this manifest is the contract. Fetch with node frontend/scripts/fetch-models.mjs.",
+  "tokenizer": "Embedded in each GGUF (wllama reads it from the file); no separate tokenizer asset is served.",
+  "models": [
+    {
+      "role": "semantic",
+      "file": "Qwen3-0.6B-Q4_K_M.gguf",
+      "path": "frontend/public/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "url": "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf",
+      "repo": "unsloth/Qwen3-0.6B-GGUF",
+      "repoRevision": "50968a4468ef4233ed78cd7c3de230dd1d61a56b",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+      "license": "Apache-2.0",
+      "verifiedAt": "2026-11-20T08:12:08.206Z"
+    },
+    {
+      "role": "narration",
+      "file": "Qwen3-1.7B-Q4_K_M.gguf",
+      "path": "frontend/public/models/Qwen3-1.7B-Q4_K_M.gguf",
+      "url": "https://huggingface.co/unsloth/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf",
+      "repo": "unsloth/Qwen3-1.7B-GGUF",
+      "repoRevision": "d7f544eead698dbd1f15126ef60b45a1e1933222",
+      "bytes": 1107409472,
+      "sha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+      "license": "Apache-2.0",
+      "verifiedAt": "2026-11-20T08:13:50.516Z"
+    }
+  ]
+}

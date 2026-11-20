@@ -1,0 +1,12 @@
+{
+ "python": "3.11.17",
+ "torch": "2.5.1+cu124",
+ "transformers": "4.51.3",
+ "cuda": "12.4",
+ "deviceName": "NVIDIA GeForce RTX 4090 D",
+ "fetch": {
+  "source": "job-meta.json",
+  "remoteSha256": "d9d68eb26abfc89edb79dc504627bc1398119cc8824531de7c40ea2ea40608a9",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

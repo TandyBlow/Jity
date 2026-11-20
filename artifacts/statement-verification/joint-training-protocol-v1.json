@@ -1,0 +1,107 @@
+{
+  "version": "joint-training-protocol-v1",
+  "created": "2026-11-05",
+  "purpose": "one binary verification head over general and target candidate spans; fixed 16+16 joint batches",
+  "init": {
+    "base": ".local\\world-components-worktree\\experiments\\world-components\\assets\\minirbt-h256-snapshot",
+    "baseModelSha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc",
+    "fromBaseOnly": true,
+    "loadOldCheckpoint": false
+  },
+  "labelContract": "判断指定候选跨度在当前上下文中表达的内容，是否得到权威授权支持。候选可以是句子、分句或短语。正文只用于恢复主体、指代及影响候选含义的否定、条件等语境；正文中其他独立陈述不纳入本次判定，也不构成授权来源。",
+  "data": {
+    "generalFile": "artifacts\\statement-verification\\pairs-v1.jsonl",
+    "generalFileSha256": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e",
+    "generalTrain": 754,
+    "generalTrainSupported": 377,
+    "generalTrainUnsupported": 377,
+    "generalDev": 190,
+    "generalDevSupported": 95,
+    "generalDevUnsupported": 95,
+    "generalConfirm": 108,
+    "generalConfirmSupported": 54,
+    "generalConfirmUnsupported": 54,
+    "targetFile": "artifacts\\statement-verification\\pairs-target-v1.jsonl",
+    "targetFileSha256": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+    "targetTrain": 160,
+    "targetTrainSupported": 80,
+    "targetTrainUnsupported": 80,
+    "targetDev": 40,
+    "targetDevSupported": 20,
+    "targetDevUnsupported": 20,
+    "targetConfirm": 48,
+    "targetConfirmSupported": 24,
+    "targetConfirmUnsupported": 24,
+    "regressionFile": "artifacts\\statement-verification\\regression-v1.jsonl",
+    "regressionFileSha256": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58",
+    "regression": 36,
+    "onlyTrainPoolsUsed": true,
+    "devConfirmNotInTraining": true
+  },
+  "batch": {
+    "general": 16,
+    "target": 16,
+    "total": 32,
+    "sameEveryStep": true
+  },
+  "budget": {
+    "updates": 300,
+    "evalEvery": 25,
+    "evalCount": 12,
+    "seed": 20261104,
+    "earlyStop": false,
+    "ratioSearch": false,
+    "secondBudget": false
+  },
+  "sampler": {
+    "general": "cycle without replacement; reshuffle at exhaustion; 16/step; 4800 draws total",
+    "target": "cycle without replacement; reshuffle at exhaustion; 16/step; 4800 draws total",
+    "generalPasses": 6.36604774535809,
+    "targetPasses": 30.0
+  },
+  "model": {
+    "head": "mean-pool + linear(2)",
+    "loss": "CrossEntropyLoss",
+    "optimizer": "AdamW",
+    "lr": 3e-05,
+    "maxLen": 256
+  },
+  "dev": {
+    "general": 190,
+    "target": 40,
+    "gates": {
+      "unsupportedRecallMin": 0.8,
+      "legalRejectionMax": 0.05,
+      "legalPendingMax": 0.15
+    },
+    "eachSetSeparately": true,
+    "tGrid": "0.50..0.99 step 0.01",
+    "selection": "both dev gate sets must pass; then max macro unsupportedRecall; min macro legalRejection; min macro legalPending; earliest step; lowest t_conf",
+    "noEligible": "report failure; no confirm; no relaxation"
+  },
+  "confirm": {
+    "general": 108,
+    "target": 48,
+    "use": "fixed regression after selection; no threshold tuning; not new confirmation"
+  },
+  "regression": {
+    "n": 36,
+    "use": "20-source regression; separate; not selection"
+  },
+  "newBlindConfirm": {
+    "prepared": false,
+    "reason": "only after joint compatibility shows benefit"
+  },
+  "evaluation": {
+    "sourceStatus": "not_implemented",
+    "sourceHead": false,
+    "service": false,
+    "autoDelete": false
+  },
+  "compatibility": {
+    "file": "artifacts\\statement-verification\\label-compatibility-v1.json",
+    "sha256": "29f1cd55719e050e66bf5efaf7b0f292691b7160a7b6e6d3e9e82fb04f9ed311",
+    "finding": "syntactic form difference; no scope conflict",
+    "jointAllowed": true
+  }
+}

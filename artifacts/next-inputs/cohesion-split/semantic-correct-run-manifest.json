@@ -1,0 +1,36 @@
+{
+  "model": "qwen2.5:7b",
+  "promptVersion": "semantic-correct/1",
+  "promptTemplateSha256": "3acdd9480ae9e09cbbee07d96b194ff8255cc9d10db03fa7265446f04f9360c1",
+  "promptBundleSha256": "70bc1ed6bea61c7b674590cc0dbfb2553bc986ae3f376d0f0d2171c938d96f49",
+  "runnerSha256": "51eee6f596d1a05491abfcded81e9b846fc30acf1d2f16de4873c3894872b090",
+  "a1Sha256": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546",
+  "contractSha256": "48029bd8b46b5ad573231ed381cb825c8f8e965739b20e2644c3b4613a530309",
+  "criteriaSha256": "425e8794cb4397c8e2a9eeaa8dda580d94e4b846dabe0543df80c290ca852837",
+  "sourceCount": 20,
+  "parseOk": 20,
+  "parseFail": 0,
+  "runStatusCounts": {
+    "pending": 12,
+    "deleted": 5,
+    "keep": 3
+  },
+  "finalStatusCounts": {
+    "pending": 16,
+    "keep": 3,
+    "deleted": 1
+  },
+  "proposedCount": 17,
+  "appliedCount": 1,
+  "flagCounts": {
+    "ambiguous-span": 3,
+    "span-not-found": 3,
+    "sentence-concatenation": 5,
+    "missing-final-period": 1,
+    "fact-coverage-drop:f3": 2,
+    "fact-coverage-drop:f1": 3
+  },
+  "totalSeconds": 38.56,
+  "meanSeconds": 1.93,
+  "note": "原始 20 源一次跑；首轮程序漏了 sentence-concatenation，修正检查后只重评分、没有重跑模型。最终 1 应用、16 pending、3 keep。"
+}

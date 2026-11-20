@@ -1,0 +1,369 @@
+{
+  "schema": "jity-d-journal-summary-v1",
+  "date": "2026-11-03",
+  "scope": "frozen_checkpoint_exposed_development_inference_only",
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "runs": [
+    {
+      "runId": "m01-journal-dev42-20261103-r1",
+      "quality": {
+        "snapshot": {
+          "D02": {
+            "fit": {
+              "matched": 0,
+              "groups": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 0,
+              "groups": 0,
+              "requiredTargets": 0,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        },
+        "append": {
+          "D02": {
+            "fit": {
+              "matched": 0,
+              "groups": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 0,
+              "groups": 0,
+              "requiredTargets": 0,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        }
+      },
+      "timing": [
+        {
+          "arm": "snapshot",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 117.530208,
+          "maxMs": 172.26325,
+          "meanMs": 124.65065,
+          "componentsMeanMs": {
+            "encoderMs": 51.2530171952676,
+            "packMs": 10.71859179646708,
+            "poolAndDigestMs": 0.7978749927133322,
+            "tensorMs": 0.2589661977253854,
+            "windowJournalMs": 1.5492756094317883,
+            "headMs": 0.6057168007828295,
+            "startJournalMs": 0.052050198428332806,
+            "snapshotStartMs": 27.878583397250623,
+            "resultJournalMs": 0.9393165993969887,
+            "snapshotEndMs": 29.601900011766702,
+            "telemetryJournalMs": 0.11175020481459796,
+            "otherMs": 0.8836069959547359
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.020226359367370605
+          ]
+        },
+        {
+          "arm": "snapshot",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 123.825542,
+          "maxMs": 178.528166,
+          "meanMs": 124.8072332,
+          "componentsMeanMs": {
+            "encoderMs": 47.85196699667722,
+            "packMs": 10.338191594928503,
+            "poolAndDigestMs": 0.5718592030461878,
+            "tensorMs": 0.15855859383009374,
+            "windowJournalMs": 1.4940836175810546,
+            "headMs": 0.16362480237148702,
+            "startJournalMs": 0.044174998765811324,
+            "snapshotStartMs": 30.39489999646321,
+            "resultJournalMs": 0.9394584049005061,
+            "snapshotEndMs": 32.28660840541124,
+            "telemetryJournalMs": 0.11619159486144781,
+            "otherMs": 0.4476149911632348
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.9756626486778259
+          ]
+        },
+        {
+          "arm": "snapshot",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 132.804708,
+          "maxMs": 188.432125,
+          "meanMs": 134.2451668,
+          "componentsMeanMs": {
+            "encoderMs": 49.673200002871454,
+            "packMs": 10.846766596660018,
+            "poolAndDigestMs": 0.5861333862412721,
+            "tensorMs": 0.16343339229933918,
+            "windowJournalMs": 1.5205920091830194,
+            "headMs": 0.19098319462500513,
+            "startJournalMs": 0.049508397933095694,
+            "snapshotStartMs": 33.97555839619599,
+            "resultJournalMs": 1.0873416031245142,
+            "snapshotEndMs": 35.5504167964682,
+            "telemetryJournalMs": 0.12358319363556802,
+            "otherMs": 0.4776498307625161
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.01315467432141304,
+            0.023671815171837807,
+            0.01782318577170372
+          ]
+        },
+        {
+          "arm": "snapshot",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 139.667,
+          "maxMs": 191.624875,
+          "meanMs": 142.863575,
+          "componentsMeanMs": {
+            "encoderMs": 51.1863169958815,
+            "packMs": 11.262075003469363,
+            "poolAndDigestMs": 0.5892660177778453,
+            "tensorMs": 0.17024980043061078,
+            "windowJournalMs": 1.5746088232845068,
+            "headMs": 0.20454979967325926,
+            "startJournalMs": 0.052908394718542695,
+            "snapshotStartMs": 37.19833340146579,
+            "resultJournalMs": 1.182458404218778,
+            "snapshotEndMs": 38.84830840397626,
+            "telemetryJournalMs": 0.13515839236788452,
+            "otherMs": 0.4593415627356592
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.022675814107060432,
+            0.912228524684906,
+            0.9493820667266846
+          ]
+        },
+        {
+          "arm": "append",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 62.748542,
+          "maxMs": 65.018917,
+          "meanMs": 62.75965,
+          "componentsMeanMs": {
+            "encoderMs": 48.722666600951925,
+            "packMs": 10.237458202755079,
+            "poolAndDigestMs": 0.5468666029628366,
+            "tensorMs": 0.15195839223451912,
+            "windowJournalMs": 1.4740667946171016,
+            "headMs": 0.14295799774117768,
+            "startJournalMs": 0.05897519877180457,
+            "snapshotStartMs": 9.999494068324566e-05,
+            "resultJournalMs": 0.9705999866127968,
+            "snapshotEndMs": 0.0001500011421740055,
+            "telemetryJournalMs": 0.0547247938811779,
+            "otherMs": 0.3991254333887255
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.020226359367370605
+          ]
+        },
+        {
+          "arm": "append",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 61.923542,
+          "maxMs": 65.006833,
+          "meanMs": 62.2006334,
+          "componentsMeanMs": {
+            "encoderMs": 47.56281680311076,
+            "packMs": 10.351549799088389,
+            "poolAndDigestMs": 0.5853752023540437,
+            "tensorMs": 0.17195038381032646,
+            "windowJournalMs": 1.5554660058114678,
+            "headMs": 0.14415860059671104,
+            "startJournalMs": 0.05860799574293196,
+            "snapshotStartMs": 0.0001334003172814846,
+            "resultJournalMs": 1.2542081996798515,
+            "snapshotEndMs": 0.00014139804989099503,
+            "telemetryJournalMs": 0.06203320808708668,
+            "otherMs": 0.4541924033512572
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.9756626486778259
+          ]
+        },
+        {
+          "arm": "append",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 65.307625,
+          "maxMs": 65.992208,
+          "meanMs": 65.4719082,
+          "componentsMeanMs": {
+            "encoderMs": 50.47037479234859,
+            "packMs": 10.913325008004904,
+            "poolAndDigestMs": 0.6155496113933623,
+            "tensorMs": 0.16112520243041217,
+            "windowJournalMs": 1.5259420091751963,
+            "headMs": 0.19470840343274176,
+            "startJournalMs": 0.04934981116093695,
+            "snapshotStartMs": 0.00010819640010595322,
+            "resultJournalMs": 1.0600002016872168,
+            "snapshotEndMs": 0.00018319697119295597,
+            "telemetryJournalMs": 0.05883320118300617,
+            "otherMs": 0.4224085658123329
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.01315467432141304,
+            0.023671815171837807,
+            0.01782318577170372
+          ]
+        },
+        {
+          "arm": "append",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 67.2165,
+          "maxMs": 70.428167,
+          "meanMs": 67.0795832,
+          "componentsMeanMs": {
+            "encoderMs": 51.8138328101486,
+            "packMs": 11.097724811406806,
+            "poolAndDigestMs": 0.6452165893279016,
+            "tensorMs": 0.1709418196696788,
+            "windowJournalMs": 1.5907994005829096,
+            "headMs": 0.21220800117589533,
+            "startJournalMs": 0.06331679760478437,
+            "snapshotStartMs": 0.0001249951310455799,
+            "resultJournalMs": 0.9181583998724818,
+            "snapshotEndMs": 0.00017480342648923397,
+            "telemetryJournalMs": 0.06400819402188063,
+            "otherMs": 0.503076577631532
+          },
+          "local50ms": "fail",
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.022675814107060432,
+            0.912228524684906,
+            0.9493820667266846
+          ]
+        }
+      ],
+      "trainingSteps": 0,
+      "timedInferenceItems": 40,
+      "forwardWindows": 160,
+      "journalEvents": 441,
+      "encoder": {
+        "layers": 2,
+        "parameters": 7120384,
+        "tensorSha256": "6bbafd3213e907abef347a0fd96179bf4282d987c1b3000d0498aca1feafb40b"
+      },
+      "headParameters": 180418,
+      "checkpoint": {
+        "contains": "four_event_anchor_heads_only",
+        "path": ".local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt",
+        "sha256": "a390a148c81f6a1300908c876a7de905d3af90abd75332fa926189fb86380b56"
+      },
+      "weightsUnchanged": true,
+      "exactPreviousProbabilities": true,
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 415.34375,
+        "stopReason": null,
+        "wallMs": 7050.134083983721
+      },
+      "allAttemptWallMs": 3920.391999,
+      "batchFinalSnapshotTiming": "included in child process wall; not separately measured",
+      "supervisorReplayTiming": "not measured; excluded from process wall, no full-request claim"
+    }
+  ],
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-journal-dev42-20261103-r1.record.json.gz",
+      "gzipSha256": "9e56ceaf2068ca22ede6b17cc9b82b00cac6d0949c0f028127bc19588d8b66ad",
+      "rawSha256": "eb968b1fbaf3e940d752b0e0ba61ca651b0f5e0c68fa0792a30a2d5e879d1589"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-journal-dev42-20261103-r1.record.journal.jsonl.gz",
+      "gzipSha256": "84743f294ac02395e0d6f0b469bcbf97e90fc04931d785ef3c086a303689ca9e",
+      "rawSha256": "e77c4ea31feb8a25eae1e05391b7819c48772e6624a956ba0e124e2aefc1f0a1"
+    }
+  ]
+}

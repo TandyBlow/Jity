@@ -1,0 +1,26 @@
+{
+  "comment": "Pure removal (text:null + supersedes) applied across two points: the superseded entry goes inactive, the removal record stays as the active description. v2 had zero coverage for this path; the v1 fixture pureRemoval is the semantic reference.",
+  "initial": {
+    "engineVersion": "world-engine-v1",
+    "schemaVersion": 1,
+    "worldId": "world_fixture",
+    "protagonistId": "person_a",
+    "initialTime": {"calendar": "gregorian", "dateTime": "2026-01-01T00:00:00", "instantOrdinal": 0},
+    "locations": {"room_a": {"id": "room_a", "name": "A 房间", "parentLocationId": null, "initialAppearance": "空房间", "slots": []}},
+    "items": {"item_a": {"id": "item_a", "name": "木箱", "initialPosition": {"containerId": "room_a", "slotId": null, "relativeTo": null}, "initialAppearance": "崭新", "slots": []}},
+    "characters": {"person_a": {"id": "person_a", "name": "主角", "initialPosition": {"containerId": "room_a", "slotId": null, "relativeTo": null}, "initialAppearance": "平凡", "initialPersonality": "谨慎", "initialSanity": 50, "tasks": {"task_a": {"id": "task_a", "ownerId": "person_a", "parentTaskId": null, "goal": "活下来", "status": "pending"}}}}
+  },
+  "points": [
+    {"pointId": "p1", "sequence": 1, "timeAdvance": {"boundary": "elapsed", "duration": {"amount": 1, "unit": "second"}},
+     "deltas": {"item_a": {"entityId": "item_a", "appearanceChanges": [{"id": "ch_1", "text": "崭新未拆", "supersedes": []}]}}},
+    {"pointId": "p2", "sequence": 2, "timeAdvance": {"boundary": "elapsed", "duration": {"amount": 1, "unit": "second"}},
+     "deltas": {"item_a": {"entityId": "item_a", "appearanceChanges": [{"id": "ch_2", "text": null, "supersedes": ["ch_1"]}]}}}
+  ],
+  "expect": {
+    "time": {"dateTime": "2026-01-01T00:00:02", "instantOrdinal": 0},
+    "item_a": {"appearanceChanges": [
+      {"id": "ch_1", "text": "崭新未拆", "sourcePointId": "p1", "sourceSequence": 1, "active": false},
+      {"id": "ch_2", "text": null, "supersedes": ["ch_1"], "sourcePointId": "p2", "sourceSequence": 2, "active": true}
+    ]}
+  }
+}

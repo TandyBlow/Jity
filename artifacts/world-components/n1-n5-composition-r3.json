@@ -1,0 +1,810 @@
+{
+ "purpose": "commit-1 real-model composition: program N1 (commit-1 vocabulary) + perspective-rule N2 + program N3 + frozen r3-direction N4 + program N5; statuses reflect N5 (#1), a REAL-tokenizer pre-model gate with 128/129 boundary cases (#2), the frozen-model KIND GATE stops new-vocabulary facts before the model (kind-awaiting-model-track), and the perspective rule stops a must without visibility ground end-to-end; offline CPU evidence, browser evidence separate",
+ "componentProvenance": {
+  "n1/n3/n5": "program",
+  "n2": "perspective rule (n2_perspective.py, must/may/invisible with visibility grounds; encoder head rejected by batch-2 measurement; select-all kept as labelled comparison arm only)",
+  "n3 model arm": "NOT run - 0.6B pause in force, no run archive exists for one",
+  "n4": "frozen r3-direction, HF generate, fp32, greedy, max_new_tokens 64, deterministic flags, offline CPU; frozen eight-kind vocabulary enforced by the kind gate"
+ },
+ "checkpoint": {
+  "dir": "assets/n4-finetune/r3-direction",
+  "modelSha256": "baceebff5d33eacfc2aa8373c61e2d231130e9986f0e1da30523299c41c19b45"
+ },
+ "environment": {
+  "python": "3.12.3",
+  "torch": "2.7.0+cu126",
+  "device": "cpu",
+  "deviceName": "cpu",
+  "note": "offline timing only; never merged with browser timings"
+ },
+ "realTokenGate": {
+  "limit": 128,
+  "tokenizer": "T5Tokenizer legacy=False, special tokens included",
+  "boundaryCases": {
+   "admitted": 128,
+   "refused": 129
+  }
+ },
+ "scenarios": [
+  {
+   "name": "normal-second",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.04,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.04,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.03,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.08,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 53,
+    "n4Model": {
+     "ms": 1812.5,
+     "outputTokens": 36,
+     "text": "管线甲从管线镇来到钟楼时,管线甲已经办妥任务「把铜铃挂回钟楼」。前后大约四十秒。"
+    },
+    "n5": {
+     "ms": 1.9,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 时间推进：约四十秒\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "normal-zero-empty",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.02,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.03,
+     "status": "ok",
+     "summary": {
+      "must": 0,
+      "may": 2,
+      "invisible": 0,
+      "selected": 2,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 2
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.06,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 25,
+    "n4Model": {
+     "ms": 492.3,
+     "outputTokens": 13,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    "n5": {
+     "ms": 0.57,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 时间推进：约零分钟\n2. 无变化\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "normal-root",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.02,
+     "facts": 1,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 0,
+      "may": 1,
+      "invisible": 0,
+      "selected": 1,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 1
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.05,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 17,
+    "n4Model": {
+     "ms": 274.7,
+     "outputTokens": 7,
+     "text": "一切如旧。"
+    },
+    "n5": {
+     "ms": 0.12,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 无变化\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "fail-version-gap",
+   "expect": "stopped-at-binding",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.04,
+     "status": "ok",
+     "summary": {
+      "must": 0,
+      "may": 2,
+      "invisible": 0,
+      "selected": 2,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 2
+    },
+    "n3": {
+     "ms": 0.03,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.06,
+     "status": "binding-failed",
+     "reason": null,
+     "reasons": [
+      "version-gap"
+     ]
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇"
+   },
+   "status": "stopped-at-binding",
+   "modelCalled": false,
+   "expectMet": true
+  },
+  {
+   "name": "limit-five-facts",
+   "expect": "unsupported",
+   "stages": {
+    "n1": {
+     "ms": 0.1,
+     "facts": 6,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.05,
+     "status": "ok",
+     "summary": {
+      "must": 4,
+      "may": 2,
+      "invisible": 0,
+      "selected": 6,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 6
+    },
+    "n3": {
+     "ms": 0.06,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.14,
+     "status": "unsupported",
+     "reason": "plan-too-long",
+     "reasons": null
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "status": "unsupported",
+   "modelCalled": false,
+   "expectMet": true
+  },
+  {
+   "name": "kind-gate-subtask",
+   "expect": "unsupported",
+   "stages": {
+    "n1": {
+     "ms": 0.05,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.03,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "status": "unsupported",
+   "unsupportedReason": "kind-awaiting-model-track",
+   "kinds": [
+    "subtask_added"
+   ],
+   "modelCalled": false,
+   "expectMet": true
+  },
+  {
+   "name": "kind-gate-relative",
+   "expect": "unsupported",
+   "stages": {
+    "n1": {
+     "ms": 0.04,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 1,
+      "may": 1,
+      "invisible": 0,
+      "selected": 2,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 2
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇"
+   },
+   "status": "unsupported",
+   "unsupportedReason": "kind-awaiting-model-track",
+   "kinds": [
+    "position_relative"
+   ],
+   "modelCalled": false,
+   "expectMet": true
+  },
+  {
+   "name": "n2-must-hidden-stop",
+   "expect": "incomplete",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "stopped",
+     "summary": {
+      "must": 1,
+      "may": 1,
+      "invisible": 0,
+      "selected": 1,
+      "mayPolicy": "select"
+     },
+     "stops": [
+      {
+       "factId": "f0",
+       "code": "must-without-visibility-ground",
+       "ground": "other-location",
+       "reason": "在追任务由他人在视角人物无法感知之处完成：必述与可见性冲突，明确停止而不是盲目写入或静默丢弃"
+      }
+     ],
+     "selected": 1
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "status": "incomplete",
+   "reason": "n2-must-without-visibility-ground",
+   "modelCalled": false,
+   "expectMet": true
+  },
+  {
+   "name": "limit-real-128",
+   "expect": "n5-review-pending",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 1,
+      "may": 1,
+      "invisible": 0,
+      "selected": 2,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 2
+    },
+    "n3": {
+     "ms": 0.03,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.11,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 128,
+    "n4Model": {
+     "ms": 2962.8,
+     "outputTokens": 65,
+     "text": "管线甲完成了任务「把铜铃挂回钟楼网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网"
+    },
+    "n5": {
+     "ms": 0.47,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [
+      "sentence '管线甲完成了任务「把铜铃挂回钟楼网网网网网网网网' not fully covered by plan recognizers (covered 0/66) — unrecognized content, needs review",
+      "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+     ],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 任务达成：管线甲「把铜铃挂回钟楼网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网网」\n2. 时间推进：约五分钟\n正文：",
+   "status": "n5-review-pending",
+   "expectMet": true
+  },
+  {
+   "name": "limit-real-129",
+   "expect": "unsupported",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 1,
+      "may": 1,
+      "invisible": 0,
+      "selected": 2,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 2
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.07,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 129
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "管线镇"
+   },
+   "status": "unsupported",
+   "unsupportedReason": "input-too-long-real",
+   "modelCalled": false,
+   "expectMet": true
+  }
+ ],
+ "gateChecks": {
+  "noCounterRefused": {
+   "noCounterRefused": true
+  },
+  "record": {
+   "name": "gate-no-counter",
+   "expect": "stopped-at-token-gate",
+   "stages": {
+    "n1": {
+     "ms": 0.04,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.03,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.07,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": null
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "status": "stopped-at-token-gate",
+   "reason": "no real tokenizer available to count the rendered input; refusing the model call (re-review 11-02 finding 1)",
+   "modelCalled": false,
+   "expectMet": true
+  }
+ },
+ "controls": [
+  {
+   "name": "control-empty",
+   "expect": "empty-output",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.06,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 53,
+    "n4Model": {
+     "ms": 0.0,
+     "outputTokens": 0,
+     "text": ""
+    },
+    "n5": {
+     "ms": 0.07,
+     "status": "checked",
+     "fails": [
+      "mustExpress [0, 1, 2] not covered by planRefs"
+     ],
+     "semanticUncertain": [
+      "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+     ],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 时间推进：约四十秒\n正文：",
+   "status": "empty-output",
+   "expectMet": true
+  },
+  {
+   "name": "control-wrong-text",
+   "expect": "n5-failed-or-review",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.06,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 53,
+    "n4Model": {
+     "ms": 0.0,
+     "outputTokens": 42,
+     "text": "管线甲从管线镇来到钟楼时,管线甲已经办妥任务「把铜铃挂回钟楼」。前后整整八千四十秒。"
+    },
+    "n5": {
+     "ms": 0.15,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [
+      "sentence '前后整整八千四十秒' not fully covered by plan recognizers (covered 3/9) — unrecognized content, needs review"
+     ],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 时间推进：约四十秒\n正文：",
+   "status": "n5-review-pending",
+   "expectMet": true
+  },
+  {
+   "name": "control-uncertain-text",
+   "expect": "n5-failed-or-review",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.07,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 53,
+    "n4Model": {
+     "ms": 0.0,
+     "outputTokens": 54,
+     "text": "管线甲从管线镇来到钟楼时,管线甲已经办妥任务「把铜铃挂回钟楼」。前后大约四十秒。路边忽然开出一朵不会有的花。"
+    },
+    "n5": {
+     "ms": 0.15,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [
+      "sentence '路边忽然开出一朵不会有的花' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review"
+     ],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 时间推进：约四十秒\n正文：",
+   "status": "n5-review-pending",
+   "expectMet": true
+  },
+  {
+   "name": "control-normal",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.02,
+     "status": "ok",
+     "summary": {
+      "must": 2,
+      "may": 1,
+      "invisible": 0,
+      "selected": 3,
+      "mayPolicy": "select"
+     },
+     "stops": [],
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.02,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.06,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4RealTokens": 53,
+    "n4Model": {
+     "ms": 0.0,
+     "outputTokens": 40,
+     "text": "管线甲从管线镇来到钟楼时,管线甲已经办妥任务「把铜铃挂回钟楼」。前后大约四十秒。"
+    },
+    "n5": {
+     "ms": 0.12,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "perspective": {
+    "type": "protagonist",
+    "entityId": "char_pa",
+    "at": "钟楼"
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 时间推进：约四十秒\n正文：",
+   "status": "ok",
+   "expectMet": true
+  }
+ ],
+ "n5Summary": {
+  "realScenarios": {
+   "withN5": 4,
+   "n5Fails": 0,
+   "n5SemanticUncertain": 1,
+   "uncertainItems": [
+    "sentence '管线甲完成了任务「把铜铃挂回钟楼网网网网网网网网' not fully covered by plan recognizers (covered 0/66) — unrecognized content, needs review",
+    "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+   ]
+  },
+  "controls": {
+   "withN5": 4,
+   "n5Fails": 1,
+   "n5SemanticUncertain": 3,
+   "note": "the two negative controls PRODUCE findings on purpose to prove the non-success statuses fire end-to-end"
+  },
+  "emptyOutputs": 1
+ },
+ "n5Note": "review-class findings are listed for review, never auto-passed; the page gate stays B-side",
+ "pass": true
+}

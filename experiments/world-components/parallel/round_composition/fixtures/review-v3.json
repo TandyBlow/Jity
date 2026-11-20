@@ -1,0 +1,391 @@
+{
+ "version": "real-batch-v3-review",
+ "batchId": "real-batch-2026-11-08-v3-shape",
+ "reviewedAt": "2026-11-08",
+ "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
+ "reviewStatus": "pending-independent-review",
+ "reviewedAttempt": 1,
+ "scope": "first call text per sample; retry texts are archived but not reviewed (pending); template fallbacks are program output",
+ "separationRule": "N5 formal findings are listed under n5Formal; N6 reasons are semantic judgements only.",
+ "d4Rule": "proper names only, absent from the registry AND from the authoritative text; object/place descriptions are N6 notes",
+ "n6Rule": "A facts conveyed without contradiction; B no invented named entity/event, no goal leak, no format echo or meta-talk; C no other character's inner state and no POV switch; D complete sentence. pass only when A-D hold.",
+ "caseMeta": {
+  "rb-move-outcome": {
+   "hasMovedFact": true
+  },
+  "rb-time-vague": {
+   "hasMovedFact": true
+  },
+  "rb-inner-change": {
+   "hasMovedFact": false
+  },
+  "rb-two-actors-move": {
+   "hasMovedFact": true
+  },
+  "rb-same-name": {
+   "hasMovedFact": true
+  },
+  "rb-subtask": {
+   "hasMovedFact": true
+  },
+  "rb-sanity-only": {
+   "hasMovedFact": false
+  },
+  "rb-time-only": {
+   "hasMovedFact": false
+  },
+  "rb-conflict-two-actors": {
+   "hasMovedFact": false
+  },
+  "rb-move-other-appearance": {
+   "hasMovedFact": true
+  }
+ },
+ "cases": {
+  "rb-move-outcome": {
+   "text": "钟楼的旧木门吱呀一声，管线甲推门而入，心中默念着任务。他缓缓走上楼梯，每一步都踏得稳重。铜铃静静地挂在钟楼的角落，仿佛在等待着他的到来。他熟练地将铜铃挂回原位，心中松了口气。任务终于完成了，他轻手轻脚地离开了钟楼。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:outcome",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the move is not conveyed: the text opens inside 钟楼 and never mentions 管线镇",
+     "invents a stairs climb and a quiet exit"
+    ],
+    "observations": [
+     "the result is conveyed ('将铜铃挂回原位')",
+     "one paragraph, no dialogue, no field echo (the instruction was followed on shape)"
+    ]
+   }
+  },
+  "rb-time-vague": {
+   "text": "钟楼的旧木门吱呀一声，管线甲推门而入，心中默念着任务的步骤。他缓缓走向钟楼内部，每一步都显得格外沉稳。终于，他找到了那个熟悉的铜铃，轻轻挂回原位，心中松了一口气。过去了一会儿，钟楼内依旧静悄悄的，只有铜铃轻轻摇曳的声音在空气中回荡。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:outcome",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the move is not conveyed",
+     "invents a search and a relieved sigh"
+    ],
+    "observations": [
+     "the result is conveyed ('轻轻挂回原位')",
+     "the elapsed time is conveyed ('过去了一会儿')"
+    ]
+   }
+  },
+  "rb-inner-change": {
+   "text": "雨幕中，管线甲缓缓走在空旷的街道上，脚下的石板路反射着昏黄的灯光。他紧了紧外袍，雨水顺着衣襟滴落，浸透了衣料。原本轻快的步伐变得沉重，每一步都显得格外艰难。他心中却渐渐平静下来，理智如一盏明灯，驱散了心中的迷雾。远处，镇上的灯火稀疏，仿佛在诉说着夜晚的宁静与寂寞。",
+   "n5Formal": [
+    "uncovered:f0:appearance_changed",
+    "uncovered:f1:personality_changed",
+    "uncovered:f2:sanity_changed",
+    "residue-name:管线甲",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the personality change is not conveyed",
+     "the sanity change is ambiguous: '渐渐平静下来' could be read either way, so it is not a conveyed fact",
+     "invents street lights, a crowd and a night mood"
+    ],
+    "observations": [
+     "the appearance change is conveyed (rain soaking the coat)"
+    ]
+   }
+  },
+  "rb-two-actors-move": {
+   "text": "钟楼的旧木门吱呀一声，管线甲心中一紧，沉稳的步伐并未因此而动摇。他紧盯着前方，每一步都踏得稳重而坚定。穿过破旧的走廊，钟楼内部的钟声仿佛在诉说着岁月的沧桑。管线乙急匆匆地跟在后面，不时回头张望，似乎生怕被什么人发现。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:moved",
+    "residue-name:管线甲",
+    "residue-name:管线乙"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": false,
+     "D": true
+    },
+    "reasons": [
+     "neither actor's move is conveyed",
+     "attributes hiding intent to 管线乙 ('似乎生怕被什么人发现')",
+     "invents a corridor and a following scene"
+    ]
+   }
+  },
+  "rb-same-name": {
+   "text": "钟楼的旧木门吱呀一声，管线甲心中一紧，沉稳的步伐并未因此而动摇。他从管线镇出发，穿过狭窄的街道，每一步都踏在历史的尘埃上。钟楼的轮廓在夕阳下显得更加苍老，仿佛在诉说着岁月的故事。管线乙急匆匆地跟在后面，偶尔的喘息声打破了周围的宁静。沉默的管线乙紧随其后，没有言语，只有坚定的步伐。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:moved",
+    "uncovered:f2:moved",
+    "residue-name:管线甲",
+    "residue-name:管线乙",
+    "residue-name:管线乙"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the move is only partially conveyed: '他从管线镇出发' gives the origin and 钟楼 comes into view, but arrival is never stated",
+     "the two 管线乙 are shown following him, so their own moves are not conveyed",
+     "invents panting and a silent-follower scene"
+    ],
+    "observations": [
+     "G4 triggered and satisfied: both 管线乙 are named"
+    ]
+   }
+  },
+  "rb-subtask": {
+   "text": "钟楼的旧木门吱呀一声，管线甲推门而入，心中默念着任务。他沿着狭窄的楼梯缓缓而上，每一步都踏得稳稳当当。终于，他来到了钟楼的顶层，只见铜铃悬挂在高处，似乎在等待着他的到来。他环视四周，寻找着可以攀爬的梯子。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:subtask_added",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the new subtask (being given 找梯子) is not conveyed; the text searches for a ladder on its own initiative",
+     "the move is not conveyed",
+     "invents a climb and a bell at the top"
+    ]
+   }
+  },
+  "rb-sanity-only": {
+   "text": "雾气如丝般弥漫，管线镇显得更加静谧。管线甲的步伐不由自主地放慢，每一步都踏在了沉稳的节奏上。他紧盯着前方，目光中透出一丝警觉。周围的景象在雾中变得模糊，但他的理智却在逐渐模糊。可见，镇上的居民依旧在忙碌，但管线甲的心却已飞向了未知的危险。他深吸一口气，试图稳定自己的情绪，但内心深处的不安却愈发强烈。",
+   "n5Formal": [
+    "uncovered:f0:personality_changed",
+    "uncovered:f1:sanity_changed",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the personality change is not conveyed",
+     "invents residents, an unknown danger and an inner struggle"
+    ],
+    "observations": [
+     "the sanity change is conveyed as a decline ('理智却在逐渐模糊')"
+    ]
+   }
+  },
+  "rb-time-only": {
+   "text": "管线镇依旧保持着那份宁静，街道两旁的管线井盖在阳光下显得格外安静。管线甲沿着熟悉的路线缓缓前行，每一步都踏在了时间的脉络上。他心中默念着任务，脚步稳健而沉稳。过去了一会儿，他来到了镇中心的旧工厂区，这里曾经是镇上最繁忙的地方，如今却显得格外冷清。",
+   "n5Formal": [
+    "uncovered:f1:no_change"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the no-change fact is not conveyed: the text walks to an abandoned factory area",
+     "invents 井盖 and 旧工厂区 (place description, N6 note)",
+     "the elapsed time is conveyed ('过去了一会儿')"
+    ]
+   }
+  },
+  "rb-conflict-two-actors": {
+   "text": "管线镇的清晨异常宁静，只有远处偶尔传来的鸟鸣打破这份沉寂。我与管线乙合力抬着钟，目标是将其从破旧的钟楼移至镇中心的新广场。我尽量保持沉稳，但管线乙急躁的性格还是在抬钟时暴露无遗，他的肩膀不由自主地抵住了钟沿，显得有些吃力。我心中暗自提醒自己，要保持冷静，这样才能更好地与管线乙配合。最终，我们齐心协力，将钟缓缓抬离了地面，朝着新广场的方向前进。",
+   "n5Formal": [
+    "uncovered:f0:outcome",
+    "uncovered:f1:outcome",
+    "residue-name:管线乙"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": true,
+     "B": false,
+     "C": false,
+     "D": true
+    },
+    "reasons": [
+     "switches to first person ('我', '我们'), which the instruction forbids and the record's POV excludes",
+     "attributes 急躁 to 管线乙 and narrates his effort",
+     "invents a destination (镇中心的新广场) and a carrying plan"
+    ],
+    "observations": [
+     "both result texts are conveyed semantically: the bell is lifted off the ground and 管线乙 braces against the rim",
+     "no section-label echo this time, unlike v2"
+    ]
+   }
+  },
+  "rb-move-other-appearance": {
+   "text": "钟楼的旧木门吱呀一声，管线甲缓缓推开门，心中默念着任务指令。他沿着狭窄的楼梯向上攀爬，每一步都显得格外沉重。钟楼内部的灰尘在昏暗的光线下显得格外浓厚，仿佛时间在这里凝固。终于，他到达了钟楼的顶层，完成了任务指令中的移动。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "residue-name:管线甲"
+   ],
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": true
+    },
+    "reasons": [
+     "the move is only named, not conveyed: '完成了任务指令中的移动' is meta-talk about the instruction, with no origin or destination",
+     "the other actor's appearance change is absent (correct, it was not selected)",
+     "invents a stairs climb and dust"
+    ]
+   }
+  }
+ },
+ "summary": {
+  "reviewed": 10,
+  "reviewedAttempt": 1,
+  "n6Executed": 10,
+  "n6Pass": 0,
+  "n6Fail": 10,
+  "n6Undetermined": 0,
+  "d4Labeled": 10,
+  "d4ProperNames": 0,
+  "d4ProperNameList": [],
+  "d4DescriptionsMovedToN6": [
+   "镇中心的新广场",
+   "旧工厂区",
+   "井盖"
+  ],
+  "movedFactSamples": 6,
+  "movedFactSampleIds": [
+   "rb-move-outcome",
+   "rb-time-vague",
+   "rb-two-actors-move",
+   "rb-same-name",
+   "rb-subtask",
+   "rb-move-other-appearance"
+  ],
+  "movedConveyed": 0,
+  "movedPartial": [
+   "rb-same-name"
+  ],
+  "factsConveyedSemantically": {
+   "rb-move-outcome": [
+    "outcome"
+   ],
+   "rb-time-vague": [
+    "outcome",
+    "time"
+   ],
+   "rb-inner-change": [
+    "appearance_changed"
+   ],
+   "rb-sanity-only": [
+    "sanity_changed"
+   ],
+   "rb-time-only": [
+    "time"
+   ],
+   "rb-conflict-two-actors": [
+    "outcome",
+    "outcome"
+   ]
+  },
+  "commonFindings": [
+   "0/10 truncated: every first call ended normally (77-121 output tokens, versus 215-384 in v2)",
+   "shape instruction was followed on length and format: one paragraph, no section-label echo, no record-line echo, no dialogue",
+   "but the moved fact is conveyed in 0 of the 6 samples that carry one; one sample gives only its origin",
+   "the model still writes another character's inner state in 2 samples and switches to first person in 1",
+   "hard gates remain 0/10 because the frames require the fact wording (从 A 来到 B / the authoritative result text), which the model paraphrases"
+  ],
+  "limit": "single reviewer; verdicts pending independent review"
+ }
+}

@@ -87,6 +87,41 @@ CREATE TABLE IF NOT EXISTS model_outputs (
   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
 );
 
+-- commit-turn idempotency (design/component-io-and-commit-turn.md §3.1).
+-- One row per accepted submission attempt: replaying the same requestId
+-- with the same content digest returns result_json verbatim and never
+-- moves the session head again.
+CREATE TABLE IF NOT EXISTS turn_submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT NOT NULL,
+  request_id TEXT NOT NULL,
+  content_digest TEXT NOT NULL,
+  result_json TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(session_id, request_id),
+  FOREIGN KEY (session_id) REFERENCES game_sessions(id)
+);
+
+-- commit-turn pending-task ledger (design §4). Stateful claims (review
+-- round 6): 'running' proves WORK IN FLIGHT, not success — recovery may
+-- re-claim a stale running claim (timeout or dead executor) but must not
+-- confirm it away; 'done' + result_json prove the effect was applied and
+-- saved in a confirm transaction. The maintainer is a PURE function that
+-- RETURNS a candidate result; the confirm transaction applies binding
+-- checks, the result, the done record and the queue change atomically.
+CREATE TABLE IF NOT EXISTS memory_task_claims (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT NOT NULL,
+  task_key TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'running',
+  executor TEXT,
+  claim_token TEXT,
+  result_json TEXT NOT NULL DEFAULT '{}',
+  claimed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(session_id, task_key),
+  FOREIGN KEY (session_id) REFERENCES game_sessions(id)
+);
+
 CREATE TABLE IF NOT EXISTS evaluations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   model_output_id INTEGER NOT NULL,
@@ -131,12 +166,23 @@ _COLUMN_MIGRATIONS = [
     ("game_sessions", "campaign_filename", "TEXT"),
     ("game_sessions", "active_slot_name", "TEXT NOT NULL DEFAULT 'default'"),
     ("session_messages", "campaign_session_index", "INTEGER NOT NULL DEFAULT 0"),
+    # Messages remember the ARC the action happened in: session_index resets
+    # to 0 at every arc boundary, so arc1/session0 would collide with
+    # arc0/session0 in message filtering (review round 6).
+    ("session_messages", "campaign_arc_index", "INTEGER NOT NULL DEFAULT 0"),
     ("session_messages", "turn_node_id", "INTEGER"),
     ("campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'"),
     ("campaign_progress", "head_turn_id", "INTEGER"),
     # Whole-campaign turn counter across sessions; capped by
     # max_turns_per_campaign (default 50). Session advance does not reset it.
     ("campaign_progress", "turns_total", "INTEGER NOT NULL DEFAULT 0"),
+    # commit-turn: audit entry + server-recomputed roll record per submission.
+    ("model_outputs", "audit_json", "TEXT NOT NULL DEFAULT '{}'"),
+    # commit-turn pending-task ledger: stateful claims (v3.4).
+    ("memory_task_claims", "state", "TEXT NOT NULL DEFAULT 'running'"),
+    ("memory_task_claims", "executor", "TEXT"),
+    ("memory_task_claims", "claim_token", "TEXT"),
+    ("memory_task_claims", "result_json", "TEXT NOT NULL DEFAULT '{}'"),
 ]
 
 
@@ -152,9 +198,48 @@ def init_schema(db) -> None:
     for table, column, definition in _COLUMN_MIGRATIONS:
         ensure_column(db, table, column, definition)
     _migrate_campaign_progress_pk(db)
+    _backfill_message_arcs(db)
     db.execute(
         "CREATE INDEX IF NOT EXISTS idx_session_messages_turn ON session_messages(turn_node_id)"
     )
+
+
+def _backfill_message_arcs(db) -> None:
+    """Repair pre-arc-column messages, including databases already on v3.4.
+
+    A turn stores progress AFTER advancement. At an arc boundary use the
+    completed pre-advancement arc, otherwise the node's arc; a parent can
+    predate an explicitly selected chapter. Never use the live campaign row.
+    """
+    db.execute("CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY)")
+    migration = "session_messages_action_arc_backfill"
+    if db.execute("SELECT 1 FROM schema_migrations WHERE name = ?", (migration,)).fetchone():
+        return
+    db.execute("""
+        UPDATE session_messages SET campaign_arc_index = (
+            SELECT COALESCE(
+                CASE WHEN json_extract(node.campaign_progress_json, '$.turn_in_session') = 0
+                     AND (json_extract(parent.campaign_progress_json, '$.arc_index') IS NULL
+                          OR json_extract(node.campaign_progress_json, '$.arc_index') >
+                             json_extract(parent.campaign_progress_json, '$.arc_index'))
+                     AND EXISTS (
+                         SELECT 1 FROM json_each(json_extract(node.campaign_progress_json, '$.completed_arcs'))
+                         WHERE value = json_extract(node.campaign_progress_json, '$.arc_index') - 1
+                     )
+                     THEN json_extract(node.campaign_progress_json, '$.arc_index') - 1
+                     ELSE json_extract(node.campaign_progress_json, '$.arc_index') END,
+                json_extract(parent.campaign_progress_json, '$.arc_index'),
+                0)
+            FROM story_turns node LEFT JOIN story_turns parent
+              ON parent.id = node.parent_turn_id AND parent.session_id = node.session_id
+            WHERE node.id = session_messages.turn_node_id
+              AND node.session_id = session_messages.session_id
+        ) WHERE EXISTS (
+            SELECT 1 FROM story_turns node WHERE node.id = session_messages.turn_node_id
+              AND node.session_id = session_messages.session_id
+        )
+    """)
+    db.execute("INSERT INTO schema_migrations (name) VALUES (?)", (migration,))
 
 
 def _migrate_campaign_progress_pk(db) -> None:

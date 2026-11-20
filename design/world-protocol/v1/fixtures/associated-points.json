@@ -1,0 +1,226 @@
+{
+  "root": {
+    "worldId": "world_school",
+    "id": "root_0",
+    "sequence": 0,
+    "kind": "root",
+    "previousPointId": null,
+    "roundId": null,
+    "advanceId": null,
+    "trigger": null,
+    "linkedFromPointId": null,
+    "timeAdvance": null,
+    "entityDeltas": null
+  },
+  "points": [
+    {
+      "worldId": "world_school",
+      "id": "p1",
+      "sequence": 1,
+      "kind": "normal",
+      "previousPointId": "root_0",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": null,
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {}
+    },
+    {
+      "worldId": "world_school",
+      "id": "p2",
+      "sequence": 2,
+      "kind": "instant",
+      "previousPointId": "p1",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": "p1",
+      "timeAdvance": {
+        "boundary": "instant",
+        "duration": {
+          "amount": 0,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {}
+    },
+    {
+      "worldId": "world_school",
+      "id": "p3",
+      "sequence": 3,
+      "kind": "linked",
+      "previousPointId": "p2",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": "p2",
+      "timeAdvance": {
+        "boundary": "instant",
+        "duration": {
+          "amount": 3,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {}
+    }
+  ],
+  "checkpoints": [
+    {
+      "roundId": "round_1",
+      "advance": {
+        "advanceId": "advance_1",
+        "inputId": "input_1",
+        "inputText": "我推开重门。",
+        "intentStatus": "pending"
+      },
+      "trigger": "player",
+      "order": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 2,
+      "actedIds": [
+        "person_a",
+        "person_b"
+      ],
+      "visitedIds": [
+        "person_a",
+        "person_b"
+      ],
+      "phase": "await_narration",
+      "resumePhase": "settle_group",
+      "pendingGroup": {
+        "groupId": "group_cd",
+        "initiatorId": "person_c",
+        "memberIds": [
+          "person_c",
+          "person_d"
+        ],
+        "frontierIds": [],
+        "closed": true,
+        "reactions": [
+          {
+            "sourceId": "person_c",
+            "targetId": "person_d",
+            "triggerKey": "trigger_cd",
+            "rollId": "roll_cd",
+            "admitted": true
+          }
+        ]
+      },
+      "conclusion": null
+    },
+    {
+      "roundId": "round_1",
+      "advance": {
+        "advanceId": "advance_1",
+        "inputId": "input_1",
+        "inputText": "我推开重门。",
+        "intentStatus": "consumed"
+      },
+      "trigger": "player",
+      "order": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 3,
+      "actedIds": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d"
+      ],
+      "visitedIds": [
+        "person_a",
+        "person_b",
+        "person_c"
+      ],
+      "phase": "await_narration",
+      "resumePhase": "continue_round",
+      "pendingGroup": null,
+      "conclusion": null
+    },
+    {
+      "roundId": "round_1",
+      "advance": {
+        "advanceId": "advance_1",
+        "inputId": "input_1",
+        "inputText": "我推开重门。",
+        "intentStatus": "consumed"
+      },
+      "trigger": "player",
+      "order": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 6,
+      "actedIds": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d"
+      ],
+      "visitedIds": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "phase": "await_narration",
+      "resumePhase": "assess_continuation",
+      "pendingGroup": null,
+      "conclusion": null
+    }
+  ],
+  "expectedTimes": [
+    "2026-01-01T11:59:02/0",
+    "2026-01-01T11:59:02/1",
+    "2026-01-01T11:59:05/0"
+  ],
+  "rolls": [
+    {
+      "worldId": "world_school",
+      "advanceId": "advance_1",
+      "roundId": "round_1",
+      "groupId": "group_cd",
+      "sourceId": "person_c",
+      "targetId": "person_d",
+      "triggerKey": "trigger_cd",
+      "rollId": "roll_cd",
+      "ruleVersion": "reaction-fixture-v1",
+      "result": 15,
+      "target": 11
+    }
+  ],
+  "requiredOrdering": [
+    "p1.commit",
+    "p1.narration.ready",
+    "p2.settle",
+    "p2.commit",
+    "p2.narration.ready",
+    "p3.commit",
+    "p3.narration.ready",
+    "round_1.conclusion"
+  ]
+}

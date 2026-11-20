@@ -1,0 +1,176 @@
+{
+ "protocol": "attention-selection-v2",
+ "branch": "exp/c-fact-selection",
+ "base": "6440534",
+ "status": "offline rule comparison; no model; no training; no wiring",
+ "results": {
+  "summary": {
+   "manual": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 10,
+    "strictPass": 9,
+    "manualEqual": 10,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.5333333333333333,
+    "unrelatedSelected": 0,
+    "relatedSelected": 1
+   },
+   "no_attention": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 3,
+    "strictPass": 2,
+    "manualEqual": 3,
+    "legacyD1Pass": 0,
+    "mustPrecisionMean": 0.45,
+    "unrelatedSelected": 7,
+    "relatedSelected": 1
+   },
+   "lexical": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 7,
+    "strictPass": 7,
+    "manualEqual": 6,
+    "legacyD1Pass": 2,
+    "mustPrecisionMean": 0.5666666666666667,
+    "unrelatedSelected": 2,
+    "relatedSelected": 0
+   },
+   "lexical_content": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 9,
+    "strictPass": 9,
+    "manualEqual": 8,
+    "legacyD1Pass": 2,
+    "mustPrecisionMean": 0.6,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   },
+   "semantic": {
+    "n": 10,
+    "hardPass": 10,
+    "lenientPass": 10,
+    "strictPass": 10,
+    "manualEqual": 9,
+    "legacyD1Pass": 1,
+    "mustPrecisionMean": 0.5666666666666667,
+    "unrelatedSelected": 0,
+    "relatedSelected": 0
+   }
+  },
+  "controlled": {
+   "manual": {
+    "n": 9,
+    "lenientPass": 9,
+    "strictPass": 9
+   },
+   "no_attention": {
+    "n": 9,
+    "lenientPass": 2,
+    "strictPass": 2
+   },
+   "lexical": {
+    "n": 9,
+    "lenientPass": 6,
+    "strictPass": 6
+   },
+   "lexical_content": {
+    "n": 9,
+    "lenientPass": 8,
+    "strictPass": 8
+   },
+   "semantic": {
+    "n": 9,
+    "lenientPass": 9,
+    "strictPass": 9
+   }
+  },
+  "v1Recheck": {
+   "conditions": 6,
+   "noAttentionEqualManual": 6,
+   "v1RuleEqualManual": 6,
+   "noAttentionHardPass": 6,
+   "noAttentionMustPrecisionMean": 0.4444444444444444,
+   "v1RuleMustPrecisionMean": 0.4444444444444444,
+   "allMustPrecisionBelow085": true
+  }
+ },
+ "notes": [
+  "selection-v2 and v1-recheck are the raw outputs; README and design report are the human reports",
+  "R1 facts are from the committed interaction report; its world.db is local-only and not in this branch",
+  "semantic gets a hand-provided focus; it is a ceiling, not a parser or model",
+  "source files are pinned by committed blob hash; working checkout may be CRLF"
+ ],
+ "files": [
+  {
+   "path": "experiments/world-components/parallel/fact_selection/cases-v2.json",
+   "bytes": 43608,
+   "sha256": "b2289c2a158419053cf543dc849327428c73d92db03ab34b7a8d03ee91d3f20e"
+  },
+  {
+   "path": "experiments/world-components/parallel/fact_selection/selector.py",
+   "bytes": 10962,
+   "sha256": "20832d82990e7efb723cec6e91627edd14b77236635e56cb76a15749ad842208"
+  },
+  {
+   "path": "experiments/world-components/parallel/fact_selection/run_selection.py",
+   "bytes": 4551,
+   "sha256": "1ac7d88930de84d0fdb04d24c94ae338511c16ff8d559e26c4f31acf4a914690"
+  },
+  {
+   "path": "experiments/world-components/parallel/fact_selection/test_selector.py",
+   "bytes": 9569,
+   "sha256": "762c3c2eab3d880f1e3a4bc9c1529fb49c19fb07e8c0aaed421ed45e01491ae7"
+  },
+  {
+   "path": "experiments/world-components/parallel/fact_selection/v1_recheck.py",
+   "bytes": 5029,
+   "sha256": "cfc77ccc4f3118af3234b22f07e176f07875ec54b2eac6f2ad2d7bf7333b414d"
+  },
+  {
+   "path": "experiments/world-components/parallel/fact_selection/README.md",
+   "bytes": 15932,
+   "sha256": "fed49e675ecadf1c13496c036ed265aaef36f6adb50390c8217c14ab7a1d8432"
+  },
+  {
+   "path": "design/world-engine-reports/components/attention-selection-v2.md",
+   "bytes": 8337,
+   "sha256": "bb06a092cc9edb8bc14863c7cf5509ec5b2d1e80fad0ab13e87854684b941361"
+  },
+  {
+   "path": "artifacts/world-components/parallel/fact-selection-v2/selection-v2.json",
+   "bytes": 36223,
+   "sha256": "18461ca7920b8486fb3c77e6a751164a72997280e68cb9dfa209a0942a9630be"
+  },
+  {
+   "path": "artifacts/world-components/parallel/fact-selection-v2/v1-recheck.json",
+   "bytes": 9122,
+   "sha256": "b3c9fdc2697c6906fb9aaeab586570199a22f52f3c09df7210013f693235dd9b"
+  },
+  {
+   "path": "artifacts/world-components/parallel/fact-selection-v2/freeze.json",
+   "bytes": 1939,
+   "sha256": "3076d26ce8f50d5229afcd63b122d3eec1e469acaa1e55662d2c4df6924c9afa"
+  },
+  {
+   "path": "artifacts/world-components/parallel/fact-selection-v2/run.log",
+   "bytes": 5082,
+   "sha256": "8369d4b5bb22df4f11a21b47da33ce5783895e4f5a88f135d1f77540f81aa02e"
+  },
+  {
+   "path": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+   "bytes": 12552,
+   "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+   "note": "committed blob hash; working checkout is CRLF"
+  },
+  {
+   "path": "design/world-engine-reports/components/interaction-sample-v1.md",
+   "bytes": 9805,
+   "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367",
+   "note": "committed blob hash; working checkout is CRLF"
+  }
+ ]
+}

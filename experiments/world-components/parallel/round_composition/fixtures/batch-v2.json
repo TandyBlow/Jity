@@ -1,0 +1,105 @@
+{
+ "version": "real-batch-v2",
+ "batchId": "real-batch-2026-11-08-v2-budget384",
+ "registeredAt": "2026-11-08",
+ "purpose": "output-budget control for the C7 real-model batch: the v1 configuration truncated every passage at num_predict=128. Only that number changes here; samples, model, prompts, judge and retry policy are identical.",
+ "decisionRecord": {
+  "outputBudget": "384 approved by the owner",
+  "outputShapeInstruction": "NOT changed in this batch (held for a separate controlled comparison)",
+  "povAndInnerState": "remain N6 findings, no hard gate",
+  "judge": "frozen; no vocabulary or frame changes after seeing v1"
+ },
+ "sameSamplesAsV1": {
+  "batchId": "real-batch-2026-11-08-v1",
+  "casesSha256": "36cb036714ef27c4ffc0d4e1c8eb4ddd474c6311d982b194f996859b0cb8dde7",
+  "note": "byte-identical cases file; the dry-run facts/selection/plan are in that file"
+ },
+ "sampleIds": [
+  "rb-move-outcome",
+  "rb-time-vague",
+  "rb-inner-change",
+  "rb-two-actors-move",
+  "rb-same-name",
+  "rb-subtask",
+  "rb-sanity-only",
+  "rb-time-only",
+  "rb-conflict-two-actors",
+  "rb-move-other-appearance"
+ ],
+ "sampleCount": 10,
+ "model": {
+  "name": "qwen2.5:7b",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "parameterSize": "7.6B",
+  "quantization": "Q4_K_M",
+  "family": "qwen2",
+  "runtime": "ollama",
+  "runtimeVersion": "0.40.15",
+  "endpoint": "http://127.0.0.1:11434/api/generate",
+  "transport": "local HTTP, no external network"
+ },
+ "decode": {
+  "temperature": 0,
+  "seed": 42,
+  "num_predict": 384,
+  "top_p": 1.0,
+  "top_k": 40,
+  "repeat_penalty": 1.0,
+  "stop": [],
+  "stream": false,
+  "system": null,
+  "templateNote": "identical prompt handling to v1"
+ },
+ "retryPolicy": {
+  "maxSentenceAttempts": 2,
+  "feedback": "the previous attempt's hard-gate problems are appended to the retry request (recorded)",
+  "fallback": "program template when the kinds have a frame; the case status stays a failure"
+ },
+ "primaryMetric": {
+  "value": "first call only (attempt 1)",
+  "retry": "reported separately; a retry can never change the primary number",
+  "denominator": "all 10 samples, including truncated ones"
+ },
+ "acceptance": {
+  "mechanism": [
+   "10/10 samples produce a complete record: prompt, raw response, finish reason, token counts, timing, decision",
+   "no unhandled exception; every call has an explicit status"
+  ],
+  "quality": [
+   "n5-pass means the hard gates passed ONLY",
+   "quality comes from N6 (pass / fail / undetermined), reviewed per sample against the committed facts",
+   "D4 counts proper names only, absent from the state registry AND from the authoritative text; object/place descriptions are N6 notes, not D4 labels (errata E5)"
+  ],
+  "tripwire": [
+   "fires when >=3/10 samples fail the hard gates (hardGateFailSamples >= 3), OR when >=2 CALLS fail at the port level (portFailureCalls >= 2)",
+   "port failures are counted per call, not per sample (errata E1)"
+  ]
+ },
+ "n6Rubric": {
+  "A_facts": "every selected fact is stated without contradiction",
+  "B_additions": "no new named entity/place/item, no invented event, no task-goal leak",
+  "C_pov": "no other character's inner state narrated",
+  "D_completeness": "the passage ends as a complete sentence",
+  "verdict": "pass only when A-D all hold; unreadable -> undetermined; anything else -> fail"
+ },
+ "errataInherited": {
+  "source": "fixtures/errata-v1.json",
+  "applied": [
+   "E1 tripwire text and counting",
+   "E5 D4 proper-name rule"
+  ]
+ },
+ "hashes": {
+  "cases": "36cb036714ef27c4ffc0d4e1c8eb4ddd474c6311d982b194f996859b0cb8dde7",
+  "judge": "5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54",
+  "runner": "0dc3965a04485e3bc169774ec81e351860e1ceaee48ff1a48e67ae9c1ea0850e",
+  "v1Registration": "b5f62d5e313a00731735f954c9c7ef4f8baac38de609e6d50c1539913101bb2e",
+  "chain": {
+   "narration_pipeline.py": "5f8e311d21a279f735bb84574dbb2fb1a6f00d641460263728db8f61e6c06866",
+   "n2_perspective.py": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+   "n3_organize.py": "12b6db4728505105a5805ed61c09c540f56c989755ad0b9688147346a4254913",
+   "packer.py": "6e5d1e5e815740f49baa3d751fd455b2a3192499888f11e9472ddd0d0b67a1b7",
+   "scene_context.py": "57d71610864c33084b90c81bf2b78a7afd3bcac3077e203b1cf9dafa35cc8a78"
+  }
+ }
+}

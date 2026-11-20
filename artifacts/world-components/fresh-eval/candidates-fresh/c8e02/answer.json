@@ -1,0 +1,98 @@
+{
+ "packVersion": 3,
+ "perspective": {
+  "type": "protagonist",
+  "entityId": "fe_wen",
+  "at": "砾脊校准间",
+  "atPath": [
+   "fy_cal",
+   "fy_yard"
+  ]
+ },
+ "n1Facts": [
+  {
+   "factId": "fe_shao:position",
+   "kind": "moved",
+   "entityId": "fe_shao",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_relay",
+    "fy_store"
+   ],
+   "at": "穹榛中继室"
+  },
+  {
+   "factId": "fe_wen:position",
+   "kind": "moved",
+   "entityId": "fe_wen",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_cal",
+    "fy_yard"
+   ],
+   "at": "砾脊校准间"
+  }
+ ],
+ "n2": {
+  "module": "experiments/world-components/n2_perspective.py",
+  "moduleSha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "status": "ok",
+  "summary": {
+   "must": 1,
+   "may": 0,
+   "invisible": 1,
+   "selected": 1,
+   "mayPolicy": "select"
+  },
+  "stops": [],
+  "refusals": [],
+  "decisions": [
+   {
+    "factId": "fe_shao:position",
+    "kind": "moved",
+    "class": "invisible",
+    "ground": "other-location",
+    "selected": false,
+    "reason": "发生在视角人物感知范围之外，省略"
+   },
+   {
+    "factId": "fe_wen:position",
+    "kind": "moved",
+    "class": "must",
+    "ground": "self-position",
+    "selected": true,
+    "reason": "视角人物自己的位置变化，必述"
+   }
+  ]
+ },
+ "expression": {
+  "fe_shao:position": "withheld",
+  "fe_wen:position": "must"
+ },
+ "withheld": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "actorKind": "character",
+   "name": "邵苇衡",
+   "fromId": "fy_store",
+   "from": "霜珀备件库",
+   "toId": "fy_relay",
+   "to": "穹榛中继室",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_shao.position",
+   "factId": "fe_shao:position",
+   "n2Class": "invisible",
+   "n2Ground": "other-location",
+   "n2Reason": "发生在视角人物感知范围之外，省略",
+   "expression": "withheld",
+   "requirementSource": "n2-invisible"
+  }
+ ],
+ "playerScope": {
+  "ids": [],
+  "constraint": null
+ }
+}

@@ -1,0 +1,173 @@
+{
+ "purpose": "物件确认集（24 单元；4 条材料缺陷剔除，判 20 条）",
+ "excluded": [
+  "qa1A",
+  "qc1A",
+  "qc1B",
+  "qd1B"
+ ],
+ "excludedReason": "事实引用了本场景不可见的物件（生成后核查发现）",
+ "judged": 20,
+ "supported": 18,
+ "clean": 18,
+ "rows": [
+  {
+   "unitId": "qa1B",
+   "category": "object_confusable",
+   "verdict": "S",
+   "note": "",
+   "output": "墨的表面结了皮。"
+  },
+  {
+   "unitId": "qa2A",
+   "category": "object_confusable",
+   "verdict": "S",
+   "note": "",
+   "output": "船灯的罩子裂了缝。"
+  },
+  {
+   "unitId": "qa2B",
+   "category": "object_confusable",
+   "verdict": "S",
+   "note": "",
+   "output": "渡船的船板裂了缝。"
+  },
+  {
+   "unitId": "qa3A",
+   "category": "object_confusable",
+   "verdict": "S",
+   "note": "",
+   "output": "抹布的边角磨破了。"
+  },
+  {
+   "unitId": "qa3B",
+   "category": "object_confusable",
+   "verdict": "S",
+   "note": "",
+   "output": "银鳞鱼的鳞片掉了两片。"
+  },
+  {
+   "unitId": "qb1A",
+   "category": "object_whole_part",
+   "verdict": "S",
+   "note": "语病：“灯芯的烧黑了一截”多一个“的”",
+   "output": "灯芯的烧黑了一截。"
+  },
+  {
+   "unitId": "qb1B",
+   "category": "object_whole_part",
+   "verdict": "S",
+   "note": "",
+   "output": "铜灯罩被擦得发亮。"
+  },
+  {
+   "unitId": "qb2A",
+   "category": "object_whole_part",
+   "verdict": "S",
+   "note": "",
+   "output": "油纸伞的伞骨断了一根。"
+  },
+  {
+   "unitId": "qb2B",
+   "category": "object_whole_part",
+   "verdict": "S",
+   "note": "",
+   "output": "油纸伞被靠在墙根。"
+  },
+  {
+   "unitId": "qb3A",
+   "category": "object_whole_part",
+   "verdict": "A",
+   "note": "写成“银鳞鱼的袖口磨破了”，状态挂到银鳞鱼；外袍不在本场景可见列表（材料缺陷，见缺陷记录）",
+   "output": "银鳞鱼的袖口磨破了。"
+  },
+  {
+   "unitId": "qb3B",
+   "category": "object_whole_part",
+   "verdict": "A",
+   "note": "写成“银鳞鱼的外袍被搭在摊棚边”，主体错；外袍不在可见列表",
+   "output": "银鳞鱼的外袍被搭在摊棚边。"
+  },
+  {
+   "unitId": "qc2A",
+   "category": "object_position",
+   "verdict": "S",
+   "note": "",
+   "output": "顾行舟把船灯挂到栈桥的托架下。"
+  },
+  {
+   "unitId": "qc2B",
+   "category": "object_position",
+   "verdict": "S",
+   "note": "",
+   "output": "顾行舟把船灯挂到船头前的木桩上。"
+  },
+  {
+   "unitId": "qc3A",
+   "category": "object_position",
+   "verdict": "S",
+   "note": "",
+   "output": "韩渡把警示灯挂回钟架上。"
+  },
+  {
+   "unitId": "qc3B",
+   "category": "object_position",
+   "verdict": "S",
+   "note": "",
+   "output": "韩渡把警示灯挂回铁链上。"
+  },
+  {
+   "unitId": "qd1A",
+   "category": "object_state_owner",
+   "verdict": "S",
+   "note": "",
+   "output": "干纸的边缘发了黄。"
+  },
+  {
+   "unitId": "qd2A",
+   "category": "object_state_owner",
+   "verdict": "S",
+   "note": "语病：“木桩的缠的旧绳断了”",
+   "output": "木桩的缠的旧绳断了。"
+  },
+  {
+   "unitId": "qd2B",
+   "category": "object_state_owner",
+   "verdict": "S",
+   "note": "",
+   "output": "缆绳的中间断了一股。"
+  },
+  {
+   "unitId": "qd3A",
+   "category": "object_state_owner",
+   "verdict": "S",
+   "note": "",
+   "output": "抹布上拧不干。"
+  },
+  {
+   "unitId": "qd3B",
+   "category": "object_state_owner",
+   "verdict": "S",
+   "note": "语病：“擦铜油的洒了半罐”",
+   "output": "擦铜油的洒了半罐。"
+  }
+ ],
+ "byCategory": {
+  "object_confusable": {
+   "n": 5,
+   "S": 5
+  },
+  "object_position": {
+   "n": 4,
+   "S": 4
+  },
+  "object_state_owner": {
+   "n": 5,
+   "S": 5
+  },
+  "object_whole_part": {
+   "n": 6,
+   "S": 4
+  }
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "repo": "runfuture/MiniCPM-2B-dpo-q4km-gguf",
+ "revision": "5716a1492bb21b66b56d6c454a949ee71471351b",
+ "lastModified": "2024-02-09T02:46:58.000Z",
+ "licenseTags": [],
+ "downloads": 2862,
+ "likes": 3,
+ "files": [
+  {
+   "path": "MiniCPM-2B-dpo-q4km-gguf.gguf",
+   "bytes": 1729503200,
+   "lfsSha256": "b4f2392d1beba99ec494aed8e0baf99fc368a1e50dadc5dfa6fcfa2bfdcb79db",
+   "lfsSize": 1729503200
+  }
+ ]
+}

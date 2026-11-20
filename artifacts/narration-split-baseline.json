@@ -1,0 +1,397 @@
+{
+  "status": "COMPLETED",
+  "layer": "narration-split rule baseline (no model); scorer counterexample self-test gated; naturalness human-rated",
+  "recordedAt": "2026-10-25T14:34:49.055Z",
+  "config": {
+    "channel": "msedge",
+    "repeats": 5
+  },
+  "browser": "155.0.4283.62",
+  "origin": "http://127.0.0.1:59701",
+  "scorerSelfTest": [
+    {
+      "name": "错误时长（约九千分钟）必须失败",
+      "pass": true,
+      "detail": "timePassage 要求句内同时含正确数量词与单位；残差「九千」必须被标记"
+    },
+    {
+      "name": "否定结果必须失败",
+      "pass": true,
+      "detail": "position 需要 name+from+to 同句成立"
+    },
+    {
+      "name": "主体交换必须失败",
+      "pass": true,
+      "detail": "主体与动作绑定在同句内核对"
+    },
+    {
+      "name": "方向反转必须失败",
+      "pass": true,
+      "detail": "同句含三词≠方向正确——要求「从{起点}」同句成立"
+    },
+    {
+      "name": "新增物品必须标捏造",
+      "pass": true,
+      "detail": "残差「获得一把不存在宝剑」不可追溯"
+    },
+    {
+      "name": "规则基线原文必须全过（ns-pos-1）",
+      "pass": true,
+      "detail": "约两分钟过去了。学生A从走廊来到了大厅。"
+    },
+    {
+      "name": "重叠词宿主句必须零标记（ns-pers-1）",
+      "pass": true,
+      "detail": "「主角」⊂任务名等嵌套词曾致合规句误标——长词先删后必须干净"
+    },
+    {
+      "name": "「时间已到中午」未被显式断言必须记遗漏（ns-task-time-1）",
+      "pass": true,
+      "detail": "「坚持到中午」引号内的「中午」是任务名引用，不是时间断言"
+    }
+  ],
+  "summary": {
+    "samples": 11,
+    "factCoverage": "24/25",
+    "omissions": [
+      "ns-task-time-1: 时间已到中午"
+    ],
+    "fabricationFlags": [],
+    "repetitions": {
+      "ns-cont-2": 0.316,
+      "ns-cont-3": 0.714
+    },
+    "totalMs": {
+      "medianBySample": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "p95": 0
+    }
+  },
+  "rows": [
+    {
+      "id": "ns-pos-1",
+      "category": "position",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约两分钟过去了。学生A从走廊来到了大厅。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约两分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "学生A 从走廊移动到了大厅",
+          "kind": "position",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-appear-1",
+      "category": "appearance",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约一分钟过去了。黄铜钥匙的表面蒙上了一层灰尘。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约一分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "钥匙表面蒙上了灰尘",
+          "kind": "appearanceText",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-loc-appear-1",
+      "category": "appearance",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约一分钟过去了。走廊两侧的储物柜都被关上了。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约一分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "两侧的储物柜都被关上了",
+          "kind": "appearanceText",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-task-1",
+      "category": "task_achieved",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约两分钟过去了。主角完成了任务「取回柜子里的东西」。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约两分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "主角完成了任务「取回柜子里的东西」",
+          "kind": "taskGoal",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-task-time-1",
+      "category": "task_achieved",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约一分钟过去了。学生A完成了任务「坚持到中午」。",
+      "factChecks": [
+        {
+          "phrase": "时间已到中午",
+          "kind": "timeReached",
+          "pass": false
+        },
+        {
+          "phrase": "学生A 的任务「坚持到中午」达成",
+          "kind": "taskGoal",
+          "pass": true
+        },
+        {
+          "phrase": "时间流逝约一分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        }
+      ],
+      "omissions": [
+        "时间已到中午"
+      ],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-pers-1",
+      "category": "personality_sanity",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约一分钟过去了。学生B完成了任务「帮主角熟悉校园」。学生B变得健谈。学生B的理智值升为12。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约一分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "学生B 的任务「帮主角熟悉校园」达成",
+          "kind": "taskGoal",
+          "pass": true
+        },
+        {
+          "phrase": "学生B 的个性变得健谈",
+          "kind": "personalityText",
+          "pass": true
+        },
+        {
+          "phrase": "学生B 的理智值变为 12",
+          "kind": "sanityValue",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-multi-1",
+      "category": "multi_entity",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约两分钟过去了。学生A从走廊来到了大厅。黄铜钥匙的表面蒙上了一层灰尘。主角完成了任务「取回柜子里的东西」。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约两分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "学生A 位于大厅",
+          "kind": "position",
+          "pass": true
+        },
+        {
+          "phrase": "钥匙表面蒙上了灰尘",
+          "kind": "appearanceText",
+          "pass": true
+        },
+        {
+          "phrase": "主角完成了任务「取回柜子里的东西」",
+          "kind": "taskGoal",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-empty-1",
+      "category": "empty_delta",
+      "series": null,
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约两分钟过去了。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝了约两分钟",
+          "kind": "timePassage",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-cont-1",
+      "category": "continuity",
+      "series": "ns-cont",
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约两秒过去了。学生A从走廊来到了大厅。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约两秒（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "学生A 从走廊到了大厅",
+          "kind": "position",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": null
+    },
+    {
+      "id": "ns-cont-2",
+      "category": "continuity",
+      "series": "ns-cont",
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约两分钟过去了。学生B额头上渗出了汗珠。",
+      "factChecks": [
+        {
+          "phrase": "时间流逝约两分钟（Δ 守卫）",
+          "kind": "timePassage",
+          "pass": true
+        },
+        {
+          "phrase": "学生B 额头上渗出了汗珠",
+          "kind": "appearanceText",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": 0.3157894736842105
+    },
+    {
+      "id": "ns-cont-3",
+      "category": "continuity",
+      "series": "ns-cont",
+      "stageMs": {
+        "locate": 0,
+        "select": 0,
+        "organize": 0,
+        "compose": 0
+      },
+      "text": "约五分钟过去了。",
+      "factChecks": [
+        {
+          "phrase": "时间又过去了五分钟",
+          "kind": "timePassage",
+          "pass": true
+        }
+      ],
+      "omissions": [],
+      "fabricationFlags": [],
+      "repetition": 0.7142857142857143
+    }
+  ]
+}

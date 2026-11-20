@@ -1,0 +1,114 @@
+{
+ "purpose": "task achievement facts inside the main world page round log, with the committed goal text",
+ "noTraining": true,
+ "modelSentencesNotUsed": true,
+ "readOnly": true,
+ "pins": {
+  "worldServer": "005ea5b (GET /world/facts/{worldId}/{pointId})",
+  "componentsBranch": "world-components-next, this commit",
+  "backendCheckout": "detached worktree .local/ws-facts-005ea5b (clean)",
+  "adapterBackend": "WORLD_FACTS_BACKEND=.local/ws-facts-005ea5b/backend"
+ },
+ "flow": {
+  "world": "isolated SQLite at artifacts/next-runs/task-display-r1/world.db, created by the page itself",
+  "commands": [
+   "完成压力试验",
+   "走到门厅",
+   "完成压力试验（任务已消耗，规则拒绝）",
+   "走到走廊",
+   "走到门厅"
+  ],
+  "why": "the first command achieves task_pressure in the corridor, so its goal can be read back from the committed point"
+ },
+ "taskFact": {
+  "shape": "subject + 达成任务： + the committed goal verbatim",
+  "shown": "周宁达成任务：完成压力试验。",
+  "source": "characters.person_c.tasks.task_pressure.goal and .status at point_7, after the delta applied",
+  "notUsed": "the delta carries only task IDs; no goal text and no execution detail is taken from the command"
+ },
+ "verification": {
+  "script": "experiments/world-components/verify_page_facts.py",
+  "derives": "expected fragments from world_points plus the committed checkpoint tasks, not from the adapter",
+  "rounds": 6,
+  "checks": 24,
+  "problems": [],
+  "snapshot": "afterMore"
+ },
+ "pageCheck": {
+  "beforeAndAfterRefresh": "every round identical, including the task sentence",
+  "historyStable": {
+   "previousRoundsUnchanged": true,
+   "grewBy": 1,
+   "lastRound": "周宁从走廊到门厅。\n\n来源"
+  },
+  "consoleErrors": []
+ },
+ "coverage": {
+  "taskAchieved": "real command 完成压力试验; goal shown verbatim from committed state; no unshown hint",
+  "taskGoalFromDelta": "not possible: tasksAchieved holds IDs only",
+  "subtaskAdded": "adapter sentence implemented and unit-tested against a committed-state fixture; no normal command produces subtasksAdded, so no page-level acceptance",
+  "move": "2 rounds, origin and destination both shown",
+  "sanity": "10 to 8 from the predecessor value",
+  "personality": "text shown verbatim",
+  "emptyDelta": "rule refusal left an empty delta, shown as 没有实体变化",
+  "root": "no change claim on the root point",
+  "appearanceNotReachable": "still open: the rule vocabulary emits no appearanceChanges"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/adapter/facts.json",
+   "bytes": 6648,
+   "sha256": "5ca6c201c5407bd7d477b94d6aa9bff246345237399ee3595729d8e2e8262c57"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/adapter/gaps.json",
+   "bytes": 16,
+   "sha256": "da2401b88ac8b7c0832454105703383fffdd5395e280efe8a4430c3bcca5b719"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/adapter/not-displayed.json",
+   "bytes": 24,
+   "sha256": "ab8c59fe2b7db66908242fe9a278e964d157f3fb53e5bb3d156b53547458413a"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/adapter/preview.json",
+   "bytes": 4652,
+   "sha256": "77e8903fa94d92594cb394c0bd0607b9bc7d3bee015d1c57912d23548fcbc4f6"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/adapter/preview.txt",
+   "bytes": 1942,
+   "sha256": "2d82caeedf2bd9de45889201606dc00c24c5c330fedfa74aeef6d1208b81d6d4"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/browser-record.json",
+   "bytes": 2271,
+   "sha256": "a9c0def2838e318670cac0ce2cfd69ca195d4c6b1e63c470976ba7a36bfce3ee"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/facts-requests.log",
+   "bytes": 1514,
+   "sha256": "cad25ada57584093fcf97373f383887c0ff9ac480b16a5301cad5b1c6e0ff32c"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/screenshots/rounds-after-more.png",
+   "bytes": 142615,
+   "sha256": "04e003707e578e9b7bbce50bd58639870ef3c02b18416d3f4e26e7c21f9e0df7"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/screenshots/rounds-after-refresh.png",
+   "bytes": 131208,
+   "sha256": "5032b78639724a480af8814e245601e48afe1ee1d9436dabdf7e5709e1496cd3"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/screenshots/rounds-after-run.png",
+   "bytes": 133643,
+   "sha256": "f9420023fcb0f0c4d05c2c63b348244f9d73cc56eafebacd47900f6cb639f2d1"
+  },
+  {
+   "path": "artifacts/next-acceptance/task-display-r1/verify.json",
+   "bytes": 1193,
+   "sha256": "b19bc946178f780cfccebb97f29372e30e21fe2635d6a8e1601dc1fab2c6b0e3"
+  }
+ ]
+}

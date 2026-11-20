@@ -1,0 +1,334 @@
+{
+ "purpose": "commit-2 real-model composition over the v2 grouped interface: plan_v3 groups + appellation grants actually reach the trained model; the ablation arm proves the grants move the output; new kinds flow end-to-end",
+ "checkpoint": {
+  "dir": "experiments/world-components/n4_corpus_v2/ckpt-v2",
+  "modelSha256": "e89739ec40981635af85312c4457e73b136d79f9b3e4656e3128ecf4a10de409"
+ },
+ "environment": {
+  "python": "3.12.3",
+  "torch": "2.7.0+cu126",
+  "device": "cpu",
+  "note": "offline CPU timing; never merged with browser timings"
+ },
+ "tokenGate": {
+  "limit": 128,
+  "tokenizer": "T5Tokenizer legacy=False (special tokens incl.)"
+ },
+ "scenarios": [
+  {
+   "name": "v2-pronoun-crossref",
+   "expect": "ok",
+   "stages": {
+    "chain": {
+     "status": "ready-for-model",
+     "reason": null,
+     "unsupportedReason": null,
+     "kinds": null,
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼"
+     }
+    },
+    "n1": {
+     "factCount": 4,
+     "diagnostics": []
+    },
+    "n2Summary": {
+     "must": 3,
+     "may": 1,
+     "invisible": 0,
+     "selected": 4,
+     "mayPolicy": "select"
+    },
+    "n3": {
+     "planner": "plan_v3",
+     "status": "ok",
+     "groups": 2,
+     "grants": 2
+    },
+    "n4Model": {
+     "ms": 883.9,
+     "outputTokens": 38,
+     "finishReason": "eos",
+     "text": "管线甲从管线镇来到了钟楼。他的精神值从10涨到了14。八分钟过去了,管线乙完成了任务「晒网」。"
+    },
+    "n5": {
+     "gates": {
+      "G1_alignment": true,
+      "G2_no_fabrication": true,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "problems": []
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n第1组（时间：无；称谓：管线甲=他）\n1. 位置：管线甲 从管线镇到钟楼\n2. 理智：管线甲 10→14（上升）\n第2组（时间：约八分钟；称谓：管线乙=他）\n3. 任务达成：管线乙「晒网」\n4. 时间推进：约八分钟\n正文：",
+   "status": "ok",
+   "expectMet": true,
+   "ablation": {
+    "inputWithoutGrants": "叙事生成任务。\n第1组（时间：无）\n1. 位置：管线甲 从管线镇到钟楼\n2. 理智：管线甲 10→14（上升）\n第2组（时间：约八分钟）\n3. 任务达成：管线乙「晒网」\n4. 时间推进：约八分钟\n正文：",
+    "output": "管线甲从管线镇来到了钟楼。他的精神值从10涨到了14。八分钟过去了,管线乙完成了任务「晒网」。",
+    "differs": false
+   }
+  },
+  {
+   "name": "v2-conflict",
+   "expect": "ok",
+   "stages": {
+    "chain": {
+     "status": "ready-for-model",
+     "reason": null,
+     "unsupportedReason": null,
+     "kinds": null,
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "管线镇"
+     }
+    },
+    "n1": {
+     "factCount": 3,
+     "diagnostics": []
+    },
+    "n2Summary": {
+     "must": 2,
+     "may": 1,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "n3": {
+     "planner": "plan_v3",
+     "status": "ok",
+     "groups": 2,
+     "grants": 0
+    },
+    "n4Model": {
+     "ms": 982.7,
+     "outputTokens": 34,
+     "finishReason": "eos",
+     "text": "管线乙办妥了任务「合力抬钟」。三分钟过去了,管线乙办妥了任务「合力抬钟」。"
+    },
+    "n5": {
+     "gates": {
+      "G1_alignment": true,
+      "G2_no_fabrication": true,
+      "G3_time": true,
+      "G4_conflict_names": true,
+      "G6_no_truncation": true
+     },
+     "problems": []
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n第1组（时间：无）\n1. 任务达成：管线乙「合力抬钟」\n第2组（时间：约三分钟）\n2. 任务达成：管线乙「合力抬钟」\n3. 时间推进：约三分钟\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "v2-gender-unknown",
+   "expect": "ok",
+   "stages": {
+    "chain": {
+     "status": "ready-for-model",
+     "reason": null,
+     "unsupportedReason": null,
+     "kinds": null,
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pd",
+      "at": "钟楼"
+     }
+    },
+    "n1": {
+     "factCount": 3,
+     "diagnostics": []
+    },
+    "n2Summary": {
+     "must": 2,
+     "may": 1,
+     "invisible": 0,
+     "selected": 3,
+     "mayPolicy": "select"
+    },
+    "n3": {
+     "planner": "plan_v3",
+     "status": "ok",
+     "groups": 1,
+     "grants": 0
+    },
+    "n4Model": {
+     "ms": 599.7,
+     "outputTokens": 19,
+     "finishReason": "eos",
+     "text": "七分钟过去了,水生从管线镇来到了钟楼。"
+    },
+    "n5": {
+     "gates": {
+      "G1_alignment": false,
+      "G2_no_fabrication": true,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "problems": [
+      "uncovered:f1:task_achieved"
+     ]
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n第1组（时间：约七分钟）\n1. 位置：水生 从管线镇到钟楼\n2. 任务达成：水生「检修钟摆」\n3. 时间推进：约七分钟\n正文：",
+   "status": "n5-failed",
+   "expectMet": false
+  },
+  {
+   "name": "v2-omniscient-two-actors",
+   "expect": "ok",
+   "stages": {
+    "chain": {
+     "status": "ready-for-model",
+     "reason": null,
+     "unsupportedReason": null,
+     "kinds": null,
+     "perspective": {
+      "type": "omniscient",
+      "entityId": null,
+      "at": "全局"
+     }
+    },
+    "n1": {
+     "factCount": 5,
+     "diagnostics": []
+    },
+    "n2Summary": {
+     "must": 4,
+     "may": 1,
+     "invisible": 0,
+     "selected": 5,
+     "mayPolicy": "select"
+    },
+    "n3": {
+     "planner": "plan_v3",
+     "status": "ok",
+     "groups": 2,
+     "grants": 2
+    },
+    "n4Model": {
+     "ms": 1408.1,
+     "outputTokens": 46,
+     "finishReason": "eos",
+     "text": "管线甲从管线镇来到了钟楼。他办妥了任务「把铜铃挂回钟楼」。六分钟过去了,管线乙从管线镇来到了钟楼。"
+    },
+    "n5": {
+     "gates": {
+      "G1_alignment": false,
+      "G2_no_fabrication": true,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "problems": [
+      "uncovered:f3:task_achieved"
+     ]
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n第1组（时间：无；称谓：管线甲=他）\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n第2组（时间：约六分钟；称谓：管线乙=他）\n3. 位置：管线乙 从管线镇到钟楼\n4. 任务达成：管线乙「补网」\n5. 时间推进：约六分钟\n正文：",
+   "status": "n5-failed",
+   "expectMet": false
+  },
+  {
+   "name": "v2-new-kinds",
+   "expect": "ok",
+   "stages": {
+    "chain": {
+     "status": "ready-for-model",
+     "reason": null,
+     "unsupportedReason": null,
+     "kinds": null,
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "管线镇"
+     }
+    },
+    "n1": {
+     "factCount": 4,
+     "diagnostics": []
+    },
+    "n2Summary": {
+     "must": 3,
+     "may": 1,
+     "invisible": 0,
+     "selected": 4,
+     "mayPolicy": "select"
+    },
+    "n3": {
+     "planner": "plan_v3",
+     "status": "ok",
+     "groups": 1,
+     "grants": 1
+    },
+    "n4Model": {
+     "ms": 946.1,
+     "outputTokens": 30,
+     "finishReason": "eos",
+     "text": "五分钟过去了,管线甲现在在管线乙旁边。他完成了任务「把铜铃挂回钟楼」。"
+    },
+    "n5": {
+     "gates": {
+      "G1_alignment": false,
+      "G2_no_fabrication": true,
+      "G3_time": true,
+      "G6_no_truncation": true
+     },
+     "problems": [
+      "uncovered:f2:subtask_added"
+     ]
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n第1组（时间：约五分钟；称谓：管线甲=他）\n1. 相对位置：管线甲 现在在管线乙旁边\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 新任务：管线甲 接到「找梯子」（隶属「把铜铃挂回钟楼」）\n4. 时间推进：约五分钟\n正文：",
+   "status": "n5-failed",
+   "expectMet": false
+  },
+  {
+   "name": "v2-over-128",
+   "expect": "unsupported",
+   "stages": {
+    "chain": {
+     "status": "unsupported",
+     "reason": null,
+     "unsupportedReason": "input-too-long-real",
+     "kinds": null,
+     "perspective": {
+      "type": "protagonist",
+      "entityId": "char_pa",
+      "at": "钟楼"
+     }
+    },
+    "n1": {
+     "factCount": 5,
+     "diagnostics": []
+    },
+    "n2Summary": {
+     "must": 3,
+     "may": 1,
+     "invisible": 1,
+     "selected": 4,
+     "mayPolicy": "select"
+    },
+    "n3": {
+     "planner": "plan_v3",
+     "status": "ok",
+     "groups": 1,
+     "grants": 1
+    }
+   },
+   "status": "unsupported",
+   "modelCalled": false,
+   "expectMet": true
+  }
+ ],
+ "pass": false
+}

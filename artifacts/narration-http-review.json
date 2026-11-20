@@ -1,0 +1,98 @@
+{
+  "status": "PASS",
+  "recordedAt": "2026-10-25T17:09:57.787Z",
+  "layer": "real A FastAPI/uvicorn fixture service + B ControllerDriver/HttpWorldTransport over loopback HTTP",
+  "limitations": "A2 in-memory fixture store; no SQLite crash recovery, browser lifecycle or inference claims",
+  "cases": [
+    {
+      "mode": "normal_submit",
+      "inputMatchesIndependentExpectation": true,
+      "beforeAndAfterDifferInTimeAndPosition": true,
+      "exchanges": [
+        {
+          "operation": "commit_point",
+          "point": {
+            "worldId": "world_1",
+            "id": "point_1",
+            "sequence": 1,
+            "kind": "normal",
+            "previousPointId": "root_3",
+            "roundId": "round_1",
+            "advanceId": "advance_1",
+            "trigger": "player",
+            "linkedFromPointId": null,
+            "timeAdvance": {
+              "boundary": "elapsed",
+              "duration": {
+                "amount": 2,
+                "unit": "second"
+              }
+            },
+            "entityDeltas": {
+              "person_a": {
+                "entityId": "person_a",
+                "positionSet": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              }
+            }
+          },
+          "responsePoint": "point_1"
+        },
+        {
+          "operation": "narration_claim",
+          "point": null,
+          "responsePoint": "point_1"
+        },
+        {
+          "operation": "get_state",
+          "point": "point_1",
+          "responsePoint": "point_1"
+        },
+        {
+          "operation": "get_state",
+          "point": "root_3",
+          "responsePoint": "root_3"
+        },
+        {
+          "operation": "narration_submit",
+          "point": null,
+          "responsePoint": "point_1"
+        }
+      ],
+      "narrationCalls": 1,
+      "finalNarrationStatus": "ready"
+    },
+    {
+      "mode": "cold_start",
+      "inputMatchesIndependentExpectation": true,
+      "beforeAndAfterDifferInTimeAndPosition": true,
+      "exchanges": [
+        {
+          "operation": "narration_claim",
+          "point": null,
+          "responsePoint": "point_1"
+        },
+        {
+          "operation": "get_state",
+          "point": "point_1",
+          "responsePoint": "point_1"
+        },
+        {
+          "operation": "get_state",
+          "point": "root_6",
+          "responsePoint": "root_6"
+        },
+        {
+          "operation": "narration_submit",
+          "point": null,
+          "responsePoint": "point_1"
+        }
+      ],
+      "narrationCalls": 1,
+      "finalNarrationStatus": "ready"
+    }
+  ]
+}

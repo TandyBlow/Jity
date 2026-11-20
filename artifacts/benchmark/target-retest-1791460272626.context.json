@@ -1,0 +1,11 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "baseUrl": "http://localhost:3100",
+  "threads": "4",
+  "environmentAfter": [
+    "环境CPU 线程（hardwareConcurrency）：20设备内存（deviceMemory）：16 GB（粗档）跨源隔离：是（多线程可用）WebGPU 暴露：是（本基准强制 n_gpu_layers=0，走 CPU）wasm SIMD：支持 · wasm 线程检测：支持 · 实际运行：多线程（4 线程）Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0"
+  ],
+  "runtimeText": [
+    "1 · 模型推荐：Qwen3-0.6B GGUF Q4_K_M；小模型冒烟测试可用 stories260K。从 URL 加载模型：http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf · 378 MB运行时：多线程 · 4 线程 · libllama b11364-46ca246 · 实际 n_ctx 4096（训练 40960） · 加载参数 n_batch 2048 / n_ubatch 512结构：n_vocab=151936 · n_embd=1024 · n_layer=28general.file_type=15 · general.quantization_version=2 · general.name=Qwen3-0.6B · general.quantized_by=Unsloth · general.repo_url=https://huggingface.co/unsloth · general.architecture=qwen3 · general.basename=Qwen3-0.6B · general.type=model · general.size_label=0.6B"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "protocol": "c1-attention-granularity-v1-extra",
+  "frozenOn": "2026-11-08",
+  "note": "v2 实现里比冻结的 A01–A10 多出的两条行为，单独预登记、单独计分，不计入 A01–A10 的 10/10。两条都是先写期望再跑。",
+  "probes": [
+    {
+      "probeId": "X1",
+      "mechanism": "任务目标原句 -> 负责人 + task 范围",
+      "worldRef": "W1",
+      "utterance": "「取回柜子里的东西」做完了吗？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_c",
+            "scope": "task",
+            "surface": "取回柜子里的东西",
+            "scopeCue": "取回柜子里的东西"
+          }
+        ]
+      },
+      "note": "契约 §7 说 v2 应把 goal 提及映射成负责人 + task 范围，而不是把任务当成一个对象；本批 10 条验收没占位，故单列。"
+    },
+    {
+      "probeId": "X2",
+      "mechanism": "词表外局部 -> 保守空目标",
+      "worldRef": "W2",
+      "utterance": "林川手背上的划痕还在吗？",
+      "priorNarration": null,
+      "expected": {
+        "state": "unresolved",
+        "targets": [],
+        "unresolvedMentions": ["划痕"],
+        "reason": "part_outside_lexicon"
+      },
+      "note": "「手背」不在 part 词表里。v1 会落到整人并放大范围；v2 必须报无法解析、输出空目标，不得退回 object。这条同时是用户指定的已知失败项的证据。"
+    }
+  ]
+}

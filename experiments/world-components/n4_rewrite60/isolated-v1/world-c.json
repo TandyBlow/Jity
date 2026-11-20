@@ -1,0 +1,23 @@
+{
+ "id": "iso-c",
+ "name": "青石渡（全新世界，隔离评测用）",
+ "locations": {
+  "loc_qingshi": {"name": "青石渡", "features": ["青石阶", "渡桩", "水线"], "sublocations": [{"name": "渡口棚"}]},
+  "loc_oldstore": {"name": "旧仓", "features": ["仓门", "木梯", "霉味"], "sublocations": []},
+  "loc_pass": {"name": "风口岭", "features": ["风口", "石堆", "经幡"], "sublocations": [{"name": "岭口"}]},
+  "loc_snow": {"name": "望雪台", "features": ["望台", "木栏", "雪线"], "sublocations": []}
+ },
+ "characters": {
+  "char_qin": {"name": "秦望"},
+  "char_liu": {"name": "柳七"},
+  "char_lu": {"name": "陆行"},
+  "char_qi": {"name": "祁婶"}
+ },
+ "items": {
+  "item_pole": {"name": "竹篙"},
+  "item_lamp": {"name": "油灯"},
+  "item_salt": {"name": "盐袋"},
+  "item_horse": {"name": "马灯"},
+  "item_rope": {"name": "缆索"}
+ }
+}

@@ -1,0 +1,151 @@
+/* On-device inference benchmark harness (see docs/local_inference_benchmark.md).
+   A dev tool, not part of the player-facing surface. */
+
+.bench-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  color: var(--color-fg);
+}
+
+.bench-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.bench-title {
+  font-size: var(--fs-heading);
+  margin: 0;
+}
+
+.bench-back {
+  color: var(--color-accent);
+}
+
+.bench-intro {
+  color: var(--color-muted);
+  font-size: var(--fs-md);
+}
+
+.bench-panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  background: var(--surface-glass);
+}
+
+.bench-panel-title {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--space-3);
+}
+
+.bench-meta {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  color: var(--color-fg);
+}
+
+.bench-dim {
+  color: var(--color-muted);
+}
+
+.bench-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.bench-config-row {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  font-size: var(--fs-sm);
+  margin-bottom: var(--space-3);
+}
+
+.bench-config-row label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bench-input {
+  width: 90px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--color-fg);
+  outline: none;
+}
+
+.bench-input-wide {
+  width: 420px;
+}
+
+.bench-button {
+  height: var(--control-h-md);
+  padding: 0 var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-panel-soft);
+  color: var(--color-fg);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bench-button:disabled {
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
+
+.bench-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.bench-status {
+  font-size: var(--fs-sm);
+  color: var(--color-fg);
+  margin-top: var(--space-3);
+}
+
+.bench-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.bench-table th {
+  color: var(--color-muted);
+  text-align: left;
+  font-weight: var(--fw-medium);
+  padding: var(--space-2);
+}
+
+.bench-table td {
+  padding: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.bench-error {
+  color: var(--color-danger);
+}
+
+.bench-good {
+  color: var(--color-accent-2);
+}
+
+.bench-bad {
+  color: var(--color-danger);
+}
+
+.bench-note {
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+  margin: var(--space-3) 0 0;
+}

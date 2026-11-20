@@ -1,0 +1,71 @@
+{
+  "tests": [
+    {
+      "command": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "D:\\others\\Jity\\.local\\world-components-next-worktree\\experiments\\world-components",
+        "-p",
+        "test_component*.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "test_missing_or_changed_input_fails_instead_of_reading_another_worktree (test_component_paths.PathsTests.test_missing_or_changed_input_fails_instead_of_reading_another_worktree) ... ok\ntest_model_is_explicit_and_checkpoint_is_separate (test_component_paths.PathsTests.test_model_is_explicit_and_checkpoint_is_separate) ... ok\ntest_output_escape_and_input_overwrite_are_rejected (test_component_paths.PathsTests.test_output_escape_and_input_overwrite_are_rejected) ... ok\ntest_symlink_output_escape_is_rejected (test_component_paths.PathsTests.test_symlink_output_escape_is_rejected) ... skipped \"Symlinks unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\\\\\Users\\\\\\\\26494\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmppi03vmcy\\\\\\\\other' -> 'C:\\\\\\\\Users\\\\\\\\26494\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmppi03vmcy\\\\\\\\branch\\\\\\\\outputs\\\\\\\\link'\"\ntest_unknown_and_traversal_round_ids_are_not_read (test_component_runtime.RoundLookupTests.test_unknown_and_traversal_round_ids_are_not_read) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.115s\n\nOK (skipped=1)\n"
+    },
+    {
+      "command": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "D:\\others\\Jity\\.local\\world-components-next-worktree\\experiments\\world-components\\n4_narrative_dev",
+        "-p",
+        "test_fact_contract.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "test_built_input_carries_the_checked_line (test_fact_contract.ContractTests.test_built_input_carries_the_checked_line) ... ok\ntest_bulk_check_flags_wrong_units (test_fact_contract.ContractTests.test_bulk_check_flags_wrong_units) ... ok\ntest_old_wrong_formats_are_rejected (test_fact_contract.ContractTests.test_old_wrong_formats_are_rejected) ... ok\ntest_other_kinds_match_training_format (test_fact_contract.ContractTests.test_other_kinds_match_training_format) ... ok\ntest_sanity_down_exact_string (test_fact_contract.ContractTests.test_sanity_down_exact_string) ... ok\ntest_sanity_up_exact_string (test_fact_contract.ContractTests.test_sanity_up_exact_string) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "command": [
+        "D:\\others\\Jity\\.local\\world-components-next-worktree\\experiments\\world-components\\n4_narrative_dev\\test_conservative_edit.py"
+      ],
+      "exitCode": 0,
+      "stdout": "version edit-layer/2\n失败 0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\others\\Jity\\.local\\world-components-next-worktree\\experiments\\world-components\\n4_narrative_dev\\test_relation_edit.py"
+      ],
+      "exitCode": 0,
+      "stdout": "version relation-edit/1\n失败 0\n",
+      "stderr": ""
+    }
+  ],
+  "astParsedFiles": 215,
+  "hardcodedMainWorktreePaths": [],
+  "runFreezeCodeAndDataStillMatch": {
+    "experiments\\world-components\\n4_narrative_dev\\train_n4_formal.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\train_n4_struct.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\train_verbalizer.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\eval_n4_holdout.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\sequence_policy.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\smoke_full_length.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\verify_sequence_policy.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\test_sequence_policy.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\formal_pairs.jsonl": true,
+    "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl": true,
+    "experiments\\world-components\\n4_narrative_dev\\holdout_pairs.jsonl": true,
+    "experiments\\world-components\\n4_rewrite60\\corpus140.jsonl": true,
+    "experiments\\world-components\\n4_rewrite60\\checker.py": true,
+    "experiments\\world-components\\n4_rewrite60\\checker-v7-freeze.json": true,
+    "experiments\\world-components\\n4_rewrite60\\isolated-v1\\isolated-v1.jsonl": true,
+    "experiments\\world-components\\n4_rewrite60\\isolated-v1\\isolated-v1.labels.json": true
+  },
+  "note": "Conservative/relation tests are executable scripts, not unittest modules. Real symlink test is skipped where Windows denies link creation."
+}

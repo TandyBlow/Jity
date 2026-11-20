@@ -1,0 +1,120 @@
+{
+ "packVersion": 3,
+ "perspective": {
+  "type": "omniscient",
+  "entityId": null,
+  "at": "全局"
+ },
+ "n1Facts": [
+  {
+   "factId": "fe_shao:position",
+   "kind": "moved",
+   "entityId": "fe_shao",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_relay",
+    "fy_store"
+   ],
+   "at": "穹榛中继室"
+  },
+  {
+   "factId": "fe_shao:task:ft_relay",
+   "kind": "task_achieved",
+   "entityId": "fe_shao",
+   "entityGroup": "characters",
+   "goal": "复核穹榛机架背面的联接编号"
+  },
+  {
+   "factId": "fe_wen:position",
+   "kind": "moved",
+   "entityId": "fe_wen",
+   "entityGroup": "characters",
+   "atPath": [
+    "fy_cal",
+    "fy_yard"
+   ],
+   "at": "砾脊校准间"
+  }
+ ],
+ "n2": {
+  "module": "experiments/world-components/n2_perspective.py",
+  "moduleSha256": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+  "status": "ok",
+  "summary": {
+   "must": 3,
+   "may": 0,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "stops": [],
+  "refusals": [],
+  "decisions": [
+   {
+    "factId": null,
+    "kind": null,
+    "class": "note",
+    "ground": "omniscient-focus:position-facts",
+    "selected": false,
+    "reason": "全知视角焦点判定：omniscient-focus:position-facts"
+   },
+   {
+    "factId": "fe_shao:position",
+    "kind": "moved",
+    "class": "must",
+    "ground": "omniscient-focus-position",
+    "selected": true,
+    "reason": "全知视角焦点人物的位置变化，必述"
+   },
+   {
+    "factId": "fe_shao:task:ft_relay",
+    "kind": "task_achieved",
+    "class": "must",
+    "ground": "omniscient-focus-goal",
+    "selected": true,
+    "reason": "全知视角焦点人物的目标/在追任务，必述（rubric §4）"
+   },
+   {
+    "factId": "fe_wen:position",
+    "kind": "moved",
+    "class": "must",
+    "ground": "omniscient-focus-position",
+    "selected": true,
+    "reason": "全知视角焦点人物的位置变化，必述"
+   }
+  ]
+ },
+ "expression": {
+  "fe_shao:position": "must",
+  "fe_shao:task:ft_relay": "must",
+  "fe_wen:position": "withheld-by-instruction"
+ },
+ "withheld": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "actorKind": "character",
+   "name": "闻澈岑",
+   "fromId": "fy_pump",
+   "from": "玄藻泵舱",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position",
+   "factId": "fe_wen:position",
+   "n2Class": "must",
+   "n2Ground": "omniscient-focus-position",
+   "n2Reason": "玩家指令要求本轮暂不展开该角色：不进入成句输入；不得据此推出关注对象或任务达成。",
+   "expression": "withheld-by-instruction",
+   "requirementSource": "n2-must"
+  }
+ ],
+ "playerScope": {
+  "ids": [
+   "fe_wen:position"
+  ],
+  "constraint": "玩家指令要求本轮暂不展开该角色：不进入成句输入；不得据此推出关注对象或任务达成。"
+ }
+}

@@ -1,0 +1,222 @@
+{
+ "engineVersion": "world-engine-v1",
+ "schemaVersion": 1,
+ "protagonistId": "fe_wen",
+ "initialTime": {
+  "calendar": "gregorian",
+  "dateTime": "2026-12-03T08:20:00",
+  "instantOrdinal": 0
+ },
+ "locations": {
+  "fy_yard": {
+   "id": "fy_yard",
+   "name": "岫砚检修院",
+   "parentLocationId": null,
+   "initialAppearance": "院内立着三根带刻线的陶柱，地面铺浅色碎石。",
+   "slots": []
+  },
+  "fy_pump": {
+   "id": "fy_pump",
+   "name": "玄藻泵舱",
+   "parentLocationId": "fy_yard",
+   "initialAppearance": "地沟沿泵座外侧延伸，隔振垫上印着斜纹。",
+   "slots": []
+  },
+  "fy_cal": {
+   "id": "fy_cal",
+   "name": "砾脊校准间",
+   "parentLocationId": "fy_yard",
+   "initialAppearance": "校准台分成两个刻度区，窗框嵌有琥珀色玻璃。",
+   "slots": []
+  },
+  "fy_bridge": {
+   "id": "fy_bridge",
+   "name": "苔铎栈桥",
+   "parentLocationId": "fy_yard",
+   "initialAppearance": "栈桥转角设着半圆挡板，踏板上压着细密菱纹。",
+   "slots": []
+  },
+  "fy_store": {
+   "id": "fy_store",
+   "name": "霜珀备件库",
+   "parentLocationId": null,
+   "initialAppearance": "备件库与检修院分属两栋建筑，入口有三层隔帘。",
+   "slots": []
+  },
+  "fy_relay": {
+   "id": "fy_relay",
+   "name": "穹榛中继室",
+   "parentLocationId": "fy_store",
+   "initialAppearance": "窄长机架背面留出一条检修通道。",
+   "slots": []
+  },
+  "fy_watch": {
+   "id": "fy_watch",
+   "name": "弧砂观测台",
+   "parentLocationId": null,
+   "initialAppearance": "观测台独立立在碎石坡上，平台中心有一道环形刻槽。",
+   "slots": []
+  }
+ },
+ "items": {
+  "fi_gauge": {
+   "id": "fi_gauge",
+   "name": "瓷铯量规",
+   "initialPosition": {
+    "containerId": "fy_cal",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "量规左右各有一列凹刻线，末端刻着双点记号。",
+   "slots": []
+  },
+  "fi_valve": {
+   "id": "fi_valve",
+   "name": "绛纹阀芯",
+   "initialPosition": {
+    "containerId": "fy_pump",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "阀芯侧边嵌着绛色条纹，顶部有六角浅槽。",
+   "slots": []
+  },
+  "fi_seal": {
+   "id": "fi_seal",
+   "name": "锆丝封签",
+   "initialPosition": {
+    "containerId": "fe_wen",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "封签绕成扁环，接合处压着一枚椭圆印。",
+   "slots": []
+  }
+ },
+ "characters": {
+  "fe_wen": {
+   "id": "fe_wen",
+   "name": "闻澈岑",
+   "initialPosition": {
+    "containerId": "fy_pump",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "灰紫护袖束在前臂，胸前别着三角陶牌。",
+   "slots": [],
+   "initialPersonality": "遇到刻度分歧先复测，再记录自己的判断。",
+   "initialSanity": 43,
+   "tasks": {
+    "ft_check": {
+     "id": "ft_check",
+     "ownerId": "fe_wen",
+     "parentTaskId": null,
+     "goal": "核验瓷铯量规的双区刻度",
+     "status": "pending"
+    },
+    "ft_mark": {
+     "id": "ft_mark",
+     "ownerId": "fe_wen",
+     "parentTaskId": "ft_check",
+     "goal": "登记量规右区的第三条刻线",
+     "status": "pending"
+    },
+    "ft_seal": {
+     "id": "ft_seal",
+     "ownerId": "fe_wen",
+     "parentTaskId": null,
+     "goal": "更换绛纹阀芯上的锆丝封签",
+     "status": "pending"
+    }
+   }
+  },
+  "fe_shao": {
+   "id": "fe_shao",
+   "name": "邵苇衡",
+   "initialPosition": {
+    "containerId": "fy_store",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "短罩衣下摆压着两道平行缝线。",
+   "slots": [],
+   "initialPersonality": "交接零件前逐一复诵批次。",
+   "initialSanity": 57,
+   "tasks": {
+    "ft_relay": {
+     "id": "ft_relay",
+     "ownerId": "fe_shao",
+     "parentTaskId": null,
+     "goal": "复核穹榛机架背面的联接编号",
+     "status": "pending"
+    }
+   }
+  },
+  "fe_nie": {
+   "id": "fe_nie",
+   "name": "聂汀穗",
+   "initialPosition": {
+    "containerId": "fy_cal",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "靛白肩带斜跨在细格工作服外。",
+   "slots": [],
+   "initialPersonality": "整理器具时习惯保留原来的朝向。",
+   "initialSanity": 61,
+   "tasks": {
+    "ft_sort": {
+     "id": "ft_sort",
+     "ownerId": "fe_nie",
+     "parentTaskId": null,
+     "goal": "将未拆封阀芯按批次分入陶格",
+     "status": "pending"
+    }
+   }
+  },
+  "fe_pu": {
+   "id": "fe_pu",
+   "name": "蒲砺弦",
+   "initialPosition": {
+    "containerId": "fy_watch",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "窄檐护帽上留着一块方形织补。",
+   "slots": [],
+   "initialPersonality": "读数后先等同伴确认再离开。",
+   "initialSanity": 38,
+   "tasks": {
+    "ft_watch": {
+     "id": "ft_watch",
+     "ownerId": "fe_pu",
+     "parentTaskId": null,
+     "goal": "读出弧砂刻槽的偏移刻度",
+     "status": "pending"
+    }
+   }
+  },
+  "fe_yu": {
+   "id": "fe_yu",
+   "name": "郁棠序",
+   "initialPosition": {
+    "containerId": "fy_bridge",
+    "slotId": null,
+    "relativeTo": null
+   },
+   "initialAppearance": "浅赭绑腿外侧各缀一枚扁扣。",
+   "slots": [],
+   "initialPersonality": "喜欢把复杂步骤拆成可以复查的小项。",
+   "initialSanity": 72,
+   "tasks": {
+    "ft_bridge": {
+     "id": "ft_bridge",
+     "ownerId": "fe_yu",
+     "parentTaskId": null,
+     "goal": "登记苔铎挡板的紧固次序",
+     "status": "pending"
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "version": "real-batch-v3-errata",
+ "batchId": "real-batch-2026-11-08-v3-shape",
+ "recordedAt": "2026-11-08",
+ "items": [
+  {
+   "id": "E1-intervention-not-sent",
+   "what": "The first v3 run replaced the requirement line only in the recorded text; the prompt actually sent was chain['renderText'], i.e. the ORIGINAL line.",
+   "evidence": [
+    "the first attempt's attempts[0].prompt still contains the original 要求： line",
+    "all 10 output token counts equal the v2 run exactly (246/272/215/384/384/340/376/384/325/274)",
+    "the recorded renderText contains the intervened line, so archive and request disagreed"
+   ],
+   "effect": "The aborted run is a repeat of the v2 condition, not the intervention. It is preserved as out/real-batch-v3-aborted-no-intervention.json with aborted=true and an abortReason field.",
+   "fix": "the runner now builds the prompt from the intervened text (rec['renderText']), and the registration was re-issued (revision 2) with the fixed runner hash. No valid v3 result existed before the fix."
+  }
+ ],
+ "note": "This errata is written before the corrected v3 run; it records a harness failure, not a model result."
+}

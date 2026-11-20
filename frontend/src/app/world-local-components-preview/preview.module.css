@@ -1,0 +1,179 @@
+/* Preview-only chrome. The playable components keep their own module CSS; this
+   file only styles the clearly-marked fixture banner and state switches. */
+
+.shell {
+  min-height: 100vh;
+  background: var(--preview-page-bg);
+  font-family: system-ui, "Noto Serif CJK SC", "Songti SC", serif;
+  color: var(--preview-ink);
+}
+
+.hero,
+.switches {
+  box-sizing: border-box;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 22px 20px;
+}
+
+.hero {
+  padding-bottom: 6px;
+}
+
+.kicker {
+  display: inline-block;
+  margin: 0 0 6px;
+  padding: 2px 8px;
+  border: 1px solid var(--preview-gold);
+  border-radius: 999px;
+  color: var(--preview-gold);
+  background: var(--preview-gold-wash);
+  font-size: 12px;
+}
+
+.heroTitle {
+  margin: 0 0 8px;
+  font-size: 26px;
+  line-height: 1.25;
+}
+
+.heroText {
+  max-width: 780px;
+  margin: 0 0 6px;
+  color: var(--preview-ink-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.link {
+  color: var(--preview-brown);
+  font-weight: 600;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.switches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  padding-top: 8px;
+  padding-bottom: 18px;
+}
+
+.switchGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--preview-line);
+  border-radius: 10px;
+  background: var(--preview-card);
+}
+
+.groupLabel {
+  color: var(--preview-ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.toggle {
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid var(--preview-line-strong);
+  border-radius: 6px;
+  color: var(--preview-ink);
+  background: var(--preview-card);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.toggle:hover {
+  border-color: var(--preview-brown);
+}
+
+.toggle[aria-pressed="true"] {
+  border-color: var(--preview-brown);
+  color: var(--preview-on-brown);
+  background: var(--preview-brown);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--preview-ink-strong);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.check input[type="checkbox"],
+.check input[type="radio"] {
+  accent-color: var(--preview-brown);
+}
+
+.check select {
+  min-height: 28px;
+  padding: 2px 6px;
+  border: 1px solid var(--preview-line-strong);
+  border-radius: 6px;
+  color: var(--preview-ink);
+  background: var(--preview-card);
+  font: inherit;
+  font-size: 12px;
+}
+
+.request,
+.note {
+  margin: 0;
+  color: var(--preview-ink-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.request {
+  word-break: break-word;
+}
+
+.note {
+  color: var(--preview-ink-muted);
+}
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--preview-line-warm);
+  border-radius: 8px;
+  color: var(--preview-gold);
+  background: var(--preview-gold-wash);
+  font-size: 12px;
+}
+
+.metaBadge {
+  padding: 2px 8px;
+  border: 1px solid var(--preview-line-strong);
+  border-radius: 999px;
+  color: var(--preview-ink-soft);
+  background: var(--preview-card);
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .hero,
+  .switches {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}

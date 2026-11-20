@@ -1,0 +1,50 @@
+{
+  "kind": "jity-goal-kernel-diff",
+  "generatedAt": "2026-11-20T08:50:00Z",
+  "oracle": {
+    "fixture": "frontend/scripts/parallel-kernel/fixtures/kernel-differential.json",
+    "fixtureSha256": "f43cbb6ce1efeb39650567c92c6b61e7022b8e698dc3899e041f4b0e19f378c7",
+    "referenceCommit": "fc60a603c7e0b57805fffea0458192bcfebf6ffc",
+    "generator": "frontend/scripts/parallel-kernel/build-kernel-fixtures.py",
+    "worldAsset": "data/worlds/dragon-raja-free-day.world.json",
+    "worldStateDigest": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
+    "fixtureSha256Lf": "7d68a392bbcd51bb39d276ffc9a37902e919b8c8b9cc1a7e78e74c67d2e2f977"
+  },
+  "covered": [
+    {
+      "function": "canonicalJson/canonicalBytes/canonicalDigest",
+      "vectors": 4,
+      "test": "frontend/src/lib/world-engine/local/canonical.test.ts"
+    },
+    {
+      "function": "buildInitialState/applyPoint/stateDigest (time)",
+      "vectors": 7,
+      "test": "frontend/src/lib/world-engine/local/state.test.ts"
+    },
+    {
+      "function": "position validation (nested, relative, cycles)",
+      "vectors": 8,
+      "test": "frontend/src/lib/world-engine/local/state.test.ts"
+    },
+    {
+      "function": "pointEntityDeltas/commit (tasks, supersedes)",
+      "vectors": 5,
+      "test": "frontend/src/lib/world-engine/local/state.test.ts"
+    },
+    {
+      "function": "LocalWorldTransport apply/commit/replay digest",
+      "vectors": 1,
+      "test": "frontend/src/lib/world-engine/local/local-transport.test.ts"
+    },
+    {
+      "function": "world-loader registration/digest",
+      "vectors": 1,
+      "test": "frontend/src/lib/world-engine/local/world-loader.test.ts"
+    }
+  ],
+  "run": {
+    "command": "cd frontend && npx vitest run",
+    "result": null,
+    "note": "filled after the G2 full run"
+  }
+}

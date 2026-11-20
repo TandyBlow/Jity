@@ -11,20 +11,51 @@ from app.dependencies import (
     build_campaign_manager,
     campaign_manager_cache,
     db,
+    embedding_client,
+    get_campaign_manager_for_session,
     knowledge_service,
+    llm_client,
     settings,
     state_manager,
 )
+from app.exceptions import ConcurrentModificationError
 from app.schemas import (
     CreateSessionRequest,
     SessionHistoryResponse,
     SessionResponse,
+)
+from app.services.commit_turn import (
+    CommitTurnError,
+    CommitTurnRequest,
+    CommitTurnResponse,
+    commit_turn,
+    read_turn_context,
+    run_pending_tasks,
 )
 from app.services.game_state.defaults import STATE_CAPS
 
 CAPS = STATE_CAPS
 
 logger = logging.getLogger(__name__)
+
+
+def _default_memory_controller_factory(session_id: str):
+    """Build a fresh controller for the commit flow's working copy (§4).
+
+    The copy loads from the in-transaction snapshot, never from a possibly
+    stale shared cache. Tests monkeypatch ``memory_controller_factory``.
+    """
+    from app.services.memory.memory_controller import MemoryController
+
+    return MemoryController(llm_client, db, session_id, embedding_client=embedding_client)
+
+
+memory_controller_factory = _default_memory_controller_factory
+
+# Pending-task execution entry (§4): the fixed-candidate round ships the
+# machinery but no automatic runner — the real maintainer (LLM memory
+# maintenance) lands with the scheduling integration. Tests monkeypatch this.
+pending_task_runner = None
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
@@ -332,3 +363,113 @@ def activate_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
         "campaign_filename": session.get("campaign_filename") if session else None,
         "slot_name": slot_name,
     }
+
+
+@router.post("/{session_id}/commit-turn", response_model=CommitTurnResponse)
+def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitTurnResponse:
+    """Plan-b submission entry (design/component-io-and-commit-turn.md §3).
+
+    One transaction per submission: idempotency lookup → binding checks →
+    merge → every write. A successful replay returns the original result
+    without moving the head again.
+    """
+    slot_name = request.slotName or "default"
+
+    def _post_commit(response: CommitTurnResponse) -> None:
+        # Post-commit, outside the transaction (§4):
+        # 1. drop the cached campaign manager for the ACTUAL slot, then the
+        #    session's cached memory controller, so the next turn rebuilds
+        #    from the committed snapshots (conservative form: rebuild);
+        # 2. run pending maintenance tasks when a runner is wired.
+        try:
+            campaign_manager_cache.invalidate(session_id, slot_name)
+        except Exception:
+            logger.warning("commit-turn campaign cache invalidation failed for %s", session_id, exc_info=True)
+        try:
+            knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
+        except Exception:
+            logger.warning("commit-turn timeline cache invalidation failed for %s", session_id, exc_info=True)
+        runner = pending_task_runner
+        if runner is not None:
+            try:
+                run_pending_tasks(db, state_manager, session_id, runner)
+            except Exception:
+                logger.warning("commit-turn pending-task run failed for %s", session_id, exc_info=True)
+
+    try:
+        return commit_turn(
+            db,
+            state_manager,
+            session_id,
+            request,
+            model=settings.llm_model,
+            source="commit_turn",
+            memory_controller_factory=lambda: memory_controller_factory(session_id),
+            campaign_manager=get_campaign_manager_for_session(session_id, slot_name),
+            post_commit=_post_commit,
+        )
+    except CommitTurnError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.detail) from exc
+    except ConcurrentModificationError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.get("/{session_id}/turn-context")
+def turn_context_endpoint(session_id: str) -> dict[str, object]:
+    """One consistent read of the snapshot the component loop binds to (§3.2)."""
+    try:
+        return read_turn_context(
+            db,
+            state_manager,
+            session_id,
+            lambda: memory_controller_factory(session_id),
+            campaign_context_provider=_campaign_context_provider(session_id),
+        )
+    except CommitTurnError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.detail) from exc
+
+
+def _campaign_context_provider(session_id: str):
+    """Campaign-context rendering for turn-context, on the CAPTURED snapshot.
+
+    Renders the snapshot's progress-row COPY through the pure render path
+    (CampaignContextBuilder.render_context) — never the shared manager's
+    progress, never a slot other than the captured one, and pending-anchor
+    state is not touched (review round 6). The campaign DEFINITION is static,
+    so loading it via the (slot-matched) manager is safe.
+    """
+    def _provide(state: dict, turn: int, snapshot: dict) -> str:
+        row = snapshot.get("progressRow")
+        if row is None:
+            return ""
+        manager = get_campaign_manager_for_session(session_id, snapshot["slotName"])
+        if manager is None or not manager.is_loaded():
+            return ""
+        from app.schemas.campaign import CampaignProgress
+
+        progress_copy = CampaignProgress(
+            campaign_id=row["campaign_id"],
+            arc_index=int(row["arc_index"]),
+            session_index=int(row["session_index"]),
+            turn_in_session=int(row["turn_in_session"]),
+            revealed_anchors=json.loads(row.get("revealed_anchors") or "[]"),
+            completed_arcs=json.loads(row.get("completed_arcs") or "[]"),
+        )
+        try:
+            relations = json.loads(row.get("npc_relations") or "[]")
+        except (TypeError, json.JSONDecodeError):
+            relations = []
+        # Rendering proposes an anchor without shared writes. commit_turn
+        # re-evaluates it inside the bound write transaction before saving it.
+        text, _candidate = manager._context.render_context(
+            manager.campaign,
+            progress_copy,
+            state,
+            turn,
+            snapshot["slotName"],
+            relations,
+            row.get("recap_compressed") or "",
+        )
+        return text
+
+    return _provide

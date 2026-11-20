@@ -1,0 +1,10 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_claim_root",
+  "worldId": "world_school",
+  "pointId": "root_0",
+  "mode": "head",
+  "currentClaim": null,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7
+}

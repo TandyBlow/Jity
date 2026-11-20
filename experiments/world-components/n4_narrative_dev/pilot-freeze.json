@@ -1,0 +1,15 @@
+{
+ "scope": "N4 32-case scaling pilot; same-world holdout, not a final generalization set",
+ "date": "2026-11-02",
+ "holdoutIds": [
+  "n4n-27",
+  "n4n-28",
+  "n4n-29",
+  "n4n-30",
+  "n4n-31",
+  "n4n-32"
+ ],
+ "inputSha256": "2f912120e0b9db4ba9fdad3e3d1fe147a679c310ae5fa7e5d3629e24a87d5dfb",
+ "targetSha256": "065ab31b30fb061377d34f16b96e836c0fece8f0067cd7b319baf3627aadba9d",
+ "rows": 6
+}

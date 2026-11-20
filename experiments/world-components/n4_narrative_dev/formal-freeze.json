@@ -1,0 +1,21 @@
+{
+ "scope": "N4 120-case same-world formal run; holdout is stratified across the 8 patterns, not a new-world set",
+ "date": "2026-11-02",
+ "holdoutIds": [
+  "n4n-40",
+  "n4n-43",
+  "n4n-53",
+  "n4n-54",
+  "n4n-64",
+  "n4n-65",
+  "n4n-74",
+  "n4n-75",
+  "n4n-87",
+  "n4n-98",
+  "n4n-109",
+  "n4n-120"
+ ],
+ "inputSha256": "601d431a7a6cccab7f3ad6f2cba05a0ca843ff81e96b7f4525d03e26522a3273",
+ "targetSha256": "3c2e86b5fe1bdbbc4f41566fec61ab7fdaa12d776d297f49cde67f7d009300ac",
+ "rows": 12
+}

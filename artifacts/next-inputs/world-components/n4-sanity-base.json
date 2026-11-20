@@ -1,0 +1,88 @@
+{
+ "rows": [
+  {
+   "unitId": "t10:f3:orig",
+   "category": null,
+   "text": "沈砚靠在墙边站了一会儿,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "t10:f3:norm",
+   "category": null,
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f2:orig",
+   "category": null,
+   "text": "沈砚靠在墙边站了一会儿,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f2:norm",
+   "category": null,
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f2:orig",
+   "category": null,
+   "text": "沈砚靠在墙边站了一会儿,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f2:norm",
+   "category": null,
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f2:orig",
+   "category": null,
+   "text": "沈砚的呼吸慢慢匀下来,胸口那点发紧的感觉散了。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f2:norm",
+   "category": null,
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f1:orig",
+   "category": null,
+   "text": "叶知微的呼吸慢慢匀下来,胸口那点发紧的感觉散了。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f1:norm",
+   "category": null,
+   "text": "叶知微的呼吸有些发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f1:orig",
+   "category": null,
+   "text": "沈砚靠在墙边站了一会儿,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f1:norm",
+   "category": null,
+   "text": "沈砚靠在墙边站了一会儿,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  }
+ ]
+}

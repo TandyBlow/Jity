@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "readyMs": 64033,
+  "wallMs": 257838,
+  "turns": [
+    {
+      "input": "我沿车道向西回廊快走，贴着墙注意听枪声",
+      "turnMs": 78845,
+      "text": "。\n你：我沿车道向西回廊快走，贴着墙注意听枪声 · 正文 38.1s\n时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：ungrounded,low_support",
+      "debug": {
+        "pointId": "point_round_3_1",
+        "draft": "时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "raw": "走廊里的灯光昏黄，闪烁不定。他贴着墙慢慢走过去，脚步声落在廊柱上，回荡许久才渐渐消失。侧耳倾听，枪声此起彼伏，声音越来越近，最后在耳边戛然而止。路明非停下脚步，抬头望向第三根廊柱。只见那里的地砖被磨掉了一小块，露出下面的水泥底面。他蹲下身，用手轻轻触摸着第三根廊柱脚下凹下去的地方，那里有一道深深的痕迹，像是有人用脚踩过。林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处肿起了一块，鞋帮上方有一个小小的肿块，边缘还泛着青色。他没有站起来，只是静静地坐着。",
+        "cleaned": "走廊里的灯光昏黄，闪烁不定。他贴着墙慢慢走过去，脚步声落在廊柱上，回荡许久才渐渐消失。侧耳倾听，枪声此起彼伏，声音越来越近，最后在耳边戛然而止。路明非停下脚步，抬头望向第三根廊柱。只见那里的地砖被磨掉了一小块，露出下面的水泥底面。他蹲下身，用手轻轻触摸着第三根廊柱脚下凹下去的地方，那里有一道深深的痕迹，像是有人用脚踩过。林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处肿起了一块，鞋帮上方有一个小小的肿块，边缘还泛着青色。他没有站起来，只是静静地坐着。",
+        "pruned": "路明非在西回廊。走廊里的灯光昏黄，闪烁不定。他贴着墙慢慢走过去，脚步声落在廊柱上，回荡许久才渐渐消失。侧耳倾听，枪声此起彼伏，声音越来越近，最后在耳边戛然而止。路明非停下脚步，抬头望向第三根廊柱。只见那里的地砖被磨掉了一小块，露出下面的水泥底面。他蹲下身，用手轻轻触摸着第三根廊柱脚下凹下去的地方，那里有一道深深的痕迹，像是有人用脚踩过。林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处肿起了一块，鞋帮上方有一个小小的肿块，边缘还泛着青色。他没有站起来，只是静静地坐着。",
+        "supported": "路明非在西回廊。走廊里的灯光昏黄，闪烁不定。他贴着墙慢慢走过去，脚步声落在廊柱上，回荡许久才渐渐消失。侧耳倾听，枪声此起彼伏，声音越来越近，最后在耳边戛然而止。路明非停下脚步，抬头望向第三根廊柱。只见那里的地砖被磨掉了一小块，露出下面的水泥底面。他蹲下身，用手轻轻触摸着第三根廊柱脚下凹下去的地方，那里有一道深深的痕迹，像是有人用脚踩过。林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处肿起了一块，鞋帮上方有一个小小的肿块，边缘还泛着青色。他没有站起来，只是静静地坐着。",
+        "text": "时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "violations": [],
+        "attempts": [
+          240,
+          149
+        ]
+      },
+      "warning": null
+    },
+    {
+      "input": "蹲下来问林亦舟伤得怎么样",
+      "turnMs": 85045,
+      "text": "。\n你：我沿车道向西回廊快走，贴着墙注意听枪声 · 正文 38.1s\n时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：ungrounded,low_support\n你：蹲下来问林亦舟伤得怎么样 · 正文 38.2s\n时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：ungrounded,low_support",
+      "debug": {
+        "pointId": "point_round_21_1",
+        "draft": "时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "raw": "路明非蹲下去问林亦舟：“你左脚踝怎么了？”\n\n林亦舟没有抬头。\n\n“肿了。”\n\n“肿多久了。”\n\n“从昨天才开始疼。鞋帮压着，没注意。”\n\n路明非把围巾解开一层，贴到自己额头上。“我摸过第三根廊柱的下端。布带断了一截，断口是剪的。”\n\n林亦舟抬起头。\n\n“你摸过？”\n\n“摸的时候手在布上停了会儿。我把它拿开，才注意到那条布带。”\n\n林亦舟站起来，往走廊中间挪了半步。“那就从这头开始，一格一格地摸。如果哪根廊柱的布带也断了一截，就换一根新的。”\n\n“你呢？”\n\n“我明天带把新布带来。”\n\n路明非完成了“摸清第三根廊柱上哪几根布带断”。\n\n林",
+        "cleaned": "路明非蹲下去问林亦舟：“你左脚踝怎么了？”\n\n林亦舟没有抬头。\n\n“肿了。”\n\n“肿多久了。”\n\n“从昨天才开始疼。鞋帮压着，没注意。”\n\n路明非把围巾解开一层，贴到自己额头上。“我摸过第三根廊柱的下端。布带断了一截，断口是剪的。”\n\n林亦舟抬起头。\n\n“你摸过？”\n\n“摸的时候手在布上停了会儿。我把它拿开，才注意到那条布带。”\n\n林亦舟站起来，往走廊中间挪了半步。“那就从这头开始，一格一格地摸。如果哪根廊柱的布带也断了一截，就换一根新的。”\n\n“你呢？”\n\n“我明天带把新布带来。”\n\n路明非完成了“摸清第三根廊柱上哪几根布带断”。",
+        "pruned": "路明非在西回廊。路明非蹲下去问林亦舟：“你左脚踝怎么了？”林亦舟没有抬头。“肿了。”“肿多久了。”“从昨天才开始疼。鞋帮压着，没注意。”路明非把围巾解开一层，贴到自己额头上。“我摸过第三根廊柱的下端。布带断了一截，断口是剪的。”林亦舟抬起头。“你摸过？”“摸的时候手在布上停了会儿。我把它拿开，才注意到那条布带。”林亦舟站起来，往走廊中间挪了半步。“那就从这头开始，一格一格地摸。如果哪根廊柱的布带也断了一截，就换一根新的。”“你呢？”“我明天带把新布带来。”路明非完成了“摸清第三根廊柱上哪几根布带断”。",
+        "supported": "路明非在西回廊。鞋帮压着，没注意。布带断了一截，断口是剪的。我把它拿开，才注意到那条布带。如果哪根廊柱的布带也断了一截，就换一根新的。",
+        "text": "时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "violations": [],
+        "attempts": [
+          67,
+          61
+        ]
+      },
+      "warning": null
+    }
+  ],
+  "restored": true,
+  "reloadError": null,
+  "snapshotBytes": 409659,
+  "snapshotStable": true,
+  "finalText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新开始\n2009-10-17 15:22 · 西回廊\n已恢复本地存档，继续上次的进度。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西回廊\n在附近\n林亦舟\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n本地存档\n每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：2 次",
+  "logs": [
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[error] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[info] [world-local task] narration point_root_world_dragon_raja_free_day 43230ms fallback=true ungrounded,low_support",
+    "[info] [world-local task] action lu 2ms fallback=false ",
+    "[info] [world-local task] targets lu 6188ms fallback=false ",
+    "[info] [world-local task] targets lu 6190ms fallback=false ",
+    "[info] [world-local task] results group_10 11424ms fallback=false ",
+    "[info] [world-local task] updates group_10 19280ms fallback=false ",
+    "[info] [world-local task] narration point_round_3_1 38068ms fallback=true ungrounded,low_support",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] action lu 1ms fallback=false ",
+    "[info] [world-local task] targets lu 6416ms fallback=false ",
+    "[info] [world-local task] targets lu 6417ms fallback=false ",
+    "[info] [world-local task] reaction lu 4932ms fallback=false ",
+    "[info] [world-local task] reaction lu 4932ms fallback=false ",
+    "[info] [world-local task] targets lin 6060ms fallback=false ",
+    "[info] [world-local task] targets lin 939ms fallback=false ",
+    "[info] [world-local task] targets lin 7000ms fallback=false target_unmentioned",
+    "[info] [world-local task] results group_28 11021ms fallback=false ",
+    "[info] [world-local task] updates group_28 17122ms fallback=false ",
+    "[info] [world-local task] narration point_round_21_1 38231ms fallback=true ungrounded,low_support",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden"
+  ]
+}

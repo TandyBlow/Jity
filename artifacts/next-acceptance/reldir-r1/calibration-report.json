@@ -1,0 +1,163 @@
+{
+ "purpose": "relation-direction margin calibration; margin only, k=1, no optimiser",
+ "device": "cuda",
+ "model": "ckpt",
+ "rows": 8,
+ "activation": {
+  "threshold": 1.0,
+  "active": 2,
+  "n": 8,
+  "min": 0.5388,
+  "median": 1.4898,
+  "max": 2.709
+ },
+ "gradients": {
+  "scope": "all 190 parameter tensors, 8 rows, single batch",
+  "lossValues": {
+   "ce": 1.3321,
+   "direction": 0.0964
+  },
+  "norms": {
+   "ce": 6.66494,
+   "direction": 3.73238
+  },
+  "cosine": 0.1409,
+  "joint": {
+   "beta=0.1": {
+    "jointNorm": 6.72768,
+    "sumOfNorms": 7.03818,
+    "ratioToCe": 1.0094
+   },
+   "beta=0.3": {
+    "jointNorm": 6.91216,
+    "sumOfNorms": 7.78466,
+    "ratioToCe": 1.0371
+   },
+   "beta=1.0": {
+    "jointNorm": 8.08463,
+    "sumOfNorms": 10.39733,
+    "ratioToCe": 1.213
+   }
+  },
+  "upperBoundNote": "the weighted sum of norms is an upper bound, not the joint gradient",
+  "activeShare": 0.25
+ },
+ "dropoutRng": {
+  "step1Reproduces": 0.0,
+  "step1Forked": 0.0,
+  "step2NoFork": 22.049171,
+  "step2Forked": 0.0
+ },
+ "perRow": [
+  {
+   "unitId": "rd01",
+   "relation": "挂",
+   "target": "铜铃挂在门框上。",
+   "negative": "门框挂在铜铃上。",
+   "generated": "门框的铜铃挂在门框上。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.2231,
+   "sSwapped": -2.4328,
+   "margin": 1.2096,
+   "sGenerated": -0.0138
+  },
+  {
+   "unitId": "rd02",
+   "relation": "缠",
+   "target": "麻绳缠在船桨上。",
+   "negative": "船桨缠在麻绳上。",
+   "generated": "船桨的麻绳缠在船桨上。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -0.9269,
+   "sSwapped": -2.3398,
+   "margin": 1.4129,
+   "sGenerated": -0.0127
+  },
+  {
+   "unitId": "rd03",
+   "relation": "系",
+   "target": "布条系在栏杆上。",
+   "negative": "栏杆系在布条上。",
+   "generated": "栏杆的布条系在栏杆上。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.4971,
+   "sSwapped": -2.9869,
+   "margin": 1.4898,
+   "sGenerated": -0.001
+  },
+  {
+   "unitId": "rd04",
+   "relation": "搭",
+   "target": "草席搭在木架上。",
+   "negative": "木架搭在草席上。",
+   "generated": "木架的草席搭在木架上。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.5281,
+   "sSwapped": -2.067,
+   "margin": 0.5388,
+   "sGenerated": -0.0175
+  },
+  {
+   "unitId": "rd05",
+   "relation": "套",
+   "target": "铜环套在门钉上。",
+   "negative": "门钉套在铜环上。",
+   "generated": "门钉的铜环套在门钉上。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.5474,
+   "sSwapped": -3.5737,
+   "margin": 2.0264,
+   "sGenerated": -0.0009
+  },
+  {
+   "unitId": "rd06",
+   "relation": "盖",
+   "target": "油布盖在鱼筐上。",
+   "negative": "鱼筐盖在油布上。",
+   "generated": "鱼筐的油布盖在鱼筐上。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.5091,
+   "sSwapped": -3.3488,
+   "margin": 1.8396,
+   "sGenerated": -0.0025
+  },
+  {
+   "unitId": "rd07",
+   "relation": "插",
+   "target": "铁钥插在锁孔里。",
+   "negative": "锁孔插在铁钥里。",
+   "generated": "锁孔的铁钥插在锁孔里。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.3548,
+   "sSwapped": -2.0445,
+   "margin": 0.6897,
+   "sGenerated": -0.0029
+  },
+  {
+   "unitId": "rd08",
+   "relation": "卡",
+   "target": "木楔卡在石缝里。",
+   "negative": "石缝卡在木楔里。",
+   "generated": "石缝的木楔卡在石缝里。",
+   "direction": "correct+repeat",
+   "stop": null,
+   "sCorrect": -1.0704,
+   "sSwapped": -3.7793,
+   "margin": 2.709,
+   "sGenerated": -0.0017
+  }
+ ],
+ "optimizer": "never constructed",
+ "fetch": {
+  "source": "calibration-report.json",
+  "remoteSha256": "a87a24996eb3b2fed9a11b98f1dd38bc27ea250cfb0ec592ebd399ade4cb9735",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

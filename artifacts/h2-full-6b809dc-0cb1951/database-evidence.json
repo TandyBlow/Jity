@@ -1,0 +1,170 @@
+{
+  "databaseSha256": "0a7c21b506e968bb6b033ddcb877b306c13b00c6d40377e307073930a700c5aa",
+  "readOnly": true,
+  "corrections": [
+    {
+      "report": "report-main.json",
+      "field": "detail.walkedWorld",
+      "reported": "world_31",
+      "actual": "world_12",
+      "proof": "world_rolls.id=roll_22 maps uniquely to world_12"
+    },
+    {
+      "report": "report-main.json",
+      "field": "detail.branch.attempts",
+      "reported": 3,
+      "actual": 2,
+      "proof": "for-loop increments attempts once after the successful admitted roll"
+    }
+  ],
+  "worlds": [
+    {
+      "worldId": "world_12",
+      "role": "main-walk",
+      "points": [
+        {
+          "pointId": "root_14",
+          "sequence": 0,
+          "kind": "root",
+          "stateDigest": "eeb26e6a1b3185d87572698c169aeb2202d83babae1b457eb6e4e70dbd48c619",
+          "narrationStatus": "ready"
+        },
+        {
+          "pointId": "point_18",
+          "sequence": 1,
+          "kind": "normal",
+          "stateDigest": "b8b67789245c6f33c923ad9c2f8fc509a1b00613e190749d1468dec286be6126",
+          "narrationStatus": "ready"
+        }
+      ],
+      "rolls": [
+        {
+          "rollId": "roll_22",
+          "pointId": "point_18",
+          "groupId": "group_19",
+          "sourceId": "person_a",
+          "targetId": "person_b",
+          "triggerKey": "trigger_20",
+          "ruleVersion": "reaction-d20-v1",
+          "result": 14,
+          "target": 11,
+          "eligible": 1,
+          "admitted": 1
+        },
+        {
+          "rollId": "roll_28",
+          "pointId": "point_18",
+          "groupId": "group_19",
+          "sourceId": "person_b",
+          "targetId": "person_c",
+          "triggerKey": "trigger_27",
+          "ruleVersion": "reaction-d20-v1",
+          "result": 16,
+          "target": 11,
+          "eligible": 1,
+          "admitted": 1
+        },
+        {
+          "rollId": "roll_29",
+          "pointId": "point_18",
+          "groupId": "group_19",
+          "sourceId": "person_a",
+          "targetId": "person_c",
+          "triggerKey": "trigger_21",
+          "ruleVersion": "reaction-d20-v1",
+          "result": 18,
+          "target": 11,
+          "eligible": 0,
+          "admitted": 0
+        }
+      ],
+      "committedChanges": [
+        {
+          "pointId": "point_18",
+          "entityId": "person_a",
+          "changeId": "change_30",
+          "allocatedKind": "change"
+        }
+      ]
+    },
+    {
+      "worldId": "world_31",
+      "role": "main-fence-takeover",
+      "points": [
+        {
+          "pointId": "root_33",
+          "sequence": 0,
+          "kind": "root",
+          "stateDigest": "4fbcedecdb59b41236b299c1678e0c114d4452b14c2d00add9f5e0c29aa953a4",
+          "narrationStatus": "ready"
+        },
+        {
+          "pointId": "point_37",
+          "sequence": 1,
+          "kind": "normal",
+          "stateDigest": "3b708c785499ee053a73eacd7b759a0b9a9808b58b394c383872a409f6f2d993",
+          "narrationStatus": "ready"
+        }
+      ],
+      "rolls": [],
+      "committedChanges": [
+        {
+          "pointId": "point_37",
+          "entityId": "person_a",
+          "changeId": "change_39",
+          "allocatedKind": "change"
+        }
+      ]
+    },
+    {
+      "worldId": "world_40",
+      "role": "successor",
+      "points": [
+        {
+          "pointId": "root_42",
+          "sequence": 0,
+          "kind": "root",
+          "stateDigest": "318a3018b190a16457e1f2adf4cf2ec583b798dadb22de9e0aad4695176a1426",
+          "narrationStatus": "ready"
+        },
+        {
+          "pointId": "point_46",
+          "sequence": 1,
+          "kind": "normal",
+          "stateDigest": "4437d9be54c0488c371c3fccb8e23d7f3ce836909f60f03b0765a081d37475d0",
+          "narrationStatus": "ready"
+        },
+        {
+          "pointId": "point_47",
+          "sequence": 2,
+          "kind": "instant",
+          "stateDigest": "e870fa46de7d25565a3d07e8ddc34ce0a918a47075e547f57c06c72a203632ef",
+          "narrationStatus": "ready"
+        }
+      ],
+      "rolls": [
+        {
+          "rollId": "roll_50",
+          "pointId": "point_46",
+          "groupId": "group_48",
+          "sourceId": "person_a",
+          "targetId": "person_b",
+          "triggerKey": "trigger_49",
+          "ruleVersion": "reaction-d20-v1",
+          "result": 5,
+          "target": 11,
+          "eligible": 1,
+          "admitted": 0
+        }
+      ],
+      "committedChanges": [
+        {
+          "pointId": "point_46",
+          "entityId": "person_a",
+          "changeId": "change_51",
+          "allocatedKind": "change"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "formatVersion": 1,
+  "status": "PASS_FIXED_H2",
+  "browserCommit": "6b809dca846b407ae24f545adeef7ae068fcf5b5",
+  "serverCommit": "0cb1951cd1b0181f6a0505026cdd9939dd668de9",
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+  "sharedFilesCompared": 155,
+  "browserTrackedClean": true,
+  "serverTrackedClean": true,
+  "serverUntracked": [
+    "backend/_proj_create.json"
+  ],
+  "reports": {
+    "report-build-corrupt.json": {
+      "status": "BUILT_FROZEN_CASE",
+      "rawSha256": "9e5f380bf72646e08f0b3943a74bb7d3acdc2a0529b337fca20b468c379846d2",
+      "archivedSha256": "a304a5f9518c94669a4f6e85617eefd4c932cc64bef43098ebb99be438d78027"
+    },
+    "report-build-frozen-case.json": {
+      "status": "BUILT_FROZEN_CASE",
+      "rawSha256": "224488ddfc18c26e48be024882e1d4a1e66c24ef685e259ff970a3b3fa4235ee",
+      "archivedSha256": "3405906c952d1706c95ded2cd3e928d1335db6dee411b1f2eb9915470aed4fb4"
+    },
+    "report-build-group.json": {
+      "status": "BUILT_FROZEN_CASE",
+      "rawSha256": "41ea042fe8772b2bf39891a1221a06e8d55ce23f55b4cd3f8c473cbe3ef10af8",
+      "archivedSha256": "d257940f264388b7cef5ea23637a1cb3667303172f47b30bdf235d33dcb1c2c5"
+    },
+    "report-build-missing.json": {
+      "status": "BUILT_FROZEN_CASE",
+      "rawSha256": "1a7309f1861c42a0378d278ec295ff6351971217276dfc1849fc11bbbe978797",
+      "archivedSha256": "7bdec435a57ac9813cee537608415d9a2555ed2dbc9737be1a9d4f983db43afc"
+    },
+    "report-frozen-corrupt.json": {
+      "status": "PASS_FROZEN_CORRUPT",
+      "rawSha256": "589dc891a60531aed4ff3a6ff3ed2e7f5cc86de0ec159ffd7cf6a8d1576a9899",
+      "archivedSha256": "589dc891a60531aed4ff3a6ff3ed2e7f5cc86de0ec159ffd7cf6a8d1576a9899"
+    },
+    "report-frozen-group.json": {
+      "status": "PASS_FROZEN_CORRUPT",
+      "rawSha256": "096066df7683d131dc0d1aaa442148d03dc70b445f209de1ed91f8ee7cf3a4e7",
+      "archivedSha256": "096066df7683d131dc0d1aaa442148d03dc70b445f209de1ed91f8ee7cf3a4e7"
+    },
+    "report-frozen-missing.json": {
+      "status": "PASS_FROZEN_MISSING",
+      "rawSha256": "fd5b56baca05c013864d4368a958e7b5375529bb22c578b4e62f4f6d9db5dbc5",
+      "archivedSha256": "fd5b56baca05c013864d4368a958e7b5375529bb22c578b4e62f4f6d9db5dbc5"
+    },
+    "report-main.json": {
+      "status": "PASS_MAIN",
+      "rawSha256": "235ee31e1f32dc209e4c66d9ef93b6ff994608889130765048306fca24050e44",
+      "archivedSha256": "235ee31e1f32dc209e4c66d9ef93b6ff994608889130765048306fca24050e44"
+    },
+    "report-post-restart.json": {
+      "status": "PASS_POST_RESTART",
+      "rawSha256": "20db43f0d6668112025bad21ae0b20474831757e26143b7e8f9ceaea33e845d7",
+      "archivedSha256": "20db43f0d6668112025bad21ae0b20474831757e26143b7e8f9ceaea33e845d7"
+    },
+    "report-successor.json": {
+      "status": "PASS_SUCCESSOR",
+      "rawSha256": "558fd35abc761cc345776370f61a1f8e83bb587e62c0fa24212d1cf5415273d1",
+      "archivedSha256": "558fd35abc761cc345776370f61a1f8e83bb587e62c0fa24212d1cf5415273d1"
+    }
+  },
+  "redaction": {
+    "replacement": "[REDACTED]",
+    "keyPattern": "token|authorization|secret|password (case insensitive)",
+    "excluded": [
+      "SQLite databases",
+      "state files",
+      "phase stdout containing lease grants",
+      "raw server logs"
+    ],
+    "archivedLineEndings": "LF; hashes bind final archived bytes"
+  },
+  "files": {
+    "database-evidence.json": "2e743254fd322807417fc1d69d3c14c114d5f2aac150b70800a9ffafb0a8a161",
+    "lifecycle.json": "cd946e20ac091326fa14b78d3a03693a183a2f806b1755534ef43e40ef21c21f",
+    "README.md": "21aa664b23a3eb0de7d6041f36124d1d23777367b646c413a3aa997c3bbc7ba8",
+    "report-build-corrupt.json": "a304a5f9518c94669a4f6e85617eefd4c932cc64bef43098ebb99be438d78027",
+    "report-build-frozen-case.json": "3405906c952d1706c95ded2cd3e928d1335db6dee411b1f2eb9915470aed4fb4",
+    "report-build-group.json": "d257940f264388b7cef5ea23637a1cb3667303172f47b30bdf235d33dcb1c2c5",
+    "report-build-missing.json": "7bdec435a57ac9813cee537608415d9a2555ed2dbc9737be1a9d4f983db43afc",
+    "report-frozen-corrupt.json": "589dc891a60531aed4ff3a6ff3ed2e7f5cc86de0ec159ffd7cf6a8d1576a9899",
+    "report-frozen-group.json": "096066df7683d131dc0d1aaa442148d03dc70b445f209de1ed91f8ee7cf3a4e7",
+    "report-frozen-missing.json": "fd5b56baca05c013864d4368a958e7b5375529bb22c578b4e62f4f6d9db5dbc5",
+    "report-main.json": "235ee31e1f32dc209e4c66d9ef93b6ff994608889130765048306fca24050e44",
+    "report-post-restart.json": "20db43f0d6668112025bad21ae0b20474831757e26143b7e8f9ceaea33e845d7",
+    "report-successor.json": "558fd35abc761cc345776370f61a1f8e83bb587e62c0fa24212d1cf5415273d1",
+    "run-recorded.py": "0404b985b0c0ee821be446572b4856a30e87c69703d0ef1a1adb8d127674ed52"
+  },
+  "priorUserVerification": {
+    "frontend": "532/532",
+    "typescript": "both passed",
+    "serverFocused": "75/75",
+    "source": "user independent review; not rerun in this documentation round"
+  },
+  "scope": {
+    "transport": "real HTTP + real SQLite + real ControllerDriver.recover; scripted model",
+    "takeover": "lease_release then acquire; epoch increments; controlled restore and sealed-point commit",
+    "restart": "hard process termination on Windows; same database + held lease; recover only",
+    "successor": "sealed predecessor + reserved, not yet begun successor",
+    "excluded": [
+      "wall-clock TTL expiry takeover",
+      "real model/browser evaluation",
+      "B3 full evaluation"
+    ]
+  }
+}

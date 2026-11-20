@@ -1,0 +1,172 @@
+{
+ "rows": [
+  {
+   "unitId": "qa1A",
+   "category": "object_confusable",
+   "text": "叶知微把干纸收在手里,抹了墨色。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa1B",
+   "category": "object_confusable",
+   "text": "墨色变白,皮上结了皮。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa2A",
+   "category": "object_confusable",
+   "text": "船灯的罩子裂了缝。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa2B",
+   "category": "object_confusable",
+   "text": "渡船的船板裂了缝,船板裂了缝。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa3A",
+   "category": "object_confusable",
+   "text": "阿棠把鱼筐的边角磨破,鱼鳞的毛孔被抹布擦掉。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa3B",
+   "category": "object_confusable",
+   "text": "阿棠把鱼筐上的鱼片掉两片,鱼片在石板上打滑。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb1A",
+   "category": "object_whole_part",
+   "text": "灯芯烧黑了一截,灯芯被烧黑了一截。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb1B",
+   "category": "object_whole_part",
+   "text": "铜灯罩被擦得发亮,灯罩已经点亮。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb2A",
+   "category": "object_whole_part",
+   "text": "油纸伞的墙根断了一根。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb2B",
+   "category": "object_whole_part",
+   "text": "油纸伞靠在墙根,纸灯笼还伸手按住墙根。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb3A",
+   "category": "object_whole_part",
+   "text": "阿棠的袖口磨破了,袖口蹭上一道石板。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb3B",
+   "category": "object_whole_part",
+   "text": "阿棠穿过鱼筐,在摊棚边站住。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc1A",
+   "category": "object_position",
+   "text": "沈砚把冷茶端到长桌尽头,纸角还带着潮气。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc1B",
+   "category": "object_position",
+   "text": "沈砚把冷茶端到门槛外,又伸手按住。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc2A",
+   "category": "object_position",
+   "text": "顾行舟把船灯挂到栈桥的托架下,船灯从雾里透出来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc2B",
+   "category": "object_position",
+   "text": "顾行舟把船灯挂到木桩上,木桩上还挂着木桩。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc3A",
+   "category": "object_position",
+   "text": "韩渡把警示灯挂回钟架上,警示灯把警示灯挂回钟架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc3B",
+   "category": "object_position",
+   "text": "韩渡把警示灯挂回铁链上,铁链在铁链上绕了两圈。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd1A",
+   "category": "object_state_owner",
+   "text": "干纸边缘发黄,纸边缘发黄。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd1B",
+   "category": "object_state_owner",
+   "text": "纸边缘发黄,纸边缘发黄。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd2A",
+   "category": "object_state_owner",
+   "text": "木桩缠的旧绳断了,木桩断了。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd2B",
+   "category": "object_state_owner",
+   "text": "缆绳在缆绳上绕了两圈。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd3A",
+   "category": "object_state_owner",
+   "text": "抹布上的盐雾被关在身后。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd3B",
+   "category": "object_state_owner",
+   "text": "叶知微擦完灯罩,抹布又沾了半罐。",
+   "stopReason": "eos",
+   "complete": true
+  }
+ ]
+}

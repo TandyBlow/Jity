@@ -1,0 +1,665 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "threads": 4,
+  "model": {
+    "tag": "qwen3-0.6b",
+    "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "parseOld": {
+      "withinTargetRate": "0/8",
+      "correctRate": "4/8",
+      "minWallMs": 16450,
+      "maxWallMs": 20684,
+      "medianPromptMs": 13204,
+      "medianPredictedMs": 3750
+    },
+    "parseNew": {
+      "withinTargetRate": "0/4",
+      "correctRate": "3/4",
+      "minWallMs": 16512,
+      "maxWallMs": 17137,
+      "medianPromptMs": 13050,
+      "medianPredictedMs": 3725
+    },
+    "namesOldJson": {
+      "withinTargetRate": "0/4",
+      "correctRate": "4/4",
+      "minWallMs": 5550,
+      "maxWallMs": 7330,
+      "medianPromptMs": 5155,
+      "medianPredictedMs": 1283
+    },
+    "namesNewJson": {
+      "withinTargetRate": "0/4",
+      "correctRate": "1/4",
+      "minWallMs": 5412,
+      "maxWallMs": 6065,
+      "medianPromptMs": 4663,
+      "medianPredictedMs": 886
+    },
+    "namesNewPlain": {
+      "withinTargetRate": "0/0",
+      "correctRate": "0/0",
+      "minWallMs": null,
+      "maxWallMs": null,
+      "medianPromptMs": null,
+      "medianPredictedMs": null
+    }
+  },
+  "batches": {
+    "parseOld": [
+      {
+        "input": "我用铜钥匙打开大门。",
+        "expect": {
+          "action_type": "item_use",
+          "item_used": "铜钥匙",
+          "target": "大门",
+          "feasible": true
+        },
+        "wallMs": 18141,
+        "promptTokens": 272,
+        "completionTokens": 28,
+        "promptMs": 14353,
+        "predictedMs": 3717,
+        "promptPerSecond": 18.95077501354249,
+        "predictedPerSecond": 7.263269859528362,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"铜钥匙\",\n  \"target\": \"大门\"\n}",
+        "parsed": {
+          "action_type": "item_use",
+          "item_used": "铜钥匙",
+          "target": "大门"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我和诺诺打听图书馆的传闻。",
+        "expect": {
+          "action_type": "npc_talk",
+          "item_used": null,
+          "target": "诺诺",
+          "feasible": true
+        },
+        "wallMs": 18530,
+        "promptTokens": 273,
+        "completionTokens": 28,
+        "promptMs": 13134,
+        "predictedMs": 5345,
+        "promptPerSecond": 20.786055526178437,
+        "predictedPerSecond": 5.051393249093555,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"npc_talk\",\n  \"item_used\": null,\n  \"target\": \"诺诺\"\n}",
+        "parsed": {
+          "action_type": "npc_talk",
+          "item_used": null,
+          "target": "诺诺"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我去二楼档案室查资料。",
+        "expect": {
+          "action_type": "move",
+          "item_used": null,
+          "target": "二楼档案室",
+          "feasible": true
+        },
+        "wallMs": 20684,
+        "promptTokens": 272,
+        "completionTokens": 27,
+        "promptMs": 17059,
+        "predictedMs": 3568,
+        "promptPerSecond": 15.944302798723403,
+        "predictedPerSecond": 7.287028192951538,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": \"二楼档案室\"\n}",
+        "parsed": {
+          "action_type": "move",
+          "item_used": null,
+          "target": "二楼档案室"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我使用生锈的铁门钥匙打开大门。",
+        "expect": {
+          "action_type": "item_use",
+          "item_used": "铁门钥匙",
+          "target": "大门",
+          "feasible": false
+        },
+        "wallMs": 17247,
+        "promptTokens": 276,
+        "completionTokens": 28,
+        "promptMs": 13406,
+        "predictedMs": 3782,
+        "promptPerSecond": 20.588171230328225,
+        "predictedPerSecond": 7.139572561723589,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"铜钥匙\",\n  \"target\": \"大门\"\n}",
+        "parsed": {
+          "action_type": "item_use",
+          "item_used": "铜钥匙",
+          "target": "大门"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": false,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": false,
+          "target": true,
+          "feasible": false
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我和执行部学生搭话。",
+        "expect": {
+          "action_type": "npc_talk",
+          "item_used": null,
+          "target": "执行部学生",
+          "feasible": true
+        },
+        "wallMs": 17129,
+        "promptTokens": 272,
+        "completionTokens": 28,
+        "promptMs": 13273,
+        "predictedMs": 3796,
+        "promptPerSecond": 20.492976634992964,
+        "predictedPerSecond": 7.112036436806527,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"npc_talk\",\n  \"item_used\": null,\n  \"target\": \"诺诺\"\n}",
+        "parsed": {
+          "action_type": "npc_talk",
+          "item_used": null,
+          "target": "诺诺"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": false,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": false,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我检查那扇书架后的暗门。",
+        "expect": {
+          "action_type": "inspect",
+          "item_used": null,
+          "target": "暗门",
+          "feasible": true
+        },
+        "wallMs": 16450,
+        "promptTokens": 275,
+        "completionTokens": 26,
+        "promptMs": 13095,
+        "predictedMs": 3322,
+        "promptPerSecond": 21.00057427024914,
+        "predictedPerSecond": 7.525346873338778,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"inspect\",\n  \"item_used\": null,\n  \"target\": \"暗门\"\n}",
+        "parsed": {
+          "action_type": "inspect",
+          "item_used": null,
+          "target": "暗门"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我拔剑攻击诺诺。",
+        "expect": {
+          "action_type": "other",
+          "item_used": "剑",
+          "target": "诺诺",
+          "feasible": false
+        },
+        "wallMs": 16844,
+        "promptTokens": 272,
+        "completionTokens": 29,
+        "promptMs": 12953,
+        "predictedMs": 3856,
+        "promptPerSecond": 20.998793727382388,
+        "predictedPerSecond": 7.261230010871098,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"铜钥匙\",\n  \"target\": \"诺诺\"\n}",
+        "parsed": {
+          "action_type": "item_use",
+          "item_used": "铜钥匙",
+          "target": "诺诺"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": false,
+        "fieldResults": {
+          "action_type": false,
+          "item_used": false,
+          "target": true,
+          "feasible": false
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我在原地休息一会儿。",
+        "expect": {
+          "action_type": "other",
+          "item_used": null,
+          "target": null,
+          "feasible": true
+        },
+        "wallMs": 16631,
+        "promptTokens": 271,
+        "completionTokens": 28,
+        "promptMs": 12915,
+        "predictedMs": 3670,
+        "promptPerSecond": 20.983133354781035,
+        "predictedPerSecond": 7.357238909984182,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": \"原地休息一会儿\"\n}",
+        "parsed": {
+          "action_type": "move",
+          "item_used": null,
+          "target": "原地休息一会儿"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": false,
+        "fieldResults": {
+          "action_type": false,
+          "item_used": true,
+          "target": false,
+          "feasible": false
+        },
+        "codeFeasible": false
+      }
+    ],
+    "parseNew": [
+      {
+        "input": "我仔细查看旧笔记里的字迹。",
+        "expect": {
+          "action_type": "inspect",
+          "item_used": null,
+          "target": "旧笔记",
+          "feasible": true
+        },
+        "wallMs": 16512,
+        "promptTokens": 274,
+        "completionTokens": 26,
+        "promptMs": 13038,
+        "predictedMs": 3425,
+        "promptPerSecond": 21.015999311534273,
+        "predictedPerSecond": 7.299666492837275,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"inspect\",\n  \"item_used\": null,\n  \"target\": \"旧笔记\"\n}",
+        "parsed": {
+          "action_type": "inspect",
+          "item_used": null,
+          "target": "旧笔记"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我用旧笔记垫住门缝。",
+        "expect": {
+          "action_type": "item_use",
+          "item_used": "旧笔记",
+          "target": "门缝",
+          "feasible": true
+        },
+        "wallMs": 16946,
+        "promptTokens": 274,
+        "completionTokens": 29,
+        "promptMs": 13023,
+        "predictedMs": 3892,
+        "promptPerSecond": 21.03988640304252,
+        "predictedPerSecond": 7.193440609798237,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"旧笔记\",\n  \"target\": \"门缝\"\n}",
+        "parsed": {
+          "action_type": "item_use",
+          "item_used": "旧笔记",
+          "target": "门缝"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我去找执行部学生问话。",
+        "expect": {
+          "action_type": "npc_talk",
+          "item_used": null,
+          "target": "执行部学生",
+          "feasible": true
+        },
+        "wallMs": 16848,
+        "promptTokens": 273,
+        "completionTokens": 29,
+        "promptMs": 13061,
+        "predictedMs": 3745,
+        "promptPerSecond": 20.901688106081963,
+        "predictedPerSecond": 7.476797228458079,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"npc_talk\",\n  \"item_used\": null,\n  \"target\": \"执行部学生\"\n}",
+        "parsed": {
+          "action_type": "npc_talk",
+          "item_used": null,
+          "target": "执行部学生"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": true,
+        "fieldResults": {
+          "action_type": true,
+          "item_used": true,
+          "target": true,
+          "feasible": true
+        },
+        "codeFeasible": true
+      },
+      {
+        "input": "我用路明非的校徽刷卡进楼。",
+        "expect": {
+          "action_type": "item_use",
+          "item_used": "校徽",
+          "target": "门禁",
+          "feasible": false
+        },
+        "wallMs": 17137,
+        "promptTokens": 277,
+        "completionTokens": 28,
+        "promptMs": 13360,
+        "predictedMs": 3705,
+        "promptPerSecond": 20.73343361229407,
+        "predictedPerSecond": 7.2878329628684915,
+        "finishReason": "stop",
+        "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": \"卡塞尔学院图书馆\"\n}",
+        "parsed": {
+          "action_type": "move",
+          "item_used": null,
+          "target": "卡塞尔学院图书馆"
+        },
+        "error": null,
+        "withinTarget": false,
+        "correct": false,
+        "fieldResults": {
+          "action_type": false,
+          "item_used": false,
+          "target": false,
+          "feasible": false
+        },
+        "codeFeasible": true
+      }
+    ],
+    "namesOldJson": [
+      {
+        "input": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。",
+        "expect": [
+          "诺诺",
+          "路明非"
+        ],
+        "wallMs": 6762,
+        "promptTokens": 117,
+        "completionTokens": 16,
+        "promptMs": 5408,
+        "predictedMs": 1303,
+        "promptPerSecond": 21.63427934921129,
+        "predictedPerSecond": 11.51609374100305,
+        "finishReason": "stop",
+        "text": "{\n  \"names\": [\"诺诺\", \"路明非\"]\n}",
+        "parsed": {
+          "names": [
+            "诺诺",
+            "路明非"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": true,
+        "correct": true
+      },
+      {
+        "input": "月光像水一样洒在诺诺的肩上，她没有回头。",
+        "expect": [
+          "诺诺"
+        ],
+        "wallMs": 5550,
+        "promptTokens": 109,
+        "completionTokens": 8,
+        "promptMs": 4932,
+        "predictedMs": 595,
+        "promptPerSecond": 22.10177767233811,
+        "predictedPerSecond": 11.75919190833206,
+        "finishReason": "stop",
+        "text": "{\"names\": [\"诺诺\"]}",
+        "parsed": {
+          "names": [
+            "诺诺"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": true,
+        "correct": true
+      },
+      {
+        "input": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。",
+        "expect": [
+          "诺诺",
+          "凯瑟琳"
+        ],
+        "wallMs": 6308,
+        "promptTokens": 107,
+        "completionTokens": 16,
+        "promptMs": 5022,
+        "predictedMs": 1262,
+        "promptPerSecond": 21.307313187633795,
+        "predictedPerSecond": 11.884529907419513,
+        "finishReason": "stop",
+        "text": "{\n  \"names\": [\"诺诺\", \"凯瑟琳\"]\n}",
+        "parsed": {
+          "names": [
+            "诺诺",
+            "凯瑟琳"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": true,
+        "correct": true
+      },
+      {
+        "input": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。",
+        "expect": [
+          "古德里安",
+          "路明非",
+          "绘梨衣"
+        ],
+        "wallMs": 7330,
+        "promptTokens": 115,
+        "completionTokens": 23,
+        "promptMs": 5288,
+        "predictedMs": 2018,
+        "promptPerSecond": 21.74759514147378,
+        "predictedPerSecond": 10.904557857353513,
+        "finishReason": "stop",
+        "text": "{\n  \"names\": [\"古德里安\", \"路明非\", \"绘梨衣\"]\n}",
+        "parsed": {
+          "names": [
+            "古德里安",
+            "路明非",
+            "绘梨衣"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": true,
+        "correct": true
+      }
+    ],
+    "namesNewJson": [
+      {
+        "input": "绘梨衣在钟楼下等着路明非。",
+        "expect": [
+          "绘梨衣",
+          "路明非"
+        ],
+        "wallMs": 5493,
+        "promptTokens": 103,
+        "completionTokens": 9,
+        "promptMs": 4785,
+        "predictedMs": 683,
+        "promptPerSecond": 21.524858599442236,
+        "predictedPerSecond": 11.717920362083738,
+        "finishReason": "stop",
+        "text": "{\"names\": [\"路明非\"]}",
+        "parsed": {
+          "names": [
+            "路明非"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": false,
+        "correct": false
+      },
+      {
+        "input": "诺诺把报告交给古德里安教授。",
+        "expect": [
+          "诺诺",
+          "古德里安"
+        ],
+        "wallMs": 5683,
+        "promptTokens": 103,
+        "completionTokens": 13,
+        "promptMs": 4643,
+        "predictedMs": 1018,
+        "promptPerSecond": 22.18433893362252,
+        "predictedPerSecond": 11.793101821641129,
+        "finishReason": "stop",
+        "text": "{\n  \"names\": [\"古德里安\"]\n}",
+        "parsed": {
+          "names": [
+            "古德里安"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": false,
+        "correct": false
+      },
+      {
+        "input": "图书馆里只有凯瑟琳和诺诺两个人。",
+        "expect": [
+          "凯瑟琳",
+          "诺诺"
+        ],
+        "wallMs": 6065,
+        "promptTokens": 103,
+        "completionTokens": 17,
+        "promptMs": 4683,
+        "predictedMs": 1355,
+        "promptPerSecond": 21.995063282786685,
+        "predictedPerSecond": 11.805199452533875,
+        "finishReason": "stop",
+        "text": "{\"names\": [\"凯瑟琳\", \"诺诺\"]}",
+        "parsed": {
+          "names": [
+            "凯瑟琳",
+            "诺诺"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": true,
+        "correct": true
+      },
+      {
+        "input": "窗台上放着一杯凉掉的咖啡。",
+        "expect": [],
+        "wallMs": 5412,
+        "promptTokens": 102,
+        "completionTokens": 10,
+        "promptMs": 4631,
+        "predictedMs": 753,
+        "promptPerSecond": 22.027811191423837,
+        "predictedPerSecond": 11.947034812331996,
+        "finishReason": "stop",
+        "text": "{\"names\": [\"古德里安\"]}",
+        "parsed": {
+          "names": [
+            "古德里安"
+          ]
+        },
+        "error": null,
+        "withinTarget": false,
+        "namesMatch": false,
+        "correct": false
+      }
+    ],
+    "namesNewPlain": []
+  },
+  "exportedAt": "2026-10-08T15:54:50.874Z"
+}

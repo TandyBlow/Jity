@@ -1,0 +1,1 @@
+{"activeAttempt":null,"attemptSlots":[],"attempts":[],"stages":[],"status":"stopped_incomplete","supervisor":{"error":"[Errno 1] Operation not permitted: 'ps'","exitCode":-15,"measurement":"ps_rss_every250ms","observedPeakResidentMiB":0.0,"stopReason":"supervisor_failure","wallMs":8.59066701377742},"unexecutedAttempts":0}

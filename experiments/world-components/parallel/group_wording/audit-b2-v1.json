@@ -1,0 +1,800 @@
+{
+ "source": "D:\\others\\Jity\\.local\\parallel\\c-group-wording\\experiments\\world-components\\parallel\\group_wording\\run-b2-v1\\results.json",
+ "freeze": "D:\\others\\Jity\\.local\\parallel\\c-group-wording\\experiments\\world-components\\parallel\\group_wording\\freeze-b2-v1.json",
+ "determinism_ok": true,
+ "samples": {
+  "GW-11": {
+   "sourceId": "fixture-r5",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "林川的帽檐压出折痕,脚踝肿了一块。",
+    "sentences": [
+     "林川的帽檐压出折痕,脚踝肿了一块。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "林川的帽檐压出折痕,脚踝肿了一块。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "林川的帽檐压出折痕,脚踝肿了一块。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "林川的帽檐压出折痕,脚踝肿了一块。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "林川的帽檐压出折痕，脚踝肿了一块。",
+    "sentences": [
+     "林川的帽檐压出折痕，脚踝肿了一块。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "林川的帽檐压出折痕，脚踝肿了一块。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "林川的帽檐压出折痕，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "脚踝肿了一块。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-12": {
+   "sourceId": "train-r4",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "沈砚的围巾松开一截,脸色发白。",
+    "sentences": [
+     "沈砚的围巾松开一截,脸色发白。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚的围巾松开一截,脸色发白。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚的围巾松开一截,脸色发白。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚的围巾松开一截,脸色发白。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "沈砚的围巾松开一截，脸色发白。",
+    "sentences": [
+     "沈砚的围巾松开一截，脸色发白。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚的围巾松开一截，脸色发白。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚的围巾松开一截，脸色发白。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚的围巾松开一截，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "脸色发白。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-13": {
+   "sourceId": "t03",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "J": {
+    "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+    "sentences": [
+     "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+    "sentences": [
+     "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "叶知微把灯罩擦得透亮，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "袖口沾了铜油，",
+      "best_fact": "f1",
+      "score": 1.0
+     },
+     {
+      "clause": "把抹布搭回梯脚。",
+      "best_fact": "f2",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-14": {
+   "sourceId": "v14",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "J": {
+    "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+    "sentences": [
+     "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "发紧"
+    ]
+   },
+   "S": {
+    "text": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+    "sentences": [
+     "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮汐档案馆走到潮渡，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "把系泊绳拖回岸上，",
+      "best_fact": "f1",
+      "score": 1.0
+     },
+     {
+      "clause": "心里发紧。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "weak_clauses": [
+     {
+      "clause": "心里发紧。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "发紧"
+    ]
+   }
+  },
+  "GW-15": {
+   "sourceId": "v18",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "J": {
+    "text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+    "sentences": [
+     "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "发紧"
+    ]
+   },
+   "S": {
+    "text": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。",
+    "sentences": [
+     "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。",
+      "score": 1.0
+     },
+     "f2": {
+      "support": true,
+      "sentence": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "沈砚从潮渡走到雾堤，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "把雾警钟敲响，",
+      "best_fact": "f1",
+      "score": 1.0
+     },
+     {
+      "clause": "心里发紧。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "weak_clauses": [
+     {
+      "clause": "心里发紧。",
+      "best_fact": null,
+      "score": 0.0
+     }
+    ],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": [
+     "心里",
+     "发紧"
+    ]
+   }
+  },
+  "GW-16": {
+   "sourceId": "t08",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+    "sentences": [
+     "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。",
+    "sentences": [
+     "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "阿棠把银鳞鱼搬上案板，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "顾行舟把缆绳绕上摊棚边的木桩。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-17": {
+   "sourceId": "t08",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "J": {
+    "text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+    "sentences": [
+     "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。"
+    ],
+    "facts": {
+     "f2": {
+      "support": true,
+      "sentence": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+      "score": 1.0
+     },
+     "f3": {
+      "support": true,
+      "sentence": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+      "best_fact": "f2",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+    "sentences": [
+     "阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。"
+    ],
+    "facts": {
+     "f2": {
+      "support": true,
+      "sentence": "阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+      "score": 1.0
+     },
+     "f3": {
+      "support": true,
+      "sentence": "阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "阿棠的辫梢沾了白汽，",
+      "best_fact": "f2",
+      "score": 1.0
+     },
+     {
+      "clause": "顾行舟的外袍下摆沾了泥水。",
+      "best_fact": "f3",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-18": {
+   "sourceId": "t22",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "J": {
+    "text": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+    "sentences": [
+     "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+      "best_fact": "f0",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "系泊绳的泥水结了一层白盐，木桩缠着的旧缆绳断了。",
+    "sentences": [
+     "系泊绳的泥水结了一层白盐，木桩缠着的旧缆绳断了。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sentence": "系泊绳的泥水结了一层白盐，木桩缠着的旧缆绳断了。",
+      "score": 1.0
+     },
+     "f1": {
+      "support": true,
+      "sentence": "系泊绳的泥水结了一层白盐，木桩缠着的旧缆绳断了。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "系泊绳的泥水结了一层白盐，",
+      "best_fact": "f0",
+      "score": 1.0
+     },
+     {
+      "clause": "木桩缠着的旧缆绳断了。",
+      "best_fact": "f1",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  },
+  "GW-19": {
+   "sourceId": "t22",
+   "role": "regression-multi",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "J": {
+    "text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+    "sentences": [
+     "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。"
+    ],
+    "facts": {
+     "f2": {
+      "support": true,
+      "sentence": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+      "score": 1.0
+     },
+     "f3": {
+      "support": true,
+      "sentence": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+      "best_fact": "f2",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   },
+   "S": {
+    "text": "顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。",
+    "sentences": [
+     "顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。"
+    ],
+    "facts": {
+     "f2": {
+      "support": true,
+      "sentence": "顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。",
+      "score": 1.0
+     },
+     "f3": {
+      "support": true,
+      "sentence": "顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。",
+      "score": 1.0
+     }
+    },
+    "omissions": [],
+    "clauses": [
+     {
+      "clause": "顾行舟把缆绳重新绕上木桩，",
+      "best_fact": "f2",
+      "score": 1.0
+     },
+     {
+      "clause": "沈砚把系泊绳拖回岸上。",
+      "best_fact": "f3",
+      "score": 1.0
+     }
+    ],
+    "weak_clauses": [],
+    "sentence_count": 1,
+    "repeated_names": 0,
+    "contains_digit": false,
+    "contains_pronoun": false,
+    "sanity_words": []
+   }
+  }
+ },
+ "row_checks": {
+  "fixture-r5": {
+   "J_matches_recorded_784": true
+  },
+  "train-r4": {
+   "J_matches_recorded_784": true
+  },
+  "t03": {
+   "J_matches_recorded_784": true
+  },
+  "v14": {
+   "J_matches_recorded_784": true
+  },
+  "v18": {
+   "J_matches_recorded_784": true
+  },
+  "t08": {
+   "J_matches_recorded_784": true
+  },
+  "t22": {
+   "J_matches_recorded_784": true
+  }
+ },
+ "summary": {
+  "J_omissions": 0,
+  "S_omissions": 0,
+  "samples": 9
+ }
+}

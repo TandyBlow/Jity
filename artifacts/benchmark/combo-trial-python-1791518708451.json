@@ -1,0 +1,4049 @@
+{
+  "suppressCategories": [
+    "inspect",
+    "move",
+    "npc_talk"
+  ],
+  "arms": [
+    {
+      "name": "q8-t1",
+      "file": "onnx/model_quantized.onnx",
+      "cases": [
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用火把照亮地下藏书室。",
+          "expectItem": "火把",
+          "expectTarget": "地下藏书室",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "火",
+              "predTarget": "地",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "火",
+              "predTarget": "地下藏书室",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "火",
+              "predTarget": "地下藏书室",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "火",
+              "predTarget": "地下藏书室",
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用短刀割断绳索。",
+          "expectItem": "短刀",
+          "expectTarget": "绳索",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我和图书馆管理员打听暗门。",
+          "expectItem": null,
+          "expectTarget": "图书馆管理员",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9571,
+          "pGold": 0.9571,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我去地下藏书室。",
+          "expectItem": null,
+          "expectTarget": "地下藏书室",
+          "goldCategory": "move",
+          "predictedCategory": "move",
+          "categoryCorrect": true,
+          "pPredicted": 0.7789,
+          "pGold": 0.7789,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "地",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "书室",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "书室",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "书室",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我检查雕像的底座。",
+          "expectItem": null,
+          "expectTarget": "雕像",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9704,
+          "pGold": 0.9704,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "雕像",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "雕",
+              "predTarget": "底座",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "底座",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "底座",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我在原地休息。",
+          "expectItem": null,
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6188,
+          "pGold": 0.6188,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用指南针校准方向。",
+          "expectItem": "指南针",
+          "expectTarget": null,
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "针",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我把铃铛挂在暗门上。",
+          "expectItem": "铃铛",
+          "expectTarget": "暗门",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.6054,
+          "pGold": 0.0187,
+          "decodes": {
+            "greedy": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我向夏弥打听暗门的来历。",
+          "expectItem": null,
+          "expectTarget": "夏弥",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.958,
+          "pGold": 0.958,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用蜡烛照亮壁画。",
+          "expectItem": "蜡烛",
+          "expectTarget": "壁画",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我推开了当铺的栅门。",
+          "expectItem": null,
+          "expectTarget": "栅门",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5331,
+          "pGold": 0.5331,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我撬开了钱柜的铜锁。",
+          "expectItem": null,
+          "expectTarget": "铜锁",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5733,
+          "pGold": 0.0145,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "钱",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "钱",
+              "predTarget": "铜锁",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "钱",
+              "predTarget": "铜锁",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "钱",
+              "predTarget": "铜锁",
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用朝奉的戥子称了称香料。",
+          "expectItem": "戥子",
+          "expectTarget": "香料",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我擦亮了掌柜的烟杆。",
+          "expectItem": "烟杆",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5813,
+          "pGold": 0.5813,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我检查了账台的暗屉。",
+          "expectItem": null,
+          "expectTarget": "账台",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9707,
+          "pGold": 0.9707,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "账",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "账",
+              "predTarget": "暗屉",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "暗屉",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "暗屉",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把算盘摆正了。",
+          "expectItem": "算盘",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6047,
+          "pGold": 0.6047,
+          "decodes": {
+            "greedy": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我朝伙计问了问行情。",
+          "expectItem": null,
+          "expectTarget": "伙计",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9565,
+          "pGold": 0.9565,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把当票折好收进了钱匣。",
+          "expectItem": "当票",
+          "expectTarget": "钱匣",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.573,
+          "pGold": 0.573,
+          "decodes": {
+            "greedy": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把斗笠递给了船娘。",
+          "expectItem": null,
+          "expectTarget": "船娘",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.567,
+          "pGold": 0.567,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把斗笠扣在了米瓮上。",
+          "expectItem": "斗笠",
+          "expectTarget": "米瓮",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5647,
+          "pGold": 0.0138,
+          "decodes": {
+            "greedy": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我向舵工打听水路。",
+          "expectItem": null,
+          "expectTarget": "舵工",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9532,
+          "pGold": 0.9532,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我检查了舵杆的裂纹。",
+          "expectItem": null,
+          "expectTarget": "舵杆",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9704,
+          "pGold": 0.9704,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把麻缆盘在了缆桩上。",
+          "expectItem": "麻缆",
+          "expectTarget": "缆桩",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5678,
+          "pGold": 0.0147,
+          "decodes": {
+            "greedy": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用长篙撑开了渡船。",
+          "expectItem": "长篙",
+          "expectTarget": "渡船",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把水瓢递给了守滩人。",
+          "expectItem": null,
+          "expectTarget": "守滩人",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6205,
+          "pGold": 0.6205,
+          "decodes": {
+            "greedy": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我向守滩人打听潮汛。",
+          "expectItem": null,
+          "expectTarget": "守滩人",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9564,
+          "pGold": 0.9564,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用那把磨得发亮的剪子铰开了线头。",
+          "expectItem": "剪子",
+          "expectTarget": "线头",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "剪子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "剪子",
+              "predTarget": "线头",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "剪子",
+              "predTarget": "线头",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "剪子",
+              "predTarget": "线头",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把缺了口的粗碗扣在了案板上。",
+          "expectItem": "粗碗",
+          "expectTarget": "案板",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.6089,
+          "pGold": 0.0143,
+          "decodes": {
+            "greedy": {
+              "predItem": "粗",
+              "predTarget": "碗",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "粗碗",
+              "predTarget": "案板",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "粗碗",
+              "predTarget": "案板",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "粗碗",
+              "predTarget": "案板",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我检查了那盏积灰的油盏。",
+          "expectItem": null,
+          "expectTarget": "油盏",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9705,
+          "pGold": 0.9705,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用浸过油的火绒引燃了柴堆。",
+          "expectItem": "火绒",
+          "expectTarget": "柴堆",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9869,
+          "pGold": 0.9869,
+          "decodes": {
+            "greedy": {
+              "predItem": "火",
+              "predTarget": "绒",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "火绒",
+              "predTarget": "柴堆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "火绒",
+              "predTarget": "柴堆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "火绒",
+              "predTarget": "柴堆",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把卷了角的图纸铺平了。",
+          "expectItem": "图纸",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.589,
+          "pGold": 0.589,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用那半截蜡笔涂黑了封皮。",
+          "expectItem": "蜡笔",
+          "expectTarget": "封皮",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我掀开了蒙着白布的笼屉。",
+          "expectItem": null,
+          "expectTarget": "笼屉",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.504,
+          "pGold": 0.504,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用斑驳的铜章在封泥上按了个印。",
+          "expectItem": "铜章",
+          "expectTarget": "封泥",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9867,
+          "pGold": 0.9867,
+          "decodes": {
+            "greedy": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我扳开了闸。",
+          "expectItem": null,
+          "expectTarget": "闸",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5557,
+          "pGold": 0.5557,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我捅了捅灶。",
+          "expectItem": null,
+          "expectTarget": "灶",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5698,
+          "pGold": 0.5698,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我擦了擦匾。",
+          "expectItem": "匾",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5908,
+          "pGold": 0.5908,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把小艇系在了桩上。",
+          "expectItem": "小艇",
+          "expectTarget": "桩",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5714,
+          "pGold": 0.0137,
+          "decodes": {
+            "greedy": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用竹钩勾住了檐。",
+          "expectItem": "竹钩",
+          "expectTarget": "檐",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我拔出了短刃。",
+          "expectItem": "短刃",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.573,
+          "pGold": 0.573,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "短",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "短",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "短",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "短",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我抵住了栅栏。",
+          "expectItem": null,
+          "expectTarget": "栅栏",
+          "goldCategory": "other",
+          "predictedCategory": "move",
+          "categoryCorrect": false,
+          "pPredicted": 0.5282,
+          "pGold": 0.4356,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我用铜钥匙打开大门。",
+          "expectItem": "铜钥匙",
+          "expectTarget": "大门",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我和诺诺打听图书馆的传闻。",
+          "expectItem": null,
+          "expectTarget": "诺诺",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9578,
+          "pGold": 0.9578,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我去二楼档案室查资料。",
+          "expectItem": null,
+          "expectTarget": "二楼档案室",
+          "goldCategory": "move",
+          "predictedCategory": "move",
+          "categoryCorrect": true,
+          "pPredicted": 0.7005,
+          "pGold": 0.7005,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我使用生锈的铁门钥匙打开大门。",
+          "expectItem": "铁门钥匙",
+          "expectTarget": "大门",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "铁",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "铁门钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铁门钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铁门钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我和执行部学生搭话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9581,
+          "pGold": 0.9581,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我检查那扇书架后的暗门。",
+          "expectItem": null,
+          "expectTarget": "暗门",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9708,
+          "pGold": 0.9708,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "书架",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "暗门",
+              "predTarget": "书架",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "书架",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "书架",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我拔剑攻击诺诺。",
+          "expectItem": "剑",
+          "expectTarget": "诺诺",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6158,
+          "pGold": 0.6158,
+          "decodes": {
+            "greedy": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我在原地休息一会儿。",
+          "expectItem": null,
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5981,
+          "pGold": 0.5981,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我仔细查看旧笔记里的字迹。",
+          "expectItem": null,
+          "expectTarget": "旧笔记",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9703,
+          "pGold": 0.9703,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我用旧笔记垫住门缝。",
+          "expectItem": "旧笔记",
+          "expectTarget": "门缝",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我去找执行部学生问话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5466,
+          "pGold": 0.2458,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我用路明非的校徽刷开闸机。",
+          "expectItem": "校徽",
+          "expectTarget": "闸机",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "校徽",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "校徽",
+              "predTarget": "闸机",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "校徽",
+              "predTarget": "闸机",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "校徽",
+              "predTarget": "闸机",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "fp32-t1",
+      "file": "onnx/model.onnx",
+      "cases": [
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用火把照亮地下藏书室。",
+          "expectItem": "火把",
+          "expectTarget": "地下藏书室",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "火",
+              "predTarget": "地",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "火",
+              "predTarget": "地下藏书室",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "火",
+              "predTarget": "地下藏书室",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "火",
+              "predTarget": "地下藏书室",
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用短刀割断绳索。",
+          "expectItem": "短刀",
+          "expectTarget": "绳索",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "短刀",
+              "predTarget": "绳索",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我和图书馆管理员打听暗门。",
+          "expectItem": null,
+          "expectTarget": "图书馆管理员",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9571,
+          "pGold": 0.9571,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "图书馆管理员",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我去地下藏书室。",
+          "expectItem": null,
+          "expectTarget": "地下藏书室",
+          "goldCategory": "move",
+          "predictedCategory": "move",
+          "categoryCorrect": true,
+          "pPredicted": 0.7789,
+          "pGold": 0.7789,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "地",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "书室",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "书室",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "书室",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我检查雕像的底座。",
+          "expectItem": null,
+          "expectTarget": "雕像",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9704,
+          "pGold": 0.9704,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "雕像",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "雕",
+              "predTarget": "底座",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "底座",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "底座",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我在原地休息。",
+          "expectItem": null,
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6188,
+          "pGold": 0.6188,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用指南针校准方向。",
+          "expectItem": "指南针",
+          "expectTarget": null,
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "校准方",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我把铃铛挂在暗门上。",
+          "expectItem": "铃铛",
+          "expectTarget": "暗门",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.6054,
+          "pGold": 0.0187,
+          "decodes": {
+            "greedy": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铃铛",
+              "predTarget": "暗门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我向夏弥打听暗门的来历。",
+          "expectItem": null,
+          "expectTarget": "夏弥",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.958,
+          "pGold": 0.958,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "夏",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devClassic",
+          "group": null,
+          "text": "我用蜡烛照亮壁画。",
+          "expectItem": "蜡烛",
+          "expectTarget": "壁画",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "蜡烛",
+              "predTarget": "壁画",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我推开了当铺的栅门。",
+          "expectItem": null,
+          "expectTarget": "栅门",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5331,
+          "pGold": 0.5331,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "栅门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我撬开了钱柜的铜锁。",
+          "expectItem": null,
+          "expectTarget": "铜锁",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5733,
+          "pGold": 0.0145,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "钱",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "钱",
+              "predTarget": "铜锁",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "钱",
+              "predTarget": "铜锁",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "钱",
+              "predTarget": "铜锁",
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用朝奉的戥子称了称香料。",
+          "expectItem": "戥子",
+          "expectTarget": "香料",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "戥子",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我擦亮了掌柜的烟杆。",
+          "expectItem": "烟杆",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5813,
+          "pGold": 0.5813,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "烟杆",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我检查了账台的暗屉。",
+          "expectItem": null,
+          "expectTarget": "账台",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9707,
+          "pGold": 0.9707,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "账",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "账",
+              "predTarget": "暗屉",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "暗屉",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "暗屉",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把算盘摆正了。",
+          "expectItem": "算盘",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6047,
+          "pGold": 0.6047,
+          "decodes": {
+            "greedy": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "算盘",
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我朝伙计问了问行情。",
+          "expectItem": null,
+          "expectTarget": "伙计",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9565,
+          "pGold": 0.9565,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把当票折好收进了钱匣。",
+          "expectItem": "当票",
+          "expectTarget": "钱匣",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.573,
+          "pGold": 0.573,
+          "decodes": {
+            "greedy": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "当票",
+              "predTarget": "钱匣",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把斗笠递给了船娘。",
+          "expectItem": null,
+          "expectTarget": "船娘",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.567,
+          "pGold": 0.567,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "船娘",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把斗笠扣在了米瓮上。",
+          "expectItem": "斗笠",
+          "expectTarget": "米瓮",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5647,
+          "pGold": 0.0138,
+          "decodes": {
+            "greedy": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "斗笠",
+              "predTarget": "米瓮",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我向舵工打听水路。",
+          "expectItem": null,
+          "expectTarget": "舵工",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9532,
+          "pGold": 0.9532,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "舵工",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我检查了舵杆的裂纹。",
+          "expectItem": null,
+          "expectTarget": "舵杆",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9704,
+          "pGold": 0.9704,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "舵杆",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把麻缆盘在了缆桩上。",
+          "expectItem": "麻缆",
+          "expectTarget": "缆桩",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5678,
+          "pGold": 0.0147,
+          "decodes": {
+            "greedy": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "麻缆",
+              "predTarget": "缆桩",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用长篙撑开了渡船。",
+          "expectItem": "长篙",
+          "expectTarget": "渡船",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "长篙",
+              "predTarget": "渡船",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把水瓢递给了守滩人。",
+          "expectItem": null,
+          "expectTarget": "守滩人",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6205,
+          "pGold": 0.6205,
+          "decodes": {
+            "greedy": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "水瓢",
+              "predTarget": "守滩人",
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我向守滩人打听潮汛。",
+          "expectItem": null,
+          "expectTarget": "守滩人",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9564,
+          "pGold": 0.9564,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用那把磨得发亮的剪子铰开了线头。",
+          "expectItem": "剪子",
+          "expectTarget": "线头",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "剪子",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "剪子",
+              "predTarget": "线头",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "剪子",
+              "predTarget": "线头",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "剪子",
+              "predTarget": "线头",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把缺了口的粗碗扣在了案板上。",
+          "expectItem": "粗碗",
+          "expectTarget": "案板",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.6089,
+          "pGold": 0.0143,
+          "decodes": {
+            "greedy": {
+              "predItem": "粗",
+              "predTarget": "碗",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "粗碗",
+              "predTarget": "案板",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "粗碗",
+              "predTarget": "案板",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "粗碗",
+              "predTarget": "案板",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我检查了那盏积灰的油盏。",
+          "expectItem": null,
+          "expectTarget": "油盏",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9705,
+          "pGold": 0.9705,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "油盏",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用浸过油的火绒引燃了柴堆。",
+          "expectItem": "火绒",
+          "expectTarget": "柴堆",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9869,
+          "pGold": 0.9869,
+          "decodes": {
+            "greedy": {
+              "predItem": "火",
+              "predTarget": "绒",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "火绒",
+              "predTarget": "柴堆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "火绒",
+              "predTarget": "柴堆",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "火绒",
+              "predTarget": "柴堆",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把卷了角的图纸铺平了。",
+          "expectItem": "图纸",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.589,
+          "pGold": 0.589,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "图纸",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用那半截蜡笔涂黑了封皮。",
+          "expectItem": "蜡笔",
+          "expectTarget": "封皮",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "蜡笔",
+              "predTarget": "封皮",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我掀开了蒙着白布的笼屉。",
+          "expectItem": null,
+          "expectTarget": "笼屉",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.504,
+          "pGold": 0.504,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "笼屉",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用斑驳的铜章在封泥上按了个印。",
+          "expectItem": "铜章",
+          "expectTarget": "封泥",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9867,
+          "pGold": 0.9867,
+          "decodes": {
+            "greedy": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铜章",
+              "predTarget": "封泥",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我扳开了闸。",
+          "expectItem": null,
+          "expectTarget": "闸",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5557,
+          "pGold": 0.5557,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "闸",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我捅了捅灶。",
+          "expectItem": null,
+          "expectTarget": "灶",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5698,
+          "pGold": 0.5698,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "灶",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我擦了擦匾。",
+          "expectItem": "匾",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5908,
+          "pGold": 0.5908,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "匾",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我把小艇系在了桩上。",
+          "expectItem": "小艇",
+          "expectTarget": "桩",
+          "goldCategory": "item_use",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5714,
+          "pGold": 0.0137,
+          "decodes": {
+            "greedy": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "小艇",
+              "predTarget": "桩",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我用竹钩勾住了檐。",
+          "expectItem": "竹钩",
+          "expectTarget": "檐",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "竹钩",
+              "predTarget": "檐",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我拔出了短刃。",
+          "expectItem": "短刃",
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.573,
+          "pGold": 0.573,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": false,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": false,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "devGroups",
+          "group": null,
+          "text": "我抵住了栅栏。",
+          "expectItem": null,
+          "expectTarget": "栅栏",
+          "goldCategory": "other",
+          "predictedCategory": "move",
+          "categoryCorrect": false,
+          "pPredicted": 0.5282,
+          "pGold": 0.4356,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "栅栏",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我用铜钥匙打开大门。",
+          "expectItem": "铜钥匙",
+          "expectTarget": "大门",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铜钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我和诺诺打听图书馆的传闻。",
+          "expectItem": null,
+          "expectTarget": "诺诺",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9578,
+          "pGold": 0.9578,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我去二楼档案室查资料。",
+          "expectItem": null,
+          "expectTarget": "二楼档案室",
+          "goldCategory": "move",
+          "predictedCategory": "move",
+          "categoryCorrect": true,
+          "pPredicted": 0.7005,
+          "pGold": 0.7005,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "二楼档案室",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我使用生锈的铁门钥匙打开大门。",
+          "expectItem": "铁门钥匙",
+          "expectTarget": "大门",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "铁",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "铁门钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "铁门钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "铁门钥匙",
+              "predTarget": "大门",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我和执行部学生搭话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "npc_talk",
+          "categoryCorrect": true,
+          "pPredicted": 0.9581,
+          "pGold": 0.9581,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我检查那扇书架后的暗门。",
+          "expectItem": null,
+          "expectTarget": "暗门",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9708,
+          "pGold": 0.9708,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "书架",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "暗门",
+              "predTarget": "书架",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "书架",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "书架",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我拔剑攻击诺诺。",
+          "expectItem": "剑",
+          "expectTarget": "诺诺",
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.6158,
+          "pGold": 0.6158,
+          "decodes": {
+            "greedy": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "剑",
+              "predTarget": "诺诺",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我在原地休息一会儿。",
+          "expectItem": null,
+          "expectTarget": null,
+          "goldCategory": "other",
+          "predictedCategory": "other",
+          "categoryCorrect": true,
+          "pPredicted": 0.5981,
+          "pGold": 0.5981,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": null,
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我仔细查看旧笔记里的字迹。",
+          "expectItem": null,
+          "expectTarget": "旧笔记",
+          "goldCategory": "inspect",
+          "predictedCategory": "inspect",
+          "categoryCorrect": true,
+          "pPredicted": 0.9703,
+          "pGold": 0.9703,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "笔",
+              "itemStrict": true,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我用旧笔记垫住门缝。",
+          "expectItem": "旧笔记",
+          "expectTarget": "门缝",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "goldRule": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "predRule": {
+              "predItem": "旧笔",
+              "predTarget": "门",
+              "itemStrict": false,
+              "targetStrict": false
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我去找执行部学生问话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "goldCategory": "npc_talk",
+          "predictedCategory": "other",
+          "categoryCorrect": false,
+          "pPredicted": 0.5466,
+          "pGold": 0.2458,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "constrained": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": null,
+              "predTarget": "执行部学生",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        },
+        {
+          "batch": "scored",
+          "group": null,
+          "text": "我用路明非的校徽刷开闸机。",
+          "expectItem": "校徽",
+          "expectTarget": "闸机",
+          "goldCategory": "item_use",
+          "predictedCategory": "item_use",
+          "categoryCorrect": true,
+          "pPredicted": 0.9868,
+          "pGold": 0.9868,
+          "decodes": {
+            "greedy": {
+              "predItem": null,
+              "predTarget": "校徽",
+              "itemStrict": false,
+              "targetStrict": false
+            },
+            "constrained": {
+              "predItem": "校徽",
+              "predTarget": "闸机",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "goldRule": {
+              "predItem": "校徽",
+              "predTarget": "闸机",
+              "itemStrict": true,
+              "targetStrict": true
+            },
+            "predRule": {
+              "predItem": "校徽",
+              "predTarget": "闸机",
+              "itemStrict": true,
+              "targetStrict": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

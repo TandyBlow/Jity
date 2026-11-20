@@ -1,0 +1,21 @@
+{
+ "purpose": "扩容确认36：混比两臂",
+ "note": "两臂在 36 条上全部表达事实；差异只有写法",
+ "diffUnits": [
+  "ca1A",
+  "ca1B",
+  "cb3A",
+  "ce2B",
+  "ce3B",
+  "ce4A",
+  "ce4B"
+ ],
+ "arm422": {
+  "supported": 36,
+  "clean": 36
+ },
+ "arm431": {
+  "supported": 36,
+  "clean": 36
+ }
+}

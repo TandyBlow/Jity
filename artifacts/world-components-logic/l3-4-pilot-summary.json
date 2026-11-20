@@ -1,0 +1,565 @@
+{
+  "schema": "jity-d-pilot-summary-v1",
+  "date": "2026-11-01",
+  "scope": "four_previously_reviewed_development_cases_five_repeats_each_not_formal_screening",
+  "runs": [
+    {
+      "runId": "m02-dev42-20261101-r1",
+      "inputLimit": 512,
+      "serialization": "complete_canonical_json",
+      "planPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r1.plan.json",
+      "planSha256": "dfbbbcac59c88b1f00c15153ccc91b565d0b28a2634ff1d3e5d392eb6fd74410",
+      "recordPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r1.record.json",
+      "recordSha256": "ef9053de3775e772b7df8bb8700e062ab4a2d1aa5db8041e430aee71ff8ee338",
+      "generationCalls": 0,
+      "status": "diagnostic_completed",
+      "parameterCount": 77440384,
+      "peakResidentMiB": 555.4375,
+      "actualRuntime": null,
+      "environmentEvidence": "preparation_metadata_only_no_retrospective_runtime_attestation",
+      "supervisor": {
+        "exitCode": 0,
+        "observedPeakResidentMiB": 500.203125,
+        "processLog": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r1.record.process.log",
+        "rssMeasurement": "ps_child_rss_every_250ms",
+        "stopReason": null,
+        "wallMs": 14847.916750004515
+      },
+      "stages": [
+        {
+          "elapsedMs": 133.76895799592603,
+          "stage": "verify_plan_and_model_files",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 13681.110625009751,
+          "stage": "dependency_import",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 89.14195800025482,
+          "stage": "tokenizer_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 53.76966600306332,
+          "stage": "model_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 442.5087919953512,
+          "stage": "nonbusiness_smoke",
+          "status": "complete"
+        }
+      ],
+      "tasks": [
+        {
+          "caseId": "dev-d02-01",
+          "attempts": 5,
+          "inputTokens": 636,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 0.8224579942179844,
+          "p95Ms": 1.0205409926129505,
+          "maxMs": 1.0205409926129505,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d03-01",
+          "attempts": 5,
+          "inputTokens": 679,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 0.8823749958537519,
+          "p95Ms": 0.9330419998150319,
+          "maxMs": 0.9330419998150319,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d04-01",
+          "attempts": 5,
+          "inputTokens": 736,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 0.9425830066902563,
+          "p95Ms": 0.9925829945132136,
+          "maxMs": 0.9925829945132136,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d05-01",
+          "attempts": 5,
+          "inputTokens": 783,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 0.9898749995045364,
+          "p95Ms": 1.0063329973490909,
+          "maxMs": 1.0063329973490909,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        }
+      ]
+    },
+    {
+      "runId": "m02-dev42-20261101-r2",
+      "inputLimit": 512,
+      "serialization": "lossless_chinese_tables_v1",
+      "planPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r2.plan.json",
+      "planSha256": "e08e290b1a77df47b4e6f9d7e4521045241661a6c01fb04b33b92319c14a9508",
+      "recordPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r2.record.json",
+      "recordSha256": "209289de15f2184aa32ddcf4bfddda43eeb9fc3db8b2b38d6b2b9193076ae789",
+      "generationCalls": 0,
+      "status": "diagnostic_completed",
+      "parameterCount": 77440384,
+      "peakResidentMiB": 558.59375,
+      "actualRuntime": null,
+      "environmentEvidence": "preparation_metadata_only_no_retrospective_runtime_attestation",
+      "supervisor": {
+        "exitCode": 0,
+        "observedPeakResidentMiB": 324.578125,
+        "processLog": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r2.record.process.log",
+        "rssMeasurement": "ps_child_rss_every_250ms",
+        "stopReason": null,
+        "wallMs": 3344.438000000082
+      },
+      "stages": [
+        {
+          "elapsedMs": 135.16299999901094,
+          "stage": "verify_plan_and_model_files",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 2422.9636670061154,
+          "stage": "dependency_import",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 65.77354200999252,
+          "stage": "tokenizer_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 39.28450000239536,
+          "stage": "model_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 65.92512500355951,
+          "stage": "nonbusiness_smoke",
+          "status": "complete"
+        }
+      ],
+      "tasks": [
+        {
+          "caseId": "dev-d02-01",
+          "attempts": 5,
+          "inputTokens": 593,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 0.8517920068698004,
+          "p95Ms": 1.1145829921588302,
+          "maxMs": 1.1145829921588302,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d03-01",
+          "attempts": 5,
+          "inputTokens": 618,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 0.9637909970479086,
+          "p95Ms": 1.097999993362464,
+          "maxMs": 1.097999993362464,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d04-01",
+          "attempts": 5,
+          "inputTokens": 675,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 1.0264169977745041,
+          "p95Ms": 1.1519170075189322,
+          "maxMs": 1.1519170075189322,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d05-01",
+          "attempts": 5,
+          "inputTokens": 738,
+          "statuses": {
+            "input_overflow": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 1.0517080081626773,
+          "p95Ms": 1.2000410060863942,
+          "maxMs": 1.2000410060863942,
+          "localBudgetExceeded": false,
+          "uniqueRawOutputs": [
+            ""
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        }
+      ]
+    },
+    {
+      "runId": "m02-dev42-20261101-r3",
+      "inputLimit": 1024,
+      "serialization": "lossless_chinese_tables_v1",
+      "planPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r3.plan.json",
+      "planSha256": "dd46137303ac50a7a6d7f8bc7151b76ca4b32d6dd73a9edb096985df4db4cbf9",
+      "recordPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r3.record.json",
+      "recordSha256": "aea50e17a8f24f2372da76fc9d267a03c93fe5aa5754d2efc42883332d676c70",
+      "generationCalls": 20,
+      "status": "diagnostic_completed",
+      "parameterCount": 77440384,
+      "peakResidentMiB": 813.609375,
+      "actualRuntime": null,
+      "environmentEvidence": "preparation_metadata_only_no_retrospective_runtime_attestation",
+      "supervisor": {
+        "exitCode": 0,
+        "observedPeakResidentMiB": 813.609375,
+        "processLog": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r3.record.process.log",
+        "rssMeasurement": "ps_child_rss_every_250ms",
+        "stopReason": null,
+        "wallMs": 6702.421542009688
+      },
+      "stages": [
+        {
+          "elapsedMs": 139.84362500195857,
+          "stage": "verify_plan_and_model_files",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 1948.9060000050813,
+          "stage": "dependency_import",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 66.231874996447,
+          "stage": "tokenizer_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 32.160625007236376,
+          "stage": "model_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 49.98825000075158,
+          "stage": "nonbusiness_smoke",
+          "status": "complete"
+        }
+      ],
+      "tasks": [
+        {
+          "caseId": "dev-d02-01",
+          "attempts": 5,
+          "inputTokens": 593,
+          "statuses": {
+            "invalid_output": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 152.17924999888055,
+          "p95Ms": 159.09712499706075,
+          "maxMs": 159.09712499706075,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不宣布动作已经成功"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d03-01",
+          "attempts": 5,
+          "inputTokens": 618,
+          "statuses": {
+            "invalid_output": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 191.91908300854266,
+          "p95Ms": 311.90575000073295,
+          "maxMs": 311.90575000073295,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不生成骰点、准入或未来行动"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d04-01",
+          "attempts": 5,
+          "inputTokens": 675,
+          "statuses": {
+            "complete": 5
+          },
+          "structureValid": 5,
+          "p50Ms": 251.19012499635573,
+          "p95Ms": 256.87020900659263,
+          "maxMs": 256.87020900659263,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不改写已冻结动作,不保证成功,不自行分配目标或骰点"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d05-01",
+          "attempts": 5,
+          "inputTokens": 738,
+          "statuses": {
+            "invalid_output": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 192.75416700111236,
+          "p95Ms": 204.74066599854268,
+          "maxMs": 204.74066599854268,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不相似"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        }
+      ]
+    },
+    {
+      "runId": "m02-dev42-20261101-r4",
+      "inputLimit": 1024,
+      "serialization": "lossless_chinese_tables_v1",
+      "planPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r4.plan.json",
+      "planSha256": "732735dc83737b846976532d18e13a5af0df055d1652ccdee989c054b6b82956",
+      "recordPath": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r4.record.json",
+      "recordSha256": "fdd30968d7d1828ca4fe8c1cc4ffe207e466e02def50536e063a96e419a86f63",
+      "generationCalls": 20,
+      "status": "diagnostic_completed",
+      "parameterCount": 77440384,
+      "peakResidentMiB": 787.5625,
+      "actualRuntime": {
+        "dependencies": {
+          "numpy": "1.26.4",
+          "safetensors": "0.6.2",
+          "sentencepiece": "0.2.1",
+          "tokenizers": "0.22.1",
+          "torch": "2.7.1",
+          "transformers": "4.57.3"
+        },
+        "device": "cpu",
+        "environmentReverifiedBeforeImport": true,
+        "gpuUsed": false,
+        "pythonExecutable": "/Users/sunhaitong/.codex/worktrees/components-logic-l1/jity/.local/world-components-logic/venv/bin/python",
+        "pythonVersion": "3.11.7",
+        "torchInteropThreads": 1,
+        "torchThreads": 1
+      },
+      "environmentEvidence": "runtime_reverified_and_import_versions_recorded",
+      "supervisor": {
+        "exitCode": 0,
+        "observedPeakResidentMiB": 787.5625,
+        "processLog": "artifacts/world-components-logic/pilots/m02-dev42-20261101-r4.record.process.log",
+        "rssMeasurement": "ps_child_rss_every_250ms",
+        "stopReason": null,
+        "wallMs": 6961.917417007498
+      },
+      "stages": [
+        {
+          "elapsedMs": 143.6629579984583,
+          "stage": "verify_plan_and_model_files",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 2163.837959000375,
+          "stage": "dependency_import",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 64.19587499112822,
+          "stage": "tokenizer_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 36.17987499455921,
+          "stage": "model_load",
+          "status": "complete"
+        },
+        {
+          "elapsedMs": 64.7190409945324,
+          "stage": "nonbusiness_smoke",
+          "status": "complete"
+        }
+      ],
+      "tasks": [
+        {
+          "caseId": "dev-d02-01",
+          "attempts": 5,
+          "inputTokens": 593,
+          "statuses": {
+            "invalid_output": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 155.10150000045542,
+          "p95Ms": 159.52629200182855,
+          "maxMs": 159.52629200182855,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不宣布动作已经成功"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d03-01",
+          "attempts": 5,
+          "inputTokens": 618,
+          "statuses": {
+            "invalid_output": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 190.08679200487677,
+          "p95Ms": 209.19449999928474,
+          "maxMs": 209.19449999928474,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不生成骰点、准入或未来行动"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d04-01",
+          "attempts": 5,
+          "inputTokens": 675,
+          "statuses": {
+            "complete": 5
+          },
+          "structureValid": 5,
+          "p50Ms": 252.8575420001289,
+          "p95Ms": 270.96795800025575,
+          "maxMs": 270.96795800025575,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不改写已冻结动作,不保证成功,不自行分配目标或骰点"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        },
+        {
+          "caseId": "dev-d05-01",
+          "attempts": 5,
+          "inputTokens": 738,
+          "statuses": {
+            "invalid_output": 5
+          },
+          "structureValid": 0,
+          "p50Ms": 195.83195800078101,
+          "p95Ms": 213.4158330009086,
+          "maxMs": 213.4158330009086,
+          "localBudgetExceeded": true,
+          "uniqueRawOutputs": [
+            "不相似"
+          ],
+          "performanceSampleStatus": "insufficient_n_for_formal_acceptance"
+        }
+      ]
+    }
+  ],
+  "historicalRunnerSnapshots": [
+    {
+      "runs": [
+        "r1"
+      ],
+      "path": "artifacts/world-components-logic/pilots/code/run_pilot-r1.py",
+      "sha256": "f02667dfe58abdb2ff4234e602342ac5ac952ecafc0c1e9eb7c40952b72d336e",
+      "restoreTo": "experiments/world-components-logic/run_pilot.py"
+    },
+    {
+      "runs": [
+        "r2",
+        "r3"
+      ],
+      "path": "artifacts/world-components-logic/pilots/code/run_pilot-r2-r3.py",
+      "sha256": "0fe0642b71e8be2384db0a24c60c271f7dd44b233f576f29fdef23e3a27d5e0c",
+      "restoreTo": "experiments/world-components-logic/run_pilot.py"
+    }
+  ],
+  "businessGenerationsTotal": 40,
+  "verdict": "current_M02_zero_shot_configuration_not_usable_on_these_four_cases",
+  "assistantDiagnosticObservations": [
+    {
+      "caseId": "dev-d02-01",
+      "finding": "格式拒绝；输出只是“不能宣布成功”的规则句，没有act/skip结构和行动正文。"
+    },
+    {
+      "caseId": "dev-d03-01",
+      "finding": "格式拒绝；没有返回目标集合，输出复述禁止事项。"
+    },
+    {
+      "caseId": "dev-d04-01",
+      "finding": "非空正文结构检查通过，但内容是禁止事项，没有应对冻结威胁的反应行动。"
+    },
+    {
+      "caseId": "dev-d05-01",
+      "finding": "格式拒绝；没有完整成员结果映射，也没有联合因果结算。"
+    }
+  ],
+  "observationScope": "implementation_author_obvious_failure_triage_not_independent_human_blind_score",
+  "sourceIndependence": "unverified",
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequestMeasured": false,
+  "fullRequest500msStatus": "unverified",
+  "local50msStatus": "failed_on_all_four_tested_tasks",
+  "input512Status": "still_overflow_even_after_lossless_serialization",
+  "nextWork": [
+    "512-token complete-coverage splitting remains unfinished; no input truncation accepted",
+    "Decompose learned decisions from short generation; prepare/train independent M01 business heads",
+    "Register any training or task-adapted M02 arm before running; do not use evaluation groups for training",
+    "Then compare actual collaboration and dynamic chain, preserving program authority and total timing"
+  ],
+  "notTested": [
+    "trained M01 heads",
+    "M01/M02 collaboration",
+    "dynamic short-chain runner",
+    "full D06-D08 request",
+    "browser integration",
+    "production integration",
+    "independent formal semantic evaluation"
+  ]
+}

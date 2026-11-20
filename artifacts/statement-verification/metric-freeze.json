@@ -1,0 +1,76 @@
+{
+  "version": "statement-verification-metrics-v2-binary",
+  "status": "frozen for the first binary training round; no source head",
+  "task": "candidate-level fact/authorization verification; binary label plus dev-selected reject rule; no edit",
+  "model": {
+    "backbone": "MiniRBT-H256 base",
+    "head": "masked mean-pool + linear(2)",
+    "classes": ["supported", "unsupported"],
+    "uncertain": "not a trained class; produced only by the dev-selected confidence/reject threshold",
+    "sourceHead": "not implemented in this round"
+  },
+  "input": {
+    "maxLength": 256,
+    "truncation": "none; any input longer than 256 tokens is an error, not a silent truncation",
+    "observedMax": 183
+  },
+  "training": {
+    "epochs": 12,
+    "batch": 32,
+    "lr": 0.00003,
+    "optimizer": "AdamW",
+    "devEachEpoch": true,
+    "checkpointEveryEpoch": true,
+    "uncertainInLoss": false
+  },
+  "rejectRule": {
+    "score": "p_unsupported = softmax(logits)[unsupported]",
+    "baseLabel": "unsupported if p_unsupported >= 0.5 else supported",
+    "uncertainRule": "if max(p_supported, p_unsupported) < t_conf then uncertain",
+    "tConfGrid": "0.50 to 0.99 step 0.01",
+    "selection": "dev only; fixed before confirm"
+  },
+  "primaryGates": {
+    "unsupportedRecall": {
+      "definition": "unsupported -> unsupported / all unsupported (uncertain excluded)",
+      "gate": ">= 0.80"
+    },
+    "legalRejection": {
+      "definition": "supported -> unsupported / all supported (uncertain excluded)",
+      "gate": "<= 0.05"
+    },
+    "legalPending": {
+      "definition": "supported -> uncertain / all supported",
+      "gate": "<= 0.15",
+      "note": "prevents lowering legal rejection by rejecting most legal statements"
+    }
+  },
+  "secondary": {
+    "unsupportedPrecision": {
+      "definition": "unsupported -> unsupported / all predicted unsupported",
+      "gate": ">= 0.85"
+    },
+    "overallUncertainRate": {
+      "definition": "all uncertain predictions / all binary examples",
+      "gate": "reported, not a pass/fail gate"
+    },
+    "sourceStatus": {
+      "definition": "prediction must say sourceStatus=not_implemented, not an empty source list",
+      "gate": "schema check"
+    }
+  },
+  "selectionOrder": [
+    "eligible: all three primary gates on dev",
+    "max unsupportedRecall",
+    "min legalRejection",
+    "min legalPending",
+    "earliest epoch",
+    "lowest t_conf"
+  ],
+  "noOverallAccuracy": true,
+  "confirm": "one run of the selected checkpoint and t_conf only; no threshold search",
+  "categoryReporting": "general, body, background, visible-state, extra-action separately; general-only score cannot pass",
+  "uncertainBoundary": "the 3 existing uncertain examples are boundary cases; report them separately and do not claim uncertainty-recognition ability",
+  "regression": "20-source/A1/target regression is separate, never training/confirm",
+  "sourceLocator": "not implemented this round; source IDs remain material annotations for manual review"
+}

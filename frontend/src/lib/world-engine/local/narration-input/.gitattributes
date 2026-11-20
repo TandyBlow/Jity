@@ -1,0 +1,5 @@
+# Exact-byte artifacts: the vector file hash, the vocabulary hash and the
+# tokenizer charset are compared byte for byte across platforms.
+*.json text eol=lf
+*.jsonl text eol=lf
+*.txt text eol=lf

@@ -1,0 +1,934 @@
+{
+ "purpose": "24 multi-fact sources, two frozen checkpoints, manual fact review",
+ "reviewer": "executor (single reviewer); raw outputs kept",
+ "arms": {
+  "paragraph": {
+   "facts": {
+    "total": 85,
+    "S": 44,
+    "O": 28,
+    "C": 3,
+    "A": 10,
+    "supportedRate": 0.518,
+    "attributionErrors": 10
+   },
+   "sources": {
+    "n": 24,
+    "clean": 1,
+    "withUnsupported": 10
+   },
+   "cohesionMean": 1.75,
+   "listMean": 2.71,
+   "outChars": {
+    "median": 56,
+    "min": 39,
+    "max": 114
+   },
+   "latencySeconds": 11.19,
+   "rows": [
+    {
+     "sourceId": "t01",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "A",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [
+      "把潮汐簿补到门槛上（无此动作）"
+     ],
+     "clean": false,
+     "cohesion": 1,
+     "listScore": 4,
+     "outChars": 76,
+     "seconds": 0.815
+    },
+    {
+     "sourceId": "t02",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "O",
+      "f1": "O",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 47,
+     "seconds": 0.361
+    },
+    {
+     "sourceId": "t03",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "O",
+      "f1": "S",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 1,
+     "listScore": 2,
+     "outChars": 64,
+     "seconds": 0.476
+    },
+    {
+     "sourceId": "t04",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 53,
+     "seconds": 0.4
+    },
+    {
+     "sourceId": "t05",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "O",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 56,
+     "seconds": 0.421
+    },
+    {
+     "sourceId": "t06",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "O",
+      "f1": "S",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 40,
+     "seconds": 0.297
+    },
+    {
+     "sourceId": "t07",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "A",
+      "f2": "O",
+      "f3": "A"
+     },
+     "unsupported": [
+      "沈砚手背沾盐沫（应为韩渡）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 4,
+     "outChars": 58,
+     "seconds": 0.517
+    },
+    {
+     "sourceId": "t08",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "A",
+      "f2": "S",
+      "f3": "O"
+     },
+     "unsupported": [
+      "阿棠把缆绳绕上木桩（应为顾行舟）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 65,
+     "seconds": 0.497
+    },
+    {
+     "sourceId": "t09",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "A"
+     },
+     "unsupported": [
+      "叶知微袖口沾墨（应为沈砚）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 56,
+     "seconds": 0.42
+    },
+    {
+     "sourceId": "t10",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "A",
+      "f2": "S",
+      "f3": "O"
+     },
+     "unsupported": [
+      "顾行舟把缆绳拖回岸上（应为沈砚）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 62,
+     "seconds": 0.483
+    },
+    {
+     "sourceId": "t11",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "O",
+      "f1": "A",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [
+      "叶知微换好灯芯（应为沈砚）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 4,
+     "outChars": 53,
+     "seconds": 0.414
+    },
+    {
+     "sourceId": "t12",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "O",
+      "f2": "S",
+      "f3": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 42,
+     "seconds": 0.318
+    },
+    {
+     "sourceId": "t13",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 1,
+     "listScore": 4,
+     "outChars": 108,
+     "seconds": 0.79
+    },
+    {
+     "sourceId": "t14",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 53,
+     "seconds": 0.38
+    },
+    {
+     "sourceId": "t15",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 73,
+     "seconds": 0.517
+    },
+    {
+     "sourceId": "t16",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "C",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 61,
+     "seconds": 0.427
+    },
+    {
+     "sourceId": "t17",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 57,
+     "seconds": 0.434
+    },
+    {
+     "sourceId": "t18",
+     "pattern": "P3-move-then-act",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "O",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 53,
+     "seconds": 0.4
+    },
+    {
+     "sourceId": "t19",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "O",
+      "f1": "O",
+      "f2": "S",
+      "f3": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 54,
+     "seconds": 0.421
+    },
+    {
+     "sourceId": "t20",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "O",
+      "f1": "O",
+      "f2": "A",
+      "f3": "S"
+     },
+     "unsupported": [
+      "韩渡扶正钟绳（应为沈砚扶警示灯）"
+     ],
+     "clean": false,
+     "cohesion": 1,
+     "listScore": 5,
+     "outChars": 114,
+     "seconds": 0.802
+    },
+    {
+     "sourceId": "t21",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "C",
+      "f1": "S",
+      "f2": "A",
+      "f3": "S"
+     },
+     "unsupported": [
+      "沈砚把潮汐簿的缺页擦亮（无此动作）"
+     ],
+     "clean": false,
+     "cohesion": 1,
+     "listScore": 5,
+     "outChars": 77,
+     "seconds": 0.569
+    },
+    {
+     "sourceId": "t22",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "O"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 49,
+     "seconds": 0.36
+    },
+    {
+     "sourceId": "t23",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "O",
+      "f2": "A",
+      "f3": "S"
+     },
+     "unsupported": [
+      "叶知微换好灯芯（应为沈砚）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 45,
+     "seconds": 0.359
+    },
+    {
+     "sourceId": "t24",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "O",
+      "f2": "S",
+      "f3": "C"
+     },
+     "unsupported": [
+      "阿棠把水洼放在门槛边（无此动作）"
+     ],
+     "clean": false,
+     "cohesion": 1,
+     "listScore": 5,
+     "outChars": 39,
+     "seconds": 0.312
+    }
+   ],
+   "outputs": {
+    "t01": "档案馆的天窗把潮汐簿补完,沈砚把潮汐簿补到门槛上。铜灯的光落在窗外,沈砚把潮汐簿补到门槛上,指尖沾了墨;他把簿子合上推到桌角,把簿子合上推到桌角,门槛被门槛压在门槛上。",
+    "t02": "早市的帆布棚下散光,阿棠从摊棚边挤进来,把鱼筐往摊棚边挤。阿棠从摊棚边挤进来,抱着一筐空鱼筐往摊棚边挤。",
+    "t03": "海风把旧灯塔的铜灯罩吹得发硬,叶知微从旋梯口出来,袖口沾了铜油,火苗在灯罩里慢慢站稳。叶知微从旋梯口出来,袖口沾了铜油,火苗在灯罩里慢慢站稳。",
+    "t04": "潮渡的雾从潮渡过来,顾行舟把渡船推离栈桥,把缆绳绕了三圈,木桩上绕了三圈,木桩上的缆绳绕了三圈。水面没有动,他没有动静。",
+    "t05": "雾堤上的浪沫被雾打湿,韩渡从堤面挤进来,把松脱的钟绳重新系紧,钟绳绷直了,他手背上沾着盐沫。韩渡从堤面挤过去,手背上沾着盐沫。",
+    "t06": "雨停了半会儿,石板上的水洼还在滴水。沈砚站在石板上,把被风吹歪的纸灯笼扶正,墙根还在滴水。",
+    "t07": "雾堤上的浪沫被雾撕碎,沈砚从潮渡那边上来,把松脱的钟绳重新系紧,钟绳绷直了,他手背上沾着盐沫。韩渡从潮渡那边上来,手背上沾着盐沫。",
+    "t08": "早市的帆布棚下散光,阿棠把银鳞鱼搬上案板,抱着一层白汽。阿棠把缆绳绕上摊棚边的木桩,把缆绳绕上摊棚边的木桩;阿棠辫梢沾了白汽,围裙上还沾着白汽。",
+    "t09": "天窗漏进灰光,沈砚把潮汐簿摊在铜灯下,叶知微从早市过来,把一叠干纸放在桌角;叶知微从早市过来,把一叠干纸放在桌角,袖口沾了墨。",
+    "t10": "潮渡的雾水从浅滩拖回栈桥上,顾行舟把渡船系在木桩上,把缆绳从浅滩拖回岸上。等他直起身,外袍下摆被雾水打湿,他把缆绳拖回岸上,才慢慢回岸上。",
+    "t11": "海风把旧灯塔吹得发冷,沈砚换好灯芯,叶知微换好灯芯,袖口沾了铜油。叶知微换好灯芯,袖口沾了铜油,火苗在灯罩里慢慢亮起来。",
+    "t12": "雨把潮生巷的纸灯笼吹得发冷,沈砚站在纸灯笼旁。阿棠从早市过来,蹲在纸灯笼下,把水筐放在门槛边。",
+    "t13": "档案馆的天窗漏进灰光,叶知微从早市过来,把一叠干纸放在桌角,叶知微把一叠干纸放在桌角。叶知微从早市过来,袖口沾了墨;叶知微从早市过来,袖口沾了墨;叶知微从早市过来,袖口沾了墨;叶知微从早市过来,袖口沾了墨;叶知微把一叠干纸放在桌角,袖口沾了墨。",
+    "t14": "雾堤上的风把浪沫吹到石阶上,顾行舟从潮渡上来,把缆绳绕在钟架上。他把缆绳绕在钟架上,等他站起来,他才发现自己没有动静。",
+    "t15": "雾从潮生巷过来,韩渡从潮生巷过来,把渡船推离栈桥,木桩上的缆绳被雾打湿,水面没有人说话。韩渡从潮生巷过来,蹲在木桩上,把渡船推离栈桥边,木桩上的缆绳已经绕上了木桩。",
+    "t16": "雨停了半会儿,潮生巷的纸灯笼还在滴水,沈砚从潮汐档案馆出来,把备用钥匙塞进纸灯笼的外层。他把备用钥匙塞进水洼里,水洼里的水洼还在滴水。",
+    "t17": "早市的帆布棚下散光,阿棠从潮生巷过来,把银鳞鱼搬上案板,鱼筐在石板上散光。阿棠从潮生巷过来,把银鳞鱼搬上案板,石板上的白汽不散。",
+    "t18": "海风把旧灯塔的铜灯罩吹得发硬,叶知微从潮渡上来,把抹布搭回梯脚。叶知微从潮渡上来,袖口沾了铜油,火苗在灯罩里慢慢站稳。",
+    "t19": "早市的帆布棚下散光,沈砚站在摊棚边。阿棠从摊棚外挤进来,抱着一层白汽。他把鱼筐放到案板边,抱着一层薄雾,把鱼筐放到案板边。",
+    "t20": "雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡扶正钟绳,把钟绳重新绕在钟架上;韩渡把钟绳重新绕在钟架上,把钟绳重新绕在钟架上;韩渡把钟绳重新绕在钟架上,把钟绳重新绕在钟架上;韩渡把钟绳重新绕在钟架上,把钟绳重新绕在钟架上;韩渡把钟绳重新绕在钟架上。",
+    "t21": "档案馆的天窗被雨声压在窗外,沈砚把潮汐簿的缺页擦亮,叶知微把干纸放在桌角。叶知微把干纸放在桌角,把干纸放在桌角,灯罩上积了灰;他把干纸放在桌角,灯罩上积了灰,灯罩上积了灰。",
+    "t22": "退潮后的浅滩泛着一层白盐,顾行舟把缆绳重新绕上木桩,把缆绳重新绕上木桩。木桩缠着的旧缆绳,泥水结了一层白盐。",
+    "t23": "海风把旧灯塔的铜灯罩吹得发硬,沈砚换好灯芯,火苗在灯罩上晃了晃。叶知微换好灯芯,火苗在灯罩上晃了晃。",
+    "t24": "雨停了半会儿,纸灯笼被风扯破一角,沈砚扶正在墙根上。阿棠扶正的纸灯笼,把水洼放在门槛边。"
+   }
+  },
+  "fact": {
+   "facts": {
+    "total": 85,
+    "S": 81,
+    "O": 1,
+    "C": 2,
+    "A": 1,
+    "supportedRate": 0.953,
+    "attributionErrors": 1
+   },
+   "sources": {
+    "n": 24,
+    "clean": 18,
+    "withUnsupported": 5
+   },
+   "cohesionMean": 2.71,
+   "listMean": 2.58,
+   "outChars": {
+    "median": 57,
+    "min": 48,
+    "max": 72
+   },
+   "latencySeconds": 12.05,
+   "rows": [
+    {
+     "sourceId": "t01",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [
+      "又回到了档案馆（无此移动事实）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 4,
+     "outChars": 49,
+     "seconds": 0.655
+    },
+    {
+     "sourceId": "t02",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 2,
+     "listScore": 4,
+     "outChars": 58,
+     "seconds": 0.471
+    },
+    {
+     "sourceId": "t03",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 53,
+     "seconds": 0.413
+    },
+    {
+     "sourceId": "t04",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 52,
+     "seconds": 0.449
+    },
+    {
+     "sourceId": "t05",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 53,
+     "seconds": 0.427
+    },
+    {
+     "sourceId": "t06",
+     "pattern": "P1-same-subject",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 51,
+     "seconds": 0.44
+    },
+    {
+     "sourceId": "t07",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 4,
+     "outChars": 58,
+     "seconds": 0.488
+    },
+    {
+     "sourceId": "t08",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "A"
+     },
+     "unsupported": [
+      "阿棠的外袍下摆沾了泥水（应为顾行舟）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 4,
+     "outChars": 69,
+     "seconds": 0.659
+    },
+    {
+     "sourceId": "t09",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 68,
+     "seconds": 0.58
+    },
+    {
+     "sourceId": "t10",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 72,
+     "seconds": 0.608
+    },
+    {
+     "sourceId": "t11",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 70,
+     "seconds": 0.58
+    },
+    {
+     "sourceId": "t12",
+     "pattern": "P2-two-actor",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 69,
+     "seconds": 0.561
+    },
+    {
+     "sourceId": "t13",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 4,
+     "outChars": 51,
+     "seconds": 0.435
+    },
+    {
+     "sourceId": "t14",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 57,
+     "seconds": 0.485
+    },
+    {
+     "sourceId": "t15",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 53,
+     "seconds": 0.421
+    },
+    {
+     "sourceId": "t16",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "C",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": false,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 48,
+     "seconds": 0.387
+    },
+    {
+     "sourceId": "t17",
+     "pattern": "P3-move-then-act",
+     "facts": 3,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 54,
+     "seconds": 0.448
+    },
+    {
+     "sourceId": "t18",
+     "pattern": "P3-move-then-act",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 66,
+     "seconds": 0.524
+    },
+    {
+     "sourceId": "t19",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 4,
+     "outChars": 60,
+     "seconds": 0.523
+    },
+    {
+     "sourceId": "t20",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 4,
+     "outChars": 54,
+     "seconds": 0.475
+    },
+    {
+     "sourceId": "t21",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "O",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [
+      "他等了一会儿，墙角那点发紧的感觉散了（组内没有这条事实）"
+     ],
+     "clean": false,
+     "cohesion": 2,
+     "listScore": 2,
+     "outChars": 54,
+     "seconds": 0.463
+    },
+    {
+     "sourceId": "t22",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [
+      "木桩断了（事实是旧缆绳断了）"
+     ],
+     "clean": false,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 60,
+     "seconds": 0.524
+    },
+    {
+     "sourceId": "t23",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "S",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [],
+     "clean": true,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 58,
+     "seconds": 0.497
+    },
+    {
+     "sourceId": "t24",
+     "pattern": "P4-multi-object",
+     "facts": 4,
+     "verdicts": {
+      "f0": "S",
+      "f1": "C",
+      "f2": "S",
+      "f3": "S"
+     },
+     "unsupported": [
+      "纸灯笼的外面积了泥（事实是排水沟积泥）"
+     ],
+     "clean": false,
+     "cohesion": 3,
+     "listScore": 2,
+     "outChars": 63,
+     "seconds": 0.537
+    }
+   ],
+   "outputs": {
+    "t01": "沈砚把潮汐簿缺的那页补全,又回到了档案馆。沈砚指尖沾了墨,指尖已经染上墨色。沈砚把簿子合上桌角,纸角被风掀起。",
+    "t02": "阿棠把银鳞鱼按大小分开装进两只鱼筐。阿棠的袖口沾了鱼鳞,鱼鳞在鱼筐上沾了鱼鳞。阿棠把空鱼筐摞到摊棚边上,鱼筐在石板上沾着鱼鳞。",
+    "t03": "叶知微把玻璃罩擦得透亮,玻璃罩透亮起来。叶知微的袖口沾了铜油,铜油已经透出来。叶知微把抹布搭回梯脚,玻璃罩已经透出来。",
+    "t04": "顾行舟把缆绳在木桩上绕了三圈。顾行舟把渡船推离栈桥,船灯从雾里透出来。顾行舟的外袍下摆被雾水打湿,手背上沾着水沫。",
+    "t05": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。韩渡把雾警钟敲响,钟绳的声音被关在身后。韩渡的手背上沾着盐沫,在钟架上蹭了两下。",
+    "t06": "沈砚把油纸伞收拢靠在墙根,纸灯笼的收口被收拢。沈砚扶正纸灯笼,纸灯笼靠在墙根上蹭了两下。沈砚鞋底沾了湿石板的水。",
+    "t07": "沈砚从潮渡回来,走进雾堤。韩渡把松脱的钟绳重新系紧,钟绳绷直了。沈砚把雾警钟敲响,钟绳的声音被关在身后。韩渡直起身,手背上沾着盐沫。",
+    "t08": "阿棠把银鳞鱼搬上案板,鱼筐在石板上沾着鱼鳞。阿棠把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽,鱼鳞在鱼筐上发亮。阿棠的外袍下摆沾了泥水,泥水在鱼筐里打滑。",
+    "t09": "叶知微到了潮汐档案馆,袖口带着干纸。沈砚把潮汐簿摊在铜灯下,干纸被关在铜灯下。叶知微把一叠干纸放在桌角,纸角被风掀起。沈砚的袖口沾了墨,纸角被关在手里。",
+    "t10": "顾行舟把渡船系在栈桥的木桩上,船灯从雾里透出来。沈砚把系泊绳从浅滩拖回岸上。顾行舟的外袍下摆被雾水打湿,手背上沾着水沫。沈砚靠在墙边站了一会儿,心跳才慢下来。",
+    "t11": "沈砚沿着石阶走进旧灯塔,鞋底在潮气里打滑。叶知微把玻璃罩上的盐雾擦掉,灯罩透亮起来。沈砚换好塔顶的灯芯,火苗收在手里。叶知微的袖口沾了铜油,铜油还留在上面。",
+    "t12": "阿棠从早市过来,抱着一叠纸灯笼进了潮生巷。沈砚把油纸伞收拢靠在墙根,纸灯笼的收口被收拢。阿棠把鱼筐放在门槛边,纸灯笼还带着潮气。沈砚鞋底沾了湿石板的水。",
+    "t13": "叶知微到了潮汐档案馆,长桌上沾着盐沫。叶知微把一叠干纸放在桌角,纸角被风掀起。叶知微的袖口沾了墨,纸角被关在手里。",
+    "t14": "顾行舟从潮渡上来,扶着铁链走到雾堤脚下。顾行舟把缆绳绕在钟架上,把缆绳绕在钟架上。顾行舟的外袍下摆被雾水打湿,手背上沾着盐沫。",
+    "t15": "韩渡从潮生巷一路走到潮渡脚下,抬头看了看船灯。韩渡把渡船推离栈桥,船灯从雾里透出来。韩渡的手背沾着盐沫,在船灯里发亮。",
+    "t16": "沈砚从潮汐档案馆出来,回到潮生巷。沈砚把备用钥匙塞进油布包的外层。沈砚靠在墙根上站了一会儿,心跳才慢下来。",
+    "t17": "阿棠从潮生巷走进早市,围裙上沾着鱼鳞。阿棠把银鳞鱼搬上案板,鱼筐在石板上沾着鱼鳞。阿棠的辫梢沾了白汽,鱼鳞在鱼筐上发亮。",
+    "t18": "叶知微从潮渡回来,走进旧灯塔。叶知微把玻璃罩擦得透亮,玻璃罩透亮起来。叶知微的袖口沾了铜油,铜油已经透出来。叶知微把抹布搭回梯脚,玻璃罩已经透出来。",
+    "t19": "阿棠的袖口沾了鱼鳞,鱼鳞在鱼筐上沾了鱼鳞。沈砚的外袍下摆沾了泥水。阿棠把银鳞鱼装进鱼筐,鱼筐还沾着鱼鳞。沈砚把油纸伞收拢靠在摊棚边。",
+    "t20": "警示灯的玻璃罩被风吹歪,玻璃罩被风吹歪。钟绳磨出毛边。沈砚扶正警示灯,把警示灯扶正。韩渡把钟绳重新绕在钟架上,钟绳绷直了。",
+    "t21": "他等了一会儿,墙角那点发紧的感觉散了。铜灯罩上积了灰。沈砚把铜灯擦亮,铜灯透亮起来。叶知微把干纸放在桌角,纸角还带着潮气。",
+    "t22": "泥水结了一层白盐。木桩缠着的旧缆绳断了,木桩断了。顾行舟把缆绳重新绕上木桩,木桩重新绕上木桩。沈砚把系泊绳拖回岸上,泥滩被雾撞进泥里。",
+    "t23": "玻璃罩上蒙了盐雾。铁链上结了锈,铁链在玻璃罩上结了锈。叶知微把玻璃罩上的盐雾擦掉,灯罩透亮起来。沈砚换好塔顶的灯芯,火苗收在手里。",
+    "t24": "纸灯笼被风扯破一角,纸角被风扯破一角。纸灯笼的外面积了泥。沈砚扶正纸灯笼,纸灯笼靠在墙根上蹭了两下。阿棠把鱼筐放在门槛边,纸灯笼还带着潮气。"
+   }
+  }
+ }
+}

@@ -1,0 +1,282 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import { ControllerDriver, initialMemory, type WorldModelPort } from '../controller';
+import type { ModelTask } from '../schedule';
+import type { InitialTemplate, Json } from '../types';
+import { WorldApiError } from '../transport';
+import { LocalWorldTransport } from './transport';
+import { SHORT_STATE } from '../runtime/b3-short-samples';
+
+const kernelFixture = JSON.parse(readFileSync(resolve('scripts/parallel-kernel/fixtures/kernel-differential.json'), 'utf8'));
+
+function template(): InitialTemplate {
+  const initial = structuredClone(SHORT_STATE.initial) as InitialTemplate & { worldId?: string };
+  delete initial.worldId;
+  return initial;
+}
+
+/** Scripted model outputs for one normal action round. The point is to
+ * exercise the real driver + local transport, not to judge narration. */
+function scriptedModel(log: string[]): WorldModelPort {
+  return {
+    async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
+      log.push(`${task}:${key}`);
+      if (task === 'pointPlan') return [{ pointId: 'p1', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_a', 'person_c'] }];
+      if (task === 'action') {
+        const data = input as { actor: string; advance: { inputText: string | null }; workingState: { protagonistId: string } };
+        return data.actor === data.workingState.protagonistId
+          ? { kind: 'act', text: data.advance.inputText ?? '我走到门厅。' }
+          : { kind: 'skip' };
+      }
+      if (task === 'targets') return { targets: [] };
+      if (task === 'results') return { person_c: '周宁从走廊走进门厅。' };
+      if (task === 'updates') {
+        return [{ stage: 'position', changes: { person_c: { entityId: 'person_c', positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } } }];
+      }
+      if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
+      if (task === 'narration') return key === 'p1' ? '门厅里安静下来。周宁在门厅停下脚步，回头看了一眼走廊。' : '走廊里很安静，盒子还盖着。';
+      throw new Error(`unexpected task ${task}`);
+    },
+  };
+}
+
+describe('LocalWorldTransport', () => {
+  it('plays one normal round through the real controller and commits state', async () => {
+    const initial = template();
+    const order = Object.keys(initial.characters).sort();
+    const transport = await LocalWorldTransport.create(initial, { roll: () => 13 });
+    const log: string[] = [];
+    const memory = initialMemory('test_local', 'holder_local');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: '我走到门厅。', order };
+    memory.allocPlan = {
+      allocationKey: 'test_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const driver = new ControllerDriver({ transport, model: scriptedModel(log) }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+    expect(log.some((entry) => entry.startsWith('narration:'))).toBe(true);
+    expect(log).toContain('narration:p1');
+    const snapshot = transport.snapshot();
+    expect(snapshot.version).toBe(1);
+    expect(snapshot.state.characters.person_c.position.containerId).toBe('hall');
+    expect(snapshot.narrations.p1.status).toBe('ready');
+    expect(snapshot.round?.cursor).toBe(order.length);
+    expect(snapshot.control.phase).toBe('complete');
+  });
+});
+
+import { LocalGameSession } from './session';
+
+describe('LocalGameSession', () => {
+  it('starts a world, accepts a command and hands back', async () => {
+    const initial = template();
+    const log: string[] = [];
+    let saved: unknown = null;
+    const session = await LocalGameSession.create(initial, scriptedModel(log), { onPersist: (snap) => { saved = snap; } });
+    const boot = await session.start();
+    expect(boot.kind).not.toBe('error');
+    expect(log.some((entry) => entry.startsWith('narration:'))).toBe(true);
+    const status = await session.submit('我走到门厅。');
+    expect(status.kind).not.toBe('error');
+    expect(session.snapshot.transport.version).toBe(1);
+    expect(session.snapshot.commands).toEqual(['我走到门厅。']);
+    expect(saved).not.toBeNull();
+    const state = await session.state();
+    expect(state.characters.person_c.position.containerId).toBe('hall');
+    const restored = await LocalGameSession.restore(session.snapshot, scriptedModel([]));
+    const state2 = await restored.state();
+    expect(state2.characters.person_c.position.containerId).toBe('hall');
+  });
+
+  it('refuses to restore a record whose point chain is broken', async () => {
+    const initial = template();
+    const session = await LocalGameSession.create(initial, scriptedModel([]));
+    await session.start();
+    await session.submit('我走到门厅。');
+    const snapshot = structuredClone(session.snapshot);
+    snapshot.transport.points[snapshot.transport.headPointId].previousPointId = 'missing_point';
+    await expect(LocalGameSession.restore(snapshot, scriptedModel([])))
+      .rejects.toThrow(/local_restore_invariant:.*point_chain_broken/u);
+  });
+
+  it('closes an advance whose settlement failed before commit', async () => {
+    const initial = template();
+    const log: string[] = [];
+    let failUpdates = false;
+    const base = scriptedModel(log);
+    let pointSeq = 0;
+    const model: WorldModelPort = {
+      async generate(task, key, input): Promise<Json> {
+        // Each round needs its own point id; the shared fixture always says p1.
+        if (task === 'pointPlan') {
+          pointSeq += 1;
+          return [{ pointId: `p_seq_${pointSeq}`, kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_a', 'person_c'] }];
+        }
+        // A settlement failure before the point commits is what left the
+        // 2026-11-20 ten-turn run stuck: every later submit was turn_in_progress.
+        if (failUpdates && task === 'updates') throw new Error('settlement_failed:updates:tasks:model_output_invalid');
+        return base.generate(task, key, input);
+      },
+    };
+    const session = await LocalGameSession.create(initial, model);
+    await session.start();
+    const first = await session.submit('我走到门厅。');
+    expect(first.kind).not.toBe('error');
+    failUpdates = true;
+    await expect(session.submit('我跑向西回廊。')).rejects.toThrow(/settlement_failed/u);
+    expect(session.snapshot.transport.advance).not.toBeNull();
+    failUpdates = false;
+    const cancelled = await session.cancel('turn_failed');
+    expect(cancelled.kind).not.toBe('error');
+    expect(session.snapshot.transport.advance).toBeNull();
+    const next = await session.submit('我留在门厅。');
+    expect(next.kind).not.toBe('error');
+  }, 30000);
+});
+
+
+describe('free-day static world', () => {
+  it('loads the full WorldState and settles a no-change point for the whole roster', async () => {
+    const raw = JSON.parse(readFileSync(resolve('public/worlds/dragon-raja-free-day.world.json'), 'utf8'));
+    const initial = structuredClone(raw.initial) as InitialTemplate & { worldId?: string };
+    delete initial.worldId;
+    const order = Object.keys(initial.characters).sort();
+    const calls: string[] = [];
+    const model: WorldModelPort = {
+      async generate(task, key, input): Promise<Json> {
+        calls.push(`${task}:${key}`);
+        if (task === 'pointPlan') return [{ pointId: 'p_0', kind: 'normal',
+          timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order }];
+        if (task === 'action') {
+          const data = input as { actor: string; workingState: { protagonistId: string }; advance: { inputText: string | null } };
+          return data.actor === data.workingState.protagonistId ? { kind: 'act', text: data.advance.inputText ?? '我留在原处观察。' } : { kind: 'skip' };
+        }
+        if (task === 'targets') return { targets: [] };
+        if (task === 'results') return {};
+        if (task === 'updates') return [];
+        if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
+        if (task === 'narration') return '西侧服务巷里，路明非停了一下。远处钟楼的影子还压在操场上。';
+        throw new Error(`unexpected ${task}`);
+      },
+    };
+    const session = await LocalGameSession.create(initial, model);
+    const boot = await session.start();
+    expect(boot.kind).not.toBe('error');
+    const status = await session.submit('我留在原处观察。');
+    expect(status.kind).not.toBe('error');
+    const snap = session.snapshot.transport;
+    expect(snap.initial.locations).toBeDefined();
+    expect(snap.version).toBe(1);
+    expect(snap.state.time.dateTime).toBe('2009-10-17T15:21:00');
+    expect(snap.round?.cursor).toBe(order.length);
+  }, 30000);
+});
+
+/** Drives the real controller + local transport over the T01 fixture and
+ * compares the committed state with the pinned Python digest. This covers the
+ * transport's group normalization, merge, preview, commit and persistence as
+ * one chain rather than testing the kernel functions in isolation. */
+function t01Model(log: string[]): WorldModelPort {
+  return {
+    async generate(task, key, input): Promise<Json> {
+      log.push(`${task}:${key}`);
+      if (task === 'pointPlan') {
+        return [{ pointId: 'p1', kind: 'normal',
+          timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } },
+          actorIds: ['person_a'] }];
+      }
+      if (task === 'action') {
+        const data = input as { actor: string; workingState: { protagonistId: string }; advance: { inputText: string | null } };
+        return data.actor === data.workingState.protagonistId
+          ? { kind: 'act', text: data.advance.inputText ?? '我走进走廊。' }
+          : { kind: 'skip' };
+      }
+      if (task === 'targets') return { targets: [] };
+      if (task === 'results') return {};
+      if (task === 'updates') {
+        return [{ stage: 'position', changes: { person_a: {
+          entityId: 'person_a',
+          positionSet: { containerId: 'corridor', slotId: null, relativeTo: null },
+        } } }];
+      }
+      if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
+      if (task === 'narration') return '走廊里空着，只有门缝下的光。';
+      throw new Error(`unexpected task ${task}`);
+    },
+  };
+}
+
+describe('LocalWorldTransport differential', () => {
+  it('commits the T01 fixture point to the pinned Python state digest', async () => {
+    const initial = structuredClone(kernelFixture.normal.initial) as InitialTemplate & { worldId?: string };
+    delete initial.worldId;
+    const order = Object.keys(initial.characters).sort();
+    const transport = await LocalWorldTransport.create(initial, { worldId: 'world_school', roll: () => 13 });
+    const memory = initialMemory('world_school', 'holder_school');
+    memory.initialTemplate = initial;
+    memory.playerInput = { text: '我走进走廊。', order };
+    memory.allocPlan = {
+      allocationKey: 't01_command',
+      slots: [
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' },
+        { slotKey: 'round', kind: 'round' }, { slotKey: 'point', kind: 'point' },
+        ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
+      ],
+    };
+    const log: string[] = [];
+    const driver = new ControllerDriver({ transport, model: t01Model(log) }, memory);
+    const status = await driver.run();
+    expect(status.kind).not.toBe('error');
+    const snapshot = transport.snapshot();
+    expect(snapshot.version).toBe(1);
+    expect(snapshot.pointStates[snapshot.headPointId].stateDigest)
+      .toBe(kernelFixture.normal.stateDigestAfter);
+    expect(snapshot.state).toEqual(kernelFixture.normal.stateAfter);
+    expect(snapshot.round?.cursor).toBe(order.length);
+  });
+});
+
+describe('LocalWorldTransport transactions', () => {
+  it('rejects an invalid create and leaves the committed record untouched', async () => {
+    const transport = await LocalWorldTransport.create(template(), { worldId: 'world_tx', roll: () => 13 });
+    const before = transport.snapshot();
+    const invalid = template() as InitialTemplate & { characters: Record<string, { initialPosition: { containerId: string } }> };
+    invalid.characters.person_a.initialPosition.containerId = 'missing_room';
+    const failure = await transport.execute('create_world', {
+      protocolVersion: 2, requestId: 'req_bad_create', initial: invalid,
+    } as never, { worldId: 'world_tx' }).then(() => null, (error: unknown) => error);
+    expect(failure).toBeInstanceOf(WorldApiError);
+    expect(['request_malformed', 'version_mismatch']).toContain((failure as WorldApiError).response.error.code);
+    const after = transport.snapshot();
+    expect(after.worldId).toBe(before.worldId);
+    expect(after.version).toBe(before.version);
+    expect(after.pointStates[after.headPointId].stateDigest).toBe(before.pointStates[before.headPointId].stateDigest);
+  });
+
+  it('replays an identical write without applying it twice', async () => {
+    const transport = await LocalWorldTransport.create(template(), { worldId: 'world_idem', roll: () => 13 });
+    const before = transport.snapshot();
+    const request = {
+      protocolVersion: 2, requestId: 'req_pause_once', worldId: 'world_idem',
+      leaseToken: before.lease!.leaseToken, fenceEpoch: before.lease!.fenceEpoch,
+      expectedPointId: before.headPointId, expectedVersion: before.version,
+      expectedCheckpointRevision: before.control.revision, operation: 'pause',
+    };
+    await transport.execute('checkpoint_pause', request as never, { worldId: 'world_idem' });
+    const paused = transport.snapshot();
+    expect(paused.control.paused).toBe(true);
+    expect(paused.control.revision).toBe(before.control.revision + 1);
+    const replay = await transport.execute('checkpoint_pause', request as never, { worldId: 'world_idem' });
+    expect(replay.replayed).toBe(true);
+    const after = transport.snapshot();
+    expect(after.control.revision).toBe(paused.control.revision);
+    expect(after.control.paused).toBe(true);
+  });
+});

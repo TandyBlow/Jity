@@ -1,0 +1,16 @@
+{
+ "n": 1351,
+ "states": {
+  "undetermined": 1047,
+  "pass": 201,
+  "mismatch": 103
+ },
+ "passShare": 0.1488,
+ "undeterminedShare": 0.775,
+ "wrongPassed": [],
+ "rejectedButConveyed": 86,
+ "rejectedCauses": {
+  "no arrival: the destination is only name": 17,
+  "arrival holds, adds content": 69
+ }
+}

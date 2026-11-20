@@ -1,0 +1,82 @@
+diff --git a/frontend/src/lib/world-engine/local/persistence/resume.ts b/frontend/src/lib/world-engine/local/persistence/resume.ts
+index abb282eb..97c3202b 100644
+--- a/frontend/src/lib/world-engine/local/persistence/resume.ts
++++ b/frontend/src/lib/world-engine/local/persistence/resume.ts
+@@ -63,6 +63,9 @@ function sameTime(a: PlannedPoint, work: { timeAdvance: TimeAdvance }): boolean
+ function planUsable(record: LocalRecord, checkpoint: LocalSchedulerCheckpoint): boolean {
+   if (!Array.isArray(checkpoint.plan) || checkpoint.plan.length === 0) return false;
+   if (!Number.isInteger(checkpoint.planIndex) || checkpoint.planIndex < 0 || checkpoint.planIndex > checkpoint.plan.length) return false;
++  // A plan whose points were all committed is not resumable without an open
++  // point: restoring it would make the next command wait on an empty plan.
++  if (checkpoint.planIndex >= checkpoint.plan.length && !record.work) return false;
+   const committed = roundPoints(record, checkpoint.roundId);
+   if (committed.length !== checkpoint.planIndex) return false;
+   for (let index = 0; index < committed.length; index++) {
+@@ -161,7 +164,12 @@ export function rebuildSessionMemory(input: ResumeRebuildInput): ResumeRebuildRe
+   let planIndex = 0;
+   if (round) {
+     const checkpoint = input.checkpoint ?? null;
+-    if (checkpoint && checkpoint.roundId === round.roundId && planUsable(record, checkpoint)) {
++    if (round.conclusion) {
++      // The round already concluded. Its plan (and any checkpoint captured
++      // before the conclusion) is finished work: the next command needs a
++      // fresh plan from the model, not a replay of this one.
++      notes.push('plan_pending_model_after_conclusion');
++    } else if (checkpoint && checkpoint.roundId === round.roundId && planUsable(record, checkpoint)) {
+       plan = clone(checkpoint.plan);
+       planIndex = checkpoint.planIndex;
+       notes.push('plan_restored');
+diff --git a/frontend/src/lib/world-engine/local/session-recovery.test.ts b/frontend/src/lib/world-engine/local/session-recovery.test.ts
+index 02beaaa8..f9fc237e 100644
+--- a/frontend/src/lib/world-engine/local/session-recovery.test.ts
++++ b/frontend/src/lib/world-engine/local/session-recovery.test.ts
+@@ -598,4 +598,35 @@ describe('LocalGameSession durability', () => {
+     expect((await store.loadLegacyBackup(corrupt.backupKey!))?.raw).toBe('{not json');
+     expect((await store.load(legacySession.worldId))!.metadata.revision).toBe(1);
+   });
++
++  it('a refresh after a concluded round plans the next command again', async () => {
++    const store = createLocalProgressStore(new MemoryProgressBackend());
++    const session = await LocalGameSession.create(template(), scriptedModel([]), {
++      storage: store, sessionId: 'tab_a', leaseHeartbeat: false, roll: () => 13,
++    });
++    await session.start();
++    expect((await session.submit('我打开盒盖。')).kind).not.toBe('error');
++    await session.close();
++
++    // Older saves can carry a checkpoint captured before the conclusion whose
++    // plan is fully consumed; restoring it must not make the next command wait
++    // on an empty plan.
++    const saved = await store.load(session.worldId);
++    const point = Object.values(saved!.snapshot.transport.points)[0];
++    const legacyCheckpoint = {
++      roundId: point.roundId,
++      plan: [{ pointId: point.id, kind: point.kind, timeAdvance: point.timeAdvance, actorIds: [...saved!.snapshot.transport.round!.order] }],
++      planIndex: 1,
++    };
++    await store.save(session.worldId, { ...saved!.snapshot, checkpoint: legacyCheckpoint });
++
++    const restored = await LocalGameSession.restoreFromStore(store, session.worldId, scriptedModel([]), {
++      sessionId: 'tab_b', leaseHeartbeat: false, roll: () => 13,
++    });
++    expect(restored).not.toBeNull();
++    const next = await restored!.submit('我退回走廊。');
++    expect(next.kind).not.toBe('error');
++    expect(restored!.commandsPlayed).toEqual(['我打开盒盖。', '我退回走廊。']);
++    expect(Object.keys(restored!.snapshot.transport.points)).toHaveLength(2);
++  });
+ });
+diff --git a/frontend/src/lib/world-engine/local/session.ts b/frontend/src/lib/world-engine/local/session.ts
+index f1ee7f65..1c016aed 100644
+--- a/frontend/src/lib/world-engine/local/session.ts
++++ b/frontend/src/lib/world-engine/local/session.ts
+@@ -370,6 +370,9 @@ export class LocalGameSession {
+     if (!round) return null;
+     const memory = this.driver.getMemory();
+     if (!memory.plan || memory.plan.length === 0) return null;
++    // A fully consumed plan is not a checkpoint: persisting it replays the end
++    // of a finished round and blocks the next command.
++    if (memory.planIndex >= memory.plan.length) return null;
+     return { roundId: round.roundId, plan: memory.plan, planIndex: memory.planIndex };
+   }
+ 

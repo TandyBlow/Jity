@@ -1,0 +1,275 @@
+{
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+    "platform": "Win32",
+    "hardwareConcurrency": 20,
+    "deviceMemoryGB": 16,
+    "crossOriginIsolated": true,
+    "webgpuExposed": true,
+    "wasmSimd": true,
+    "wasmThreadsPossible": true,
+    "collectedAt": "2026-10-08T12:18:31.994Z"
+  },
+  "model": {
+    "sourceLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "sourceBytes": 396705472,
+    "multithread": true,
+    "numThreads": 4,
+    "nCtx": 4096,
+    "nCtxTrain": 40960,
+    "nVocab": 151936,
+    "nEmbd": 1024,
+    "nLayer": 28,
+    "libllamaVersion": "b11364-46ca246",
+    "generalMeta": {
+      "general.file_type": "15",
+      "general.quantization_version": "2",
+      "general.name": "Qwen3-0.6B",
+      "general.quantized_by": "Unsloth",
+      "general.repo_url": "https://huggingface.co/unsloth",
+      "general.architecture": "qwen3",
+      "general.basename": "Qwen3-0.6B",
+      "general.type": "model",
+      "general.size_label": "0.6B"
+    },
+    "loadParams": {
+      "n_ctx": 4096,
+      "n_batch": 2048,
+      "n_ubatch": 64,
+      "n_threads": 4
+    }
+  },
+  "suites": [
+    {
+      "id": "checkpoints",
+      "label": "检查点",
+      "startedAt": "2026-10-08T12:18:33.797Z",
+      "config": {
+        "totalTokens": [
+          512
+        ],
+        "memoryTokens": [
+          256
+        ],
+        "decodeTokens": 16,
+        "prefillRepeats": 1,
+        "decodeRepeats": 1,
+        "nCtx": 4096,
+        "nBatch": 2048,
+        "nUbatch": 64,
+        "nThreads": 4,
+        "chatReference": false,
+        "acceptEnabled": false,
+        "acceptOutputTokens": 512
+      },
+      "model": null,
+      "modelLabel": null,
+      "runs": [
+        {
+          "id": "load-1-1791461913797",
+          "kind": "load",
+          "label": "URL: http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "startedAt": "2026-10-08T12:18:33.797Z",
+          "wallMs": 11983,
+          "heap": {
+            "usedMB": 37.8,
+            "totalMB": 45.2
+          }
+        },
+        {
+          "id": "memory-2-1791461925780",
+          "kind": "memory",
+          "label": "加载后内存采样",
+          "startedAt": "2026-10-08T12:18:45.780Z",
+          "wallMs": 0,
+          "heap": {
+            "usedMB": 38,
+            "totalMB": 47.2
+          },
+          "memory": {
+            "usedMB": 37.9,
+            "totalMB": 39.2,
+            "preciseMB": 1624.2,
+            "breakdownMB": {
+              "DOM": 0,
+              "JavaScript": 1623,
+              "Shared": 1,
+              "other": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "suite-1-1791461925897",
+      "label": "套件 1",
+      "startedAt": "2026-10-08T12:18:45.897Z",
+      "config": {
+        "totalTokens": [
+          512
+        ],
+        "memoryTokens": [
+          256
+        ],
+        "decodeTokens": 16,
+        "prefillRepeats": 1,
+        "decodeRepeats": 1,
+        "nCtx": 4096,
+        "nBatch": 2048,
+        "nUbatch": 64,
+        "nThreads": 4,
+        "chatReference": false,
+        "acceptEnabled": false,
+        "acceptOutputTokens": 512
+      },
+      "model": {
+        "sourceLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+        "sourceBytes": 396705472,
+        "multithread": true,
+        "numThreads": 4,
+        "nCtx": 4096,
+        "nCtxTrain": 40960,
+        "nVocab": 151936,
+        "nEmbd": 1024,
+        "nLayer": 28,
+        "libllamaVersion": "b11364-46ca246",
+        "generalMeta": {
+          "general.file_type": "15",
+          "general.quantization_version": "2",
+          "general.name": "Qwen3-0.6B",
+          "general.quantized_by": "Unsloth",
+          "general.repo_url": "https://huggingface.co/unsloth",
+          "general.architecture": "qwen3",
+          "general.basename": "Qwen3-0.6B",
+          "general.type": "model",
+          "general.size_label": "0.6B"
+        },
+        "loadParams": {
+          "n_ctx": 4096,
+          "n_batch": 2048,
+          "n_ubatch": 64,
+          "n_threads": 4
+        }
+      },
+      "modelLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "runs": [
+        {
+          "id": "prefill-3-1791461925898",
+          "kind": "prefill",
+          "label": "512 tok（记忆 256）· 第 1 遍",
+          "startedAt": "2026-10-08T12:18:45.898Z",
+          "wallMs": 27889,
+          "heap": {
+            "usedMB": 38.5,
+            "totalMB": 47.4
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 256,
+          "seed": 445,
+          "promptTokens": 366,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 27846,
+          "promptPerSecond": 13.143758675419404,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791461925897"
+        },
+        {
+          "id": "decode-4-1791461953788",
+          "kind": "decode",
+          "label": "512 tok 输入 · 生成 16 token · 第 1 遍",
+          "startedAt": "2026-10-08T12:19:13.788Z",
+          "wallMs": 42697,
+          "heap": {
+            "usedMB": 37.3,
+            "totalMB": 38.4
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 16,
+          "seed": 9901,
+          "promptTokens": 507,
+          "predictedTokens": 16,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 38893,
+          "promptPerSecond": 13.035853611220707,
+          "predictedMs": 3747,
+          "predictedPerSecond": 4.0036406438921786,
+          "suiteId": "suite-1-1791461925897"
+        },
+        {
+          "id": "abort-5-1791461996485",
+          "kind": "abort",
+          "label": "输入处理阶段取消 · 200ms",
+          "startedAt": "2026-10-08T12:19:56.485Z",
+          "wallMs": 33984,
+          "heap": {
+            "usedMB": 38,
+            "totalMB": 39.2
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 64,
+          "maxTokens": 256,
+          "abortAfterMs": 200,
+          "seed": 31337,
+          "abortOutcome": "cancelled",
+          "streamedChunks": 0,
+          "generatedChars": 0,
+          "abortPhase": "prefill",
+          "stopLatencyMs": 33776,
+          "suiteId": "suite-1-1791461925897"
+        },
+        {
+          "id": "abort-6-1791462030470",
+          "kind": "abort",
+          "label": "生成阶段取消 · 28246ms",
+          "startedAt": "2026-10-08T12:20:30.470Z",
+          "wallMs": 35045,
+          "heap": {
+            "usedMB": 38.2,
+            "totalMB": 40.2
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 64,
+          "maxTokens": 256,
+          "abortAfterMs": 28246,
+          "seed": 31337,
+          "abortOutcome": "cancelled",
+          "streamedChunks": 0,
+          "generatedChars": 0,
+          "abortPhase": "prefill",
+          "stopLatencyMs": 6792,
+          "suiteId": "suite-1-1791461925897"
+        },
+        {
+          "id": "memory-7-1791462065516",
+          "kind": "memory",
+          "label": "套件后内存采样",
+          "startedAt": "2026-10-08T12:21:05.516Z",
+          "wallMs": 0,
+          "heap": {
+            "usedMB": 38.2,
+            "totalMB": 40.2
+          },
+          "memory": {
+            "usedMB": 37.5,
+            "totalMB": 38.7,
+            "preciseMB": 1745.8,
+            "breakdownMB": {
+              "other": 0,
+              "JavaScript": 1745,
+              "DOM": 0,
+              "Shared": 1
+            }
+          },
+          "suiteId": "suite-1-1791461925897"
+        }
+      ],
+      "finishedAt": "2026-10-08T12:22:05.544Z"
+    }
+  ],
+  "exportedAt": "2026-10-08T12:22:16.112Z"
+}

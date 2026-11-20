@@ -1,0 +1,247 @@
+{
+ "purpose": "mixed exemplars: same 12 targets, six inputs without the name in the value",
+ "job": {
+  "id": 241115,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "node": "hpcgpu13",
+  "units": 925,
+  "arms": [
+   "moved",
+   "ctl",
+   "mix"
+  ]
+ },
+ "design": {
+  "control": "aug-r1 experiment pools byte-identical",
+  "experiment": "6 of 12 inputs rewritten without the name",
+  "targets": "byte-identical between arms; the old \"targets must differ\" assertion is replaced by \"targets equal, inputs differ on six rows\"",
+  "nameInsideValue": {
+   "ctl": 11,
+   "mix": 5,
+   "of": 12
+  }
+ },
+ "namepair": {
+  "moved": {
+   "passAll": "6/12",
+   "withName": "0/6",
+   "withoutName": "6/6",
+   "referenceKept": "12/12",
+   "relationKept": "9/12",
+   "syntaxBroken": 3
+  },
+  "ctl": {
+   "passAll": "7/12",
+   "withName": "6/6",
+   "withoutName": "1/6",
+   "referenceKept": "7/12",
+   "relationKept": "12/12",
+   "syntaxBroken": 0
+  },
+  "mix": {
+   "passAll": "10/12",
+   "withName": "6/6",
+   "withoutName": "4/6",
+   "referenceKept": "12/12",
+   "relationKept": "12/12",
+   "syntaxBroken": 1,
+   "misses": {
+    "p-np3b": "搭在钟架的钟绳滑下来 — name becomes possessor, 上 dropped",
+    "p-np6b": "压在门槛上,压在门槛上 — repetition collapse"
+   }
+  }
+ },
+ "relationProbes": {
+  "moved": {
+   "pass": 1,
+   "relationKept": 7,
+   "attributionWrong": 9,
+   "syntaxBroken": 8
+  },
+  "ctl": {
+   "pass": 8,
+   "relationKept": 8,
+   "attributionWrong": 2,
+   "syntaxBroken": 0
+  },
+  "mix": {
+   "pass": 10,
+   "relationKept": 8,
+   "attributionWrong": 0,
+   "syntaxBroken": 0
+  }
+ },
+ "regression": {
+  "moved": {
+   "machine": {
+    "S": 185,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "human": 184,
+   "units": 185,
+   "added": 2,
+   "language": 3
+  },
+  "ctl": {
+   "machine": {
+    "S": 181,
+    "O": 0,
+    "A": 1,
+    "REVIEW": 3
+   },
+   "human": 184,
+   "units": 185,
+   "added": 0,
+   "language": 3
+  },
+  "mix": {
+   "machine": {
+    "S": 185,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "human": 184,
+   "units": 185,
+   "added": 0,
+   "language": 2
+  }
+ },
+ "verdict": {
+  "bothSides": "fails: total 10/12 meets 10, but the without-name side is 4/6 against the declared 5/6",
+  "notNameOnly": "passes: relation 12/12, syntax broken 1",
+  "relationProbes": "passes: 10/10",
+  "factRegression": "fails: t21:f0 writes 潮汐簿的边缘毛糙, replacing 缺页 with the book name (machine S at 0.67)",
+  "addedRegression": "passes: 0 against 2",
+  "languageRegression": "passes: 2 against 3",
+  "overall": "not passed, on two clauses",
+  "reason": "the insertion skill is learned (1/6 -> 4/6 without the name, with-name side intact, prefix stacking gone) but the two remaining misses are two different failures, and one new fact loss appears. The human total stays 184/185 only because t22:f1 is fixed in the same run; a listed loss must not be offset by the total",
+  "wins": [
+   "t22:f1 now 缠在木桩上的旧缆绳断了",
+   "relation probes 10/10",
+   "cf24 clean sources 24/24",
+   "added 0, language 2",
+   "t08/t17/v12 f2 now 沾了白汽 matching the fact"
+  ]
+ },
+ "reproducibility": "the ctl arm retrained to the same checkpoint hash as the previous exp arm (e3de7659), same ids (0793d32d) and same targets (bb0a301f)",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/moved-cf24/cf24-baseline.json",
+   "bytes": 137407,
+   "sha256": "a12b0d6c8ee26e7050a3ba5a7bcd3207b4dfbec0821e38cb0fdf8194d26e7eb2"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/moved-final24/final24-baseline.json",
+   "bytes": 114900,
+   "sha256": "fbc0431febdb0b7b54559e5a6efc1e50074bc84490f2a1e0033f0160773713b0"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/moved-moved24/moved24-baseline.json",
+   "bytes": 38262,
+   "sha256": "abee7b4c5164b0e291e5049e2ed74017423e27335f71b39060c03e794781ee5f"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/moved-relation/relation-baseline.json",
+   "bytes": 17391,
+   "sha256": "7c77769a59c8b94af033c4219de578ce06ca3a569f610e93b0417e352d5b9f0b"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/moved-namepair/namepair-baseline.json",
+   "bytes": 20241,
+   "sha256": "97966614dcd2dc2cdfdb0ce42a2e98f624f367690b2dcfd133333436c64fd8a0"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/ctl-cf24/cf24-baseline.json",
+   "bytes": 137357,
+   "sha256": "ff93fcfc350a77d5ce2bdac52f84977049348e8d4b46cbd7db9dbe75f159cfdb"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/ctl-final24/final24-baseline.json",
+   "bytes": 114910,
+   "sha256": "8ed950af90374943f6929ac5fdb4fc298393f00e88efa4f01f52653ce64a5b9f"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/ctl-moved24/moved24-baseline.json",
+   "bytes": 38248,
+   "sha256": "fc42b0acf6c372c28a0a6a4efa46bcde56b84b8d053fc76df9eef77b343988d1"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/ctl-relation/relation-baseline.json",
+   "bytes": 17334,
+   "sha256": "90a146674a53a605f1be0d63540ca1449eac8d7181f938092612eedad0caa1ff"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/ctl-namepair/namepair-baseline.json",
+   "bytes": 20197,
+   "sha256": "a5e9244e902365dd526a1de5786a74e301f1612aa29ae6688229f954908a6eb9"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mix-cf24/cf24-baseline.json",
+   "bytes": 137350,
+   "sha256": "23cadad6a338ceddad40f43177b609c680719aa6bd700a1e3af2e62e0d5e0bb6"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mix-final24/final24-baseline.json",
+   "bytes": 114920,
+   "sha256": "283991069eb1b56d1efcfad46854e924950db393ec96497faba8d01ce5e8381a"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mix-moved24/moved24-baseline.json",
+   "bytes": 38264,
+   "sha256": "a6ca7cf97159247673df2fd3171e8e2737fc5336670e1948958987abf14c75a6"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mix-relation/relation-baseline.json",
+   "bytes": 17351,
+   "sha256": "37da1549b0379164883d374ff9465a560f5ce6a0733248533ebc36c6b2dab68d"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mix-namepair/namepair-baseline.json",
+   "bytes": 20245,
+   "sha256": "9fe96d245d539cb5c0bbf6c6b242e80391145600461d18c08562b657cf260d68"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/namepair-judged.json",
+   "bytes": 12735,
+   "sha256": "8a0f5b07c66f887b291c680f091fbdb91ffcb4136b8a915f31e652b7d1fba45a"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/frame-judged.json",
+   "bytes": 7035,
+   "sha256": "7d7520aa3d33dcea01b6a832e4b3bd57764d1a6637933cb6ea3c2fffff5c9cc3"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/review-r6.json",
+   "bytes": 2090,
+   "sha256": "5d73203f3215f108956adf318d81304f04aa488facb39fd696637ff15679e25f"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/summary-r6.json",
+   "bytes": 684,
+   "sha256": "ff610b7069baab688b658aef8089fae72db3754f0cdc8e3ebfc6ebcbd851ad76"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mixed-freeze.json",
+   "bytes": 3037,
+   "sha256": "e3a07254af019e1839f83ebdeede53aaa8df6494fbe56135ba67a7f2dcc19c78"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/mixed-rule.json",
+   "bytes": 2232,
+   "sha256": "191c41402d48281b7ef9572d5ca56d013be4725eb3351da107ded149afb929e9"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/train-ctl.json",
+   "bytes": 2044,
+   "sha256": "a8eece4b63ea628fadd1ab25cb03b102fc0baca44828ac5febd7cb68a68b14bd"
+  },
+  {
+   "path": "artifacts/next-acceptance/mixed-r1/train-mix.json",
+   "bytes": 2043,
+   "sha256": "981f4fe987939b8a4141f1a2e4a4e8f61513a19be6099ff212574d897bc1249b"
+  }
+ ]
+}

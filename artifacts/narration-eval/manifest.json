@@ -1,0 +1,186 @@
+{
+  "formatVersion": 1,
+  "status": "COMPLETED",
+  "recordedAt": "2026-10-28T10:42:47.028Z",
+  "batch": "narration-eval-2 (state alignment and natural expression)",
+  "branch": "world-narration-eval",
+  "base": "48eb3a0",
+  "source": {
+    "head": "ffdd8478f4ca261272907050d6cb90e6768f65f5",
+    "status": "",
+    "sha256": {
+      "frontend/scripts/run-narration-eval.mjs": "5cf60cc89b25970b3dd3a56abff89973854bc348743f1472917b3a3f2219e598",
+      "frontend/src/lib/world-engine/runtime/narration-alignment.ts": "5403dada0426a5f6a4d1efd89545cb89b06fb90b4e7e06f0224af20fc49f3f20",
+      "frontend/src/lib/world-engine/runtime/narration-eval.ts": "985ab7e82b2f2b55b1dc5a158ce70167cbf8168c156b377f023dc6b349ff03ad",
+      "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts": "c3ca0c5e6e52670eb961ea2de9450ee4fd7d7f4d18bd092a4249b646cceddd48",
+      "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+      "frontend/src/lib/world-engine/runtime/engine.ts": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266"
+    },
+    "contractDigest": {
+      "protocolVersion": 2,
+      "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+    }
+  },
+  "config": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "contextSize": 4096,
+    "numThreads": 4,
+    "channel": "msedge",
+    "seed": 42,
+    "temperature": 0,
+    "maxTokens": 160,
+    "cachePrompt": false,
+    "timeoutMs": 120000
+  },
+  "assets": {
+    "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "packageVersion": "3.8.1"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "loadMs": 7502.744999885559,
+  "model": {
+    "family": "Qwen3-0.6B",
+    "quantization": "Q4_K_M",
+    "runtime": "wllama",
+    "browser": "155.0.4283.62"
+  },
+  "samples": [
+    {
+      "sampleId": "nv-move-1",
+      "category": "movement",
+      "adopted": true,
+      "attempts": 1,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": false,
+      "violations": [],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-task-pers-sanity-1",
+      "category": "task_personality_sanity",
+      "adopted": false,
+      "attempts": 2,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": true,
+      "violations": [],
+      "omissions": [
+        "学生B完成了任务「帮主角熟悉校园」",
+        "学生B完成了任务「帮主角熟悉校园」"
+      ]
+    },
+    {
+      "sampleId": "nv-multi-1",
+      "category": "multi_character",
+      "adopted": true,
+      "attempts": 1,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": true,
+      "violations": [],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-task-only-1",
+      "category": "task_personality_sanity",
+      "adopted": false,
+      "attempts": 2,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": false,
+      "violations": [],
+      "omissions": [
+        "主角完成了任务「取回柜子里的东西」",
+        "主角完成了任务「取回柜子里的东西」"
+      ]
+    },
+    {
+      "sampleId": "nv-refused-1",
+      "category": "refused_action",
+      "adopted": true,
+      "attempts": 1,
+      "templateOk": false,
+      "mechanicalOk": false,
+      "timeExpressed": false,
+      "violations": [],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-empty-1",
+      "category": "no_change",
+      "adopted": true,
+      "attempts": 1,
+      "templateOk": false,
+      "mechanicalOk": false,
+      "timeExpressed": false,
+      "violations": [],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-cont-1",
+      "category": "continuity",
+      "adopted": true,
+      "attempts": 1,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": false,
+      "violations": [],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-cont-2",
+      "category": "continuity",
+      "adopted": false,
+      "attempts": 2,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": true,
+      "violations": [
+        "state_claim_without_fact",
+        "state_claim_without_fact"
+      ],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-cont-3",
+      "category": "continuity",
+      "adopted": true,
+      "attempts": 2,
+      "templateOk": false,
+      "mechanicalOk": false,
+      "timeExpressed": false,
+      "violations": [
+        "movement_without_fact"
+      ],
+      "omissions": []
+    },
+    {
+      "sampleId": "nv-multi-opposite-1",
+      "category": "multi_character",
+      "adopted": true,
+      "attempts": 1,
+      "templateOk": true,
+      "mechanicalOk": true,
+      "timeExpressed": true,
+      "violations": [],
+      "omissions": []
+    }
+  ],
+  "files": {
+    "run.json": "2afd66bb90a791609acf36f5a7a811eb742a193fa6605039ee6a2da01f1492f0",
+    "README.md": "750d6ccb2f044ece79f33a0c398e94a8f7354b5db5f1ae92b92f435bf53676e6"
+  },
+  "boundaries": [
+    "one 0.6B model on one device, ten frozen samples, one fixed world; not a statistical result",
+    "deterministic fact alignment only; semantic invention stays an unverified review flag",
+    "the page gate and rule-session were not changed; wiring is a separate decision",
+    "A3-2, the contract and the recovery chain remain frozen and untouched"
+  ]
+}

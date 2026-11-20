@@ -1,0 +1,154 @@
+{
+ "purpose": "direction pairs replacing the augmentation block",
+ "design": "per pair the same two entities and the same relation; one row names the place, the other names the actor; both targets keep both entities, the relation and the state",
+ "pairs": [
+  {
+   "pair": "dp1",
+   "anchor": "石板",
+   "other": "油纸伞",
+   "relation": "压",
+   "state": "滑开了",
+   "locationRow": {
+    "name": "石板",
+    "value": "压着的油纸伞滑开了",
+    "target": "压在石板上的油纸伞滑开了。"
+   },
+   "actorRow": {
+    "name": "油纸伞",
+    "value": "压着石板，滑开了",
+    "target": "油纸伞压着石板，滑开了。"
+   }
+  },
+  {
+   "pair": "dp2",
+   "anchor": "木桩",
+   "other": "渡船",
+   "relation": "靠",
+   "state": "退了半尺",
+   "locationRow": {
+    "name": "木桩",
+    "value": "靠着的渡船退了半尺",
+    "target": "靠在木桩上的渡船退了半尺。"
+   },
+   "actorRow": {
+    "name": "渡船",
+    "value": "靠着木桩，退了半尺",
+    "target": "渡船靠着木桩，退了半尺。"
+   }
+  },
+  {
+   "pair": "dp3",
+   "anchor": "铜灯罩",
+   "other": "灯芯",
+   "relation": "插",
+   "state": "歪了",
+   "locationRow": {
+    "name": "铜灯罩",
+    "value": "插着的灯芯歪了",
+    "target": "插在铜灯罩里的灯芯歪了。"
+   },
+   "actorRow": {
+    "name": "灯芯",
+    "value": "插在罩里，歪了",
+    "target": "灯芯插在铜灯罩里，歪了。"
+   }
+  },
+  {
+   "pair": "dp4",
+   "anchor": "铁链",
+   "other": "抹布",
+   "relation": "搭",
+   "state": "滑下来",
+   "locationRow": {
+    "name": "铁链",
+    "value": "搭着的抹布滑下来",
+    "target": "搭在铁链上的抹布滑下来。"
+   },
+   "actorRow": {
+    "name": "抹布",
+    "value": "搭在链上，滑下来",
+    "target": "抹布搭在铁链上，滑下来。"
+   }
+  },
+  {
+   "pair": "dp5",
+   "anchor": "鱼筐",
+   "other": "银鳞鱼",
+   "relation": "堆",
+   "state": "露出来",
+   "locationRow": {
+    "name": "鱼筐",
+    "value": "堆着的银鳞鱼露出来",
+    "target": "堆在鱼筐底的银鳞鱼露出来。"
+   },
+   "actorRow": {
+    "name": "银鳞鱼",
+    "value": "堆在筐底，露出来",
+    "target": "银鳞鱼堆在鱼筐底，露出来。"
+   }
+  },
+  {
+   "pair": "dp6",
+   "anchor": "钟架",
+   "other": "钟绳",
+   "relation": "绕",
+   "state": "垂到堤面",
+   "locationRow": {
+    "name": "钟架",
+    "value": "绕着的钟绳垂到堤面",
+    "target": "绕在钟架上的钟绳垂到堤面。"
+   },
+   "actorRow": {
+    "name": "钟绳",
+    "value": "绕在架上，垂到堤面",
+    "target": "钟绳绕在钟架上，垂到堤面。"
+   }
+  }
+ ],
+ "files": {
+  "verbalizer": {
+   "control": {
+    "path": "artifacts/dirpair-r1/pool-ctl-verbalizer.jsonl",
+    "rows": 241,
+    "sha256": "36ecbc296dd60b5a8081e91c61578511f589c444f8322feca053fb827fe1a2dc"
+   },
+   "dir": {
+    "path": "artifacts/dirpair-r1/pool-dir-verbalizer.jsonl",
+    "rows": 241,
+    "sha256": "47c421afeff8377023e0b7fe9837a8340ab5602d84ade66cfc6a7182ccf01484"
+   }
+  },
+  "expand78": {
+   "control": {
+    "path": "artifacts/dirpair-r1/pool-ctl-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   "dir": {
+    "path": "artifacts/dirpair-r1/pool-dir-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   }
+  },
+  "object34": {
+   "control": {
+    "path": "artifacts/dirpair-r1/pool-ctl-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   },
+   "dir": {
+    "path": "artifacts/dirpair-r1/pool-dir-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  }
+ },
+ "ids": {
+  "rows": 353,
+  "sha256": "748ec6af0cd54da3aeb7afe68c2fec776d2ef8a4f37996e2d554dfccade397aa"
+ },
+ "targets": {
+  "control": "8e41f721bb49e1b8125a1cbd38272d6e8cdf677bee9b8a3e3c5abb1c4abc957a",
+  "dir": "fc95540ff6da2edc7843c1b37c8a59f95c7abbf98c4572e2834005b684de7d3c"
+ }
+}

@@ -1,0 +1,10 @@
+{"exampleId": "c3_00a", "input": "顾行舟的围巾冻得发僵。", "parseOk": true, "raw": "", "statements": [{"spans": ["顾行舟的围巾冻得发僵"], "subject": "顾行舟", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_00b", "input": "阿棠的围巾冻得发僵,胸口发僵。", "parseOk": true, "raw": "", "statements": [{"spans": ["阿棠的围巾冻得发僵"], "subject": "阿棠", "subjectStatus": "explicit"}, {"spans": ["胸口发僵"], "subject": "阿棠", "subjectStatus": "recovered"}]}
+{"exampleId": "c3_01a", "input": "顾行舟的围巾蹭破了皮。", "parseOk": true, "raw": "", "statements": [{"spans": ["顾行舟的围巾蹭破了皮"], "subject": "顾行舟", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_01b", "input": "阿棠的围巾蹭破了皮。", "parseOk": true, "raw": "", "statements": [{"spans": ["阿棠的围巾蹭破了皮"], "subject": "阿棠", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_02a", "input": "顾行舟的腰侧湿了。", "parseOk": true, "raw": "", "statements": [{"spans": ["顾行舟的腰侧湿了"], "subject": "顾行舟", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_02b", "input": "阿棠的腰侧湿了。", "parseOk": true, "raw": "", "statements": [{"spans": ["阿棠的腰侧湿了"], "subject": "阿棠", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_03a", "input": "顾行舟的腰侧沾了泥。", "parseOk": true, "raw": "", "statements": [{"spans": ["顾行舟的腰侧沾了泥"], "subject": "顾行舟", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_03b", "input": "阿棠的腰侧沾了泥。", "parseOk": true, "raw": "", "statements": [{"spans": ["阿棠的腰侧沾了泥"], "subject": "阿棠", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_04a", "input": "顾行舟的腰侧结了盐霜。", "parseOk": true, "raw": "", "statements": [{"spans": ["顾行舟的腰侧结了盐霜"], "subject": "顾行舟", "subjectStatus": "explicit"}]}
+{"exampleId": "c3_04b", "input": "阿棠的腰侧结了盐霜。", "parseOk": true, "raw": "", "statements": [{"spans": ["阿棠的腰侧结了盐霜"], "subject": "阿棠", "subjectStatus": "explicit"}]}

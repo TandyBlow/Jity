@@ -1,0 +1,212 @@
+{
+  "version": "narration-best-of-n-prereg-v1",
+  "owner": "12-best-of-n",
+  "createdAt": "2026-11-10T12:05:00Z",
+  "status": "frozen-before-any-model-output",
+  "language": "zh-CN",
+  "question": "同一冻结已结算输入、同一模型与采样下，6 个种子的真实正文是否是不同表达？至少两份事实/视角合格且不同质时，best-of-N 相对 N=1 是否有可复核收益，且代价仍满足浏览器等待要求？",
+  "notTheQuestion": [
+    "不是先假设 N 越大越好",
+    "不是用相同必述事实当重复",
+    "不是只挑最长或模型自评分最高的候选",
+    "不是用删必述项、降严重度或换更松检查器制造提升"
+  ],
+  "sharedInputPackage": {
+    "owner": "01-input",
+    "package": "narration-dev-package-v1",
+    "root": "D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/dev-package-v1",
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+    "manifestCaseCount": 15,
+    "rule": "只使用共享包的 caseId/input/requiredFacts/licensedEntities/priorTexts。模型提示词只含 input。reference 永不进入生成或自动分析；requiredFacts/notes 不进入提示词。包哈希不符时准备与运行都失败关闭，不混版本。",
+    "independence": "公开开发回归，永远不是独立终验；独立终验另立冻结批次。"
+  },
+  "batches": [
+    {
+      "batchId": "b01",
+      "role": "diversity-pilot",
+      "caseIds": ["frozen-row-0012"],
+      "category": "long_text",
+      "whyThisCase": "四类必述事实（移动、任务/个性、物品状态、时间）与对白并存，表达自由度足够；不是先挑最容易通过的场景。",
+      "seeds": [17, 29, 43, 61, 79, 97],
+      "model": {
+        "hpcPath": "~/qwen15b",
+        "identityRule": "runner 记录 model.config（model_type/architectures/hidden_size/num_layers/max_position_embeddings）、权重文件 SHA-256、tokenizer 文件 SHA-256；以这些为身份，不按目录名猜。",
+        "quantization": "none；safetensors；bf16 若节点支持，否则 fp16，实际 dtype 写入 env.json",
+        "productWeights": false,
+        "note": "这是 HPC 上已有的 Qwen2.5-1.5B instruct 基座，不是当前浏览器产品权重。任何产品结论必须在产品权重同条件复测。"
+      },
+      "template": {
+        "kind": "qwen2-chatml",
+        "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+        "userRenderer": "renderTrainedInstructUser(input)",
+        "addGenerationPrompt": true,
+        "promptShaRule": "prepare 写 userPromptSha256；runner 重新计算并在不一致时拒绝生成；最终 chat prompt 的 SHA-256 与 token 数写入 raw 行。"
+      },
+      "sampling": {
+        "doSample": true,
+        "temperature": 0.45,
+        "topP": 0.95,
+        "topK": 40,
+        "repetitionPenalty": 1.0,
+        "noRepeatNgramSize": 0,
+        "maxNewTokens": 240,
+        "numReturnSequences": 1,
+        "eosStop": true
+      },
+      "status": "ready-to-submit-after-freeze",
+      "gate": "先完成 preregistration 提交与哈希；10 才可运行。"
+    },
+    {
+      "batchId": "b02-generalization",
+      "role": "same-condition-coverage",
+      "caseIds": [
+        "dr-0021-no-change-three-people",
+        "short2-0034-carved-line-worn",
+        "fixture-goggles-transfer",
+        "short2-0056-duty-name-and-copy",
+        "tide-continuity-tide-duty-t2"
+      ],
+      "categories": ["no_change", "move_direction", "item_transfer_fixture", "gender_pronoun", "continuity"],
+      "seeds": [17, 29, 43, 61, 79, 97],
+      "status": "blocked-on-b01-analysis",
+      "gate": "b01 原始输出分析完成且未触发停止条件；相同模型/模板/采样/种子/上限/包哈希。若 b01 有效重复率 > 0.80 或事实合格候选为 0，先做原因分析，不自动扩批。"
+    }
+  ],
+  "duplicateAndHomogeneityRules": {
+    "principle": "相同必述事实不等于重复。比较表达结构、叙述节奏、句式/句长分布、细节组织顺序；同义换词但骨架和细节顺序相同仍算同质。",
+    "normalization": "NFKC；去零宽字符；去标点/空白/引号；保留全部汉字；不做同义词归一化。",
+    "surfaceFingerprint": "标准化文本的字符 3-gram 集合。",
+    "structureFingerprint": "按句号/问号/叹号/省略号/换行分句；每句 token = 对白(d)/叙述(n) + 句长桶(<=8,<=16,<=28,<=48,>48) + 逗号桶(0-1,2-3,>=4)；取相邻 token 的 2-gram 集合。",
+    "detailFingerprint": "共享包 licensedEntities 在标准化文本中的出现顺序；长名优先匹配，嵌套名不重复计数；取相邻实体的 2-gram 集合。",
+    "alignedFingerprint": "逐句字符 2-gram 最佳匹配的平均值（双向平均），用于识别同义改写。",
+    "edgeFingerprint": "首句与末句各自的字符 3-gram Jaccard。",
+    "rules": [
+      {
+        "id": "R1-near-copy",
+        "condition": "surfaceJaccard >= 0.62 OR containment >= 0.80",
+        "verdict": "homogeneous"
+      },
+      {
+        "id": "R2-short-template",
+        "condition": "两份都 < 40 标准化字符 AND surfaceJaccard >= 0.45",
+        "verdict": "homogeneous"
+      },
+      {
+        "id": "R3-same-skeleton",
+        "condition": "structureJaccard >= 0.85 AND alignedJaccard >= 0.42 AND surfaceJaccard >= 0.20 AND (detailJaccard IS NULL OR detailJaccard >= 0.75)",
+        "verdict": "homogeneous"
+      },
+      {
+        "id": "R4-same-edges",
+        "condition": "openingJaccard >= 0.78 AND closingJaccard >= 0.78 AND |句数差| <= 1",
+        "verdict": "homogeneous"
+      }
+    ],
+    "clustering": "complete-linkage，按种子升序；候选加入某簇当且仅当与簇内所有成员同质；否则新建簇。",
+    "effectiveRepetition": "1 - distinctRealizationClusters / sampleCount；分母始终是生成的样本数（每例 6）。",
+    "qualifiedClusters": "事实合格候选单独再聚类得到的簇数；作为计数报告，绝不用它替换重复率分母。",
+    "ambiguousHandling": "任一用于判定的分数距阈值 <= 0.05 且因此改变判定时，该对标记 ambiguous，交 01/未参与评审逐句复核；复核前该对不自动算同质也不自动算不同质，报告中两值都列出。",
+    "thresholdsFrozen": true
+  },
+  "factPerspectiveQualification": {
+    "rubricOwner": "01-input",
+    "rubricVersion": "RUBRIC.md sha256 020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107",
+    "checker": "01-input frontend/src/lib/world-engine/local/narration-quality/reviewNarration；分析时记录该目录文件的 SHA-256，模块变化即新版本，不与旧结果混比。",
+    "modelSees": "只有 input。",
+    "analyzerSees": "input、requiredFacts、licensedEntities、priorTexts、生成正文、checker findings、耗时。永不读 reference。",
+    "decisionMapping": {
+      "fail": "任一 fact severity finding，或传输失败/空文本",
+      "style_fail": "无 fact finding，有 style finding",
+      "pending": "无 fact/style finding，有 review finding（机器不可判）",
+      "pass": "无任何 finding"
+    },
+    "factQualified": "decision != fail；用于 best-of-N 事实合格门槛与合格簇计数。",
+    "readableQualified": "decision == pass；另报，不替代 factQualified。",
+    "noFakeHuman": "checker 是机械检查器，不是人工。独立逐句复核由 01 或经逐样本回避确认的 05/03 完成；AI 审读标 reviewKind=independent_agent；真实人工未发生时 humanReview=pending。",
+    "recusal": "01 自写 10 例、05 写 3 例；参与该样本编写/调参/训练者不得独立签该样本。12 不签自己的实验。"
+  },
+  "candidateSelectionPolicy": {
+    "module": "frontend/src/lib/world-engine/local/narration-candidates/best-of-n/select.ts",
+    "version": "best-of-n-select-v1",
+    "order": [
+      "事实合格（factQualified）；unjudged 默认不采纳",
+      "必述事实覆盖率高",
+      "文内重复句/重复从句/空话句比例低",
+      "与前文 priorText 的字符 2-gram 回声低",
+      "种子升序（确定性最后裁决）"
+    ],
+    "forbiddenCriteria": ["字数最长", "模型自评分", "仅凭格式完整"],
+    "provisional": "离线实验可用 allowProvisional=true 标 provisional；产品路径必须 false。",
+    "evidence": "保留全部候选、逐项 rejected 原因、ranking 数值、同质重复项和被浪费的调用。"
+  },
+  "armComparison": {
+    "arms": [1, 2, 4],
+    "unit": "每个 case 的同一组 6 个样本；N=1 用 seed[0]，N=2 用 seed[0..1]，N=4 用 seed[0..3]。",
+    "trials": "b01+b02 共 6 个 case，每个 arm 6 个配对 trial；相同输入集合/种子集合/模型/采样/总时序条件（顺序调用，实际耗时累加）。",
+    "primaryEndpoint": "selectedFactQualifiedRate：该 arm 选中候选 factQualified 的 trial 比例。",
+    "secondaryEndpoints": [
+      "selectedPassRate（可读合格）",
+      "meanMandatoryCoverage（选中候选的必述事实覆盖率）",
+      "meanSelectedInTextRepetition（选中候选的重复/空话比例）",
+      "meanSelectedPriorEcho（有前文的 case）"
+    ],
+    "benefitRule": "先满足 diversityGate（同一 case 至少 2 份 factQualified 且分属不同簇，至少 2 个 case 成立）。然后 selectedFactQualifiedRate(N>1) 严格高于 N=1；或率相同但 selectedPassRate 严格更高；或两者相同但 meanMandatoryCoverage 严格更高且 meanSelectedInTextRepetition 不变差。任何 factQualified=0 的批不叫收益。",
+    "noBenefitVerdict": "若各 arm 完全相同时，如实写 no measurable benefit，不扩 N。",
+    "cost": "每 arm 实际墙钟 = 该 arm 顺序调用的 totalMs 之和 + 选择耗时；报告每调用 ttft/total/tokens/s；不把 N 的耗时藏到后台。",
+    "browserGate": "HPC 只做筛选。真实浏览器从提交到首个事实核对通过的可读正文、整个候选流程完成和整回合时间由 09 实测；>60s 首可读或 >300s 整回合的方案不得进产品。",
+    "productGate": "只有 diversityGate + benefitRule 通过且 09 浏览器耗时满足要求，才向 06/09 交接入方案；否则保留负面证据。"
+  },
+  "spotCheck": {
+    "allSamplesPreserved": true,
+    "reviewPopulation": [
+      "任一 arm 选中的候选",
+      "全部 ambiguous 对",
+      "每 case 未被选中但 factQualified 的候选中按 text SHA 排序取第一份"
+    ],
+    "reviewerRule": "01 默认；有参与则按 05/03 顺序，且逐样本声明未参与；都不合格则 pending。",
+    "requiredFields": ["sampleId", "caseId", "seed", "checkerVersion", "inputSha256", "textSha256", "findings", "ambiguousPairs", "reviewer", "reviewKind", "reviewedAt", "basisQuotes", "unresolved"],
+    "aiDisclosure": "AI 逐句审读必须标 independent_agent；不得写成 human；人工未发生记 pending。"
+  },
+  "stopAndDirectionRules": {
+    "zeroQualified": "任一 case 6 份全部不是 factQualified：该 case 不构成收益；若整批如此，停止扩大 N，先查输入/模板/采样/模型容量。",
+    "effectiveRepetitionStop": "同一 case 有效重复率 > 0.80 且连续两个可比实验无改善：停止当前方案，不扩大 N。",
+    "threeRounds": "同方向连续三轮可比实验无实质改善：写原因分析，列出已排除/未检验假设（输入/模板/数据/生成/容量/运行），按证据转向；不得换题、换口径或缩小覆盖制造改善。",
+    "noDeadline": "无开发截止、无总轮数或 GPU 小时预算；限制的是无效重复。",
+    "versioning": "开始后修错误另立 prereg v2 并保留旧结果；不修改本文件制造改善。"
+  },
+  "timingAndResourceAccounting": {
+    "hpcExecutor": "10-training only",
+    "hpcRecord": ["submit/grant/start/end/fetch 时间", "jobId", "GPU 型号与数量", "排队状态", "nvidia-smi 利用率与显存（观测不到写 unknown）", "loadMs", "promptTokens", "firstTokenMs", "totalMs", "newTokens", "tokensPerSecond", "finishReason", "retry/cancel/failure"],
+    "localRule": "12 不 SSH、不占 4060；本地重推理只经 09，且需先过本 prereg 的离线筛选。",
+    "browserAccountingLater": "09 实测从玩家提交到首个事实核对通过的可读正文及整回合，包含非叙事、全部候选调用、检查与重试；未经验证草稿的流式首 token 不算 60 秒达标。"
+  },
+  "generationAndAnalysisFlow": [
+    "prepare.ts 校验共享包哈希与 case input 哈希，按 renderTrainedInstructUser 渲染 user prompt，写 requests/expected/plan（不含 reference）",
+    "verify_pack.py 在 HPC 前再次校验 Python 规范化 input SHA 和 prompt SHA",
+    "10 运行 generate_hpc.py：同一已加载模型顺序跑 6 个种子，落 raw.jsonl + env.json",
+    "analyze.ts 用 01 reviewNarration 判 fact/style/review，用 best-of-n 模块聚类、计数、跑 arm 对比",
+    "01/未参与评审对抽查样本逐句复核；AI 审读另标；人工未发生记 pending",
+    "仅当 diversityGate + benefitRule + 09 浏览器耗时全过，才向 06 交接入方案"
+  ],
+  "frozenArtifacts": {
+    "configs": ["configs/b01.json", "configs/b02-generalization.json"],
+    "code": [
+      "experiments/narration-best-of-n/src/prepare.ts",
+      "experiments/narration-best-of-n/src/verify_pack.py",
+      "experiments/narration-best-of-n/src/generate_hpc.py",
+      "experiments/narration-best-of-n/src/analyze.ts",
+      "frontend/src/lib/world-engine/local/narration-candidates/best-of-n/",
+      "frontend/src/lib/world-engine/local/narration-generation/trained-input.ts (read-only renderer)"
+    ],
+    "hashRule": "提交后把实际 commit 与 preregistration 文件 SHA-256 写入 HPC 请求；10 在生成前校验。"
+  },
+  "knownLimitations": [
+    "b01 只有 1 个 case，只是多样性 pilot，不做 N>1 收益结论。",
+    "模型是 HPC 基座而非浏览器产品权重；产品结论需同条件复测。",
+    "HPC transformers 采样与 wllama 的 top-k/top-p 默认实现可能有细微差异，记录配置而不声称逐位一致。",
+    "机械 checker 不是人工；pending/review 不通过。",
+    "HPC 时间不是浏览器时间；60/300 秒要求必须由 09 实测。"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "rootHead": {
+    "worldId": "world_school",
+    "pointId": "root_0",
+    "advanceId": null,
+    "generation": 1,
+    "claimToken": "claim_root",
+    "expiresAt": 1800,
+    "mode": "head",
+    "fenceEpoch": 7
+  },
+  "historyRoot": {
+    "worldId": "world_school",
+    "pointId": "root_0",
+    "advanceId": null,
+    "generation": 2,
+    "claimToken": "claim_history",
+    "expiresAt": 1800,
+    "mode": "history",
+    "fenceEpoch": null
+  },
+  "lease": {
+    "worldId": "world_school",
+    "holderId": "tab_a",
+    "leaseToken": "lease_a",
+    "fenceEpoch": 7,
+    "expiresAt": 120
+  },
+  "renewal": {
+    "at": 20,
+    "expectedFenceEpoch": 7,
+    "expiresAt": 140
+  },
+  "takeover": {
+    "at": 141,
+    "newFenceEpoch": 8,
+    "expectedOldClaimResult": "stale_epoch",
+    "mayReclaimImmediately": true
+  },
+  "rootGate": {
+    "narrationStatus": "pending",
+    "startRoundAllowed": false
+  },
+  "terminalGroup": {
+    "expectedKinds": [
+      "normal",
+      "instant",
+      "linked"
+    ],
+    "emptyLinkedNarrationCalls": 1
+  }
+}

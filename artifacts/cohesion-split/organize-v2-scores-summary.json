@@ -1,0 +1,24 @@
+{
+  "sourceCount": 20,
+  "opCounts": {
+    "coord/1": 14,
+    "recast/1": 3,
+    "seg/1": 1
+  },
+  "flagCounts": {
+    "coord-not-contiguous": 8,
+    "endpoint-in-coord": 10,
+    "op-missing-fact:f3": 2,
+    "text-order-review": 4,
+    "op-missing-fact:f2": 7,
+    "source-not-in-A1": 2,
+    "op-extra-fact:f1": 1,
+    "coord-same-subject": 3,
+    "recast-multi-fact": 3,
+    "op-extra-fact:f0": 1,
+    "op-missing-fact:f1": 1,
+    "subjectless-clause": 1
+  },
+  "sourcesWithFlags": 17,
+  "sourcesWithoutFlags": 3
+}

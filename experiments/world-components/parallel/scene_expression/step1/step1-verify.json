@@ -1,0 +1,103 @@
+{
+ "step": "1",
+ "startedAt": "2026-11-08T14:25:21+0800",
+ "weights": {
+  "files": {
+   "u240-model.safetensors": {
+    "path": ".local\\models\\u240-model.safetensors",
+    "bytes": 309783976,
+    "sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+   },
+   "model.safetensors": {
+    "path": ".local\\models\\model.safetensors",
+    "bytes": 309783976,
+    "sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+   },
+   "config.json": {
+    "path": ".local\\models\\config.json",
+    "bytes": 782,
+    "sha256": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e"
+   },
+   "spiece.model": {
+    "path": ".local\\models\\spiece.model",
+    "bytes": 680811,
+    "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+   }
+  },
+  "expectedBytes": 309783976,
+  "expectedSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+  "match": true
+ },
+ "config": {
+  "architectures": [
+   "T5ForConditionalGeneration"
+  ],
+  "model_type": "t5",
+  "d_model": 512,
+  "d_ff": 1024,
+  "num_layers": 8,
+  "num_decoder_layers": 8,
+  "num_heads": 6,
+  "vocab_size": 32596,
+  "torch_dtype": "float32"
+ },
+ "env": {
+  "python": "3.10.19",
+  "torch": "2.9.1+cu126",
+  "transformers": "4.57.3",
+  "sentencepiece": "0.2.3",
+  "device": "cpu",
+  "torchThreads": 14,
+  "cudaAvailable": true
+ },
+ "load": {
+  "tokenizerSeconds": 0.519,
+  "modelSeconds": 2.25,
+  "parameters": 77440384,
+  "vocab": 32696,
+  "missingKeys": [
+   "decoder.embed_tokens.weight",
+   "encoder.embed_tokens.weight"
+  ],
+  "unexpectedKeys": [],
+  "embedTiedToShared": true,
+  "status": "ok"
+ },
+ "oldTemplate": {
+  "template": "fact_contract.build_unit_input（短句任务/地点/地点可见/场景/视角/事实/方向/要求/短句）",
+  "unitsFile": "experiments\\world-components\\n4_narrative_dev\\dev-units-v1.jsonl",
+  "unitsFileSha256": "af32783d4c956c8871e593003d41284437fd48183c04291ab0a396852e484089",
+  "trainMaxInput": 160,
+  "rows": [
+   {
+    "unitId": "vb:n4n-41:f0",
+    "kind": "moved",
+    "inputTokens": 169,
+    "roundtripEqual": false,
+    "output": "沈砚从潮渡上来,蹲到雾堤的钟架下。",
+    "seconds": 1.356,
+    "reason": null,
+    "reproduced": true
+   },
+   {
+    "unitId": "vb:n4n-52:f0",
+    "kind": "moved",
+    "inputTokens": 168,
+    "roundtripEqual": false,
+    "output": "沈砚从潮生巷一路走到潮渡,河风把外袍吹起来。",
+    "seconds": 1.194,
+    "reason": null
+   },
+   {
+    "unitId": "vb:n4n-52:f1",
+    "kind": "moved",
+    "inputTokens": 168,
+    "roundtripEqual": false,
+    "output": "顾行舟从河心划过来,船头抵住潮渡的栈桥。",
+    "seconds": 1.121,
+    "reason": null
+   }
+  ]
+ },
+ "finishedAt": "2026-11-08T14:25:47+0800"
+}

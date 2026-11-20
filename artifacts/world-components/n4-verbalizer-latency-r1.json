@@ -1,0 +1,24 @@
+{
+ "purpose": "per-call latency of the fact verbalizer (GPU lower bound)",
+ "ckpt": "ckpt-verbalizer2",
+ "device": "NVIDIA GeForce RTX 4090 D",
+ "calls": 69,
+ "ms": {
+  "mean": 150.8,
+  "p50": 141.3,
+  "p95": 204.6,
+  "max": 256.4
+ },
+ "outputTokens": {
+  "mean": 17.9
+ },
+ "projection": {
+  "turns": {
+   "1": 0.15,
+   "2": 0.3,
+   "3": 0.45,
+   "4": 0.6
+  },
+  "note": "GPU lower bound; browser (wllama/ORT) is slower and must be measured separately. Scene arm adds no call."
+ }
+}

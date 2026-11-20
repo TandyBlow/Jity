@@ -1,0 +1,62 @@
+{
+  "protocol": "c1-attention-parse-probes-v1",
+  "note": "预登记限制探针：写在这里的 expectedRuleBehavior 是我在跑之前预计规则会怎么错，desiredBehavior 是这一环真正需要的行为。探针不计入 10 条主样本成绩，只把“规则已知会错在哪里”变成可复跑的记录。",
+  "probes": [
+    {
+      "probeId": "P1",
+      "mechanism": "代词 × 前文用描述词指代",
+      "worldRef": "W2",
+      "utterance": "他呢？",
+      "priorNarration": "穿灰衣的走进门厅。",
+      "expectedRuleBehavior": { "status": "unresolved", "attentionTargets": [] },
+      "desiredBehavior": { "status": "resolved", "attentionTargets": ["person_a"] },
+      "note": "规则只在上一段里找提交记录的人名，不解析描述词；上一段用「穿灰衣的」指林川时，规则找不到前驱。"
+    },
+    {
+      "probeId": "P2",
+      "mechanism": "同名 × 描述词共同消解",
+      "roster": {
+        "protagonistId": "p1",
+        "entities": [
+          { "entityId": "dup_a", "kind": "character", "name": "张伟", "descriptor": "穿灰衣。" },
+          { "entityId": "dup_b", "kind": "character", "name": "张伟", "descriptor": "穿蓝衣。" }
+        ]
+      },
+      "utterance": "穿灰衣的张伟呢？",
+      "priorNarration": null,
+      "expectedRuleBehavior": { "status": "ambiguous", "attentionTargets": [] },
+      "desiredBehavior": { "status": "resolved", "attentionTargets": ["dup_a"] },
+      "note": "合成 roster（非世界记录）：规则会把同名先判成歧义组，描述词只证明「穿灰衣」属于 dup_a，两条机制不合并，所以不选。"
+    },
+    {
+      "probeId": "P3",
+      "mechanism": "昵称变体",
+      "worldRef": "W2",
+      "utterance": "川哥还在吗？",
+      "priorNarration": null,
+      "expectedRuleBehavior": { "status": "none", "attentionTargets": [] },
+      "desiredBehavior": { "status": "resolved", "attentionTargets": ["person_a"] },
+      "note": "「川哥」不在提交记录任何字段里；规则只认老/小/阿＋一字的昵称形状，也不认识川哥。"
+    },
+    {
+      "probeId": "P4",
+      "mechanism": "无所指的远指",
+      "worldRef": "W2",
+      "utterance": "上次说的那个呢？",
+      "priorNarration": null,
+      "expectedRuleBehavior": { "status": "none", "attentionTargets": [] },
+      "desiredBehavior": { "status": "unresolved", "attentionTargets": [] },
+      "note": "「那个」在这里明确指某种对象，但规则只有代词表，没有指示词，于是判成完全无关。两种都不选，但 none 会把“没听懂”说成“没关注”。"
+    },
+    {
+      "probeId": "P5",
+      "mechanism": "否定句里的对象",
+      "worldRef": "W2",
+      "utterance": "别管林川，看看盒子。",
+      "priorNarration": null,
+      "expectedRuleBehavior": { "status": "resolved", "attentionTargets": ["person_a", "box"] },
+      "desiredBehavior": { "status": "resolved", "attentionTargets": ["box"] },
+      "note": "规则没有极性判断，名字出现就进候选；「别管」把林川排除的意思读不出来。"
+    }
+  ]
+}

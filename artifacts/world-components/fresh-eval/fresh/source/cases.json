@@ -1,0 +1,135 @@
+[
+ {
+  "id": "c8e01",
+  "worldId": "world_1",
+  "pointId": "point_7",
+  "rootPointId": "root_3",
+  "ids": {
+   "advance": "advance_4",
+   "input": "input_5",
+   "round": "round_6",
+   "point": "point_7",
+   "group_0": "group_8",
+   "group_1": "group_9",
+   "group_2": "group_10"
+  },
+  "commit": {
+   "pointId": "point_7",
+   "version": 1,
+   "stateDigest": "2f959cc7186179374a260440f610ab42aa20e638156bdcba0add25cab9a2a3bd"
+  },
+  "sourceStatus": "committed-evaluation-fixture",
+  "rootDigest": "b21a870bddb375ba4deb0305a9834359ef50dc97da54d48298e670a0cc0bd581",
+  "afterDigest": "2f959cc7186179374a260440f610ab42aa20e638156bdcba0add25cab9a2a3bd"
+ },
+ {
+  "id": "c8e02",
+  "worldId": "world_11",
+  "pointId": "point_17",
+  "rootPointId": "root_13",
+  "ids": {
+   "advance": "advance_14",
+   "input": "input_15",
+   "round": "round_16",
+   "point": "point_17",
+   "group_0": "group_18",
+   "group_1": "group_19"
+  },
+  "commit": {
+   "pointId": "point_17",
+   "version": 1,
+   "stateDigest": "3567903a66787a00c4bfe063557ee8ebd977e176239fe4390be83cd057957204"
+  },
+  "sourceStatus": "committed-evaluation-fixture",
+  "rootDigest": "4a66f7b59b6765106a5aa4466b97ac8c62bf2b9f39c7963e2148005843667856",
+  "afterDigest": "3567903a66787a00c4bfe063557ee8ebd977e176239fe4390be83cd057957204"
+ },
+ {
+  "id": "c8e03",
+  "worldId": "world_20",
+  "pointId": "point_26",
+  "rootPointId": "root_22",
+  "ids": {
+   "advance": "advance_23",
+   "input": "input_24",
+   "round": "round_25",
+   "point": "point_26",
+   "group_0": "group_27",
+   "group_1": "group_28",
+   "change_0_fe_wen_calibration": "change_29"
+  },
+  "commit": {
+   "pointId": "point_26",
+   "version": 1,
+   "stateDigest": "70aed1eb20028721b817f6b91f7c41f1170bcd543f053836ebccde50e3cf0c08"
+  },
+  "sourceStatus": "committed-evaluation-fixture",
+  "rootDigest": "42a882b7851a0c4e9b148dee2cf716a137322554737d4595338287207d265004",
+  "afterDigest": "70aed1eb20028721b817f6b91f7c41f1170bcd543f053836ebccde50e3cf0c08"
+ },
+ {
+  "id": "c8e04",
+  "worldId": "world_30",
+  "pointId": "point_36",
+  "rootPointId": "root_32",
+  "ids": {
+   "advance": "advance_33",
+   "input": "input_34",
+   "round": "round_35",
+   "point": "point_36",
+   "group_0": "group_37"
+  },
+  "commit": {
+   "pointId": "point_36",
+   "version": 1,
+   "stateDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452"
+  },
+  "sourceStatus": "committed-evaluation-fixture",
+  "rootDigest": "fa68255f59363d5960be978c6af03ecd83dc6409a0025c259758277d4b728f2d",
+  "afterDigest": "581bfbf50e572ca306622aa406ba8ac9fffd545ab5e49b245e3ec716b6f90452"
+ },
+ {
+  "id": "c8e05",
+  "worldId": "world_38",
+  "pointId": "point_44",
+  "rootPointId": "root_40",
+  "ids": {
+   "advance": "advance_41",
+   "input": "input_42",
+   "round": "round_43",
+   "point": "point_44",
+   "group_0": "group_45",
+   "change_0_fi_seal_crimp": "change_46"
+  },
+  "commit": {
+   "pointId": "point_44",
+   "version": 1,
+   "stateDigest": "4bc218e24ec7ec7138afb77eaa42dac2779f5418c6b705b3f2398988a6422bcc"
+  },
+  "sourceStatus": "committed-evaluation-fixture",
+  "rootDigest": "49b240cc657c0a6b01164eba197be360c8f821e25df88bb7a91e1b81e36e24eb",
+  "afterDigest": "4bc218e24ec7ec7138afb77eaa42dac2779f5418c6b705b3f2398988a6422bcc"
+ },
+ {
+  "id": "c8e06",
+  "worldId": "world_47",
+  "pointId": "point_53",
+  "rootPointId": "root_49",
+  "ids": {
+   "advance": "advance_50",
+   "input": "input_51",
+   "round": "round_52",
+   "point": "point_53",
+   "group_0": "group_54",
+   "group_1": "group_55"
+  },
+  "commit": {
+   "pointId": "point_53",
+   "version": 1,
+   "stateDigest": "a29e1dacef48966d52fc0dbdd1dfaf63c60229e0638bd4442686ffdd1074c370"
+  },
+  "sourceStatus": "committed-evaluation-fixture",
+  "rootDigest": "e5e81ecfd5f7b506e79f0c6ec52146fe57d9abf42f86789fdaaccaec2595cd26",
+  "afterDigest": "a29e1dacef48966d52fc0dbdd1dfaf63c60229e0638bd4442686ffdd1074c370"
+ }
+]

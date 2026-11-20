@@ -1,0 +1,21 @@
+{
+ "method": "原始运行没有保存 token id 或停止原因；重新分词后的长度和句末标点不能确认是否生成了 EOS。原输出一律记为 stop_reason_not_recorded；A 的 train-r4 记为 suspected_cap（正好 128 token，结尾停在“泥”）。不给出 EOS 数量，也不区分正常遗漏与截断遗漏。A15 是本次生成，stop 由 return_dict_in_generate 直接记录。",
+ "original_holdout": {
+  "outputs": 24,
+  "stop_reason_not_recorded": 24,
+  "suspected_cap": [
+   "A:train-r4"
+  ]
+ },
+ "plan_response": {
+  "outputs": 8,
+  "stop_reason_not_recorded": 8
+ },
+ "a15": {
+  "outputs": 12,
+  "eos": 12,
+  "cap": 0,
+  "method": "exact, return_dict_in_generate"
+ },
+ "note": "停止原因未记录的输出不能用来区分“正常结束后的遗漏”和“截断遗漏”。"
+}

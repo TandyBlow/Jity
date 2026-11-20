@@ -1,0 +1,84 @@
+{
+ "purpose": "deterministic facts inside the main world page, driven by normal commands in an isolated test world",
+ "noTraining": true,
+ "modelSentencesNotUsed": true,
+ "readOnly": true,
+ "pins": {
+  "worldServer": "005ea5b (GET /world/facts/{worldId}/{pointId})",
+  "componentsBranch": "world-components-next, this commit",
+  "backendCheckout": "detached worktree .local/ws-facts-005ea5b (clean, no other working changes)"
+ },
+ "flow": {
+  "world": "isolated SQLite at artifacts/next-runs/integration-r1/world.db, created by the page itself",
+  "commands": [
+   "完成压力试验",
+   "走到门厅",
+   "完成压力试验（任务已消耗，规则拒绝）",
+   "走到走廊",
+   "走到门厅"
+  ],
+  "why": "the first command runs in the corridor so the milestone precondition holds; the repeated one is refused and leaves an empty delta"
+ },
+ "sources": {
+  "positions": "checkpoints read along previous_point_id by the adapter",
+  "page": "GET /world/facts/... per point during rebuild and after each narration event"
+ },
+ "verification": {
+  "script": "experiments/world-components/verify_page_facts.py",
+  "derives": "expected fragments from world_points and the initial names, not from the adapter",
+  "rounds": 6,
+  "checks": 18,
+  "problems": [],
+  "snapshot": "afterMore"
+ },
+ "pageCheck": {
+  "beforeAndAfterRefresh": "every round identical",
+  "historyStable": {
+   "previousRoundsUnchanged": true,
+   "grewBy": 1,
+   "lastRound": "周宁从走廊到门厅。\n\n来源"
+  },
+  "consoleErrors": []
+ },
+ "coverage": {
+  "move": "2 rounds, origin and destination both shown",
+  "sanity": "10 to 8 from the predecessor value",
+  "description": "personality change text shown verbatim",
+  "task": "shown as 存在尚未展示的任务变化, not as a quiet turn",
+  "emptyDelta": "rule refusal left an empty delta, shown as 没有实体变化",
+  "root": "no change claim on the root point",
+  "appearanceNotReachable": "the rule vocabulary emits positionSet, sanitySet, tasksAchieved and personalityChanges only; appearanceChanges has no command, so that row was exercised by the fixture, not here"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/integration-r1/verify.json",
+   "bytes": 1211,
+   "sha256": "0b9c6a11e0ee8229095331afdb9748d19547a5e1d13eca205cce737b1818f653"
+  },
+  {
+   "path": "artifacts/next-acceptance/integration-r1/browser-record.json",
+   "bytes": 2370,
+   "sha256": "3354129953b6358bae43b292e60373371bed38e021a876b93f66f51d4b7647f9"
+  },
+  {
+   "path": "artifacts/next-acceptance/integration-r1/screenshots/rounds-after-more.png",
+   "bytes": 144409,
+   "sha256": "ba262bf69d8cdcb99f09a9c963568d9724bc04d9cb8c7bc2bdbc1320b262b458"
+  },
+  {
+   "path": "artifacts/next-acceptance/integration-r1/screenshots/rounds-after-refresh.png",
+   "bytes": 132980,
+   "sha256": "0654f5d2aa7e5f85c2e15dc91a95781f5bfe2547f8b07eb179b1ad28efabba62"
+  },
+  {
+   "path": "artifacts/next-acceptance/integration-r1/screenshots/rounds-after-run.png",
+   "bytes": 135440,
+   "sha256": "d1eb4e389296a1ad4a12097c373925934a36071ef7359924df2ee8bb2aca5148"
+  },
+  {
+   "path": "artifacts/next-acceptance/integration-r1/facts-requests.log",
+   "bytes": 1514,
+   "sha256": "1f1ffb0b0da7a73d9af0b6992509cc29797681dc56c5f07665f2589625bd08b8"
+  }
+ ]
+}

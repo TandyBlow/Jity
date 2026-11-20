@@ -1,0 +1,751 @@
+{
+  "protocolVersion": 2,
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+  "artifacts": [
+    {
+      "path": "api-contract.json",
+      "sha256": "97a7aa1e8f32a42d0bfb56c5628bc3645b8cd5cfd73a26864501717fb19bb7b1",
+      "generated": true
+    },
+    {
+      "path": "canonical-vectors.json",
+      "sha256": "a69291a5e4e9210c652c32753f6fd739bf5eeb76ebbb44d0d3b26f4150c64143",
+      "generated": false
+    },
+    {
+      "path": "failure-cases.json",
+      "sha256": "4c8186d888b383508bbcd039ee6df182bf3809bd6899edc002aeea6651c467b1",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/allocate_ids/error.json",
+      "sha256": "fb6b923f991b65c0a0522b019870c67f91963fc6dd660ec19b069c137505a628",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/allocate_ids/request.json",
+      "sha256": "5be0af9e150421ee827e4cf5ba98cdb694333d7a765411acd7fb215e95a7b306",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/allocate_ids/success.json",
+      "sha256": "b522e714fbdf01d2f9680b571523b4be7ad285363ccfab5503f2e4b6f8bdcfbb",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_begin_point/error.json",
+      "sha256": "3130e96d633e94159fc16cd56cd121bb640f17c1aa4047fc1752b1ae3b809948",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_begin_point/request.json",
+      "sha256": "aa698735198e382f11cdd0fa4fca9d977c8cccc450c7d14f209afead2910b658",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_begin_point/success.json",
+      "sha256": "4842a63e19f2a010747789b7e210748b1ad17a5fcf076bd032d56cb55c59441e",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_close_group/error.json",
+      "sha256": "c19d5ddb0082ecede20662ab82a2b15d30e3240b36df2de919063cc41cf3fea8",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_close_group/request.json",
+      "sha256": "0383b6d7f9747ad8ce79ae4a9e6eacd1dba65459163e73bb204ede7ba8a133cd",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_close_group/success.json",
+      "sha256": "8e13ccfb8feb8cc16fe40f77757a56b5001ac06698ac14f5e25446117d90c0e4",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_discover_group/error.json",
+      "sha256": "c6d2dfa574539ca5e61abf3d22304cb45ffcd7dc1f208f28e3748f32c09dd722",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_discover_group/request.json",
+      "sha256": "33222ddb8f391d3fa03d4e08605f976dbd6ef937c65f70a3501ca070ab80e2fc",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_discover_group/success.json",
+      "sha256": "7b890537c997477b8c2bdedbd6c535ea77e9dd4c97db30fde4f72b460a1bf645",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_extend_group/error.json",
+      "sha256": "9cfc6eec64021be75d15c9a680e44c6614f7564cd7cda6f981f7d10a5dace2e0",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_extend_group/request.json",
+      "sha256": "7355297ae86005f29b87528ac4f0e2cf40e669c0cfe06e326d75c25cc4974b65",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_extend_group/success.json",
+      "sha256": "7ac380dc9853e4892420b43f7eca464609270bb8309e3fb7af0f0898ef5f9d1d",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_pause/error.json",
+      "sha256": "c9f613758182afafd1039dd0df4c7311d80fe3907597c1ec0128e9feddd7d587",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_pause/request.json",
+      "sha256": "0daed85e05ac1cdafcc7c24fc00db729f97ead9c2bf5afa859f715a1c4101e41",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_pause/success.json",
+      "sha256": "af5c0e781a3639aea6e15f789700214562da656f86f2a6585e43c65436253961",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_prepare_successor/error.json",
+      "sha256": "d67bcf15b907d7cc991beb8f727cc9598e68b7b34d0857d45bb034aee5839319",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_prepare_successor/request.json",
+      "sha256": "9ed10eccf132a8681e161fc4ab05a565c6b4782e86df863594227c2858d96794",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_prepare_successor/success.json",
+      "sha256": "d7fe6bd6c695fb3b48510d1ddcf1531c9332528f32870975967cce2132f01457",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_record_skip/error.json",
+      "sha256": "514f13d0f8c14b486b59ff2e6b15a41b0a3306a718ebac2ee87609cb20df7f02",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_record_skip/request.json",
+      "sha256": "470a439b49dd64d8896b6b03d13bec5e5d5a18c9b4566fc687eff116914c225f",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_record_skip/success.json",
+      "sha256": "12edce8982a36d497185cbdb71f9836cd5f85459f2629da39019b61d4f1f364c",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_restore_group_work/error.json",
+      "sha256": "d07a1a12d2be296260a6f5898a49c8b5de6ac845f453ecc2f11edd38d3eb6476",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "sha256": "b4298bd5dd61082e9e980f430d3b24064cab00199f923665019b5a9e8e9f2601",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_restore_group_work/success.json",
+      "sha256": "7be3db957489acd3d17ad8c4bca3ada965f021ed8d5bfac968125318057bc052",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_resume/error.json",
+      "sha256": "544da0fbd6d6ab3b09b857ff412d6a07bc1c7c7b8581f03aa81768f6f16efdf4",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_resume/request.json",
+      "sha256": "cf60ed798d1f5ebcd97f09b41d765a04b0c1423e7021062d8611d023eb004a88",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_resume/success.json",
+      "sha256": "07ea2fdd1ee049193a524905e3f5c9ae09ef0f3c4d5aaf812d0fb9865e93e063",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_seal_point/error.json",
+      "sha256": "899b1a232ad4cc28292571a6578458becaae703b7f2738783ad5268d5bac084f",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_seal_point/request.json",
+      "sha256": "ea0b004d659f761f84e08e43bf4bbbb9d852dddc5feb8a8d7a0f2ea185537766",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_seal_point/success.json",
+      "sha256": "4bbb028722a64e5eeb6dff6d94dd169cbb0a6b3d35dce2b57e70b8ed247da78c",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_set_point_time/error.json",
+      "sha256": "b86229185e4292f6cd14d9dd6f839a6e37aae2d93e01d75e59f50899db319140",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_set_point_time/request.json",
+      "sha256": "00074b9abbde0e4c767dc142293f309aba40b9fae600765b37c5a4b99f42f93a",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_set_point_time/success.json",
+      "sha256": "67d446382d0b05db0f18c8562af819e6c4bdfa5f8b39597cb914ff55ecfd134b",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_stage_time_scan/error.json",
+      "sha256": "21fe019c10fe506bc88192fd6067331bb806269255bd7cabaec75769bac8339a",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_stage_time_scan/request.json",
+      "sha256": "1d6011addf3b74625dbed173dcf85881b3144d9bd6c0ba436682313e6159a56c",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_stage_time_scan/success.json",
+      "sha256": "f39c776a87fa8b132dcabdf4597143fd6564f752a0ebe6b886332e19aa1a8e2f",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_stage_unit/error.json",
+      "sha256": "c835d0f69ea2ffd18327d6eb85b06b88670e0308493b5b206262a94e71768f20",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_stage_unit/request.json",
+      "sha256": "84199aeeab5f65341192b2872d17880b5951b819afcefbd3d63dde44dad216ec",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_stage_unit/success.json",
+      "sha256": "0ba4eb5383a3669947b007dc8c22c3183ebdd7df213f96577889e9ae9d265e3d",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_start_advance/error.json",
+      "sha256": "cc070900c4201ea0a9fe0a67f96d5155572aa85fd9a41a965496ccb2caed6325",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_start_advance/request.json",
+      "sha256": "4d4ec4670590d724c32a0c6915c8218d1a8e7a41ab0fdd64b42589f730950224",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/checkpoint_start_advance/success.json",
+      "sha256": "d4c1b4f5a8039a15453cdc540ba4a7a554588bc86e52433934adaed0ac7c1eed",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/commit_point/error.json",
+      "sha256": "23637a717d632df07b4e3d74f8c9245b0148650c079fa7ad2e9014ff6ada4b55",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/commit_point/request.json",
+      "sha256": "1dc86f9d92943489beca9ce2e6d4d51da719a20b4afe9088d3b71c9c24cb9785",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/commit_point/success.json",
+      "sha256": "60f79c95525ac2a00e3a9a40469fe5b61896e0f4150aaefcf357d3cdd3c063f9",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/create_rolls/error.json",
+      "sha256": "14de5c4dc4fd89f7ac25b181527c7696b29a92e63476c04ac82eaaf882db36a9",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/create_rolls/request.json",
+      "sha256": "800b5af50d680c16a5eb244a2dc24dde5e632e72abad0cf2e1db7c84787b200d",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/create_rolls/success.json",
+      "sha256": "40144593f56ba1c415aaa0c00d9e1b7368a08d3ef504f36c64d1b863bab599bc",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/create_world/error.json",
+      "sha256": "3e90a34985950da89c3924f7636e5c45366e41bef2e7cc7da600980061e54131",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/create_world/request.json",
+      "sha256": "a44533e5bd3966eb5de14ed9e24922e8239a068f660aaecbd8f6d93aadba200f",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/create_world/success.json",
+      "sha256": "55c353ca20296930efe4912d270fa3063416af4197cc8543330b3dfdac5ad88a",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/get_context/error.json",
+      "sha256": "d8be4527efe569f2ef44692020ee0c4ba06cfe6819ac0045bff547f8803d45e0",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/get_context/request.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/get_context/success.json",
+      "sha256": "6df4a4cdbf328f996d58cf0e0f1a11925a4cf825a61f36a179f3e4afa8a3f045",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/get_state/error.json",
+      "sha256": "4f5ed69207fcf7c2afedfb7ae8115831fb62b99092e51d7c67a2c11e5196d2dd",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/get_state/request.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/get_state/success.json",
+      "sha256": "c0a25661ab7a87d7f29ae0a97d23abe74a9743bf992ebf0a65f60ba278c8e154",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_acquire/error.json",
+      "sha256": "9514df35e5507b9ed3a92f61db4405731858c9dff1c6d26cf8468b842e9bc39c",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_acquire/request.json",
+      "sha256": "1b8521d7e4cb9159cc1b5fbd512194738a27f158e661869f6026c602d448bed8",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_acquire/success.json",
+      "sha256": "94f8e65009f2d1b76b0ea4fa0818f9439cd7db523ee284b63dbe92bd98b97ba0",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_release/error.json",
+      "sha256": "09a00c8bb9aae11080917029d2e973217833ea08f17989a8208f7956bb8eefaa",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_release/request.json",
+      "sha256": "33fa8f11b3fa25916b3bea1a011d59aa0bd2a0215375d3b69e750a27dd76e5e7",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_release/success.json",
+      "sha256": "2c3b922ea09d10d4bc69646a40cf1f13e147e18e36dca03cb2f1e65b9cb712d9",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_renew/error.json",
+      "sha256": "02b2c5c6225894687468fe9a3c22e7b6b7faca42683990b9a52dfa4b709a7e37",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_renew/request.json",
+      "sha256": "9c4d76df5edcaeca46d59d70e948d12f0bf907b4b06c1eba309928869092c638",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/lease_renew/success.json",
+      "sha256": "3e558b3301c267e3c273b64d6c95224cef238b5bd0e01224464d07150b6a4f40",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/list_points/error.json",
+      "sha256": "c2270e3cf39af27d1daa2d28847ef89562f060edcbff2336e9dc9b4f790715f4",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/list_points/request.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/list_points/success.json",
+      "sha256": "f052d1033e641ffda42df389e22893e9ad8b10fb22ec56a418b30cf1a418cb6e",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_claim/error.json",
+      "sha256": "4772756490689fff85ad7f8a625499ea8d70a045828c671a140e6a9965ac3314",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_claim/request.json",
+      "sha256": "64b75c567eadcbf89314d8e008af1a2cffba8f72de9778bf67ec23c3952e69cc",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_claim/success.json",
+      "sha256": "e6232ba8be9475ce15fe375b200c75c0620087422385951725b0cba32fd83809",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_claim_renew/error.json",
+      "sha256": "22e6ebba69bd2e71d3869a1f64fa3bf29a32ea39bccb3b882029bab3f239e2cb",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_claim_renew/request.json",
+      "sha256": "b766d08aa31d1f81bd818e1e320cc18f7a373a1749d01f76ffc44825f3a5a947",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_claim_renew/success.json",
+      "sha256": "03aa5efd810cb74d5f8c91259326647ffc7a0d70296725539dfeb7e92c174bf9",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_delete/error.json",
+      "sha256": "f220cb8e297975d5d10673012ef2a8697f774586805ec0f0cb94643e4f3bd39c",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_delete/request.json",
+      "sha256": "18aaec9776405ad260a3aae89df7928f3dd2e8bce989557cc88f0aab7bf8725a",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_delete/success.json",
+      "sha256": "bd1f5f842b8564e3b619fe801e51a126dd342ce1e3746d6e4a49216864338daa",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_get/error.json",
+      "sha256": "bbce5b8ba3a40b014c59f02792c3cc43eba221a75fbc43d54424bdad71191dc3",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_get/request.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_get/success.json",
+      "sha256": "0f549d34c5bb46210f1b132871dc872f21c4f84212e4c6ed412a124d56fc1ce0",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_submit/error.json",
+      "sha256": "c25675847c1546c2002c62ec60d670413d13d9a307a19c59df9820a105413f48",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_submit/request.json",
+      "sha256": "0662c92ab4c994668cf4b970b0033ccc9e58c82f6402d7f10402ea891214abaf",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/narration_submit/success.json",
+      "sha256": "fbe4923248795a9618bc75feb03cb0e867b1f77873c567080bfe6082ee24b8b6",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/operations.json",
+      "sha256": "f993a0eb372b6d83ed3ee2a6efca871d53a42088bd81fe5c4c13ee68e98c903d",
+      "generated": true
+    },
+    {
+      "path": "fixtures/api/preview_point/error.json",
+      "sha256": "408c1b7763fd9e67a25002d96016f34d62fb74c98158ec7317145821f5552ecf",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/preview_point/request.json",
+      "sha256": "ff9a3ae63b9aabb2ca0926d1247da893dd9afa8928362e273d41c9d5bcd1dd67",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/preview_point/success.json",
+      "sha256": "4e88b43cd0c913cce74ffb97f1bc7c2dc84151dcf88fe61eb6f7da80b92ef974",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/round_conclusion_cancel/error.json",
+      "sha256": "01ebe8158e2c52217a93a525e39ffe5d5d6796ac5f34e97c25ee842adfdc6b86",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/round_conclusion_cancel/request.json",
+      "sha256": "1063f897fedf5b685df2108db2ba7c2dc78b56ac3fed509c03ad22d42bdfdd1d",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/round_conclusion_cancel/success.json",
+      "sha256": "229a33b1f371115e90129964d9951a598ece743f926e1acbcd60da0517a682eb",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/round_conclusion_conclude/error.json",
+      "sha256": "ab66e03351fe306ba00969eb1cbe3d594ffe0829490eb51e530062040c79a8fc",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/round_conclusion_conclude/request.json",
+      "sha256": "2bbb0968482d2d10316f6885b0b2d1fce08f7b92b12c26f9eee8d3bfe351744f",
+      "generated": false
+    },
+    {
+      "path": "fixtures/api/round_conclusion_conclude/success.json",
+      "sha256": "2a9a58594a998947de7ef6d14fbbdc7dd178e2374f63af7e76e507622021d8ed",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/claim-replay.success.json",
+      "sha256": "375fd1402e599459d7e08856438c540ba4f8f6d8d20002933f518ac1b87065a1",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/handback.error.json",
+      "sha256": "ab66e03351fe306ba00969eb1cbe3d594ffe0829490eb51e530062040c79a8fc",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/handback.request.json",
+      "sha256": "7f457d555cb91bc72e2e20ab1684a94718507fcf106932948729b6c4744e53a0",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/handback.success.json",
+      "sha256": "959233a8236bd3220e9db94e27f34ddcddb5d2a9b493e6fe4af073f263348a37",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/recovery-frozen_work_corrupt.error.json",
+      "sha256": "2ec823fd7a27e06890cfae361bbe020c4f1d2110b1f4063527b3b622e7022efd",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/recovery-frozen_work_missing.error.json",
+      "sha256": "252f46bb543e026008f56ca4bdedd31ac3b5353e8c2280ca9f7ad6946aea108b",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/recovery-successor.success.json",
+      "sha256": "d083ae71c880cc72be3566d3af6418b0f5d4c68ae285f349f70f1b3a69bc4a3b",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/recovery-unconfirmed.success.json",
+      "sha256": "6dadda7f668ba98773a021b64e7e525f70ff254c9aa1929458fe2c7361dda61b",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/recovery.request.json",
+      "sha256": "cbd185427dc9110f5b3b335a6f9648e7c1c185ad0ef3277dacbc530632df19b5",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/recovery.success.json",
+      "sha256": "2fcb4da1c35a6bccbdb0a6cb7923c52bb3406762b6d8c050bd9a5311cdbb1b85",
+      "generated": false
+    },
+    {
+      "path": "fixtures/branches/takeover.json",
+      "sha256": "2d58802e7c9b86ec4e4798474bd0a3472b95e91cb8f45ed2be2caa347fa707b3",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/cache_missing.json",
+      "sha256": "4772756490689fff85ad7f8a625499ea8d70a045828c671a140e6a9965ac3314",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/claim_expired.json",
+      "sha256": "22e6ebba69bd2e71d3869a1f64fa3bf29a32ea39bccb3b882029bab3f239e2cb",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/claim_fenced.json",
+      "sha256": "c25675847c1546c2002c62ec60d670413d13d9a307a19c59df9820a105413f48",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/frozen_work_corrupt.json",
+      "sha256": "359456eef01e63ef688210465b4a26ac214a42c4358994571838aed9bad41db1",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/frozen_work_missing.json",
+      "sha256": "d07a1a12d2be296260a6f5898a49c8b5de6ac845f453ecc2f11edd38d3eb6476",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/lease_invalid.json",
+      "sha256": "9514df35e5507b9ed3a92f61db4405731858c9dff1c6d26cf8468b842e9bc39c",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/narration_blocked.json",
+      "sha256": "3130e96d633e94159fc16cd56cd121bb640f17c1aa4047fc1752b1ae3b809948",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/paused.json",
+      "sha256": "14becce103db26acf77345a048f4280a7d7d5249ad58aa0450a1a540bc6541f8",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/phase_invalid.json",
+      "sha256": "9cfc6eec64021be75d15c9a680e44c6614f7564cd7cda6f981f7d10a5dace2e0",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/point_time_locked.json",
+      "sha256": "b86229185e4292f6cd14d9dd6f839a6e37aae2d93e01d75e59f50899db319140",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/preview_budget_exceeded.json",
+      "sha256": "408c1b7763fd9e67a25002d96016f34d62fb74c98158ec7317145821f5552ecf",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/protocol_version_unsupported.json",
+      "sha256": "7e0a9fb4ff47be880d5c2013b56f6c9c4ffa87ddb82b5ecdb5e98d52512589a1",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/request_id_reused.json",
+      "sha256": "3e90a34985950da89c3924f7636e5c45366e41bef2e7cc7da600980061e54131",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/request_in_progress.json",
+      "sha256": "52a2e30018fd5c977564444a34cdeae890e6c069c20ed22c86922f0a81d7ac33",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/request_malformed.json",
+      "sha256": "31497971fa8161fc563fe0707f3f5f7ad0bae9965da552e72af5e0083365aec4",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/revision_mismatch.json",
+      "sha256": "544da0fbd6d6ab3b09b857ff412d6a07bc1c7c7b8581f03aa81768f6f16efdf4",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/stale_epoch.json",
+      "sha256": "c835d0f69ea2ffd18327d6eb85b06b88670e0308493b5b206262a94e71768f20",
+      "generated": false
+    },
+    {
+      "path": "fixtures/errors/version_mismatch.json",
+      "sha256": "23637a717d632df07b4e3d74f8c9245b0148650c079fa7ad2e9014ff6ada4b55",
+      "generated": false
+    },
+    {
+      "path": "fixtures/projections/description-collapse.expected.json",
+      "sha256": "a2bde20d7d21fadf147cffba1231a0a4238c4a9970c917b956079e0f2ef26986",
+      "generated": false
+    },
+    {
+      "path": "fixtures/projections/normal.expected.json",
+      "sha256": "28fb24ebd3b3adb3753554c3dc2af0449c63d0820730495978dff08e19f673f2",
+      "generated": false
+    },
+    {
+      "path": "fixtures/projections/segmented.expected.json",
+      "sha256": "459649984bb4e096acb416aa11574dad10735a1d330f12ece6875e83c5d6c5fe",
+      "generated": false
+    },
+    {
+      "path": "fixtures/projections/task-normalization.expected.json",
+      "sha256": "cdf4c382e6501cb325a367a915b1f95a97540baa23b21bed90bbececca848884",
+      "generated": false
+    },
+    {
+      "path": "fixtures/projections/time.expected.json",
+      "sha256": "5cea7a2aee3f7bd10941078060768f6b13e35fb56635bffe3e959005b6f942ca",
+      "generated": false
+    },
+    {
+      "path": "storage-contract.sql",
+      "sha256": "041bf83d4b7683c68ae5877f8c0ab9992bcb33399bd5a431655b0b19935a8831",
+      "generated": false
+    },
+    {
+      "path": "trace.schema.json",
+      "sha256": "64d8c8964cf982c626aea425253894f687416f2b5c1b74e3bf2b9af67d4d011f",
+      "generated": true
+    },
+    {
+      "path": "traces/T01.json",
+      "sha256": "e8759a4f384279f6b0e0e482749c24cfa3409c04e11fdbf2708fbeea9b4c5f9e",
+      "generated": false
+    },
+    {
+      "path": "traces/T02-empty-linked.json",
+      "sha256": "f20e71a35e4f6eea208086e0fff61f00e487fd2265f55b66aa3c59cbe9721153",
+      "generated": false
+    },
+    {
+      "path": "traces/T02.json",
+      "sha256": "a79ca6a716d867f4a5ef6616c447ed7540d8c8ed778c7b77ca954879b92f6e1e",
+      "generated": false
+    },
+    {
+      "path": "traces/T03-collapse.json",
+      "sha256": "bf38630cd6630f84f561106e9a5eb2aa3655b0c2228751c3734cb487120d5839",
+      "generated": false
+    },
+    {
+      "path": "traces/T03.json",
+      "sha256": "6749477e8d2b76c92ebded0fda394eec22ed1eb5614abc5ee21b5e5cbc138ba4",
+      "generated": false
+    },
+    {
+      "path": "traces/T04.json",
+      "sha256": "0aeb1ab5c44f70823620eeb341c8012d8188ec6d26a7ca0a67fb7d709fefe01e",
+      "generated": false
+    },
+    {
+      "path": "traces/T05.json",
+      "sha256": "dad0c2483f0611d4ac763395d957c84316198553af9d6a594f4bd98572ed42e3",
+      "generated": false
+    },
+    {
+      "path": "traces/T06.json",
+      "sha256": "1fb32c618af80a51c796b59ddae25f152dbd31913f5efd27f732e189a8927637",
+      "generated": false
+    },
+    {
+      "path": "traces/T07.json",
+      "sha256": "0998cd79f9d6fcdc1340d13db7ed6b10643b53233e0f587a28438fcb7bf353c1",
+      "generated": false
+    },
+    {
+      "path": "traces/T08.json",
+      "sha256": "8a5dc62255e7ad73b3347542f0331399f64fe374c5907ba197f41d92ce7be78a",
+      "generated": false
+    },
+    {
+      "path": "traces/T09.json",
+      "sha256": "2c4fbcc36374d0ccd600b020d01480effb6c2298936614797a2306743f01d3e4",
+      "generated": false
+    },
+    {
+      "path": "versions.json",
+      "sha256": "c5ed8d75768eacb273c98b6e47027ff46677fe894797c4f49764564de45be615",
+      "generated": true
+    },
+    {
+      "path": "world-protocol.schema.json",
+      "sha256": "8fa805c8360b090cdf09b9daddedf9dbd58dff809e22e46ba3373cb4967e58bd",
+      "generated": true
+    }
+  ]
+}

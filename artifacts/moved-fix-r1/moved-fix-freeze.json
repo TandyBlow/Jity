@@ -1,0 +1,238 @@
+{
+ "purpose": "moved-target repair arm built on top of the audited C pools",
+ "source": {
+  "verbalizer": {
+   "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+   "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd",
+   "rows": 229
+  },
+  "expand78": {
+   "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0",
+   "rows": 78
+  },
+  "object34": {
+   "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e",
+   "rows": 34
+  }
+ },
+ "rule": "a moved target is repaired only when it still carries a post-arrival action, a carried object, a body detail or a state change; subject, start and destination are kept and the direction character of the row is used",
+ "bannedTokens": [
+  "站住",
+  "蹲到",
+  "推开",
+  "扶着",
+  "停下",
+  "抵住",
+  "抱着",
+  "送到",
+  "抬头",
+  "鞋底",
+  "袖口",
+  "蹭",
+  "点亮",
+  "发暗",
+  "绷直"
+ ],
+ "changed": [
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-03:f0",
+   "old": "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+   "new": "沈砚从潮生巷下到潮渡。",
+   "reason": "删“在栈桥边站住”，保留主体/起点/终点，方向取本行“下”"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-04:f2",
+   "old": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "new": "阿棠从早市走进潮汐档案馆。",
+   "reason": "删“抱着一叠干纸”，携带物件不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-11:f0",
+   "old": "沈砚从潮渡上来，扶着铁链走到雾堤的钟架旁。",
+   "new": "沈砚从潮渡上到雾堤。",
+   "reason": "删“扶着铁链走到钟架旁”，身体细节与子地点不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-12:f1",
+   "old": "顾行舟从河心划过来，船头抵住潮渡的栈桥。",
+   "new": "顾行舟从河心划到潮渡。",
+   "reason": "删“船头抵住栈桥”，抵达动作不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-18:f0",
+   "old": "韩渡从潮渡上来，蹲到雾堤的钟架下。",
+   "new": "韩渡从潮渡上到雾堤。",
+   "reason": "删“蹲到钟架下”，抵达后动作不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-23:f0",
+   "old": "阿棠离开早市，把干纸送到潮汐档案馆。",
+   "new": "阿棠从早市走到潮汐档案馆。",
+   "reason": "删“把干纸送到”，携带物件与递送动作不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-26:f0",
+   "old": "顾行舟从河心划过来，船头抵住潮渡的栈桥。",
+   "new": "顾行舟从河心划到潮渡。",
+   "reason": "同 n4n-12:f1"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-27:f0",
+   "old": "沈砚从潮生巷过来，推开档案馆的门。",
+   "new": "沈砚从潮生巷走到潮汐档案馆。",
+   "reason": "删“推开档案馆的门”，抵达动作不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-32:f0",
+   "old": "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+   "new": "沈砚从潮生巷下到潮渡。",
+   "reason": "同 n4n-03:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-47:f0",
+   "old": "沈砚从潮生巷过来，推开档案馆的门。",
+   "new": "沈砚从潮生巷走到潮汐档案馆。",
+   "reason": "同 n4n-27:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-47:f1",
+   "old": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "new": "阿棠从早市走进潮汐档案馆。",
+   "reason": "同 n4n-04:f2"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-52:f0",
+   "old": "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+   "new": "沈砚从潮生巷下到潮渡。",
+   "reason": "同 n4n-03:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-52:f1",
+   "old": "顾行舟从河心划过来，船头抵住潮渡的栈桥。",
+   "new": "顾行舟从河心划到潮渡。",
+   "reason": "同 n4n-12:f1"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-53:f1",
+   "old": "阿棠离开早市，把干纸送到潮汐档案馆。",
+   "new": "阿棠从早市走到潮汐档案馆。",
+   "reason": "同 n4n-23:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-54:f0",
+   "old": "沈砚从潮渡上来，扶着铁链走到雾堤的钟架旁。",
+   "new": "沈砚从潮渡上到雾堤。",
+   "reason": "同 n4n-11:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-79:f0",
+   "old": "韩渡从潮渡上来，蹲到雾堤的钟架下。",
+   "new": "韩渡从潮渡上到雾堤。",
+   "reason": "同 n4n-18:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-80:f0",
+   "old": "阿棠穿过潮生巷，到早市的鱼摊前停下。",
+   "new": "阿棠穿过潮生巷走到早市。",
+   "reason": "删“到鱼摊前停下”，抵达动作与子地点不在事实里"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-82:f0",
+   "old": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "new": "阿棠从早市走进潮汐档案馆。",
+   "reason": "同 n4n-04:f2"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-86:f0",
+   "old": "阿棠离开早市，把干纸送到潮汐档案馆。",
+   "new": "阿棠从早市走到潮汐档案馆。",
+   "reason": "同 n4n-23:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-103:f0",
+   "old": "韩渡从潮渡上来，蹲到雾堤的钟架下。",
+   "new": "韩渡从潮渡上到雾堤。",
+   "reason": "同 n4n-18:f0"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-108:f0",
+   "old": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "new": "阿棠从早市走进潮汐档案馆。",
+   "reason": "同 n4n-04:f2"
+  },
+  {
+   "pool": "verbalizer",
+   "pairId": "vb:n4n-108:f1",
+   "old": "沈砚从潮生巷过来，推开档案馆的门。",
+   "new": "沈砚从潮生巷走到潮汐档案馆。",
+   "reason": "同 n4n-27:f0"
+  }
+ ],
+ "files": {
+  "verbalizer": {
+   "control": {
+    "path": "artifacts/moved-fix-r1/arm-control-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+   },
+   "moved": {
+    "path": "artifacts/moved-fix-r1/arm-moved-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "0492ea176995c76b96c69688d53cd19fc2d6a8d3fce8a2c68a55af42b10f9b4a"
+   }
+  },
+  "expand78": {
+   "control": {
+    "path": "artifacts/moved-fix-r1/arm-control-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   "moved": {
+    "path": "artifacts/moved-fix-r1/arm-moved-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   }
+  },
+  "object34": {
+   "control": {
+    "path": "artifacts/moved-fix-r1/arm-control-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   },
+   "moved": {
+    "path": "artifacts/moved-fix-r1/arm-moved-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  }
+ },
+ "idOrder": {
+  "rows": 341,
+  "sha256": "1e0815465811369104f8d00b6a48e53969caee7ae664ffeed6348937b9558e07"
+ },
+ "changedCount": 22,
+ "rows": 341
+}

@@ -1,0 +1,37 @@
+{
+  "namespace": "h2full_mvrs2w5u",
+  "recordedAt": "2026-10-28T07:13:34.113Z",
+  "phase": "post-restart",
+  "browser": {
+    "head": "d1d2de0cf2805d0f3ce1d182cde57821800d3bef",
+    "status": "",
+    "sourceSha256": {
+      "frontend/src/lib/world-engine/recovery.ts": "84e6d8df25347063f6ff55c40e8a200d4ef7cee1b84b601c68d46263900a9ae8",
+      "frontend/src/lib/world-engine/controller.ts": "ec97a1a0c050fb9238127cc24a89eab1e129ee81993f2edc3a0f3013af343d20",
+      "frontend/src/lib/world-engine/schedule.ts": "fc897c64f7c33efe828b0647f04c40e918e243f9b0e9d7af734bb41cc32ab6c4",
+      "frontend/scripts/review-world-h2-full.mjs": "428005caa9f55a2c649e9fd19523f6a322164f985c4396bdf3f9e2ecaae010e5"
+    }
+  },
+  "server": {
+    "head": "d1d2de0cf2805d0f3ce1d182cde57821800d3bef",
+    "status": "",
+    "sourceSha256": {
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/database/world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559"
+    }
+  },
+  "contractDigest": {
+    "protocolVersion": 2,
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+  },
+  "status": "PASS_POST_RESTART",
+  "worldId": "world_62",
+  "detail": {
+    "rollId": "roll_71",
+    "admitted": true,
+    "stack": [
+      "person_a"
+    ]
+  }
+}

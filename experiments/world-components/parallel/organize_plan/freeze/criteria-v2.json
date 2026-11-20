@@ -1,0 +1,161 @@
+{
+ "protocol": "c3-acceptance-criteria-v2",
+ "created": "2026-11-08T06:08:59.191485+00:00",
+ "supersedes": "runs/r1 (v1 checker accepted reversed order, out-of-scope 随后, and added content)",
+ "checker": {
+  "module": "text_conformance.py",
+  "sha256": "a4444195f6ce6ee6c5ad9d30fd6536a3161510125fed036c1011e1e21cc76d90",
+  "contractVersion": "c3-text-conformance-v2"
+ },
+ "probeSet": {
+  "file": "freeze/tamper-probes.json",
+  "sha256": "75cad427564f24bbd768ff05b66cdd9762fdfee1ad460ac373a5df2ceffe3b12",
+  "probes": 11
+ },
+ "severities": {
+  "hard": "位置/结构可判定；出现即判该条不合格，不允许人工改判",
+  "review": "语义可判定性不足；必须有人工结论才能算通过，未填结论不等於通过"
+ },
+ "hardRules": [
+  {
+   "code": "fact-omitted",
+   "rule": "每条选中事实必须能在某个句子里辨认（3-gram 召回 ≥ 0.5）"
+  },
+  {
+   "code": "fact-repeated",
+   "rule": "同一条事实不能出现在多于一个句子里"
+  },
+  {
+   "code": "group-split",
+   "rule": "同一组的相邻事实必须在同一句"
+  },
+  {
+   "code": "groups-merged",
+   "rule": "相邻两组交界的两条事实必须在不同句"
+  },
+  {
+   "code": "within-group-order",
+   "rule": "组内事实的字符位置必须按计划顺序递增"
+  },
+  {
+   "code": "group-out-of-order",
+   "rule": "各组在正文中出现的句子序号必须按计划顺序递增"
+  },
+  {
+   "code": "added-sentence",
+   "rule": "句子数不能多于组数"
+  },
+  {
+   "code": "sentence-count-mismatch",
+   "rule": "句子数不能少于组数"
+  },
+  {
+   "code": "ref-name-missing",
+   "rule": "ref=name 的句子必须出现该实体姓名"
+  },
+  {
+   "code": "ref-missing-antecedent",
+   "rule": "ref=omit 的句子必须能在同句找到前置姓名"
+  },
+  {
+   "code": "ref-not-omitted",
+   "rule": "ref=omit 时姓名不能紧贴在事实文本前重复出现"
+  },
+  {
+   "code": "ref-first-mention-omit",
+   "rule": "首次出现不能省略"
+  },
+  {
+   "code": "ref-ambiguous-omit",
+   "rule": "省略时最近一个姓名必须是同一实体"
+  },
+  {
+   "code": "edge-endpoints-share-sentence",
+   "rule": "边的两端必须在不同句"
+  },
+  {
+   "code": "sequence-wording-missing",
+   "rule": "required 边的目标句必须出现“随后”"
+  },
+  {
+   "code": "sequence-wording-outside-scope",
+   "rule": "“随后”只能出现在 required 边的目标句里"
+  },
+  {
+   "code": "sequence-wording-after-fact",
+   "rule": "“随后”必须在目标事实之前"
+  },
+  {
+   "code": "sequence-wording-excess",
+   "rule": "“随后”出现次数不能多于 required 边数"
+  },
+  {
+   "code": "invented-sequence",
+   "rule": "没有授权边时不得出现任何顺序词"
+  },
+  {
+   "code": "invented-simultaneity",
+   "rule": "不得出现“同时/与此同时”"
+  },
+  {
+   "code": "invented-causality",
+   "rule": "不得出现“因为/所以/因此/导致/于是”"
+  },
+  {
+   "code": "invented-pronoun",
+   "rule": "不得出现“他/她”"
+  }
+ ],
+ "reviewRules": [
+  {
+   "code": "added-content-outside-vocabulary",
+   "rule": "正文去掉姓名、事实文本、连接词、标点与功能字后剩下的内容里，有字符不在选中事实、实体名、场景可见清单中"
+  },
+  {
+   "code": "added-content-visible-only",
+   "rule": "剩余内容只用到场景可见清单里的字词，没有事实支撑；可能是合法描写，也可能是新事件"
+  }
+ ],
+ "acceptance": {
+  "itemAccepted": "该条没有任何 hard 发现，且所有 review 发现都有人工结论（结论为“合法改写”才算通过）",
+  "pairedSuccess": "同一来源的两份计划都被 itemAccepted",
+  "gate": "新冻结留出上成对成功 ≥ 8/10，且严格高于四个固定策略的同批成绩（当前材料上固定策略成对成功均为 0）",
+  "mustNot": [
+   "不得只报告平均分而隐藏逐条 hard 发现",
+   "不得用固定策略的成绩替代模型成绩",
+   "不得在看过留出结果后改判据"
+  ]
+ },
+ "manualReview": {
+  "maxRowsPerBatch": 10,
+  "queueFile": "runs/r2/manual-review.json",
+  "fields": [
+   "queueId",
+   "code",
+   "run",
+   "outsideVocabulary",
+   "text",
+   "verdict",
+   "reviewerNote"
+  ],
+  "verdictValues": [
+   "paraphrase-ok",
+   "new-content-fail",
+   "unsure"
+  ],
+  "rule": "unsure 不计入通过；每批重新开表，不复用上一批结论"
+ },
+ "nextRoundPreregistration": {
+  "inputs": "runs/r2/downstream-inputs.jsonl 的 18 条（与 r1 相同，逐字节一致）",
+  "checker": "text_conformance.py 的 v2，代码哈希见 checker.sha256",
+  "controls": [
+   "split-all",
+   "merge-all-adjacent",
+   "merge-first-pair",
+   "merge-last-pair"
+  ],
+  "responsiveness": "同一来源交换 P1/P2 标签后，输出必须跟着换；否则先判“没读计划”",
+  "stop": "模型成对成功不高于固定策略即停止，不加步数、不换基座",
+  "holdout": "本轮 9 个来源只用于协议与工具验证，不能作为能力结论的留出"
+ }
+}

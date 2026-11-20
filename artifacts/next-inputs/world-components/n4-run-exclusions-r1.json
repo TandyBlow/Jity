@@ -1,0 +1,12 @@
+{
+ "purpose": "rows excluded from length audit / training material",
+ "excluded": [
+  {
+   "id": "n4n-03",
+   "file": "n4_rewrite60/corpus140.jsonl",
+   "reason": "moved fact names from=河心, which is absent from world.json; it is a data gap, not a judge result",
+   "decision": "excluded from arm material and from judge rates; keep the row on disk unchanged so the gap stays visible",
+   "alternativeNotTaken": "add 河心 to world.json; rejected because it would change the frozen entity tables"
+  }
+ ]
+}

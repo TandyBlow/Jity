@@ -1,0 +1,2 @@
+# Hashed artifacts: keep bytes identical on checkout (no CRLF rewrite).
+* -text

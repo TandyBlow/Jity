@@ -1,0 +1,24 @@
+{
+ "checker": "checker.py v1",
+ "sha256": "7fa97a73c6849dceca6c960a6f27cedd176b27f9203efd69602a8dcbfd46bf8d",
+ "world": "world.json",
+ "worldNames": 66,
+ "thresholds": {
+  "minChars": 60,
+  "copyRun": 8,
+  "contentMin": {
+   "outcome": 0.2,
+   "task_achieved": 0.2,
+   "subtask_added": 0.8
+  }
+ },
+ "calibration": {
+  "rows": 60,
+  "pass": 60
+ },
+ "tamper": {
+  "cases": 9,
+  "caught": 9
+ },
+ "registeredBeforeAnyModelRun": true
+}

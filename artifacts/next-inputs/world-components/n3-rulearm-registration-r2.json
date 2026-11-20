@@ -1,0 +1,99 @@
+{
+ "purpose": "Fix-round 1c41587 r2 registration for the N3 rule arm: binds the CURRENT consumed bytes after the review-mandated changes (runner pause gate moved into precheck_real; freeze record approval downgrade + runner re-bind). The v1 registration stays untouched at n3-rulearm-registration.json and remains the record of the pre-fix-round world; it refuses against current bytes by design.",
+ "status": "REGISTERED-PRE-RUN",
+ "registeredAt": "2026-11-02",
+ "plan": {
+  "file": "design/world-engine-reports/components/n3-program-arm-plan.md",
+  "sha256": "ccc279e37be64b575bdb42841622c4c9eff47a609338b7bb970ccbc5cd12a536"
+ },
+ "ruleArm": {
+  "file": "experiments/world-components/n2_selection/n3_rule_arm.py",
+  "sha256": "75bee589987f72c1e61aaa0d03672e75e9fcbeac6ae35065ef8a14ee55f9194f"
+ },
+ "dependencies": {
+  "run_n3_arm": {
+   "file": "experiments/world-components/n2_selection/run_n3_arm.py",
+   "sha256": "798289cdd7a62cc299ec0216bdf00b3326c662fdb939f034696fd7f15a2a5769",
+   "role": "gate functions: check_items_binding / check_metric_tool / selected_facts_of / classify_plan / load_jsonl"
+  },
+  "d2_metrics": {
+   "file": "experiments/world-components/n2_selection/d2_metrics.py",
+   "sha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+   "role": "scoring, shape checks, check_gold_sha, differential reference build_gold_row"
+  },
+  "n3_plan": {
+   "file": "experiments/world-components/n2_selection/n3_plan.py",
+   "sha256": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+   "role": "indirect dependency of d2_metrics (check_invariants); structural verdicts depend on it"
+  }
+ },
+ "inputs": {
+  "gate8Items": {
+   "file": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+   "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+   "expectedItems": 8
+  },
+  "diagnostic16Items": {
+   "file": "experiments/world-components/n2_selection/items.jsonl",
+   "sha256": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+   "expectedItems": 16,
+   "basis": "working-tree bytes (text eol=crlf)"
+  }
+ },
+ "gold": {
+  "file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+  "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+ },
+ "freezeRecord": {
+  "file": "artifacts/world-components/d2-n3-prompt-freeze.json",
+  "sha256": "63e2b746f1de55a164eb534da9bc89b90089868fe9d16730ba7ba5230a432007"
+ },
+ "passLine": {
+  "reference": "frozen record passLine, scope 8-item only; 16-item diagnostic-only"
+ },
+ "boundaryBehaviours": [
+  "ill-formed (unknown kind / missing-duplicate factId / non-string goal): refuse generation",
+  "unsupported time-orphan (leading time, no entity fact): refuse official plan, reason archived",
+  "unsupported no-entity: refuse official plan (empty plan would drop selected facts)",
+  "consecutive time: exploration probe T-P7 only, never part of the frozen gate",
+  "same name different entityIds: separate groups, identical mentions allowed (rendering ambiguity = N4-coref, unverified)"
+ ],
+ "n4Boundary": "groups with more than 4 facts are marked n4_out_of_range and listed; no splitting, no fallback (coordinator ruling)",
+ "archiveHashes": "recorded post-run in n3-rulearm-delivery.md; not in this file",
+ "lineage": {
+  "supersedes": "n3-rulearm-registration.json (v1, sha256 cbdc6be8532c9ccc6229c1d5947a4a4ce991121dee855e725f4109dd5487d370) — kept byte-identical at its path",
+  "v1FreezeRecordPin": "77b37b43989b52325aa2605878c6d967cd5260c5aa020196040f8230434fbfe1",
+  "v1FreezeRecordReproducible": "git show 2ef930e:artifacts/world-components/d2-n3-prompt-freeze.json | sha256sum  -> the v1 pin (the freeze record was amended only by the review-prescribed pinning commit b5e041e and this fix round)",
+  "changedSinceV1": [
+   "run_n3_arm.py: 0.6B pause gate moved into precheck_real (review #6; before any model or library loading)",
+   "d2-n3-prompt-freeze.json: approval downgraded to PENDING-TRACEABLE-OWNER-CONFIRMATION (review #5), runner re-bound to the new bytes with status PENDING-REVIEW"
+  ],
+  "unchangedSinceV1": {
+   "ruleArm": {
+    "file": "experiments/world-components/n2_selection/n3_rule_arm.py",
+    "sha256": "75bee589987f72c1e61aaa0d03672e75e9fcbeac6ae35065ef8a14ee55f9194f",
+    "matchesV1": true
+   },
+   "d2_metrics": {
+    "file": "experiments/world-components/n2_selection/d2_metrics.py",
+    "sha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+    "matchesV1": true
+   },
+   "n3_plan": {
+    "file": "experiments/world-components/n2_selection/n3_plan.py",
+    "sha256": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+    "matchesV1": true
+   },
+   "gate8Items": {
+    "file": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+    "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+    "matchesV1": true
+   },
+   "gold": {
+    "file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+    "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+    "matchesV1": true
+   }
+  }
+ }
+}

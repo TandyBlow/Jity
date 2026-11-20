@@ -1,0 +1,520 @@
+{
+  "status": "REVIEW_FINDINGS",
+  "recordedAt": "2026-10-25T19:07:55.912Z",
+  "layer": "real A FastAPI/uvicorn fixture service + B ControllerDriver/HttpWorldTransport",
+  "cases": [
+    {
+      "mode": "position_appearance",
+      "reachedLastStage": true,
+      "stepsExecuted": 3,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 1,
+      "updatesPreviewSkipped": 0,
+      "updatesPendingRefs": [],
+      "calls": [
+        {
+          "key": "group_2#position",
+          "position": "lobby",
+          "taskStatus": "pending"
+        },
+        {
+          "key": "group_2#appearance",
+          "position": "classroom1",
+          "taskStatus": "pending"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {
+                "person_a": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "expectedRevision": 5,
+          "servedRevision": 5
+        }
+      ],
+      "failure": null
+    },
+    {
+      "mode": "time_scan",
+      "reachedLastStage": true,
+      "stepsExecuted": 3,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 1,
+      "updatesPreviewSkipped": 0,
+      "updatesPendingRefs": [],
+      "calls": [
+        {
+          "key": "time_scan:point_1#tasks",
+          "position": "lobby",
+          "taskStatus": "pending"
+        },
+        {
+          "key": "time_scan:point_1#subtasks",
+          "position": "lobby",
+          "taskStatus": "pending"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": null,
+              "actorIds": [],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "expectedRevision": 2,
+          "servedRevision": 2
+        }
+      ],
+      "failure": null
+    },
+    {
+      "mode": "personality_sanity",
+      "reachedLastStage": true,
+      "stepsExecuted": 5,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 2,
+      "updatesPreviewSkipped": 0,
+      "updatesPendingRefs": [],
+      "calls": [
+        {
+          "key": "group_2#tasks",
+          "position": "lobby",
+          "taskStatus": "pending"
+        },
+        {
+          "key": "group_2#personality",
+          "position": "lobby",
+          "taskStatus": "achieved"
+        },
+        {
+          "key": "group_2#sanity",
+          "position": "lobby",
+          "taskStatus": "achieved"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "task_a_root"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "expectedRevision": 5,
+          "servedRevision": 5
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "task_a_root"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {
+                "person_a": [
+                  {
+                    "id": "review_change",
+                    "text": "review personality",
+                    "supersedes": []
+                  }
+                ]
+              },
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "expectedRevision": 5,
+          "servedRevision": 5
+        }
+      ],
+      "failure": null
+    },
+    {
+      "mode": "forward_task_reference",
+      "reachedLastStage": true,
+      "stepsExecuted": 3,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 1,
+      "updatesPreviewSkipped": 1,
+      "updatesPendingRefs": [
+        "person_a:review_future_task"
+      ],
+      "calls": [
+        {
+          "key": "group_2#tasks",
+          "position": "lobby",
+          "taskStatus": "pending"
+        },
+        {
+          "key": "group_2#subtasks",
+          "position": "lobby",
+          "taskStatus": "pending"
+        }
+      ],
+      "exchanges": [],
+      "failure": null
+    },
+    {
+      "mode": "invalid_position",
+      "reachedLastStage": false,
+      "stepsExecuted": 2,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 0,
+      "updatesPreviewSkipped": 0,
+      "updatesPendingRefs": [],
+      "calls": [
+        {
+          "key": "group_2#position",
+          "position": "lobby",
+          "taskStatus": "pending"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {
+                "person_a": {
+                  "containerId": "nonexistent_room",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "expectedRevision": 5,
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context",
+          "servedRevision": 5
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {
+                "person_a": {
+                  "containerId": "nonexistent_room",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "expectedRevision": 5,
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        }
+      ],
+      "terminal": {
+        "kind": "stop",
+        "reason": "updates_preview_refused:version_mismatch"
+      },
+      "failure": null
+    },
+    {
+      "mode": "mixed_forward_reference",
+      "reachedLastStage": true,
+      "stepsExecuted": 3,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 1,
+      "updatesPreviewSkipped": 0,
+      "updatesPendingRefs": [
+        "person_a:review_future_task"
+      ],
+      "calls": [
+        {
+          "key": "group_2#tasks",
+          "position": "lobby",
+          "taskStatus": "pending"
+        },
+        {
+          "key": "group_2#subtasks",
+          "position": "lobby",
+          "taskStatus": "achieved"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {},
+              "appearances": {},
+              "tasksAchieved": {
+                "person_a": [
+                  "task_a_root"
+                ]
+              },
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ]
+            }
+          ],
+          "expectedRevision": 5,
+          "servedRevision": 5
+        }
+      ],
+      "failure": null
+    },
+    {
+      "mode": "stale_revision",
+      "reachedLastStage": true,
+      "stepsExecuted": 3,
+      "endedByReviewStepLimit": false,
+      "updatesApplied": 1,
+      "updatesPreviewSkipped": 0,
+      "updatesPendingRefs": [],
+      "calls": [
+        {
+          "key": "group_2#position",
+          "position": "lobby",
+          "taskStatus": "pending"
+        },
+        {
+          "key": "group_2#appearance",
+          "position": "classroom1",
+          "taskStatus": "pending"
+        }
+      ],
+      "exchanges": [
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {
+                "person_a": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "expectedRevision": 5,
+          "error": {
+            "name": "WorldApiError",
+            "code": "version_mismatch"
+          }
+        },
+        {
+          "operation": "get_context",
+          "servedRevision": 7
+        },
+        {
+          "operation": "preview_point",
+          "groups": [
+            {
+              "groupId": "group_2",
+              "actorIds": [
+                "person_a"
+              ],
+              "positions": {
+                "person_a": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "appearances": {},
+              "tasksAchieved": {},
+              "subtasksAdded": {},
+              "personalities": {},
+              "sanities": {},
+              "taskCoverageIds": [
+                "person_a",
+                "person_b",
+                "person_c",
+                "person_d",
+                "person_e",
+                "person_f"
+              ],
+              "personalityCoverageIds": []
+            }
+          ],
+          "expectedRevision": 7,
+          "servedRevision": 7
+        }
+      ],
+      "failure": null
+    }
+  ]
+}

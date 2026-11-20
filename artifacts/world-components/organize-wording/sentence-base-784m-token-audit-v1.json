@@ -1,0 +1,14 @@
+{
+ "tokenizer": "experiments/world-components/assets/randeng-t5-784m",
+ "tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+ "reference_sequence": "sampled_calls-B-large.jsonl",
+ "training_calls": 480,
+ "max_input_tokens": 232,
+ "max_target_tokens": 35,
+ "input_over_512": 0,
+ "target_over_128": 0,
+ "target_token_mismatches": [],
+ "target_mismatch_count": 0,
+ "eval_calls_checked": "fixed+regression B calls",
+ "all_replay_calls": 480
+}

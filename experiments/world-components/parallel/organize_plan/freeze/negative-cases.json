@@ -1,0 +1,1794 @@
+{
+ "protocol": "c3-organize-plan-negative-v1",
+ "note": "Each case mutates the legal fixture-r1 merge plan or uses a marked synthetic fact set. expectedCodes must be a subset of the validator's actual codes.",
+ "cases": [
+  {
+   "caseId": "N01-missing-fact",
+   "note": "drop f4's group",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "fact-missing"
+   ]
+  },
+  {
+   "caseId": "N02-duplicate-fact",
+   "note": "f4 appears in two groups",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4",
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "fact-duplicate"
+   ]
+  },
+  {
+   "caseId": "N03-unknown-fact",
+   "note": "replace f4 with f9",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f9"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "fact-unknown",
+    "fact-missing"
+   ]
+  },
+  {
+   "caseId": "N04-order-changed",
+   "note": "swap f2 and f3 groups",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "order-changed"
+   ]
+  },
+  {
+   "caseId": "N05-non-contiguous",
+   "note": "group f0+f2 skips f1",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f2"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f1"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "order-changed",
+    "link-entity-mismatch"
+   ]
+  },
+  {
+   "caseId": "N06-continuation-across-entities",
+   "note": "continuation joins 周宁 with 陈默",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f2",
+       "f3"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "link-entity-mismatch",
+    "order-changed"
+   ]
+  },
+  {
+   "caseId": "N07-parallel-within-entity",
+   "note": "parallel joins two 林川 facts",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "parallel"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "link-entity-mismatch"
+   ]
+  },
+  {
+   "caseId": "N08-first-mention-omit",
+   "note": "first 林川 fact is omitted",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "omit",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "ref-first-mention-omit",
+    "ref-omit-without-name"
+   ]
+  },
+  {
+   "caseId": "N09-cross-group-omit",
+   "note": "omit 陈默 in a later group",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "omit"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "ref-cross-group-omit"
+   ]
+  },
+  {
+   "caseId": "N10-missing-edge",
+   "note": "drop the authorized before(f2->f3)",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": []
+   },
+   "expectedCodes": [
+    "edge-missing-authorized"
+   ]
+  },
+  {
+   "caseId": "N11-unauthorized-edge",
+   "note": "invent before(f0->f1)",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f0",
+      "to": "f1",
+      "type": "before",
+      "mode": "optional"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "edge-unauthorized",
+    "edge-missing-authorized"
+   ]
+  },
+  {
+   "caseId": "N12-reversed-edge",
+   "note": "reverse the authorized direction",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f3",
+      "to": "f2",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "edge-order",
+    "edge-unauthorized",
+    "edge-missing-authorized"
+   ]
+  },
+  {
+   "caseId": "N13-target-not-isolated",
+   "note": "merge the relation target f3 with f4",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3",
+       "f4"
+      ],
+      "links": [
+       "continuation"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "edge-target-not-isolated"
+   ]
+  },
+  {
+   "caseId": "N14-extra-field",
+   "note": "add a free-text temporal field",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ],
+    "then": "f0 随后 f1"
+   },
+   "expectedCodes": [
+    "unknown-field",
+    "plan-free-text"
+   ]
+  },
+  {
+   "caseId": "N15-cause-edge",
+   "note": "turn before into cause",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "cause",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "edge-type"
+   ]
+  },
+  {
+   "caseId": "N16-time-on-group",
+   "note": "add a time field to a group",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ],
+      "time": "随后"
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "required"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "unknown-field",
+    "plan-free-text"
+   ]
+  },
+  {
+   "caseId": "N17-bad-edge-mode",
+   "note": "mode is a temporal word",
+   "synthetic": false,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "person_a",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    },
+    {
+     "factId": "f2",
+     "entityId": "person_b",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "text": "斗篷下摆湿了一片"
+    },
+    {
+     "factId": "f3",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f4",
+     "entityId": "person_c",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "text": "袖口湿到肘部"
+    }
+   ],
+   "authorizedEdges": [
+    {
+     "from": "f2",
+     "to": "f3"
+    }
+   ],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1"
+      ],
+      "links": [
+       "continuation"
+      ]
+     },
+     {
+      "facts": [
+       "f2"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f3"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f4"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "omit",
+     "f2": "name",
+     "f3": "name",
+     "f4": "name"
+    },
+    "edges": [
+     {
+      "from": "f2",
+      "to": "f3",
+      "type": "before",
+      "mode": "then"
+     }
+    ]
+   },
+   "expectedCodes": [
+    "edge-mode"
+   ]
+  },
+  {
+   "caseId": "N18-ambiguous-name",
+   "note": "two entities named 张伟",
+   "synthetic": true,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "p1",
+     "name": "张伟",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "p2",
+     "name": "张伟",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    }
+   ],
+   "authorizedEdges": [],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f1"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name"
+    },
+    "edges": []
+   },
+   "expectedCodes": [
+    "ref-ambiguous-name"
+   ]
+  },
+  {
+   "caseId": "N19-ambiguous-omit",
+   "note": "A/B/A: omit at f2 points back to B if read nearest-first",
+   "synthetic": true,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "p1",
+     "name": "甲",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": "p2",
+     "name": "乙",
+     "kind": "appearance_changed",
+     "text": "鞋底沾了泥"
+    },
+    {
+     "factId": "f2",
+     "entityId": "p1",
+     "name": "甲",
+     "kind": "appearance_changed",
+     "text": "指节发白"
+    }
+   ],
+   "authorizedEdges": [],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "links": [
+       "parallel",
+       "parallel"
+      ]
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name",
+     "f2": "omit"
+    },
+    "edges": []
+   },
+   "expectedCodes": [
+    "ref-ambiguous-omit"
+   ]
+  },
+  {
+   "caseId": "N20-time-fact-unsupported",
+   "note": "time facts have no entity; this schema refuses them",
+   "synthetic": true,
+   "facts": [
+    {
+     "factId": "f0",
+     "entityId": "p1",
+     "name": "甲",
+     "kind": "appearance_changed",
+     "text": "袖口沾了雨"
+    },
+    {
+     "factId": "f1",
+     "entityId": null,
+     "name": null,
+     "kind": "time",
+     "amount": 2,
+     "unit": "minute"
+    }
+   ],
+   "authorizedEdges": [],
+   "plan": {
+    "groups": [
+     {
+      "facts": [
+       "f0"
+      ],
+      "links": []
+     },
+     {
+      "facts": [
+       "f1"
+      ],
+      "links": []
+     }
+    ],
+    "refs": {
+     "f0": "name",
+     "f1": "name"
+    },
+    "edges": []
+   },
+   "expectedCodes": [
+    "unsupported-fact-kind"
+   ]
+  }
+ ]
+}

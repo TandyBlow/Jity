@@ -126,6 +126,12 @@ class ScenarioGenerator(
             state = refreshed["state"]
             memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
 
+        action_arc_index = (
+            int(campaign_manager.progress.arc_index)
+            if campaign_manager is not None and campaign_manager.is_loaded() and campaign_manager.progress is not None
+            else 0
+        )
+
         previous_output = {}
         active_turn = self.db.get_story_turn(session_id, parent_turn_id) if parent_turn_id else None
         if active_turn:
@@ -286,6 +292,7 @@ class ScenarioGenerator(
             source=source,
             model_output_id=output_id,
             campaign_session_index=_csi,
+            campaign_arc_index=action_arc_index,
         )
         campaign_manager.flush_deferred_effects()
         self._schedule_memory(session_id, timeline_node_id, next_state, campaign_manager)

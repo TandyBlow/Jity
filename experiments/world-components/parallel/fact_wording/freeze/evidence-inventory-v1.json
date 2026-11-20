@@ -1,0 +1,365 @@
+{
+ "protocol": "c4-evidence-inventory-v1",
+ "generated_at": "2026-11-08T05:42:19+00:00",
+ "written_by": "experiments/world-components/parallel/fact_wording/scripts/inventory_u240.py",
+ "rules": [
+  "an evidence file counts as u240 evidence only if it, or the index that owns it, records the weight sha256 above",
+  "files with no recorded checkpoint identify a process, not u240; they are kept for diagnostics only",
+  "sha256 is recomputed here, never copied from a report"
+ ],
+ "evidence": [
+  {
+   "id": "target-revision.index",
+   "kind": "index",
+   "purpose": "two-arm continuation from u240; its `base.modelSha256` names u240",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/target-revision-r1/index.json",
+   "exists": true,
+   "bytes": 5363,
+   "sha256": "4d73b8897e6dee31df72e0cc227b71a947fd3996daf38b01c199793422fd9087",
+   "declared_model_sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "identity": "u240-confirmed"
+  },
+  {
+   "id": "syntax-gap.index",
+   "kind": "index",
+   "purpose": "remaining-error inventory and minimal-contrast probes; its `model` block names u240",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/syntax-gap-r1/index.json",
+   "exists": true,
+   "bytes": 7702,
+   "sha256": "2e242e5b40675c5e622c13f081bac8c0cf28a15fe10dfeac80b98631549a9af9",
+   "identity": "identity-missing"
+  },
+  {
+   "id": "cf24-u240-baseline.index",
+   "kind": "index",
+   "purpose": "cf24 quality baseline run on u240 (raw output, mechanical verdicts, overlap, human review, edit-layer variant)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "exists": true,
+   "bytes": 3314,
+   "sha256": "45122c2fef12d9e55880ec28f5bfc91d12701abe0f3b8d734df679acfdbad37b",
+   "declared_model_sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "identity": "u240-confirmed"
+  },
+  {
+   "id": "cf24-u240-baseline.raw",
+   "kind": "model-output",
+   "purpose": "greedy output for 85 cf24 units on u240 (CPU)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-baseline.json",
+   "exists": true,
+   "bytes": 137379,
+   "sha256": "cb153939fc58feb9b534169167d5fe7a5259bd407bd5d560ea7773cfaf496c3e",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "cf24-u240-baseline.mechanical",
+   "kind": "score",
+   "purpose": "mechanical S/O/C/A verdicts on the u240 cf24 output",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-mechanical.json",
+   "exists": true,
+   "bytes": 19648,
+   "sha256": "7e2bca51eadf43ad70edd3a4e195900f6b630077aadd8b38fd4f49d382bb8e68",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "cf24-u240-baseline.overlap",
+   "kind": "diagnostic",
+   "purpose": "training-set overlap of the 85 cf24 units (fact signature level)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-overlap.json",
+   "exists": true,
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "cf24-u240-baseline.review",
+   "kind": "human-review",
+   "purpose": "per-source human review of the u240 cf24 output (the only per-item human labels for u240)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-review.json",
+   "exists": true,
+   "bytes": 21891,
+   "sha256": "79c9908dd8a3726a94775ac7607f63aee4b3231cb74af61386f4890db066d2aa",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "cf24-moved-rule.raw",
+   "kind": "model-output",
+   "purpose": "u240 second run with the added input sentence for the 10 moved units (input fix that failed)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-moved-rule/cf24-baseline.json",
+   "exists": true,
+   "bytes": 138226,
+   "sha256": "b276cfd62eb4499b00e8ee061703df6795f1821e41176ebda8848d6a51c3d214",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "val-u240.raw",
+   "kind": "model-output",
+   "purpose": "u240 greedy output on the final24 validation set",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/target-revision-r1/val-u240/val-baseline.json",
+   "exists": true,
+   "bytes": 114808,
+   "sha256": "2f9a2d088c386c5c0fc62fc2a1a3735d3a6513b2ff69a8a82d0ebed898ab88f3",
+   "declared_model_sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/target-revision-r1/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "val-u240.mechanical",
+   "kind": "score",
+   "purpose": "mechanical verdicts on the u240 final24 output",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/target-revision-r1/val-u240/cf24-mechanical-val-baseline.json",
+   "exists": true,
+   "bytes": 17480,
+   "sha256": "78126a81e84c8e52019e6bd7bdb92e0555a102270e79009dfa6a5e41bb9dec3a",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/target-revision-r1/index.json",
+   "identity_owner_status": "u240-confirmed"
+  },
+  {
+   "id": "syntax-gap.probe-u240",
+   "kind": "model-output",
+   "purpose": "u240 output on the frozen minimal-contrast syntax probes (GPU)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/syntax-gap-r1/probe-u240/probe-baseline.json",
+   "exists": true,
+   "bytes": 27753,
+   "sha256": "f3675a90457c7c1264b3ba333c8df6c5d3629cb59de092c4d9429c8175e2ff04",
+   "declared_model_sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "identity": "u240-confirmed",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/syntax-gap-r1/index.json",
+   "identity_owner_status": "identity-missing"
+  },
+  {
+   "id": "syntax-gap.review",
+   "kind": "human-review",
+   "purpose": "review covering the u240 and c syntax-gap probes; the file itself records no checkpoint hash",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/syntax-gap-r1/review-r1.json",
+   "exists": true,
+   "bytes": 18428,
+   "sha256": "137edf9fd8826fc53519657c436ddf7752550a2ee2580da209e44198f7e0ec99",
+   "identity": "identity-missing",
+   "identity_owner": ".local/world-components-next-worktree/artifacts/next-acceptance/syntax-gap-r1/index.json",
+   "identity_owner_status": "identity-missing"
+  },
+  {
+   "id": "decode-compare.arm-ab",
+   "kind": "model-output",
+   "purpose": "greedy vs beam-2 on the 90-case regression set",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/decode-compare/arm-ab.json",
+   "exists": true,
+   "bytes": 46570,
+   "sha256": "005d2d14d7fee03236b65735c30906bf7d87e07c8ee49165cd5d2d0f78413787",
+   "identity": "identity-missing"
+  },
+  {
+   "id": "decode-compare.diag215-ab",
+   "kind": "model-output",
+   "purpose": "greedy vs beam-2 on the 215-case diagnostic set",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/decode-compare/diag215-ab.json",
+   "exists": true,
+   "bytes": 112217,
+   "sha256": "0b450798b0f14f8f5926eec6d42022d8d7ba4bfc57743324d34c7a29ffec8f65",
+   "identity": "identity-missing"
+  },
+  {
+   "id": "decode-compare.confirm40-ab",
+   "kind": "model-output",
+   "purpose": "greedy vs beam-2 on the 40-case confirmation set",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/decode-compare/confirm40-ab.json",
+   "exists": true,
+   "bytes": 21399,
+   "sha256": "a95f323c9e008f164c1ed43d35eb81b4ab76f8ca8e6cdcd81c786709bfdda12f",
+   "identity": "identity-missing"
+  },
+  {
+   "id": "decode-compare.cases",
+   "kind": "input-set",
+   "purpose": "the 90 frozen decode cases with their inputs and input hashes",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/decode-compare/cases.json",
+   "exists": true,
+   "bytes": 54890,
+   "sha256": "48dbda093ef85ee2923f5456797ca14d13bb97736e90ce2afda5a230b64f6dad",
+   "identity": "not-applicable (input set)"
+  },
+  {
+   "id": "decode-compare.diag215-cases",
+   "kind": "input-set",
+   "purpose": "the 215 diagnostic-case inputs",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/decode-compare/diag215-cases.json",
+   "exists": true,
+   "bytes": 164411,
+   "sha256": "ff26d980039e3371867ab035d78ee6a5a7e6d8521666b75fdab27dd84e87334e",
+   "identity": "not-applicable (input set)"
+  },
+  {
+   "id": "decode-compare.confirm40-cases",
+   "kind": "input-set",
+   "purpose": "the 40 confirmation-case inputs",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/decode-compare/confirm40-cases.json",
+   "exists": true,
+   "bytes": 18389,
+   "sha256": "0894b81c915c8034ae77e8a265906141940db64d8305fcae166435fa51ee3c3b",
+   "identity": "not-applicable (input set)"
+  },
+  {
+   "id": "decode-beam-review",
+   "kind": "human-review",
+   "purpose": "item-by-item review of the 32 cases where greedy and beam differ",
+   "tree": "wc",
+   "path": ".local/world-components-worktree/artifacts/world-components/decode-beam-review-v1.md",
+   "exists": true,
+   "bytes": 13937,
+   "sha256": "a4c2b50ab63fb2a0ed19daa7504fed6c23b508a0bfa0b1870c806505b8cf1eb4",
+   "identity": "identity-missing"
+  },
+  {
+   "id": "cf24-contract",
+   "kind": "input-set",
+   "purpose": "the 85 single-fact units / 24 sources of the cf24 evaluation set",
+   "tree": "c4",
+   "path": ".local/parallel/c-fact-wording/artifacts/world-components/n4-cf24-contract.jsonl",
+   "exists": true,
+   "bytes": 68504,
+   "sha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+   "identity": "not-applicable (input set)",
+   "declared_prefix": "a94f7a13eb61",
+   "declared_matches": true,
+   "units": 85
+  },
+  {
+   "id": "cf24-scoring-v2",
+   "kind": "score",
+   "purpose": "older per-fact cf24 verdicts for base/arm1/arm2/422/431 (no u240 arm, no checkpoint hash)",
+   "tree": "next",
+   "path": ".local/world-components-next-worktree/artifacts/next-inputs/world-components/n4-cf24-scoring-v2.json",
+   "exists": true,
+   "bytes": 21525,
+   "sha256": "451f6ebfdd464dfea348b97b3a8f63b6d121c588b65d3852d729f0e248142921",
+   "identity": "identity-missing",
+   "note": "per-fact cf24 verdicts for arms base/arm1/arm2/422/431; no u240 arm and no checkpoint hash, so it cannot be compared with the u240 numbers"
+  }
+ ],
+ "index_declarations": {
+  "cf24-u240-baseline": {
+   "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "model_matches_local": true,
+   "unitFileSha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+   "files": [
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-baseline.json",
+     "declared": "cb153939fc58feb9b534169167d5fe7a5259bd407bd5d560ea7773cfaf496c3e",
+     "actual": "cb153939fc58feb9b534169167d5fe7a5259bd407bd5d560ea7773cfaf496c3e",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-mechanical.json",
+     "declared": "7e2bca51eadf43ad70edd3a4e195900f6b630077aadd8b38fd4f49d382bb8e68",
+     "actual": "7e2bca51eadf43ad70edd3a4e195900f6b630077aadd8b38fd4f49d382bb8e68",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-overlap.json",
+     "declared": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330",
+     "actual": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-review.json",
+     "declared": "79c9908dd8a3726a94775ac7607f63aee4b3231cb74af61386f4890db066d2aa",
+     "actual": "79c9908dd8a3726a94775ac7607f63aee4b3231cb74af61386f4890db066d2aa",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-edited.json",
+     "declared": "62e23492d1e1f2301b47fc7d1f0e28c30c0fc0ac3bb22bc765f5cc945ba29129",
+     "actual": "62e23492d1e1f2301b47fc7d1f0e28c30c0fc0ac3bb22bc765f5cc945ba29129",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-mechanical-cf24-edited.json",
+     "declared": "f5b4140fba8f8f2c6e34894014e9dbedfa2528ac4e7a1ea0360d8dfce490db30",
+     "actual": "f5b4140fba8f8f2c6e34894014e9dbedfa2528ac4e7a1ea0360d8dfce490db30",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-review-edited.json",
+     "declared": "6e5726c3498ef5cd07afe8ab561e89b042a1cdd7c842500e1e0cc336fdd76760",
+     "actual": "6e5726c3498ef5cd07afe8ab561e89b042a1cdd7c842500e1e0cc336fdd76760",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-moved-rule/cf24-baseline.json",
+     "declared": "b276cfd62eb4499b00e8ee061703df6795f1821e41176ebda8848d6a51c3d214",
+     "actual": "b276cfd62eb4499b00e8ee061703df6795f1821e41176ebda8848d6a51c3d214",
+     "matches": true
+    },
+    {
+     "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-moved-rule/cf24-mechanical.json",
+     "declared": "4a24d398eb0a514efa7c308b5632ad800121bbebac51ee9958172f0c076432c3",
+     "actual": "4a24d398eb0a514efa7c308b5632ad800121bbebac51ee9958172f0c076432c3",
+     "matches": true
+    }
+   ]
+  }
+ },
+ "decode_prefix_checks": [
+  {
+   "path": "artifacts/decode-compare/arm-ab.json",
+   "declared_prefix": "005d2d14d7fee032",
+   "actual_prefix": "005d2d14d7fee032",
+   "matches": true
+  },
+  {
+   "path": "artifacts/decode-compare/diag215-ab.json",
+   "declared_prefix": "0b450798b0f14f8f",
+   "actual_prefix": "0b450798b0f14f8f",
+   "matches": true
+  },
+  {
+   "path": "artifacts/decode-compare/confirm40-ab.json",
+   "declared_prefix": "a95f323c9e008f16",
+   "actual_prefix": "a95f323c9e008f16",
+   "matches": true
+  },
+  {
+   "path": "artifacts/decode-compare/cases.json",
+   "declared_prefix": "48dbda093ef85ee2",
+   "actual_prefix": "48dbda093ef85ee2",
+   "matches": true
+  }
+ ],
+ "cf24_contract_check": {
+  "path": "artifacts/world-components/n4-cf24-contract.jsonl",
+  "declared_prefix": "a94f7a13eb61",
+  "actual": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+  "matches": true,
+  "units": 85
+ }
+}

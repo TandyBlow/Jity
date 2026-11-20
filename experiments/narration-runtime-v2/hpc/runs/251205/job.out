@@ -1,0 +1,72 @@
+node=hpcgpu10 start=Tue Nov 10 11:24:24 CST 2026 config=configs/yuyan-lora-v2.json out=runs/yuyan-result-v2-r1
+NVIDIA GeForce RTX 4090 D, 24564 MiB
+Python 3.11.17
+{
+ "config": "hpc:~/narr_v2/configs/yuyan-lora-v2.json",
+ "backend": "yuyan",
+ "status": "active",
+ "data": {
+  "path": "hpc:~/narr_v2/data/rows-yuyan-v2.jsonl",
+  "sha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+  "rows": 199,
+  "manifest": "hpc:~/narr_v2/data/manifest.json",
+  "manifestSha256": "972b65b8cce94476eb4e9ede99694ff823c165ffca619dee512d179e5bb2c511"
+ },
+ "splits": {
+  "path": "hpc:~/narr_v2/splits/v1.json",
+  "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836"
+ },
+ "sourceChecks": {
+  "skipped": "frozen source directory is not present",
+  "sourceDir": "hpc:~/world-components/narration-dataset-v1"
+ },
+ "tokenizer": {
+  "name": "yuyan-char-v1",
+  "source": "hpc:~/narr_rows/dict.txt",
+  "path": "tokenizers/yuyan-v1/dict.txt",
+  "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+  "bytes": 119884,
+  "vocabSize": 13668,
+  "specialTokens": [
+   "<end>",
+   "<mask>",
+   "<sep>",
+   "<hold>"
+  ],
+  "hasSpaceToken": false,
+  "hasTabToken": false,
+  "hasNewlineToken": false
+ },
+ "base": {
+  "path": "hpc:~/narr_rows/checkpoint_best.pt",
+  "exists": true,
+  "sha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106"
+ },
+ "lengths": {
+  "ok": true,
+  "problems": [],
+  "vocabSize": 13672,
+  "eos": 2,
+  "lengths": {
+   "prompt": {
+    "min": 197,
+    "max": 915,
+    "mean": 430.8
+   },
+   "target": {
+    "min": 177,
+    "max": 1467,
+    "mean": 417.7
+   },
+   "input": {
+    "min": 481,
+    "max": 2382,
+    "mean": 848.4
+   }
+  },
+  "rowsOverMaxLen": 0
+ },
+ "ok": true,
+ "problems": []
+}
+hashing base checkpoint: hpc:~/narr_rows/checkpoint_best.pt

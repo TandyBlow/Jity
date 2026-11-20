@@ -1,0 +1,30 @@
+[world_1 root_3 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 point_8 seq=1] prev=root_3 delta={}
+    show  第1点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_13 root_15 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_13 point_20 seq=1] prev=root_15 delta={}
+    show  第1点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_13 point_23 seq=2] prev=point_20 delta={}
+    show  第2点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_25 root_27 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_30 root_32 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_35 root_37 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_35 point_42 seq=1] prev=root_37 delta={}
+    show  第1点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_35 point_45 seq=2] prev=point_42 delta={}
+    show  第2点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True

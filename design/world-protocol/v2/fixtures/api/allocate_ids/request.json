@@ -1,0 +1,20 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_ids_cd",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "allocationKey": "alloc_round_1_p1",
+  "slots": [
+    {
+      "slotKey": "slot_group_p1_cd",
+      "kind": "group",
+      "scope": "round_1"
+    },
+    {
+      "slotKey": "slot_trigger_c_d",
+      "kind": "trigger",
+      "scope": "group_cd"
+    }
+  ]
+}

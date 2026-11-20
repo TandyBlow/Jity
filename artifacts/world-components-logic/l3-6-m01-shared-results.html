@@ -1,0 +1,2135 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 完整场景共享读取实测</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:24px 18px}article{background:white;padding:22px;margin:18px 0;border:1px solid #dce3e8;border-radius:12px}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #dde4e8}.scroll{overflow:auto}.bad{color:#a7352e}.muted{color:#667784}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f8;padding:12px;font-size:13px}h1{font-size:28px}h2{font-size:21px}</style><main><p class="muted">D / 2026-11-02 · 已公开旧开发题的探索试验</p><h1>完整场景共享读取：速度与漏判分别看</h1><p>同一个约1028万参数的冻结编码器，旧方案为每个候选重复读取场景，新方案只读取一次，再用学习到的人物融合头判断。两套头和表示不同，本页比较工程候选，不声称输出数值等价。</p><article><h2>本次实际做了什么</h2><p>新判断头共 180,418 参数；16来源组拟合，4个已在前批公开的开发场景用于观察，每个臂每题重复5次。新90组完全未使用，仍需独立训练数据和正式校准。本批不生成行动正文、反应或共同结果，也未测完整500毫秒计算。</p><p>原子事实和完整候选保留，每窗≤512；人物身份池按输入字段/ID建立，语义是/否由学习头判断。事实送入模型不等于模型已理解全部跨窗关系。</p></article><article><h2>先看结论</h2><p>纠正训练后的r3：目标分析从每个候选重读场景的12窗降为共享4窗，完整单项中位耗时约0.49–0.50秒降至0.20–0.21秒；行动判断约0.19秒，略慢于同批旧方案。两项仍未达到50毫秒局部预算。</p><p class="bad">原来漏掉两人的开闸题现在选对，但原来没有目标的系鞋带题又误选p2、p3，完整目标集合仍只命中1/2。行动保留题2/2。新表示能拟合8/8训练场景，不代表能可靠处理新场景；不能晋升为可用组件。</p></article><article><h2>r2：学习率 0.01</h2><p>原学习率的融合头趋向常量分数，拟合失败，完整保留。</p><div class="scroll"><table><tr><th>新共享头</th><th>拟合题整题命中</th><th>已公开保留开发题命中</th><th>保留目标漏选/错选</th></tr><tr><td>D02</td><td>4/8</td><td>1/2</td><td>不适用</td></tr><tr><td>D03</td><td>2/8</td><td>1/2</td><td>2/0</td></tr></table></div><div class="scroll"><table><tr><th>题目</th><th>旧方案中位/最大ms</th><th>共享方案中位/最大ms</th><th>读取窗口：旧→新</th><th>局部50ms</th></tr><tr><td>dev-d02-03</td><td>177.37/207.03</td><td>186.71/215.67</td><td>4→4</td><td class="bad">fail</td></tr><tr><td>dev-d02-05</td><td>179.75/206.36</td><td>184.55/213.81</td><td>4→4</td><td class="bad">fail</td></tr><tr><td>dev-d03-02</td><td>485.59/514.88</td><td>199.27/225.74</td><td>12→4</td><td class="bad">fail</td></tr><tr><td>dev-d03-06</td><td>495.11/528.63</td><td>205.62/234.66</td><td>12→4</td><td class="bad">fail</td></tr></table></div><p>同一进程、CPU单线程、交替顺序；每次重新分词/完整编码，包含逐窗日志和头计算，不使用计时特征缓存。每题只有5次观测，不能签正式性能；完整500ms未测。</p><details><summary>dev-d02-03 · 原判据 skip · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 152.411083,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.04483398515731096
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 159.443209,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.16233298811130226
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 172.9395,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.13541599037125707
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 169.062208,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.051333976443856955
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 177.368208,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.04529199213720858
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 186.710458,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.15183299547061324
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 201.820666,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.15087498468346894
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 193.663625,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.04624997382052243
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 207.025333,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.04583399277180433
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 215.671292,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.1459580089431256
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;现在一步跨过六米检修井到东侧。&quot;,
+    &quot;intentStatus&quot;: &quot;pending&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;顾岚（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;重视安全，不会凭空获得跳跃能力。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等待工程师提供安全跨越方案，目前不冒险越井。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;简工（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;按工程条件判断。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;核对断梯尺寸后安排更换。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;聂禾（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;遵守隔离要求。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;在东平台等候，不改变井口状态。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;断梯&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;检修记录册&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p2&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;冰窖检修站&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;六米宽检修井西侧，梯子断裂，无跨越设施&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;检修井东侧封闭平台&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>dev-d02-05 · 原判据 act · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 156.000625,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.0457499991171062
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 160.6345,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.13558397768065333
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 173.132625,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.1462079817429185
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 169.42125,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.048124988097697496
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 179.745583,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.04533299943432212
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 184.554208,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.13491700519807637
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 200.262625,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.20387498079799116
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 195.305459,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.04600000102072954
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 206.357875,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.046375003876164556
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 213.805083,
+    &quot;probabilities&quot;: [
+      0.5000174045562744
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.20787498215213418
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;把刚才那张借阅凭条送给管理员。&quot;,
+    &quot;intentStatus&quot;: &quot;consumed&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;纪遥（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;见到风险会主动保护资料。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;优先保护自己负责的纸卷不被眼前漏水浸湿。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;柳川（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;积极协作。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;通知维修人员处理屋顶漏水。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;陶白（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;做事细致。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;清点桌面的封签。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;纸卷箱&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;遮水布&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;河岸档案室&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;漏水靠近纸卷架的阅档室&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;干燥走廊&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>dev-d03-02 · 原判据 [] · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 461.882625,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05033300840295851
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 172.0385,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.16254198271781206
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 183.383583,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.2118749835062772
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 477.128875,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05279199103824794
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 485.589375,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05020800745114684
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 199.270417,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.18395899678580463
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 211.193666,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.21891598589718342
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 501.630792,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05187498754821718
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 514.884791,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.04949999856762588
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 225.742875,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.21454098168760538
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我坐在通道外，低头系紧自己松开的鞋带。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我坐在通道外，低头系紧自己松开的鞋带。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;周栖（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;不打扰别人。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;在车来前整理随身衣物。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;白茵（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;认真。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;保管票夹。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;江照（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;平和。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等候发车通知。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;主角鞋带&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;票夹&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p2&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;城门候车棚&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;通道外的座椅区&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;售票窗&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>dev-d03-06 · 原判据 [&#x27;p2&#x27;, &#x27;p3&#x27;] · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 468.631416,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.048874993808567524
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 176.880375,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.16575001063756645
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 188.758584,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.17387501429766417
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 484.796459,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05079200491309166
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 495.108375,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05054098437540233
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 205.61825,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.18162501510232687
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 216.736792,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.1667079923208803
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 516.6555,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.04979199729859829
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 528.630542,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.049792026402428746
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 234.65825,
+    &quot;probabilities&quot;: [
+      0.499980092048645,
+      0.499980092048645,
+      0.499980092048645
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.26787500246427953
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我突然打开排水闸，让水流冲向槽内两人正在站立的位置。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我突然打开排水闸，让水流冲向槽内两人正在站立的位置。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;盛澜（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;动作直接。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;打开闸门排水。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;赵晚（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;反应谨慎。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;避免自己和布匹被水冲倒。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;方舟（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;善于保护工具。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;稳住脚下并护住布架。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;排水闸&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;待整理布匹&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;河边染坊&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;槽内工作区及排水闸&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;晾布廊&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><p><a href="m01-fitting/m01-shared-dev42-20261102-r2.plan.json">本批冻结计划</a> · <a href="m01-fitting/m01-shared-dev42-20261102-r2.record.json.gz">完整记录</a> · <a href="m01-fitting/m01-shared-dev42-20261102-r2.record.windows.jsonl.gz">逐窗事件</a></p></article><article><h2>r3：学习率 0.0003</h2><p>依据拟合损失失败登记一次较小学习率纠正；不改阈值、题目、训练步数或保留组。</p><div class="scroll"><table><tr><th>新共享头</th><th>拟合题整题命中</th><th>已公开保留开发题命中</th><th>保留目标漏选/错选</th></tr><tr><td>D02</td><td>8/8</td><td>2/2</td><td>不适用</td></tr><tr><td>D03</td><td>8/8</td><td>1/2</td><td>0/2</td></tr></table></div><div class="scroll"><table><tr><th>题目</th><th>旧方案中位/最大ms</th><th>共享方案中位/最大ms</th><th>读取窗口：旧→新</th><th>局部50ms</th></tr><tr><td>dev-d02-03</td><td>179.14/209.82</td><td>188.17/215.70</td><td>4→4</td><td class="bad">fail</td></tr><tr><td>dev-d02-05</td><td>181.19/208.78</td><td>186.37/214.56</td><td>4→4</td><td class="bad">fail</td></tr><tr><td>dev-d03-02</td><td>492.57/515.42</td><td>198.84/225.72</td><td>12→4</td><td class="bad">fail</td></tr><tr><td>dev-d03-06</td><td>503.15/529.83</td><td>206.90/233.10</td><td>12→4</td><td class="bad">fail</td></tr></table></div><p>同一进程、CPU单线程、交替顺序；每次重新分词/完整编码，包含逐窗日志和头计算，不使用计时特征缓存。每题只有5次观测，不能签正式性能；完整500ms未测。</p><details><summary>dev-d02-03 · 原判据 skip · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 152.595667,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.045541004510596395
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 160.743959,
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.1772090035956353
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 174.365875,
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.1886249810922891
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 167.095791,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.046375003876164556
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 179.143292,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.045541004510596395
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 188.172166,
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.16645900905132294
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 201.348209,
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.14024999109096825
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 195.145792,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.04645899753086269
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 209.823417,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.04737498238682747
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 215.697833,
+    &quot;probabilities&quot;: [
+      0.08529818803071976
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;headMs&quot;: 0.15908299246802926
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;现在一步跨过六米检修井到东侧。&quot;,
+    &quot;intentStatus&quot;: &quot;pending&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;顾岚（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;重视安全，不会凭空获得跳跃能力。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等待工程师提供安全跨越方案，目前不冒险越井。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;简工（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;按工程条件判断。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;核对断梯尺寸后安排更换。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;聂禾（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;遵守隔离要求。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;在东平台等候，不改变井口状态。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;断梯&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;检修记录册&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p2&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;冰窖检修站&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;六米宽检修井西侧，梯子断裂，无跨越设施&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;检修井东侧封闭平台&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>dev-d02-05 · 原判据 act · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 152.456625,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.0439999857917428
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 159.658708,
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.14320900663733482
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 171.821375,
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.14583300799131393
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 168.376,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.04591597826220095
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 181.1885,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.04629101022146642
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 186.369958,
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.1437499886378646
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 199.265416,
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.17512499471195042
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 196.601042,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.0448749924544245
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 208.781292,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.04487502155825496
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 214.564875,
+    &quot;probabilities&quot;: [
+      0.9695144891738892
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;headMs&quot;: 0.1446670212317258
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;把刚才那张借阅凭条送给管理员。&quot;,
+    &quot;intentStatus&quot;: &quot;consumed&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;纪遥（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;见到风险会主动保护资料。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;优先保护自己负责的纸卷不被眼前漏水浸湿。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;柳川（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;积极协作。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;通知维修人员处理屋顶漏水。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;陶白（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;做事细致。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;清点桌面的封签。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;纸卷箱&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;遮水布&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;河岸档案室&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;漏水靠近纸卷架的阅档室&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;干燥走廊&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>dev-d03-02 · 原判据 [] · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 463.740334,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05120801506564021
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 171.305417,
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.16112500452436507
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 183.937833,
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.1822909980546683
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 477.889292,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05029098247177899
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 492.574542,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.051749986596405506
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 198.839875,
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.18854098743759096
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 209.574667,
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.16975001199170947
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 507.7485,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.0509590026922524
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 515.42325,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05004199920222163
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 225.719666,
+    &quot;probabilities&quot;: [
+      0.018044568598270416,
+      0.5487032532691956,
+      0.7279428243637085
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.2575830148998648
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我坐在通道外，低头系紧自己松开的鞋带。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我坐在通道外，低头系紧自己松开的鞋带。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;周栖（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;不打扰别人。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;在车来前整理随身衣物。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;白茵（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;认真。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;保管票夹。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;江照（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;平和。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等候发车通知。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;主角鞋带&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;票夹&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p2&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;城门候车棚&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;通道外的座椅区&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;售票窗&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>dev-d03-06 · 原判据 [&#x27;p2&#x27;, &#x27;p3&#x27;] · 查看所有预测/耗时</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 469.016917,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.051915994845330715
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;elapsedMs&quot;: 179.998458,
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.186417018994689
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 189.720083,
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.20383400260470808
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;elapsedMs&quot;: 485.752458,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.052332994528114796
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 503.153584,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.04991600872017443
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;elapsedMs&quot;: 206.902583,
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.18733300385065377
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 217.594292,
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.18279199139215052
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;elapsedMs&quot;: 518.775625,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.05329199484549463
+  },
+  {
+    &quot;arm&quot;: &quot;legacy&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 529.828917,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;headMs&quot;: 0.04904202069155872
+  },
+  {
+    &quot;arm&quot;: &quot;shared&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;elapsedMs&quot;: 233.101833,
+    &quot;probabilities&quot;: [
+      0.019564399495720863,
+      0.8203742504119873,
+      0.7377943396568298
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;headMs&quot;: 0.17079099779948592
+  }
+]</pre><p>完整原输入</p><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我突然打开排水闸，让水流冲向槽内两人正在站立的位置。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我突然打开排水闸，让水流冲向槽内两人正在站立的位置。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;盛澜（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;动作直接。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;打开闸门排水。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;赵晚（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;反应谨慎。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;避免自己和布匹被水冲倒。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;方舟（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;善于保护工具。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;稳住脚下并护住布架。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;排水闸&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;待整理布匹&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;河边染坊&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;槽内工作区及排水闸&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;晾布廊&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><p><a href="m01-fitting/m01-shared-dev42-20261102-r3.plan.json">本批冻结计划</a> · <a href="m01-fitting/m01-shared-dev42-20261102-r3.record.json.gz">完整记录</a> · <a href="m01-fitting/m01-shared-dev42-20261102-r3.record.windows.jsonl.gz">逐窗事件</a></p></article><article><h2>边界与下一步</h2><p class="bad">共享读取减少了重复计算，不代表新判断头质量通过；按本页逐项实际成绩判断。50ms局部预算与500ms完整目标不变，浏览器、生产接线、反应/共同结果协同、来源独立和正式泛化仍未通过。</p><p>首次r1在资源监测权限处停止，0业务调用，40项计划任务未启动；旧监督记录漏列这些slot，保留原件并在汇总中注明，后续代码与回归已纠正。r2/r3在可监测资源的方式下执行，均保留时间/RSS上限。权重仅在D本地忽略目录，训练和推理大记录gzip无损归档。</p><p><a href="l3-6-m01-shared-summary.json">汇总、哈希与全部运行信息</a> · <a href="l3-5-m01-results.html">前批结果</a></p></article></main></html>

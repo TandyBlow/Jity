@@ -1,0 +1,1842 @@
+{
+  "kind": "jity-goal-timing-baseline",
+  "generatedAt": "2026-11-20T09:54:55.520Z",
+  "thresholds": {
+    "firstReadableMs": 60000,
+    "pointTextMs": 300000
+  },
+  "sources": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-1.json",
+      "runId": "2026-11-20T0814-735b",
+      "status": "PREFLIGHT",
+      "intent": "10-turn",
+      "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-2.json",
+      "runId": "2026-11-20T0815-a2f9",
+      "status": "PREFLIGHT",
+      "intent": "10-turn",
+      "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-3.json",
+      "runId": "2026-11-20T0815-a3cb",
+      "status": "PREFLIGHT",
+      "intent": "10-turn",
+      "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-10-final4.json",
+      "runId": "2026-11-20T0926-4b42",
+      "status": "FAILED",
+      "intent": "timing-baseline",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-extra-2.json",
+      "runId": "2026-11-20T0949-a18c",
+      "status": "FAILED",
+      "intent": "timing-topup",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-extra-2.json"
+    }
+  ],
+  "coldStarts": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-1.json",
+      "runId": "2026-11-20T0814-735b",
+      "startedAt": "2026-11-20T08:14:55.607Z",
+      "readyMs": 24696,
+      "crossOriginIsolated": true,
+      "adapter": {
+        "available": true,
+        "vendor": "nvidia",
+        "architecture": "lovelace",
+        "device": "",
+        "description": "",
+        "isFallback": null,
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "bgra8unorm-storage",
+          "texture-formats-tier1",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "float32-blendable",
+          "atomic-vec2u-min-max",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "shader-f16",
+          "clip-distances"
+        ]
+      },
+      "models": {
+        "requests": 2,
+        "ok": 2,
+        "failed": []
+      },
+      "jsHeapAtReady": {
+        "usedJSHeapSize": 66509262,
+        "totalJSHeapSize": 85265702,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-2.json",
+      "runId": "2026-11-20T0815-a2f9",
+      "startedAt": "2026-11-20T08:15:27.985Z",
+      "readyMs": 18883,
+      "crossOriginIsolated": true,
+      "adapter": {
+        "available": true,
+        "vendor": "nvidia",
+        "architecture": "lovelace",
+        "device": "",
+        "description": "",
+        "isFallback": null,
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "texture-formats-tier1",
+          "bgra8unorm-storage",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "float32-blendable",
+          "atomic-vec2u-min-max",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "shader-f16",
+          "timestamp-query"
+        ]
+      },
+      "models": {
+        "requests": 2,
+        "ok": 2,
+        "failed": []
+      },
+      "jsHeapAtReady": {
+        "usedJSHeapSize": 64872635,
+        "totalJSHeapSize": 78496739,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-3.json",
+      "runId": "2026-11-20T0815-a3cb",
+      "startedAt": "2026-11-20T08:15:50.984Z",
+      "readyMs": 19341,
+      "crossOriginIsolated": true,
+      "adapter": {
+        "available": true,
+        "vendor": "nvidia",
+        "architecture": "lovelace",
+        "device": "",
+        "description": "",
+        "isFallback": null,
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "texture-formats-tier1",
+          "bgra8unorm-storage",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "float32-blendable",
+          "atomic-vec2u-min-max",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "clip-distances",
+          "texture-formats-tier2"
+        ]
+      },
+      "models": {
+        "requests": 2,
+        "ok": 2,
+        "failed": []
+      },
+      "jsHeapAtReady": {
+        "usedJSHeapSize": 63659791,
+        "totalJSHeapSize": 81492403,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    }
+  ],
+  "points": [
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 1,
+      "id": "t1-look-lane",
+      "input": "我停在服务巷的墙边，先把领用台上那张演习规则牌看清楚，再抬头打量巷口和器材棚方向。",
+      "purpose": "开局：观察服务巷、读规则牌、不移动",
+      "clocks": {
+        "pointCommittedAtMs": 20536,
+        "narrationStartedAtMs": 22806,
+        "firstReadableAtMs": 22806,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 31416,
+        "firstAcceptedAtMs": 31416,
+        "pointTextFinishedMinusCommitMs": 10880,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_3_1": {
+            "startedAtMs": 22806,
+            "firstTextAtMs": 22806,
+            "completedAtMs": 31416
+          }
+        },
+        "driverDoneMs": 108456,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1570.1849999427795,
+      "longestStreamGapMs": 156.70500004291534,
+      "generation": {
+        "wallMs": 5634.6900000572205,
+        "finishReason": "stop",
+        "streamChunks": 153
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 5064,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5",
+          "stage": null,
+          "ms": 12525,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_6",
+          "stage": null,
+          "ms": 4434,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6",
+          "stage": null,
+          "ms": 10675,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_7",
+          "stage": null,
+          "ms": 2938,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7",
+          "stage": null,
+          "ms": 11013,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_8",
+          "stage": null,
+          "ms": 4812,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8",
+          "stage": null,
+          "ms": 8822,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_10",
+          "stage": null,
+          "ms": 6162,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10",
+          "stage": null,
+          "ms": 16849,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 56,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 184,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2917,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 7972,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 20537,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 22884,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 108418,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 68,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 10,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 2,
+      "id": "t2-move-shed",
+      "input": "我贴着服务巷的低墙往器材棚走，进门后先看领用台后面有没有人，再找林亦舟。",
+      "purpose": "移动到器材棚，找林亦舟",
+      "clocks": {
+        "pointCommittedAtMs": 17710,
+        "narrationStartedAtMs": 20831,
+        "firstReadableAtMs": 20831,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 27628,
+        "firstAcceptedAtMs": 27628,
+        "pointTextFinishedMinusCommitMs": 9918,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_25_1": {
+            "startedAtMs": 20831,
+            "firstTextAtMs": 20831,
+            "completedAtMs": 27628
+          }
+        },
+        "driverDoneMs": 178332,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1570.1849999427795,
+      "longestStreamGapMs": 156.70500004291534,
+      "generation": {
+        "wallMs": 5634.6900000572205,
+        "finishReason": "stop",
+        "streamChunks": 153
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_27",
+          "stage": null,
+          "ms": 3939,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_27",
+          "stage": null,
+          "ms": 10152,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_28",
+          "stage": null,
+          "ms": 4633,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_28",
+          "stage": null,
+          "ms": 10822,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_29",
+          "stage": null,
+          "ms": 2881,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_29",
+          "stage": null,
+          "ms": 8236,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_30",
+          "stage": null,
+          "ms": 4523,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_30",
+          "stage": null,
+          "ms": 8378,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_31",
+          "stage": null,
+          "ms": 5585,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_31",
+          "stage": null,
+          "ms": 14507,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_32",
+          "stage": null,
+          "ms": 5459,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_32",
+          "stage": null,
+          "ms": 17497,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_33",
+          "stage": null,
+          "ms": 3723,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_33",
+          "stage": null,
+          "ms": 38521,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 71,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 200,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2465,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 6472,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 16655,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 20939,
+          "label": "正在写正文…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 61,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 14,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 3,
+      "id": "t3-talk-lin",
+      "input": "我蹲下来问林亦舟脚踝怎么样，那条断掉的蓝布带是在哪儿弄断的。",
+      "purpose": "与林亦舟对话，问脚伤和蓝布带",
+      "clocks": {
+        "pointCommittedAtMs": 37566,
+        "narrationStartedAtMs": 39743,
+        "firstReadableAtMs": 39743,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 44272,
+        "firstAcceptedAtMs": 44272,
+        "pointTextFinishedMinusCommitMs": 6706,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_44_1": {
+            "startedAtMs": 39743,
+            "firstTextAtMs": 39743,
+            "completedAtMs": 44272
+          }
+        },
+        "driverDoneMs": 147430,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1570.1849999427795,
+      "longestStreamGapMs": 161.51499998569489,
+      "generation": {
+        "wallMs": 5634.6900000572205,
+        "finishReason": "stop",
+        "streamChunks": 153
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_46",
+          "stage": null,
+          "ms": 15633,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_46",
+          "stage": null,
+          "ms": 18147,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_47",
+          "stage": null,
+          "ms": 4576,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_47",
+          "stage": null,
+          "ms": 10901,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_48",
+          "stage": null,
+          "ms": 2928,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_48",
+          "stage": null,
+          "ms": 8028,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_49",
+          "stage": null,
+          "ms": 4198,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_49",
+          "stage": null,
+          "ms": 8713,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_50",
+          "stage": null,
+          "ms": 5379,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_50",
+          "stage": null,
+          "ms": 14603,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_51",
+          "stage": null,
+          "ms": 5727,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51",
+          "stage": null,
+          "ms": 17476,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 95,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 223,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 3697,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 19373,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 37524,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 39887,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 147402,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 63,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 12,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 4,
+      "id": "t4-joint-move",
+      "input": "我跟诺诺说一起走，两人沿着器材棚外侧低姿快走到西回廊，贴着廊柱停住。",
+      "purpose": "共同组：和诺诺一起低姿移动到西回廊",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 45005,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": 1570.1849999427795,
+      "longestStreamGapMs": 161.51499998569489,
+      "generation": {
+        "wallMs": 5634.6900000572205,
+        "finishReason": "stop",
+        "streamChunks": 153
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_67",
+          "stage": null,
+          "ms": 41525,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 122,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 246,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2736,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 44831,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 44984,
+          "label": "本轮停止：结算没有完成，可以重试。"
+        }
+      ],
+      "peakMemoryMB": 70,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 1,
+      "problems": [
+        "submit_refused:结算没有完成，可以重试。",
+        "no_readable_prose",
+        "settlement_failed_recoverable",
+        "empty_text",
+        "program_fallback_labelled",
+        "program_text_not_model",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "source_unknown",
+        "no_accepted_model_text"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 5,
+      "id": "t5-wait-listen",
+      "input": "我在西回廊的廊柱后面等一会儿，听枪声从哪个方向来，顺便数着时间。",
+      "purpose": "时间推进：在西回廊听枪声，等一会儿",
+      "clocks": {
+        "pointCommittedAtMs": 41066,
+        "narrationStartedAtMs": 43526,
+        "firstReadableAtMs": 43526,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 54838,
+        "firstAcceptedAtMs": 54838,
+        "pointTextFinishedMinusCommitMs": 13772,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_83_1": {
+            "startedAtMs": 43526,
+            "firstTextAtMs": 43526,
+            "completedAtMs": 54838
+          }
+        },
+        "driverDoneMs": 135298,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1570.1849999427795,
+      "longestStreamGapMs": 164.58000004291534,
+      "generation": {
+        "wallMs": 5634.6900000572205,
+        "finishReason": "stop",
+        "streamChunks": 153
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_85",
+          "stage": null,
+          "ms": 10417,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_85",
+          "stage": null,
+          "ms": 20171,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_86",
+          "stage": null,
+          "ms": 6346,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_86",
+          "stage": null,
+          "ms": 11073,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_87",
+          "stage": null,
+          "ms": 3054,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_87",
+          "stage": null,
+          "ms": 8063,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_88",
+          "stage": null,
+          "ms": 16333,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_88",
+          "stage": null,
+          "ms": 8568,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_90",
+          "stage": null,
+          "ms": 5743,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_90",
+          "stage": null,
+          "ms": 17127,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 107,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 237,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 3730,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 5900,
+          "label": "结算中：即时反应取消本轮"
+        },
+        {
+          "atMs": 9387,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 20897,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 41038,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 43588,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 135285,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 80,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 10,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 6,
+      "id": "t6-mid-refresh",
+      "input": "我从西回廊往钟楼门厅走，进门前先看一眼门缝里有没有光。",
+      "purpose": "取消/刷新：结算中途刷新页面，验证恢复与输入不重复消费",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 46187,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": null,
+      "longestStreamGapMs": null,
+      "generation": {
+        "wallMs": null,
+        "finishReason": null,
+        "streamChunks": null
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": null,
+      "modelId": null,
+      "narrationModel": null,
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "mid_settle_refresh"
+      ],
+      "excluded": "mid_settle_refresh"
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 7,
+      "id": "t7-move-foyer",
+      "input": "我推开钟楼门厅的门进去，靠墙站住，听楼上有动静没有。",
+      "purpose": "刷新后继续：进入钟楼门厅",
+      "clocks": {
+        "pointCommittedAtMs": 36786,
+        "narrationStartedAtMs": 39215,
+        "firstReadableAtMs": 39216,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 44515,
+        "firstAcceptedAtMs": 44515,
+        "pointTextFinishedMinusCommitMs": 7729,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_137_1": {
+            "startedAtMs": 39215,
+            "firstTextAtMs": 39215,
+            "completedAtMs": 44515
+          }
+        },
+        "driverDoneMs": 136732,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 2343.469999909401,
+      "longestStreamGapMs": 155.1050000190735,
+      "generation": {
+        "wallMs": 7643.079999923706,
+        "finishReason": "stop",
+        "streamChunks": 103
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_139",
+          "stage": null,
+          "ms": 7818,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_139",
+          "stage": null,
+          "ms": 18389,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_140",
+          "stage": null,
+          "ms": 3377,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_140",
+          "stage": null,
+          "ms": 10707,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_141",
+          "stage": null,
+          "ms": 2648,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_141",
+          "stage": null,
+          "ms": 8157,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_142",
+          "stage": null,
+          "ms": 4227,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_142",
+          "stage": null,
+          "ms": 8824,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_144",
+          "stage": null,
+          "ms": 5469,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_144",
+          "stage": null,
+          "ms": 16682,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_145",
+          "stage": null,
+          "ms": 3331,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_145",
+          "stage": null,
+          "ms": 8559,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 128,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 265,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 3701,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 5611,
+          "label": "结算中：即时反应取消本轮"
+        },
+        {
+          "atMs": 8537,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 17213,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 35602,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 39346,
+          "label": "正在写正文…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 78,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 12,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 8,
+      "id": "t8-climb-landing",
+      "input": "我沿着楼梯上到二层平台，蹲在栏杆边往下看中央庭院和喷泉池。",
+      "purpose": "移动到钟楼二层平台，观察庭院",
+      "clocks": {
+        "pointCommittedAtMs": 14907,
+        "narrationStartedAtMs": 17404,
+        "firstReadableAtMs": 17404,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 21940,
+        "firstAcceptedAtMs": 21940,
+        "pointTextFinishedMinusCommitMs": 7033,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_158_1": {
+            "startedAtMs": 17404,
+            "firstTextAtMs": 17404,
+            "completedAtMs": 21940
+          }
+        },
+        "driverDoneMs": 146727,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 2343.469999909401,
+      "longestStreamGapMs": 201.38499999046326,
+      "generation": {
+        "wallMs": 7643.079999923706,
+        "finishReason": "stop",
+        "streamChunks": 103
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_160",
+          "stage": null,
+          "ms": 3620,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_160",
+          "stage": null,
+          "ms": 10629,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_161",
+          "stage": null,
+          "ms": 3544,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_161",
+          "stage": null,
+          "ms": 10631,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_162",
+          "stage": null,
+          "ms": 3016,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_162",
+          "stage": null,
+          "ms": 11997,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_163",
+          "stage": null,
+          "ms": 4199,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_163",
+          "stage": null,
+          "ms": 8417,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_165",
+          "stage": null,
+          "ms": 5282,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_165",
+          "stage": null,
+          "ms": 16724,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_166",
+          "stage": null,
+          "ms": 3410,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_166",
+          "stage": null,
+          "ms": 37571,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 190,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 339,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 467,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 4127,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 14858,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 17468,
+          "label": "正在写正文…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 75,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 12,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 9,
+      "id": "t9-ask-nono",
+      "input": "我问诺诺现在红蓝两方各占哪些地方，我这样两边都不帮算不算违规。",
+      "purpose": "任务达成：问清红蓝局势和自己的中立立场",
+      "clocks": {
+        "pointCommittedAtMs": 13343,
+        "narrationStartedAtMs": 15118,
+        "firstReadableAtMs": 15118,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 23486,
+        "firstAcceptedAtMs": 23486,
+        "pointTextFinishedMinusCommitMs": 10143,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_178_1": {
+            "startedAtMs": 15118,
+            "firstTextAtMs": 15118,
+            "completedAtMs": 23486
+          }
+        },
+        "driverDoneMs": 127187,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 2343.469999909401,
+      "longestStreamGapMs": 201.38499999046326,
+      "generation": {
+        "wallMs": 7643.079999923706,
+        "finishReason": "stop",
+        "streamChunks": 103
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_180",
+          "stage": null,
+          "ms": 4541,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_180",
+          "stage": null,
+          "ms": 8139,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_181",
+          "stage": null,
+          "ms": 4148,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_181",
+          "stage": null,
+          "ms": 10780,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_182",
+          "stage": null,
+          "ms": 2776,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_182",
+          "stage": null,
+          "ms": 11458,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_183",
+          "stage": null,
+          "ms": 4335,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_183",
+          "stage": null,
+          "ms": 9174,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_184",
+          "stage": null,
+          "ms": 7872,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_184",
+          "stage": null,
+          "ms": 13841,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_185",
+          "stage": null,
+          "ms": 5539,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_185",
+          "stage": null,
+          "ms": 17838,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 160,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 418,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 4994,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 13146,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 15247,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 127169,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 121,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 12,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0926-4b42",
+      "turn": 10,
+      "id": "t10-hold-and-time",
+      "input": "我在平台上再等一段时间，记下演习还剩多久，检查自己的护目镜和身上的识别带。",
+      "purpose": "长时间等待与状态核对",
+      "clocks": {
+        "pointCommittedAtMs": 30202,
+        "narrationStartedAtMs": 32639,
+        "firstReadableAtMs": 32639,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 42750,
+        "firstAcceptedAtMs": 42750,
+        "pointTextFinishedMinusCommitMs": 12548,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_198_1": {
+            "startedAtMs": 32639,
+            "firstTextAtMs": 32639,
+            "completedAtMs": 42750
+          }
+        },
+        "driverDoneMs": 162833,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 2343.469999909401,
+      "longestStreamGapMs": 201.38499999046326,
+      "generation": {
+        "wallMs": 7643.079999923706,
+        "finishReason": "stop",
+        "streamChunks": 103
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_200",
+          "stage": null,
+          "ms": 14971,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_200",
+          "stage": null,
+          "ms": 14466,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_201",
+          "stage": null,
+          "ms": 4758,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_201",
+          "stage": null,
+          "ms": 11959,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_202",
+          "stage": null,
+          "ms": 2980,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_202",
+          "stage": null,
+          "ms": 8183,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_203",
+          "stage": null,
+          "ms": 4411,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_203",
+          "stage": null,
+          "ms": 8492,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_205",
+          "stage": null,
+          "ms": 5289,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_205",
+          "stage": null,
+          "ms": 16368,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_206",
+          "stage": null,
+          "ms": 3720,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_206",
+          "stage": null,
+          "ms": 37978,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 245,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 508,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 15600,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 30048,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 32717,
+          "label": "正在写正文…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 89,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 12,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0949-a18c",
+      "turn": 1,
+      "id": "t11-rest-aid",
+      "input": "我从平台下来，穿过中央庭院往医护附楼走，想去看看林亦舟的脚伤处理得怎么样。",
+      "purpose": "离开钟楼，去医护附楼看林亦舟的脚伤",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 23515,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": 1602.6599999666214,
+      "longestStreamGapMs": 119.60000002384186,
+      "generation": {
+        "wallMs": 5546.289999961853,
+        "finishReason": "stop",
+        "streamChunks": 154
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 4614,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5",
+          "stage": null,
+          "ms": 14118,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 141,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 267,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 3166,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 9106,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 23318,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 23445,
+          "label": "本轮停止：结算没有完成，可以重试。"
+        }
+      ],
+      "peakMemoryMB": 68,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 2,
+      "problems": [
+        "submit_refused:结算没有完成，可以重试。",
+        "no_readable_prose",
+        "settlement_failed_recoverable",
+        "empty_text",
+        "program_fallback_labelled",
+        "program_text_not_model",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "source_unknown",
+        "no_accepted_model_text"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0949-a18c",
+      "turn": 2,
+      "id": "t12-talk-doctor",
+      "input": "我在医护处置室门口问顾岚，今天送来的伤员里有没有脚踝扭伤的，演习还剩多少时间。",
+      "purpose": "与顾岚对话，问伤员和演习规则",
+      "clocks": {
+        "pointCommittedAtMs": 30388,
+        "narrationStartedAtMs": 33347,
+        "firstReadableAtMs": 33347,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 36867,
+        "firstAcceptedAtMs": 36867,
+        "pointTextFinishedMinusCommitMs": 6479,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_21_1": {
+            "startedAtMs": 33347,
+            "firstTextAtMs": 33347,
+            "completedAtMs": 36867
+          }
+        },
+        "driverDoneMs": 112240,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1602.6599999666214,
+      "longestStreamGapMs": 140.35999989509583,
+      "generation": {
+        "wallMs": 5546.289999961853,
+        "finishReason": "stop",
+        "streamChunks": 154
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_23",
+          "stage": null,
+          "ms": 7437,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_23",
+          "stage": null,
+          "ms": 15737,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_24",
+          "stage": null,
+          "ms": 3944,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_24",
+          "stage": null,
+          "ms": 11000,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_25",
+          "stage": null,
+          "ms": 2793,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_25",
+          "stage": null,
+          "ms": 8461,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_26",
+          "stage": null,
+          "ms": 4650,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_26",
+          "stage": null,
+          "ms": 8494,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_28",
+          "stage": null,
+          "ms": 5102,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_28",
+          "stage": null,
+          "ms": 16529,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 57,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 195,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2265,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 5112,
+          "label": "结算中：即时反应取消本轮"
+        },
+        {
+          "atMs": 7124,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 14584,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 30384,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 33501,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 112220,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 65,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 10,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    }
+  ],
+  "gates": {
+    "evaluatedPoints": 9,
+    "firstReadable": {
+      "evaluated": 9,
+      "failed": 0,
+      "worstMs": 43526
+    },
+    "pointText": {
+      "evaluated": 9,
+      "failed": 0,
+      "worstMs": 13772
+    },
+    "autoChainPoints": 0,
+    "status": "FAIL_OR_INCOMPLETE"
+  }
+}

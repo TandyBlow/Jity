@@ -1,0 +1,356 @@
+{
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+    "platform": "Win32",
+    "hardwareConcurrency": 20,
+    "deviceMemoryGB": 16,
+    "crossOriginIsolated": true,
+    "webgpuExposed": true,
+    "wasmSimd": true,
+    "wasmThreadsPossible": true,
+    "collectedAt": "2026-10-08T14:07:47.390Z"
+  },
+  "model": {
+    "sourceLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "sourceBytes": 396705472,
+    "multithread": true,
+    "numThreads": 4,
+    "nCtx": 4096,
+    "nCtxTrain": 40960,
+    "nVocab": 151936,
+    "nEmbd": 1024,
+    "nLayer": 28,
+    "libllamaVersion": "b11364-46ca246",
+    "generalMeta": {
+      "general.file_type": "15",
+      "general.quantization_version": "2",
+      "general.name": "Qwen3-0.6B",
+      "general.quantized_by": "Unsloth",
+      "general.repo_url": "https://huggingface.co/unsloth",
+      "general.architecture": "qwen3",
+      "general.basename": "Qwen3-0.6B",
+      "general.type": "model",
+      "general.size_label": "0.6B"
+    },
+    "loadParams": {
+      "n_ctx": 4096,
+      "n_batch": 2048,
+      "n_ubatch": 128,
+      "n_threads": 4
+    }
+  },
+  "suites": [
+    {
+      "id": "checkpoints",
+      "label": "检查点",
+      "startedAt": "2026-10-08T14:07:49.252Z",
+      "config": {
+        "totalTokens": [
+          512,
+          1024
+        ],
+        "memoryTokens": [
+          256
+        ],
+        "decodeTokens": 16,
+        "prefillRepeats": 1,
+        "decodeRepeats": 1,
+        "nCtx": 4096,
+        "nBatch": 2048,
+        "nUbatch": 128,
+        "nThreads": 4,
+        "chatReference": false,
+        "acceptEnabled": true,
+        "acceptOutputTokens": 512
+      },
+      "model": null,
+      "modelLabel": null,
+      "runs": [
+        {
+          "id": "load-1-1791468469252",
+          "kind": "load",
+          "label": "URL: http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "startedAt": "2026-10-08T14:07:49.252Z",
+          "wallMs": 11128,
+          "heap": {
+            "usedMB": 40.1,
+            "totalMB": 48.1
+          }
+        },
+        {
+          "id": "memory-2-1791468480382",
+          "kind": "memory",
+          "label": "加载后内存采样",
+          "startedAt": "2026-10-08T14:08:00.382Z",
+          "wallMs": 0,
+          "heap": {
+            "usedMB": 37.7,
+            "totalMB": 47.7
+          },
+          "memory": {
+            "usedMB": 38,
+            "totalMB": 38.7,
+            "preciseMB": 1624.2,
+            "breakdownMB": {
+              "other": 0,
+              "Shared": 1,
+              "JavaScript": 1623,
+              "DOM": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "suite-1-1791468480506",
+      "label": "套件 1",
+      "startedAt": "2026-10-08T14:08:00.506Z",
+      "config": {
+        "totalTokens": [
+          512,
+          1024
+        ],
+        "memoryTokens": [
+          256
+        ],
+        "decodeTokens": 16,
+        "prefillRepeats": 1,
+        "decodeRepeats": 1,
+        "nCtx": 4096,
+        "nBatch": 2048,
+        "nUbatch": 128,
+        "nThreads": 4,
+        "chatReference": false,
+        "acceptEnabled": true,
+        "acceptOutputTokens": 512
+      },
+      "model": {
+        "sourceLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+        "sourceBytes": 396705472,
+        "multithread": true,
+        "numThreads": 4,
+        "nCtx": 4096,
+        "nCtxTrain": 40960,
+        "nVocab": 151936,
+        "nEmbd": 1024,
+        "nLayer": 28,
+        "libllamaVersion": "b11364-46ca246",
+        "generalMeta": {
+          "general.file_type": "15",
+          "general.quantization_version": "2",
+          "general.name": "Qwen3-0.6B",
+          "general.quantized_by": "Unsloth",
+          "general.repo_url": "https://huggingface.co/unsloth",
+          "general.architecture": "qwen3",
+          "general.basename": "Qwen3-0.6B",
+          "general.type": "model",
+          "general.size_label": "0.6B"
+        },
+        "loadParams": {
+          "n_ctx": 4096,
+          "n_batch": 2048,
+          "n_ubatch": 128,
+          "n_threads": 4
+        }
+      },
+      "modelLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "runs": [
+        {
+          "id": "prefill-3-1791468480507",
+          "kind": "prefill",
+          "label": "512 tok（记忆 256）· 第 1 遍",
+          "startedAt": "2026-10-08T14:08:00.507Z",
+          "wallMs": 26604,
+          "heap": {
+            "usedMB": 38.6,
+            "totalMB": 48
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 256,
+          "seed": 445,
+          "promptTokens": 366,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 26557,
+          "promptPerSecond": 13.781871236202972,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "prefill-4-1791468507113",
+          "kind": "prefill",
+          "label": "1024 tok（记忆 256）· 第 1 遍",
+          "startedAt": "2026-10-08T14:08:27.113Z",
+          "wallMs": 78395,
+          "heap": {
+            "usedMB": 37.4,
+            "totalMB": 38.2
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 256,
+          "seed": 445,
+          "promptTokens": 1068,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 78334,
+          "promptPerSecond": 13.633921298316963,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "decode-5-1791468585509",
+          "kind": "decode",
+          "label": "1024 tok 输入 · 生成 16 token · 第 1 遍",
+          "startedAt": "2026-10-08T14:09:45.509Z",
+          "wallMs": 70864,
+          "heap": {
+            "usedMB": 38,
+            "totalMB": 38.7
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 16,
+          "seed": 9901,
+          "promptTokens": 1006,
+          "predictedTokens": 16,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 65910,
+          "promptPerSecond": 15.263137013130015,
+          "predictedMs": 4852,
+          "predictedPerSecond": 3.0912092192223755,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "accept-6-1791468656374",
+          "kind": "accept",
+          "label": "4 秒实测 · 512 tok（记忆 256）+ 生成 512",
+          "startedAt": "2026-10-08T14:10:56.374Z",
+          "wallMs": 120732,
+          "heap": {
+            "usedMB": 38.2,
+            "totalMB": 39.2
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 512,
+          "seed": 56013,
+          "promptPreview": "15375855。## 战役上下文\n当前战役：黑月之潮。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。\n锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2…\n\n## 当前状态\n当前地点：卡塞尔学院图书馆。血统稳定：72/100。体力：88/100。回合：22。\n玩家状态：调查中 · danger_level=medium · 当前目标：找到那本…\n\n## 长期叙事记忆\n- 雨点开始敲打天窗，节奏忽快忽慢，盖过了大厅里的交谈声。（记忆0）\n- 他用指尖抚过摊开的地图，纸页边缘已经被人反复翻阅得起了毛。（记忆1）\n- 盆栽的叶片全部朝向同一个方向，尽管窗户在房间的另一头。（记忆2）\n- 暮色降临后，教学楼里的每一扇亮着的窗都像一次无声的点名。（记忆3）\n- 远处的操场传来隐约的哨声，随即又被风声揉碎在楼宇之间。（记忆4）\n- 远处的操场传来隐约的哨声，随即又被风声揉碎在楼宇之间。（记忆5）\n- 控制室的仪表指针停在绿色区域边缘，偶尔朝红色轻轻颤动一下。（记忆6）\n- 暮色降临后，教学楼里的每一扇亮着的窗都像一次无声的点名。（记忆7）\n- 地下室的水管发出规律的滴答声，像某种耐心的倒计时。（记忆8）\n- 远处的操场传来隐约的哨…\n\n## 最近对话历史\n[玩家]: 我要查阅上周的值班登记簿。\n[主持人]: 管理员说登记簿就在值班室，但当你翻开时，最后一页已经被撕掉了。\n[玩家]: 询问管理员谁最后接触过登记簿。\n[主持人]: 管理员想了想，说深夜只有巡夜的学生…\n\n## 玩家行动\n我去调查巡夜学生的名单，并核对当晚的出入记录（样本1537…",
+          "generatedText": "）。样本15375855。## 战役上下文\n当前战役：黑月之潮。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2…)\n## 现场环境\n- 教学楼的走廊里，走廊尽头的门已经关上，门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框上挂着的钥匙已经锈蚀。\n- 走廊尽头的门框",
+          "promptTokens": 485,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 27439,
+          "promptPerSecond": 17.675716208176205,
+          "predictedMs": 93168,
+          "predictedPerSecond": 5.484733089811184,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "accept-7-1791468777106",
+          "kind": "accept",
+          "label": "4 秒实测 · 1024 tok（记忆 256）+ 生成 512",
+          "startedAt": "2026-10-08T14:12:57.106Z",
+          "wallMs": 199775,
+          "heap": {
+            "usedMB": 38.7,
+            "totalMB": 39.9
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 512,
+          "seed": 56525,
+          "promptPreview": "30741487。## 战役上下文\n当前战役：黑月之潮。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。\n锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2)，源稚生 中性(+0)。\n\n## 当前状态\n当前地点：卡塞尔学院图书馆。血统稳定：72/100。体力：88/100。回合：17。\n玩家状态：调查中 · danger_level=medium · 当前目标：找到那本被撕掉登记页的值班记录。\n\n## 长期叙事记忆\n- 他数过门廊的立柱，一共十四根，但照片里明显只有十三根。（记忆0）\n- 广播里的女声念到一半忽然中断，只剩下十几秒空白的电流杂音。（记忆1）\n- 教室后排的椅子上放着一本没人认领的笔记本，扉页写着日期。（记忆2）\n- 风吹动布告栏里的传单，露出下面一层更旧的、已经褪色的通知。（记忆3）\n- 远处的操场传来隐约的哨声，随即又被风声揉碎在楼宇之间。（记忆4）\n- 广播里的女声念到一半忽然中断，只剩下十几秒空白的电流杂音。（记忆5）\n- 地下室的水管发出规律的滴答声，像某种耐心的倒计时。（记忆6）\n- 盆栽的叶片全部朝向同一个方向，尽管窗户在房间的另一头。（记忆7）\n- 远处的操场传来隐约的哨声，随即又被风声揉碎在楼宇之间。（记忆8）\n- 远处的操场传来隐约的…\n\n## 生成规则（节选）\n- 他用指尖抚过摊开的地图，纸页边缘已经被人反复翻阅得起了毛。（规则0）\n- 广播里的女声念到一半忽然中断，只剩下十几秒空白的电流杂音。（规则1）\n- 信封里只有半张车票，撕口整齐得像是有人用尺子比着裁开的。（规则2）\n- 盆栽的叶片全部朝向同一个方向，尽管窗户在房间的另一头。（规则3）\n- 远处的操场传来隐约的哨声，随即又被风声揉碎在楼宇之间。（规则4）\n- 她记得那扇门原本朝东，可现在它开在了走廊的另一侧。（规则5）\n- 名单上的第三个名字被红笔划掉了，划痕深得几乎穿透纸背。（规则6）\n- 教室后排的椅子上放着一本没人认领的笔记本，扉页写着日期。（规则7）\n- 走廊尽头的挂钟停在三点半，齿轮上覆着一层没有人擦拭过的灰。（规则8）\n- 名单上的第三个名字被红笔划掉了，划痕深得几乎穿透纸背。（规则9）\n- 名单上的第三个名字被红笔划掉了，划痕深得几乎穿透纸背。（规则10）\n- 广播里的女声念到一半忽然中断，只剩下十几秒空白的电流杂音。（规则11）\n- 信封里只有半张车票，撕口整齐得像是有人用尺子比着裁开的。（规则12）\n- 图书馆高窗外的云影缓缓掠过石质书架，尘埃在斜照的光柱里浮动。（规则13）\n- 风吹动布告栏里的传单，露出下面一层更旧的、已经褪色的通知。（规则14）\n- 风吹动布告栏里的传单，露出下面一层更旧的、已经褪色的通知。（规则15）\n- 他用指尖抚过摊开的地图，纸页边缘已经被人反复翻阅得起了毛。（规则16）\n- 盆栽的叶片全部朝向同一个方向，尽管窗户在房间的另一头。（规则17）\n\n## 最近对话历史\n[玩家]: 我要查阅上周的值班登记簿。\n[主持人]: 管理员说登记簿就在值班室，但当你翻开时，最后一页已经被撕掉了。\n[玩家]: 询问管理员谁最后接触过登记簿。\n[主持人]: 管理员想了想，说深夜只有巡夜的学生来过（样本30741487）。\n\n## 玩家行动\n我去调查巡夜学生的名单，并核对当晚的出入记录（样本30741487）。",
+          "generatedText": "我需要确认这些记录是否与当前的值班登记簿一致。\n\n## 现场环境\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n\n## 现场环境\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n\n## 现场环境\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，看着远处的操场。\n- 他注意到图书馆的高窗外的云影在石质书架上漂浮。\n- 他站在图书馆的高窗外，",
+          "promptTokens": 997,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 47519,
+          "promptPerSecond": 20.981112158880684,
+          "predictedMs": 152180,
+          "predictedPerSecond": 3.3578563959945935,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "abort-8-1791468976882",
+          "kind": "abort",
+          "label": "输入处理阶段取消 · 200ms",
+          "startedAt": "2026-10-08T14:16:16.882Z",
+          "wallMs": 32515,
+          "heap": {
+            "usedMB": 39.9,
+            "totalMB": 40.9
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 64,
+          "maxTokens": 256,
+          "abortAfterMs": 200,
+          "seed": 31337,
+          "abortOutcome": "cancelled",
+          "streamedChunks": 0,
+          "generatedChars": 0,
+          "abortPhase": "prefill",
+          "stopLatencyMs": 32308,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "abort-9-1791469009397",
+          "kind": "abort",
+          "label": "生成阶段取消 · 26957ms",
+          "startedAt": "2026-10-08T14:16:49.397Z",
+          "wallMs": 34992,
+          "heap": {
+            "usedMB": 40.2,
+            "totalMB": 41.4
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 64,
+          "maxTokens": 256,
+          "abortAfterMs": 26957,
+          "seed": 31337,
+          "abortOutcome": "cancelled",
+          "streamedChunks": 0,
+          "generatedChars": 0,
+          "abortPhase": "prefill",
+          "stopLatencyMs": 8019,
+          "suiteId": "suite-1-1791468480506"
+        },
+        {
+          "id": "memory-10-1791469044389",
+          "kind": "memory",
+          "label": "套件后内存采样",
+          "startedAt": "2026-10-08T14:17:24.389Z",
+          "wallMs": 0,
+          "heap": {
+            "usedMB": 40.2,
+            "totalMB": 41.4
+          },
+          "memory": {
+            "usedMB": 34.4,
+            "totalMB": 38.5,
+            "preciseMB": 2196.9,
+            "breakdownMB": {
+              "JavaScript": 2195,
+              "DOM": 0,
+              "other": 0,
+              "Shared": 1
+            }
+          },
+          "suiteId": "suite-1-1791468480506"
+        }
+      ],
+      "finishedAt": "2026-10-08T14:18:24.434Z"
+    }
+  ],
+  "exportedAt": "2026-10-08T14:18:31.103Z"
+}

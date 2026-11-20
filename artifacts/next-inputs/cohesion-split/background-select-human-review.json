@@ -1,0 +1,162 @@
+[
+  {
+    "sourceId": "fixture-r1",
+    "modelDecision": "insert",
+    "vsA1": "略有改善",
+    "vsSimple": "持平",
+    "modelGainBeyondRule": false,
+    "note": "与规则相同：b0 夜 / s0。"
+  },
+  {
+    "sourceId": "fixture-r2",
+    "modelDecision": "insert",
+    "vsA1": "略有改善",
+    "vsSimple": "持平",
+    "modelGainBeyondRule": false,
+    "note": "与规则相同：b0 夜 / s0。"
+  },
+  {
+    "sourceId": "train-r1",
+    "modelDecision": "insert",
+    "vsA1": "略有改善",
+    "vsSimple": "持平",
+    "modelGainBeyondRule": false,
+    "note": "与规则相同：b0 夜 / s0。"
+  },
+  {
+    "sourceId": "train-r2",
+    "modelDecision": "insert",
+    "vsA1": "略有改善",
+    "vsSimple": "持平",
+    "modelGainBeyondRule": false,
+    "note": "与规则相同：b0 夜 / s0。"
+  },
+  {
+    "sourceId": "train-r3",
+    "modelDecision": "insert",
+    "vsA1": "略有改善",
+    "vsSimple": "持平",
+    "modelGainBeyondRule": false,
+    "note": "与规则相同：b0 夜 / s0。"
+  },
+  {
+    "sourceId": "train-r5",
+    "modelDecision": "insert",
+    "vsA1": "略有改善",
+    "vsSimple": "持平",
+    "modelGainBeyondRule": false,
+    "note": "与规则相同：b0 夜 / s0。"
+  },
+  {
+    "sourceId": "v02",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "无收益（理由不成立）",
+    "modelGainBeyondRule": false,
+    "note": "规则会插“清晨”；“早市”不等于已经表达“清晨”，模型理由是“A1已描述具体动作”，不成立；none 不构成规则外收益。"
+  },
+  {
+    "sourceId": "t19",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "无收益（理由不成立）",
+    "modelGainBeyondRule": false,
+    "note": "规则会插“清晨”；“早市”不等于已经表达“清晨”，模型理由是“A1已表达背景为清晨”，A1 里没有“清晨”；none 不构成规则外收益。"
+  },
+  {
+    "sourceId": "v05",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "无收益（理由不成立）",
+    "modelGainBeyondRule": false,
+    "note": "规则会插“夜里”；“灯还亮着”不等于“夜里”，模型理由是“A1已表达背景为夜里”，A1 里没有“夜”；none 不构成规则外收益。"
+  },
+  {
+    "sourceId": "v06",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "无收益（理由不成立）",
+    "modelGainBeyondRule": false,
+    "note": "规则会插“雨后”；“袖口沾了雨”不等于“雨后”，模型理由是“A1已包含雨的相关信息”，不成立；none 不构成规则外收益。"
+  },
+  {
+    "sourceId": "fixture-r3",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "fixture-r4",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "fixture-r5",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "train-r4",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "v01",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾；警示灯，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "v03",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；小雨；铜灯，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "t01",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；小雨；铜灯，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "t05",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾；警示灯，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "double-d010",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  },
+  {
+    "sourceId": "double-d011",
+    "modelDecision": "none",
+    "vsA1": "持平",
+    "vsSimple": "变差",
+    "modelGainBeyondRule": false,
+    "note": "场景=夜；浓雾，A1 没有夜间信息；规则“夜里，…”合法，none 放弃了一个可用框架。"
+  }
+]

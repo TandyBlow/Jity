@@ -230,6 +230,7 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
         """Remove server-only state before returning a response to the client."""
         state.pop("_memory_controller", None)
         state.pop("_campaign_session_index", None)
+        state.pop("_memory_pending_tasks", None)
         return state
 
     @staticmethod

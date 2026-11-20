@@ -1,0 +1,14 @@
+commit 44a23687fc41 branch exp/c-attention-parse trackedDirty=False
+python 3.11.15 Windows-10-10.0.26200-SP0
+scope: parse -> scope filter; no model, no service
+
+W01 part 命中可选事实              state=resolved   kept=taskGoal,timePassage,appearanceText                  excluded=position,appearanceText      ok
+W02 appearance 范围排除他者        state=resolved   kept=taskGoal,timePassage,appearanceText                  excluded=position,appearanceText      ok
+W03 position 范围              state=resolved   kept=taskGoal,timePassage,position                        excluded=appearanceText,appearanceText ok
+W04 part 未锚定不放大              state=resolved   kept=taskGoal,timePassage                                 excluded=position,appearanceText,appearanceText ok
+W05 空目标（歧义）                  state=ambiguous  kept=taskGoal,timePassage                                 excluded=-                            ok
+W06 空目标（无关注）                 state=none       kept=taskGoal,timePassage                                 excluded=-                            ok
+W07 object 范围                state=resolved   kept=taskGoal,timePassage,position                        excluded=appearanceText,appearanceText ok
+W08 task 范围无对应事实             state=resolved   kept=taskGoal,timePassage                                 excluded=position,appearanceText,appearanceText ok
+
+summary: 8/8 cases matched; must kept in all cases=True; out-of-scope exclusions=14; forbidden selected=0

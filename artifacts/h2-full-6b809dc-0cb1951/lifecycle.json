@@ -1,0 +1,267 @@
+[
+  {
+    "at": "2026-10-27T06:30:30.688813+00:00",
+    "action": "baseline",
+    "browser": "6b809dca846b407ae24f545adeef7ae068fcf5b5",
+    "server": "0cb1951cd1b0181f6a0505026cdd9939dd668de9",
+    "browserStatus": "",
+    "serverStatus": "?? backend/_proj_create.json",
+    "sharedFilesCompared": 155,
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+  },
+  {
+    "at": "2026-10-27T06:30:32.996811+00:00",
+    "action": "service_start",
+    "generation": 1,
+    "pid": 17428,
+    "database": "positive.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:30:44.202437+00:00",
+    "action": "phase",
+    "phase": "main",
+    "label": "main",
+    "exitCode": 0,
+    "status": "PASS_MAIN"
+  },
+  {
+    "at": "2026-10-27T06:30:50.415062+00:00",
+    "action": "phase",
+    "phase": "successor",
+    "label": "successor",
+    "exitCode": 0,
+    "status": "PASS_SUCCESSOR"
+  },
+  {
+    "at": "2026-10-27T06:30:53.262043+00:00",
+    "action": "phase",
+    "phase": "build-frozen-case",
+    "label": "build-frozen-case",
+    "exitCode": 0,
+    "status": "BUILT_FROZEN_CASE"
+  },
+  {
+    "at": "2026-10-27T06:30:53.281362+00:00",
+    "action": "service_stop",
+    "generation": 1,
+    "pid": 17428,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:30:55.604523+00:00",
+    "action": "service_start",
+    "generation": 2,
+    "pid": 53732,
+    "database": "positive.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:30:58.548032+00:00",
+    "action": "phase",
+    "phase": "post-restart",
+    "label": "post-restart",
+    "exitCode": 0,
+    "status": "PASS_POST_RESTART"
+  },
+  {
+    "at": "2026-10-27T06:30:58.565932+00:00",
+    "action": "service_stop",
+    "generation": 2,
+    "pid": 53732,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:30:58.567447+00:00",
+    "action": "restart_evidence",
+    "sameDatabase": "positive.db",
+    "databaseBeforeRestartSha256": "a7dee4e58521ba4cc98d020a4b1e13b467956327be5c8d71d848efd52ef257ba",
+    "persistedState": "positive-state.json",
+    "restartFromGeneration": 1,
+    "restartToGeneration": 2
+  },
+  {
+    "at": "2026-10-27T06:31:01.328724+00:00",
+    "action": "service_start",
+    "generation": 3,
+    "pid": 136656,
+    "database": "missing.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:31:04.837102+00:00",
+    "action": "phase",
+    "phase": "build-frozen-case",
+    "label": "build-missing",
+    "exitCode": 0,
+    "status": "BUILT_FROZEN_CASE"
+  },
+  {
+    "at": "2026-10-27T06:31:04.855208+00:00",
+    "action": "service_stop",
+    "generation": 3,
+    "pid": 136656,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:31:04.868764+00:00",
+    "action": "damage_injection",
+    "mode": "missing",
+    "database": "missing.db",
+    "affectedRows": 1,
+    "worldId": "world_1",
+    "pointId": "point_7",
+    "groupId": "group_8",
+    "serviceStopped": true
+  },
+  {
+    "at": "2026-10-27T06:31:07.119388+00:00",
+    "action": "service_start",
+    "generation": 4,
+    "pid": 81892,
+    "database": "missing.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:31:09.399306+00:00",
+    "action": "phase",
+    "phase": "expect-frozen",
+    "label": "frozen-missing",
+    "exitCode": 0,
+    "status": "PASS_FROZEN_MISSING"
+  },
+  {
+    "at": "2026-10-27T06:31:09.415769+00:00",
+    "action": "service_stop",
+    "generation": 4,
+    "pid": 81892,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:31:11.650499+00:00",
+    "action": "service_start",
+    "generation": 5,
+    "pid": 127536,
+    "database": "corrupt.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:31:14.692184+00:00",
+    "action": "phase",
+    "phase": "build-frozen-case",
+    "label": "build-corrupt",
+    "exitCode": 0,
+    "status": "BUILT_FROZEN_CASE"
+  },
+  {
+    "at": "2026-10-27T06:31:14.710024+00:00",
+    "action": "service_stop",
+    "generation": 5,
+    "pid": 127536,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:31:14.728344+00:00",
+    "action": "damage_injection",
+    "mode": "corrupt",
+    "database": "corrupt.db",
+    "affectedRows": 1,
+    "worldId": "world_1",
+    "pointId": "point_7",
+    "groupId": "group_8",
+    "serviceStopped": true
+  },
+  {
+    "at": "2026-10-27T06:31:17.052418+00:00",
+    "action": "service_start",
+    "generation": 6,
+    "pid": 110088,
+    "database": "corrupt.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:31:19.168277+00:00",
+    "action": "phase",
+    "phase": "expect-frozen",
+    "label": "frozen-corrupt",
+    "exitCode": 0,
+    "status": "PASS_FROZEN_CORRUPT"
+  },
+  {
+    "at": "2026-10-27T06:31:19.187380+00:00",
+    "action": "service_stop",
+    "generation": 6,
+    "pid": 110088,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:31:21.420439+00:00",
+    "action": "service_start",
+    "generation": 7,
+    "pid": 85764,
+    "database": "group.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:31:24.447979+00:00",
+    "action": "phase",
+    "phase": "build-frozen-case",
+    "label": "build-group",
+    "exitCode": 0,
+    "status": "BUILT_FROZEN_CASE"
+  },
+  {
+    "at": "2026-10-27T06:31:24.466105+00:00",
+    "action": "service_stop",
+    "generation": 7,
+    "pid": 85764,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:31:24.488660+00:00",
+    "action": "damage_injection",
+    "mode": "group",
+    "database": "group.db",
+    "affectedRows": 1,
+    "worldId": "world_1",
+    "pointId": "point_7",
+    "groupId": "group_8",
+    "serviceStopped": true
+  },
+  {
+    "at": "2026-10-27T06:31:26.733391+00:00",
+    "action": "service_start",
+    "generation": 8,
+    "pid": 22012,
+    "database": "group.db",
+    "factory": "app.world_app:create_persistent_world_app",
+    "ready": true
+  },
+  {
+    "at": "2026-10-27T06:31:29.114933+00:00",
+    "action": "phase",
+    "phase": "expect-frozen",
+    "label": "frozen-group",
+    "exitCode": 0,
+    "status": "PASS_FROZEN_CORRUPT"
+  },
+  {
+    "at": "2026-10-27T06:31:29.133021+00:00",
+    "action": "service_stop",
+    "generation": 8,
+    "pid": 22012,
+    "exitCode": 1
+  },
+  {
+    "at": "2026-10-27T06:31:29.135214+00:00",
+    "action": "complete",
+    "status": "PASS_FIXED_H2"
+  }
+]

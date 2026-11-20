@@ -1,0 +1,38 @@
+{
+  "worldFamily": "tide-watch-1998",
+  "train": [
+    "tide-duty-t1",
+    "tide-duty-t2",
+    "tide-duty-t3",
+    "tide-duty-t4",
+    "tide-duty-t5",
+    "tide-pier-t1",
+    "tide-pier-t2",
+    "tide-pier-t3"
+  ],
+  "dev": [
+    "tide-radio-t1",
+    "tide-radio-t2",
+    "tide-radio-t3"
+  ],
+  "bySequence": {
+    "tide-watch-duty": [
+      "tide-duty-t1",
+      "tide-duty-t2",
+      "tide-duty-t3",
+      "tide-duty-t4",
+      "tide-duty-t5"
+    ],
+    "tide-watch-pier": [
+      "tide-pier-t1",
+      "tide-pier-t2",
+      "tide-pier-t3"
+    ],
+    "tide-watch-radio": [
+      "tide-radio-t1",
+      "tide-radio-t2",
+      "tide-radio-t3"
+    ]
+  },
+  "rule": "连续回合只在同一 sequence 内先后使用；dev 分支不进入训练。"
+}

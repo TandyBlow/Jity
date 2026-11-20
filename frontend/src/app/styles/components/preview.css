@@ -1,0 +1,89 @@
+/* 只读展示预览页。三块告示用颜色区分：事实、尚未展示、无法恢复。
+   组件源码不写颜色与字号，一律走 token。 */
+
+.preview-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--space-9) var(--space-6) 80px;
+  color: var(--color-fg);
+  line-height: 1.7;
+}
+
+.preview-title {
+  font-size: var(--fs-heading);
+  margin: 0 0 var(--space-3);
+}
+
+.preview-lede {
+  color: var(--color-muted);
+  font-size: var(--fs-md);
+  margin: 0 0 var(--space-6);
+}
+
+.preview-bar {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.preview-bar label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-md);
+  color: var(--color-muted);
+}
+
+.preview-select {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-md);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.preview-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+  padding: var(--space-5) var(--space-6);
+  margin-bottom: var(--space-5);
+}
+
+.preview-card--warn {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-panel));
+}
+
+.preview-card--stop {
+  border-color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-panel));
+}
+
+.preview-meta {
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+}
+
+.preview-fact {
+  font-size: var(--fs-lg);
+  margin: var(--space-2) 0;
+}
+
+.preview-quiet {
+  font-size: var(--fs-lg);
+  color: var(--color-fg);
+}
+
+.preview-diagnostics pre {
+  font-size: var(--fs-xs);
+  overflow-x: auto;
+}
+
+.preview-diagnostics summary {
+  cursor: pointer;
+  color: var(--color-muted);
+  font-size: var(--fs-md);
+}

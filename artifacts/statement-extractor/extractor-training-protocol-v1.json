@@ -1,0 +1,64 @@
+{
+  "version": "statement-extractor-training-protocol-v1",
+  "created": "2026-11-05",
+  "purpose": "one fixed statement extractor; identify text spans, subject, subject status; no authorization/verdict",
+  "init": {
+    "base": ".local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "baseModelSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+    "fromBaseOnly": true,
+    "loadU240Checkpoint": false
+  },
+  "materials": {
+    "material": "artifacts\\statement-extractor\\material-v1.jsonl",
+    "materialSha256": "ae45ef2c5b557d42b58bdcd4d7b8cd577ddbe7edae37a63f05fea55d64952562",
+    "materialFreeze": "artifacts\\statement-extractor\\material-v1-freeze.json",
+    "materialFreezeSha256": "22451695d0c419c20b07f62b6a4936562dda0e6ce115218ad9344060af1402ed",
+    "regression": "artifacts\\statement-extractor\\regression-a0-v1.jsonl",
+    "regressionSha256": "abc8512591c5983725ed3bd12abaf19663472eb10f4367493e9d51dac132731b",
+    "regressionFreeze": "artifacts\\statement-extractor\\regression-a0-v1-freeze.json",
+    "regressionFreezeSha256": "be02169ae70c526c9005a2c1eab4b3653865241826b768b8abf8811df3097a69"
+  },
+  "counts": {
+    "train": 50,
+    "dev": 20,
+    "test": 10,
+    "regressionSources": 20,
+    "trainStatements": 52,
+    "devStatements": 30,
+    "testStatements": 11,
+    "regressionStatements": 95,
+    "unresolvedTraining": 0
+  },
+  "budget": {
+    "updates": 300,
+    "batch": 8,
+    "lr": 0.0001,
+    "seed": 20261104,
+    "evalEvery": 25,
+    "maxInput": 256,
+    "maxOutput": 256,
+    "earlyStop": false,
+    "modelSweep": false,
+    "ratioSearch": false,
+    "epochs": null
+  },
+  "devSelection": {
+    "primary": "statement span-set F1 (exact normalized spans)",
+    "secondary": "subjectStatusAccuracy on matched statements",
+    "tertiary": "JSON valid rate",
+    "tie": "earliest step",
+    "threshold": null
+  },
+  "evaluation": {
+    "test": "10 held-out C3 examples; per-example",
+    "regression": "20-source A0; regression only; not selection/training",
+    "baseline": "punctuation split; same metrics",
+    "noTwentySourceTraining": true,
+    "noNewTemplates": true,
+    "sourceStatus": "not_implemented",
+    "sourceHead": false,
+    "service": false,
+    "autoDelete": false,
+    "u240Frozen": true
+  }
+}

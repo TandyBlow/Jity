@@ -1,0 +1,325 @@
+{
+ "boundary2-confirm40": [
+  {
+   "unitId": "c1_00",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "衣领沾了泥，下摆也沾了泥",
+   "text": "顾行舟的衣领沾了泥,下摆也沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_01",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "衣领结了盐霜，下摆湿了",
+   "text": "顾行舟的衣领结了盐霜,下摆湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_02",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "衣领落着灰，下摆也落着灰",
+   "text": "顾行舟的衣领落着灰,下摆也落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_03",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "衣领冻得发僵，下摆沾了泥",
+   "text": "顾行舟的衣领冻得发僵,下摆沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_04",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "衣领蹭破了皮，下摆也蹭破了皮",
+   "text": "顾行舟的衣领蹭破了皮,下摆也蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_05",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "下摆结了盐霜，鞋面湿了",
+   "text": "顾行舟的下摆结了盐霜,鞋面湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_06",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "下摆冻得发僵，鞋面也冻得发僵",
+   "text": "顾行舟的下摆冻得发僵,鞋面也冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_07",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鞋面沾了泥，手背湿了",
+   "text": "顾行舟的鞋面沾了泥,手背湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_08",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鞋面结了盐霜，手背也结了盐霜",
+   "text": "顾行舟的鞋面结了盐霜,手背也结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_09",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鞋面落着灰，手背湿了",
+   "text": "顾行舟的鞋面落着灰,手背湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_10",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鞋面蹭破了皮，指尖也蹭破了皮",
+   "text": "顾行舟的鞋面蹭破了皮,指尖也蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_11",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "手背沾了泥，指尖湿了",
+   "text": "顾行舟的手背沾了泥,指尖湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_12",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鬓角沾了泥，肩头也沾了泥",
+   "text": "顾行舟的鬓角沾了泥,肩头也沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_13",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鬓角结了盐霜，肩头湿了",
+   "text": "顾行舟的鬓角结了盐霜,肩头湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_14",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鬓角落着灰，膝盖也落着灰",
+   "text": "顾行舟的鬓角落着灰,膝盖也落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_15",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鬓角冻得发僵，肩头沾了泥",
+   "text": "顾行舟的鬓角冻得发僵,肩头沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_16",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "鬓角蹭破了皮，肩头也蹭破了皮",
+   "text": "顾行舟的鬓角蹭破了皮,肩头也蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_17",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "肩头结了盐霜，膝盖湿了",
+   "text": "顾行舟的肩头结了盐霜,膝盖湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_18",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "肩头冻得发僵，膝盖也冻得发僵",
+   "text": "顾行舟的肩头冻得发僵,膝盖也冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "c1_19",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "膝盖结了盐霜，帽檐湿了",
+   "text": "顾行舟的膝盖结了盐霜,帽檐湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_00",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "膝盖蹭破了皮",
+   "text": "顾行舟的膝盖蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_01",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "帽檐沾了泥",
+   "text": "顾行舟的帽檐沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_02",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "帽檐结了盐霜",
+   "text": "顾行舟的帽檐结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_03",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "帽檐落着灰",
+   "text": "顾行舟的帽檐落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_04",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "帽檐冻得发僵",
+   "text": "顾行舟的帽檐冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_05",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "帽檐蹭破了皮",
+   "text": "顾行舟的帽檐蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_06",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "围巾湿了",
+   "text": "顾行舟的围巾湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_07",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "围巾沾了泥",
+   "text": "顾行舟的围巾沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_08",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "围巾结了盐霜",
+   "text": "顾行舟的围巾结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "c2_09",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "围巾落着灰",
+   "text": "顾行舟的围巾落着灰。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_00a",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "围巾冻得发僵",
+   "text": "顾行舟的围巾冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_00b",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "围巾冻得发僵",
+   "text": "阿棠的围巾冻得发僵。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_01a",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "围巾蹭破了皮",
+   "text": "顾行舟的围巾蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_01b",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "围巾蹭破了皮",
+   "text": "阿棠的围巾蹭破了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_02a",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "腰侧湿了",
+   "text": "顾行舟的腰侧湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_02b",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "腰侧湿了",
+   "text": "阿棠的腰侧湿了。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_03a",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "腰侧沾了泥",
+   "text": "顾行舟的腰侧沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_03b",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "腰侧沾了泥",
+   "text": "阿棠的腰侧沾了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_04a",
+   "factId": null,
+   "name": "顾行舟",
+   "expected": "腰侧结了盐霜",
+   "text": "顾行舟的腰侧结了盐霜。",
+   "complete": true
+  },
+  {
+   "unitId": "c3_04b",
+   "factId": null,
+   "name": "阿棠",
+   "expected": "腰侧结了盐霜",
+   "text": "阿棠的腰侧结了盐霜。",
+   "complete": true
+  }
+ ],
+ "wallSeconds": 5.7
+}

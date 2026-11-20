@@ -1,0 +1,37 @@
+{
+  "status": "REVIEW_FINDINGS",
+  "recordedAt": "2026-10-26T04:47:31.024Z",
+  "layer": "real ControllerDriver and scheduler with deterministic transport/model probes",
+  "rows": [
+    {
+      "probe": "normal_input_without_context_roundtrip",
+      "sentInput": "PLAYER_INPUT_SENTINEL",
+      "actionAdvance": {
+        "inputText": null,
+        "intentStatus": "pending"
+      },
+      "operations": [
+        "checkpoint_start_advance",
+        "checkpoint_begin_point"
+      ]
+    },
+    {
+      "probe": "results_to_updates",
+      "resultRetained": {
+        "person_a": "CONFIRMED_RESULT_SENTINEL"
+      },
+      "updatesInputKeys": [
+        "groupId",
+        "mode",
+        "workingState"
+      ],
+      "resultPassedToUpdates": false
+    },
+    {
+      "probe": "missing_frozen_actions",
+      "terminal": null,
+      "modelCalled": true,
+      "members": []
+    }
+  ]
+}

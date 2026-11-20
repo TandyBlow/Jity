@@ -1,0 +1,575 @@
+{
+  "readOnly": true,
+  "databaseSha256": "fdc14ccffebe79711f04870f045bc5c9b850de4a495e3f454af1d0fd7af7b184",
+  "privateDirectory": "rule-facts-1793091791807",
+  "worlds": 10,
+  "successfulCommits": 10,
+  "narrativeGenerations": 20,
+  "rows": [
+    {
+      "id": "move",
+      "worldId": "world_1",
+      "point": {
+        "pointId": "point_7",
+        "sequence": 1,
+        "stateDigest": "7632719699b400e5790760422c492b2da8a0c2a7180d671a5f86e5664f55e5e2",
+        "previousPointId": "root_3"
+      },
+      "allocations": [
+        {
+          "id": "advance_4",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_8",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_9",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_5",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_7",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_6",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_move_mvqgk4ay_15"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_4",
+          "inputId": "input_5",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "move-precondition",
+      "worldId": "world_10",
+      "point": {
+        "pointId": "point_16",
+        "sequence": 1,
+        "stateDigest": "ba1b3ebf50c2644e7012b0b7868e20b6b42557cce475378e5f1786f9641d4614",
+        "previousPointId": "root_12"
+      },
+      "allocations": [
+        {
+          "id": "advance_13",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_17",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_18",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_14",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_16",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_15",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_move_precondition_mvqgk5sf_15"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_13",
+          "inputId": "input_14",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为2。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "numeric",
+      "worldId": "world_19",
+      "point": {
+        "pointId": "point_25",
+        "sequence": 1,
+        "stateDigest": "176fc56430f19b6c1c8b640d06efa88680569edbca07d2340cc98705cab5bac1",
+        "previousPointId": "root_21"
+      },
+      "allocations": [
+        {
+          "id": "advance_22",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "change_28",
+          "kind": "change",
+          "slotKey": "change:66647e943510e57f3ba6e2faac36ea33"
+        },
+        {
+          "id": "group_26",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_27",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_23",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_25",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_24",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_numeric_mvqgk6pk_16"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_22",
+          "inputId": "input_23",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "numeric-lower-bound",
+      "worldId": "world_29",
+      "point": {
+        "pointId": "point_35",
+        "sequence": 1,
+        "stateDigest": "dab6aefca352e91738c9bdcef051486dfc238f1bd7b10b732e40051fa2e4a1fe",
+        "previousPointId": "root_31"
+      },
+      "allocations": [
+        {
+          "id": "advance_32",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_36",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_37",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_33",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_35",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_34",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_numeric_lower_bound_mvqgk7qe_15"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_32",
+          "inputId": "input_33",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为1。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "numeric-recover",
+      "worldId": "world_38",
+      "point": {
+        "pointId": "point_44",
+        "sequence": 1,
+        "stateDigest": "2aaf049baad8616c4f36c2dfb2cc829b4fc1a15083d888c82ba1ebb948f68160",
+        "previousPointId": "root_40"
+      },
+      "allocations": [
+        {
+          "id": "advance_41",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "change_47",
+          "kind": "change",
+          "slotKey": "change:45d02c3a8ee22751c1e93b430d62c3b0"
+        },
+        {
+          "id": "group_45",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_46",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_42",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_44",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_43",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_numeric_recover_mvqgk8p9_16"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_41",
+          "inputId": "input_42",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "numeric-upper-bound",
+      "worldId": "world_48",
+      "point": {
+        "pointId": "point_54",
+        "sequence": 1,
+        "stateDigest": "bfc13606bee535cd47c45b394b1e70551e8440d58ae21a3379d76b8cb11bbe53",
+        "previousPointId": "root_50"
+      },
+      "allocations": [
+        {
+          "id": "advance_51",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_55",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_56",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_52",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_54",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_53",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_numeric_upper_bound_mvqgk9m9_15"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_51",
+          "inputId": "input_52",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "numeric-task-missing",
+      "worldId": "world_57",
+      "point": {
+        "pointId": "point_63",
+        "sequence": 1,
+        "stateDigest": "d7b86c3421b11e2efc9b55d016403d01bf98f72ac8a1a56cda8d304925f49017",
+        "previousPointId": "root_59"
+      },
+      "allocations": [
+        {
+          "id": "advance_60",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_64",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_65",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_61",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_63",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_62",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_numeric_task_missing_mvqgkads_15"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_60",
+          "inputId": "input_61",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "numeric-time-incomplete",
+      "worldId": "world_66",
+      "point": {
+        "pointId": "point_72",
+        "sequence": 1,
+        "stateDigest": "196813a522cc924de5e95ee9b6966cfd77043d31d9eb17750aabb38e732f9adc",
+        "previousPointId": "root_68"
+      },
+      "allocations": [
+        {
+          "id": "advance_69",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_73",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_74",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_70",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_72",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_71",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_numeric_time_incomplete_mvqgkb37_15"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_69",
+          "inputId": "input_70",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "free-text-not-fact",
+      "worldId": "world_75",
+      "point": {
+        "pointId": "point_81",
+        "sequence": 1,
+        "stateDigest": "e884900c4be04d91ed39d918c9066c84e06bc36ef1e81a2818e5c676b83827c6",
+        "previousPointId": "root_77"
+      },
+      "allocations": [
+        {
+          "id": "advance_78",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "group_82",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_83",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_79",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_81",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_80",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_free_text_not_fact_mvqgkbtf_13"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_78",
+          "inputId": "input_79",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+      "narrationMatchesHttp": true
+    },
+    {
+      "id": "lost-commit-response",
+      "worldId": "world_84",
+      "point": {
+        "pointId": "point_90",
+        "sequence": 1,
+        "stateDigest": "9ed929d4dad3569a6a3567e07a84e89260126ec93cd034f6c97db25a1d87bec1",
+        "previousPointId": "root_86"
+      },
+      "allocations": [
+        {
+          "id": "advance_87",
+          "kind": "advance",
+          "slotKey": "advance"
+        },
+        {
+          "id": "change_93",
+          "kind": "change",
+          "slotKey": "change:b38ea829bf6612aa3d9edaceb407d652"
+        },
+        {
+          "id": "group_91",
+          "kind": "group",
+          "slotKey": "group:person_a"
+        },
+        {
+          "id": "group_92",
+          "kind": "group",
+          "slotKey": "group:person_c"
+        },
+        {
+          "id": "input_88",
+          "kind": "input",
+          "slotKey": "input"
+        },
+        {
+          "id": "point_90",
+          "kind": "point",
+          "slotKey": "point"
+        },
+        {
+          "id": "round_89",
+          "kind": "round",
+          "slotKey": "round"
+        }
+      ],
+      "committedRequestIds": [
+        "rule_lost_commit_response_mvqgkcfu_16"
+      ],
+      "inputs": [
+        {
+          "advanceId": "advance_87",
+          "inputId": "input_88",
+          "intentStatus": "consumed",
+          "ended": 1
+        }
+      ],
+      "savedNarration": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+      "narrationMatchesHttp": true
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+    "annotatorId":  "ai-a",
+    "annotatorType":  "AI",
+    "context":  "fresh task without inherited turns",
+    "inputFileNames":  [
+                           "rubric.md",
+                           "items-blind.jsonl",
+                           "sheet.md",
+                           "labels-template.jsonl"
+                       ],
+    "exposureBeyondFourInputFiles":  false,
+    "method":  "完整阅读四个指定输入文件，逐条独立语义判断可见性、人物或地点主体、全知共同焦点及四类必述条件；标签先由AI判定，再用代码写入并校验92条数量、模板顺序、ID和标签合法性；未读取旧标签、模型输出或其他标注者结果，未计算一致度。",
+    "limitations":  [
+                        "AI标注，非人工评测，不能替代独立真人标注。",
+                        "同模型可能存在相关偏差，不能将多份AI判断视为独立人工证据。",
+                        "仅依据所给rubric及盲表，缺少未提供的叙事上下文；不推断未明示的共同任务或主角危险。"
+                    ]
+}

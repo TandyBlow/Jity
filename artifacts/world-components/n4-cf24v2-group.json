@@ -1,0 +1,584 @@
+{
+ "arm": "group",
+ "checkpoint": "~/n4group_run/ckpt-group",
+ "materials": "cf24-v2.json",
+ "budget": 20.0,
+ "sources": [
+  {
+   "sourceId": "t01",
+   "pattern": "P1-same-subject",
+   "output": "档案馆的雨声压在天窗外,沈砚把潮汐簿的缺页补全,把干纸合上推到桌角,纸角已经发暗。铜灯的光落在天窗外,沈砚把缺页补的那页补全;他把簿子合上推到桌角,纸角已经发暗;他把簿子合上推到桌角,纸角已经发暗;他把缺页补完的那页补全,纸页没有补完,纸页没有补完。",
+   "complete": true,
+   "seconds": 1.073,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 118
+    }
+   ]
+  },
+  {
+   "sourceId": "t02",
+   "pattern": "P1-same-subject",
+   "output": "早市的雾还没散,阿棠从早市过来,把鱼筐拍得筐沿拍;阿棠把鱼筐拍得筐沿拍得发亮,鱼尾拍得筐沿发亮。",
+   "complete": true,
+   "seconds": 0.341,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 48
+    }
+   ]
+  },
+  {
+   "sourceId": "t03",
+   "pattern": "P1-same-subject",
+   "output": "海风把铜灯罩吹得发冷,叶知微把抹布搭回梯脚,把抹布搭回梯脚。铜灯罩透亮起来,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。风把铜灯罩透亮起来,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。风把铜灯罩透亮起来,火苗重新站稳。",
+   "complete": true,
+   "seconds": 0.798,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 114
+    }
+   ]
+  },
+  {
+   "sourceId": "t04",
+   "pattern": "P1-same-subject",
+   "output": "雾把潮渡的木桩推上栈桥,顾行舟把缆绳绕到木桩上,船灯在雾里只剩一圈黄。",
+   "complete": true,
+   "seconds": 0.264,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 37
+    }
+   ]
+  },
+  {
+   "sourceId": "t05",
+   "pattern": "P1-same-subject",
+   "output": "雾堤上的风把浪沫吹到石阶上,韩渡扶着铁链走到钟架旁。韩渡把松脱的钟绳重新系紧,钟绳绷直了,他手背上沾着盐沫。",
+   "complete": true,
+   "seconds": 0.373,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 53
+    }
+   ]
+  },
+  {
+   "sourceId": "t06",
+   "pattern": "P1-same-subject",
+   "output": "雨停在墙根,沈砚扶正被风吹歪的纸灯笼扶正。墙根还在滴水,他鞋底沾了湿石板的水。他把伞收拢靠在墙根,墙根还在滴水;他鞋底沾了湿石板的水。",
+   "complete": true,
+   "seconds": 0.546,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 65
+    }
+   ]
+  },
+  {
+   "sourceId": "t07",
+   "pattern": "P2-two-actor",
+   "output": "沈砚从潮渡上来,蹲到雾堤的钟架旁。雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡蹲下去,把松脱的钟绳重新系紧;钟绳绷直了,他才站起来。沈砚把雾警钟敲响,警示灯在风里发晃。雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡手背上沾着盐沫,他手背上沾着盐沫。",
+   "complete": true,
+   "seconds": 0.908,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 18
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 48
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 20
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 41
+    }
+   ]
+  },
+  {
+   "sourceId": "t08",
+   "pattern": "P2-two-actor",
+   "output": "阿棠把银鳞鱼搬上案板,鱼尾拍得筐沿发亮。阿棠从早市过来,把缆绳绕上摊棚边的木桩。阿棠从早市过来,鞋底在石板上蹭了两下。阿棠从早市过来,围裙上沾着鱼鳞。",
+   "complete": true,
+   "seconds": 0.547,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 21
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 19
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 19
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 16
+    }
+   ]
+  },
+  {
+   "sourceId": "t09",
+   "pattern": "P2-two-actor",
+   "output": "叶知微从早市过来,走进档案馆。沈砚把潮汐簿摊在铜灯下,把干纸摊在铜灯下。铜灯的光落在天窗上,沈砚把潮汐簿摊在铜灯下,纸页没有散。档案馆的天窗漏进灰光,沈砚在长桌边站了一会儿。铜灯的光落在天窗上,沈砚坐在长桌边。叶知微把一叠干纸放在桌角,纸角发暗。铜灯的光落在纸页上,他看了一会儿,袖口带着铜油。铜灯的光落在纸页上,他看了一会儿,他才把一叠干纸放在桌角;他看了一会儿,门槛上什么也没有再发生。沈砚的袖口沾了墨,袖口沾了墨。",
+   "complete": true,
+   "seconds": 1.395,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 14
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 49
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 117
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 17
+    }
+   ]
+  },
+  {
+   "sourceId": "t10",
+   "pattern": "P2-two-actor",
+   "output": "顾行舟把渡船系在木桩上,把缆绳系在木桩上;他把渡船系在木桩上,船灯在水面挂了两盏。沈砚把系泊绳从浅滩拖回岸上,等他直起身,把系泊绳从浅滩拖回岸上。顾行舟把外袍下摆被雾水打湿,船灯在水面没有动。沈砚从潮渡上来,踩着缆绳走到木桩旁。",
+   "complete": true,
+   "seconds": 0.852,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 43
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 34
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 24
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 18
+    }
+   ]
+  },
+  {
+   "sourceId": "t11",
+   "pattern": "P2-two-actor",
+   "output": "沈砚从潮生巷过来,沿着石阶上到旧灯塔。海风把铜灯罩吹得发冷,沈砚站在旋梯口。叶知微把玻璃罩上的盐雾擦掉,铜灯罩透亮起来。海风把塔顶的铜灯罩吹得发冷,沈砚换好备用灯芯,火苗在风里轻轻响。铜灯罩嗡嗡响,火苗在风里重新站稳。铜灯罩嗡嗡响,火苗在风里重新站稳。叶知微从旋梯口出来,袖口沾了铜油。",
+   "complete": true,
+   "seconds": 1.013,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 20
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 39
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 65
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 18
+    }
+   ]
+  },
+  {
+   "sourceId": "t12",
+   "pattern": "P2-two-actor",
+   "output": "阿棠从早市过来,早市的纸灯笼在水洼里站住。沈砚把油纸伞收拢靠在墙根,鞋底在水声里发亮。阿棠把鱼筐放在门槛边,鞋底在水洼里蹭了两下。沈砚鞋底沾了湿石板的水,沈砚鞋底沾了湿石板的水。",
+   "complete": true,
+   "seconds": 0.655,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 21
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 24
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 22
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 24
+    }
+   ]
+  },
+  {
+   "sourceId": "t13",
+   "pattern": "P3-move-then-act",
+   "output": "档案馆的天窗漏进灰光,叶知微把一叠干纸放在桌角,铜灯的光落在纸页上。铜灯的光落在纸页上,叶知微把一叠干纸放在桌角,纸角沾了墨;他袖口沾了墨,纸角又透着一层旧墨迹发暗。铜灯的光落在纸页上,他袖口沾了墨;他袖口沾了墨。铜灯的光落在纸页上,他听见门槛上的雾水;他把一叠干纸放在桌角,纸页没有散。",
+   "complete": true,
+   "seconds": 0.951,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 136
+    }
+   ]
+  },
+  {
+   "sourceId": "t14",
+   "pattern": "P3-move-then-act",
+   "output": "雾堤上的风把浪沫吹到石阶上,顾行舟把缆绳绕在钟架上,把绳绳绕在钟架上。",
+   "complete": true,
+   "seconds": 0.255,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 36
+    }
+   ]
+  },
+  {
+   "sourceId": "t15",
+   "pattern": "P3-move-then-act",
+   "output": "雾从潮生巷过来,韩渡从潮生巷过来,把渡船推离栈桥。",
+   "complete": true,
+   "seconds": 0.179,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 25
+    }
+   ]
+  },
+  {
+   "sourceId": "t16",
+   "pattern": "P3-move-then-act",
+   "output": "雨停在潮生巷的纸灯笼下,沈砚把备用钥匙塞进油布包的外层。他把钥匙塞进油布包的外层,齿口磨圆;他把钥匙塞进油布包的外层,齿口磨圆;他把钥匙塞进油布包的外层重新站稳。",
+   "complete": true,
+   "seconds": 0.57,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 81
+    }
+   ]
+  },
+  {
+   "sourceId": "t17",
+   "pattern": "P3-move-then-act",
+   "output": "阿棠从潮生巷走进早市,把银鳞鱼搬上案板。",
+   "complete": true,
+   "seconds": 0.145,
+   "calls": [
+    {
+     "factId": "f0, f1, f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 20
+    }
+   ]
+  },
+  {
+   "sourceId": "t18",
+   "pattern": "P3-move-then-act",
+   "output": "海风把塔顶的铜灯罩吹得发冷,叶知微从潮渡上来,蹲在铜灯罩旁,用抹布把玻璃罩上的盐雾擦掉;他袖口沾了铜油,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。铜灯罩透亮起来,火苗重新站稳。风把塔顶的铜灯罩透亮起来。",
+   "complete": true,
+   "seconds": 0.849,
+   "calls": [
+    {
+     "factId": "f0, f1, f2, f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 121
+    }
+   ]
+  },
+  {
+   "sourceId": "t19",
+   "pattern": "P4-multi-object",
+   "output": "阿棠的袖口沾了鱼鳞。沈砚的外袍下摆沾了泥水,外袍下摆沾了泥水。阿棠把银鳞鱼装进鱼筐,鱼尾拍得筐沿响。沈砚把油纸伞收拢靠在摊棚边,鱼尾拍得筐沿响。",
+   "complete": true,
+   "seconds": 0.565,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 11
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 23
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 20
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 24
+    }
+   ]
+  },
+  {
+   "sourceId": "t20",
+   "pattern": "P4-multi-object",
+   "output": "雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。警示灯在风里发晃,钟绳绷直了,他站了一会儿,他才站起来。雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。警示灯在风里发晃,他把手拢在石阶上;他站了一会儿,他才站起来。雾堤上的风把浪沫吹到石阶上,沈砚把警示灯扶正,铁链在风里发晃。他把警示灯扶正,铁链在风里发晃。雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡蹲下去,把钟绳重新绕在钟架上,等他站了一会儿,他才站起来。",
+   "complete": true,
+   "seconds": 1.387,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 48
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 51
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 48
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 49
+    }
+   ]
+  },
+  {
+   "sourceId": "t21",
+   "pattern": "P4-multi-object",
+   "output": "档案馆的雨声压在天窗外,沈砚在长桌前站了一会儿。铜灯的光落在门槛上,沈砚在长桌边站了一会儿。铜灯的光落在纸页上,没有动静。档案馆的雨声压在天窗外,沈砚在长桌前站了一会儿。铜灯的光落在铜灯下,他把墨迹擦掉;他看了一会儿,门槛上的灰暗没有散。沈砚把铜灯擦亮,潮汐簿的门槛很暗。档案馆的雨声压在天窗外,沈砚在长桌边站了一会儿。叶知微把干纸放在桌角,纸角发暗。",
+   "complete": true,
+   "seconds": 1.2,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 57
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 54
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 19
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 39
+    }
+   ]
+  },
+  {
+   "sourceId": "t22",
+   "pattern": "P4-multi-object",
+   "output": "退潮后的浅滩泛着雾,沈砚踩着湿泥走到浅滩上。等他直起身,缆绳在泥里绕了两圈。退潮后的浅滩泛着雾,沈砚站在木桩旁。木桩缠着的旧缆绳,泥滩上留着水痕。他把缆绳缠在木桩上,他把绳子缠在木桩上;他站了一会儿,水面留着水痕。退潮后的浅滩泛着雾,沈砚踩着缆绳重新绕上木桩。等他直起身,手上的盐雾沾满泥水;他把缆绳重新绕上木桩,船灯在水面留着水痕。退潮后的浅滩泛着雾,沈砚把系泊绳拖回岸上,等他直起身,把绳绳拖回岸上。等他把绳绳拖回岸上,等他站了一会儿,他才把绳绳拖回岸上。",
+   "complete": true,
+   "seconds": 1.602,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 38
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 68
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 58
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 63
+    }
+   ]
+  },
+  {
+   "sourceId": "t23",
+   "pattern": "P4-multi-object",
+   "output": "海风把铜灯罩吹得发冷,沈砚站在旋梯口。铜灯罩烧出一小截黑灰,火苗在风里重新站稳。铜灯罩被风吹得发冷,他站了一会儿,灯芯烧出一小截黑灰。铜灯罩嗡嗡响,火苗在风里重新站稳。海风把铜灯罩吹得发冷,沈砚站在旋梯口。铜灯罩烧出一小截黑灰,火苗在风里重新站稳。铜灯罩嗡嗡响,火苗在风里重新站稳。海风把铜灯罩吹得发冷,沈砚站在旋梯口。叶知微把玻璃罩上的盐雾擦掉,灯芯烧出一小截黑灰。海风把塔顶的铜灯罩吹得发冷,沈砚换好备用。铜灯罩烧出一小截黑灰,火苗在风里重新站稳。铜灯罩嗡嗡响,火苗在风里重新站稳。",
+   "complete": true,
+   "seconds": 1.679,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 82
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 56
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 42
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 58
+    }
+   ]
+  },
+  {
+   "sourceId": "t24",
+   "pattern": "P4-multi-object",
+   "output": "沈砚的鞋底在雨停,鞋底在滴水。沈砚的衣着已经薄了泥,墙根还在滴水。沈砚把纸灯笼扶正,墙根还在滴水。阿棠把鱼筐放在门槛边,鞋底在滴水。",
+   "complete": true,
+   "seconds": 0.504,
+   "calls": [
+    {
+     "factId": "f0",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 17
+    },
+    {
+     "factId": "f1",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 18
+    },
+    {
+     "factId": "f2",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 17
+    },
+    {
+     "factId": "f3",
+     "stopReason": "eos",
+     "complete": true,
+     "newTokens": 17
+    }
+   ]
+  }
+ ]
+}

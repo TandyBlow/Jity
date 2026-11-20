@@ -1,0 +1,197 @@
+---
+library_name: transformers
+license: apache-2.0
+language:
+- en
+- zh
+pipeline_tag: text-generation
+tags:
+- mnn
+- mnn-pocket
+- on-device
+- edge
+- qwen3
+- int4
+base_model: taobao-mnn/MNN-Pocket-0.3B-Base
+---
+
+<div align="center">
+  <img src="https://cdn-uploads.huggingface.co/production/uploads/6881be3a7d8f27f6508ef8de/hPDaFYzlZb3m07kc8a4ho.png" alt="MNN-Pocket" style="width: 100%; max-width: 100%; height: auto; display: inline-block; margin-bottom: 0.5em; margin-top: 0.5em;" />
+  <div style="display: flex; justify-content: center; gap: 0.5em; margin-bottom: 1em;">
+    <a href="https://huggingface.co/collections/taobao-mnn/mnn-pocket-03b"><strong>Collection</strong></a> •
+    <a href="https://github.com/alibaba/MNN"><strong>GitHub (MNN)</strong></a> •
+    <a href="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/resolve/main/MNN-Pocket-0.3B-Technical-Report.pdf"><strong>Tech Report</strong></a>
+  </div>
+</div>
+
+<p align="center">
+English |
+<a href="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/blob/main/README-cn.md" target="_blank">中文</a>
+</p>
+
+# MNN-Pocket-0.3B
+
+MNN-Pocket is a family of compact language models co-designed with the [MNN](https://github.com/alibaba/MNN) inference stack for **on-device deployment**. `MNN-Pocket-0.3B` is the general-purpose, instruction-tuned member of the family.
+
+- **Tiny footprint**: ~300M parameters; the INT4 (W4A16) QAT MNN build occupies only **173 MB**.
+- **Fast edge inference**: up to **466 tokens/s** decode on iPad Pro M5 (Metal), above the 200 tok/s real-time target.
+- **Context length**: up to **32K tokens**.
+- **Balanced bilingual capability**: best average (50.00) across 11 zh/en benchmarks among ~300M models, surpassing several ~500M baselines.
+
+## Demo
+
+<p><span style="font-size: 0.85em; color: #666;">iPhone 18 Pro Demo</span></p>
+
+<div align="center">
+  <video width="80%" controls>
+    <source src="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/resolve/main/assets/demo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+## Model Details
+
+| Model | Parameters | Description |
+|-------|------------|-------------|
+| [MNN-Pocket-0.3B-Base](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-Base) | 300M | Pre-trained base model for fine-tuning |
+| [MNN-Pocket-0.3B-SFT](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-SFT) | 300M | Supervised fine-tuning (SFT) checkpoint, intermediate stage for research and ablation |
+| [**MNN-Pocket-0.3B**](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B) | 300M | General-purpose instruction-tuned model |
+| [MNN-Pocket-0.3B-GGUF](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF) | 300M | GGUF for llama.cpp: F16 / Q8_0 from the BF16 checkpoint, Q4_1 from the QAT checkpoint |
+| [MNN-Pocket-0.3B-MNN](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-MNN) | 300M | INT4 (W4A16) QAT MNN build for on-device deployment |
+| [MNN-Pocket-0.3B-Dec](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-Dec) | 300M | Non-autoregressive decision model: LoRA adapter + pointer head, answers every question in one forward pass |
+
+Architecture:
+
+- **Parameters**: ~300M
+- **Layers**: 28
+- **Hidden size**: 896
+- **Attention**: 14 heads, GQA with 2 KV heads, head_dim 64
+- **FFN intermediate**: 2560 (SiLU)
+- **Context**: 40,960 positions (32K supported in deployment)
+- **Vocabulary**: 65,536
+- **Embeddings**: tied input/output
+- **Precision**: bfloat16 native; INT4 W4A16 (MNN build)
+- **Languages**: Chinese, English
+
+MNN-Pocket-0.3B is intended for on-device assistants, data extraction, and lightweight agentic pipelines. Like other sub-billion-parameter models, it is not recommended for reasoning-heavy workloads such as advanced mathematics or long-horizon code generation.
+
+### Chat Template
+
+MNN-Pocket uses a ChatML-style conversation format. The exact template (including the im_start / im_end control tokens) ships in this repo as `chat_template.jinja`; prefer `tokenizer.apply_chat_template()` so formatting stays correct automatically. Schematic:
+
+```
+[IM_START]system
+You are a helpful assistant.[IM_END]
+[IM_START]user
+Hello![IM_END]
+[IM_START]assistant
+```
+
+```python
+from transformers import AutoTokenizer
+tok = AutoTokenizer.from_pretrained("taobao-mnn/MNN-Pocket-0.3B")
+text = tok.apply_chat_template(
+    [{"role": "system", "content": "You are a helpful assistant."},
+     {"role": "user", "content": "Hello!"}],
+    add_generation_prompt=True, tokenize=False)
+```
+
+## Inference
+
+MNN-Pocket is optimized for the [MNN](https://github.com/alibaba/MNN) runtime but also runs in Transformers and llama.cpp.
+
+On-device with MNN: the INT4 (W4A16, block 64) QAT build is published as [MNN-Pocket-0.3B-MNN](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-MNN).
+
+For other precisions, export from the safetensors in this repo with `llmexport`:
+
+```bash
+# Download the MNN source
+git clone https://github.com/alibaba/MNN.git
+
+# Export to MNN (INT4, block 64)
+cd MNN/transformers/llm/export
+python llmexport.py --path /path/to/MNN-Pocket-0.3B --export mnn --quant_bit 4 --quant_block 64
+```
+
+Build flags, `config.json` options and `llmexport` parameters are in the [MNN-LLM doc](https://github.com/alibaba/MNN/blob/master/transformers/README.md).
+
+With the MNN weights in hand — the published INT4 build or your own export — build the runtime and run it:
+
+```bash
+# Download the MNN source (only needed if you have not cloned it yet)
+git clone https://github.com/alibaba/MNN.git
+
+# Build
+cd MNN
+mkdir build && cd build
+cmake .. -DMNN_LOW_MEMORY=true -DMNN_BUILD_LLM=true -DMNN_SUPPORT_TRANSFORMER_FUSE=true
+make -j
+
+# Run
+./llm_demo /path/to/MNN-Pocket-0.3B-MNN/config.json prompt.txt
+```
+
+Transformers:
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_id = "taobao-mnn/MNN-Pocket-0.3B"
+model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", dtype="bfloat16")
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+messages = [{"role": "user", "content": "What is MNN?"}]
+inputs = tokenizer.apply_chat_template(messages, add_generation_prompt=True,
+                                       return_tensors="pt", tokenize=True, return_dict=True).to(model.device)
+outputs = model.generate(**inputs, max_new_tokens=512, do_sample=True,
+                         temperature=0.8, top_p=0.8, top_k=20)
+print(tokenizer.decode(outputs[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True))
+```
+
+llama.cpp: see [MNN-Pocket-0.3B-GGUF](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF).
+
+## Performance
+
+Post-trained MNN-Pocket-0.3B vs. same-size and larger open models (higher is better). Full protocol in the tech report.
+
+| Benchmark   | MNN-Pocket-0.3B | -INT4 | Gemma-3-270M | ERNIE-4.5-0.3B | LFM2.5-350M | SmolLM2-360M | Hunyuan-0.5B | MiniCPM4-0.5B | Qwen3-0.6B |
+|-------------|-----------------|-------|--------------|----------------|-------------|--------------|--------------|---------------|------------|
+| **Average** | 50.00           | 49.59 | 6.42         | 31.99          | 31.28       | 18.43        | 31.22        | 46.81         | 44.28      |
+| C-Eval      | 38.86           | 40.27 | 6.84         | 32.17          | 32.10       | 23.77        | 35.29        | 67.98         | 44.06      |
+| CMMLU       | 40.11           | 39.65 | 4.94         | 33.91          | 31.65       | 24.87        | 35.69        | 66.04         | 44.50      |
+| MMLU-Redux  | 44.00           | 43.40 | 13.58        | 32.68          | 41.01       | 24.17        | 36.29        | 52.85         | 51.63      |
+| BBH         | 47.38           | 46.63 | 8.09         | 31.07          | 26.03       | 27.74        | 54.65        | 47.61         | 41.94      |
+| IFEval      | 73.20           | 74.12 | 20.15        | 44.92          | 72.09       | 32.16        | 24.58        | 52.13         | 56.93      |
+| IFEval-zh   | 74.59           | 72.49 | 17.02        | 32.87          | 44.06       | 25.64        | 25.87        | 30.30         | 50.35      |
+| GSM8K       | 54.36           | 52.84 | 0.00         | 31.24          | 33.66       | 11.60        | 36.01        | 42.46         | 45.49      |
+| MGSM-zh     | 51.20           | 48.80 | 0.00         | 25.20          | 18.00       | 3.60         | 34.80        | 37.60         | 40.00      |
+| MATH500     | 35.40           | 35.40 | 0.00         | 21.40          | 14.80       | 4.60         | 35.80        | 23.00         | 45.20      |
+| HumanEval   | 53.66           | 53.66 | 0.00         | 38.41          | 14.63       | 0.00         | 14.63        | 48.17         | 36.59      |
+| MBPP        | 37.20           | 38.20 | 0.00         | 28.00          | 16.00       | 24.60        | 9.80         | 46.80         | 30.40      |
+
+The INT4 (W4A16) QAT build loses only 0.41 points on average (49.59 vs 50.00), confirming quantization largely preserves quality while cutting the footprint to ~173 MB.
+
+### On-Device Speed
+
+Prefill / decode throughput at 512-token context with the INT4 build:
+
+| Device | Backend | Prefill (tok/s) | Decode (tok/s) |
+|---|---|---|---|
+| iPad Pro M5 | Metal | 8,721 | 466 |
+| iPad Pro M5 | CPU | 2,228 | 231 |
+| Snapdragon 8 Gen 5 | OpenCL | 3,403 | 138 |
+| Snapdragon 8 Gen 5 | CPU | 930 | 251 |
+
+## License
+
+Released under the **Apache License 2.0**. See `LICENSE.txt`.
+
+## Citation
+
+```bibtex
+@misc{mnn2026pocket,
+  title  = {MNN-Pocket-0.3B Technical Report},
+  author = {{MNN Team}},
+  year   = {2026}
+}
+```

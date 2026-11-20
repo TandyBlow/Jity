@@ -1,0 +1,170 @@
+{
+  "protocol": "c1-n2-attention-granularity-v1",
+  "frozenOn": "2026-11-08",
+  "contract": "freeze/contract-v1.md",
+  "labelFreeze": "本文件在 v2 解析器存在之前写入并单独提交；expected 是人工作者标注，不来自任何程序输出。",
+  "utteranceOrigin": "10 条玩家原话为本实验新写，仓库里没有可用的真实原话记录；原话只是输入。",
+  "anchorOrigin": "part 是否锚定由 freeze/anchors-v1.json 判定，锚点文本逐字来自已登记夹具。",
+  "samples": [
+    {
+      "sampleId": "A01",
+      "category": "scope_object",
+      "worldRef": "W2",
+      "utterance": "林川怎么样了？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          { "entityId": "person_a", "scope": "object", "surface": "林川", "scopeCue": null }
+        ]
+      },
+      "note": "没有任何字段线索词，范围是整人。"
+    },
+    {
+      "sampleId": "A02",
+      "category": "scope_position",
+      "worldRef": "W2",
+      "utterance": "林川现在在哪儿？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          { "entityId": "person_a", "scope": "position", "surface": "林川", "scopeCue": "在哪儿" }
+        ]
+      },
+      "note": "问位置；v2 下 r1 的 S01 同句应收窄为 position，而不是整人。"
+    },
+    {
+      "sampleId": "A03",
+      "category": "scope_appearance",
+      "worldRef": "W2",
+      "utterance": "周宁今天穿的什么？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          { "entityId": "person_c", "scope": "appearance", "surface": "周宁", "scopeCue": "穿的" }
+        ]
+      },
+      "note": "问外观；范围只允许外观类事实。"
+    },
+    {
+      "sampleId": "A04",
+      "category": "scope_task",
+      "worldRef": "W2",
+      "utterance": "林川的任务怎样了？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          { "entityId": "person_a", "scope": "task", "surface": "林川", "scopeCue": "任务" }
+        ]
+      },
+      "note": "问任务；范围只允许任务类事实。"
+    },
+    {
+      "sampleId": "A05",
+      "category": "scope_part_anchored_initial",
+      "worldRef": "W2",
+      "utterance": "盒盖还关着吗？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "box",
+            "scope": "part",
+            "part": "盒盖",
+            "partAnchored": true,
+            "surface": "盒盖",
+            "scopeCue": "盒盖"
+          }
+        ]
+      },
+      "note": "局部词来自 box.initialAppearance「盒盖关闭。」；实体由描述词命中，不是名字。"
+    },
+    {
+      "sampleId": "A06",
+      "category": "scope_part_anchored_change",
+      "worldRef": "W1",
+      "utterance": "钥匙表面的灰还在吗？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "item_key",
+            "scope": "part",
+            "part": "表面",
+            "partAnchored": true,
+            "surface": "钥匙",
+            "scopeCue": "表面"
+          }
+        ]
+      },
+      "note": "局部词来自提交的变化文本「黄铜钥匙的表面蒙上了一层灰尘」（chg_key_1 / p_appear），不是初始外观。"
+    },
+    {
+      "sampleId": "A07",
+      "category": "scope_part_unanchored",
+      "worldRef": "W2",
+      "utterance": "林川的袖口湿了吗？",
+      "priorNarration": null,
+      "expected": {
+        "state": "resolved",
+        "targets": [
+          {
+            "entityId": "person_a",
+            "scope": "part",
+            "part": "袖口",
+            "partAnchored": false,
+            "surface": "林川",
+            "scopeCue": "袖口"
+          }
+        ]
+      },
+      "note": "用户给的例子。袖口不在林川任何提交文本里，所以锚定为 false；仍然保留 part 词，N2 字面匹配不到就不选，禁止退化成整人。"
+    },
+    {
+      "sampleId": "A08",
+      "category": "state_ambiguous",
+      "worldRef": "W1",
+      "utterance": "那个学生怎么样了？",
+      "priorNarration": null,
+      "expected": {
+        "state": "ambiguous",
+        "targets": [],
+        "ambiguousCandidates": ["person_a", "person_b"],
+        "reason": "shared_name_stem"
+      },
+      "note": "学生A／学生B 共用词干；范围未知也只能不选，不能先挑一个人再给范围。"
+    },
+    {
+      "sampleId": "A09",
+      "category": "state_unresolved",
+      "worldRef": "W2",
+      "utterance": "老林的任务呢？",
+      "priorNarration": null,
+      "expected": {
+        "state": "unresolved",
+        "targets": [],
+        "unresolvedMentions": ["老林"],
+        "reason": "nickname_not_in_committed_record"
+      },
+      "note": "昵称没有对应记录；虽然出现任务线索词，但没有实体，不能凭空造目标。"
+    },
+    {
+      "sampleId": "A10",
+      "category": "state_none",
+      "worldRef": "W2",
+      "utterance": "继续。",
+      "priorNarration": null,
+      "expected": {
+        "state": "none",
+        "targets": [],
+        "reason": "no_attention_mention"
+      },
+      "note": "没有关注对象；下游可选事实一条都不选，不回退全选。"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+ "pack": "cf24-t1-batch-12",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0066",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0084",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0020",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0168",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0071",
+   "verdict": "undetermined",
+   "categories": [
+    "direction"
+   ],
+   "flags": [
+    "direction_wording_risk"
+   ],
+   "reason": "方向=平却写“上来”，起终点都在；按冻结口径记措辞风险，判无法判断"
+  },
+  {
+   "code": "c0112",
+   "verdict": "undetermined",
+   "categories": [
+    "direction"
+   ],
+   "flags": [
+    "direction_wording_risk"
+   ],
+   "reason": "方向=平却写“上来”，起终点都在；按冻结口径记措辞风险，判无法判断"
+  },
+  {
+   "code": "c0039",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0106",
+   "verdict": "fail",
+   "categories": [
+    "repetition"
+   ],
+   "flags": [],
+   "reason": "“擦得透亮”与“玻璃罩已经透亮”重复"
+  },
+  {
+   "code": "c0032",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0033",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}

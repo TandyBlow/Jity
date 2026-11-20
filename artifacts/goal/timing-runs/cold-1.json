@@ -1,0 +1,182 @@
+{
+  "runId": "2026-11-20T0814-735b",
+  "outFile": "D:\\others\\Jity\\artifacts\\goal\\timing-runs\\cold-1.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "04799b2bc57a8b273b293065983cfa87b813f3a6e957fa2d5586a4136a9f5320",
+    "edgeVersion": "157.0.4341.60",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence"
+  },
+  "status": "PREFLIGHT",
+  "startedAt": "2026-11-20T08:14:55.607Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json",
+  "integration": {
+    "head": null,
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": null,
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "801f5524015cd1b9a1db26f711bdae636b6e7def",
+    "pageSha256": "c8ecc6f717a6356386ccf53905b35aefc3f3e3140e81db20154f188e6359e6bb",
+    "turnEvidenceAvailable": false,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "85de1cd9321dd6fb1b3ca3980ac0c4cd9bb923afba91b5ae7f40b446873be37a",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "bgra8unorm-storage",
+        "texture-formats-tier1",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "shader-f16",
+        "clip-distances"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"chromium-experimental-sampling-resource-table\"]}",
+      "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: nvidia | architecture: lovelace | device_id: 0 | name:  | device_desc: ",
+      "[info] [world-local task] narration point_root_world_dragon_raja_free_day 19886ms fallback=false ",
+      "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: nvidia | architecture: lovelace | device_id: 0 | name:  | device_desc: "
+    ]
+  },
+  "modelRequests": [
+    {
+      "url": "http://127.0.0.1:3177/models/Qwen3-1.7B-Q4_K_M.gguf",
+      "status": 200,
+      "length": "1107409472",
+      "type": "fetch",
+      "at": "2026-11-20T08:15:01.625Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "status": 200,
+      "length": "396705472",
+      "type": "fetch",
+      "at": "2026-11-20T08:15:21.682Z"
+    }
+  ],
+  "readyMs": 24696,
+  "readyText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新开始\n2009-10-17 15:20 · 西侧服务巷\n本地世界已就绪。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n本地存档\n每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次",
+  "turns": [],
+  "failures": [],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-20T08:14:55.716310+00:00",
+    "supervisorPid": null,
+    "holderPid": 42464,
+    "token": "6f57a148cd8e96d5d3bfeaec44469b28"
+  },
+  "freshReset": {
+    "localStorageKeys": 0,
+    "databases": [],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-20T08:15:26.855Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 5,
+    "markerChunks": [
+      {
+        "chunk": "/_next/static/chunks/app/world-local/page.js",
+        "markers": [
+          "__worldRestore",
+          "__worldSnapshot",
+          "__worldArm",
+          "__worldLive",
+          "__worldGenerations",
+          "affected_projection"
+        ]
+      }
+    ],
+    "globalsReady": true,
+    "globalsWaitMs": 5
+  },
+  "jsHeapAtReady": {
+    "usedJSHeapSize": 66509262,
+    "totalJSHeapSize": 85265702,
+    "jsHeapSizeLimit": 4395630592,
+    "label": "JS heap, not GPU VRAM"
+  },
+  "arm": {
+    "candidate": "auto",
+    "mode": null,
+    "shape": null,
+    "narrationModel": "qwen3-1.7b",
+    "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+    "narrationBytes": 1107409472,
+    "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+  },
+  "restored": false,
+  "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+  },
+  "finishedAt": "2026-11-20T08:15:26.855Z",
+  "priorProseLeaks": [],
+  "turnFailures": [],
+  "submissions": [],
+  "summary": {
+    "turns": 0,
+    "turnsWithText": 0,
+    "turnsWithFallbackNote": 0,
+    "turnsOver60sAccepted": 0,
+    "draftsVisible": 0,
+    "turnsOver300s": 0,
+    "turnsWithEmptyText": 0,
+    "turnsEchoingInput": 0,
+    "turnsWithSubmissionLedger": 0,
+    "submissionCalls": [],
+    "distinctPlaces": [],
+    "distinctHistoryCounts": []
+  }
+}

@@ -1,0 +1,42 @@
+# The original D1 manifest binds Windows CRLF input bytes. Recreate those
+# exact bytes on every platform without changing the existing Git blobs.
+items.jsonl text eol=crlf
+annotation/manifest.json text eol=crlf
+annotation/items-blind.jsonl text eol=crlf
+annotation/sheet.md text eol=crlf
+annotation/labels-template.jsonl text eol=crlf
+annotation/labels-c-impl.jsonl text eol=crlf
+
+# New annotation and freeze evidence must retain its exact archived bytes.
+annotation/labels-ai-*.jsonl -text
+annotation/identity-ai-*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+annotation/d1-ai-protocol.json -text
+annotation/labels-v3.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+annotation_kappa.py text eol=lf
+recompute_must.py text eol=lf
+recompute_must_v3.py text eol=lf
+
+# D2 (2026-10-29): registered materials keep their committed LF bytes on
+# every checkout so the pre-registered hashes hold under core.autocrlf=true.
+d2_capability_items.jsonl -text
+d2-n3-prompt-draft.md -text
+annotation/d2-gold-rubric.md -text
+annotation/d2-sheet.md -text
+annotation/d2-labels-template.jsonl -text
+annotation/d2-gold-protocol.json -text
+annotation/labels-d2-ai-*.jsonl -text
+annotation/identity-d2-ai-*.json -text
+
+# D2 tools are LF everywhere; their hashes are pinned by the pre-registration.
+build_d2_capability_items.py text eol=lf
+check_isolation_d2.py text eol=lf
+d2_labels_agreement.py text eol=lf
+d2_metrics.py text eol=lf
+run_n3_arm.py text eol=lf
+n3_rule_arm.py text eol=lf
+n3_plan.py text eol=lf
+n3_n4_fixture.py text eol=lf
+
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"n2-smoke.tmp.json" -text

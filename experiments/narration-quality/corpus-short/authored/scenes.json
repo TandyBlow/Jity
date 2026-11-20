@@ -1,0 +1,1668 @@
+{
+  "world": {
+    "dataset": "dragon-raja-free-day",
+    "sourceFile": "frontend/public/worlds/dragon-raja-free-day.world.json",
+    "sourceCommit": "865ae64e0901a70c3db4f1d0eb2af60268943c53",
+    "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
+    "premise": "The world file's initial snapshot. Each scene is one authored turn from that snapshot; it is not a browser session and does not claim any earlier turn happened."
+  },
+  "scenes": [
+    {
+      "id": "dr-0001-no-change-lane",
+      "slug": "no-change-lane",
+      "sourceRowId": "authored:dragon-raja-free-day#no-change-lane",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu"
+      ],
+      "items": [
+        "map"
+      ],
+      "time": "2 分钟",
+      "delta": {},
+      "targetText": "服务巷里没有多出脚步。两分钟过去，黄黑绳垂在巷口，赛区图贴在右墙，器材棚的门仍旧敞着；墙角的演习弹红痕没有变。路明非没有动。",
+      "categories": [
+        "no_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "2 分钟"
+        },
+        {
+          "kind": "no_change",
+          "scope": "世界状态",
+          "note": "本回合变化为空；人物、地点、物品均无变化"
+        }
+      ],
+      "licensedDetails": [
+        "服务巷的黄黑绳、赛区图、器材棚敞开的推拉门、墙角的演习弹红痕（地点/物品外貌）",
+        "路明非没有动（无变化的具体化）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "服务巷里看得见的地面和墙面",
+          "自己没有动",
+          "远处没有新的脚步"
+        ],
+        "mustNotReveal": [
+          "诺诺或芬格尔此刻在别处的想法",
+          "任何未结算的事件、线索或任务答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得新增人物、物品、对话、枪声或事件",
+        "不得写开箱、发现线索、夺旗等输入没有的变化"
+      ],
+      "styleReferenceIds": [
+        "row-0008"
+      ],
+      "notes": "无变化场景；只有时间、静态环境和路明非的静止，没有盒子或新事件。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0002-move-nono-to-shed",
+      "slug": "move-nono-to-shed",
+      "sourceRowId": "authored:dragon-raja-free-day#move-nono-to-shed",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane",
+        "shed"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "3 分钟",
+      "delta": {
+        "诺诺": {
+          "位置": "器材棚"
+        }
+      },
+      "afterOverride": {
+        "路明非": {
+          "位置": "西侧服务巷"
+        }
+      },
+      "targetText": "器材棚的推拉门一直敞着。三分钟过去，诺诺从服务巷走进器材棚。她绕过领用台，停在带锁的器材笼前；低墙后的路明非还留在原处，巷口的黄黑绳没有动。门没有关。",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "3 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "诺诺",
+          "from": "西侧服务巷",
+          "to": "器材棚"
+        },
+        {
+          "kind": "position",
+          "actor": "路明非",
+          "location": "西侧服务巷",
+          "note": "视角人物留在原处"
+        }
+      ],
+      "licensedDetails": [
+        "器材棚的推拉门、领用台、带锁的器材笼（地点外貌）",
+        "低墙（服务巷外貌）",
+        "诺诺绕过领用台、停在笼前（合理的路径动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "诺诺从服务巷进入器材棚的可见动作",
+          "自己仍在服务巷",
+          "器材棚敞着的推拉门"
+        ],
+        "mustNotReveal": [
+          "诺诺进入器材棚后的内心判断",
+          "器材笼里未看见的物品",
+          "诺诺的下一步计划"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让诺诺说话或给出任务答案",
+        "不得新增人物、物品、枪声或开锁/取物事件"
+      ],
+      "styleReferenceIds": [
+        "row-0100"
+      ],
+      "notes": "移动人物不是视角人物；两个端点都写出，视角人物留在原处。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0003-task-goggles",
+      "slug": "task-goggles",
+      "sourceRowId": "authored:dragon-raja-free-day#task-goggles",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu"
+      ],
+      "items": [
+        "goggles_lu"
+      ],
+      "taskGoals": [
+        "task_lu_goggles"
+      ],
+      "beforeOverrides": {
+        "items": {
+          "goggles_lu": {
+            "位置": "路明非",
+            "外貌": [
+              "镜片无裂纹",
+              "镜带松着",
+              "现挂在胸前而非戴在眼前"
+            ]
+          }
+        }
+      },
+      "time": "4 分钟",
+      "delta": {
+        "路明非": {
+          "完成任务": [
+            "把胸前护目镜戴好并确认镜片没有裂纹"
+          ]
+        },
+        "路明非的护目镜": {
+          "解除外貌": [
+            "镜带松着",
+            "现挂在胸前而非戴在眼前"
+          ],
+          "新增外貌": [
+            "镜带扣好",
+            "护目镜戴在眼前"
+          ]
+        }
+      },
+      "targetText": "护目镜挂在路明非胸前，镜带还松着。四分钟过去，路明非办完了「把胸前护目镜戴好并确认镜片没有裂纹」：两片镜片对着巷口的光看过，都没有裂纹；镜带扣到脑后，又紧了一格。",
+      "categories": [
+        "task_complete",
+        "item_change",
+        "appearance_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "4 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "路明非",
+          "goal": "把胸前护目镜戴好并确认镜片没有裂纹"
+        },
+        {
+          "kind": "item_state",
+          "item": "路明非的护目镜",
+          "from": "镜带松着、挂在胸前",
+          "to": "镜带扣好、戴在眼前"
+        }
+      ],
+      "licensedDetails": [
+        "护目镜的镜片和镜带（物品外貌）",
+        "路明非摘镜、查看、扣带、戴回（完成任务的合理动作）",
+        "服务巷巷口的光（地点环境）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "自己手里护目镜的镜片和镜带",
+          "自己是否把护目镜戴好"
+        ],
+        "mustNotReveal": [
+          "镜片裂纹以外的隐患",
+          "任何未结算的线索或答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写镜片有裂纹",
+        "不得新增人物、物品或对话",
+        "不得把任务目标改写成别的任务"
+      ],
+      "styleReferenceIds": [
+        "row-0050",
+        "row-0060"
+      ],
+      "notes": "任务完成 + 物品外貌变化；只写任务目标要求的检查和佩戴，不补任务答案。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0004-appearance-fingel",
+      "slug": "appearance-fingel",
+      "sourceRowId": "authored:dragon-raja-free-day#appearance-fingel",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "fingel",
+      "locations": [
+        "campus",
+        "west",
+        "shed"
+      ],
+      "characters": [
+        "fingel"
+      ],
+      "items": [
+        "camera"
+      ],
+      "beforeOverrides": {
+        "characters": {
+          "fingel": {
+            "外貌": [
+              "头盔歪扣着",
+              "食指蹭了油",
+              "旧相机挂在脖子上",
+              "左臂没有阵营布带",
+              "护膝一边扣紧",
+              "一边还敞着"
+            ]
+          }
+        }
+      },
+      "time": "5 分钟",
+      "delta": {
+        "芬格尔": {
+          "解除外貌": [
+            "食指蹭了油",
+            "护膝一边扣紧",
+            "一边还敞着"
+          ],
+          "新增外貌": [
+            "护膝两边都扣紧"
+          ]
+        }
+      },
+      "targetText": "芬格尔的旧相机挂在脖子上，电池图标只剩一格。五分钟过去，他把食指在裤缝上蹭了两下，油印擦掉了；又低头把敞着的那边护膝扣紧，两只膝扣都贴住了。",
+      "categories": [
+        "appearance_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "5 分钟"
+        },
+        {
+          "kind": "appearance_change",
+          "entity": "芬格尔",
+          "remove": [
+            "食指蹭了油",
+            "护膝一边扣紧",
+            "一边还敞着"
+          ],
+          "add": [
+            "护膝两边都扣紧"
+          ]
+        },
+        {
+          "kind": "item_state",
+          "item": "芬格尔的相机",
+          "state": "电池图标只剩一格",
+          "note": "物品未变化，只保留输入已有状态"
+        }
+      ],
+      "licensedDetails": [
+        "芬格尔的头盔、旧相机、护膝（人物/物品外貌）",
+        "用裤缝擦手、低头扣护膝（合理的细微动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "芬格尔",
+        "canKnow": [
+          "自己手指上的油、护膝扣和相机电量图标",
+          "器材棚里看得见的领用台和器材笼"
+        ],
+        "mustNotReveal": [
+          "相机以外的战术信息",
+          "其他人的想法或未结算的任务答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写换电池、修相机或拍照成功",
+        "不得新增人物、物品或对话",
+        "不得把护膝写成新物品"
+      ],
+      "styleReferenceIds": [
+        "row-0060"
+      ],
+      "notes": "只写手指油印解除和护膝扣好；相机保持原来的低电量状态，不升级成事件。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0005-personality-nono",
+      "slug": "personality-nono",
+      "sourceRowId": "authored:dragon-raja-free-day#personality-nono",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "3 分钟",
+      "delta": {
+        "诺诺": {
+          "新增个性": [
+            "先护住人，再自己探头"
+          ]
+        }
+      },
+      "targetText": "诺诺没有先探身去看巷口。三分钟过去，诺诺先护住人，再自己探头：抬手把路明非往低墙后按了按，等他缩稳，自己才侧过脸看了一眼器材棚。红色识别带还缠在她左臂。",
+      "categories": [
+        "personality_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "3 分钟"
+        },
+        {
+          "kind": "personality_change",
+          "owner": "诺诺",
+          "add": "先护住人，再自己探头"
+        },
+        {
+          "kind": "appearance_state",
+          "entity": "诺诺",
+          "state": "红色识别带还缠在左臂"
+        }
+      ],
+      "licensedDetails": [
+        "诺诺的红色识别带（人物外貌）",
+        "服务巷低墙（地点外貌）",
+        "抬手按人、侧脸看器材棚（表现新个性的动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "诺诺先按住自己、再探头的可见顺序",
+          "诺诺左臂的红色识别带",
+          "器材棚的方向"
+        ],
+        "mustNotReveal": [
+          "诺诺为什么这样做的内心理由",
+          "她看到的器材棚内部细节",
+          "任何未结算的任务答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让诺诺说出承诺、战术答案或秘密",
+        "不得新增人物、物品、枪声或事件",
+        "不得把新个性写成对路明非的长期承诺"
+      ],
+      "styleReferenceIds": [
+        "row-0182"
+      ],
+      "notes": "用可见动作表现新增个性，不解释内心，不添加事件或承诺。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0006-sanity-lu",
+      "slug": "sanity-lu",
+      "sourceRowId": "authored:dragon-raja-free-day#sanity-lu",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu"
+      ],
+      "items": [
+        "map",
+        "jacket_lu"
+      ],
+      "time": "2 分钟",
+      "delta": {
+        "路明非": {
+          "精神值": 35
+        }
+      },
+      "targetText": "服务巷里很静。两分钟过去，路明非的喉咙发紧，几次都没把气吸匀；他的精神值从 43 掉到 35。他盯着巷口那截黄黑绳，把手在背心前襟上攥了攥，又松开；绳头没有动。",
+      "categories": [
+        "sanity_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "2 分钟"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "路明非",
+          "from": 43,
+          "to": 35
+        }
+      ],
+      "licensedDetails": [
+        "路明非的演习背心前襟（物品外貌）",
+        "服务巷的黄黑绳和静止环境（地点外貌）",
+        "路明非的背心前襟（人物外貌）",
+        "喉咙发紧、呼吸不匀、手攥紧又松开（精神下降的可观察表现）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "自己的呼吸、喉咙和手",
+          "巷口看得见的黄黑绳",
+          "附近没有新的脚步"
+        ],
+        "mustNotReveal": [
+          "其他人的想法",
+          "未结算的伤势、线索或任务答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写中弹、流血、昏倒或新增伤势",
+        "不得新增人物、物品、枪声或对话",
+        "不得把精神下降写成新的世界事件"
+      ],
+      "styleReferenceIds": [
+        "row-0194"
+      ],
+      "notes": "不打印精神值数字，只写可观察的紧张；这是主正文版本。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0007-separation-lu-shed",
+      "slug": "separation-lu-shed",
+      "sourceRowId": "authored:dragon-raja-free-day#separation-lu-shed",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane",
+        "shed"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "4 分钟",
+      "delta": {
+        "路明非": {
+          "位置": "器材棚"
+        }
+      },
+      "afterOverride": {
+        "诺诺": {
+          "位置": "西侧服务巷"
+        }
+      },
+      "targetText": "低墙后的路明非动身时，诺诺没有跟。四分钟过去，路明非从西侧服务巷走进器材棚，推拉门在身后敞着；诺诺留在服务巷，红色识别带还在她左臂，两人之间隔着一道门框。",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "4 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "路明非",
+          "from": "西侧服务巷",
+          "to": "器材棚"
+        },
+        {
+          "kind": "position",
+          "actor": "诺诺",
+          "location": "西侧服务巷",
+          "note": "其他人物留在原处"
+        }
+      ],
+      "licensedDetails": [
+        "服务巷低墙、器材棚推拉门和门框（地点外貌）",
+        "诺诺左臂的红色识别带（人物外貌）",
+        "没有脚步跟进来（无变化的具体化）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "自己走进器材棚",
+          "诺诺仍留在服务巷的可见位置",
+          "身后没有脚步"
+        ],
+        "mustNotReveal": [
+          "诺诺的内心判断",
+          "器材棚里未看见的物品",
+          "分开后的计划"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让两人对话或互相承诺",
+        "不得新增人物、物品、枪声或事件",
+        "不得把诺诺写成已经进入器材棚"
+      ],
+      "styleReferenceIds": [
+        "row-0182"
+      ],
+      "notes": "两人分开；视角人物移动，另一个明确留在原处，两个位置都写出。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0008-task-added-lu",
+      "slug": "task-added-lu",
+      "sourceRowId": "authored:dragon-raja-free-day#task-added-lu",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu"
+      ],
+      "items": [
+        "map"
+      ],
+      "taskGoals": [],
+      "time": "3 分钟",
+      "delta": {
+        "路明非": {
+          "新增小任务": [
+            {
+              "目标": "问清检修门从里面插闩的事",
+              "属于大任务": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+              "状态": "未完成"
+            }
+          ]
+        }
+      },
+      "targetText": "赛区图贴在服务巷右墙，地下检修通道用虚线标着。三分钟过去，路明非又看了一遍，决定先去找芬格尔，问清检修门从里面插闩的事；图上那条虚线没有标门闩，他没有把图揭下来。",
+      "categories": [
+        "task_added"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "3 分钟"
+        },
+        {
+          "kind": "task_added",
+          "owner": "路明非",
+          "goal": "问清检修门从里面插闩的事"
+        }
+      ],
+      "licensedDetails": [
+        "赛区图的虚线没有标门闩（物品外貌）",
+        "服务巷右墙（地点外貌）",
+        "路明非看图和决定去问（任务新增的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "自己看见的赛区图",
+          "自己决定去问什么",
+          "图上没有标出的门闩状态"
+        ],
+        "mustNotReveal": [
+          "检修门实际是否插闩的答案",
+          "芬格尔会不会回答",
+          "未结算的路线信息"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写门闩已经打开或已经确认",
+        "不得让芬格尔出场回答",
+        "不得新增人物、物品、枪声或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0199"
+      ],
+      "notes": "只新增任务，不给答案；地图仍留在墙上，没有发生物品移动。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0010-cage-stretcher",
+      "slug": "cage-stretcher",
+      "sourceRowId": "authored:dragon-raja-free-day#cage-stretcher",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "qin",
+      "locations": [
+        "campus",
+        "west",
+        "shed",
+        "cage"
+      ],
+      "characters": [
+        "qin"
+      ],
+      "items": [
+        "cage_lock",
+        "stretcher",
+        "supply_counter",
+        "checkout_book"
+      ],
+      "time": "12 分钟",
+      "delta": {
+        "器材笼挂锁": {
+          "解除外貌": [
+            "挂锁扣住笼门插销，锁眼朝外，锁梁完整"
+          ],
+          "新增外貌": [
+            "锁梁开着，插销抽在一边"
+          ]
+        },
+        "折叠担架": {
+          "位置": "器材棚"
+        }
+      },
+      "targetText": "器材笼的挂锁扣着笼门，钥匙挂在秦越腰环上。十二分钟过去，他把钥匙解下来，插进锁眼；锁梁弹开，插销抽到一边，笼门推到一旁。折叠担架从笼里搬出来，放在领用台边，帆布和锁脚都扣得稳；笼里只剩折叠梯和那卷安全绳。领用台上的簿子摊开着，担架那一栏空着，他先没有落笔。",
+      "categories": [
+        "item_change",
+        "movement"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "12 分钟"
+        },
+        {
+          "kind": "item_state",
+          "item": "器材笼挂锁",
+          "from": "锁梁完整、插销扣住",
+          "to": "锁梁开着，插销抽在一边"
+        },
+        {
+          "kind": "item_move",
+          "item": "折叠担架",
+          "from": "器材笼内",
+          "to": "器材棚"
+        }
+      ],
+      "licensedDetails": [
+        "器材笼的铁网、折叠梯和安全绳（地点外貌）",
+        "领用台、领用簿和未干的笔尖（物品外貌）",
+        "解钥匙、开锁、抽插销、搬担架（完成物品移动的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "秦越",
+        "canKnow": [
+          "自己开锁和搬担架的动作",
+          "器材笼里剩下的物品",
+          "领用簿上空着的担架栏"
+        ],
+        "mustNotReveal": [
+          "谁需要担架、伤情如何",
+          "钥匙以后会不会交给别人",
+          "芬格尔的打算"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写林亦舟或任何人已经到场",
+        "不得写领用簿已经签好",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0063"
+      ],
+      "notes": "物品移动 + 挂锁外貌；担架搬到器材棚，但领用簿没有落笔，不提前写登记。",
+      "reviewState": "manually-read-input-and-target",
+      "beforeOverrides": {
+        "items": {
+          "cage_lock": {
+            "位置": "器材棚",
+            "外貌": [
+              "挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+              "器材笼钥匙能开"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dr-0011-su-report-bridge",
+      "slug": "su-report-bridge",
+      "sourceRowId": "authored:dragon-raja-free-day#su-report-bridge",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "su",
+      "locations": [
+        "campus",
+        "east_arcade",
+        "bridge",
+        "tower",
+        "lower_stairs",
+        "landing"
+      ],
+      "characters": [
+        "su",
+        "chu"
+      ],
+      "items": [
+        "rifle_su",
+        "radio_su"
+      ],
+      "time": "9 分钟",
+      "delta": {
+        "苏茜": {
+          "位置": "钟楼二层平台",
+          "完成任务": [
+            "向楚子航报告跨溪小桥的实际人员和松动护栏"
+          ]
+        }
+      },
+      "afterOverride": {
+        "楚子航": {
+          "位置": "钟楼二层平台"
+        }
+      },
+      "targetText": "东回廊北口的廊口通向跨溪小桥。九分钟过去，苏茜从东回廊经跨溪小桥走到钟楼二层平台。桥中段的护栏一推就晃，两枚螺母退在外面；苏茜扶着桥面过去，办完了「向楚子航报告跨溪小桥的实际人员和松动护栏」：桥上没有人、小桥还能通行、护栏松动。楚子航没有离开窗口。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "9 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "苏茜",
+          "from": "东回廊",
+          "to": "钟楼二层平台"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "苏茜",
+          "goal": "向楚子航报告跨溪小桥的实际人员和松动护栏"
+        },
+        {
+          "kind": "position",
+          "actor": "楚子航",
+          "location": "钟楼二层平台",
+          "note": "接收报告的人没有离开"
+        }
+      ],
+      "licensedDetails": [
+        "跨溪小桥松动的护栏和退出的螺母（地点外貌）",
+        "东回廊北口、钟楼东侧、下层楼梯（地点连通）",
+        "楚子航把短讯机按向腰侧（人物原有物品的细微动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "苏茜",
+        "canKnow": [
+          "自己走过的路线",
+          "桥面还能通行",
+          "护栏松动的事实",
+          "楚子航在窗口"
+        ],
+        "mustNotReveal": [
+          "桥上的其他人（输入没有）",
+          "楚子航的战术决定",
+          "林亦舟的伤情"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写桥上有人或有人受伤",
+        "不得写楚子航下令或做出决定",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0100"
+      ],
+      "notes": "移动 + 任务完成；移动经过的中间地点都来自地点连通，报告只说通行和护栏，不给战术答案。",
+      "reviewState": "manually-read-input-and-target",
+      "taskGoals": [
+        "task_su_report"
+      ]
+    },
+    {
+      "id": "dr-0012-doctor-bed-ready",
+      "slug": "doctor-bed-ready",
+      "sourceRowId": "authored:dragon-raja-free-day#doctor-bed-ready",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "doctor",
+      "locations": [
+        "campus",
+        "annex",
+        "aid"
+      ],
+      "characters": [
+        "doctor"
+      ],
+      "items": [
+        "empty_bed",
+        "medical_case",
+        "triage_clipboard"
+      ],
+      "time": "16 分钟",
+      "delta": {
+        "顾岚": {
+          "完成任务": [
+            "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+          ]
+        },
+        "医护空床": {
+          "新增外貌": [
+            "床尾朝门口挪开半步，担架能直接靠到床边"
+          ]
+        }
+      },
+      "targetText": "医护附楼的空床锁着制动轮，屏风折在床边。十六分钟过去，顾岚办完了「为可能送来的脚踝扭伤者留出空床与冷敷材料」：床尾朝门口挪开半步，担架进来能直接靠到床边；医护箱里冷敷袋、弹力绷带和检查手套都伸手够得到。门口登记夹的两栏还空着，她没有先写谁的名字。",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "16 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "顾岚",
+          "goal": "为可能送来的脚踝扭伤者留出空床与冷敷材料"
+        },
+        {
+          "kind": "item_state",
+          "item": "医护空床",
+          "add": "床尾朝门口挪开半步，担架能直接靠到床边"
+        }
+      ],
+      "licensedDetails": [
+        "医护箱里敞着的冷敷袋、绷带和手套（物品外貌）",
+        "伤情登记夹的两栏（物品外貌）",
+        "检查制动轮、挪床尾、拉屏风（完成任务的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "顾岚",
+        "canKnow": [
+          "自己挪开的床和检查过的制动轮",
+          "医护箱里有什么",
+          "登记夹还是空的"
+        ],
+        "mustNotReveal": [
+          "谁受伤、伤得多重",
+          "林亦舟会不会来",
+          "曼施坦因的停赛决定"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写伤者到场、登记或治疗",
+        "不得写冷敷袋已经启用",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0197"
+      ],
+      "notes": "任务完成 + 空床外貌；只准备床位，不写伤者到达，也不写登记内容。",
+      "reviewState": "manually-read-input-and-target",
+      "taskGoals": [
+        "task_doctor_prepare"
+      ]
+    },
+    {
+      "id": "dr-0013-tang-reload",
+      "slug": "tang-reload",
+      "sourceRowId": "authored:dragon-raja-free-day#tang-reload",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "tang",
+      "locations": [
+        "campus",
+        "yard"
+      ],
+      "characters": [
+        "tang"
+      ],
+      "items": [
+        "rifle_tang",
+        "tang_magazine",
+        "bench_cover"
+      ],
+      "time": "7 分钟",
+      "delta": {
+        "唐骁": {
+          "完成任务": [
+            "在再次探身前更换空弹匣，不把空枪当成掩护火力"
+          ]
+        },
+        "唐骁的演习枪": {
+          "解除外貌": [
+            "枪机停在后位，当前没有弹匣",
+            "换入可用弹匣前无法射击"
+          ],
+          "新增外貌": [
+            "弹匣装好，枪机复位"
+          ]
+        }
+      },
+      "targetText": "倒放的长椅横在唐骁和喷泉之间，一条腿断着。七分钟过去，唐骁办完了「在再次探身前更换空弹匣，不把空枪当成掩护火力」：枪托从肩上卸下来，缠红胶带的满弹匣推进空仓，卡榫合住，枪机推回原位。庭院里没有新的射线，他也没有急着探身。",
+      "categories": [
+        "task_complete",
+        "item_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "7 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "唐骁",
+          "goal": "在再次探身前更换空弹匣，不把空枪当成掩护火力"
+        },
+        {
+          "kind": "item_state",
+          "item": "唐骁的演习枪",
+          "from": "枪机停在后位、没有弹匣",
+          "to": "弹匣装好，枪机复位"
+        }
+      ],
+      "licensedDetails": [
+        "缠红胶带的满弹匣（物品外貌）",
+        "倒放长椅和断腿（地点外貌）",
+        "卸枪托、推弹匣、顶卡榫、试保险（换弹匣的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "唐骁",
+        "canKnow": [
+          "自己换上的弹匣和枪机状态",
+          "眼前长椅和喷泉的位置",
+          "庭院里有没有新的射线"
+        ],
+        "mustNotReveal": [
+          "凯撒的进攻计划",
+          "对方窗口里有没有人",
+          "任何未结算的命中或伤情"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写开火、命中或压制成功",
+        "不得写换弹匣之外的物品变化",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0178"
+      ],
+      "notes": "任务完成 + 枪械外貌；换弹匣后没有开火，也没有写压制结果。",
+      "reviewState": "manually-read-input-and-target",
+      "beforeOverrides": {
+        "items": {
+          "rifle_tang": {
+            "位置": "唐骁",
+            "外貌": [
+              "枪机停在后位，当前没有弹匣",
+              "换入可用弹匣前无法射击"
+            ]
+          }
+        }
+      },
+      "taskGoals": [
+        "task_tang_ammo"
+      ]
+    },
+    {
+      "id": "dr-0014-caesar-to-yard",
+      "slug": "caesar-to-yard",
+      "sourceRowId": "authored:dragon-raja-free-day#caesar-to-yard",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "caesar",
+      "locations": [
+        "campus",
+        "red_rally",
+        "yard",
+        "fountain"
+      ],
+      "characters": [
+        "caesar",
+        "tang"
+      ],
+      "items": [
+        "red_flag",
+        "caesar_map"
+      ],
+      "time": "6 分钟",
+      "delta": {
+        "凯撒": {
+          "位置": "中央庭院"
+        }
+      },
+      "afterOverride": {
+        "唐骁": {
+          "位置": "中央庭院"
+        }
+      },
+      "targetText": "红方集结点的雨棚梁上系着红布，凯撒把信号旗折在左手边。六分钟过去，凯撒从红方集结点走进中央庭院，绕过喷泉池沿，停在倒放的长椅后。池底的残水没有干，靠钟楼一侧的池沿缺口露在外面；唐骁守着东侧射界，回头看了一眼。",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "6 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "凯撒",
+          "from": "红方集结点",
+          "to": "中央庭院"
+        },
+        {
+          "kind": "position",
+          "actor": "唐骁",
+          "location": "中央庭院",
+          "note": "另一名在场者仍在原处"
+        }
+      ],
+      "licensedDetails": [
+        "喷泉池底的残水、钟楼一侧的池沿缺口（地点外貌）",
+        "倒放长椅和断腿（地点外貌）",
+        "红方信号旗折在左手边（物品外貌）",
+        "回头看一眼、没有再站上长椅（合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "凯撒",
+        "canKnow": [
+          "自己走进庭院的路线",
+          "喷泉和长椅的状态",
+          "唐骁在附近的可见位置",
+          "自己手里的信号旗"
+        ],
+        "mustNotReveal": [
+          "唐骁的判断或汇报内容",
+          "蓝方窗口里的人员",
+          "任何未结算的战术结果"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写交火、命中或夺旗",
+        "不得让唐骁报告火力位置",
+        "不得新增人物、线索或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0182"
+      ],
+      "notes": "移动 + 另一人留在原处；只写走到长椅后，不写进攻结果。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0015-move-without-posture",
+      "slug": "move-without-posture",
+      "sourceRowId": "authored:dragon-raja-free-day#move-without-posture",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane",
+        "shed"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "5 分钟",
+      "delta": {
+        "路明非": {
+          "位置": "器材棚"
+        }
+      },
+      "afterOverride": {
+        "诺诺": {
+          "位置": "西侧服务巷"
+        }
+      },
+      "targetText": "低墙挡着庭院的视线，推拉门在器材棚那头敞着。五分钟过去，路明非从低墙后走到器材棚门口，跨过门槛，停在领用台和器材笼之间；诺诺没有跟进来，服务巷里没有第二道脚步。",
+      "categories": [
+        "movement",
+        "separation"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "5 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "路明非",
+          "from": "西侧服务巷",
+          "to": "器材棚"
+        },
+        {
+          "kind": "position",
+          "actor": "诺诺",
+          "location": "西侧服务巷",
+          "note": "另一人没有跟进"
+        }
+      ],
+      "licensedDetails": [
+        "器材棚的推拉门、领用台、器材笼（地点外貌）",
+        "低墙（服务巷外貌）",
+        "跨门槛、停在两件器材之间（移动的路径和终点）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "自己走进器材棚",
+          "诺诺没有跟进来",
+          "身后没有第二道脚步"
+        ],
+        "mustNotReveal": [
+          "诺诺的打算",
+          "器材棚里未看见的物品",
+          "任何未结算的战术信息"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写站、坐、蹲、靠等没有结算的姿势",
+        "不得让两人说话或承诺",
+        "不得新增人物、物品、事件"
+      ],
+      "styleReferenceIds": [
+        "row-0100"
+      ],
+      "notes": "移动 + 分开，正文完全不写姿势词；只写跨门槛和停下的位置。用于对照 04 的“路明非站在西侧服务巷”姿势误加。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0016-two-people-clear-subjects",
+      "slug": "two-people-clear-subjects",
+      "sourceRowId": "authored:dragon-raja-free-day#two-people-clear-subjects",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane"
+      ],
+      "characters": [
+        "lu",
+        "nono"
+      ],
+      "items": [],
+      "time": "4 分钟",
+      "delta": {
+        "诺诺": {
+          "新增个性": [
+            "先看清身边的人，再转向别处"
+          ]
+        },
+        "路明非": {
+          "精神值": 39
+        }
+      },
+      "targetText": "巷口那截黄黑绳垂着，服务巷里没有别的声音。四分钟过去，诺诺先看清身边的人，再转向别处。她先低头看路明非的手，又抬眼看了看他的脸，自己才转向巷口。路明非的精神值从 43 掉到 39，手指在背心前襟上收紧，又慢慢松开。",
+      "categories": [
+        "personality_change",
+        "sanity_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "4 分钟"
+        },
+        {
+          "kind": "personality_change",
+          "owner": "诺诺",
+          "add": "先看清身边的人，再转向别处"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "路明非",
+          "from": 43,
+          "to": 39
+        }
+      ],
+      "licensedDetails": [
+        "服务巷低墙和巷口（地点外貌）",
+        "路明非的背心前襟（物品外貌）",
+        "低头看手、抬眼、转向巷口（表现新个性的动作）",
+        "呼吸变短、手指收紧又松开（精神下降的可观察表现）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "诺诺先看自己再看巷口的顺序",
+          "自己的呼吸和手",
+          "巷口的方向"
+        ],
+        "mustNotReveal": [
+          "诺诺的内心理由",
+          "她看见了什么",
+          "任何未结算的威胁"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让诺诺说话或承诺",
+        "不得写枪声、人影或新事件",
+        "不得把精神下降写成伤势"
+      ],
+      "styleReferenceIds": [
+        "row-0182",
+        "row-0194"
+      ],
+      "notes": "两个同地点人物，每句都用名字开头，避免“还有诺诺”式指代混淆；个性用动作表现，精神只用可观察反应。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0017-chu-checks-hatch",
+      "slug": "chu-checks-hatch",
+      "sourceRowId": "authored:dragon-raja-free-day#chu-checks-hatch",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "chu",
+      "locations": [
+        "campus",
+        "tower",
+        "landing",
+        "foyer"
+      ],
+      "characters": [
+        "chu"
+      ],
+      "items": [
+        "hatch_door",
+        "foyer_table"
+      ],
+      "taskGoals": [
+        "task_chu_hatch"
+      ],
+      "time": "11 分钟",
+      "delta": {
+        "楚子航": {
+          "位置": "钟楼门厅",
+          "完成任务": [
+            "检查钟楼地下检修门的门闩，不能把地下路线当成不存在"
+          ]
+        }
+      },
+      "targetText": "钟楼门厅正对大门，地下检修门在侧墙。十一分钟过去，楚子航从钟楼二层平台走到钟楼门厅，办完了「检查钟楼地下检修门的门闩，不能把地下路线当成不存在」。铁门关着，内侧门闩插在槽里；他从外面推了两下，门没有动。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "11 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "楚子航",
+          "from": "钟楼二层平台",
+          "to": "钟楼门厅"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "楚子航",
+          "goal": "检查钟楼地下检修门的门闩，不能把地下路线当成不存在"
+        }
+      ],
+      "licensedDetails": [
+        "地下检修门、门闩、门厅翻倒的长桌（地点/物品外貌）",
+        "下楼梯、穿门厅、推门两下（完成检查的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "楚子航",
+        "canKnow": [
+          "自己从平台下到门厅",
+          "门闩插在槽里、外面推不开",
+          "自己没有撬门"
+        ],
+        "mustNotReveal": [
+          "地下通道通向哪里以外的路线判断",
+          "路明非是否会走地下",
+          "其他人的计划"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写门闩被打开或地下通道可通行",
+        "不得写派人守门或新的战术决定",
+        "不得新增人物、物品、事件"
+      ],
+      "styleReferenceIds": [
+        "row-0199"
+      ],
+      "notes": "移动 + 任务完成；只写检查结果（门闩插着、外面推不开），不给“地下路线能不能走”的答案。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0018-fingel-tells-hatch",
+      "slug": "fingel-tells-hatch",
+      "sourceRowId": "authored:dragon-raja-free-day#fingel-tells-hatch",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "fingel",
+      "locations": [
+        "campus",
+        "west",
+        "shed",
+        "lane"
+      ],
+      "characters": [
+        "fingel",
+        "lu"
+      ],
+      "items": [
+        "camera"
+      ],
+      "taskGoals": [
+        "task_fingel_map"
+      ],
+      "time": "8 分钟",
+      "delta": {
+        "芬格尔": {
+          "位置": "西侧服务巷",
+          "完成任务": [
+            "把检修门从里面插闩这件事告诉准备走地下路线的人"
+          ]
+        }
+      },
+      "afterOverride": {
+        "路明非": {
+          "位置": "西侧服务巷"
+        }
+      },
+      "targetText": "器材棚的推拉门开着，服务巷的黄黑绳垂在巷口。八分钟过去，芬格尔从器材棚走到西侧服务巷，把「把检修门从里面插闩这件事告诉准备走地下路线的人」办完了：地下通道通到钟楼地下门，门闩在钟楼里面插着，从通道这头推不动。他说完就停住，没有再多说别的。",
+      "categories": [
+        "movement",
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "8 分钟"
+        },
+        {
+          "kind": "movement",
+          "actor": "芬格尔",
+          "from": "器材棚",
+          "to": "西侧服务巷"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "芬格尔",
+          "goal": "把检修门从里面插闩这件事告诉准备走地下路线的人"
+        },
+        {
+          "kind": "position",
+          "actor": "路明非",
+          "location": "西侧服务巷",
+          "note": "听的人没有离开"
+        }
+      ],
+      "licensedDetails": [
+        "服务巷低墙、黄黑绳（地点外貌）",
+        "芬格尔的旧相机挂在脖子上（物品外貌）",
+        "走到低墙边、把门闩的事说完就停住（完成任务的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "芬格尔",
+        "canKnow": [
+          "自己知道的检修通道和门闩位置",
+          "自己说了什么",
+          "路明非在低墙后"
+        ],
+        "mustNotReveal": [
+          "路明非会不会走地下",
+          "钟楼里的布防",
+          "其他人的计划"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得让路明非回答或决定路线",
+        "不得写门闩被打开",
+        "不得新增人物、物品、事件"
+      ],
+      "styleReferenceIds": [
+        "row-0188"
+      ],
+      "notes": "移动 + 任务完成；把已知的门闩事实说清，但不替路明非做路线决定。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0019-tomiyama-shen-symptom",
+      "slug": "tomiyama-shen-symptom",
+      "sourceRowId": "authored:dragon-raja-free-day#tomiyama-shen-symptom",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "tomiyama",
+      "locations": [
+        "campus",
+        "annex",
+        "rest"
+      ],
+      "characters": [
+        "tomiyama",
+        "shen"
+      ],
+      "items": [
+        "water",
+        "blanket",
+        "shen_band"
+      ],
+      "taskGoals": [
+        "task_tomiyama_shen"
+      ],
+      "time": "19 分钟",
+      "delta": {
+        "富山雅史": {
+          "完成任务": [
+            "询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友"
+          ]
+        },
+        "沈澄": {
+          "精神值": 46
+        }
+      },
+      "targetText": "休息区的长椅旁叠着一条保温毯，饮水杯还有半杯温水。十九分钟过去，沈澄坐在长椅上喝水，右手指尖还带着一点木。富山雅史办完了「询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友」：问麻感有没有轻一些；沈澄说手还是有点麻，又补了一句，说自己更怕拖累队友。沈澄的精神值从 41 升到 46。富山雅史把保温毯往她那边推了推。",
+      "categories": [
+        "task_complete",
+        "sanity_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "19 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "富山雅史",
+          "goal": "询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友"
+        },
+        {
+          "kind": "sanity_change",
+          "owner": "沈澄",
+          "from": 41,
+          "to": 46,
+          "entity": "沈澄"
+        }
+      ],
+      "licensedDetails": [
+        "沈澄坐着喝水、右手指尖轻微麻感（人物外貌）",
+        "休息区保温毯、饮水杯（物品外貌）",
+        "推保温毯（安抚的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "富山雅史",
+        "canKnow": [
+          "沈澄说出口的麻感和担心",
+          "沈澄在长椅上喝水",
+          "保温毯在长椅空位旁"
+        ],
+        "mustNotReveal": [
+          "沈澄没有说出口的战术见闻",
+          "顾岚的诊断",
+          "其他人的谈话"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写诊断结果或治疗",
+        "不得写沈澄回场",
+        "不得新增人物、物品或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0055",
+        "row-0197"
+      ],
+      "notes": "任务完成 + 另一人精神上升；伤情只说“有点麻”，不写医学结论。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0020-su-checks-magazine",
+      "slug": "su-checks-magazine",
+      "sourceRowId": "authored:dragon-raja-free-day#su-checks-magazine",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "su",
+      "locations": [
+        "campus",
+        "east_arcade"
+      ],
+      "characters": [
+        "su"
+      ],
+      "items": [
+        "rifle_su",
+        "su_magazine",
+        "window_pad",
+        "canvas_blind"
+      ],
+      "taskGoals": [
+        "task_su_reload"
+      ],
+      "time": "9 分钟",
+      "delta": {
+        "苏茜": {
+          "完成任务": [
+            "在当前弹匣打空前确认身后的备用弹匣属于自己"
+          ]
+        }
+      },
+      "targetText": "东回廊的低窗收着长枪，窗内石沿上铺着软垫。九分钟过去，苏茜办完了「在当前弹匣打空前确认身后的备用弹匣属于自己」：侧过身看那只备用弹匣，蓝色胶带上写着她的名字，八发演习弹都在。她没有把弹匣拿起来，只把数目记下。",
+      "categories": [
+        "task_complete"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "9 分钟"
+        },
+        {
+          "kind": "task_complete",
+          "owner": "苏茜",
+          "goal": "在当前弹匣打空前确认身后的备用弹匣属于自己"
+        }
+      ],
+      "licensedDetails": [
+        "低窗软垫、窗框上方的遮光帘（地点外貌）",
+        "蓝色胶带名字和八发演习弹（物品外貌）",
+        "收枪口、侧身看弹匣、压稳枪托（确认弹药的合理动作）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "苏茜",
+        "canKnow": [
+          "自己备用弹匣上的名字和弹数",
+          "枪仍然收在窗内",
+          "软垫的状态"
+        ],
+        "mustNotReveal": [
+          "唐骁的位置或弹药",
+          "凯撒的进攻计划",
+          "任何未结算的命中"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得写开火或换弹匣",
+        "不得写拿起弹匣",
+        "不得新增人物、物品或事件"
+      ],
+      "styleReferenceIds": [
+        "row-0178"
+      ],
+      "notes": "任务完成；只确认备用弹匣属于自己，不写换弹或开火。",
+      "reviewState": "manually-read-input-and-target"
+    },
+    {
+      "id": "dr-0021-no-change-three-people",
+      "slug": "no-change-three-people",
+      "sourceRowId": "authored:dragon-raja-free-day#no-change-three-people",
+      "worldFamily": "dragon-raja-free-day",
+      "viewpointId": "lu",
+      "locations": [
+        "campus",
+        "west",
+        "lane",
+        "shed"
+      ],
+      "characters": [
+        "lu",
+        "nono",
+        "fingel"
+      ],
+      "items": [
+        "map"
+      ],
+      "time": "2 分钟",
+      "delta": {},
+      "targetText": "服务巷里只有黄黑绳碰墙的声音。两分钟过去，路明非没有动。诺诺还在巷口。器材棚的门开着，芬格尔没有出来。三个人谁也没有往庭院走，墙角的演习弹红痕还是原样。",
+      "categories": [
+        "no_change"
+      ],
+      "requiredFacts": [
+        {
+          "kind": "time_advance",
+          "text": "2 分钟"
+        },
+        {
+          "kind": "no_change",
+          "scope": "世界状态",
+          "note": "本回合变化为空；三个人都没有移动，也没有新事件"
+        }
+      ],
+      "licensedDetails": [
+        "服务巷的黄黑绳、器材棚敞开的推拉门、墙角的演习弹红痕（地点/物品外貌）",
+        "路明非、诺诺、芬格尔都没有移动（无变化的具体化）"
+      ],
+      "knowledgeBoundary": {
+        "viewpoint": "路明非",
+        "canKnow": [
+          "服务巷里看得见的地面和墙面",
+          "自己、诺诺和器材棚门口都没有动",
+          "远处没有新的脚步"
+        ],
+        "mustNotReveal": [
+          "诺诺或芬格尔此刻的想法",
+          "任何未结算的事件、线索或任务答案"
+        ]
+      },
+      "forbiddenInventions": [
+        "不得新增人物、物品、对话、枪声或事件",
+        "不得写任何人走到庭院、进入器材棚或改变站位"
+      ],
+      "styleReferenceIds": [
+        "row-0008"
+      ],
+      "notes": "无变化场景；三个人都在输入原位，没有移动、没有姿势、没有事件。针对 04 realizer 在同一 root 点给三个人各编一次移动/站位。",
+      "reviewState": "manually-read-input-and-target"
+    }
+  ]
+}

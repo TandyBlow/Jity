@@ -1,0 +1,94 @@
+# c3 organize-plan run r1  18 plans / 9 sources
+
+## Legality
+legal plans: 18/18
+
+| source | family | P1 shape | P1 legal | P2 shape | P2 legal |
+| --- | --- | --- | --- | --- | --- |
+| fixture-r1 | edge | merge-left | yes | split-all | yes |
+| fixture-r2 | edge | split-all | yes | merge-left | yes |
+| fixture-r3 | edge | merge-left | yes | split-all | yes |
+| fixture-r4 | edge | split-all | yes | merge-left | yes |
+| fixture-r5 | edge | merge-left | yes | split-all | yes |
+| train-r2 | grouping | merge-right | yes | merge-left | yes |
+| train-r3 | grouping | merge-left | yes | merge-right | yes |
+| train-r4 | grouping | merge-right | yes | merge-left | yes |
+| train-r5 | grouping | merge-left | yes | merge-right | yes |
+
+## Negative controls
+pass: 20/20
+
+| case | expected | actual | ok |
+| --- | --- | --- | --- |
+| N01-missing-fact | fact-missing | fact-missing | yes |
+| N02-duplicate-fact | fact-duplicate | fact-duplicate, link-count | yes |
+| N03-unknown-fact | fact-missing, fact-unknown | fact-missing, fact-unknown | yes |
+| N04-order-changed | order-changed | order-changed | yes |
+| N05-non-contiguous | link-entity-mismatch, order-changed | link-entity-mismatch, order-changed, ref-cross-group-omit | yes |
+| N06-continuation-across-entities | link-entity-mismatch, order-changed | edge-same-group, edge-target-not-isolated, link-entity-mismatch, order-changed | yes |
+| N07-parallel-within-entity | link-entity-mismatch | link-entity-mismatch | yes |
+| N08-first-mention-omit | ref-first-mention-omit, ref-omit-without-name | ref-first-mention-omit, ref-omit-without-name | yes |
+| N09-cross-group-omit | ref-cross-group-omit | ref-cross-group-omit | yes |
+| N10-missing-edge | edge-missing-authorized | edge-missing-authorized | yes |
+| N11-unauthorized-edge | edge-missing-authorized, edge-unauthorized | edge-missing-authorized, edge-same-group, edge-target-not-isolated, edge-unauthorized | yes |
+| N12-reversed-edge | edge-missing-authorized, edge-order, edge-unauthorized | edge-missing-authorized, edge-order, edge-unauthorized | yes |
+| N13-target-not-isolated | edge-target-not-isolated | edge-target-not-isolated | yes |
+| N14-extra-field | plan-free-text, unknown-field | plan-free-text, unknown-field | yes |
+| N15-cause-edge | edge-type | edge-type | yes |
+| N16-time-on-group | plan-free-text, unknown-field | plan-free-text, unknown-field | yes |
+| N17-bad-edge-mode | edge-mode | edge-mode | yes |
+| N18-ambiguous-name | ref-ambiguous-name | ref-ambiguous-name | yes |
+| N19-ambiguous-omit | ref-ambiguous-omit | ref-ambiguous-omit | yes |
+| N20-time-fact-unsupported | unsupported-fact-kind | unsupported-fact-kind | yes |
+
+## Old controllability plans re-checked
+legal: 18/18 (A/B on the 9 overlapping sources; inline `authorized: true` removed)
+
+## Reference text conformance
+self pass: 18/18; cross fail: 18/18; missing-required-wording caught: True
+
+## Fixed-strategy controls
+legal fixed plans: 36/36; paired successes: 0
+
+| source | strategy | legal | =P1 | =P2 | paired |
+| --- | --- | --- | --- | --- | --- |
+| fixture-r1 | split-all | yes | no | yes | no |
+| fixture-r1 | merge-all-adjacent | yes | yes | no | no |
+| fixture-r1 | merge-first-pair | yes | yes | no | no |
+| fixture-r1 | merge-last-pair | yes | yes | no | no |
+| fixture-r2 | split-all | yes | yes | no | no |
+| fixture-r2 | merge-all-adjacent | yes | no | yes | no |
+| fixture-r2 | merge-first-pair | yes | no | yes | no |
+| fixture-r2 | merge-last-pair | yes | no | yes | no |
+| fixture-r3 | split-all | yes | no | yes | no |
+| fixture-r3 | merge-all-adjacent | yes | yes | no | no |
+| fixture-r3 | merge-first-pair | yes | yes | no | no |
+| fixture-r3 | merge-last-pair | yes | yes | no | no |
+| fixture-r4 | split-all | yes | yes | no | no |
+| fixture-r4 | merge-all-adjacent | yes | no | yes | no |
+| fixture-r4 | merge-first-pair | yes | no | yes | no |
+| fixture-r4 | merge-last-pair | yes | no | yes | no |
+| fixture-r5 | split-all | yes | no | yes | no |
+| fixture-r5 | merge-all-adjacent | yes | yes | no | no |
+| fixture-r5 | merge-first-pair | yes | yes | no | no |
+| fixture-r5 | merge-last-pair | yes | yes | no | no |
+| train-r2 | split-all | yes | no | no | no |
+| train-r2 | merge-all-adjacent | yes | no | no | no |
+| train-r2 | merge-first-pair | yes | no | yes | no |
+| train-r2 | merge-last-pair | yes | yes | no | no |
+| train-r3 | split-all | yes | no | no | no |
+| train-r3 | merge-all-adjacent | yes | no | no | no |
+| train-r3 | merge-first-pair | yes | yes | no | no |
+| train-r3 | merge-last-pair | yes | no | yes | no |
+| train-r4 | split-all | yes | no | no | no |
+| train-r4 | merge-all-adjacent | yes | no | no | no |
+| train-r4 | merge-first-pair | yes | no | yes | no |
+| train-r4 | merge-last-pair | yes | yes | no | no |
+| train-r5 | split-all | yes | no | no | no |
+| train-r5 | merge-all-adjacent | yes | no | no | no |
+| train-r5 | merge-first-pair | yes | yes | no | no |
+| train-r5 | merge-last-pair | yes | no | yes | no |
+
+## Downstream
+{"capability": "not run: no plan-trained checkpoint locally; training is out of scope this round", "baseSmoke": {"file": "runs/r1/model-smoke.json", "arm": "frozen base control (never trained on plan blocks)", "rows": 4, "conformancePass": 0, "note": "the old controllability checkpoint was not saved; this base arm is a harness control, not evidence about whether a plan-trained model can follow plans"}}
+

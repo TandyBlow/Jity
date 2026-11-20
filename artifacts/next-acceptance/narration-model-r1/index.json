@@ -1,0 +1,100 @@
+{
+ "purpose": "first narration model experiment: 0.6B model against 13 distinct real committed fact packets, 3 generations each plus repeat-state points; fact completeness, both existing checks, manual quality, fallbacks and negative controls",
+ "model": "Qwen3-0.6B-Q4_K_M.gguf sha256 ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+ "baseline": "b739b39",
+ "noTraining": true,
+ "noPageWiring": true,
+ "defaultPath": "template",
+ "results": {
+  "primaryPackets": 13,
+  "primaryGenerations": 39,
+  "allGenerations": 54,
+  "factCheckPass": 0,
+  "alignerPass": 30,
+  "pageGatePass": 0,
+  "manualAccepted": 0,
+  "meanMs": 27175,
+  "promptTokens": 10896,
+  "completionTokens": 2205
+ },
+ "report": {
+  "path": "design/world-engine-reports/components/narration-model-r1-2026-11-06.md"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/checks-final.json",
+   "bytes": 129016,
+   "sha256": "90971e7f86bf61c676b0786dc2db25d72ac1fc95c817362eaccd89490b553e3b"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/negative-controls.json",
+   "bytes": 11830,
+   "sha256": "ddba72e079ac716a4ea3a317ffdabdcd08c62b934639cec6cc2efcecc659b1c7"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/prompt-task.txt",
+   "bytes": 800,
+   "sha256": "4ebcf842773b4386cd233db79512afd6a1b0eeaf8f60506557381616645d4aae"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/reads-2.json",
+   "bytes": 43949,
+   "sha256": "ec1932093722cacc23f318bc5578c36933a3ec68004c987daddf8711d73bc8ee"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/reads.json",
+   "bytes": 133720,
+   "sha256": "fa479d541b12d836733c5ccdf4eae698ff9f3693f08ee2ea195241d7fd5a92f5"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/review.json",
+   "bytes": 26339,
+   "sha256": "f0e07798259a325ff029abd698688d50385b1017a980abe1be6b0232f8129dcd"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/run-2.json",
+   "bytes": 47761,
+   "sha256": "51018b05b5d527073d2e3aa7ddfee26f096e8c780a2b94dff6f6c3a9c8ea419b"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/run.json",
+   "bytes": 127349,
+   "sha256": "555ebeb06d232cd4f9728d7a93150edff7a97afcbbd22de227d4aaef904a91b3"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/source.json",
+   "bytes": 1697,
+   "sha256": "f09ecf08a8919cd94be3e0ab3ab30c9b4c058611ce90c51f75a5746b334d0032"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/summary.json",
+   "bytes": 7335,
+   "sha256": "1b327da3a98391f9ac166aa2b40ca9e16fbb951c813175a296f0d61541a7ddd3"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/world-after-refresh.png",
+   "bytes": 239246,
+   "sha256": "6de7a357c76e4424b9ebc447f5d9b30e7902e37c65f8aee147e1e12c2559ffe7"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/world-before-refresh.png",
+   "bytes": 233485,
+   "sha256": "1e7b8e170111d486a7dd1be62165e33b6478dc9f7da382b6861c5d4c26e7963a"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/world-record.json",
+   "bytes": 7850,
+   "sha256": "f8b756c50555e60bee70363569702b4ed878af922ecf008eaf309bd8a047e736"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/world2-after-run.png",
+   "bytes": 124564,
+   "sha256": "cf2e1dfa26e3fdd5e9c3d5e2f0ea0885f79852522a2c874f79b92ac3a8fc34f9"
+  },
+  {
+   "path": "artifacts/next-acceptance/narration-model-r1/world2-record.json",
+   "bytes": 1681,
+   "sha256": "0f949aa85be3ecd08b34b86f5d2e5e71c303f50c5f7e9955e6dd24186acab559"
+  }
+ ]
+}

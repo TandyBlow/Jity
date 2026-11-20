@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "readyMs": 45522,
+  "wallMs": 322794,
+  "turns": [
+    {
+      "input": "我沿着车道向西回廊快走，贴着墙，注意听枪声",
+      "turnMs": 45881,
+      "text": "。\n你：我沿着车道向西回廊快走，贴着墙，注意听枪声 · 正文 18.3s\n「你在这儿干什么。」「我在等。」林亦舟说。「你走过了。」「走了没到。」「那又往哪儿走。」「往西回廊。」「往回走廊。」她把帽子往上举了一下，「那边的砖墙比这边厚。」「不是比这儿厚。」他指了指石板道。林亦舟看了很久。「我在这儿等了这么久。」「那我先走了。」他说。「不走就站一会儿。」「我不让站。」「那就站在这儿。」她把帽子放回去，「我等着你。」两个人没说话。走廊里的灯在墙角亮着，但光线很暗。「你在这儿等了多久。」林亦舟问。「从今天早上到现在。」他用手指在墙上敲了一下，「昨天我在这儿站了一会儿。」「你刚才说这儿是砖墙。」「不是。」他说，「砖墙比这边厚。」「那你怎么知道。」「因为站在那儿看不清。」林亦舟把帽子放下，「从那边往回走的人能看清。」「那你为什么往西回廊走了。」「因为我在这儿等了这么久。」「那就是说你不是在等别的东西。」「不是。」「那是什么。」「因为你站在那儿想一个人在等着别人。」林亦舟把帽子放回去，「所以从今天早上到现在，我就在这儿站了很久。」「那你今天为什么没回来。」\n正文已按已结算事实修正：movement_without_fact",
+      "warning": null
+    },
+    {
+      "input": "我蹲下来问林亦舟伤得怎么样，需不需要帮忙",
+      "turnMs": 41480,
+      "text": "。」「往回走廊。」她把帽子往上举了一下，「那边的砖墙比这边厚。」「不是比这儿厚。」他指了指石板道。林亦舟看了很久。「我在这儿等了这么久。」「那我先走了。」他说。「不走就站一会儿。」「我不让站。」「那就站在这儿。」她把帽子放回去，「我等着你。」两个人没说话。走廊里的灯在墙角亮着，但光线很暗。「你在这儿等了多久。」林亦舟问。「从今天早上到现在。」他用手指在墙上敲了一下，「昨天我在这儿站了一会儿。」「你刚才说这儿是砖墙。」「不是。」他说，「砖墙比这边厚。」「那你怎么知道。」「因为站在那儿看不清。」林亦舟把帽子放下，「从那边往回走的人能看清。」「那你为什么往西回廊走了。」「因为我在这儿等了这么久。」「那就是说你不是在等别的东西。」「不是。」「那是什么。」「因为你站在那儿想一个人在等着别人。」林亦舟把帽子放回去，「所以从今天早上到现在，我就在这儿站了很久。」「那你今天为什么没回来。」\n正文已按已结算事实修正：movement_without_fact\n你：我蹲下来问林亦舟伤得怎么样，需不需要帮忙 · 正文 17.4s\n「你没看见？」「我看着。」林亦舟说。路明非抬头看她。「你看不见。」「我看得很清楚。」「那怎么办。」「先问。」林亦舟把水枪收进怀里，「然后看看情况。」「怎么了。」「我不知道。」她说，「但我知道要问。」「知道了就问。」「不知道就先不要问我。」「我先问问自己。」她站起来，往西回廊那边走。路明非蹲下去，用手肘压住栏杆，没动。他把纸折起来，叠到膝盖上，放回去。他没听见林亦舟说话。过了很久，才听到她从那道缝里出来，走到栏杆底下，又跑回来。「你问了。」她说。「我问了。」「你先问问自己。」她说，「然后等一晚上。」「我等到了。」他说。「那就等。」他把手肘压在栏杆上，没动。林亦舟没有再说话。走廊的灯今天都开了，还是黑的。她往回廊那边走。走到头才回来。「你问了什么。」她说。「不知道。」路明非说，「但我知道我得问。」「那你先问。」她说，「等一晚上。」林亦舟没有再说话。走廊里的灯还是开着的。她把纸折起来，叠到膝盖上，放回去。\n正文已按已结算事实修正：movement_without_fact",
+      "warning": null
+    },
+    {
+      "input": "我检查他放在地上的演习枪，确认保险是关着的",
+      "turnMs": 55786,
+      "text": "清楚。」「那怎么办。」「先问。」林亦舟把水枪收进怀里，「然后看看情况。」「怎么了。」「我不知道。」她说，「但我知道要问。」「知道了就问。」「不知道就先不要问我。」「我先问问自己。」她站起来，往西回廊那边走。路明非蹲下去，用手肘压住栏杆，没动。他把纸折起来，叠到膝盖上，放回去。他没听见林亦舟说话。过了很久，才听到她从那道缝里出来，走到栏杆底下，又跑回来。「你问了。」她说。「我问了。」「你先问问自己。」她说，「然后等一晚上。」「我等到了。」他说。「那就等。」他把手肘压在栏杆上，没动。林亦舟没有再说话。走廊的灯今天都开了，还是黑的。她往回廊那边走。走到头才回来。「你问了什么。」她说。「不知道。」路明非说，「但我知道我得问。」「那你先问。」她说，「等一晚上。」林亦舟没有再说话。走廊里的灯还是开着的。她把纸折起来，叠到膝盖上，放回去。\n正文已按已结算事实修正：movement_without_fact\n你：我检查他放在地上的演习枪，确认保险是关着的 · 正文 18.3s\n路明非在西回廊。「这玩意儿我放了两天。」「你用它干什么。」林亦舟问。「检查保险。」他把那盒放在桌上，「这一盒里装的是三把不同形状的保险，一把是锁好的，一把是锁不好的。」「那你先看看这两把。」「看完了再说。」「你看这把，不是锁好的那一把。」林亦舟把手在上衣口袋里摸了一阵，「别碰。」路明非往左看。三把保险，都是一样的形状，放在一起的条子上印着同一组号码，但纸边不一样，折起来是翘的。「那这三把各不相同。」他说。「可钥匙一样。」「可钥匙一样的人用同样的东西去开。」林亦舟把手在裤子上擦了擦，「我查过了，这两把锁都是从别的地方拿下来的。」「拿来的是什么？」「枪的保险。」他把盒子合上，「你先别走。」走廊尽头那盏灯比刚才暗了一点，人影落在地上。「你在这儿等我。」林亦舟说。「不用了。」路明非说，「我来。」他走到栏杆边上，把腰带系好。「那就别走了。」「不走就等着。」「那我先去拿枪。」「这回我给你送一把。」他说，「送回来的时候，你得先把保险放回箱子里。」走廊尽头那盏灯亮了一下。「我先走了。\n正文已按已结算事实修正：wrong_time",
+      "warning": null
+    },
+    {
+      "input": "我把护目镜戴好，问他红方现在在哪个方向",
+      "turnMs": 53219,
+      "text": "里装的是三把不同形状的保险，一把是锁好的，一把是锁不好的。」「那你先看看这两把。」「看完了再说。」「你看这把，不是锁好的那一把。」林亦舟把手在上衣口袋里摸了一阵，「别碰。」路明非往左看。三把保险，都是一样的形状，放在一起的条子上印着同一组号码，但纸边不一样，折起来是翘的。「那这三把各不相同。」他说。「可钥匙一样。」「可钥匙一样的人用同样的东西去开。」林亦舟把手在裤子上擦了擦，「我查过了，这两把锁都是从别的地方拿下来的。」「拿来的是什么？」「枪的保险。」他把盒子合上，「你先别走。」走廊尽头那盏灯比刚才暗了一点，人影落在地上。「你在这儿等我。」林亦舟说。「不用了。」路明非说，「我来。」他走到栏杆边上，把腰带系好。「那就别走了。」「不走就等着。」「那我先去拿枪。」「这回我给你送一把。」他说，「送回来的时候，你得先把保险放回箱子里。」走廊尽头那盏灯亮了一下。「我先走了。\n正文已按已结算事实修正：wrong_time\n你：我把护目镜戴好，问他红方现在在哪个方向 · 正文 23.1s\n路明非把护目镜戴好，问他红方现在在哪个方向。「西回廊。」林亦舟说。「对头了。」「不是对头。」他没马上回答。走到走廊尽头的时候才问了一句，「你先去拿东西。」「我先来。」他说，「你先往那边走。」「往哪儿走。」「往西回廊那边。」他说。「那我等你。」「不行。」「那你先去拿东西。」林亦舟没再往前走，径直把腰带往上提了一半，然后坐下。「你刚才说对头了。」「我告诉你，不对头。」他把纸条折起来塞进兜里，「而且不对的，是因为前面那根蓝布带断了。」「断了就说明对面有人在看。」林亦舟从椅子上站起来，「所以我要你先去拿东西。」「我先去拿东西。」「那就先去拿东西。」林亦舟把纸条放回兜里，「我知道前面那根蓝布带断了，但不知道对头是什么意思。」他往西回廊走了一段，走到走廊尽头的时候才停下来。「我走了这么久，没弄明白一个人在看什么。」「你刚才说对头了。」林亦舟把纸条放回去，「而且不对的，是因为前面那根蓝布带断了。」「断了就说明对面有人在看。」\n正文已按已结算事实修正：added_event,movement_without_fact",
+      "warning": null
+    },
+    {
+      "input": "我扶他站起来，一起往钟楼西门走",
+      "turnMs": 62993,
+      "text": "目镜戴好，问他红方现在在哪个方向 · 正文 23.1s\n路明非把护目镜戴好，问他红方现在在哪个方向。「西回廊。」林亦舟说。「对头了。」「不是对头。」他没马上回答。走到走廊尽头的时候才问了一句，「你先去拿东西。」「我先来。」他说，「你先往那边走。」「往哪儿走。」「往西回廊那边。」他说。「那我等你。」「不行。」「那你先去拿东西。」林亦舟没再往前走，径直把腰带往上提了一半，然后坐下。「你刚才说对头了。」「我告诉你，不对头。」他把纸条折起来塞进兜里，「而且不对的，是因为前面那根蓝布带断了。」「断了就说明对面有人在看。」林亦舟从椅子上站起来，「所以我要你先去拿东西。」「我先去拿东西。」「那就先去拿东西。」林亦舟把纸条放回兜里，「我知道前面那根蓝布带断了，但不知道对头是什么意思。」他往西回廊走了一段，走到走廊尽头的时候才停下来。「我走了这么久，没弄明白一个人在看什么。」「你刚才说对头了。」林亦舟把纸条放回去，「而且不对的，是因为前面那根蓝布带断了。」「断了就说明对面有人在看。」\n正文已按已结算事实修正：added_event,movement_without_fact\n你：我扶他站起来，一起往钟楼西门走 · 正文 15.2s\n路明非在钟楼。「你先站这儿。」路明非回头看了一眼，没走。「那我跟下去。」他往回廊那边走。「不行的。」「为什么？」「因为有人从西门进来。」「没有人进来的。」「没人进来的。」他把手在口袋里摸了摸，「那就是说，有人从外面进来。」「那是什么意思。」「就是说，这回的人不比前回少。」「前回也是这么个感觉。」他说。「你这话听着像是在找人。」「不是。」路明非把手放回口袋里，「是问自己是怎么回事。」「你怎么知道。」「因为昨天晚上我站在西门那头看。」他把头转过去，对着楼内的灯看了一会儿。「我站那儿没看见有人进来。」他说。「那你去查。」「我去查。」路明非说，「我先走了。」走廊尽头的检修口开着。他推开门，站在门口，等了半分钟。门关着，风从下面传来。「这扇门开了。」路明非把手放回口袋，「开了。」走到头廊那边的时候，他听见水在楼内响了一声。\n正文已按已结算事实修正：added_event",
+      "warning": null
+    }
+  ],
+  "restored": true,
+  "snapshotBytes": 784885,
+  "snapshotStable": true,
+  "finalText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新开始\n2009-10-17 15:25 · 钟楼\n已恢复本地存档，继续上次的进度。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：钟楼\n在附近\n没有别人\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n本地存档\n每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：5 次",
+  "logs": [
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 4479ms fallback=false ",
+    "[info] [world-local task] results group_28 0ms fallback=true program_single_member",
+    "[info] [world-local task] updates move 3058ms fallback=false ",
+    "[info] [world-local task] updates group_28 16401ms fallback=false ",
+    "[info] [world-local task] narration point_round_21_1 17413ms fallback=true movement_without_fact",
+    "[info] [world-local task] continuation continuation 2834ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] action lin 4793ms fallback=false ",
+    "[info] [world-local task] targets lin 3870ms fallback=false ",
+    "[info] [world-local task] results group_46 4403ms fallback=false ",
+    "[info] [world-local task] updates move 3167ms fallback=false ",
+    "[info] [world-local task] updates group_46 16394ms fallback=false ",
+    "[info] [world-local task] results group_47 0ms fallback=true program_single_member",
+    "[warning] slot   operator(): id  3 | task 237 | need to evaluate at least 1 token for each active slot (n_past = 1564, task.n_tokens() = 1564)",
+    "[warning] slot   operator(): id  3 | task 237 | n_past was set to 1563",
+    "[info] [world-local task] updates move 3666ms fallback=false ",
+    "[info] [world-local task] updates group_47 4413ms fallback=false ",
+    "[info] [world-local task] narration point_round_40_1 18306ms fallback=true wrong_time",
+    "[info] [world-local task] continuation continuation 3182ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 2651ms fallback=false ",
+    "[info] [world-local task] results group_65 2119ms fallback=false ",
+    "[info] [world-local task] updates move 3846ms fallback=false ",
+    "[info] [world-local task] updates group_65 17412ms fallback=false ",
+    "[info] [world-local task] narration point_round_58_1 23144ms fallback=true added_event,movement_without_fact",
+    "[info] [world-local task] continuation continuation 2719ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 2895ms fallback=false ",
+    "[info] [world-local task] results group_84 3926ms fallback=false ",
+    "[info] [world-local task] updates move 3994ms fallback=false ",
+    "[info] [world-local task] updates group_84 31969ms fallback=true program_movement_fallback",
+    "[info] [world-local task] narration point_round_77_1 15172ms fallback=true added_event",
+    "[info] [world-local task] continuation continuation 5547ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden"
+  ]
+}

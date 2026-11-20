@@ -1,0 +1,58 @@
+{
+ "protocol": "c3-holdout-semantic-review-v1",
+ "reviewer": {
+  "identity": "A-side assistant (AI draft)",
+  "kind": "ai"
+ },
+ "note": "AI draft only. c3 requires reviewer.kind == \"human\"; a person must read each source and confirm or rewrite every verdict. Until then the package is not admissible.",
+ "sources": {
+  "h01": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h02": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h03": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h04": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h05": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h06": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h07": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h08": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h09": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h10": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h11": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  },
+  "h12": {
+   "verdict": "independent",
+   "note": "new cast, new place, new appearance vocabulary; fact texts pass the bigram screen and describe different events than any old source"
+  }
+ }
+}

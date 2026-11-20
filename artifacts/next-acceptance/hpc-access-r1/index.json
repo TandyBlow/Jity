@@ -1,0 +1,10 @@
+{
+  "schema": "acceptance-evidence-index/1",
+  "sourceCommit": "f79261d",
+  "files": [
+    {
+      "path": "connectivity.json",
+      "sha256": "5c505614cc5ab13415588180b947343e97e26a1683ef5eda3ef5ff8a05e1eefd"
+    }
+  ]
+}

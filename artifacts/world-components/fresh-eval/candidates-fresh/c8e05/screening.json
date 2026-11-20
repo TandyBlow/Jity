@@ -1,0 +1,24 @@
+{
+ "v1": {
+  "id": "c8e05",
+  "verdict": "candidate",
+  "signature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+  "fullSignature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+  "mode": "new-world",
+  "r1Version": "v1",
+  "reasons": [],
+  "warnings": []
+ },
+ "v2": {
+  "id": "c8e05",
+  "verdict": "candidate",
+  "signature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+  "fullSignature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+  "mode": "new-world",
+  "r1Version": "v2",
+  "reasons": [],
+  "warnings": []
+ },
+ "expressionSignature": "appearance_changed*1+moved*1+moved_entity*1|2|60s",
+ "note": "R1/R2/R3 使用完整变化集合；expressionSignature 只用于叙述分析"
+}

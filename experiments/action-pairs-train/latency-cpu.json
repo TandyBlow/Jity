@@ -1,0 +1,28 @@
+{
+ "kind": "pairwise-latency",
+ "device": "cpu",
+ "gpu": null,
+ "torch": "2.7.0+cu126",
+ "dtype": "float32",
+ "maxLen": 224,
+ "params": 10345473,
+ "pairTokensMax": 147,
+ "single": {
+  "medianMs": 264.73,
+  "minMs": 155.54,
+  "maxMs": 383.21,
+  "repeats": 30
+ },
+ "serial13": {
+  "medianMs": 2877.57,
+  "minMs": 1637.5,
+  "maxMs": 3230.53,
+  "repeats": 10
+ },
+ "batch13": {
+  "medianMs": 485.97,
+  "minMs": 372.38,
+  "maxMs": 647.72,
+  "repeats": 30
+ }
+}

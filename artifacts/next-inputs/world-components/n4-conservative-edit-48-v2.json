@@ -1,0 +1,1163 @@
+{
+ "v01": {
+  "sourceId": "v01",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮渡上来,蹲到雾堤的钟架下。韩渡把松脱的钟绳重新系紧,钟绳绷直了。沈砚把警示灯扶正。韩渡的袖口沾了盐沫。",
+  "edited": "沈砚从潮渡上来,蹲到雾堤的钟架下。韩渡把松脱的钟绳重新系紧,钟绳绷直了。沈砚把警示灯扶正。韩渡的袖口沾了盐沫。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "final24"
+ },
+ "v02": {
+  "sourceId": "v02",
+  "version": "edit-layer/2",
+  "original": "阿棠把银鳞鱼按大小分开装进鱼筐。顾行舟把抹布拧干。顾行舟的手背上沾了鱼鳞。",
+  "edited": "阿棠把银鳞鱼按大小分开装进鱼筐。顾行舟把抹布拧干，手背上沾了鱼鳞。",
+  "ops": [
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "顾行舟的手背上沾了鱼鳞。",
+    "after": "手背上沾了鱼鳞",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f1",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v03": {
+  "sourceId": "v03",
+  "version": "edit-layer/2",
+  "original": "沈砚把潮汐簿缺的那页补全。叶知微把干纸码成一小摞。叶知微的指尖沾了墨。四下安静,没有新的事情发生。",
+  "edited": "沈砚把潮汐簿缺的那页补全。叶知微把干纸码成一小摞，指尖沾了墨。四下安静,没有新的事情发生。",
+  "ops": [
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "叶知微的指尖沾了墨。",
+    "after": "指尖沾了墨",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f1",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [
+   {
+    "factId": "f3",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": true,
+  "set": "final24"
+ },
+ "v04": {
+  "sourceId": "v04",
+  "version": "edit-layer/2",
+  "original": "顾行舟把渡船系在栈桥的木桩上。韩渡把系泊绳收成一卷。韩渡的手背上沾了盐沫。",
+  "edited": "顾行舟把渡船系在栈桥的木桩上。韩渡把系泊绳收成一卷，手背上沾了盐沫。",
+  "ops": [
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "韩渡的手背上沾了盐沫。",
+    "after": "手背上沾了盐沫",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f1",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v05": {
+  "sourceId": "v05",
+  "version": "edit-layer/2",
+  "original": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮,玻璃上不再有雾。塔顶的灯还亮着,什么也没有再发生。",
+  "edited": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮,玻璃上不再有雾。塔顶的灯还亮着,什么也没有再发生。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f3",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v06": {
+  "sourceId": "v06",
+  "version": "edit-layer/2",
+  "original": "阿棠的鞋底沾了湿石板的水。沈砚的袖口沾了雨。阿棠把纸灯笼扶正。",
+  "edited": "阿棠的鞋底沾了湿石板的水。沈砚的袖口沾了雨。阿棠把纸灯笼扶正。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "final24"
+ },
+ "v07": {
+  "sourceId": "v07",
+  "version": "edit-layer/2",
+  "original": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+  "edited": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v08": {
+  "sourceId": "v08",
+  "version": "edit-layer/2",
+  "original": "警示灯的玻璃罩被风吹歪。钟绳磨出了毛边。韩渡把钟绳重新绕在钟架上。",
+  "edited": "警示灯的玻璃罩被风吹歪。钟绳磨出了毛边。韩渡把钟绳重新绕在钟架上。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v09": {
+  "sourceId": "v09",
+  "version": "edit-layer/2",
+  "original": "鱼筐的边沿沾着鱼鳞。案板的边沿沾着鱼鳞。阿棠把银鳞鱼装进鱼筐。",
+  "edited": "鱼筐的边沿沾着鱼鳞。案板的边沿沾着鱼鳞。阿棠把银鳞鱼装进鱼筐。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v10": {
+  "sourceId": "v10",
+  "version": "edit-layer/2",
+  "original": "铁链的链环上结了锈。铜灯罩的玻璃上蒙了盐雾。叶知微把擦铜油放回梯脚。",
+  "edited": "铁链的链环上结了锈。铜灯罩的玻璃上蒙了盐雾。叶知微把擦铜油放回梯脚。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v11": {
+  "sourceId": "v11",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮生巷一路走到潮汐档案馆门口。沈砚把铜灯挪到门槛边。四下安静,没有新的事情发生。沈砚的袖口沾了墨。",
+  "edited": "沈砚从潮生巷一路走到潮汐档案馆门口，把铜灯挪到门槛边。四下安静,没有新的事情发生。沈砚的袖口沾了墨。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚把铜灯挪到门槛边。",
+    "after": "把铜灯挪到门槛边",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1"
+    ]
+   }
+  ],
+  "fallbacks": [
+   {
+    "factId": "f2",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": true,
+  "set": "final24"
+ },
+ "v12": {
+  "sourceId": "v12",
+  "version": "edit-layer/2",
+  "original": "阿棠从潮生巷一路走到早市,帆布棚下散光。阿棠把银鳞鱼搬上案板。阿棠的辫梢沾了白汽。",
+  "edited": "阿棠从潮生巷一路走到早市，帆布棚下散光，把银鳞鱼搬上案板，辫梢沾了白汽。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "阿棠把银鳞鱼搬上案板。",
+    "after": "把银鳞鱼搬上案板",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "阿棠的辫梢沾了白汽。",
+    "after": "辫梢沾了白汽",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v13": {
+  "sourceId": "v13",
+  "version": "edit-layer/2",
+  "original": "叶知微从潮渡一路走到旧灯塔脚下,抬头看了看塔身。叶知微换好塔顶的灯芯。叶知微的袖口沾了铜油。",
+  "edited": "叶知微从潮渡一路走到旧灯塔脚下，抬头看了看塔身，换好塔顶的灯芯，袖口沾了铜油。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "叶知微换好塔顶的灯芯。",
+    "after": "换好塔顶的灯芯",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "叶知微的袖口沾了铜油。",
+    "after": "袖口沾了铜油",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v14": {
+  "sourceId": "v14",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮汐档案馆出来,走进潮渡。沈砚把系泊绳拖回岸上。沈砚的呼吸有些发紧,手指也不太听使唤。",
+  "edited": "沈砚从潮汐档案馆出来，走进潮渡，把系泊绳拖回岸上，呼吸有些发紧，手指也不太听使唤。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚把系泊绳拖回岸上。",
+    "after": "把系泊绳拖回岸上",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "after": "呼吸有些发紧,手指也不太听使唤",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v15": {
+  "sourceId": "v15",
+  "version": "edit-layer/2",
+  "original": "沈砚把备用钥匙塞进油布包的内层。沈砚把干纸夹进潮汐簿的扉页。沈砚把潮汐簿合上推到桌角。",
+  "edited": "沈砚把备用钥匙塞进油布包的内层，把干纸夹进潮汐簿的扉页，把潮汐簿合上推到桌角。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚把干纸夹进潮汐簿的扉页。",
+    "after": "把干纸夹进潮汐簿的扉页",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名",
+    "before": "沈砚把潮汐簿合上推到桌角。",
+    "after": "把潮汐簿合上推到桌角",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v16": {
+  "sourceId": "v16",
+  "version": "edit-layer/2",
+  "original": "阿棠把抹布塞进鱼筐底下。阿棠把银鳞鱼摆在案板旁边。阿棠的袖口沾了鱼鳞。",
+  "edited": "阿棠把抹布塞进鱼筐底下，把银鳞鱼摆在案板旁边，袖口沾了鱼鳞。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "阿棠把银鳞鱼摆在案板旁边。",
+    "after": "把银鳞鱼摆在案板旁边",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "阿棠的袖口沾了鱼鳞。",
+    "after": "袖口沾了鱼鳞",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v17": {
+  "sourceId": "v17",
+  "version": "edit-layer/2",
+  "original": "叶知微把灯芯收进铜灯罩底下。叶知微把油壶搁在铜灯罩上。叶知微的指尖沾了铜油。",
+  "edited": "叶知微把灯芯收进铜灯罩底下，把油壶搁在铜灯罩上，指尖沾了铜油。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "叶知微把油壶搁在铜灯罩上。",
+    "after": "把油壶搁在铜灯罩上",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "叶知微的指尖沾了铜油。",
+    "after": "指尖沾了铜油",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v18": {
+  "sourceId": "v18",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮渡上来,蹲到雾堤的钟架下。沈砚把雾警钟敲响。沈砚的呼吸有些发紧,手指也不太听使唤。",
+  "edited": "沈砚从潮渡上来，蹲到雾堤的钟架下，把雾警钟敲响，呼吸有些发紧，手指也不太听使唤。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚把雾警钟敲响。",
+    "after": "把雾警钟敲响",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "after": "呼吸有些发紧,手指也不太听使唤",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v19": {
+  "sourceId": "v19",
+  "version": "edit-layer/2",
+  "original": "叶知微把干纸放在桌角。叶知微的呼吸有些发紧,手指也不太听使唤。四下安静,没有新的事情发生。",
+  "edited": "叶知微把干纸放在桌角，呼吸有些发紧，手指也不太听使唤。四下安静,没有新的事情发生。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名＋的",
+    "before": "叶知微的呼吸有些发紧,手指也不太听使唤。",
+    "after": "呼吸有些发紧,手指也不太听使唤",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1"
+    ]
+   }
+  ],
+  "fallbacks": [
+   {
+    "factId": "f2",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": true,
+  "set": "final24"
+ },
+ "v20": {
+  "sourceId": "v20",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮生巷一路走到潮渡,鞋底在木桩旁站住。沈砚松开手,才发现自己一直提着的那口气落回去了。沈砚把渡船推离栈桥。",
+  "edited": "沈砚从潮生巷一路走到潮渡，鞋底在木桩旁站住，松开手，才发现自己一直提着的那口气落回去了。沈砚把渡船推离栈桥。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚松开手,才发现自己一直提着的那口气落回去了。",
+    "after": "松开手,才发现自己一直提着的那口气落回去了",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "final24"
+ },
+ "v21": {
+  "sourceId": "v21",
+  "version": "edit-layer/2",
+  "original": "沈砚把铜灯挪到长桌另一头。四下安静,没有新的事情发生。沈砚的指尖沾了墨。",
+  "edited": "沈砚把铜灯挪到长桌另一头。四下安静,没有新的事情发生。沈砚的指尖沾了墨。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v22": {
+  "sourceId": "v22",
+  "version": "edit-layer/2",
+  "original": "阿棠把鱼筐放在门槛边。周围没有新的事情发生,什么也没有再发生。阿棠的鞋底沾了湿石板的水。",
+  "edited": "阿棠把鱼筐放在门槛边。周围没有新的事情发生,什么也没有再发生。阿棠的鞋底沾了湿石板的水。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v23": {
+  "sourceId": "v23",
+  "version": "edit-layer/2",
+  "original": "顾行舟把缆绳绕上摊棚边的木桩。四下安静,没有新的事情发生。顾行舟的手背上沾了鱼鳞。",
+  "edited": "顾行舟把缆绳绕上摊棚边的木桩。四下安静,没有新的事情发生。顾行舟的手背上沾了鱼鳞。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "v24": {
+  "sourceId": "v24",
+  "version": "edit-layer/2",
+  "original": "韩渡把钟绳解开。周围没有新的事情发生,什么也没有再发生。韩渡的手背上沾了盐沫。",
+  "edited": "韩渡把钟绳解开。周围没有新的事情发生,什么也没有再发生。韩渡的手背上沾了盐沫。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "final24"
+ },
+ "t01": {
+  "sourceId": "t01",
+  "version": "edit-layer/2",
+  "original": "沈砚把潮汐簿缺的那页补全。沈砚的指尖沾了墨。沈砚把簿子合上推到桌角。",
+  "edited": "沈砚把潮汐簿缺的那页补全，指尖沾了墨，把簿子合上推到桌角。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名＋的",
+    "before": "沈砚的指尖沾了墨。",
+    "after": "指尖沾了墨",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名",
+    "before": "沈砚把簿子合上推到桌角。",
+    "after": "把簿子合上推到桌角",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t02": {
+  "sourceId": "t02",
+  "version": "edit-layer/2",
+  "original": "阿棠把银鳞鱼按大小分开装进两只鱼筐。阿棠的袖口沾了鱼鳞。阿棠把空鱼筐摞到摊棚边上。",
+  "edited": "阿棠把银鳞鱼按大小分开装进两只鱼筐，袖口沾了鱼鳞，把空鱼筐摞到摊棚边上。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名＋的",
+    "before": "阿棠的袖口沾了鱼鳞。",
+    "after": "袖口沾了鱼鳞",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名",
+    "before": "阿棠把空鱼筐摞到摊棚边上。",
+    "after": "把空鱼筐摞到摊棚边上",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t03": {
+  "sourceId": "t03",
+  "version": "edit-layer/2",
+  "original": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+  "edited": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名＋的",
+    "before": "叶知微的袖口沾了铜油。",
+    "after": "袖口沾了铜油",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名",
+    "before": "叶知微把抹布搭回梯脚。",
+    "after": "把抹布搭回梯脚",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t04": {
+  "sourceId": "t04",
+  "version": "edit-layer/2",
+  "original": "顾行舟把缆绳在木桩上绕了三圈。顾行舟把渡船推离栈桥。顾行舟的外袍下摆被雾水打湿。",
+  "edited": "顾行舟把缆绳在木桩上绕了三圈，把渡船推离栈桥，外袍下摆被雾水打湿。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "顾行舟把渡船推离栈桥。",
+    "after": "把渡船推离栈桥",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "顾行舟的外袍下摆被雾水打湿。",
+    "after": "外袍下摆被雾水打湿",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t05": {
+  "sourceId": "t05",
+  "version": "edit-layer/2",
+  "original": "韩渡把松脱的钟绳重新系紧。韩渡把雾警钟敲响。韩渡的手背上沾着盐沫。",
+  "edited": "韩渡把松脱的钟绳重新系紧，把雾警钟敲响，手背上沾着盐沫。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "韩渡把雾警钟敲响。",
+    "after": "把雾警钟敲响",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "韩渡的手背上沾着盐沫。",
+    "after": "手背上沾着盐沫",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t06": {
+  "sourceId": "t06",
+  "version": "edit-layer/2",
+  "original": "沈砚把油纸伞收拢靠在墙根。沈砚把被风吹歪的纸灯笼扶正。沈砚的鞋底沾了湿石板的水。",
+  "edited": "沈砚把油纸伞收拢靠在墙根，把被风吹歪的纸灯笼扶正，鞋底沾了湿石板的水。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚把被风吹歪的纸灯笼扶正。",
+    "after": "把被风吹歪的纸灯笼扶正",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "沈砚的鞋底沾了湿石板的水。",
+    "after": "鞋底沾了湿石板的水",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t07": {
+  "sourceId": "t07",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。韩渡把松脱的钟绳重新系紧,钟绳绷直了。沈砚把雾警钟敲响。韩渡的手背上沾着盐沫。",
+  "edited": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。韩渡把松脱的钟绳重新系紧,钟绳绷直了。沈砚把雾警钟敲响。韩渡的手背上沾着盐沫。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t08": {
+  "sourceId": "t08",
+  "version": "edit-layer/2",
+  "original": "阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+  "edited": "阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t09": {
+  "sourceId": "t09",
+  "version": "edit-layer/2",
+  "original": "叶知微从早市过来,走进档案馆。沈砚把潮汐簿摊在铜灯下。叶知微把一叠干纸放在桌角。沈砚的袖口沾了墨。",
+  "edited": "叶知微从早市过来,走进档案馆。沈砚把潮汐簿摊在铜灯下。叶知微把一叠干纸放在桌角。沈砚的袖口沾了墨。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t10": {
+  "sourceId": "t10",
+  "version": "edit-layer/2",
+  "original": "顾行舟把渡船系在栈桥的木桩上。沈砚把系泊绳从浅滩拖回岸上。顾行舟的外袍下摆被雾水打湿。沈砚的呼吸有些发紧,手指也不太听使唤。",
+  "edited": "顾行舟把渡船系在栈桥的木桩上。沈砚把系泊绳从浅滩拖回岸上。顾行舟的外袍下摆被雾水打湿。沈砚的呼吸有些发紧,手指也不太听使唤。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t11": {
+  "sourceId": "t11",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。沈砚换好塔顶的灯芯。叶知微的袖口沾了铜油。",
+  "edited": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。沈砚换好塔顶的灯芯。叶知微的袖口沾了铜油。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t12": {
+  "sourceId": "t12",
+  "version": "edit-layer/2",
+  "original": "阿棠从早市过来,抱起一叠纸进了潮生巷。沈砚把油纸伞收拢靠在墙根。阿棠把鱼筐放在门槛边。沈砚的鞋底沾了湿石板的水。",
+  "edited": "阿棠从早市过来,抱起一叠纸进了潮生巷。沈砚把油纸伞收拢靠在墙根。阿棠把鱼筐放在门槛边。沈砚的鞋底沾了湿石板的水。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t13": {
+  "sourceId": "t13",
+  "version": "edit-layer/2",
+  "original": "叶知微从早市过来,走进档案馆。叶知微把一叠干纸放在桌角。叶知微的袖口沾了墨。",
+  "edited": "叶知微从早市过来，走进档案馆，把一叠干纸放在桌角，袖口沾了墨。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "叶知微把一叠干纸放在桌角。",
+    "after": "把一叠干纸放在桌角",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "叶知微的袖口沾了墨。",
+    "after": "袖口沾了墨",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t14": {
+  "sourceId": "t14",
+  "version": "edit-layer/2",
+  "original": "顾行舟从潮渡上来,走进雾堤。顾行舟把缆绳绕在钟架上。顾行舟的外袍下摆被雾水打湿。",
+  "edited": "顾行舟从潮渡上来，走进雾堤，把缆绳绕在钟架上，外袍下摆被雾水打湿。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "顾行舟把缆绳绕在钟架上。",
+    "after": "把缆绳绕在钟架上",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "顾行舟的外袍下摆被雾水打湿。",
+    "after": "外袍下摆被雾水打湿",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t15": {
+  "sourceId": "t15",
+  "version": "edit-layer/2",
+  "original": "韩渡从潮生巷一路走到潮渡,鞋底在木桩旁站住。韩渡把渡船推离栈桥。韩渡的手背沾着盐沫。",
+  "edited": "韩渡从潮生巷一路走到潮渡，鞋底在木桩旁站住，把渡船推离栈桥，手背沾着盐沫。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "韩渡把渡船推离栈桥。",
+    "after": "把渡船推离栈桥",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "韩渡的手背沾着盐沫。",
+    "after": "手背沾着盐沫",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t16": {
+  "sourceId": "t16",
+  "version": "edit-layer/2",
+  "original": "沈砚从潮汐档案馆出来,走进潮生巷。沈砚把备用钥匙塞进油布包的内层。沈砚的呼吸有些发紧,手指也不太听使唤。",
+  "edited": "沈砚从潮汐档案馆出来，走进潮生巷，把备用钥匙塞进油布包的内层，呼吸有些发紧，手指也不太听使唤。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "沈砚把备用钥匙塞进油布包的内层。",
+    "after": "把备用钥匙塞进油布包的内层",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "after": "呼吸有些发紧,手指也不太听使唤",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t17": {
+  "sourceId": "t17",
+  "version": "edit-layer/2",
+  "original": "阿棠从潮生巷一路走到早市,鱼筐上沾着鱼鳞。阿棠把银鳞鱼搬上案板。阿棠的辫梢沾了白汽。",
+  "edited": "阿棠从潮生巷一路走到早市，鱼筐上沾着鱼鳞，把银鳞鱼搬上案板，辫梢沾了白汽。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "阿棠把银鳞鱼搬上案板。",
+    "after": "把银鳞鱼搬上案板",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "阿棠的辫梢沾了白汽。",
+    "after": "辫梢沾了白汽",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t18": {
+  "sourceId": "t18",
+  "version": "edit-layer/2",
+  "original": "叶知微从潮渡上来,走进旧灯塔。叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+  "edited": "叶知微从潮渡上来，走进旧灯塔，把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+  "ops": [
+   {
+    "factId": "f1",
+    "op": "删姓名",
+    "before": "叶知微把灯罩擦得透亮。",
+    "after": "把灯罩擦得透亮",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f2",
+    "op": "删姓名＋的",
+    "before": "叶知微的袖口沾了铜油。",
+    "after": "袖口沾了铜油",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f3",
+    "op": "删姓名",
+    "before": "叶知微把抹布搭回梯脚。",
+    "after": "把抹布搭回梯脚",
+    "ownerRecoverable": true
+   },
+   {
+    "factId": "f0",
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1",
+     "f2",
+     "f3"
+    ]
+   }
+  ],
+  "fallbacks": [],
+  "changed": true,
+  "set": "cf24"
+ },
+ "t19": {
+  "sourceId": "t19",
+  "version": "edit-layer/2",
+  "original": "阿棠的袖口沾了鱼鳞。沈砚的外袍下摆沾了泥水。阿棠把银鳞鱼装进鱼筐。沈砚把油纸伞收拢靠在摊棚边。",
+  "edited": "阿棠的袖口沾了鱼鳞。沈砚的外袍下摆沾了泥水。阿棠把银鳞鱼装进鱼筐。沈砚把油纸伞收拢靠在摊棚边。",
+  "ops": [],
+  "fallbacks": [],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t20": {
+  "sourceId": "t20",
+  "version": "edit-layer/2",
+  "original": "警示灯的铜框玻璃罩被风吹歪。钟绳磨出了毛边。沈砚把警示灯扶正。韩渡把钟绳重新绕在钟架上。",
+  "edited": "警示灯的铜框玻璃罩被风吹歪。钟绳磨出了毛边。沈砚把警示灯扶正。韩渡把钟绳重新绕在钟架上。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t21": {
+  "sourceId": "t21",
+  "version": "edit-layer/2",
+  "original": "潮汐簿的缺页的边缘毛糙。铜灯的灯罩上积了灰。沈砚把铜灯擦亮。叶知微把干纸放在桌角。",
+  "edited": "潮汐簿的缺页的边缘毛糙。铜灯的灯罩上积了灰。沈砚把铜灯擦亮。叶知微把干纸放在桌角。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t22": {
+  "sourceId": "t22",
+  "version": "edit-layer/2",
+  "original": "系泊绳的泥水结了一层白盐。木桩缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+  "edited": "系泊绳的泥水结了一层白盐。木桩缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t23": {
+  "sourceId": "t23",
+  "version": "edit-layer/2",
+  "original": "铜灯罩的玻璃上蒙了盐雾。铁链的链环上结了锈。叶知微把灯罩擦得透亮,玻璃罩已经透亮。沈砚换好塔顶的灯芯。",
+  "edited": "铜灯罩的玻璃上蒙了盐雾。铁链的链环上结了锈。叶知微把灯罩擦得透亮,玻璃罩已经透亮。沈砚换好塔顶的灯芯。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "cf24"
+ },
+ "t24": {
+  "sourceId": "t24",
+  "version": "edit-layer/2",
+  "original": "纸灯笼被风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+  "edited": "纸灯笼被风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+  "ops": [],
+  "fallbacks": [
+   {
+    "factId": "f0",
+    "reason": "非人物主体"
+   },
+   {
+    "factId": "f1",
+    "reason": "非人物主体"
+   }
+  ],
+  "changed": false,
+  "set": "cf24"
+ }
+}

@@ -1,0 +1,373 @@
+{
+ "worldId": "world_1",
+ "rounds": 9,
+ "checks": 59,
+ "problems": [
+  "appearance delta/checkpoint disagree at point_14 (person_c)",
+  "appearance history disagrees at point_14/person_c",
+  "appearance history disagrees at point_21/person_c",
+  "expected exactly one committed appearance change, found 0",
+  "round 2 (point_14) missing '暂无法恢复'"
+ ],
+ "snapshot": "afterMore",
+ "appearanceStateChecks": [
+  {
+   "pointId": "point_7",
+   "sequence": 1,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_7",
+   "sequence": 1,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_7",
+   "sequence": 1,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "actorId": "person_c",
+   "added": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": []
+    }
+   ],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_7",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": false
+  },
+  {
+   "pointId": "point_21",
+   "sequence": 3,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_21",
+   "sequence": 3,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_21",
+   "sequence": 3,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_14",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": false
+  },
+  {
+   "pointId": "point_27",
+   "sequence": 4,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_27",
+   "sequence": 4,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_27",
+   "sequence": 4,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_14",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": true
+  },
+  {
+   "pointId": "point_33",
+   "sequence": 5,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_33",
+   "sequence": 5,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_33",
+   "sequence": 5,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_14",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": true
+  },
+  {
+   "pointId": "point_39",
+   "sequence": 6,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_39",
+   "sequence": 6,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_39",
+   "sequence": 6,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_14",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": true
+  },
+  {
+   "pointId": "point_45",
+   "sequence": 7,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_45",
+   "sequence": 7,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_45",
+   "sequence": 7,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_14",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": true
+  },
+  {
+   "pointId": "point_51",
+   "sequence": 8,
+   "actorId": "box",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_51",
+   "sequence": 8,
+   "actorId": "person_a",
+   "added": [],
+   "stored": [],
+   "matches": true
+  },
+  {
+   "pointId": "point_51",
+   "sequence": 8,
+   "actorId": "person_c",
+   "added": [],
+   "stored": [
+    {
+     "id": "change_17",
+     "text": "面带微笑",
+     "supersedes": [],
+     "sourcePointId": "point_14",
+     "sourceSequence": 2,
+     "active": true
+    }
+   ],
+   "matches": true
+  }
+ ],
+ "factsRouteChecks": [
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "actorId": "person_c",
+   "changeId": "change_17",
+   "stored": {
+    "id": "change_17",
+    "text": "面带微笑",
+    "supersedes": [],
+    "sourcePointId": "point_7",
+    "sourceSequence": 2,
+    "active": true
+   },
+   "expected": "周宁：面带微笑。",
+   "matches": true
+  }
+ ],
+ "perRound": [
+  {
+   "pointId": "root_3",
+   "sequence": 0,
+   "must": [],
+   "page": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+  },
+  {
+   "pointId": "point_7",
+   "sequence": 1,
+   "must": [
+    "周宁",
+    "（10→8）",
+    "经历压力试验后更谨慎",
+    "周宁达成任务：完成压力试验。"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。\n\n周宁的理智下降（10→8）。\n\n周宁：经历压力试验后更谨慎。\n\n周宁达成任务：完成压力试验。"
+  },
+  {
+   "pointId": "point_14",
+   "sequence": 2,
+   "must": [
+    "周宁",
+    "暂无法恢复"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为8。\n\n周宁：面带微笑。"
+  },
+  {
+   "pointId": "point_21",
+   "sequence": 3,
+   "must": [
+    "没有实体变化"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。\n\n第3点没有实体变化。"
+  },
+  {
+   "pointId": "point_27",
+   "sequence": 4,
+   "must": [
+    "周宁",
+    "周宁从走廊到门厅"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。\n\n周宁从走廊到门厅。"
+  },
+  {
+   "pointId": "point_33",
+   "sequence": 5,
+   "must": [
+    "没有实体变化"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为8。\n\n第5点没有实体变化。"
+  },
+  {
+   "pointId": "point_39",
+   "sequence": 6,
+   "must": [
+    "周宁",
+    "周宁从门厅到走廊"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为8。\n\n周宁从门厅到走廊。"
+  },
+  {
+   "pointId": "point_45",
+   "sequence": 7,
+   "must": [
+    "没有实体变化"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。\n\n第7点没有实体变化。"
+  },
+  {
+   "pointId": "point_51",
+   "sequence": 8,
+   "must": [
+    "周宁",
+    "周宁从走廊到门厅"
+   ],
+   "page": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。\n\n周宁从走廊到门厅。"
+  }
+ ]
+}

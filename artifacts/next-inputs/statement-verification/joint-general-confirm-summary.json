@@ -1,0 +1,48 @@
+{
+  "name": "general-confirm",
+  "use": "fixed regression; no tuning",
+  "n": 108,
+  "supported": 54,
+  "unsupported": 54,
+  "t_conf": 0.5,
+  "metrics": {
+    "n": 108,
+    "nSupported": 54,
+    "nUnsupported": 54,
+    "confusion": {
+      "supported->supported": 53,
+      "supported->unsupported": 1,
+      "supported->uncertain": 0,
+      "unsupported->supported": 2,
+      "unsupported->unsupported": 52,
+      "unsupported->uncertain": 0
+    },
+    "unsupportedRecall": 0.9629629629629629,
+    "legalRejection": 0.018518518518518517,
+    "legalPending": 0.0,
+    "unsupportedPrecision": 0.9811320754716981,
+    "uncertainRate": 0.0,
+    "uncertainCount": 0
+  },
+  "category": {
+    "general": {
+      "n": 108,
+      "nSupported": 54,
+      "nUnsupported": 54,
+      "confusion": {
+        "supported->supported": 53,
+        "supported->unsupported": 1,
+        "supported->uncertain": 0,
+        "unsupported->supported": 2,
+        "unsupported->unsupported": 52,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 0.9629629629629629,
+      "legalRejection": 0.018518518518518517,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 0.9811320754716981,
+      "uncertainRate": 0.0,
+      "uncertainCount": 0
+    }
+  }
+}

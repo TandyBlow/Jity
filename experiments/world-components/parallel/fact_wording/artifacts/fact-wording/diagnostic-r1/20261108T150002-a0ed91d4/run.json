@@ -1,0 +1,32 @@
+{
+ "protocol": "c4-diagnostic-r1",
+ "runId": "20261108T150002-a0ed91d4",
+ "startedAt": "2026-11-08T15:00:25+0800",
+ "protocolSha256": "b1644af511ee42aa9111b16d196744ddae2d4e47bb3f2e55b8b9f5e0a9691fa6",
+ "manifestSha256": "a0ed91d4865eda518c06fe7677553f4107975b81e3858b610d794bcfbadc4608",
+ "beam2Sha256": "0d33797a170454c87e1824ae4b5343b653befd38ab5bc81dc9605d1aff6f109a",
+ "runnerSha256": "9b4b3946fbb679bf6a2f5570bf8cd0be617e45b54d9e16e6fd15b017320be813",
+ "decoderStartTokenId": 0,
+ "eosTokenId": 1,
+ "budgetSeconds": 20.0,
+ "maxNewTokens": 64,
+ "bothArmsSameLimits": true,
+ "unitOrder": "contract file row order (1-85)",
+ "armOrder": "greedy then beam2, per unit",
+ "retryPolicy": "infrastructure errors only, max 1 attempt retry, recorded",
+ "loadSeconds": 0.8152561187744141,
+ "unitFile": ".local/parallel/c-fact-wording/artifacts/world-components/n4-cf24-contract.jsonl",
+ "unitFileSha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+ "env": {
+  "python": "3.12.3",
+  "torch": "2.7.0+cu126",
+  "transformers": "4.57.3",
+  "sentencepiece": "0.2.0",
+  "device": "cpu",
+  "threads": 4,
+  "cudaAvailable": true,
+  "os": "Windows-11-10.0.26200-SP0"
+ },
+ "finishedAt": "2026-11-08T15:09:53+0800",
+ "wallSeconds": 568.1
+}

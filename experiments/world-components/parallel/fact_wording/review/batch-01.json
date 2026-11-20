@@ -1,0 +1,700 @@
+{
+  "protocol": "c4-human-review-candidates-v1",
+  "status": "pending-human-review",
+  "batchId": "c4-cf24-01",
+  "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+  "rows": [
+    {
+      "caseId": "c4-cf24-t07-f0",
+      "unitId": "t07:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "沈砚",
+        "entityGroup": "characters",
+        "from": "潮渡",
+        "to": "雾堤",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t07",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 19,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/6/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、石壁、钟架、钟绳、警示灯、铁皮、白沫、石阶、铁链、钟架、钟绳、雾警钟\n场景=夜；浓雾；警示灯\n视角=沈砚；第三人称\n事实=沈砚｜移动｜潮渡→雾堤\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。",
+      "archivedReview": {
+        "unitId": "t07:f0",
+        "sourceId": "t07",
+        "kind": "moved",
+        "text": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {
+          "added": {
+            "text": "鞋底在石阶边站了一会儿",
+            "why": "到达后追加了动作，且主语落到了鞋底上"
+          }
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "extra_action_state",
+          "status": "failed",
+          "subtype": "action",
+          "span": "鞋底在石阶边站了一会儿",
+          "reason": "到达后追加了动作，且主语落到了鞋底上",
+          "origin": "archived-assistant-review"
+        },
+        {
+          "category": "subject",
+          "status": "failed",
+          "subtype": "added-clause-subject",
+          "span": "鞋底在石阶边站了一会儿",
+          "reason": "病态主语出现在新增尾句；不改判核心人物归属。",
+          "origin": "c4-archive-classification"
+        },
+        {
+          "category": "position",
+          "status": "failed",
+          "subtype": "added-clause-position",
+          "span": "在石阶边站了一会儿",
+          "reason": "物件可见不授权人物到达后在其旁边站住或停留。",
+          "origin": "c4-archive-classification"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t07-f1",
+      "unitId": "t07:f1",
+      "fact": {
+        "factId": "f1",
+        "kind": "outcome",
+        "name": "韩渡",
+        "entityGroup": "characters",
+        "resultText": "把松脱的钟绳重新系紧"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t07",
+        "factId": "f1",
+        "contract": {
+          "source": "contract",
+          "line": 20,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/resultText"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/6/facts/1"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=雾堤>堤面\n地点可见=钟绳、雾警钟、警示灯、石壁、钟架、钟绳、警示灯、铁皮、白沫、石阶、铁链、钟架、钟绳、雾警钟\n场景=夜；浓雾；警示灯\n视角=沈砚；第三人称\n事实=韩渡｜结果｜把松脱的钟绳重新系紧\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+      "archivedReview": {
+        "unitId": "t07:f1",
+        "sourceId": "t07",
+        "kind": "outcome",
+        "text": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {
+          "added": {
+            "text": "钟绳绷直了",
+            "why": "追加了事实里没有的状态"
+          }
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "extra_action_state",
+          "status": "failed",
+          "subtype": "state",
+          "span": "钟绳绷直了",
+          "reason": "追加了事实里没有的状态",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t10-f3",
+      "unitId": "t10:f3",
+      "fact": {
+        "factId": "f3",
+        "kind": "sanity_changed",
+        "name": "沈砚",
+        "entityGroup": "characters",
+        "from": 12,
+        "to": 9
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t10",
+        "factId": "f3",
+        "contract": {
+          "source": "contract",
+          "line": 34,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/9/facts/3"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、系泊绳、木桩、缆绳、船灯、水面、木桩、缆绳、船灯、水面、浅滩\n场景=清晨；薄雾；船灯\n视角=沈砚；第三人称\n事实=沈砚｜状态变化｜发紧\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+      "archivedReview": {
+        "unitId": "t10:f3",
+        "sourceId": "t10",
+        "kind": "sanity_changed",
+        "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {}
+      },
+      "proposedFindings": [
+        {
+          "category": "sanity_value",
+          "status": "undetermined",
+          "subtype": "numeric-capability-not-tested",
+          "span": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+          "reason": "原事实12→9，inputUsed只写发紧且禁止数值；未测试数值、上升或不变。",
+          "origin": "c4-coverage-audit"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t11-f0",
+      "unitId": "t11:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "沈砚",
+        "entityGroup": "characters",
+        "from": "潮生巷",
+        "to": "旧灯塔",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t11",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 35,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/10/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、备用灯芯、抹布、擦铜油、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=沈砚；第三人称\n事实=沈砚｜移动｜潮生巷→旧灯塔\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+      "archivedReview": {
+        "unitId": "t11:f0",
+        "sourceId": "t11",
+        "kind": "moved",
+        "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {
+          "added": {
+            "text": "抬头看了看塔身",
+            "why": "到达后追加了动作，塔身也不在可见清单里"
+          }
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "extra_action_state",
+          "status": "failed",
+          "subtype": "action",
+          "span": "抬头看了看塔身",
+          "reason": "到达后追加了动作，塔身也不在可见清单里",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t11-f1",
+      "unitId": "t11:f1",
+      "fact": {
+        "factId": "f1",
+        "kind": "outcome",
+        "name": "叶知微",
+        "entityGroup": "characters",
+        "resultText": "把灯罩擦得透亮"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t11",
+        "factId": "f1",
+        "contract": {
+          "source": "contract",
+          "line": 36,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/resultText"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/10/facts/1"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、备用灯芯、抹布、擦铜油、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=沈砚；第三人称\n事实=叶知微｜结果｜把灯罩擦得透亮\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。",
+      "archivedReview": {
+        "unitId": "t11:f1",
+        "sourceId": "t11",
+        "kind": "outcome",
+        "text": "叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {
+          "repeated": "玻璃罩透亮起来"
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "repetition",
+          "status": "failed",
+          "subtype": "duplicate-proposition",
+          "span": "玻璃罩透亮起来",
+          "reason": "归档标为复述。",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t12-f0",
+      "unitId": "t12:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "阿棠",
+        "entityGroup": "characters",
+        "from": "早市",
+        "to": "潮生巷",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t12",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 39,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/11/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮生巷\n地点可见=油纸伞、鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=入夜；小雨；纸灯笼\n视角=沈砚；第三人称\n事实=阿棠｜移动｜早市→潮生巷\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+      "archivedReview": {
+        "unitId": "t12:f0",
+        "sourceId": "t12",
+        "kind": "moved",
+        "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {
+          "added": {
+            "text": "抱起一叠纸",
+            "why": "追加了动作与物件，纸不在潮生巷的可见清单里"
+          }
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "extra_action_state",
+          "status": "failed",
+          "subtype": "action",
+          "span": "抱起一叠纸",
+          "reason": "追加了动作与物件，纸不在潮生巷的可见清单里",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t14-f0",
+      "unitId": "t14:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "顾行舟",
+        "entityGroup": "characters",
+        "from": "潮渡",
+        "to": "雾堤",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t14",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 46,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/13/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=雾堤>堤面\n地点可见=缆绳、钟绳、警示灯、石壁、钟架、钟绳、警示灯、铁皮、白沫、石阶、铁链、钟架、钟绳、雾警钟\n场景=傍晚；雾；警示灯\n视角=顾行舟；第三人称\n事实=顾行舟｜移动｜潮渡→雾堤\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "顾行舟从潮渡上来,走进雾堤。",
+      "archivedReview": {
+        "unitId": "t14:f0",
+        "sourceId": "t14",
+        "kind": "moved",
+        "text": "顾行舟从潮渡上来,走进雾堤。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {}
+      },
+      "proposedFindings": [
+        {
+          "category": "direction",
+          "status": "undetermined",
+          "subtype": "level-wording-risk",
+          "span": "上来",
+          "reason": "方向=平而写高低词；归档仍支持起终点，不将措辞风险改判方向事实矛盾。",
+          "origin": "c4-coverage-scan"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t15-f0",
+      "unitId": "t15:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "韩渡",
+        "entityGroup": "characters",
+        "from": "潮生巷",
+        "to": "潮渡",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t15",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 49,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/14/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮渡>栈桥\n地点可见=渡船、缆绳、船灯、木桩、缆绳、船灯、水面、木桩、缆绳、船灯、水面、浅滩\n场景=清晨；薄雾；船灯\n视角=韩渡；第三人称\n事实=韩渡｜移动｜潮生巷→潮渡\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "韩渡从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+      "archivedReview": {
+        "unitId": "t15:f0",
+        "sourceId": "t15",
+        "kind": "moved",
+        "text": "韩渡从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {
+          "added": {
+            "text": "鞋底在木桩旁站住",
+            "why": "到达后追加了动作，且主语落到了鞋底上"
+          }
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "extra_action_state",
+          "status": "failed",
+          "subtype": "action",
+          "span": "鞋底在木桩旁站住",
+          "reason": "到达后追加了动作，且主语落到了鞋底上",
+          "origin": "archived-assistant-review"
+        },
+        {
+          "category": "subject",
+          "status": "failed",
+          "subtype": "added-clause-subject",
+          "span": "鞋底在木桩旁站住",
+          "reason": "病态主语出现在新增尾句；不改判核心人物归属。",
+          "origin": "c4-archive-classification"
+        },
+        {
+          "category": "position",
+          "status": "failed",
+          "subtype": "added-clause-position",
+          "span": "在木桩旁站住",
+          "reason": "物件可见不授权人物到达后在其旁边站住或停留。",
+          "origin": "c4-archive-classification"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t16-f2",
+      "unitId": "t16:f2",
+      "fact": {
+        "factId": "f2",
+        "kind": "sanity_changed",
+        "name": "沈砚",
+        "entityGroup": "characters",
+        "from": 12,
+        "to": 9
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t16",
+        "factId": "f2",
+        "contract": {
+          "source": "contract",
+          "line": 54,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/15/facts/2"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=潮生巷\n地点可见=油布包、备用钥匙、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=沈砚｜状态变化｜发紧\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+      "archivedReview": {
+        "unitId": "t16:f2",
+        "sourceId": "t16",
+        "kind": "sanity_changed",
+        "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+        "factSupported": true,
+        "independence": "independent",
+        "flags": {}
+      },
+      "proposedFindings": [
+        {
+          "category": "sanity_value",
+          "status": "undetermined",
+          "subtype": "numeric-capability-not-tested",
+          "span": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+          "reason": "原事实12→9，inputUsed只写发紧且禁止数值；未测试数值、上升或不变。",
+          "origin": "c4-coverage-audit"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    },
+    {
+      "caseId": "c4-cf24-t17-f0",
+      "unitId": "t17:f0",
+      "fact": {
+        "factId": "f0",
+        "kind": "moved",
+        "name": "阿棠",
+        "entityGroup": "characters",
+        "from": "潮生巷",
+        "to": "早市",
+        "direction": "平"
+      },
+      "provenance": {
+        "authority": "registered-offline-fixture; not a committed-world-point",
+        "sourceId": "t17",
+        "factId": "f0",
+        "contract": {
+          "source": "contract",
+          "line": 55,
+          "fieldPaths": [
+            "/fact/name",
+            "/fact/from",
+            "/fact/to",
+            "/fact/direction"
+          ]
+        },
+        "fixture": {
+          "source": "pinned-n4-cf24-materials-v2.json",
+          "jsonPointer": "/sources/16/facts/0"
+        },
+        "entityId": null,
+        "pointId": null,
+        "worldFieldPath": null,
+        "missingWorldProvenance": [
+          "entityId",
+          "pointId",
+          "fieldPath"
+        ],
+        "note": "字段路径指向冻结夹具，不伪装成世界字段；不按姓名补造ID。"
+      },
+      "inputUsed": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、抹布、帆布棚、鱼筐、案板、石板、银鳞鱼、白汽\n场景=清晨；薄雾；棚下散光\n视角=阿棠；第三人称\n事实=阿棠｜移动｜潮生巷→早市\n方向=平\n要求：写一句话，把事实写成场景里可见的动作或状态；句中出现事实主体的名字；只用地点可见里的物件与场景给的现象；需要表示高低时用方向给的字；不写任务标题、数值、具体时长、字段名；不新增人物、物品、地点。\n短句：\n",
+      "text": "阿棠从潮生巷一路走到早市,鱼筐上沾着鱼鳞。",
+      "archivedReview": {
+        "unitId": "t17:f0",
+        "sourceId": "t17",
+        "kind": "moved",
+        "text": "阿棠从潮生巷一路走到早市,鱼筐上沾着鱼鳞。",
+        "factSupported": true,
+        "independence": "seen-fact",
+        "flags": {
+          "added": {
+            "text": "鱼筐上沾着鱼鳞",
+            "why": "追加了本单元事实之外的状态"
+          }
+        }
+      },
+      "proposedFindings": [
+        {
+          "category": "extra_action_state",
+          "status": "failed",
+          "subtype": "state",
+          "span": "鱼筐上沾着鱼鳞",
+          "reason": "追加了本单元事实之外的状态",
+          "origin": "archived-assistant-review"
+        }
+      ],
+      "humanVerdict": null,
+      "humanNotes": null
+    }
+  ]
+}
