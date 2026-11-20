@@ -1139,6 +1139,21 @@ export default function WorldLocalPage() {
     try {
       const status = await session.submit(text);
       console.info('[world-local] turn status', status);
+      // A fix_request stop can leave the advance open; the next submit is then
+      // refused as turn_in_progress forever (G3 run: turn 2 waited 330 s).
+      if (status.kind === 'stop' && session.snapshot.transport.advance) {
+        try {
+          await Promise.race([session.cancel('turn_failed'), new Promise((resolve) => setTimeout(resolve, 15_000))]);
+        } catch (cancelError) { console.warn('[world-local] cancel after stopped turn failed', cancelError); }
+        if (session.snapshot.transport.advance) {
+          try {
+            await Promise.race([session.start(), new Promise((resolve) => setTimeout(resolve, 60_000))]);
+          } catch (finishError) { console.warn('[world-local] finishing narration after stopped turn failed', finishError); }
+          try {
+            await Promise.race([session.cancel('turn_failed'), new Promise((resolve) => setTimeout(resolve, 15_000))]);
+          } catch (cancelError) { console.warn('[world-local] second cancel after stopped turn failed', cancelError); }
+        }
+      }
       await refresh();
       if (status.kind === 'stop' && status.reason === 'turn_in_progress') {
         // The previous turn is still settling; this input was not consumed.
