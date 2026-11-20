@@ -1,0 +1,11 @@
+{
+ "capturedFrom": "worktrees/06-recovery/frontend/src/lib/world-engine/local/prompt.ts",
+ "world": "public/worlds/dragon-raja-free-day.world.json",
+ "viewpointId": "lu",
+ "viewpointName": "路明非",
+ "draftSha256Note": "draft.txt unchanged; prompt heads come from the loaded source",
+ "prompts": {
+  "scene": 306,
+  "repair": 316
+ }
+}

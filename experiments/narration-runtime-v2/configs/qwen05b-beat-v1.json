@@ -1,0 +1,47 @@
+{
+  "runId": "qwen05b-beat-v1",
+  "root": "/home/student/t330034047/beats_v1",
+  "mount": "D:/others/Jity/.local/parallel-local-game/worktrees/10-training/experiments/narration-runtime-v2",
+  "seed": 20261110,
+  "base": {
+    "file": "~/qwen05b"
+  },
+  "tokenizer": {
+    "file": "~/qwen05b"
+  },
+  "beats": {},
+  "scenes": {
+    "file": null,
+    "variants": []
+  },
+  "splits": {
+    "file": "data/splits-v1.json"
+  },
+  "training": {
+    "epochs": 4,
+    "lr": 0.0002,
+    "batch": 1,
+    "gradAccum": 4,
+    "maxLen": 2560,
+    "gradClip": 1.0,
+    "weightDecay": 0.0,
+    "sampleMaxNew": 120,
+    "lora": {
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targetModules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ]
+    }
+  },
+  "data": {
+    "file": "data/train-v3.jsonl"
+  }
+}

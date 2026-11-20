@@ -1,0 +1,960 @@
+{
+ "version": "draft-splits-v1",
+ "rule": "lane-01 rows: group = worldFamily#lineage, the whole group is assigned by a hash of the group key; teacher beats follow the frozen v1 split of their source row; the frozen 199 scenes keep v1.json unchanged",
+ "groups": {
+  "frozen#caesar": {
+   "split": "train",
+   "rows": [
+    "world-caesar-trait-12"
+   ]
+  },
+  "frozen#chu": {
+   "split": "train",
+   "rows": [
+    "world-chu-sanity-60"
+   ]
+  },
+  "frozen#fingel": {
+   "split": "train",
+   "rows": [
+    "world-fingel-move-west-10",
+    "world-fingel-sanity-59"
+   ]
+  },
+  "frozen#lin": {
+   "split": "train",
+   "rows": [
+    "world-lin-sanity-61"
+   ]
+  },
+  "frozen#lu": {
+   "split": "train",
+   "rows": [
+    "world-lu-sanity-57"
+   ]
+  },
+  "frozen#manstein": {
+   "split": "train",
+   "rows": [
+    "world-manstein-trait-13",
+    "world-manstein-sanity-66"
+   ]
+  },
+  "frozen#nono": {
+   "split": "train",
+   "rows": [
+    "world-nono-sanity-58"
+   ]
+  },
+  "frozen#row-0004": {
+   "split": "train",
+   "rows": [
+    "lib-row-0004-sanity-江叙白-1"
+   ]
+  },
+  "frozen#row-0006": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0006-sanity-程含章-2"
+   ]
+  },
+  "frozen#row-0012": {
+   "split": "train",
+   "rows": [
+    "lib-row-0012-move-温执-1"
+   ]
+  },
+  "frozen#row-0015": {
+   "split": "train",
+   "rows": [
+    "lib-row-0015-sanity-苏既明-3"
+   ]
+  },
+  "frozen#row-0017": {
+   "split": "test",
+   "rows": [
+    "lib-row-0017-sanity-韩暮-4"
+   ]
+  },
+  "frozen#row-0022": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0022-move-黎停云-2",
+    "lib-row-0022-sanity-韩砚-5"
+   ]
+  },
+  "frozen#row-0026": {
+   "split": "train",
+   "rows": [
+    "lib-row-0026-trait-42-1"
+   ]
+  },
+  "frozen#row-0030": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0030-move-柏砚-3"
+   ]
+  },
+  "frozen#row-0032": {
+   "split": "train",
+   "rows": [
+    "lib-row-0032-sanity-周望舒-6"
+   ]
+  },
+  "frozen#row-0033": {
+   "split": "test",
+   "rows": [
+    "lib-row-0033-sanity-沈叙白-7"
+   ]
+  },
+  "frozen#row-0039": {
+   "split": "train",
+   "rows": [
+    "lib-row-0039-sanity-周书言-8"
+   ]
+  },
+  "frozen#row-0042": {
+   "split": "train",
+   "rows": [
+    "lib-row-0042-sanity-韩既白-9"
+   ]
+  },
+  "frozen#row-0047": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0047-sanity-沈暮-10"
+   ]
+  },
+  "frozen#row-0048": {
+   "split": "train",
+   "rows": [
+    "lib-row-0048-sanity-周既白-11"
+   ]
+  },
+  "frozen#row-0051": {
+   "split": "train",
+   "rows": [
+    "lib-row-0051-sanity-温书言-12"
+   ]
+  },
+  "frozen#row-0053": {
+   "split": "test",
+   "rows": [
+    "lib-row-0053-task-88-1"
+   ]
+  },
+  "frozen#row-0057": {
+   "split": "train",
+   "rows": [
+    "lib-row-0057-sanity-柏书言-13"
+   ]
+  },
+  "frozen#row-0058": {
+   "split": "train",
+   "rows": [
+    "lib-row-0058-sanity-沈含章-14"
+   ]
+  },
+  "frozen#row-0059": {
+   "split": "train",
+   "rows": [
+    "lib-row-0059-sanity-韩既明-15",
+    "lib-row-0059-sanity-沈叙白-16"
+   ]
+  },
+  "frozen#row-0060": {
+   "split": "train",
+   "rows": [
+    "lib-row-0060-sanity-叶既白-17"
+   ]
+  },
+  "frozen#row-0061": {
+   "split": "train",
+   "rows": [
+    "lib-row-0061-trait-102-2",
+    "lib-row-0061-sanity-周含章-18"
+   ]
+  },
+  "frozen#row-0066": {
+   "split": "train",
+   "rows": [
+    "lib-row-0066-sanity-温照-19"
+   ]
+  },
+  "frozen#row-0067": {
+   "split": "test",
+   "rows": [
+    "lib-row-0067-trait-111-3"
+   ]
+  },
+  "frozen#row-0069": {
+   "split": "train",
+   "rows": [
+    "lib-row-0069-sanity-秦望舒-20"
+   ]
+  },
+  "frozen#row-0072": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0072-trait-119-4"
+   ]
+  },
+  "frozen#row-0077": {
+   "split": "train",
+   "rows": [
+    "lib-row-0077-sanity-叶既明-21",
+    "lib-row-0077-sanity-秦照-22"
+   ]
+  },
+  "frozen#row-0078": {
+   "split": "train",
+   "rows": [
+    "lib-row-0078-sanity-黎既白-23"
+   ]
+  },
+  "frozen#row-0079": {
+   "split": "train",
+   "rows": [
+    "lib-row-0079-sanity-沈照-24"
+   ]
+  },
+  "frozen#row-0084": {
+   "split": "train",
+   "rows": [
+    "lib-row-0084-sanity-柏照-25",
+    "lib-row-0084-trait-137-5"
+   ]
+  },
+  "frozen#row-0087": {
+   "split": "train",
+   "rows": [
+    "lib-row-0087-sanity-沈照-26"
+   ]
+  },
+  "frozen#row-0091": {
+   "split": "train",
+   "rows": [
+    "lib-row-0091-sanity-江既白-27"
+   ]
+  },
+  "frozen#row-0092": {
+   "split": "train",
+   "rows": [
+    "lib-row-0092-sanity-周书言-28"
+   ]
+  },
+  "frozen#row-0093": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0093-sanity-叶照-29"
+   ]
+  },
+  "frozen#row-0096": {
+   "split": "train",
+   "rows": [
+    "lib-row-0096-trait-152-6"
+   ]
+  },
+  "frozen#row-0100": {
+   "split": "train",
+   "rows": [
+    "lib-row-0100-move-温暮-4",
+    "lib-row-0100-move-柏清和-5"
+   ]
+  },
+  "frozen#row-0103": {
+   "split": "train",
+   "rows": [
+    "lib-row-0103-trait-162-7"
+   ]
+  },
+  "frozen#row-0104": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0104-sanity-秦照-30"
+   ]
+  },
+  "frozen#row-0105": {
+   "split": "train",
+   "rows": [
+    "lib-row-0105-task-166-2",
+    "lib-row-0105-task-167-3"
+   ]
+  },
+  "frozen#row-0106": {
+   "split": "train",
+   "rows": [
+    "lib-row-0106-sanity-沈叙白-31"
+   ]
+  },
+  "frozen#row-0107": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0107-sanity-方既明-32"
+   ]
+  },
+  "frozen#row-0109": {
+   "split": "train",
+   "rows": [
+    "lib-row-0109-move-温暮-6"
+   ]
+  },
+  "frozen#row-0115": {
+   "split": "train",
+   "rows": [
+    "lib-row-0115-sanity-苏既白-33"
+   ]
+  },
+  "frozen#row-0116": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0116-move-温照-7"
+   ]
+  },
+  "frozen#row-0117": {
+   "split": "train",
+   "rows": [
+    "lib-row-0117-sanity-温照-34"
+   ]
+  },
+  "frozen#row-0118": {
+   "split": "train",
+   "rows": [
+    "lib-row-0118-sanity-方既白-35"
+   ]
+  },
+  "frozen#row-0119": {
+   "split": "train",
+   "rows": [
+    "lib-row-0119-move-柏含章-8"
+   ]
+  },
+  "frozen#row-0120": {
+   "split": "test",
+   "rows": [
+    "lib-row-0120-sanity-苏既明-36"
+   ]
+  },
+  "frozen#row-0123": {
+   "split": "train",
+   "rows": [
+    "lib-row-0123-sanity-顾既明-37"
+   ]
+  },
+  "frozen#row-0126": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0126-trait-196-8"
+   ]
+  },
+  "frozen#row-0133": {
+   "split": "test",
+   "rows": [
+    "lib-row-0133-move-江既白-9",
+    "lib-row-0133-sanity-周既白-38"
+   ]
+  },
+  "frozen#row-0137": {
+   "split": "train",
+   "rows": [
+    "lib-row-0137-sanity-苏既白-39"
+   ]
+  },
+  "frozen#row-0139": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0139-sanity-苏含章-40"
+   ]
+  },
+  "frozen#row-0140": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0140-trait-217-9",
+    "lib-row-0140-trait-219-10"
+   ]
+  },
+  "frozen#row-0142": {
+   "split": "train",
+   "rows": [
+    "lib-row-0142-sanity-顾既白-41"
+   ]
+  },
+  "frozen#row-0146": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0146-task-226-4"
+   ]
+  },
+  "frozen#row-0148": {
+   "split": "train",
+   "rows": [
+    "lib-row-0148-sanity-周既白-42"
+   ]
+  },
+  "frozen#row-0150": {
+   "split": "train",
+   "rows": [
+    "lib-row-0150-sanity-苏望舒-43"
+   ]
+  },
+  "frozen#row-0152": {
+   "split": "train",
+   "rows": [
+    "lib-row-0152-sanity-温照-44"
+   ]
+  },
+  "frozen#row-0154": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0154-sanity-方既白-45"
+   ]
+  },
+  "frozen#row-0160": {
+   "split": "test",
+   "rows": [
+    "lib-row-0160-sanity-周书言-46"
+   ]
+  },
+  "frozen#row-0166": {
+   "split": "test",
+   "rows": [
+    "lib-row-0166-sanity-柏书言-47"
+   ]
+  },
+  "frozen#row-0173": {
+   "split": "test",
+   "rows": [
+    "lib-row-0173-sanity-柏照-48"
+   ]
+  },
+  "frozen#row-0174": {
+   "split": "train",
+   "rows": [
+    "lib-row-0174-sanity-方既白-49"
+   ]
+  },
+  "frozen#row-0176": {
+   "split": "train",
+   "rows": [
+    "lib-row-0176-task-267-5"
+   ]
+  },
+  "frozen#row-0179": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0179-sanity-黎既白-50"
+   ]
+  },
+  "frozen#row-0182": {
+   "split": "train",
+   "rows": [
+    "lib-row-0182-sanity-温暮-51"
+   ]
+  },
+  "frozen#row-0185": {
+   "split": "train",
+   "rows": [
+    "lib-row-0185-sanity-柏书言-52"
+   ]
+  },
+  "frozen#row-0186": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0186-sanity-秦既白-53"
+   ]
+  },
+  "frozen#row-0190": {
+   "split": "train",
+   "rows": [
+    "lib-row-0190-trait-290-11",
+    "lib-row-0190-sanity-顾既白-54"
+   ]
+  },
+  "frozen#row-0194": {
+   "split": "train",
+   "rows": [
+    "lib-row-0194-sanity-江既白-55"
+   ]
+  },
+  "frozen#row-0198": {
+   "split": "dev",
+   "rows": [
+    "lib-row-0198-sanity-沈照-56"
+   ]
+  },
+  "frozen#shen": {
+   "split": "train",
+   "rows": [
+    "world-shen-sanity-64"
+   ]
+  },
+  "frozen#tang": {
+   "split": "train",
+   "rows": [
+    "world-tang-sanity-62"
+   ]
+  },
+  "frozen#task_fingel_map": {
+   "split": "train",
+   "rows": [
+    "world-fingel-task-task_fingel_map-6"
+   ]
+  },
+  "frozen#task_su_report": {
+   "split": "train",
+   "rows": [
+    "world-su-task-task_su_report-7"
+   ]
+  },
+  "frozen#task_zhou_rope": {
+   "split": "train",
+   "rows": [
+    "world-zhou-task-task_zhou_rope-8"
+   ]
+  },
+  "frozen#tomiyama": {
+   "split": "train",
+   "rows": [
+    "world-tomiyama-move-annex-11",
+    "world-tomiyama-sanity-65"
+   ]
+  },
+  "frozen#zhou": {
+   "split": "train",
+   "rows": [
+    "world-zhou-sanity-63"
+   ]
+  },
+  "unknown#appearance-fingel": {
+   "split": "train",
+   "rows": [
+    "dr-0004-appearance-fingel"
+   ]
+  },
+  "unknown#caesar-to-yard": {
+   "split": "dev",
+   "rows": [
+    "dr-0014-caesar-to-yard"
+   ]
+  },
+  "unknown#cage-stretcher": {
+   "split": "train",
+   "rows": [
+    "dr-0010-cage-stretcher"
+   ]
+  },
+  "unknown#chu-checks-hatch": {
+   "split": "train",
+   "rows": [
+    "dr-0017-chu-checks-hatch"
+   ]
+  },
+  "unknown#derived:row-0008": {
+   "split": "train",
+   "rows": [
+    "short-0008-two-minute-no-change"
+   ]
+  },
+  "unknown#doctor-bed-ready": {
+   "split": "train",
+   "rows": [
+    "dr-0012-doctor-bed-ready"
+   ]
+  },
+  "unknown#fingel-tells-hatch": {
+   "split": "train",
+   "rows": [
+    "dr-0018-fingel-tells-hatch"
+   ]
+  },
+  "unknown#move-nono-to-shed": {
+   "split": "train",
+   "rows": [
+    "dr-0002-move-nono-to-shed"
+   ]
+  },
+  "unknown#move-without-posture": {
+   "split": "train",
+   "rows": [
+    "dr-0015-move-without-posture"
+   ]
+  },
+  "unknown#no-change-lane": {
+   "split": "train",
+   "rows": [
+    "dr-0001-no-change-lane"
+   ]
+  },
+  "unknown#no-change-three-people": {
+   "split": "train",
+   "rows": [
+    "dr-0021-no-change-three-people"
+   ]
+  },
+  "unknown#personality-nono": {
+   "split": "train",
+   "rows": [
+    "dr-0005-personality-nono"
+   ]
+  },
+  "unknown#row-0008": {
+   "split": "test",
+   "rows": [
+    "short-0008-binding-no-change"
+   ]
+  },
+  "unknown#row-0020": {
+   "split": "train",
+   "rows": [
+    "short2-0020-clock-and-torn-page"
+   ]
+  },
+  "unknown#row-0031": {
+   "split": "train",
+   "rows": [
+    "short2-0031-binding-glue-and-tape"
+   ]
+  },
+  "unknown#row-0034": {
+   "split": "test",
+   "rows": [
+    "short2-0034-carved-line-worn"
+   ]
+  },
+  "unknown#row-0039": {
+   "split": "train",
+   "rows": [
+    "short2-0039-three-people-and-a-confession"
+   ]
+  },
+  "unknown#row-0042": {
+   "split": "train",
+   "rows": [
+    "short2-0042-mailbox-and-relief"
+   ]
+  },
+  "unknown#row-0050": {
+   "split": "dev",
+   "rows": [
+    "short-0050-backdoor-lock"
+   ]
+  },
+  "unknown#row-0055": {
+   "split": "train",
+   "rows": [
+    "short-0055-reading-room-reveal"
+   ]
+  },
+  "unknown#row-0056": {
+   "split": "train",
+   "rows": [
+    "short2-0056-duty-name-and-copy"
+   ]
+  },
+  "unknown#row-0058": {
+   "split": "train",
+   "rows": [
+    "short2-0058-light-and-tea-stain"
+   ]
+  },
+  "unknown#row-0060": {
+   "split": "test",
+   "rows": [
+    "short-0060-corridor-glasses"
+   ]
+  },
+  "unknown#row-0061": {
+   "split": "train",
+   "rows": [
+    "short2-0061-key-handed-over"
+   ]
+  },
+  "unknown#row-0063": {
+   "split": "train",
+   "rows": [
+    "short-0063-stack-room-rope"
+   ]
+  },
+  "unknown#row-0065": {
+   "split": "train",
+   "rows": [
+    "short2-0065-sink-cloth-and-wrench"
+   ]
+  },
+  "unknown#row-0074": {
+   "split": "dev",
+   "rows": [
+    "short2-0074-locked-from-outside"
+   ]
+  },
+  "unknown#row-0078": {
+   "split": "train",
+   "rows": [
+    "short-0078-courtyard-drop"
+   ]
+  },
+  "unknown#row-0090": {
+   "split": "train",
+   "rows": [
+    "short2-0090-locked-door-and-watched-table"
+   ]
+  },
+  "unknown#row-0091": {
+   "split": "train",
+   "rows": [
+    "short2-0091-seventh-copy-missing"
+   ]
+  },
+  "unknown#row-0098": {
+   "split": "train",
+   "rows": [
+    "short-0098-newsroom-cup"
+   ]
+  },
+  "unknown#row-0100": {
+   "split": "train",
+   "rows": [
+    "short-0100-desk-swap"
+   ]
+  },
+  "unknown#row-0101": {
+   "split": "train",
+   "rows": [
+    "short-0101-power-room-doubt"
+   ]
+  },
+  "unknown#row-0102": {
+   "split": "train",
+   "rows": [
+    "short2-0102-three-copies-collated"
+   ]
+  },
+  "unknown#row-0111": {
+   "split": "dev",
+   "rows": [
+    "short2-0111-desk-book-and-ink"
+   ]
+  },
+  "unknown#row-0117": {
+   "split": "train",
+   "rows": [
+    "short-long-0117-two-tasks-and-relief"
+   ]
+  },
+  "unknown#row-0119": {
+   "split": "train",
+   "rows": [
+    "short2-0119-guard-records-and-shelves"
+   ]
+  },
+  "unknown#row-0121": {
+   "split": "test",
+   "rows": [
+    "short-0121-newspaper-clip"
+   ]
+  },
+  "unknown#row-0125": {
+   "split": "dev",
+   "rows": [
+    "short2-0125-proof-and-empty-slot"
+   ]
+  },
+  "unknown#row-0129": {
+   "split": "dev",
+   "rows": [
+    "short2-0129-film-version-and-fear"
+   ]
+  },
+  "unknown#row-0132": {
+   "split": "train",
+   "rows": [
+    "short-long-0132-cover-row-and-dust"
+   ]
+  },
+  "unknown#row-0136": {
+   "split": "train",
+   "rows": [
+    "short2-0136-lamp-and-forty-year-book"
+   ]
+  },
+  "unknown#row-0137": {
+   "split": "dev",
+   "rows": [
+    "short-long-0137-pipe-and-note"
+   ]
+  },
+  "unknown#row-0138": {
+   "split": "train",
+   "rows": [
+    "short-0138-empty-slots"
+   ]
+  },
+  "unknown#row-0145": {
+   "split": "train",
+   "rows": [
+    "short2-0145-cover-layers"
+   ]
+  },
+  "unknown#row-0152": {
+   "split": "train",
+   "rows": [
+    "short-0152-archive-two-tasks"
+   ]
+  },
+  "unknown#row-0161": {
+   "split": "dev",
+   "rows": [
+    "short-0161-damp-plant"
+   ]
+  },
+  "unknown#row-0169": {
+   "split": "dev",
+   "rows": [
+    "short-0169-archive-fire-answer"
+   ]
+  },
+  "unknown#row-0172": {
+   "split": "train",
+   "rows": [
+    "short2-0172-march-name-and-two-questions"
+   ]
+  },
+  "unknown#row-0175": {
+   "split": "train",
+   "rows": [
+    "short-0175-window-rustle"
+   ]
+  },
+  "unknown#row-0177": {
+   "split": "train",
+   "rows": [
+    "short2-0177-fire-and-notices"
+   ]
+  },
+  "unknown#row-0178": {
+   "split": "train",
+   "rows": [
+    "short-0178-dirty-hands"
+   ]
+  },
+  "unknown#row-0180": {
+   "split": "train",
+   "rows": [
+    "short2-0180-wax-seal-half"
+   ]
+  },
+  "unknown#row-0182": {
+   "split": "dev",
+   "rows": [
+    "short-0182-corridor-separation"
+   ]
+  },
+  "unknown#row-0183": {
+   "split": "test",
+   "rows": [
+    "short-long-0183-page-count-and-new-trait"
+   ]
+  },
+  "unknown#row-0187": {
+   "split": "train",
+   "rows": [
+    "short2-0187-left-handed-knot"
+   ]
+  },
+  "unknown#row-0188": {
+   "split": "train",
+   "rows": [
+    "short-0188-archive-two-cover-tasks"
+   ]
+  },
+  "unknown#row-0189": {
+   "split": "train",
+   "rows": [
+    "short2-0189-two-investigations-finished"
+   ]
+  },
+  "unknown#row-0191": {
+   "split": "train",
+   "rows": [
+    "short2-0191-three-labels"
+   ]
+  },
+  "unknown#row-0194": {
+   "split": "dev",
+   "rows": [
+    "short-0194-power-room-fear"
+   ]
+  },
+  "unknown#row-0197": {
+   "split": "train",
+   "rows": [
+    "short-0197-basement-dehumidifier"
+   ]
+  },
+  "unknown#row-0199": {
+   "split": "train",
+   "rows": [
+    "short-0199-rooftop-third-name"
+   ]
+  },
+  "unknown#sanity-lu": {
+   "split": "dev",
+   "rows": [
+    "dr-0006-sanity-lu"
+   ]
+  },
+  "unknown#separation-lu-shed": {
+   "split": "train",
+   "rows": [
+    "dr-0007-separation-lu-shed"
+   ]
+  },
+  "unknown#su-checks-magazine": {
+   "split": "train",
+   "rows": [
+    "dr-0020-su-checks-magazine"
+   ]
+  },
+  "unknown#su-report-bridge": {
+   "split": "dev",
+   "rows": [
+    "dr-0011-su-report-bridge"
+   ]
+  },
+  "unknown#tang-reload": {
+   "split": "train",
+   "rows": [
+    "dr-0013-tang-reload"
+   ]
+  },
+  "unknown#task-added-lu": {
+   "split": "dev",
+   "rows": [
+    "dr-0008-task-added-lu"
+   ]
+  },
+  "unknown#task-goggles": {
+   "split": "train",
+   "rows": [
+    "dr-0003-task-goggles"
+   ]
+  },
+  "unknown#tomiyama-shen-symptom": {
+   "split": "train",
+   "rows": [
+    "dr-0019-tomiyama-shen-symptom"
+   ]
+  },
+  "unknown#two-people-clear-subjects": {
+   "split": "train",
+   "rows": [
+    "dr-0016-two-people-clear-subjects"
+   ]
+  }
+ },
+ "counts": {
+  "test": 15,
+  "dev": 33,
+  "train": 121
+ }
+}

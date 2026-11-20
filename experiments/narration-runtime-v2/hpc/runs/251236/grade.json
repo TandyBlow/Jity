@@ -1,0 +1,183 @@
+{
+  "kept": 98,
+  "beats": 368,
+  "perKind": {
+    "moved": {
+      "candidates": 123,
+      "kept": 11
+    },
+    "task_achieved": {
+      "candidates": 390,
+      "kept": 8
+    },
+    "personality_changed": {
+      "candidates": 255,
+      "kept": 13
+    },
+    "sanity_changed": {
+      "candidates": 200,
+      "kept": 66
+    }
+  },
+  "rejectedExamples": [
+    {
+      "id": "lib-row-0002-move-沈含章",
+      "text": "沈含章深吸一口气，从报刊架后迈步走向长桌区，脚下发出轻微的沙沙声，似乎是在提醒他这间阅览室里久未有人光顾的寂寥。",
+      "issues": [
+        "mood_or_interpretation",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-move-沈含章",
+      "text": "沈含章收起手中的书，从报刊架后迈步向前，脚步轻踩在老旧的木地板上，发出轻微的吱呀声。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0002-move-沈含章",
+      "text": "沈含章轻轻拉开一本厚重的报纸，从报刊架后踱步至长桌区。",
+      "issues": [
+        "no_movement_verb",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-task-1",
+      "text": "沈含章从报刊架最底层抽出一卷缩微胶片，仔细地擦拭上面的灰尘，将它平铺在阅览桌上。",
+      "issues": [
+        "no_completion_verb",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-task-1",
+      "text": "沈含章指尖轻抚过一摞摞报纸边缘，终于在1987年的某一天找到了那张泛黄的《日报》。他将它小心翼翼地卷起，放入随身携带的小袋中。",
+      "issues": [
+        "cliche",
+        "invented_number:1987",
+        "product_rule:wrong_time"
+      ]
+    },
+    {
+      "id": "lib-row-0002-task-1",
+      "text": "沈含章将手指轻轻滑过泛黄的纸页，最后一张报纸被稳稳地夹进木夹中，发出轻微的咔嗒声，这件事就算做完了。",
+      "issues": [
+        "goal_not_recognisable",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-move-顾知微",
+      "text": "顾知微从报刊架后迈步走到二层走廊，脚尖轻点地面，发出细微的沙沙声。",
+      "issues": [
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-move-顾知微",
+      "text": "顾知微从报刊架后迈步走到二层走廊，脚步声在空旷的空间里显得格外清晰。",
+      "issues": [
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-move-顾知微",
+      "text": "顾知微从报刊架后走出，沿着狭窄的走廊向前移动，脚步轻盈地踏过散落的碎屑。",
+      "issues": [
+        "target_missing",
+        "no_movement_verb"
+      ]
+    },
+    {
+      "id": "lib-row-0002-trait-3",
+      "text": "顾知微的手指微微颤抖，指尖轻轻抚过陈旧的报纸边缘，心中却满是犹豫。",
+      "issues": [
+        "trait_not_recognisable",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-trait-3",
+      "text": "顾知微手指轻抚过一摞摞泛黄的报纸边缘，指尖沾染了些许灰尘。",
+      "issues": [
+        "trait_not_recognisable",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0002-trait-3",
+      "text": "顾知微的目光在旧报纸上停留片刻，指尖轻轻拂过泛黄的纸面，心中却在权衡着如何开口。",
+      "issues": [
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0003-task-4",
+      "text": "陆停云拉开抽屉，将借阅单存根整齐地放好，然后轻轻合上抽屉，锁住。",
+      "issues": [
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0003-task-4",
+      "text": "陆停云逐一抽出还书箱里的借阅单存根，仔细与书籍信息比对。每一张单据都轻轻滑过指尖，直到最后一张也归位。锁扣合上，这件事就算做完了。",
+      "issues": [
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0003-task-4",
+      "text": "陆停云抽出最后一张存根，轻轻合上了还书箱的盖板。",
+      "issues": [
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0004-trait-5",
+      "text": "江叙白的手指微微颤抖，轻触那些翘起的边角标签，心中疑云密布。",
+      "issues": [
+        "trait_not_recognisable",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0004-trait-5",
+      "text": "江叙白的手指轻轻抚过泛黄的纸页，指尖滑过的纹理似乎在诉说着过往的故事。他抬头望向书架上的索书号标签，那些翘起的边缘像是岁月的痕迹，每一道缝隙都藏匿着时间的秘密。他的眼神忽然变得迟疑，嘴角轻轻抿了一下，眉头微微皱起，仿佛在内心深处进行着一场无声的辩论。",
+      "issues": [
+        "trait_not_recognisable",
+        "mood_or_interpretation",
+        "cliche",
+        "too_long"
+      ]
+    },
+    {
+      "id": "lib-row-0004-trait-5",
+      "text": "江叙白手指轻轻抚过书脊，心跳不由自主地加快。",
+      "issues": [
+        "trait_not_recognisable",
+        "cliche"
+      ]
+    },
+    {
+      "id": "lib-row-0005-move-苏照",
+      "text": "苏照将手扶在窗框上，轻轻推开了窗户，一股冷风携带着夜的湿气拂过脸庞，他转而走向水槽前，指尖触碰到冰凉的台面。",
+      "issues": [
+        "origin_missing",
+        "cliche",
+        "product_rule:added_event"
+      ]
+    },
+    {
+      "id": "lib-row-0005-move-苏照",
+      "text": "苏照把双手搭在水槽边缘，水珠顺着指尖滑落。窗玻璃上映出他略显疲惫的脸庞，雾气使得视线模糊不清。",
+      "issues": [
+        "origin_missing",
+        "target_missing",
+        "no_movement_verb"
+      ]
+    }
+  ]
+}
