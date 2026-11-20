@@ -1,0 +1,342 @@
+{
+ "protocol": "c4-real-state-n3n4-smoke-v1",
+ "startedAt": "2026-11-08T18:00:59+0800",
+ "modelDir": "<repo>\\.local\\models",
+ "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+ "loadSeconds": 0.692,
+ "decoderStartTokenId": 0,
+ "eosTokenId": 1,
+ "maxNewTokens": 64,
+ "budgetSeconds": 20.0,
+ "units": [
+  {
+   "db": ".local/b3-debug-action-db/world.db",
+   "pointId": "point_7",
+   "version": 1,
+   "previousPointId": "root_3",
+   "stateDigest": "7632719699b400e5790760422c492b2da8a0c2a7180d671a5f86e5664f55e5e2",
+   "worldId": "world_1",
+   "entityDeltas": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "bindingProblems": [],
+   "n1": {
+    "factCount": 2,
+    "diagnostics": []
+   },
+   "n2": {
+    "arm": "perspective-rule",
+    "status": "ok",
+    "mayPolicy": null,
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 1,
+     "mayPolicy": "omit"
+    },
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "time",
+      "class": "may",
+      "ground": "global-time",
+      "selected": false,
+      "reason": "全局事实，可写可省"
+     }
+    ],
+    "selectedCount": 1
+   },
+   "n3": {
+    "planner": "plan_v3",
+    "status": "ok",
+    "groups": 1,
+    "grants": 0
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "selectedFacts": [
+    {
+     "kind": "moved",
+     "entityId": "person_c",
+     "name": "周宁",
+     "from": "走廊",
+     "to": "门厅",
+     "at": "门厅",
+     "heldBy": null,
+     "source": {
+      "entityId": "person_c",
+      "field": "positionSet"
+     },
+     "factId": "f0",
+     "entityGroup": "characters",
+     "nameAmbiguous": false,
+     "fromAmbiguous": false,
+     "toAmbiguous": false,
+     "atAmbiguous": false,
+     "atPath": [
+      "hall"
+     ],
+     "ref": 0
+    }
+   ],
+   "planImplementation": "flat per-fact calls; N3 grouping/coreference are NOT executed by the wording stage (not implemented)",
+   "status": "ran",
+   "rows": [
+    {
+     "planFactId": "f0",
+     "inputSha256": "ee578f30dae84108f7f810755cf7454205b0ca8590213efaea5b65f730f5279f",
+     "stopReason": "eos",
+     "output": "周宁从走廊一路走到门厅脚下,抬头看了看门厅。",
+     "encodeSeconds": 0.265,
+     "decodeSeconds": 2.841
+    }
+   ]
+  },
+  {
+   "db": ".local/world-chain-full-1793200688255/world.db",
+   "pointId": "point_19",
+   "version": 3,
+   "previousPointId": "point_13",
+   "stateDigest": "13446fbc5b7f48f1ffd361b84d576b13a540dec02fc6a579ebc0f7ce63595fd3",
+   "worldId": "world_1",
+   "entityDeltas": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "corridor",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "bindingProblems": [],
+   "n1": {
+    "factCount": 2,
+    "diagnostics": []
+   },
+   "n2": {
+    "arm": "perspective-rule",
+    "status": "ok",
+    "mayPolicy": null,
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 1,
+     "mayPolicy": "omit"
+    },
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "moved",
+      "class": "must",
+      "ground": "self-position",
+      "selected": true,
+      "reason": "视角人物自己的位置变化，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "time",
+      "class": "may",
+      "ground": "global-time",
+      "selected": false,
+      "reason": "全局事实，可写可省"
+     }
+    ],
+    "selectedCount": 1
+   },
+   "n3": {
+    "planner": "plan_v3",
+    "status": "ok",
+    "groups": 1,
+    "grants": 0
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "selectedFacts": [
+    {
+     "kind": "moved",
+     "entityId": "person_c",
+     "name": "周宁",
+     "from": "门厅",
+     "to": "走廊",
+     "at": "走廊",
+     "heldBy": null,
+     "source": {
+      "entityId": "person_c",
+      "field": "positionSet"
+     },
+     "factId": "f0",
+     "entityGroup": "characters",
+     "nameAmbiguous": false,
+     "fromAmbiguous": false,
+     "toAmbiguous": false,
+     "atAmbiguous": false,
+     "atPath": [
+      "corridor"
+     ],
+     "ref": 0
+    }
+   ],
+   "planImplementation": "flat per-fact calls; N3 grouping/coreference are NOT executed by the wording stage (not implemented)",
+   "status": "ran",
+   "rows": [
+    {
+     "planFactId": "f0",
+     "inputSha256": "c13f6dcdb9d73b24cd9383810999fb18ae8892fda86fc90d319d4d186c3f8a3b",
+     "stopReason": "eos",
+     "output": "周宁从门厅出来,走到走廊的盒子里。",
+     "encodeSeconds": 0.2,
+     "decodeSeconds": 1.924
+    }
+   ]
+  },
+  {
+   "db": ".local/b3-debug-action2-db/world.db",
+   "pointId": "point_34",
+   "version": 3,
+   "previousPointId": "point_13",
+   "stateDigest": "e7a75c0b58e0cbbce98c71d893865011092d0be367e65347d691445227d846e4",
+   "worldId": "world_1",
+   "entityDeltas": {
+    "person_c": {
+     "entityId": "person_c",
+     "tasksAchieved": [
+      "task_pressure"
+     ]
+    }
+   },
+   "bindingProblems": [],
+   "n1": {
+    "factCount": 2,
+    "diagnostics": []
+   },
+   "n2": {
+    "arm": "perspective-rule",
+    "status": "ok",
+    "mayPolicy": null,
+    "summary": {
+     "must": 1,
+     "may": 1,
+     "invisible": 0,
+     "selected": 1,
+     "mayPolicy": "omit"
+    },
+    "decisions": [
+     {
+      "factId": "f0",
+      "kind": "task_achieved",
+      "class": "must",
+      "ground": "self-task",
+      "selected": true,
+      "reason": "视角人物自己的任务达成，必述"
+     },
+     {
+      "factId": "f1",
+      "kind": "time",
+      "class": "may",
+      "ground": "global-time",
+      "selected": false,
+      "reason": "全局事实，可写可省"
+     }
+    ],
+    "selectedCount": 1
+   },
+   "n3": {
+    "planner": "plan_v3",
+    "status": "ok",
+    "groups": 1,
+    "grants": 0
+   },
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "selectedFacts": [
+    {
+     "kind": "task_achieved",
+     "entityId": "person_c",
+     "name": "周宁",
+     "goal": "完成压力试验",
+     "at": "门厅",
+     "source": {
+      "entityId": "person_c",
+      "taskId": "task_pressure"
+     },
+     "factId": "f0",
+     "entityGroup": "characters",
+     "nameAmbiguous": false,
+     "atAmbiguous": false,
+     "atPath": [
+      "hall"
+     ],
+     "ref": 0
+    }
+   ],
+   "planImplementation": "flat per-fact calls; N3 grouping/coreference are NOT executed by the wording stage (not implemented)",
+   "status": "ran",
+   "unsupported": [
+    {
+     "factId": "f0",
+     "kind": "task_achieved",
+     "reason": "u240 takes a result sentence; N1 task facts carry goal+status and no resultText, so a faithful fact line cannot be rendered"
+    }
+   ]
+  }
+ ],
+ "finishedAt": "2026-11-08T18:01:06+0800",
+ "wallSeconds": 7.1
+}

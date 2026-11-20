@@ -1,0 +1,88 @@
+{
+ "pack": "cf24-t1-batch-07",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0097",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0104",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0157",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0037",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0114",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0067",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0005",
+   "verdict": "undetermined",
+   "categories": [
+    "sanity_value"
+   ],
+   "flags": [
+    "sanity_value_unverifiable"
+   ],
+   "reason": "理智 12→9，输入只给“发紧”；方向可感，数值保真不可核"
+  },
+  {
+   "code": "c0043",
+   "verdict": "undetermined",
+   "categories": [
+    "sanity_value"
+   ],
+   "flags": [
+    "sanity_value_unverifiable"
+   ],
+   "reason": "理智 12→9，输入只给“发紧”；方向可感，数值保真不可核"
+  },
+  {
+   "code": "c0129",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "追加“抬头看了看塔身”，塔身不在可见清单"
+  },
+  {
+   "code": "c0057",
+   "verdict": "fail",
+   "categories": [
+    "extra_action_state"
+   ],
+   "flags": [],
+   "reason": "同 c0129：追加“抬头看了看塔身”"
+  }
+ ]
+}

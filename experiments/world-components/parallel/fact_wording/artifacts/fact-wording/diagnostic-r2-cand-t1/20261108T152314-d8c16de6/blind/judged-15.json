@@ -1,0 +1,80 @@
+{
+ "pack": "cf24-t1-batch-15",
+ "judgedBy": "assistant",
+ "items": [
+  {
+   "code": "c0041",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0065",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0170",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0049",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0023",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0108",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0056",
+   "verdict": "fail",
+   "categories": [
+    "language"
+   ],
+   "flags": [],
+   "reason": "“系泊绳的泥水”所有格错位"
+  },
+  {
+   "code": "c0103",
+   "verdict": "fail",
+   "categories": [
+    "language"
+   ],
+   "flags": [],
+   "reason": "同 c0056"
+  },
+  {
+   "code": "c0164",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  },
+  {
+   "code": "c0095",
+   "verdict": "pass",
+   "categories": [],
+   "flags": [],
+   "reason": "事实被完整表达，主体绑定正确，无新增、无复述、无语病"
+  }
+ ]
+}

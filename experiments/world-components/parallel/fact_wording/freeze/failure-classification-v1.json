@@ -1,0 +1,244 @@
+{
+  "protocol": "c4-failure-classification-freeze-v1",
+  "context": {
+    "checkpoint": {
+      "name": "Randeng-T5-77M/u240",
+      "weightSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+      "files": {
+        "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+        "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+        "model.safetensors": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+      }
+    },
+    "archivedRun": {
+      "purpose": "cf24 quality baseline; single-fact units, greedy, no training",
+      "device": "cpu",
+      "environment": {
+        "python": "3.12.3",
+        "torch": "2.7.0+cu126",
+        "transformers": "4.57.3",
+        "threads": 4
+      },
+      "decode": {
+        "policy": "greedy, EOS or wall-clock budget, no length cap",
+        "budgetSeconds": 20.0
+      },
+      "variant": {
+        "name": "none",
+        "rule": null,
+        "unitsChanged": 0
+      },
+      "units": {
+        "file": "world-components/n4-cf24-contract.jsonl",
+        "sha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+        "count": 85
+      }
+    },
+    "archivedGenerationCommit": null,
+    "reportedGenerationCommitPrefix": "43d897b",
+    "generationCommitNote": "前缀仅来自已核对哈希的baseline-report标题；原始生成文件未绑定提交，不补造完整SHA。",
+    "classificationTreeCommit": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+    "classifierSha256": "7a8bfbdbc41ccebc93d4606a4c8dc4a51dd60673c3c336b491094ffe20a3f28a",
+    "taxonomySha256": "458daf7d1d487dae6963571a8452aec9732d52be0550bd22bee132fb3ba7ad95",
+    "reviewAuthor": "assistant, reading every output against its single fact",
+    "newHumanReview": false
+  },
+  "sources": {
+    "inventory": {
+      "path": ".local/parallel/c-fact-wording/experiments/world-components/parallel/fact_wording/freeze/evidence-inventory-v1.json",
+      "sha256": "1ac504f2cf468a377feb836f3c8ec16f006f880868fda1a8083559ba0e3873a4",
+      "bytes": 15965
+    },
+    "identity": {
+      "path": ".local/parallel/c-fact-wording/experiments/world-components/parallel/fact_wording/freeze/u240-identity-v1.json",
+      "sha256": "0099509df900f4e12e6310b21c1ee8d81b6a4010262ba09985488705520def07",
+      "bytes": 6038
+    },
+    "taxonomy": {
+      "path": ".local/parallel/c-fact-wording/experiments/world-components/parallel/fact_wording/freeze/failure-taxonomy-v1.json",
+      "sha256": "458daf7d1d487dae6963571a8452aec9732d52be0550bd22bee132fb3ba7ad95",
+      "bytes": 2321
+    },
+    "baseline-report": {
+      "path": ".local/world-components-next-worktree/design/world-engine-reports/components/cf24-baseline-2026-11-05.md",
+      "sha256": "1a9989c5a0c1013e94ebe57fe0994ca96abf0bd9eb2aec4122560ac170c4bf87",
+      "bytes": 8792
+    },
+    "cf24-u240-baseline.raw": {
+      "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-baseline.json",
+      "sha256": "cb153939fc58feb9b534169167d5fe7a5259bd407bd5d560ea7773cfaf496c3e",
+      "bytes": 137379
+    },
+    "cf24-u240-baseline.review": {
+      "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-review.json",
+      "sha256": "79c9908dd8a3726a94775ac7607f63aee4b3231cb74af61386f4890db066d2aa",
+      "bytes": 21891
+    },
+    "cf24-u240-baseline.mechanical": {
+      "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-mechanical.json",
+      "sha256": "7e2bca51eadf43ad70edd3a4e195900f6b630077aadd8b38fd4f49d382bb8e68",
+      "bytes": 19648
+    },
+    "cf24-u240-baseline.overlap": {
+      "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-overlap.json",
+      "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330",
+      "bytes": 20213
+    },
+    "cf24-moved-rule.raw": {
+      "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-moved-rule/cf24-baseline.json",
+      "sha256": "b276cfd62eb4499b00e8ee061703df6795f1821e41176ebda8848d6a51c3d214",
+      "bytes": 138226
+    },
+    "cf24-u240-baseline.index": {
+      "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+      "sha256": "45122c2fef12d9e55880ec28f5bfc91d12701abe0f3b8d734df679acfdbad37b",
+      "bytes": 3314
+    },
+    "contract": {
+      "path": ".local/parallel/c-fact-wording/artifacts/world-components/n4-cf24-contract.jsonl",
+      "sha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+      "bytes": 68504
+    },
+    "input-pin": {
+      "path": ".local/world-components-next-worktree/artifacts/next-inputs/pin.json",
+      "sha256": "9252008cf4de4c56153ba6ad30451d7a7092cbefb788cc9769e22e10f2233a54",
+      "bytes": 186124
+    },
+    "pinned-n4-cf24-contract.jsonl": {
+      "path": ".local/world-components-next-worktree/artifacts/next-inputs/world-components/n4-cf24-contract.jsonl",
+      "sha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+      "bytes": 68504
+    },
+    "pinned-n4-cf24-materials-v2.json": {
+      "path": ".local/world-components-next-worktree/artifacts/next-inputs/world-components/n4-cf24-materials-v2.json",
+      "sha256": "e570a5b9d958f10ebf939916b0ea6e505a1da8a8187a8677b9b58797fa3c54b3",
+      "bytes": 97987
+    }
+  },
+  "summary": {
+    "units": 85,
+    "sources": 24,
+    "kinds": {
+      "appearance_changed": 30,
+      "moved": 10,
+      "outcome": 43,
+      "sanity_changed": 2
+    },
+    "archivedFactSupported": 85,
+    "archivedCoreFactFailures": 0,
+    "archivedDefectiveUnits": 11,
+    "archivedFlagUnitIds": {
+      "added": [
+        "t07:f0",
+        "t07:f1",
+        "t11:f0",
+        "t12:f0",
+        "t15:f0",
+        "t17:f0"
+      ],
+      "repeated": [
+        "t11:f1",
+        "t23:f2"
+      ],
+      "language": [
+        "t21:f0",
+        "t22:f0",
+        "t24:f1"
+      ]
+    },
+    "archivedFullyCleanSources": 15,
+    "signatureIndependentUnits": 74,
+    "signatureIndependentDefectiveUnits": 5,
+    "sourcesWithDefectsOnIndependentUnits": [
+      "t12",
+      "t15",
+      "t21",
+      "t22",
+      "t24"
+    ],
+    "categories": {
+      "subject": {
+        "description": "区分核心事实归属和新增小句中的病态主语；鞋底站住不等于人物互换",
+        "failedUnitIds": [
+          "t07:f0",
+          "t15:f0"
+        ],
+        "undeterminedUnitIds": []
+      },
+      "direction": {
+        "description": "起终点与高低措辞分开；方向=平时写上来仅登记风险；未覆盖关系双方互换",
+        "failedUnitIds": [],
+        "undeterminedUnitIds": [
+          "t14:f0",
+          "t18:f0"
+        ]
+      },
+      "sanity_value": {
+        "description": "当前输入只给发紧，不给12→9；两条同方向样本不能验收数值保真",
+        "failedUnitIds": [],
+        "undeterminedUnitIds": [
+          "t10:f3",
+          "t16:f2"
+        ]
+      },
+      "position": {
+        "description": "物件存在不授权人物在物件旁停留；已有抵达别名口径不改",
+        "failedUnitIds": [
+          "t07:f0",
+          "t15:f0"
+        ],
+        "undeterminedUnitIds": []
+      },
+      "extra_action_state": {
+        "description": "包括事实之外的新动作和新状态，不能只数动作而漏状态",
+        "failedUnitIds": [
+          "t07:f0",
+          "t07:f1",
+          "t11:f0",
+          "t12:f0",
+          "t15:f0",
+          "t17:f0"
+        ],
+        "undeterminedUnitIds": []
+      },
+      "repetition": {
+        "description": "保留归档复述标签，不硬塞进五类事实错误",
+        "failedUnitIds": [
+          "t11:f1",
+          "t23:f2"
+        ],
+        "undeterminedUnitIds": []
+      },
+      "language": {
+        "description": "保留归档语病标签，不把所有格语病直接改判核心归属错误",
+        "failedUnitIds": [
+          "t21:f0",
+          "t22:f0",
+          "t24:f1"
+        ],
+        "undeterminedUnitIds": []
+      }
+    },
+    "movedUnits": 10,
+    "movedRuleChangedOutputs": 3,
+    "missingCommittedWorldProvenanceUnits": 85,
+    "newGenerations": 0,
+    "newRetries": 0
+  },
+  "artifacts": {
+    "results/cf24-catalog-v1.json": "b8c5ccac259c5ea9decfd2a30872b032b66a644dcab2ec4059bac0b9577cd7d6",
+    "results/cf24-moved-rule-pairs-v1.json": "e1618ea120e134332351f58dca883f36f8c3b83e96714e56f6c3b80fcb74aebf",
+    "review/batch-01.json": "48ce9e44340f4c120591ca21dee89f10bfb885f1bbb1e88ca89b6317077dbad1",
+    "review/batch-02.json": "82f971fc0b33bce467d83d9e21c4e1e7f4ce61453fb6e32e22d3d0664180a2f2",
+    "results/failure-report-v1.md": "189fe1f030d6a6aac902c4ce992f7304adb4031b7cc6398ced1600075eafd128"
+  },
+  "validation": [
+    "source hashes and owner index pins",
+    "one-to-one unitId joins",
+    "fixture facts equal raw facts",
+    "review text equals raw text",
+    "original inputs and variant insertion",
+    "archived summary recomputed",
+    "all finding spans quoted from original text"
+  ]
+}
