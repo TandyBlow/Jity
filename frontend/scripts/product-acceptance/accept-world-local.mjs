@@ -1,0 +1,1243 @@
+// Independent acceptance driver for the ONE product page: 06's /world-local.
+//
+// Rules this script follows (PRODUCT-ORGANIZATION.md, tasks/product-09-acceptance.md):
+//   - it only drives visible controls (textarea + 行动 button), never injects
+//     state, never computes settlement, never selects a candidate;
+//   - it records what the page showed and when, not what the engine "should"
+//     have produced;
+//   - it fails loudly when the integrator has not published a runnable product
+//     (no results/product/integration.json, dead URL, missing model);
+//   - one JSON file per acceptance session, written after every turn so a crash
+//     keeps the earlier turns.
+//
+// Usage:
+//   node scripts/product-acceptance/accept-world-local.mjs \
+//     --base http://127.0.0.1:3177 --turns scripts/product-acceptance/turns-10.json \
+//     --out ../../../results/product/evidence/09-acceptance-<stamp>.json \
+//     [--history 0|1] [--resume] [--keep-storage] [--turn-timeout-ms 330000]
+//     [--intent 10-turn|20-turn|smoke] [--fresh]
+//
+// Cross-origin isolation (COOP/COEP) is a product requirement, not a harness
+// convenience: without it the page cannot use multi-threaded wllama. By default
+// the driver requests the page exactly as served and records
+// `crossOriginIsolated` and the resulting behaviour. `--header-shim` repeats the
+// run with the two headers added to the document response only, and the run is
+// labelled `shimmed` so it can never be mistaken for a product pass.
+
+import { createRequire } from 'node:module';
+import { existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { acquireLease } from './lease.mjs';
+
+const require = createRequire(resolve('package.json'));
+const { chromium } = require('@playwright/test');
+const here = dirname(fileURLToPath(import.meta.url));
+
+function flag(name, fallback = null) {
+  const index = process.argv.indexOf(name);
+  return index >= 0 && process.argv[index + 1] ? process.argv[index + 1] : fallback;
+}
+const has = (name) => process.argv.includes(name);
+
+const base = (flag('--base', 'http://127.0.0.1:3177')).replace(/\/$/, '');
+const out = resolve(flag('--out', resolve(here, '../../../results/product/evidence/09-acceptance.json')));
+const turnsFile = flag('--turns', resolve(here, 'turns-10.json'));
+const turnTimeoutMs = Number(flag('--turn-timeout-ms', '330000'));
+const readyTimeoutMs = Number(flag('--ready-timeout-ms', '900000'));
+const intent = flag('--intent', '10-turn');
+const preflightOnly = has('--preflight');
+const qualityHandoff = flag('--quality-handoff', null);
+const selfTest = has('--harness-selftest');
+const keepStorage = has('--keep-storage') || has('--resume');
+const fresh = has('--fresh') || !has('--resume');
+const settleDelayMs = Number(flag('--settle-delay-ms', '120'));
+
+if (!existsSync(turnsFile)) {
+  console.error(`[fail] turns file missing: ${turnsFile}`);
+  process.exit(2);
+}
+const turns = preflightOnly ? [] : JSON.parse(readFileSync(turnsFile, 'utf8'));
+if (!preflightOnly && (!Array.isArray(turns) || turns.length === 0)) {
+  console.error(`[fail] turns file has no turns: ${turnsFile}`);
+  process.exit(2);
+}
+
+// The integrator's contract. Without it there is no product to accept.
+const integrationPath = resolve(here, '../../../../../results/product/integration.json');
+let integration = null;
+if (existsSync(integrationPath)) {
+  integration = JSON.parse(readFileSync(integrationPath, 'utf8'));
+} else if (!selfTest) {
+  console.error(`[fail] ${integrationPath} is missing: 06 has not published the product tree/URL/model yet.`);
+  process.exit(2);
+}
+const integrationUrl = integration?.product?.url ?? integration?.url ?? null;
+if (integrationUrl && !base.startsWith(integrationUrl.replace(/\/$/, '')) && !base.includes(new URL(integrationUrl).port)) {
+  console.error(`[warn] --base ${base} does not match integration.json ${integrationUrl}`);
+}
+
+const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+const runId = `${new Date().toISOString().replace(/[:.]/g, '').slice(0, 15)}-${Math.random().toString(16).slice(2, 6)}`;
+// Two runs must never share a path: the 15:57 base report was lost that way.
+const expectedPageSha = (process.argv.find((arg) => arg.startsWith('--expect-page-sha=')) ?? '').split('=')[1] || null;
+const evidenceFile = existsSync(out) && !process.argv.includes('--resume')
+  ? out.replace(/\.json$/, `-${runId}.json`)
+  : out;
+const evidence = {
+  runId,
+  outFile: evidenceFile,
+  kind: '09-product-acceptance',
+  intent,
+  harness: { selfTest },
+  status: 'IN_PROGRESS',
+  startedAt: new Date().toISOString(),
+  base,
+  turnsFile,
+  integration: integration
+    ? {
+      head: integration?.product?.head ?? integration?.head ?? null,
+      branch: integration?.product?.branch ?? integration?.branch ?? null,
+      url: integrationUrl,
+      model: integration?.model ?? integration?.assets?.models ?? null,
+      startup: integration?.startup ?? integration?.product?.startup ?? null,
+      sha256: null,
+    }
+    : null,
+  harness: {
+    driver: 'scripts/product-acceptance/accept-world-local.mjs',
+    selfTest,
+    driverSha256: sha256(readFileSync(new URL(import.meta.url), 'utf8')),
+    edgeVersion: null,
+    launchArgs: null,
+    coopCoepShim: has('--header-shim'),
+    saveServiceBlocked: has('--block-api'),
+    candidateInjection: false,
+    storageReset: fresh,
+    note: '--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence',
+  },
+  productState: { gitHead: null, pageSha256: null, turnEvidenceAvailable: null },
+  environment: { userAgent: null, crossOriginIsolated: null, adapter: null, ggmlConsole: [] },
+  modelRequests: [],
+  readyMs: null,
+  readyText: null,
+  turns: [],
+  failures: [],
+  finishes: [],
+};
+
+function sha256(text) {
+  const { createHash } = require('node:crypto');
+  return createHash('sha256').update(text, 'utf8').digest('hex');
+}
+/** Hash raw bytes: a served chunk must be hashed exactly as it arrived. */
+function sha256Buffer(buffer) {
+  const { createHash } = require('node:crypto');
+  return createHash('sha256').update(buffer).digest('hex');
+}
+
+function save() {
+  evidence.updatedAt = new Date().toISOString();
+  mkdirSync(dirname(out), { recursive: true });
+  const tmp = `${evidenceFile}.tmp-${process.pid}`;
+  writeFileSync(tmp, JSON.stringify(evidence, null, 2));
+  renameSync(tmp, evidenceFile);
+}
+
+function noteFailure(scope, message, detail = null) {
+  evidence.failures.push({ at: new Date().toISOString(), scope, message, detail });
+  save();
+}
+
+// Reserve the GPU before any model can load; a status check is not a lock.
+const lease = acquireLease({ purpose: `09 acceptance ${intent} ${base}` });
+evidence.lease = lease.record;
+
+const browser = await chromium.launch({
+  headless: !has('--headed'),
+  channel: 'msedge',
+  args: [
+    '--enable-unsafe-webgpu',
+    '--force_high_performance_gpu',
+    '--ignore-gpu-blocklist',
+  ],
+});
+evidence.harness.launchArgs = ['--enable-unsafe-webgpu', '--force_high_performance_gpu', '--ignore-gpu-blocklist'];
+
+try {
+  evidence.harness.edgeVersion = browser.version();
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+  evidence.environment.userAgent = await page.evaluate(() => navigator.userAgent).catch(() => null);
+
+  page.on('console', (message) => {
+    const text = message.text();
+    if (/ggml_webgpu|adapter_info|nvidia|lovelace|wllama|narration|world-local/i.test(text)) {
+      evidence.environment.ggmlConsole.push(`[${message.type()}] ${text}`.slice(0, 600));
+    }
+  });
+  page.on('pageerror', (error) => noteFailure('page', `pageerror: ${error.message}`));
+  page.on('response', (response) => {
+    const url = response.url();
+    if (/\/models\/.*\.gguf/.test(url) || /api\/.*(progress|save|session)/.test(url)) {
+      evidence.modelRequests.push({
+        url,
+        status: response.status(),
+        length: response.headers()['content-length'] ?? null,
+        type: response.request().resourceType(),
+        at: new Date().toISOString(),
+      });
+    }
+  });
+
+  if (has('--block-api')) {
+    // "Server only stores progress": with that service down the game must keep
+    // playing locally. Every API call is refused and the run is labelled.
+    await page.route('**/api/**', (route) => route.abort('failed'));
+  }
+
+  if (has('--header-shim')) {
+    await page.route('**/world-local*', async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        headers: {
+          ...response.headers(),
+          'cross-origin-opener-policy': 'same-origin',
+          'cross-origin-embedder-policy': 'require-corp',
+        },
+      });
+    });
+  }
+
+
+    const retryEvaluate = async (fn, attempts = 4) => {
+      let lastError = null;
+      for (let i = 0; i < attempts; i += 1) {
+        try {
+          return await fn();
+        } catch (error) {
+          lastError = error;
+          if (!/Execution context was destroyed|navigation|Target closed|detached/i.test(String(error))) throw error;
+          await page.waitForLoadState('domcontentloaded').catch(() => undefined);
+          await page.waitForTimeout(600);
+        }
+      }
+      throw lastError;
+    };
+  // A fresh player must not inherit anything from an earlier run. The product
+  // persists in IndexedDB (writer lease + revision), so clearing localStorage
+  // alone leaves a stale lease/revision and the first save conflicts. Clear all
+  // origin storage on a same-origin blank document before the product boots.
+  if (!keepStorage) {
+    await page.goto(`${base}/`, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => undefined);
+    // The home document may hand off (client navigation or a reload) while the
+    // storage wipe is running; retry on a destroyed context instead of dying.
+    const wipe = async () => page.evaluate(async () => {
+      const result = { localStorageKeys: 0, databases: [], caches: [], errors: [] };
+      try { result.localStorageKeys = localStorage.length; localStorage.clear(); } catch (error) { result.errors.push(`localStorage:${String(error)}`); }
+      try {
+        const databases = (await indexedDB.databases?.()) ?? [];
+        for (const db of databases) {
+          await new Promise((done) => {
+            const request = indexedDB.deleteDatabase(db.name);
+            request.onsuccess = request.onerror = request.onblocked = () => done(null);
+          });
+        }
+        result.databases = databases.map((db) => db.name);
+      } catch (error) { result.errors.push(`indexedDB:${String(error)}`); }
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+        result.caches = keys;
+      } catch (error) { result.errors.push(`cache:${String(error)}`); }
+      try { await navigator.storage?.getDirectory?.().then((root) => root?.remove?.()).catch(() => undefined); } catch { /* OPFS optional */ }
+      return result;
+    });
+    evidence.freshReset = await retryEvaluate(wipe);
+    evidence.freshReset.after = await retryEvaluate(() => page.evaluate(async () => ({
+      localStorageKeys: localStorage.length,
+      databases: ((await indexedDB.databases?.()) ?? []).map((db) => db.name),
+    })));
+    if (evidence.freshReset.after.databases.length > 0) {
+      noteFailure('fresh-reset', 'IndexedDB still has databases after delete', evidence.freshReset.after.databases);
+    }
+  }
+
+  // WebGPU identity is read from the page itself, before any model load.
+  const query = flag('--query', '');
+  await page.goto(`${base}/world-local${query ? `?${query.replace(/^\?/, '')}` : ''}`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  evidence.environment.crossOriginIsolated = await retryEvaluate(() => page.evaluate(() => globalThis.crossOriginIsolated === true));
+  evidence.environment.adapter = await page.evaluate(async () => {
+    try {
+      const adapter = await navigator.gpu?.requestAdapter?.({ powerPreference: 'high-performance' });
+      if (!adapter) return { available: false };
+      const info = adapter.info ?? {};
+      return {
+        available: true,
+        vendor: info.vendor ?? null, architecture: info.architecture ?? null,
+        device: info.device ?? null, description: info.description ?? null,
+        isFallback: adapter.isFallbackAdapter ?? null,
+        features: [...(adapter.features ?? [])].slice(0, 20),
+      };
+    } catch (error) {
+      return { available: false, error: String(error) };
+    }
+  }).catch((error) => ({ available: false, error: String(error) }));
+  save();
+
+  evidence.productState = await page.evaluate(() => ({
+    gitHead: null,
+    pageSha256: null,
+    turnEvidenceAvailable: Array.isArray(globalThis.__worldTurns),
+  })).catch(() => ({ turnEvidenceAvailable: false }));
+  try {
+    const rootDir = resolve(here, '../../../../..');
+    const declared = integration?.product?.worktree ?? 'worktrees/06-recovery';
+    const productWorktree = existsSync(resolve(declared, 'frontend'))
+      ? resolve(declared)
+      : resolve(rootDir, declared);
+    evidence.productState.worktree = productWorktree;
+    evidence.productState.gitHead = execSync(`git -C "${productWorktree}" rev-parse HEAD`, { encoding: 'utf8' }).trim();
+    // 06 serves a specific built directory (product.serve in integration.json),
+    // not necessarily the worktree head and not a fixed dist name; read the
+    // declared distDir and verify the served chunk's hash.
+    const serve = integration?.product?.serve ?? null;
+    if (serve) {
+      evidence.productState.serve = {
+        mode: serve.mode ?? null, buildId: serve.buildId ?? null, pageChunk: serve.pageChunk ?? null,
+        chunkSha256: serve.chunkSha256 ?? null, pid: serve.pid ?? null, frozenAt: serve.frozenAt ?? null,
+      };
+      if (serve.pageChunk) {
+        const chunkResponse = await page.request.get(`${base}/_next/static/chunks/app/world-local/${serve.pageChunk}`, { timeout: 30000 }).catch(() => null);
+        const body = chunkResponse ? await chunkResponse.body().catch(() => null) : null;
+        evidence.productState.servedChunkHttp = chunkResponse ? chunkResponse.status() : null;
+        evidence.productState.servedChunkSha256 = body ? sha256Buffer(body) : null;
+        evidence.productState.servedChunkMatches = Boolean(serve.chunkSha256 && evidence.productState.servedChunkSha256 === serve.chunkSha256);
+        if (body && serve.chunkSha256 && !evidence.productState.servedChunkMatches && !has('--allow-page-sha-mismatch')) {
+          noteFailure('product', `served chunk ${serve.pageChunk} hash ${evidence.productState.servedChunkSha256.slice(0, 12)} does not match the frozen ${serve.chunkSha256.slice(0, 12)}`);
+          evidence.status = 'FAILED';
+          save();
+          throw new Error(`chunk_sha_mismatch:${evidence.productState.servedChunkSha256.slice(0, 12)}`);
+        }
+      }
+    }
+    // The served bundle is whatever the declared distDir was built from, not
+    // whatever the worktree head says. Record the build id file's mtime and the
+    // head commit's time so a run cannot silently claim uncompiled code.
+    try {
+      const distDir = serve?.mode?.match(/\.next[-\w]*/u)?.[0] ?? '.next-prod';
+      const buildIdPath = resolve(productWorktree, 'frontend', distDir, 'BUILD_ID');
+      if (existsSync(buildIdPath)) {
+        const stat = statSync(buildIdPath);
+        evidence.productState.buildId = readFileSync(buildIdPath, 'utf8').trim();
+        evidence.productState.buildIdMtime = stat.mtime.toISOString();
+        const headTime = Number(execSync(`git -C "${productWorktree}" log -1 --format=%ct`, { encoding: 'utf8' }).trim()) * 1000;
+        evidence.productState.headCommittedAt = new Date(headTime).toISOString();
+        const lagSeconds = Math.round((headTime - stat.mtime.getTime()) / 1000);
+        evidence.productState.headNewerThanBuildSeconds = lagSeconds;
+        if (lagSeconds > 60) {
+          evidence.warnings = [...(evidence.warnings ?? []), `head ${evidence.productState.gitHead.slice(0, 8)} is ${lagSeconds}s newer than the served build (${evidence.productState.buildId}); the bundle may not contain the head's code`];
+        }
+      }
+    } catch (error) {
+      evidence.productState.buildIdentityError = String(error).slice(0, 200);
+    }
+    // Hash the source with LF endings: 06 publishes the git blob sha (LF), while a
+    // Windows checkout is CRLF on disk. Hashing the checkout bytes made the same
+    // build look like a different one; keep both so the raw value is auditable.
+    const pageSource = readFileSync(resolve(productWorktree, 'frontend/src/app/world-local/page.tsx'), 'utf8');
+    evidence.productState.pageSha256 = sha256(pageSource.replaceAll(String.fromCharCode(13), ''));
+    evidence.productState.pageSha256Raw = sha256(pageSource);
+    evidence.productState.expectedPageSha256 = expectedPageSha;
+    // Match either the LF-normalized sha (06 publishes this) or the on-disk bytes,
+    // so a checkout's line endings cannot abort a valid build.
+    const expectedPrefix = expectedPageSha
+      ? (expectedPageSha.endsWith('...') ? expectedPageSha.slice(0, -3) : expectedPageSha)
+      : null;
+    const pageShaMatches = Boolean(expectedPrefix)
+      && (evidence.productState.pageSha256.startsWith(expectedPrefix)
+        || evidence.productState.pageSha256Raw.startsWith(expectedPrefix));
+    if (expectedPageSha && !pageShaMatches
+        && !process.argv.includes('--allow-page-sha-mismatch')) {
+      noteFailure('product', `page source ${evidence.productState.pageSha256.slice(0, 12)} does not match the frozen ${expectedPageSha}`);
+      evidence.status = 'FAILED';
+      save();
+      throw new Error(`page_sha_mismatch:${evidence.productState.pageSha256.slice(0, 12)}!=${expectedPageSha}`);
+    }
+  } catch (error) {
+    evidence.productState.error = String(error).slice(0, 200);
+    // A frozen-build mismatch is a hard abort: never run turns against a
+    // different page source just because the check sits inside try/catch.
+    if (/^(page_sha_mismatch|chunk_sha_mismatch)/u.test(String(error))) {
+      evidence.status = 'FAILED';
+      evidence.finishedAt = new Date().toISOString();
+      save();
+      throw error;
+    }
+  }
+  const pageResponse = await page.request.get(`${base}/world-local`, { timeout: 30000 }).catch(() => null);
+  evidence.pageHttp = pageResponse ? pageResponse.status() : null;
+  if (!pageResponse || pageResponse.status() !== 200) {
+    noteFailure('page', `GET /world-local returned ${evidence.pageHttp ?? 'no response'}`);
+    evidence.status = 'FAILED';
+    evidence.finishedAt = new Date().toISOString();
+    save();
+    console.log(`[fail] page not served: ${evidence.pageHttp}`);
+    process.exitCode = 1;
+    throw new Error(`page_unavailable:${evidence.pageHttp ?? 'none'}`);
+  }
+  const textareaVisible = await page.waitForSelector('textarea', { timeout: 60000 }).then(() => true).catch(() => false);
+  evidence.textareaVisible = textareaVisible;
+  // The product page sets its debug globals only inside submit/restore, so
+  // they cannot identify the tree at load. Ask the served build instead: the
+  // current settlement contract must be in one of its chunks.
+  const identity = await (async () => {
+    const html = await page.request.get(`${base}/world-local`, { timeout: 30000 }).then((r) => r.text()).catch(() => '');
+    const chunks = [...html.matchAll(/\/_next\/static\/chunks\/[^"']+\.js/g)].map((m) => m[0]);
+    const hits = [];
+    for (const chunk of [...new Set(chunks)]) {
+      const body = await page.request.get(`${base}${chunk}`, { timeout: 30000 }).then((r) => r.text()).catch(() => '');
+      // Identity markers are the product globals that survive internal
+      // refactors; a literal settlement string can legitimately disappear (the
+      // affected projection removed per_character_decision).
+      const markers = ['__worldRestore', '__worldSnapshot', '__worldArm', '__worldLive', '__worldGenerations',
+        'affected_projection', 'per_character_decision'].filter((marker) => body.includes(marker));
+      if (markers.length) hits.push({ chunk, markers });
+    }
+    return { chunks: new Set(chunks).size, markerChunks: hits };
+  })();
+  const globalsWaitStarted = Date.now();
+  const globalsReady = await page.waitForFunction(() => Array.isArray(globalThis.__worldTurns), { timeout: 15000 })
+    .then(() => true).catch(() => false);
+  evidence.productIdentity = { ...identity, globalsReady, globalsWaitMs: Date.now() - globalsWaitStarted };
+  const seenMarkers = new Set(identity.markerChunks.flatMap((hit) => hit.markers));
+  const buildIsCurrent = (seenMarkers.has('__worldRestore') || seenMarkers.has('__worldSnapshot'))
+    && (seenMarkers.has('affected_projection') || seenMarkers.has('__worldArm'));
+  if (!buildIsCurrent && !process.argv.includes('--allow-unknown-page')) {
+    noteFailure('page', `the served build is not current: markers ${[...seenMarkers].join(',') || 'none'}; need the product globals __worldRestore plus __worldSnapshot/__worldArm`);
+    evidence.status = 'FAILED';
+    save();
+    throw new Error('wrong_product_page');
+  }
+
+  const readyStarted = Date.now();
+  try {
+    await page.waitForFunction(
+      () => /本地世界已就绪|已恢复本地存档|加载失败|Error/.test(document.body.innerText),
+      null,
+      { timeout: readyTimeoutMs },
+    );
+  } catch (error) {
+    noteFailure('ready', `page did not become ready in ${readyTimeoutMs} ms`, String(error).slice(0, 400));
+  }
+  evidence.readyMs = Date.now() - readyStarted;
+  const heap = async () => page.evaluate(() => {
+    const memory = performance.memory;
+    return memory ? {
+      usedJSHeapSize: memory.usedJSHeapSize, totalJSHeapSize: memory.totalJSHeapSize,
+      jsHeapSizeLimit: memory.jsHeapSizeLimit,
+      label: 'JS heap, not GPU VRAM',
+    } : null;
+  }).catch(() => null);
+  evidence.jsHeapAtReady = await heap();
+  evidence.arm = await page.evaluate(() => globalThis.__worldArm ?? null).catch(() => null);
+  evidence.readyText = (await page.evaluate(() => document.body.innerText)).slice(0, 600);
+  const readyText = evidence.readyText ?? '';
+  evidence.restored = /已恢复本地存档/.test(readyText);
+  if (/加载失败|Error/.test(readyText)) noteFailure('ready', 'page reported a load error', readyText.slice(0, 400));
+  const modelGets = evidence.modelRequests.filter((request) => /\/models\/.*\.gguf/.test(request.url));
+  evidence.models = {
+    requests: modelGets.length,
+    ok: modelGets.filter((request) => request.status === 200).length,
+    failed: modelGets.filter((request) => request.status !== 200).map((request) => ({ url: request.url, status: request.status })),
+  };
+  if (modelGets.length === 0) noteFailure('models', 'the page requested no model file: it cannot have loaded a local model');
+  const failedModels = evidence.models.failed;
+  if (failedModels.length) noteFailure('models', `model request(s) failed: ${failedModels.map((entry) => `${entry.status} ${entry.url}`).join(', ')}`);
+  save();
+
+  const entryCount = () => page.evaluate(() => document.querySelectorAll('article').length);
+  const snapshot = async () => page.evaluate(() => {
+    const read = (label) => {
+      const nodes = [...document.querySelectorAll('aside div')];
+      const hit = nodes.find((node) => node.textContent?.trim().startsWith(label));
+      return hit ? hit.textContent.trim().slice(label.length).replace(/^：/, '').trim() : null;
+    };
+    const panel = [...document.querySelectorAll('aside')].map((node) => node.innerText).join('\n');
+    return {
+      sanity: read('精神值'),
+      place: read('地点'),
+      nearby: panel.split('在附近')[1]?.split('当前任务')[0]?.trim() ?? null,
+      tasks: [...document.querySelectorAll('aside li')].map((node) => ({
+        goal: node.textContent?.trim() ?? '',
+        done: (node.style?.textDecoration ?? '').includes('line-through'),
+      })),
+      historyCount: /已行动：(\d+)/.exec(panel)?.[1] ?? null,
+      storageChars: (localStorage.getItem('jity.world.local.snapshot.v1') ?? '').length,
+      header: document.querySelector('main section div div span')?.textContent ?? null,
+      // Per-point scheduling evidence: whatever the transport exposes per point,
+      // kept as scalars only. When 05/06 add commit/narration timestamps they
+      // appear here without the driver needing to know their names.
+      transportPoints: (() => {
+        const state = globalThis.__worldSnapshot;
+        const snapshot = typeof state === 'function' ? state() : state;
+        const points = snapshot?.transport?.points ?? snapshot?.session?.transport?.points ?? null;
+        if (!points || typeof points !== 'object') return null;
+        const rows = {};
+        for (const [id, point] of Object.entries(points)) {
+          if (!point || typeof point !== 'object') continue;
+          const scalars = {};
+          for (const [key, value] of Object.entries(point)) {
+            if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean' || value === null) scalars[key] = value;
+          }
+          rows[id] = scalars;
+        }
+        return rows;
+      })(),
+    };
+  });
+
+  if (preflightOnly) {
+    evidence.status = 'PREFLIGHT';
+    evidence.finishedAt = new Date().toISOString();
+    save();
+    console.log(`[preflight] ready=${evidence.readyMs}ms isolated=${evidence.environment.crossOriginIsolated} adapter=${JSON.stringify(evidence.environment.adapter)} models=${evidence.modelRequests.filter((r) => /gguf/.test(r.url)).length} -> ${out}`);
+  } else
+  for (let index = 0; index < turns.length; index += 1) {
+    const turn = typeof turns[index] === 'string' ? { id: `t${index + 1}`, input: turns[index] } : turns[index];
+    const beforeCount = await entryCount();
+    const beforeState = await snapshot();
+    const beforeBody = await page.evaluate(() => document.body.innerText);
+    const timer = { submittedAt: new Date().toISOString(), submittedAtMs: Date.now() };
+    const entry = {
+      turn: index + 1,
+      id: turn.id ?? `t${index + 1}`,
+      input: turn.input,
+      purpose: turn.purpose ?? null,
+      before: beforeState,
+      timings: { waitMs: null, firstStageMs: null, firstTokenMs: null, firstReadableMs: null, firstVisibleDraftMs: null, doneMs: null },
+      stages: [],
+      text: null,
+      note: null,
+      after: null,
+      console: [],
+      problems: [],
+    };
+    const consoleStart = evidence.environment.ggmlConsole.length;
+
+    try {
+      const candidateBefore = await page.evaluate(() => (Array.isArray(globalThis.__worldCandidate) ? globalThis.__worldCandidate.length : 0))
+        .catch(() => 0);
+      await page.fill('textarea', turn.input);
+      const submitAt = Date.now();
+      // If the submit control is not actionable, record what the page shows
+      // (label, disabled, status line) so a page-busy state is distinguishable
+      // from a driver selector break.
+      try {
+        await page.click('button:has-text("行动")', { timeout: 30000 });
+      } catch (error) {
+        entry.submitBlocked = await page.evaluate(() => {
+          const buttons = [...document.querySelectorAll('button')].map((node) => ({
+            text: (node.textContent ?? '').trim().slice(0, 40), disabled: Boolean(node.disabled), visible: node.offsetParent !== null,
+          }));
+          const statusLine = document.body.innerText.split(String.fromCharCode(10)).find((line) => /结算中|正在写正文|本轮/.test(line)) ?? null;
+          return { buttons, statusLine };
+        }).catch(() => null);
+        throw error;
+      }
+
+      // A mid-settlement refresh must restore the last complete settlement and
+      // must not consume the same input twice. This is a product behaviour the
+      // driver can only provoke, not fake: it reloads the real page.
+      if (turn.cancelAfterMs) {
+        await page.waitForTimeout(turn.cancelAfterMs);
+        const clicked = await page.evaluate(() => {
+          const button = [...document.querySelectorAll('button')].find((node) => /取消本轮|取消|停止/.test(node.textContent ?? ''));
+          if (!button) return false;
+          button.click();
+          return true;
+        });
+        // Wait for the page to leave the busy state.
+        const cancelDeadline = Date.now() + 60000;
+        while (Date.now() < cancelDeadline) {
+          const busy = await page.evaluate(() => /结算中|正在写正文|正在取消/.test(document.body.innerText));
+          if (!busy) break;
+          await page.waitForTimeout(200);
+        }
+        entry.cancelled = {
+          clicked,
+          ms: Date.now() - submitAt,
+          historyAfter: (await snapshot()).historyCount,
+          historyBefore: beforeState.historyCount,
+          text: (await page.evaluate(() => document.body.innerText)).slice(-800),
+          product: await page.evaluate(() => {
+            const turns = globalThis.__worldTurns;
+            const record = Array.isArray(turns) ? turns[turns.length - 1] : null;
+            return record ? { index: record.index, cancelled: record.cancelled ?? false, acceptedMs: record.acceptedMs ?? null, source: record.source ?? null } : null;
+          }).catch(() => null),
+        };
+        entry.timings.doneMs = Date.now() - submitAt;
+        if (!entry.cancelled.clicked) entry.problems.push('cancel_control_missing');
+        if (entry.cancelled.historyAfter !== entry.cancelled.historyBefore) entry.problems.push('cancel_consumed_input');
+        if (entry.cancelled.product && entry.cancelled.product.acceptedMs != null) entry.problems.push('cancel_committed_model_text');
+        evidence.turns.push(entry);
+        save();
+        console.log(`[turn ${entry.turn}] ${entry.id} cancelled clicked=${entry.cancelled.clicked} history=${entry.cancelled.historyBefore}->${entry.cancelled.historyAfter}`);
+        continue;
+      }
+
+      if (turn.refreshMidSettleMs) {
+        await page.waitForTimeout(turn.refreshMidSettleMs);
+        const beforeState = await snapshot();
+        const reloadAt = Date.now();
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await page.waitForFunction(
+          () => /本地世界已就绪|已恢复本地存档|加载失败|Error/.test(document.body.innerText),
+          null,
+          { timeout: readyTimeoutMs },
+        );
+        const afterText = await page.evaluate(() => document.body.innerText);
+        entry.refreshMidSettle = {
+          waitedMs: turn.refreshMidSettleMs,
+          reloadMs: Date.now() - reloadAt,
+          restored: /已恢复本地存档/.test(afterText),
+          beforeState,
+          afterState: await snapshot(),
+          entryCount: await entryCount(),
+          text: afterText.slice(-1200),
+        };
+        entry.timings.doneMs = Date.now() - submitAt;
+        entry.problems.push('mid_settle_refresh');
+        if (!entry.refreshMidSettle.restored) entry.problems.push('mid_settle_refresh_not_restored');
+        const beforeHistory = Number(entry.refreshMidSettle.beforeState?.historyCount ?? NaN);
+        const afterHistory = Number(entry.refreshMidSettle.afterState?.historyCount ?? NaN);
+        entry.refreshMidSettle.historyDelta = Number.isFinite(beforeHistory) && Number.isFinite(afterHistory)
+          ? afterHistory - beforeHistory : null;
+        if (entry.refreshMidSettle.historyDelta !== null && entry.refreshMidSettle.historyDelta < 0) {
+          entry.problems.push('history_went_backwards_after_refresh');
+        }
+        evidence.turns.push(entry);
+        save();
+        console.log(`[turn ${entry.turn}] ${entry.id} mid-settle refresh restored=${entry.refreshMidSettle.restored}`);
+        continue;
+      }
+
+      // Sample the header stage line + narration text until this turn's entry settles.
+      let lastStage = '';
+      let firstReadableAt = null;
+      const deadline = submitAt + turnTimeoutMs;
+      while (Date.now() < deadline) {
+        const sample = await page.evaluate((count) => {
+          const articles = [...document.querySelectorAll('article')];
+          const last = articles.at(-1);
+          const stage = [...document.querySelectorAll('span')]
+            .map((node) => (node.textContent ?? '').trim())
+            .find((label) => /^(结算中|正在写正文|本轮完成|本轮已交还|本轮已到|本轮停止)/.test(label)) ?? '';
+          // Read prose by stripping the article's UI labels instead of matching an
+          // inline style; 06 moved the prose container into a CSS module.
+          const clone = last ? last.cloneNode(true) : null;
+          let text = '';
+          if (clone) {
+            const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+            const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
+            for (const node of [...clone.querySelectorAll('div,span,p')]) {
+              const value = (node.textContent ?? '').trim();
+              if (!value) continue;
+              if (labels.test(value) || badge.test(value)) node.remove();
+            }
+            text = (clone.textContent ?? '').trim();
+          }
+          const bodyText = document.body.innerText;
+          const record = Array.isArray(globalThis.__worldTurns) ? globalThis.__worldTurns.at(-1) : null;
+          return {
+            record: record ? {
+              index: record.index, done: record.done ?? null, failed: record.failed ?? null,
+              stopped: record.stopped ?? record.stop ?? null, finishedAtMs: record.finishedAtMs ?? null,
+              source: record.source ?? null,
+            } : null,
+            count: articles.length,
+            stage,
+            text,
+            busy: /结算中|正在写正文/.test(bodyText),
+            done: /本轮(完成|已交还|已到|停止)/.test(bodyText),
+            doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮(完成|已交还|已到|停止)/.test(line)) ?? ''),
+            failed: /Error|加载失败/.test(bodyText),
+            cancelVisible: [...document.querySelectorAll('button')].some((node) => /取消|停止|中断/.test(node.textContent ?? '')),
+            failureNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('这一回合的结算没有完成')) ?? ''),
+            turnNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('本回合没有完成：')) ?? ''),
+          };
+        }, beforeCount);
+        if (sample.count <= beforeCount && !sample.failed) {
+          await page.waitForTimeout(settleDelayMs);
+          continue;
+        }
+        if (sample.cancelVisible) entry.cancelSeen = true;
+        if (sample.stage && sample.stage !== lastStage) {
+          lastStage = sample.stage;
+          entry.stages.push({ atMs: Date.now() - submitAt, label: sample.stage });
+          if (entry.timings.firstStageMs === null) entry.timings.firstStageMs = Date.now() - submitAt;
+        }
+        // "Readable" means prose a player could read, not the first UI stage
+        // label. A pre-wrap node can exist while the point is still settling
+        // (stage notes / error text), so require a sentence-sized, non-status
+        // sample and keep the raw early sample for audit.
+        const earlyText = sample.text.trim();
+        if (earlyText && entry.timings.firstTextMs === null) {
+          entry.timings.firstTextMs = Date.now() - submitAt;
+          entry.firstTextSample = earlyText.slice(0, 120);
+        }
+        const looksLikeProse = earlyText.length >= 8
+          && !/^(结算中|正在写正文|判断|牵连|本组|未能|无法|Error)/.test(earlyText)
+          && !/结算|判断牵连|模型|回退/.test(earlyText.slice(0, 24));
+        if (looksLikeProse && entry.timings.firstVisibleDraftMs === null) {
+          // Visible draft text is not a qualified first segment; keep the clock
+          // under its own name and never label it readable.
+          entry.timings.firstVisibleDraftMs = Date.now() - submitAt;
+          entry.firstReadableSample = earlyText.slice(0, 120);
+        }
+        if (sample.record && (sample.record.done || sample.record.failed || sample.record.stopped)) {
+          entry.terminal = sample.record;
+          break;
+        }
+        if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
+        // A submit can be refused synchronously (e.g. progress_conflict): the
+        // page shows 本轮停止 and no narration will ever stream. Waiting out the
+        // full turn budget would misreport a 300 s timeout.
+        if (sample.done && /本轮停止/.test(sample.doneText ?? '')) break;
+        // A recoverable settlement failure is a stopped turn too: the page keeps
+        // the history and asks for a retry, so waiting 330 s would misreport it
+        // as a timeout and as empty prose.
+        if (sample.failureNote || sample.turnNote) {
+          entry.failureNote = sample.failureNote || sample.turnNote;
+          entry.stoppedEarly = 'settlement_not_completed';
+          break;
+        }
+        if (sample.failed) {
+          entry.problems.push('page_error');
+          break;
+        }
+        await page.waitForTimeout(settleDelayMs);
+      }
+      entry.timings.waitMs = Date.now() - submitAt;
+      entry.doneText = await page.evaluate(() => (document.body.innerText.split(String.fromCharCode(10)).find((line) => /本轮完成|本轮已交还|本轮停止/.test(line)) ?? '')).catch(() => '');
+      if (/本轮停止/.test(entry.doneText)) {
+        entry.refused = { reason: entry.doneText.replace(/^本轮停止[:：]?/, '').trim(), ms: entry.timings.waitMs };
+        entry.problems.push(`submit_refused:${entry.refused.reason || 'unknown'}`);
+      }
+      if (entry.timings.waitMs >= turnTimeoutMs) entry.problems.push('turn_timeout');
+
+      const afterInfo = await page.evaluate((count) => {
+        const articles = [...document.querySelectorAll('article')];
+        const last = articles.at(-1);
+        // Production CSS-module class names are hashed, so the prose container
+        // cannot be found by name and the article also holds UI labels. Clone the
+        // article, drop the label nodes and the player's own line, keep the rest
+        // verbatim.
+        const clone = last ? last.cloneNode(true) : null;
+        let text = '';
+        if (clone) {
+          const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+          const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
+          for (const node of [...clone.querySelectorAll('div,span,p')]) {
+            const value = (node.textContent ?? '').trim();
+            if (!value) continue;
+            if (labels.test(value) || badge.test(value)) node.remove();
+          }
+          text = (clone.textContent ?? '').trim();
+        }
+        const input = last?.querySelector('div')?.textContent ?? '';
+        const noteNode = [...(last?.querySelectorAll('div') ?? [])].find((node) => /^(正文已按已结算事实修正|本回合没有完成：)/.test(node.textContent ?? ''));
+        return {
+          count: articles.length,
+          text,
+          input,
+          note: noteNode ? noteNode.textContent : null,
+          body: document.body.innerText.slice(-4000),
+          // Any 本轮… line is a hand-back signal, including the 295 s deadline.
+          message: (document.body.innerText.split(String.fromCharCode(10))
+            .find((line) => /^本轮(完成|已交还|已到|停止)/.test(line.trim())) ?? null),
+        };
+      }, beforeCount);
+      entry.text = afterInfo.text || null;
+      // No visible prose means there is no first-readable time at all.
+      entry.timings.firstReadableMs = null;
+      if (!entry.text || entry.text.trim().length < 8) {
+        entry.problems.push('no_readable_prose');
+      }
+      entry.inputLine = afterInfo.input || null;
+      entry.note = afterInfo.note;
+      if (entry.note?.startsWith('本回合没有完成：')) {
+        entry.failureNote = entry.note;
+        entry.stoppedEarly = entry.stoppedEarly ?? 'settlement_not_completed';
+        entry.problems.push('settlement_failed_recoverable');
+      }
+      entry.message = afterInfo.message;
+      entry.timings.doneMs = Date.now() - timer.submittedAtMs;
+      entry.after = await snapshot();
+      entry.jsHeap = await heap();
+      const loadCounts = (entry.product?.engines ?? []).map((engine) => `${engine.label}:${engine.loadCount}/${engine.workersCreated}/${engine.generations}`);
+      entry.engineCounters = loadCounts;
+      entry.warmTurn = entry.turn > 1;
+      // The page already exposes its narration debug object; the driver only
+      // reads it. Absence is recorded, never filled in by the harness.
+      entry.product = await page.evaluate(() => {
+        const turns = globalThis.__worldTurns;
+        if (!Array.isArray(turns) || turns.length === 0) return null;
+        const record = turns[turns.length - 1];
+        return {
+          index: record.index ?? null, input: record.input ?? null,
+          acceptedMs: record.acceptedMs ?? null, draftMs: record.draftMs ?? null, programMs: record.programMs ?? null,
+          // 06 exposes the first non-whitespace streamed model text separately from
+          // completion; keep both so the 60 s clock is not measured at completion.
+          // 06 keeps the scheduling clocks in record.clocks; read both shapes.
+          firstReadableAtMs: record.clocks?.firstReadableAtMs ?? record.firstReadableAtMs ?? null,
+          firstReadableSource: record.clocks?.firstReadableSource ?? null,
+          firstAcceptedAtMs: record.clocks?.firstAcceptedAtMs ?? record.firstAcceptedAtMs ?? null,
+          pointCommittedAtMs: record.clocks?.pointCommittedAtMs ?? record.pointCommittedAtMs ?? null,
+          narrationStartedAtMs: record.clocks?.narrationStartedAtMs ?? null,
+          narrationStarts: record.narrationStarts ?? null,
+          // Per-point narration clocks (06 f4893c53): startedAtMs /
+          // firstTextAtMs / completedAtMs keyed by pointId. This is the
+          // overlap evidence; narrationStarts above is the older field.
+          pointNarration: record.pointNarration ?? null,
+          actions: Array.isArray(record.actions) ? record.actions : null,
+          cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
+          engines: Array.isArray(record.engines) ? record.engines : null,
+          narration: record.narration ?? null,
+          segments: Array.isArray(record.segments) ? record.segments : null,
+          mixedMs: record.mixedMs ?? null,
+          narrationModel: record.narrationModel ?? null,
+          promptShape: record.promptShape ?? null,
+          submission: record.submission ? {
+            inputText: record.submission.inputText ?? null,
+            startedAtMs: record.submission.startedAtMs ?? null,
+            endedAtMs: record.submission.endedAtMs ?? null,
+            resultsCalls: record.submission.resultsCalls ?? null,
+            updatesCalls: record.submission.updatesCalls ?? null,
+            continuationCalls: record.submission.continuationCalls ?? null,
+            continuationDecision: record.submission.continuationDecision ?? null,
+            stops: record.submission.stops ?? null,
+            calls: (record.submission.calls ?? []).map((call) => ({
+              task: call.task, key: call.key, stage: call.stage ?? null, ms: call.ms ?? null,
+              promptChars: call.promptChars ?? null,
+              // Full prompt: NARRATION-RAW-OUTPUT needs the exact text sent to the
+              // model to prove no previous-turn prose is in it.
+              prompt: typeof call.prompt === 'string' ? call.prompt : (call.prompt ?? null),
+              fallback: Boolean(call.fallback), error: call.error ?? null,
+              calls: call.calls ?? null, stages: call.stages ?? null, coverage: call.coverage ?? null,
+              stageMs: call.stageMs ?? null,
+              raw: typeof call.raw === 'string' ? call.raw.slice(0, 4000) : (call.raw ?? null),
+              rawChars: typeof call.raw === 'string' ? call.raw.length : null,
+              attempts: Array.isArray(call.attempts) ? call.attempts.map((attempt) => ({
+                ms: attempt?.ms ?? null, error: attempt?.error ?? null, finishReason: attempt?.finishReason ?? null,
+                raw: typeof attempt?.raw === 'string' ? attempt.raw.slice(0, 4000) : (attempt?.raw ?? null),
+              })) : (call.attempts ?? null),
+            })),
+          } : null,
+        };
+      }).catch(() => null);
+      entry.submission = entry.product?.submission ?? null;
+      // Offscreen judge record. The page pushes two kinds of row for the action
+      // lane: a per-model-call row (source null, ms = one call) and a per-actor
+      // decision row from reportAction (source model|program|fallback, plus the
+      // issue codes). The split is computed from the decision rows only; the
+      // call rows are kept so the model-call count is auditable.
+      {
+        const actions = (entry.product?.actions ?? []).filter((row) => row?.task === 'action');
+        // A decision row carries source; a per-call row does not. Some builds
+        // also tag rows with recordKind; trust it when present.
+        const decisionRows = actions.filter((row) => (row?.recordKind ? row.recordKind === 'result' : row?.source != null));
+        const callRows = actions.filter((row) => (row?.recordKind ? row.recordKind !== 'result' : row?.source == null));
+        const skipCodes = new Set(['model_skip', 'actor_out_of_scene', 'protagonist_command', 'protagonist_command_consumed', 'protagonist_no_input']);
+        const rows = decisionRows.map((row) => {
+          const issues = Array.isArray(row.issues) ? row.issues : [];
+          const skipIssue = issues.find((code) => skipCodes.has(code)) ?? null;
+          const value = row.value && typeof row.value === 'object' ? row.value : null;
+          return {
+            actorId: row.key ?? null,
+            source: row.source,
+            // The lane's own value decides act vs skip; the issue codes are the
+            // fallback signal when the value is not exposed.
+            // Only a value or a skip code decides; a fallback row carries
+            // neither, and calling it 'act' would invent a decision.
+            decision: value ? (value.kind === 'skip' ? 'skip' : 'act') : (skipIssue ? 'skip' : null),
+            value: value ? { kind: value.kind ?? null, text: typeof value.text === 'string' ? value.text.slice(0, 200) : null } : null,
+            issueDetails: Array.isArray(row.issueDetails) ? row.issueDetails : null,
+            recordKind: row.recordKind ?? null,
+            repaired: row.fallback === false && Array.isArray(row.issues) && row.issues.includes('repair_requested'),
+            issueCode: skipIssue ?? (issues.at(-1) ?? null),
+            issues,
+            fallback: row.fallback ?? null,
+            error: row.error ?? null,
+            ms: Math.round(row.ms ?? 0),
+          };
+        });
+        const model = rows.filter((row) => row.source === 'model');
+        const program = rows.filter((row) => row.source === 'program');
+        const fallback = rows.filter((row) => row.source === 'fallback');
+        const mean = (list) => (list.length ? Math.round(list.reduce((sum, row) => sum + row.ms, 0) / list.length) : null);
+        entry.offscreenJudge = {
+          basis: rows.length ? 'page-recorded-source' : 'none',
+          actors: rows.length,
+          modelJudged: rows.length ? model.length : null,
+          programSkipped: rows.length ? program.length : null,
+          fallbackJudged: rows.length ? fallback.length : null,
+          modelSkips: model.filter((row) => row.decision === 'skip').length,
+          modelActs: model.filter((row) => row.decision === 'act').length,
+          modelDecisionUnknown: model.filter((row) => row.decision == null).length,
+          programSkips: program.filter((row) => row.decision === 'skip').length,
+          modelMs: mean(model),
+          programMs: mean(program),
+          /** Time one model-judged actor costs over a program-skipped one. */
+          deltaMs: (mean(model) != null && mean(program) != null) ? mean(model) - mean(program) : null,
+          modelCalls: callRows.length,
+          modelCallMs: callRows.reduce((sum, row) => sum + Math.round(row.ms ?? 0), 0),
+          uniqueActors: new Set(rows.map((row) => row.actorId)).size,
+          repairedActs: rows.filter((row) => row.source === 'model' && row.decision === 'act' && row.repaired).length,
+          rawKept: rows.filter((row) => typeof row.raw === 'string' && row.raw.length > 0).length,
+          rows,
+          callRows: callRows.map((row) => ({ actorId: row.key ?? null, ms: Math.round(row.ms ?? 0), fallback: row.fallback ?? null, error: row.error ?? null })),
+        };
+      }
+      entry.console = evidence.environment.ggmlConsole.slice(consoleStart);
+      entry.narrationRejections = entry.console
+        .filter((line) => /\[narration\] (in-model rejected|candidate fallback rejected)/.test(line))
+        .map((line) => line.slice(0, 300));
+      entry.shownChars = (entry.text ?? '').length;
+      // Full per-call evidence (semantic + narration) before any reload can
+      // clear the page globals.
+      // Action-family evidence (targets / roll / reaction) is produced before
+      // updates; keep it even when the settlement later aborts.
+      entry.snapshotAfterTurn = await page.evaluate(() => {
+        const snapshot = globalThis.__worldSnapshot;
+        return snapshot ?? null;
+      }).catch(() => null);
+      entry.actions = await page.evaluate(() => {
+        const turns = globalThis.__worldTurns;
+        const record = Array.isArray(turns) ? turns.at(-1) : null;
+        const actions = record?.actions;
+        return Array.isArray(actions) ? actions.slice(-40) : (actions ?? null);
+      }).catch(() => null);
+      entry.live = await page.evaluate(() => {
+        const live = globalThis.__worldLive;
+        return live && typeof live === 'object' ? live : null;
+      }).catch(() => null);
+      entry.generations = await page.evaluate(() => {
+        const generations = globalThis.__worldGenerations;
+        return Array.isArray(generations) ? generations.slice(-200) : null;
+      }).catch(() => null);
+      if (!entry.text) entry.problems.push('empty_text');
+      if (afterInfo.count <= beforeCount) entry.problems.push('no_entry_added');
+      if (/Error|加载失败/.test(afterInfo.body.slice(-1200))) entry.problems.push('error_visible');
+      entry.textSource = entry.product?.source ?? (entry.note ? 'program' : (entry.text ? 'unknown_or_draft' : 'none'));
+      // A draft becomes visible when narration starts writing; it is not a
+      // qualified first segment. Keep the two clocks apart.
+      entry.firstVisibleDraftMs = entry.textSource === 'draft' ? (entry.timings.firstVisibleDraftMs ?? null) : null;
+      entry.acceptedFirstReadableMs = entry.product?.acceptedMs ?? null;
+      entry.modelId = entry.product?.modelId ?? null;
+      if (entry.note) entry.problems.push('program_fallback_labelled');
+      if (entry.textSource === 'program') entry.problems.push('program_text_not_model');
+      const prose = entry.text ?? '';
+      if (/^(…+|。|，|、|\s)$/.test(prose.trim())) entry.problems.push('placeholder_only_text');
+      if (/(结算|回退|fallback|本拍|本组|模型未|无法确认|未产生)/.test(prose)) entry.problems.push('internal_note_in_prose');
+      if (/^(上一|刚才|此前)/.test(prose.trim()) && /(结算|修正|回退)/.test(prose)) entry.problems.push('internal_note_in_prose');
+      if (entry.shownChars > 0 && entry.shownChars < 30) entry.problems.push('very_short_text');
+      if (entry.text && turn.input && entry.text.includes(turn.input)) entry.problems.push('echoes_player_input');
+      const beforeHistory = Number(entry.before?.historyCount ?? NaN);
+      const afterHistory = Number(entry.after?.historyCount ?? NaN);
+      if (Number.isFinite(beforeHistory) && Number.isFinite(afterHistory)) {
+        entry.historyDelta = afterHistory - beforeHistory;
+        if (entry.text && entry.historyDelta !== 1) entry.problems.push(`history_delta_${entry.historyDelta}`);
+      }
+      const stageText = entry.stages.map((stage) => stage.label).join('|');
+      entry.stageSequence = stageText;
+      if (!/正在写正文/.test(stageText)) entry.problems.push('no_streaming_stage_observed');
+      if ((entry.product?.acceptedMs ?? null) === null) entry.problems.push('no_readable_text_observed');
+      if (entry.timings.doneMs > 300000) entry.problems.push('over_300s');
+      const product = entry.product;
+      if (!product) entry.problems.push('no_product_turn_evidence');
+      else {
+        if (product.source !== 'model') entry.problems.push(`source_${product.source ?? 'unknown'}`);
+        if (product.cancelled) entry.problems.push('cancelled');
+        if (product.acceptedMs == null) entry.problems.push('no_accepted_model_text');
+        if (product.acceptedMs != null && product.acceptedMs > 60000) entry.problems.push('accepted_over_60s');
+        if (product.draftMs != null && product.acceptedMs == null) entry.problems.push('draft_only_not_accepted');
+        if (product.programMs != null && product.acceptedMs == null) entry.problems.push('program_only_not_model_text');
+      }
+      const beforeBodyLength = beforeBody.length;
+      entry.bodyGrowth = afterInfo.body.length - beforeBodyLength;
+    } catch (error) {
+      entry.problems.push(`driver_error:${String(error).slice(0, 200)}`);
+      noteFailure(entry.id, String(error).slice(0, 400));
+    }
+
+    evidence.turns.push(entry);
+    save();
+    if (turn.refreshAfter) {
+      const before = await snapshot();
+      entry.snapshotBefore = await page.evaluate(() => globalThis.__worldSnapshot ?? null).catch(() => null);
+      const startedReload = Date.now();
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(
+        () => /本地世界已就绪|已恢复本地存档|加载失败|Error/.test(document.body.innerText),
+        null,
+        { timeout: readyTimeoutMs },
+      );
+      const after = await snapshot();
+      const restoredText = await page.evaluate(() => document.body.innerText);
+      entry.refreshAfter = {
+        ms: Date.now() - startedReload,
+        restored: /已恢复本地存档/.test(restoredText),
+        entriesAfter: await entryCount(),
+        beforeHistory: before.historyCount, afterHistory: after.historyCount,
+        samePlace: before.place === after.place, sameSanity: before.sanity === after.sanity,
+      };
+      if (!entry.refreshAfter.restored) entry.problems.push('refresh_after_not_restored');
+      if (entry.refreshAfter.beforeHistory !== entry.refreshAfter.afterHistory) entry.problems.push('history_changed_across_refresh');
+      if (!entry.refreshAfter.samePlace || !entry.refreshAfter.sameSanity) entry.problems.push('state_changed_across_refresh');
+      save();
+      console.log(`[refresh-after ${entry.id}] restored=${entry.refreshAfter.restored} history ${entry.refreshAfter.beforeHistory}->${entry.refreshAfter.afterHistory}`);
+    }
+    console.log(`[turn ${entry.turn}] ${entry.id} chars=${entry.shownChars ?? 0} wait=${entry.timings.doneMs ?? '?'}ms draft=${entry.timings.firstVisibleDraftMs ?? '-'}ms accepted=${entry.product?.acceptedMs ?? '-'}ms problems=${entry.problems.join(',') || 'none'}`);
+    if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
+  }
+
+  // Two mechanical checks over the whole run, so every later run carries its own
+  // proof instead of relying on a one-off script:
+  //   displayedEqualsRaw - each displayed text is exactly the raw beat text
+  //   priorProseLeaks    - no later prompt contains an earlier displayed text or
+  //                        any sentence of it (>=10 chars)
+  // The page appends one block per committed point; a point's beats are the
+  // sentences it wrote. Rebuild that layout from the candidate records the turn
+  // added and compare the page's text with it. Whitespace between blocks is the
+  // only tolerated difference; any word difference is a real mismatch.
+  const pointsOf = (turn) => {
+    const tail = turn.candidate?.tail;
+    if (!Array.isArray(tail)) return [];
+    return tail.map((item) => {
+      let beats = [];
+      if (Array.isArray(item?.beats)) beats = item.beats;
+      else if (typeof item?.detail === 'string') {
+        try { beats = JSON.parse(item.detail)?.beats ?? []; } catch { beats = []; }
+      }
+      return beats.map((beat) => beat?.raw ?? '').filter(Boolean).join(String.fromCharCode(10));
+    }).filter(Boolean);
+  };
+  const rawOf = (turn) => {
+    const points = pointsOf(turn);
+    if (points.length === 0) return null;
+    return points.join(String.fromCharCode(10, 10));
+  };
+  const flat = (value) => String(value ?? '').replace(/\s+/gu, '');
+  const beatsOf = (turn) => (turn.candidate?.tail ?? []).flatMap((item) => {
+    if (Array.isArray(item?.beats)) return item.beats;
+    if (typeof item?.detail === 'string') {
+      try { return JSON.parse(item.detail)?.beats ?? []; } catch { return []; }
+    }
+    return [];
+  });
+  const sentences = (text) => String(text).split(String.fromCharCode(10)).flatMap((line) => line.split(/[。！？；]/u)).map((part) => part.trim()).filter((part) => part.length >= 10);
+  const leaks = [];
+  for (let i = 0; i < evidence.turns.length; i += 1) {
+    const turn = evidence.turns[i];
+    const expected = rawOf(turn);
+    if (turn.text && expected != null) {
+      turn.displayedEqualsRaw = flat(turn.text) === flat(expected);
+      turn.displayedSameLayout = turn.text === expected;
+    } else {
+      // No prose, or no raw beat kept on this build: the comparison is unknown,
+      // not false. Say so instead of reporting a mismatch that was never checked.
+      turn.displayedEqualsRaw = null;
+      turn.displayedSameLayout = null;
+      if (turn.text && expected == null) {
+        turn.displayChecksSkipped = 'no candidate beats recorded by the page on this build';
+      }
+    }
+    const later = evidence.turns.slice(i + 1);
+    const earlierText = turn.text || '';
+    if (!earlierText) continue;
+    for (const other of later) {
+      const prompts = beatsOf(other).map((beat) => beat?.prompt || '');
+      for (const prompt of prompts) {
+        if (prompt.includes(earlierText)) leaks.push({ from: turn.id, into: other.id, kind: 'full' });
+        for (const sentence of sentences(earlierText)) {
+          if (prompt.includes(sentence)) leaks.push({ from: turn.id, into: other.id, kind: 'sentence', sentence: sentence.slice(0, 30) });
+        }
+      }
+    }
+  }
+  evidence.priorProseLeaks = leaks;
+
+  if (!preflightOnly) {
+  // Refresh/restore is a product behaviour, not a driver convenience: reload the
+  // page and check the entries survive from the browser's own save.
+  const entriesBeforeReload = await entryCount();
+  const stateBeforeReload = await snapshot();
+  evidence.reload = { startedAt: new Date().toISOString(), status: 'reloading' };
+  save();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const reloadStarted = Date.now();
+  const reloadTimeoutMs = Math.min(readyTimeoutMs, 240000);
+  try {
+    await page.waitForFunction(
+      () => /本地世界已就绪|已恢复本地存档|世界已就绪|加载失败|Error/.test(document.body.innerText),
+      null,
+      { timeout: reloadTimeoutMs },
+    );
+    evidence.reload.status = 'ready';
+  } catch (error) {
+    evidence.reload.status = 'timeout';
+    evidence.reload.bodyTail = await page.evaluate(() => document.body.innerText.slice(-600)).catch(() => null);
+    noteFailure('reload', `page did not become ready after reload in ${reloadTimeoutMs} ms`, String(error).slice(0, 300));
+  }
+  evidence.reload.readyMs = Date.now() - reloadStarted;
+  save();
+  const entriesAfterReload = await entryCount();
+  const stateAfterReload = await snapshot();
+  const restoredText2 = await page.evaluate(() => document.body.innerText);
+  // 06 publishes its own restore judgment; read it instead of guessing from a
+  // place/sanity match, and keep the raw object in evidence.
+  const restoreReport = await page.evaluate(() => window.__worldRestore ?? null).catch(() => null);
+  const snapshotAfterReload = await page.evaluate(() => globalThis.__worldSnapshot ?? null).catch(() => null);
+  // Entry identity, not just a count: a page can report 'restored' while the
+  // visible history is empty.
+  const entriesContract = await page.evaluate(() => {
+    const entries = [...document.querySelectorAll('article')].map((node) => node.querySelector('div')?.textContent ?? '');
+    return { count: entries.length, inputs: entries.map((line) => line.replace(/^你：/, '').split(' · ')[0]) };
+  });
+  const reportedEntries = restoreReport && typeof restoreReport.entriesRestored === 'number'
+    ? restoreReport.entriesRestored >= (restoreReport.entriesTotal ?? 0) && restoreReport.entriesRestored >= entriesBeforeReload
+    : null;
+  // A restore that also changes what was committed is not a clean restore:
+  // compare the on-screen history, not only the product's boolean.
+  const historyStable = stateBeforeReload.historyCount === stateAfterReload.historyCount;
+  const stateRestored = (restoreReport ? Boolean(restoreReport.stateRestored) : true)
+    && stateBeforeReload.place === stateAfterReload.place
+    && stateBeforeReload.sanity === stateAfterReload.sanity
+    && historyStable;
+  const historyRestored = restoreReport
+    ? Boolean(restoreReport.inputConsumptionRestored)
+    : stateBeforeReload.historyCount === stateAfterReload.historyCount;
+  const entriesRestored = (reportedEntries ?? (entriesAfterReload >= entriesBeforeReload
+    && entriesContract.count >= entriesBeforeReload));
+  const engineSegments = await page.evaluate(() => (window.__worldTurns ?? []).map((turn) => ({
+    index: turn.index, engines: turn.engines ?? null, source: turn.source ?? null,
+  }))).catch(() => null);
+  evidence.refreshRestore = {
+    ms: Date.now() - reloadStarted,
+    // A refresh legitimately reloads the engine once; recording the counters on
+    // both sides proves it is one reload, not a leak.
+    engineSegments,
+    pageSaysRestored: /已恢复本地存档/.test(restoredText2),
+    entriesBefore: entriesBeforeReload,
+    entriesAfter: entriesAfterReload,
+    entriesNow: entriesContract,
+    historyCountBefore: stateBeforeReload.historyCount,
+    historyCountAfter: stateAfterReload.historyCount,
+    historyStable,
+    committedBefore: entriesContract.inputs.length ? entriesContract.inputs.slice(0, 5) : null,
+    stateBefore: stateBeforeReload,
+    stateAfter: stateAfterReload,
+    stateRestored,
+    reported: restoreReport,
+    snapshotAfterReload,
+    historyRestored,
+    inputConsumptionRestored: historyRestored,
+    entriesRestored,
+    // The product may only claim recovery when everything a player relies on
+    // is actually back. A matching place/sanity is not enough.
+    overallRestored: stateRestored && historyRestored && entriesRestored,
+  };
+  if (!entriesRestored) noteFailure('reload', `entries were not restored after refresh: ${entriesBeforeReload} -> ${entriesAfterReload}`, evidence.refreshRestore);
+  if (!stateRestored) noteFailure('reload', 'state changed across refresh/restore', evidence.refreshRestore);
+  if (!historyRestored) noteFailure('reload', 'history count changed across refresh/restore', evidence.refreshRestore);
+  if (!evidence.refreshRestore.overallRestored) evidence.refreshRestore.failure = 'overall_not_restored';
+  save();
+
+  // Contract checks that do not need inference: cancel control and save service.
+  evidence.controls = {
+    // The stop control only has to exist while work runs; read it from the
+    // sampled turns instead of the quiet end state.
+    cancelButtonDuringTurn: evidence.turns.some((turn) => turn.cancelSeen === true),
+    cancelButton: await page.evaluate(() => [...document.querySelectorAll('button')].some((node) => /取消|停止|中断/.test(node.textContent ?? ''))),
+    resetButton: await page.evaluate(() => [...document.querySelectorAll('button')].some((node) => /重新开始/.test(node.textContent ?? ''))),
+    historyVisible: await page.evaluate(() => /已行动：\d+/.test(document.body.innerText)),
+  };
+  evidence.network = {
+    persistenceRequests: evidence.modelRequests.filter((request) => /api\//.test(request.url)),
+    modelRequests: evidence.modelRequests.filter((request) => /\/models\/.*\.gguf/.test(request.url)),
+  };
+  if (!evidence.controls.cancelButtonDuringTurn && !evidence.controls.cancelButton) noteFailure('controls', 'no visible cancel/stop control while a turn was running');
+
+  }
+  // A run that executed is not a passing run: any turn without an accepted
+  // model segment fails the acceptance intent.
+  const blockingPrefixes = ['turn_timeout', 'no_accepted_model_text', 'source_program', 'source_draft',
+    'empty_text', 'no_readable_prose', 'settlement_failed_recoverable', 'submit_refused', 'page_error'];
+  const turnFailures = evidence.turns.filter((turn) => (turn.problems ?? []).some((problem) => blockingPrefixes.some((key) => problem.startsWith(key))));
+  evidence.turnFailures = turnFailures.map((turn) => ({ id: turn.id, problems: turn.problems }));
+  evidence.status = selfTest ? 'SELFTEST' : (evidence.failures.length || turnFailures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
+  evidence.finishedAt = new Date().toISOString();
+  if (qualityHandoff) {
+    // What 01 needs to review sentence by sentence: the input, the displayed
+    // prose, any fallback label and the page-visible state around the turn.
+    // Nothing here is a verdict; 09 does not grade prose.
+    const handoff = {
+      kind: '09-quality-handoff',
+      at: evidence.finishedAt,
+      reviewer: '01-input (independent)',
+      recordedBy: '09-ui',
+      product: evidence.integration,
+      driver: 'scripts/product-acceptance/accept-world-local.mjs',
+      pageConditions: { crossOriginIsolated: evidence.environment.crossOriginIsolated, adapter: evidence.environment.adapter },
+      turns: evidence.turns.map((turn) => ({
+        id: turn.id, input: turn.input, purpose: turn.purpose,
+        text: turn.text, fallbackNote: turn.note, message: turn.message,
+        before: turn.before, after: turn.after, historyDelta: turn.historyDelta ?? null,
+        timings: turn.timings, problems: turn.problems,
+        narrationDebug: turn.narrationDebug ?? null,
+      })),
+      note: '01 reviews fact fidelity/prose across turns; 09 records playability, provenance, timing and fallbacks. Neither substitutes for human/user review.',
+    };
+    const target = resolve(qualityHandoff);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, JSON.stringify(handoff, null, 2));
+    evidence.qualityHandoff = target;
+    console.log(`[handoff] ${target}`);
+  }
+  evidence.submissions = evidence.turns.map((turn) => turn.submission).filter(Boolean);
+  evidence.summary = {
+    turns: evidence.turns.length,
+    turnsWithText: evidence.turns.filter((turn) => turn.text).length,
+    turnsWithFallbackNote: evidence.turns.filter((turn) => turn.note).length,
+    // Qualified first readable = accepted model text, never a UI stage or draft.
+    turnsOver60sAccepted: evidence.turns.filter((turn) => (turn.product?.acceptedMs ?? Infinity) > 60000).length,
+    draftsVisible: evidence.turns.filter((turn) => (turn.firstVisibleDraftMs ?? null) !== null).length,
+    turnsOver300s: evidence.turns.filter((turn) => (turn.timings.doneMs ?? 0) > 300000).length,
+    turnsWithEmptyText: evidence.turns.filter((turn) => !turn.text).length,
+    turnsEchoingInput: evidence.turns.filter((turn) => turn.problems.includes('echoes_player_input')).length,
+    turnsWithSubmissionLedger: evidence.submissions.length,
+    submissionCalls: evidence.submissions.map((submission) => ({
+      turn: evidence.turns.find((turn) => turn.submission === submission)?.id ?? null,
+      results: submission.resultsCalls, updates: submission.updatesCalls,
+      continuation: submission.continuationCalls, stops: submission.stops,
+    })),
+    distinctPlaces: [...new Set(evidence.turns.map((turn) => turn.after?.place).filter(Boolean))],
+    distinctHistoryCounts: [...new Set(evidence.turns.map((turn) => turn.after?.historyCount).filter(Boolean))],
+  };
+  save();
+  console.log(`[done] status=${evidence.status} turns=${evidence.turns.length} failures=${evidence.failures.length} -> ${out}`);
+  if (has('--print')) console.log(JSON.stringify(evidence.summary, null, 2));
+} catch (error) {
+  noteFailure('driver', String(error).slice(0, 800));
+  evidence.status = 'FAILED';
+  evidence.finishedAt = new Date().toISOString();
+  save();
+  console.error('[driver-error]', error);
+  process.exitCode = 1;
+} finally {
+  await browser.close();
+  lease.release();
+}
