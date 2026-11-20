@@ -37,6 +37,10 @@ export interface GameModelOptions {
    * narrated before the rest of the roster is judged (the 2026-11-11 turns
    * spent 280 s settling one point that held every actor). */
   protagonistId?: Id;
+  /** Evaluation arm: off-screen actors are judged per actor ('judge') or
+   * skipped by the action lane's program rule ('skip'). The page exposes it
+   * only through the URL query; the shipped default stays 'judge'. */
+  offscreenPolicy?: 'skip' | 'judge';
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -188,6 +192,7 @@ export class LocalGameModel implements WorldModelPort {
       });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       recentEvents: () => this.recentEvents,
+      offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
         ms: call.elapsedMs, fallback: !call.decoded, error: call.error, raw: call.raw, promptChars: call.promptChars,
       }),

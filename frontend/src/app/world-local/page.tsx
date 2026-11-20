@@ -532,7 +532,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge' } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -540,13 +540,16 @@ export default function WorldLocalPage() {
     const model = modelParam === 'qwen3-1.7b' || modelParam === 'qwen25-1.5b-narr' ? modelParam : undefined;
     const modeParam = q.get('narrationMode');
     const shapeParam = q.get('narrationShape');
+    const offscreenParam = q.get('offscreenPolicy');
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
     const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
+    const offscreenPolicy = offscreenParam === 'skip' || offscreenParam === 'judge' ? offscreenParam : undefined;
     return {
       ...(candidate ? { candidate } : {}),
       ...(mode ? { mode } : {}),
       ...(shape ? { shape } : {}),
       ...(model ? { model } : {}),
+      ...(offscreenPolicy ? { offscreenPolicy } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -748,6 +751,7 @@ export default function WorldLocalPage() {
         // the exact narration file and its hash so no run can silently swap weights.
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
+          offscreenPolicy: arm.offscreenPolicy ?? 'judge',
           narrationModel: narrationKey, narrationFile: narrationSpec.url,
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
         };
@@ -757,6 +761,7 @@ export default function WorldLocalPage() {
           // a player round holds only that character so its settlement can
           // commit and be narrated before the rest of the roster is judged.
           protagonistId: world.state.protagonistId,
+          ...(arm.offscreenPolicy ? { offscreenPolicy: arm.offscreenPolicy } : {}),
           narrationMode: 'instruct',
           narrationCandidate: (candidate ?? 'builtin') as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin',
           ...(arm.mode ? { trainedMode: arm.mode } : {}),
