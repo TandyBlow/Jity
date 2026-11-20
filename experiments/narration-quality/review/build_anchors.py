@@ -1,0 +1,1900 @@
+# -*- coding: utf-8 -*-
+"""Build the independent-review calibration batch.
+
+The free-day fixture is generated from the committed world file, so the
+`上回合状态` is the real initial state, not a hand-written approximation. The
+texts are copied verbatim from the reports they are named after; nothing is
+rewritten to make a check fire.
+"""
+import json
+import io
+import os
+
+ROOT = "D:/others/Jity/.local/parallel-local-game"
+WT = ROOT + "/worktrees/01-input"
+OUT = WT + "/experiments/narration-quality/review"
+WORLD = WT + "/frontend/public/worlds/dragon-raja-free-day.world.json"
+
+world = json.load(io.open(WORLD, encoding="utf-8"))
+initial = world["initial"]
+loc_name = {key: value["name"] for key, value in initial["locations"].items()}
+char_name = {key: value["name"] for key, value in initial["characters"].items()}
+item_name = {key: value["name"] for key, value in initial["items"].items()}
+
+
+def place_block(key):
+    value = initial["locations"][key]
+    parent = value.get("parentLocationId")
+    return {
+        "位于": loc_name[parent] if parent else None,
+        "外貌": [value["initialAppearance"]],
+    }
+
+
+def person_block(key):
+    value = initial["characters"][key]
+    container = value["initialPosition"]["containerId"]
+    place = loc_name.get(container, char_name.get(container, container))
+    big = [task for task in value["tasks"].values() if not task.get("parentTaskId")]
+    small = [task for task in value["tasks"].values() if task.get("parentTaskId")]
+    tasks = {
+        "大任务": {"目标": big[0]["goal"], "状态": "未完成" if big[0]["status"] == "pending" else "已完成"} if big else None,
+        "小任务": [
+            {"目标": task["goal"], "状态": "未完成" if task["status"] == "pending" else "已完成"}
+            for task in small
+        ],
+    }
+    return {
+        "位置": place,
+        "精神值": value["initialSanity"],
+        "外貌": [value["initialAppearance"]],
+        "个性": [value["initialPersonality"]],
+        "任务": tasks,
+    }
+
+
+def item_block(key):
+    value = initial["items"][key]
+    container = value["initialPosition"]["containerId"]
+    place = loc_name.get(container, char_name.get(container, container))
+    return {"位置": place, "外貌": [value["initialAppearance"]]}
+
+
+def base_state():
+    return {
+        "视角": "主角视角（路明非）；只表达已结算的世界事实",
+        "上回合状态": {
+            "地点": {name: place_block(key) for key, name in [
+                ("campus", "campus"), ("west", "west"), ("lane", "lane"), ("shed", "shed"),
+                ("yard", "yard"), ("west_arcade", "west_arcade"), ("aid", "aid"), ("rest", "rest"),
+            ]},
+            "人物": {
+                char_name["lu"]: person_block("lu"),
+                char_name["nono"]: person_block("nono"),
+                char_name["fingel"]: person_block("fingel"),
+            },
+            "物品": {
+                item_name["rules"]: item_block("rules"),
+                item_name["map"]: item_block("map"),
+                item_name["goggles_lu"]: item_block("goggles_lu"),
+                item_name["pistol_nono"]: item_block("pistol_nono"),
+            },
+        },
+        "本回合变化": {"时间推进": "2 分钟", "变化": {}},
+    }
+
+
+opening = base_state()
+
+# Free-day task point: 路明非 and 诺诺 moved to 西回廊; 路明非 completed
+# task_nono_lu, gained one personality line and sanity 43 -> 48.
+task_state = json.loads(json.dumps(opening))
+task_state["上回合状态"]["人物"][char_name["lu"]]["位置"] = "西回廊"
+task_state["上回合状态"]["人物"][char_name["nono"]]["位置"] = "西回廊"
+task_state["上回合状态"]["地点"]["西回廊"] = place_block("west_arcade")
+task_state["本回合变化"] = {
+    "时间推进": "3 分钟",
+    "变化": {
+        char_name["lu"]: {
+            "精神值": 48,
+            "新增个性": ["不再等别人替他决定，愿意先迈出一步"],
+            "任务": {
+                "大任务": {"目标": task_state["上回合状态"]["人物"][char_name["lu"]]["任务"]["大任务"]["目标"], "状态": "未完成"},
+                "小任务": [
+                    {"目标": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立", "状态": "已完成"},
+                ] + task_state["上回合状态"]["人物"][char_name["lu"]]["任务"]["小任务"][1:],
+            },
+        },
+    },
+}
+task_state["上回合状态"]["人物"]["林亦舟"] = {
+    "位置": "西回廊", "精神值": 29,
+    "外貌": ["蓝色识别带沾着灰，左脚踝在鞋帮上方肿起；背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面。说话正常，没法独自站稳"],
+    "个性": ["蓝方低年级队员，怕被看成拖累"],
+    "任务": {"大任务": {"目标": "在不加重脚踝伤势的情况下到达演习医护处置室", "状态": "未完成"}, "小任务": []},
+}
+task_state["本回合状态"] = {
+    char_name["lu"]: {
+        "精神值": 48,
+        "个性": task_state["上回合状态"]["人物"][char_name["lu"]]["个性"] + ["不再等别人替他决定，愿意先迈出一步"],
+        "任务": task_state["本回合变化"]["变化"][char_name["lu"]]["任务"],
+    },
+}
+
+# Move point: 路明非 and 诺诺 to 西回廊, 芬格尔 器材棚 -> 中央庭院.
+move_state = json.loads(json.dumps(opening))
+for name, target in [(char_name["lu"], "西回廊"), (char_name["nono"], "西回廊"), (char_name["fingel"], "中央庭院")]:
+    move_state["本回合变化"]["变化"][name] = {"位置": target}
+move_state["上回合状态"]["地点"]["西回廊"] = place_block("west_arcade")
+move_state["上回合状态"]["地点"]["中央庭院"] = place_block("yard")
+move_state["本回合状态"] = {name: {"位置": target} for name, target in [
+    (char_name["lu"], "西回廊"), (char_name["nono"], "西回廊"), (char_name["fingel"], "中央庭院")]}
+
+# Small corridor scene for 02's 1.5B root run, transcribed from its prompt.
+corridor = {
+    "视角": "主角视角（周宁）；只表达已结算的世界事实",
+    "上回合状态": {
+        "地点": {
+            "走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]},
+            "门厅": {"位于": "走廊", "外貌": ["门厅的灯还亮着。"]},
+        },
+        "人物": {
+            "林川": {
+                "位置": "走廊", "精神值": 10, "外貌": ["穿灰衣"],
+                "个性": ["谨慎", "恪守职责"],
+                "任务": {"大任务": {"目标": "留在走廊守门，不碰盒子", "状态": "未完成"}, "小任务": []},
+            },
+            "周宁": {
+                "位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"],
+                "任务": {"大任务": None, "小任务": []},
+            },
+        },
+        "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}},
+    },
+    "本回合变化": {"时间推进": "", "变化": {}},
+}
+
+# Small scene for rule anchors: one move, one sanity change, one task.
+rule_scene = {
+    "视角": "主角视角（温执）；只表达已结算的世界事实",
+    "上回合状态": {
+        "地点": {
+            "一层门厅": {"位于": None, "外貌": ["地砖被脚步磨得发白。"]},
+            "借阅台": {"位于": "一层门厅", "外貌": ["硬木台面，边角包着铜皮。"]},
+            "还书处": {"位于": "一层门厅", "外貌": ["铁皮还书箱敞着口。"]},
+        },
+        "人物": {
+            "温执": {
+                "位置": "借阅台", "精神值": 51, "外貌": ["戴着一副圆框眼镜"], "个性": ["不爱欠人情"],
+                "任务": {"大任务": {"目标": "查清十年前那场火灾是谁放的火", "状态": "未完成"},
+                        "小任务": [{"目标": "比对三份互相矛盾的登记簿", "状态": "未完成"}]},
+            },
+            "黎知微": {
+                "位置": "还书处", "精神值": 63, "外貌": ["袖口沾了墨"], "个性": ["讲究次序"],
+                "任务": {"大任务": {"目标": "把走失的妹妹从外地找回来", "状态": "未完成"}, "小任务": []},
+            },
+        },
+        "物品": {"铁皮还书箱": {"位置": "还书处", "外貌": ["箱底锈穿了一个洞"]}},
+    },
+    "本回合变化": {
+        "时间推进": "4 分钟",
+        "变化": {
+            "温执": {"位置": "还书处", "精神值": 47, "任务": {
+                "大任务": {"目标": "查清十年前那场火灾是谁放的火", "状态": "未完成"},
+                "小任务": [{"目标": "比对三份互相矛盾的登记簿", "状态": "已完成"}]}},
+            "黎知微": {"新增个性": ["答应替温执留一只没登记过的旧箱"]},
+            "铁皮还书箱": {"解除外貌": ["箱底锈穿了一个洞"], "新增外貌": ["箱底垫了一块木板"]},
+        },
+    },
+    "本回合状态": {
+        "温执": {"位置": "还书处", "精神值": 47,
+                 "任务": {"大任务": {"目标": "查清十年前那场火灾是谁放的火", "状态": "未完成"},
+                          "小任务": [{"目标": "比对三份互相矛盾的登记簿", "状态": "已完成"}]}},
+        "黎知微": {"个性": ["讲究次序", "答应替温执留一只没登记过的旧箱"]},
+        "铁皮还书箱": {"外貌": ["箱底垫了一块木板"]},
+    },
+}
+
+genders = {
+    "路明非": {"gender": "male", "source": "world/character text: 「不愿替他」", "confidence": "world-text"},
+    "诺诺": {"gender": "female", "source": "world/character text: 「不能显示她」", "confidence": "world-text"},
+    "楚子航": {"gender": "male", "source": "world/character text: 「楚子航补上他」", "confidence": "world-text"},
+    "沈澄": {"gender": "female", "source": "world/character text: 「和她」", "confidence": "world-text"},
+    "林亦舟": {"gender": "male", "source": "05 character-gender-evidence: 「已离开他的手」", "confidence": "world-text"},
+    "周宁": {"gender": "female", "source": "08 report humanReviewFindings: product review 2026-11-10 recorded 周宁 narrated as 他 as an error", "confidence": "recorded-review"},
+}
+
+
+def completed_tasks(state, person_name, goal):
+    raw = state["上回合状态"]["人物"][person_name]["任务"]
+    return {
+        "大任务": raw["大任务"],
+        "小任务": [
+            {"目标": task["目标"], "状态": "已完成" if task["目标"] == goal else task["状态"]}
+            for task in raw["小任务"]
+        ],
+    }
+
+
+# Point matching 04's program-mode sample: 路明非/诺诺 moved into 器材棚,
+# 芬格尔 left for 中央庭院, the goggles moved to his forehead, the cage lock
+# was opened, and two tasks completed.
+program_state = json.loads(json.dumps(opening))
+program_state["上回合状态"]["人物"][char_name["lu"]]["位置"] = "西侧服务巷"
+program_state["上回合状态"]["人物"][char_name["nono"]]["位置"] = "西侧服务巷"
+program_state["上回合状态"]["人物"][char_name["fingel"]]["位置"] = "器材棚"
+program_state["上回合状态"]["人物"]["秦越"] = {
+    "位置": "器材棚", "精神值": 61, "外貌": ["灰色器材背心套在校服外，胸前挂着领用牌"],
+    "个性": ["按登记发器材"], "任务": {"大任务": {"目标": "让演习器材可追溯地发放，并优先保证伤员搬运", "状态": "未完成"}, "小任务": []},
+}
+program_state["上回合状态"]["地点"]["器材笼"] = {"位于": "器材棚", "外貌": ["铁笼里堆着担架、折叠梯和安全绳。"]}
+program_state["上回合状态"]["地点"]["中央庭院"] = place_block("yard")
+program_state["上回合状态"]["物品"]["器材笼的挂锁"] = {"位置": "器材棚", "外貌": ["锁舌扣在笼门上。"]}
+program_state["上回合状态"]["物品"]["折叠担架"] = {"位置": "器材笼", "外貌": ["帆布面磨得发白。"]}
+program_state["上回合状态"]["物品"]["演习弹药箱"] = {"位置": "器材棚", "外貌": ["箱盖开着，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹。"]}
+program_state["本回合变化"] = {
+    "时间推进": "2 分钟",
+    "变化": {
+        char_name["lu"]: {
+            "位置": "器材棚",
+            "新增外貌": ["护目镜推到额头上，镜带压住一撮头发"],
+            "新增个性": ["开口还是先绕一句玩笑，但已经把护目镜当成要用的东西，不再只是挂在胸前给别人看"],
+            "任务": completed_tasks(program_state, char_name["lu"], "把胸前护目镜戴好并确认镜片没有裂纹"),
+        },
+        char_name["nono"]: {
+            "位置": "器材棚",
+            "任务": completed_tasks(program_state, char_name["nono"], "问清路明非的参赛意愿并说明三条接近钟楼的路线"),
+        },
+        char_name["fingel"]: {"位置": "中央庭院"},
+        "器材笼的挂锁": {"新增外貌": ["锁舌挂在笼门上，笼门开着"]},
+    },
+}
+program_state["本回合状态"] = {
+    char_name["lu"]: {
+        "位置": "器材棚",
+        "外貌": program_state["上回合状态"]["人物"][char_name["lu"]]["外貌"] + ["护目镜推到额头上，镜带压住一撮头发"],
+        "个性": program_state["上回合状态"]["人物"][char_name["lu"]]["个性"] + ["开口还是先绕一句玩笑，但已经把护目镜当成要用的东西，不再只是挂在胸前给别人看"],
+        "任务": program_state["本回合变化"]["变化"][char_name["lu"]]["任务"],
+    },
+    char_name["nono"]: {"位置": "器材棚", "任务": program_state["本回合变化"]["变化"][char_name["nono"]]["任务"]},
+    char_name["fingel"]: {"位置": "中央庭院"},
+    "器材笼的挂锁": {"外貌": ["锁舌挂在笼门上，笼门开着"]},
+}
+
+PROGRAM_TEXT = "\n\n".join([
+    "两分钟过去了。",
+    "路明非站在器材棚。",
+    "诺诺离开西侧服务巷，走进器材棚。",
+    "芬格尔从器材棚进入中央庭院。",
+    "路明非身上，护目镜已经推到额头上，镜带压住一撮头发，右手还搭在颈后的镜带上。",
+    "器材笼的挂锁已经打开，锁舌挂在笼门上，笼里那副折叠担架被拖到了门口。",
+    "路明非把「把胸前护目镜戴好并确认镜片没有裂纹」这件事做完了。",
+    "路明非还有下一件事要做：向秦越报明护目镜已经领到手，再问清担架放在哪一侧。",
+    "诺诺完成了「问清路明非的参赛意愿并说明三条接近钟楼的路线」。",
+    "路明非身上多了一点变化：开口还是先绕一句玩笑，但已经把护目镜当成要用的东西，不再只是挂在胸前给别人看。",
+    "路明非喉咙紧了一下。",
+    "路明非把护目镜推到额头上，问秦越担架放在哪一侧；秦越说担架已经在器材笼门口，先报用途再登记。",
+    "开盖演习弹药箱在器材棚，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹。",
+    "路明非在原地站了一会儿。",
+])
+
+
+anchors = []
+
+# ------------------------------------------- Qwen3 1.7B product-case arms (02)
+arms_scene = {
+    "视角": "主角视角（路明非）",
+    "上回合状态": {
+        "地点": {"西侧服务巷": {"位于": "西侧器材区", "外貌": ["巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。"]},
+                 "西侧器材区": {"位于": "卡塞尔学院演习区", "外貌": ["器材棚、服务巷和西侧集结点围成一条后勤线；从服务巷可到庭院西口，也能绕进检修通道。"]}},
+        "人物": {
+            "路明非": {"位置": "西侧服务巷", "精神值": 43,
+                       "外貌": ["校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带"],
+                       "个性": ["听见远处枪声会下意识缩肩", "习惯先用一句玩笑替自己解围"],
+                       "任务": {"大任务": {"目标": "作出参赛选择", "状态": "未完成"}, "小任务": []}},
+            "诺诺": {"位置": "西侧服务巷", "精神值": 58,
+                     "外貌": ["红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面"],
+                     "个性": ["看人时比听解释更有耐心"], "任务": {"大任务": {"目标": "保障旗台行动", "状态": "未完成"}, "小任务": []}},
+        },
+        "物品": {"路明非的护目镜": {"位置": "路明非", "外貌": ["镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前"]},
+                 "赛区路线图": {"位置": "西侧服务巷", "外貌": ["图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路"]},
+                 "演习规则牌": {"位置": "西侧服务巷", "外貌": ["牌面写明：使用弗里嘉演习弹；护目镜必须戴好；医护白线禁射；退出者不得返场；15:45停赛"]}},
+    },
+    "本回合变化": {"变化": {}},
+    "本回合状态": {"人物": {}, "物品": {}},
+}
+anchors += [
+    {
+        "id": "neg/qwen3-arm-scene",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json free-day-root::scene, auto-accepted=true",
+        "input": arms_scene,
+        "text": "路明非盯着墙上的赛区图，手指摩挲着镜片边缘。巷口的黄黑绳已放，空气中还残留着硝烟味。他摸了摸胸前的护目镜，镜片无裂纹，镜带松着。远处传来枪声，他下意识缩肩，但没说出口。诺诺在入口处，红发束在脑后，短枪枪口压向地面。他没说话，只是低头整理衣襟，膝盖沾了灰。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added", "fact.trait_as_event"], "style": [],
+                   "notes": "A conditional trait (hearing gunfire, shrinking the shoulders) is turned into a current gunshot plus a current shrug."},
+    },
+    {
+        "id": "neg/qwen3-arm-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json free-day-root::prose, auto-accepted=true",
+        "input": arms_scene,
+        "text": "路明非望着远处的钟楼，风穿过巷子，带来一丝凉意。诺诺的红发在阳光下闪烁，她手中的短枪压在地面，枪口微微抬起。远处传来演习规则牌的声音，提醒着他们必须遵守规则。路明非注意到诺诺的红痕，那是她扶过弹着石墙时蹭上的，身上没有本场命中标记。空气中弥漫着演习弹的气味，路明非感受到脚下地面的温度，仿佛能触摸到那片被弹片击中的痕迹。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction", "fact.object_speaks", "fact.past_added"], "style": [],
+                   "notes": "The rule sign speaks, the held pistol lies on the ground with its muzzle up, and a fragment hit is invented."},
+    },
+    {
+        "id": "neg/qwen3-arm-beats",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json free-day-root::beats, rejected",
+        "input": arms_scene,
+        "text": "光从巷口斜斜洒来，映着诺诺发圈上的红光，右袖的红痕在光下泛着暗色。路明非伸手摸了摸手背，指尖触到那道浅浅的红痕，忽然想起刚才被弹片击中时，自己也摸到了类似的东西。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.past_added", "fact.body_mark_added"], "style": [],
+                   "notes": "An invented fragment hit remembered as past; the protagonist has no such mark in the settled appearance."},
+    },
+]
+
+
+# -------------------------------------------------- 1.5B accepted counterexample
+box_scene = {
+    "视角": "主角视角（周宁）",
+    "上回合状态": {
+        "地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}},
+        "人物": {"林川": {"位置": "走廊", "精神值": 10, "外貌": ["穿灰衣"],
+                          "任务": {"大任务": {"目标": "留在走廊守门，不碰盒子", "状态": "未完成"}, "小任务": []}},
+                 "周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "任务": {"大任务": {"目标": "无", "状态": "未完成"}, "小任务": []}}},
+        "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}},
+    },
+    "本回合变化": {"时间推进": "2 分钟", "变化": {}},
+    "本回合状态": {"人物": {}, "物品": {}},
+}
+anchors += [
+    {
+        "id": "neg/1.5b-accepted-elapsed",
+        "source": "results/quality/beat-qwen25-1.5b-instruct.json run elapsed-two-minutes, accepted=true by the old gate",
+        "input": box_scene,
+        "text": "光从盒子缝隙中透出，映在走廊的每一面墙壁上。声音是轻柔的铃声，偶尔几下脚步声在走廊尽头渐行渐远。周宁的手指轻轻触碰盒盖，盒子缓缓开启，映入眼帘的是一块精致的古董，上面雕刻着精美的图案。\n\n约两分钟过去了。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.event_added", "fact.sound_added", "fact.sound_added"], "style": [],
+                   "notes": "Closed box opens, two sounds and a new object appear; the time is stated, so this is a pure invention case."},
+    },
+    {
+        "id": "neg/1.5b-root-closed-box",
+        "source": "results/quality/beat-qwen25-1.5b-instruct.json run root-scene, rejected for length only",
+        "input": box_scene,
+        "text": "走廊明亮，周宁看着林川站在那里，林川的手按在盒盖上，盒子静静地悬在空中。周宁的心跳加速，盒子缓缓打开，里面是一张纸条。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.object_added", "fact.event_added"], "style": [],
+                   "notes": "A closed box opens and holds a note that was never settled."},
+    },
+]
+
+# ------------------------------------------------------- 08 counterexamples
+gaze_scene = {
+    "视角": "主角视角（周宁）",
+    "上回合状态": {
+        "地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]},
+                 "门厅": {"位于": None, "外貌": ["门厅里的灯亮着。"]}},
+        "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"]},
+                 "林川": {"位置": "门厅", "精神值": 10, "外貌": ["穿灰衣"]}},
+        "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}},
+    },
+    "本回合变化": {"时间推进": "2 分钟", "变化": {}},
+    "本回合状态": {"人物": {}, "物品": {}},
+}
+route_scene = {
+    "视角": "主角视角（林川）",
+    "上回合状态": {
+        "地点": {"库房": {"位于": None, "外貌": ["库房里堆着木箱。"]},
+                 "平台": {"位于": None, "外貌": ["平台边上有栏杆。"]},
+                 "楼梯间": {"位于": None, "外貌": ["窄楼梯拐角堆着沙袋。"]}},
+        "人物": {"林川": {"位置": "库房", "精神值": 40, "外貌": ["穿灰衣"]}},
+        "物品": {},
+    },
+    "本回合变化": {"时间推进": "2 分钟", "变化": {"林川": {"位置": "平台"}}},
+    "本回合状态": {"林川": {"位置": "平台"}},
+}
+anchors += [
+    {
+        "id": "neg/08-gaze-is-not-movement",
+        "source": "worktrees/08-runtime/.local/candidate-model/run-qwen25-1.5b-dev-r3.json point continuation-elapsed; the shared grader flagged movement_without_fact on the gaze",
+        "input": gaze_scene,
+        "text": "两分钟过去。周宁的视线在门厅与走廊之间来回扫动，偶尔停顿在那扇门上，似乎在等待门厅那边的人迈出步伐。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [], "notes": "The subject is the gaze, not the body: no movement fact is needed."},
+    },
+    {
+        "id": "neg/wrong-source-floor",
+        "source": "08-runtime limitation: the unseen-world move point paraphrases 库房→平台 as 从楼梯间走来 and the shared grader missed the wrong source",
+        "input": route_scene,
+        "text": "两分钟过去，林川从楼梯间走来，停在平台边上。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.wrong_source"], "style": [], "notes": "The origin is a known place and differs from the settled origin; the destination alone does not make the move right."},
+    },
+]
+
+
+
+def add(case):
+    anchors.append(case)
+
+
+def from_report(path, *keys):
+    data = json.load(io.open(path, encoding="utf-8"))
+    value = data
+    for key in keys:
+        value = value[key]
+    return value
+
+
+# ---------------------------------------------------------------- negatives
+add({
+    "id": "neg/08-dev-root",
+    "source": "results/quality/team-08-runtime.json realRuns[6].text0 (accepted by the old grader)",
+    "input": corridor,
+    "text": from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[6]["text0"],
+    "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
+    "expect": {
+        "fact": ["fact.sound_added"],
+        "review": ["review.pronoun", "review.micro_action"],
+        "notes": "「脚步声」 in a corridor whose only settled state is an empty hallway; 「林川站在他身后」 leaves 他 ambiguous, so the pronoun is a review item, not a machine gender verdict. The 2-minute advance is not stated either.",
+    },
+})
+
+add({
+    "id": "neg/08-dev-continuation",
+    "source": "results/quality/team-08-runtime.json realRuns[6].textContinuation",
+    "input": dict(corridor, **{"本回合变化": {"时间推进": "2 分钟", "变化": {}}}),
+    "text": from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[6]["textContinuation"],
+    "options": {
+        "genders": {name: entry["gender"] for name, entry in genders.items()},
+        "priorTexts": [from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[6]["text0"]],
+        "minChars": 60, "targetChars": 200,
+    },
+    "expect": {
+        "fact": ["fact.sound_added"],
+        "style": ["style.repeated_opening"],
+        "review": ["review.pronoun"],
+        "notes": "Unfounded footsteps; verbatim opening repeated from the previous turn; 他 for 周宁; the 2-minute advance is stated twice.",
+    },
+})
+
+add({
+    "id": "neg/08-free-day-gun",
+    "source": "results/quality/team-08-runtime.json realRuns[1].text (accepted, 275 chars)",
+    "input": opening,
+    "text": from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[1]["text"],
+    "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
+    "expect": {
+        "fact": ["fact.item_misattribution"],
+        "notes": "路明非's settled appearance says 右手还空着; the prose puts a gun in that hand.",
+    },
+})
+
+add({
+    "id": "neg/08-free-day-board",
+    "source": "results/quality/team-08-runtime.json realRuns[2].text (accepted, 204 chars)",
+    "input": opening,
+    "text": from_report(ROOT + "/results/quality/team-08-runtime.json", "realRuns")[2]["text"],
+    "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
+    "expect": {
+        "fact": ["fact.body_mark_added"],
+        "notes": "The rule sign in his palm is now review-level polish; the hard errors are the missing time and 诺诺's red mark moved onto 路明非's arm.",
+    },
+})
+
+add({
+    "id": "neg/02-1.5b-root",
+    "source": "results/02-narration/real-model-1.5b.json runs[0].text (rejected by 02's grader, kept for the narrative defects)",
+    "input": corridor,
+    "text": from_report(ROOT + "/results/02-narration/real-model-1.5b.json", "runs")[0]["text"],
+    "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
+    "expect": {
+        "fact": ["fact.event_added"],
+        "review": ["review.micro_action"],
+        "notes": "「她把门推开一条缝」 invents a door; no time is stated (2-minute point); dialogue invents a past light.",
+    },
+})
+
+add({
+    "id": "neg/02-free-day-task-accepted",
+    "source": "results/quality/browser-09.json run 02-narration::free-day-task::mwakurt9 (accepted=true)",
+    "input": task_state,
+    "text": "「站住！」林亦舟叫道。\n\n路明非把「向诺诺问清当前红蓝两方局势和自己是否可以保持中立」这件事做完了。\n\n路明非不再等别人替他决定，愿意先迈出一步。。\n\n路明非的精神值从43变成了48。\n\n约三分钟过去了。",
+    "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
+    "expect": {
+        "fact": [],
+        "style": ["style.status_panel", "style.field_sentence", "style.punctuation"],
+        "review": ["review.speech_act"],
+        "notes": "Every settled fact is present, so the fact count is zero — but the text is a field recital, not narration. This is the accepted-by-machine case the product review rejected.",
+    },
+})
+
+# ---------------------------------------------------------- synthetic rules
+add({
+    "id": "neg/wrong-sanity-number",
+    "source": "synthetic: settled 51 -> 47, prose says 53",
+    "input": rule_scene,
+    "text": "温执走进还书处，站了四分钟。温执的精神值从 51 掉到 53。温执办完了「比对三份互相矛盾的登记簿」，说箱底已经垫了木板。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": ["fact.wrong_number"], "notes": "53 is neither the settled 51 nor 47."},
+})
+
+add({
+    "id": "neg/reversed-move",
+    "source": "synthetic: settled 温执 借阅台 -> 还书处; prose reverses it",
+    "input": rule_scene,
+    "text": "四分钟过去，温执从还书处走回借阅台；温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": ["fact.direction_reversed"], "notes": "Origin/destination order is reversed."},
+})
+
+add({
+    "id": "neg/invented-past",
+    "source": "synthetic: no past event in the settled input",
+    "input": rule_scene,
+    "text": "四分钟过去，温执走进还书处，忽然说起小时候从树上掉下来摔断腿的事。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": ["fact.past_added"], "notes": "「小时候…」 has no basis in the input."},
+})
+
+add({
+    "id": "neg/promise",
+    "source": "synthetic: no promise settled",
+    "input": rule_scene,
+    "text": "四分钟过去，温执走进还书处。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱，又保证明天一定把三份登记簿都找出来。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": ["fact.promise_added"], "notes": "保证 is a promise with no settled basis."},
+})
+
+add({
+    "id": "neg/viewpoint-interiority",
+    "source": "synthetic: 黎知微 is not the viewpoint",
+    "input": rule_scene,
+    "text": "四分钟过去，温执走进还书处。黎知微心里明白他不会就此罢休，却只是把箱底垫好。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": ["fact.viewpoint_interiority"], "notes": "黎知微's interior state is not visible to 温执."},
+})
+
+add({
+    "id": "neg/item-scene-held",
+    "source": "synthetic: 铁皮还书箱 is settled in 还书处",
+    "input": rule_scene,
+    "text": "四分钟过去，温执走进还书处，把铁皮还书箱抱在怀里，低头看箱底那块木板。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": [], "style": [], "notes": "A scene object written as carried is allowed polish: the object's settled position does not change, so this is review-level, not a fact error."},
+})
+
+add({
+    "id": "neg/gender-single-person",
+    "source": "synthetic: 周宁 is the only person in the scene and the registry says female",
+    "input": {
+        "视角": "主角视角（周宁）；只表达已结算的世界事实",
+        "上回合状态": {
+            "地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}},
+            "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"], "任务": {"小任务": []}}},
+            "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}},
+        },
+        "本回合变化": {"时间推进": "2 分钟", "变化": {}},
+    },
+    "text": "两分钟过去。他站在走廊里，看着脚边的盒子，没有动。",
+    "options": {"genders": {"周宁": "female"}, "minChars": 1},
+    "expect": {"fact": ["fact.gender"], "notes": "Only 周宁 is in the scene, so 他 cannot be anyone else."},
+})
+
+
+add({
+    "id": "pos/04-program-free-day-move",
+    "source": "results/quality/team-04-settlement.json firstProse.programMode.sample (program realization, not a model)",
+    "input": program_state,
+    "text": PROGRAM_TEXT,
+    "options": {"genders": {name: entry["gender"] for name, entry in genders.items()}, "minChars": 60, "targetChars": 200},
+    "expect": {"fact": ["fact.event_added"], "style": ["style.status_panel"], "notes": "Program text: the panel realization is a style failure; the stretcher dragged to the door and the new next-task line are additions the point did not settle."},
+})
+
+# ---------------------------------------------------------------- positives
+add({
+    "id": "pos/paraphrase-move",
+    "source": "synthetic: same settled move, natural paraphrase",
+    "input": rule_scene,
+    "text": "四分钟过去了。温执从借阅台走到还书处，在铁皮箱边停下。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47，箱底也已经垫了一块木板。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": [], "notes": "Direction preserved, time stated, task and item change stated."},
+})
+
+add({
+    "id": "pos/negated-event",
+    "source": "synthetic: negated verb must not be an event",
+    "input": rule_scene,
+    "text": "四分钟过去，温执走进还书处。他没有打开铁皮还书箱，只蹲下看了看箱底。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": [], "notes": "「没有打开」 is not an assertion that the box was opened."},
+})
+
+add({
+    "id": "pos/licensed-appearance",
+    "source": "synthetic: settled appearance quoted, no invention",
+    "input": rule_scene,
+    "text": "四分钟过去，温执走进还书处。铁皮还书箱的箱底垫了一块木板，边角还新；他戴着圆框眼镜，站在箱边看了一会儿。温执办完了「比对三份互相矛盾的登记簿」，精神值从 51 降到 47。黎知微答应替温执留一只没登记过的旧箱。",
+    "options": {"genders": {}, "minChars": 1},
+    "expect": {"fact": [], "notes": "The board under the box is the settled appearance change; the glasses are settled appearance."},
+})
+
+
+anchors += [
+    {
+        "id": "neg/wrong-place-outer",
+        "source": "02 req-02-06 class: a person inside a sub-place written at the outer place",
+        "input": {"视角": "主角视角（方既白）", "上回合状态": {"地点": {"天台": {"位于": None, "外貌": ["地面铺着防水卷材。"]}, "天台楼梯间": {"位于": "天台", "外貌": ["楼梯间窄，灯泡坏了。"]}}, "人物": {"方既白": {"位置": "天台楼梯间", "精神值": 53, "外貌": ["头发用一根木簪别着"], "个性": ["心软"], "任务": {"大任务": {"目标": "找回兄长", "状态": "未完成"}, "小任务": []}}, "黎含英": {"位置": "天台楼梯间", "精神值": 55, "外貌": ["围巾洗得发白"], "个性": ["沉默寡言"], "任务": {"大任务": {"目标": "赎回医书", "状态": "未完成"}, "小任务": []}}}, "物品": {}}, "本回合变化": {"时间推进": "6 分钟", "变化": {}}, "本回合状态": {"人物": {}, "物品": {}}},
+        "text": "六分钟过去。方既白还在天台，手指按在墙边没有移开。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.wrong_place"], "style": [],
+                   "notes": "Settled in 天台楼梯间; the prose puts her at the outer 天台."},
+    },
+    {
+        "id": "pos/wrong-place-same",
+        "source": "same scene, correct place claim",
+        "input": {"视角": "主角视角（方既白）", "上回合状态": {"地点": {"天台": {"位于": None, "外貌": ["地面铺着防水卷材。"]}, "天台楼梯间": {"位于": "天台", "外貌": ["楼梯间窄，灯泡坏了。"]}}, "人物": {"方既白": {"位置": "天台楼梯间", "精神值": 53, "外貌": ["头发用一根木簪别着"], "个性": ["心软"], "任务": {"大任务": {"目标": "找回兄长", "状态": "未完成"}, "小任务": []}}, "黎含英": {"位置": "天台楼梯间", "精神值": 55, "外貌": ["围巾洗得发白"], "个性": ["沉默寡言"], "任务": {"大任务": {"目标": "赎回医书", "状态": "未完成"}, "小任务": []}}}, "物品": {}}, "本回合变化": {"时间推进": "6 分钟", "变化": {}}, "本回合状态": {"人物": {}, "物品": {}}},
+        "text": "六分钟过去。方既白在楼梯间里，手指按在墙边没有移开。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Shortened sub-place name stays inside the settled place; no flag."},
+    },
+]
+
+
+anchors += [
+    {
+        "id": "neg/09-smoke-prose",
+        "source": "results/02-narration/smoke-probe-05b.json free-day-root::prose, 0.5B narration model, old gate accepted",
+        "input": arms_scene,
+        "text": "西侧服务巷的灯亮着，空气中带着纸屑和空气的味道。\n\n路明非站在东侧的服务台前，手里拿着一只盒子。\n\n「这个盒子。」他说。\n\n诺诺站在他身后，看着他拿。\n\n「你拿的是什么。」\n\n「演习用的背心。」\n\n诺诺凑近看。「这是新的吗？」\n\n「是新买的。」路明非说，「胸袋里放着一支枪，肩上没有。」\n\n诺诺没说话。她把盒子推过去，放在台子边上。\n\n「我来拿。」她说，「你先坐这儿。」\n\n路明非没有立刻走开。「站住。」\n\n诺诺停下。「站住。」\n\n他站着没走。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution"], "style": [],
+                   "notes": "An empty hand holds an invented box; the wrong place (东侧服务台) is not covered yet."},
+    },
+    {
+        "id": "neg/09-smoke-scene",
+        "source": "results/02-narration/smoke-probe-05b.json free-day-root::scene, 0.5B narration model, old gate accepted",
+        "input": arms_scene,
+        "text": "「哨声响了。」\n\n路明非把枪放在桌上，对着空场。\n\n诺诺站在旁边，手里紧着一条布条。「有伤员吗？」\n\n「没有。」\n\n诺诺没再问。她转过头看着他，脸上闪过一丝复杂。\n\n「我猜你们在做什么。」她说。\n\n「都在做什么。」\n\n「都在做一件事。」\n\n路明非把枪收好，背在背后。\n\n回廊上响起了脚步声。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.sound_added"], "style": [],
+                   "notes": "An empty hand handles a gun twice; a corridor footstep has no move fact."},
+    },
+]
+
+anchors += [
+    {
+        "id": "neg/10turn-program-fallback",
+        "source": "results/product/evidence/09-product-10turn.json turn 1, source=program, the settlement failed and no time advance was committed",
+        "input": arms_scene,
+        "text": "一分钟过去，路明非还在西侧服务巷。\n\n西侧服务巷里，巷口的黄黑绳已放下，进入即算踏入演习区。\n\n身边还有诺诺，红发用发圈束在脑后，红色识别带缠在左臂。\n\n路明非：本组结算未能确认新的结果。\n\n路明非在原地站了一会儿。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": ["style.meta"], "review": ["review.time_added"],
+                   "notes": "A minute passes with no settled advance, and the settlement failure line is shown as prose. The standing micro-action must stay unflagged."},
+    },
+    {
+        "id": "neg/10turn-ellipsis",
+        "source": "results/product/evidence/09-product-10turn.json turn 2, shown text is a single ellipsis after a timeout",
+        "input": arms_scene,
+        "text": "…",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": ["style.placeholder"],
+                   "notes": "No words were shown; this is a placeholder, not a scene."},
+    },
+    {
+        "id": "pos/allowed-micro-action",
+        "source": "allowed polish: a posture change that alters no settled state",
+        "input": arms_scene,
+        "text": "路明非在原地站了一会儿。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Standing still changes no settled state; it must not be rejected as a new event."},
+    },
+    {
+        "id": "pos/allowed-dialogue",
+        "source": "allowed polish: short dialogue with no settled content",
+        "input": arms_scene,
+        "text": "「走吧。」诺诺说。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Dialogue wording is allowed; only invented content needs reading."},
+    },
+]
+
+anchors += [
+    {
+        "id": "neg/qwen3b-move-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json move-direction::prose, auto-accepted",
+        "input": {"视角": "主角视角（周宁）", "上回合状态": {"地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}, "门厅": {"位于": None, "外貌": []}}, "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"], "任务": {"大任务": None, "小任务": []}}, "林川": {"位置": "走廊", "精神值": 40, "外貌": ["穿灰衣"], "个性": ["寡言"], "任务": {"大任务": None, "小任务": []}}}, "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}}}, "本回合变化": {"变化": {"林川": {"位置": "门厅"}}}, "本回合状态": {"人物": {}, "物品": {}}},
+        "text": "周宁看着盒盖紧闭的盒子，听见远处传来林川的脚步声，从走廊走到门厅。空气中弥漫着淡淡的木香，混合着一丝若有若无的潮湿。他靠在墙上，手指无意识地摩挲着盒子边缘，耳边是林川低声交谈的声音。远处传来轻微的响动，像是风拂过树叶，又像是某种未知的声响。周宁没有动，只是静静等待。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Allowed polish (leaning, touching the lid) plus an invented conversation, which is review-level speech, not a fact error."},
+    },
+    {
+        "id": "pos/qwen3b-elapsed-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms.json elapsed-two-minutes::prose, auto-accepted; 10 called it the cleanest arm",
+        "input": {"视角": "主角视角（周宁）", "上回合状态": {"地点": {"走廊": {"位于": None, "外貌": ["明亮的走廊，通往门厅。"]}, "门厅": {"位于": None, "外貌": []}}, "人物": {"周宁": {"位置": "走廊", "精神值": 10, "外貌": ["穿蓝衣"], "个性": ["好奇"], "任务": {"大任务": None, "小任务": []}}}, "物品": {"盒子": {"位置": "走廊", "外貌": ["盒盖关闭"]}}}, "本回合变化": {"时间推进": "2 分钟", "变化": {}}, "本回合状态": {"人物": {}, "物品": {}}},
+        "text": "周宁盯着前方的盒子，盒盖依旧紧闭。走廊里只有风声，吹动着他的衣角。他没有说话，只是盯着那块木头，仿佛在等待什么。两分钟过去，他依旧站在原地，手中只握着自己的物品，没有移动。空气中有一丝潮湿的气味，混着淡淡的木香。他没有拿起盒子，也没有放下它。此刻，他只看见盒子，听见风声，和自己。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [],
+                   "notes": "Time is stated and nothing contradicts the state; the ungrounded held object is a review item, so the text is not fact-broken but not proven clean either."},
+    },
+]
+
+anchors += [
+    {
+        "id": "neg/qwen3-clean-prose",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json free-day-root::prose (accepted, 15:35Z)",
+        "input": arms_scene,
+        "text": "路明非盯着手中的演习规则牌，镜片上映着墙上的赛区图。诺诺的红发在风中飘动，她手中的短枪枪口压向地面，红痕在左臂清晰可见。路明非的护目镜挂在胸前，镜带松着，镜片无裂纹。他看着诺诺的识别带，没有说话。空气中弥漫着演习弹的硝烟味，路明非的手指轻轻摩挲着规则牌边缘。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [],
+                   "notes": "诺诺's red mark is settled on the right sleeve and written on the left arm. Holding the lane's rule sign is polish."},
+    },
+    {
+        "id": "neg/qwen3-clean-scene",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json free-day-root::scene (accepted, 15:35Z)",
+        "input": arms_scene,
+        "text": "路明非蹲在服务巷的墙角，手指摩挲着护目镜边缘。远处枪声未歇，他缩肩的姿势被风揉碎，混着灰土味的空气里，有金属摩擦的声响。诺诺的短枪枪口仍压向地面，红发在风中晃动，像一团未燃的火。他摸到胸前的护目镜，镜片无裂纹，镜带松着，未戴在眼前。墙角的演习弹痕还在，新鲜的，像未愈合的伤口。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added", "fact.trait_as_event"], "style": [],
+                   "notes": "Gunshot and metal sound have no source; the conditional shrink is written as now."},
+    },
+    {
+        "id": "neg/qwen3-clean-beats",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json free-day-root::beats (rejected, 15:35Z)",
+        "input": arms_scene,
+        "text": "路明非看见光在墙角闪烁，像碎银般散落。他摸到右臂上红痕，指尖触到发圈的金属扣。忽然，一片碎屑落在手背，是弹片刮过皮肤的痕迹。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.body_mark_added", "fact.past_added"], "style": [],
+                   "notes": "A red mark on the protagonist's arm and a fragment hit he never had."},
+    },
+]
+
+
+anchors += [
+    {
+        "id": "neg/09-smoke-beats",
+        "source": "results/02-narration/smoke-probe-05b-beats.json free-day-root::beats (0.5B narration model, accepted)",
+        "input": arms_scene,
+        "text": "西侧服务巷的巷口传来一声闷响，立刻让诺诺停下脚步。\n\n路明非抬头看。巷子里没人应声。\n\n「有人？」他问。\n\n「没。」诺诺说，「门是开着的。」\n\n「开了多久。」\n\n「不知道。」诺诺把袖子往上捋了捋，「可声音传进来。」\n\n路明非把绳子收好，放在地上，把手掌贴在墙上，回过头看了看巷口那道光。\n\n远处有声音，比街上的更近。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.sound_added"], "style": [],
+                   "notes": "An empty hand puts away a rope that was never settled, and a muffled sound starts the scene."},
+    },
+]
+
+
+anchors += [
+    {
+        "id": "neg/lora-scene",
+        "source": "results/02-narration/real-lora-free-day-arms.json free-day-root::scene (1.5B v2 template, rejected, 513 chars)",
+        "input": arms_scene,
+        "text": "西侧服务巷里，路明非站在巷口。他把胸前的护目镜摘下来，挂在脖子上的小钩子上，又重新挂回了胸口。镜片是干净的，没有裂纹，他很满意地笑了笑。诺诺从后门走了进来，手里拿着一个装着短枪的袋子。「你先走吧。」他说。「我先走。」「现在怎么走？「从这儿绕过去。」路明非把头伸出去，「右手边是正门，左手边是服务巷。要过这儿时，记得往墙根儿退两步。墙后面有人在等你。」「你是第九个了？」诺诺问。「第九个。」他把手里的东西递过去，「这个是短枪，别对准人。」「我知道。」「还有别的？」「没有了。」路明非说。他把那张纸条从口袋里抽出来，塞进衣兜。「你什么时候想好啦？」诺诺问。「今天。」他说，「明天我去找你们队长。」「为什么是我？」「因为我的腿不听使唤。」他笑了一下，声音有些轻。「那你笑得出来。」「能笑就得撑住。」路明非把纸条重新插回口袋，然后往前走了一步。「诺诺，你刚才说的那句‘我不会替别人跑’，我记下了。」诺诺停了下来。「什么意思？」「意思是，你不能替我跑。」他解释道，「你要是能跑，早就跑了。」诺诺看了他一会儿，没有再说话。她把短枪插回袋子，走到门口，又回头。「那你明天还来吗？」路明非问。「来。」她说，「明天你在哪儿见着了就往哪儿走吧。」",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [],
+                   "notes": "The only hard fact is the invented note prop; the 12 dialogue turns and the next-day promise are review-level, which is why the gate must hold rather than accept."},
+    },
+]
+
+
+anchors += [
+    {
+        "id": "neg/qwen3-160-prose",
+        "source": "results/02-narration/real-qwen3-free-day-160.json free-day-root-160::prose (accepted, 101 chars)",
+        "input": arms_scene,
+        "text": "路明非望着远处的钟楼，护目镜在胸前晃动。诺诺的红发在风中飘动，枪口压向地面。演习规则牌在手中转着，他听见了风声，也听见了脚步声。路明非的护目镜无裂纹，镜带松着，他看见了诺诺的红痕，也看见了她手里的短枪。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added"], "style": [],
+                   "notes": "A footstep with no mover; the rule sign in hand and the unseen clock tower stay review."},
+    },
+    {
+        "id": "neg/qwen3-closed-prose",
+        "source": "results/02-narration/real-qwen3-free-day-closedlist.json free-day-root-160::prose (accepted, 109 chars)",
+        "input": arms_scene,
+        "text": "路明非握着演习规则牌，看着诺诺手里的短枪压向地面。她发圈松散，红痕在左臂蜿蜒，护目镜松着带，挂在胸前。西侧服务巷的黄黑绳已放下，器材棚门敞开。钟楼旗台外廊的风声在耳边响起，路明非的演习背心前襟完好，肩上没有阵营识别带。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [],
+                   "notes": "The red mark moves to the left arm in the next sentence; the pronoun still refers to 诺诺."},
+    },
+]
+
+
+b01_input = {'视角': '主角视角（温执）；只表达已结算的世界事实',
+ '上回合状态': {'地点': {'一层门厅': {'位于': None, '外貌': ['地砖被脚步磨得发白，正对大门挂着一面停摆的钟。']},
+                  '借阅台': {'位于': '一层门厅', '外貌': ['硬木台面，边角包着铜皮，抽屉上着锁。']},
+                  '还书处': {'位于': '一层门厅', '外貌': ['铁皮还书箱敞着口，旁边堆着没上架的书车。']}},
+           '人物': {'温执': {'位置': '借阅台',
+                         '精神值': 51,
+                         '外貌': ['戴着一副圆框眼镜', '指节上有旧伤'],
+                         '个性': ['不爱欠人情', '在还书处帮过工，知道哪只箱子漏底', '认定十年前那场火灾不是意外'],
+                         '任务': {'大任务': {'目标': '查清十年前那场火灾是谁放的火', '状态': '未完成'}, '小任务': [{'目标': '比对三份互相矛盾的登记簿', '状态': '未完成'}]}},
+                  '黎知微': {'位置': '还书处',
+                          '精神值': 63,
+                          '外貌': ['袖口沾了墨', '衣角被雨打湿过'],
+                          '个性': ['讲究次序', '管着还书处那串钥匙', '记得每个常来的人借过什么'],
+                          '任务': {'大任务': {'目标': '把走失的妹妹从外地找回来', '状态': '未完成'}, '小任务': []}}},
+           '物品': {'铁皮还书箱': {'位置': '还书处', '外貌': ['箱底锈穿了一个洞']}}},
+ '本回合变化': {'时间推进': '4 分钟',
+           '变化': {'温执': {'位置': '还书处', '新增外貌': ['袖口沾了墨']}, '黎知微': {'新增个性': ['答应替温执留一只没登记过的旧箱']}, '铁皮还书箱': {'解除外貌': ['箱底锈穿了一个洞'], '新增外貌': ['箱底垫了一块木板']}}},
+ '本回合状态': {'温执': {'位置': '还书处', '外貌': ['戴着一副圆框眼镜', '指节上有旧伤', '袖口沾了墨']},
+           '黎知微': {'个性': ['讲究次序', '管着还书处那串钥匙', '记得每个常来的人借过什么', '答应替温执留一只没登记过的旧箱']},
+           '铁皮还书箱': {'外貌': ['箱底垫了一块木板']}}}
+anchors += [
+    {
+        "id": "neg/b01-stale-look",
+        "source": "12-best-of-n b01 raw.jsonl seed 43 (frozen checker ec7ffc0e already rejected it; 01 gap review)",
+        "input": b01_input,
+        "text": "温执站在还书处，箱底垫了一块木板，箱底锈穿了一个洞。他戴着一副圆框眼镜，指节上还有旧伤，袖口沾了墨。他似乎在为十年前那场火灾的真相而努力。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.appearance_recital"], "review": [],
+                   "notes": "The look removed this turn (箱底锈穿了一个洞) is narrated as current; the appearance is also recited."},
+    },
+    {
+        "id": "neg/b01-trait-owner",
+        "source": "12-best-of-n b01 raw.jsonl seed 61",
+        "input": b01_input,
+        "text": "温执站在还书处，他戴着一副圆框眼镜，指节上还有旧伤。袖口沾了墨，这是他日常工作的痕迹。他注意到箱底垫了一块木板，这可能是为了防止箱子漏底。温执的个性是讲究次序，他知道哪只箱子漏底，认定十年前那场火灾不是意外。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.trait_misattribution"], "style": ["style.appearance_recital"], "review": [],
+                   "notes": "讲究次序 belongs to 黎知微; the sentence gives it to 温执 with 温执的个性是…."},
+    },
+    {
+        "id": "neg/b01-first-person",
+        "source": "12-best-of-n b01 raw.jsonl seed 97",
+        "input": b01_input,
+        "text": "我站在还书处，箱底垫着一块木板，箱底锈穿了一个洞。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.perspective"], "review": [],
+                   "notes": "First-person prose for a named third-person viewpoint, plus the removed look again."},
+    },
+]
+
+
+
+anchors += [
+    {
+        "id": "neg/q3-new-scene",
+        "source": "results/02-narration/real-qwen3-free-day-arms-clean.json scene arm (accepted, 122 chars)",
+        "input": {'视角': '主角视角（路明非）',
+ '上回合状态': {'人物': {'路明非': {'位置': '西侧服务巷/slot_wall',
+                          '精神值': 43,
+                          '外貌': ['校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩'],
+                          '个性': ['习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人'],
+                          '任务': {'大任务': {'目标': '在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场', '状态': '未完成'},
+                                 '小任务': [{'目标': '向诺诺问清当前红蓝两方局势和自己是否可以保持中立', '状态': '未完成'},
+                                         {'目标': '在进入交火区前拿到可用的护目镜与演习装备', '状态': '未完成'},
+                                         {'目标': '把胸前护目镜戴好并确认镜片没有裂纹', '状态': '未完成'},
+                                         {'目标': '在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线', '状态': '未完成'},
+                                         {'目标': '得到至少一名在场者明确同意的协作，不替他人擅自承诺', '状态': '未完成'},
+                                         {'目标': '读过服务巷规则牌，知道医护白线内禁止交火', '状态': '已完成'}]}},
+                  '诺诺': {'位置': '西侧服务巷/slot_entry',
+                         '精神值': 58,
+                         '外貌': ['红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面'],
+                         '个性': ['看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实'],
+                         '任务': {'大任务': {'目标': '让红方的旗台行动有可执行的掩护，而不把路明非当诱饵', '状态': '未完成'},
+                                '小任务': [{'目标': '问清路明非的参赛意愿并说明三条接近钟楼的路线', '状态': '未完成'},
+                                        {'目标': '把故障短讯机恢复到能与凯撒联络的状态', '状态': '未完成'},
+                                        {'目标': '确认西回廊的蓝方伤员是否需要真正的医护帮助', '状态': '未完成'},
+                                        {'目标': '与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷', '状态': '未完成'}]}}},
+           '地点': {'西侧服务巷': {'位于': '西侧器材区', '外貌': ['巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕']},
+                  '西侧器材区': {'位于': '卡塞尔学院演习区', '外貌': ['器材棚', '服务巷和西侧集结点围成一条后勤线；从服务巷可到庭院西口，也能绕进检修通道。运送伤员可沿白线到医护附楼，不必穿越庭院']}},
+           '物品': {'路明非的护目镜': {'位置': '路明非', '外貌': ['镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前']},
+                  '路明非的演习背心': {'位置': '路明非', '外貌': ['背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带']},
+                  '诺诺的演习短枪': {'位置': '诺诺', '外貌': ['枪上有黄色演习标记，弹匣内剩3发弗里嘉演习弹，保险合上，枪口向下']},
+                  '赛区路线图': {'位置': '西侧服务巷', '外貌': ['图上画出庭院', '东西回廊', '跨溪小桥', '钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态']}}},
+ '本回合变化': {'变化': {}}},
+        "text": "路明非盯着墙上的赛区图，右手空着，护目镜挂在胸前。巷口的黄黑绳已放，风穿过服务巷，带起几片干叶。诺诺在入口处，红发束在脑后，短枪枪口压向地面。他听见远处枪声，缩肩。空气中混着机油和铁锈味，墙角的演习弹痕迹新鲜。他摸了摸胸前的护目镜，镜片无裂纹。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added", "fact.trait_as_event"], "style": [], "forbid": [],
+                   "notes": "The gunshot exists only inside the settled habit; the scene still turns it into a current event."},
+    },
+]
+
+anchors += [
+    {
+        "id": "neg/q3-repair-prose",
+        "source": "results/02-narration/real-qwen3-free-day-sentence-repair.json prose arm (rejected, 97 chars)",
+        "input": {'视角': '主角视角（路明非）',
+ '上回合状态': {'人物': {'路明非': {'位置': '西侧服务巷/slot_wall',
+                          '精神值': 43,
+                          '外貌': ['校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩'],
+                          '个性': ['习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人'],
+                          '任务': {'大任务': {'目标': '在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场', '状态': '未完成'},
+                                 '小任务': [{'目标': '向诺诺问清当前红蓝两方局势和自己是否可以保持中立', '状态': '未完成'},
+                                         {'目标': '在进入交火区前拿到可用的护目镜与演习装备', '状态': '未完成'},
+                                         {'目标': '把胸前护目镜戴好并确认镜片没有裂纹', '状态': '未完成'},
+                                         {'目标': '在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线', '状态': '未完成'},
+                                         {'目标': '得到至少一名在场者明确同意的协作，不替他人擅自承诺', '状态': '未完成'},
+                                         {'目标': '读过服务巷规则牌，知道医护白线内禁止交火', '状态': '已完成'}]}},
+                  '诺诺': {'位置': '西侧服务巷/slot_entry',
+                         '精神值': 58,
+                         '外貌': ['红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面'],
+                         '个性': ['看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实'],
+                         '任务': {'大任务': {'目标': '让红方的旗台行动有可执行的掩护，而不把路明非当诱饵', '状态': '未完成'},
+                                '小任务': [{'目标': '问清路明非的参赛意愿并说明三条接近钟楼的路线', '状态': '未完成'},
+                                        {'目标': '把故障短讯机恢复到能与凯撒联络的状态', '状态': '未完成'},
+                                        {'目标': '确认西回廊的蓝方伤员是否需要真正的医护帮助', '状态': '未完成'},
+                                        {'目标': '与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷', '状态': '未完成'}]}}},
+           '地点': {'西侧服务巷': {'位于': '西侧器材区', '外貌': ['巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕']},
+                  '西侧器材区': {'位于': '卡塞尔学院演习区', '外貌': ['器材棚', '服务巷和西侧集结点围成一条后勤线；从服务巷可到庭院西口，也能绕进检修通道。运送伤员可沿白线到医护附楼，不必穿越庭院']}},
+           '物品': {'路明非的护目镜': {'位置': '路明非', '外貌': ['镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前']},
+                  '路明非的演习背心': {'位置': '路明非', '外貌': ['背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带']},
+                  '诺诺的演习短枪': {'位置': '诺诺', '外貌': ['枪上有黄色演习标记，弹匣内剩3发弗里嘉演习弹，保险合上，枪口向下']},
+                  '赛区路线图': {'位置': '西侧服务巷', '外貌': ['图上画出庭院', '东西回廊', '跨溪小桥', '钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态']}}},
+ '本回合变化': {'变化': {}}},
+        "text": "路明非盯着演习规则牌，发圈在脑后晃动。诺诺靠在墙边，发丝垂落。西侧服务巷的黄黑绳已放下，路明非的护目镜无裂纹，演习背心前襟完好。他摸了摸衣袋，里面装着几片药片。风声轻拂，钟楼旗台外廊的风铃轻响。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.sound_added", "fact.item_misattribution"], "style": [], "forbid": [],
+                   "notes": "The wind chime is invented; the hair tie belongs to 诺诺, not 路明非."},
+    },
+]
+
+anchors += [
+    {
+        "id": "pos/q3-quiet-beats",
+        "source": "results/02-narration/real-qwen3-free-day-beats-quiet.json beats arm (rejected for length, fact-clean)",
+        "input": {'视角': '主角视角（路明非）',
+ '上回合状态': {'人物': {'路明非': {'位置': '西侧服务巷/slot_wall',
+                          '精神值': 43,
+                          '外貌': ['校服领口松着，膝盖沾了灰；护目镜挂在胸前，右手还空着，身上没有红蓝识别带。听见远处枪声会下意识缩肩'],
+                          '个性': ['习惯先用一句玩笑替自己解围，真见到有人受伤又很难装作没看见。认识诺诺和室友芬格尔，对楚子航有同校旧识的熟悉感，却还没答应加入任何一方；很想证明自己不是只能被别人保护的人'],
+                          '任务': {'大任务': {'目标': '在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场', '状态': '未完成'},
+                                 '小任务': [{'目标': '向诺诺问清当前红蓝两方局势和自己是否可以保持中立', '状态': '未完成'},
+                                         {'目标': '在进入交火区前拿到可用的护目镜与演习装备', '状态': '未完成'},
+                                         {'目标': '把胸前护目镜戴好并确认镜片没有裂纹', '状态': '未完成'},
+                                         {'目标': '在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线', '状态': '未完成'},
+                                         {'目标': '得到至少一名在场者明确同意的协作，不替他人擅自承诺', '状态': '未完成'},
+                                         {'目标': '读过服务巷规则牌，知道医护白线内禁止交火', '状态': '已完成'}]}},
+                  '诺诺': {'位置': '西侧服务巷/slot_entry',
+                         '精神值': 58,
+                         '外貌': ['红发用发圈束在脑后，红色识别带缠在左臂；右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面'],
+                         '个性': ['看人时比听解释更有耐心，开玩笑尖锐却会在危险前把人拉住。属于凯撒的红方，愿意给路明非提示，但不愿替他选阵营；知道西回廊有蓝方伤员，尚不知道伤势是否真实'],
+                         '任务': {'大任务': {'目标': '让红方的旗台行动有可执行的掩护，而不把路明非当诱饵', '状态': '未完成'},
+                                '小任务': [{'目标': '问清路明非的参赛意愿并说明三条接近钟楼的路线', '状态': '未完成'},
+                                        {'目标': '把故障短讯机恢复到能与凯撒联络的状态', '状态': '未完成'},
+                                        {'目标': '确认西回廊的蓝方伤员是否需要真正的医护帮助', '状态': '未完成'},
+                                        {'目标': '与凯撒约定可被双方看见的进攻信号，再决定何时离开服务巷', '状态': '未完成'}]}}},
+           '地点': {'西侧服务巷': {'位于': '西侧器材区', '外貌': ['巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕']},
+                  '西侧器材区': {'位于': '卡塞尔学院演习区', '外貌': ['器材棚', '服务巷和西侧集结点围成一条后勤线；从服务巷可到庭院西口，也能绕进检修通道。运送伤员可沿白线到医护附楼，不必穿越庭院']}},
+           '物品': {'路明非的护目镜': {'位置': '路明非', '外貌': ['镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前']},
+                  '路明非的演习背心': {'位置': '路明非', '外貌': ['背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带']},
+                  '诺诺的演习短枪': {'位置': '诺诺', '外貌': ['枪上有黄色演习标记，弹匣内剩3发弗里嘉演习弹，保险合上，枪口向下']},
+                  '赛区路线图': {'位置': '西侧服务巷', '外貌': ['图上画出庭院', '东西回廊', '跨溪小桥', '钟楼与白线撤离路；地下检修通道用虚线标注，未标门闩状态']}}},
+ '本回合变化': {'变化': {}}},
+        "text": "红发女子左臂缠着红色识别带，右袖红痕未褪。演习规则牌在她掌心，护目镜紧贴双眼。她指尖抵着墙，指尖沾着泥渍。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [], "forbid": ["fact.sound_added", "fact.state_contradiction", "fact.item_misattribution"],
+                   "notes": "A 53-char beat that keeps the settled band, mark and map; short but fact-clean."},
+    },
+]
+
+
+anchors += [
+    {
+        "id": "neg/slot-substitution",
+        "source": "constructed from frozen-row-0012: 温执's cuff is settled with ink",
+        "input": b01_input,
+        "text": "温执站在还书处，袖口沾着泥。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "袖口 is settled with 墨; 泥 changes the same slot."},
+    },
+]
+
+
+rows_q3 = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-new2.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/q3-ext-prose",
+        "source": "02 Qwen3-1.7B free-day extended run (78 chars, rejected by 02); goggles settled hanging, text says 摘下",
+        "input": rows_q3["q3-ext"]["input"],
+        "text": rows_q3["q3-ext"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.item_misattribution", "fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "发圈 belongs to 诺诺; 摘下护目镜 implies they were worn, but they hang on the chest."},
+    },
+)
+
+
+# ------------------------------------------------- 82-char static inventory
+rows_move = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-all.jsonl", encoding="utf-8"))}
+state_list_input = json.loads(json.dumps(rows_move["real-qwen3-free-day-160::free-day-root-160::prose"]["input"]))
+state_list_input["本回合变化"] = {"变化": {"路明非": {"位置": "中央庭院"}}}
+anchors.append(
+    {
+        "id": "neg/state-list-82",
+        "source": "02 Qwen3-1.7B free-day move arm, 82 chars accepted by 02's own flag; a static inventory, not prose",
+        "input": state_list_input,
+        "text": "路明非在中央庭院的石阶上，护目镜无裂纹，演习背心前襟完好。诺诺在西侧服务巷，红发用发圈束在脑后。演习规则牌在手心，赛区路线图在脚边。风穿过庭院，带着潮湿的泥土气息。",
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": ["style.state_recital"], "review": [],
+                   "notes": "A change point rendered as 6 current-state clauses; accepted flags do not make this prose."},
+    },
+)
+
+
+rows_spine = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-spine.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/q3-spine-handchain",
+        "source": "02 Qwen3-1.7B spine-root-2 run (144 chars, accepted by 02): invents a silver bracelet with scratches",
+        "input": rows_spine["q3-spine"]["input"],
+        "text": rows_spine["q3-spine"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "notes": "银质手链 is worn and described, but it is neither in the settled look nor handled from a settled object."},
+    },
+)
+
+
+rows_cont = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-cont.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/q3-cont-laughter-past",
+        "source": "02 Qwen3-1.7B continuation run (162 chars, rejected by 02): children's laughter and a war memory",
+        "input": rows_cont["q3-cont-1"]["input"],
+        "text": rows_cont["q3-cont-1"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.past_added", "fact.sound_added"], "style": [], "review": [],
+                   "notes": "孩童的笑声 has no child in the scene; 曾经被战火灼伤 is an unsettled past event."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/q3-cont-hair",
+        "source": "02 Qwen3-1.7B continuation runs 2/3 (156/134 chars): 诺诺's tied hair hangs loose",
+        "input": rows_cont["q3-cont-2"]["input"],
+        "text": rows_cont["q3-cont-2"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "Red hair is settled 束在脑后; 红发垂落 is a state change."},
+    },
+)
+
+
+rows_cont4 = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-cont4.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "pos/q3-cont4-lane",
+        "source": "02 Qwen3-1.7B continuation-4 run (117 chars, accepted by 02): the viewpoint looks at the lane he is in",
+        "input": rows_cont4["q3-cont-4"]["input"],
+        "text": rows_cont4["q3-cont-4"]["text"],
+        "options": {"genders": {}, "minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [], "forbid": ["review.unseen_entity"],
+                   "notes": "路明非 is at 西侧服务巷/slot_wall; looking at 西侧服务巷 is not an unseen place."},
+    },
+)
+
+
+rows_gender = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-q3-all.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/zhouning-pronoun",
+        "source": "02 q3 1.5B run: 周宁 (female, recorded by the 2026-11-10 product review) is narrated as 他 eleven times",
+        "input": rows_gender["real-model-1.5b::elapsed-two-minutes"]["input"],
+        "text": rows_gender["real-model-1.5b::elapsed-two-minutes"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.gender"], "style": [], "review": [],
+                   "notes": "A single-person scene; 他 cannot be anyone but 周宁."},
+    },
+)
+anchors.append(
+    {
+        "id": "pos/nono-pronoun",
+        "source": "02 Qwen3 free-day-calibrated run: 诺诺's hair band, then 他 = the male viewpoint",
+        "input": rows_gender["real-qwen3-free-day-calibrated::free-day-root-160::prose"]["input"],
+        "text": rows_gender["real-qwen3-free-day-calibrated::free-day-root-160::prose"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [],
+                   "forbid": ["fact.gender"],
+                   "notes": "The male viewpoint is visible; 他 must not be blamed on 诺诺."},
+    },
+)
+
+
+rows_unseen = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-unseen2.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/unseen-archive-knife",
+        "source": "02 Qwen3 unseen-archive-2 (174 chars): a 裁纸刀 not in the settled state",
+        "input": rows_unseen["unseen-2"]["input"],
+        "text": rows_unseen["unseen-2"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "notes": "The settled items are the three ledgers and the abacus; 裁纸刀 is handled but invented."},
+    },
+)
+anchors.append(
+    {
+        "id": "pos/unseen-archive-inner-self",
+        "source": "02 Qwen3 unseen-archive-1 (186 chars): 自己 in the viewpoint's interiority",
+        "input": rows_unseen["unseen-1"]["input"],
+        "text": rows_unseen["unseen-1"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "forbid": ["fact.viewpoint_interiority"],
+                   "notes": "而自己却在心里嘀咕 is 黎含章's own interiority, not 赵掌柜's; the knife is still invented."},
+    },
+)
+anchors.append(
+    {
+        "id": "pos/unseen-archive-paper-sound",
+        "source": "02 Qwen3 unseen-archive-2: paper friction has the settled ledger as its source",
+        "input": rows_unseen["unseen-2"]["input"],
+        "text": rows_unseen["unseen-2"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": [], "review": [],
+                   "forbid": ["fact.sound_added"],
+                   "notes": "纸张摩擦的声响 is the ledger's paper, present in the same sentence."},
+    },
+)
+
+
+rows_unseen_accepted = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-unseen-accepted.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/unseen-accepted-knife",
+        "source": "02 Qwen3 unseen-archive accepted 189-char text: a 裁纸刀 prop that the settled state never mentions, plus the same 三分钟 twice",
+        "input": rows_unseen_accepted["unseen-accepted-189"]["input"],
+        "text": rows_unseen_accepted["unseen-accepted-189"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added"], "style": ["style.punctuation"], "review": [],
+                   "notes": "02's own gate accepted this text; the knife is a new object and the advance is stated twice."},
+    },
+)
+
+
+rows_move02 = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-02move.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "pos/02-move-perception-pronoun",
+        "source": "02 Qwen3 spine move (171 chars, accepted by 02): 路明非注意到她脚边的演习规则牌",
+        "input": rows_move02["02-move-171"]["input"],
+        "text": rows_move02["02-move-171"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "forbid": ["fact.gender"],
+                   "notes": "After a perception verb the pronoun is the perceived person, not the perceiver; no recorded female visible, so it must stay review. The same text rewrites the settled tied hair as 发圈垂落, which is a real state contradiction."},
+    },
+)
+
+
+rows_opening = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-opening2324.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/page-opening-2324",
+        "source": "09 run 2026-11-10T1832-0d8b (06 page 2324cde1, new qwen3-1.7b scene/prose-facts chain): the first model-accepted opening (60.8 s, fallback=false)",
+        "input": rows_opening["opening-2324"]["input"],
+        "text": rows_opening["opening-2324"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "Red hair hangs loose though tied; the red mark is put on the left; the identifying band moves to the hair tie; the chest pocket is said to contain a magazine although the state only says it can hold one."},
+    },
+)
+
+
+rows_f15d = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+for suffix, note in (
+    ("opening", "Red hair is said to hang loose; the red mark is on the left; the chest pocket holds a magazine."),
+    ("point", "The chest pocket again contains a magazine; the read-the-rules result is missing."),
+    ("auto", "The goggles are in his hand although they hang on the chest, and the same text ends with empty hands."),
+):
+    row = rows_f15d[f"f15d-{suffix}"]
+    anchors.append(
+        {
+            "id": f"neg/page-f15d-{suffix}",
+            "source": "09 run 2026-11-10T1846-a5ff (06 f15d7a98, new qwen3-1.7b scene/prose-facts chain): " + note,
+            "input": row["input"],
+            "text": row["text"],
+            "options": {"minChars": 1},
+            "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [], "notes": note},
+        },
+    )
+
+
+quiet = json.load(io.open(WT + "/../../results/02-narration/real-qwen3-quiet-minute-4.json", encoding="utf-8"))
+quiet_text = next(run["text"] for run in quiet["runs"] if run.get("text"))
+quiet_input = next(row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8")) if row["id"] == "f15d-point")
+anchors.append(
+    {
+        "id": "neg/02-quiet-minute-4",
+        "source": "02 re-run on 28f30c7e (real-qwen3-quiet-minute-4.json, accepted 147 chars, 24.0 s): 诺诺 walks with no settled move",
+        "input": quiet_input,
+        "text": quiet_text,
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.event_added"], "style": [], "review": [],
+                   "notes": "The only hard defect is 诺诺一步步走近; 钟声/泥土味/铃铛 are review atmosphere."},
+    },
+)
+
+
+run_95 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-95dc.json", encoding="utf-8"))
+n95 = run_95["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+e95 = {}
+b7_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+for key, value in n95.items():
+    e95["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else "auto1")] = value.get("text") or ""
+anchors.append(
+    {
+        "id": "neg/95dc-point-program",
+        "source": "09 run 2026-11-10T2032-3f72 (06 95dc8e8e): the program fallback uses the goggles as the actor and prints «为false»",
+        "input": b7_inputs["f15d-point"],
+        "text": e95["point"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.item_actor"], "style": ["style.status_panel"], "review": [],
+                   "notes": "The goggles are an item held by 路明非; the program makes them stand."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/95dc-auto1-mark-time",
+        "source": "09 run 2026-11-10T2032-3f72 (06 95dc8e8e): the auto-1 model text gives 路明非 the nono's right-sleeve red mark and skips the minute",
+        "input": b7_inputs["f15d-point"],
+        "text": e95["auto1"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.body_mark_added"], "style": [], "review": [],
+                   "notes": "The nono's look carries the right-sleeve red mark; the lu's does not."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/95dc-root-dialogue",
+        "source": "09 run 2026-11-10T2032-3f72 (06 95dc8e8e): the opening invents «这里……没人在。» and re-ties the settled hair",
+        "input": b7_inputs["f15d-opening"],
+        "text": e95["root"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": [], "review": [],
+                   "notes": "The invented dialogue and the hair re-enactment are review items; the root is not displayed."},
+    },
+)
+
+
+run_415 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-415c.json", encoding="utf-8"))
+n415 = run_415["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+e415 = {}
+for key, value in n415.items():
+    e415["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else "auto")] = value.get("text") or ""
+# The real settled inputs of the 415c points (built by review-run.test.ts from
+# the run snapshot); the f15d inputs were a different state and hid the action
+# and accessory rules.
+rr415 = {row["id"]: row for row in json.load(io.open(WT + "/.local/narration-quality/415c-review-run.json", encoding="utf-8"))}
+b415_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/415c-point-program",
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the player point is a program recital; the goggles stand, 诺诺 speaks a dice result, and the move/read never happens",
+        "input": rr415["point"]["input"],
+        "text": e415["point"],
+        "options": {"minChars": 1, "action": run_415["turns"][0]["input"]},
+        "expect": {"fact": ["fact.item_actor", "fact.action_omitted"], "style": ["style.status_panel"], "review": [],
+                   "notes": "The player's «往里走 / 看清规则牌» is not narrated; the place/诺诺 blocks are state recitals."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/415c-auto-echo",
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the automatic nono point repeats the point's setting/status lines and never narrates the nono action",
+        "input": rr415["auto1"]["input"],
+        "text": e415["auto"],
+        "options": {"minChars": 1, "priorTexts": [e415["point"]]},
+        "expect": {"fact": [], "style": ["style.echo_prior", "style.status_panel"], "review": [],
+                   "notes": "The subject is 路明非, the round member is nono; «把视线收回来» is a viewpoint micro-action."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/415c-root-gun-past",
+        "source": "09 run 2026-11-10T2055-3e8a (06 415ccbe0): the opening puts 诺诺's in-hand gun on the ground and adds a past night",
+        "input": b415_inputs["f15d-opening"],
+        "text": e415["root"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction", "fact.past_added"], "style": [], "review": [],
+                   "notes": "«暮色» at 15:21, «那场未完成的演习» and «石阶» are review items; the 131-char root is not in the displayed text."},
+    },
+)
+
+
+# 02 dense-point-4: the accepted text hears water and then denies any sound;
+# the real input is compressed v3, so build the equivalent DatasetInput.
+d4 = json.load(io.open(WT + "/../../results/02-narration/real-qwen3-dense-point-4.json", encoding="utf-8"))["runs"][0]
+d4_input = {
+    "视角": "主角视角（路明非）",
+    "上回合状态": {
+        "人物": {
+            "路明非": {"位置": "西侧服务巷", "精神值": 43},
+            "诺诺": {"位置": "西侧服务巷", "外貌": ["红发用发圈束在脑后"]},
+        },
+        "地点": {"中央庭院": {"位于": "西侧器材区", "外貌": ["停水喷泉池边有石阶。"]}},
+        "物品": {},
+    },
+    "本回合变化": {
+        "变化": {"路明非": {"位置": "中央庭院", "任务": {"大任务": {"目标": "比对三份互相矛盾的登记簿", "状态": "已完成"}}}},
+        "时间推进": "两分钟",
+    },
+}
+anchors.append(
+    {
+        "id": "neg/02-dense-point-4",
+        "source": "02 run free-day-dense-point::prose (git dd9b02eb): accepted text hears 水声, denies any sound, adds rain, omits the move",
+        "input": d4_input,
+        "text": d4["text"],
+        "options": {"minChars": 1, "action": "路明非从西侧服务巷走到中央庭院"},
+        "expect": {"fact": ["fact.sound_denied", "fact.sound_added", "fact.object_added", "fact.action_omitted"], "style": [], "review": [],
+                   "notes": "The same paragraph has 水声 and 没有听到任何声音; 雨水 is not settled; the move is replaced by 他没有移动."},
+    },
+)
+
+
+# d101 active run: the trained candidate was rejected on echo_prior and the
+# legacy route produced a 127-char model text with an invented dice/table/wind.
+d101 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-d101.json", encoding="utf-8"))
+d101_text = d101["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+d101_key = next(k for k in d101_text if k.startswith("point_round_3_1"))
+d101_point = d101_text[d101_key]["text"]
+d101_review = {row["id"]: row for row in json.load(io.open(WT + "/.local/narration-quality/d101-review-run.json", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/d101-legacy-dice",
+        "source": "09 run 2026-11-10T2129-cad9 (active d101): trained rejected echo_prior; legacy route accepted a dice/table/wind text",
+        "input": d101_review["point"]["input"],
+        "text": d101_point,
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.object_added", "fact.sound_added"], "style": [], "review": [],
+                   "notes": "State 物品 {}; the text handles 骰子 on a 桌上 and adds 一阵风; no minute."},
+    },
+)
+
+
+# The 3-turn product run (09-product-03turn-d101): the new build dropped the
+# dice sentence, but the legacy point still re-lowers the rope the state has
+# already down and never walks in or reads the sign.
+d101_3turn_review = {row["id"]: row for row in json.load(io.open(WT + "/.local/narration-quality/d101-3turn-review-run.json", encoding="utf-8"))}
+d101_3turn = json.load(io.open(WT + "/../../results/product/evidence/09-product-03turn-d101.json", encoding="utf-8"))
+t1 = d101_3turn["turns"][0]
+anchor_point = next(iter(t1["snapshotAfterTurn"]["transport"]["narrations"].values()))
+anchors.append(
+    {
+        "id": "neg/d101-3turn-turn1",
+        "source": "09 3-turn product run 2026-11-10T2137-ac7c, turn 1: rope already down re-lowered; walk/read sign missing",
+        "input": d101_3turn_review["point"]["input"],
+        "text": anchor_point["text"] if isinstance(anchor_point, dict) else t1["text"],
+        "options": {"minChars": 1, "action": t1["input"]},
+        "expect": {"fact": ["fact.state_contradiction", "fact.action_omitted"], "style": [], "review": [],
+                   "notes": "State: 黄黑绳已放下; input walks in and reads the 规则牌; text re-lowers the rope and never walks in/reads."},
+    },
+)
+
+run_e9 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-e9a5.json", encoding="utf-8"))
+e9_narr = run_e9["turns"][0]["snapshotAfterTurn"]["transport"]["narrations"]
+e9 = {}
+for key, value in e9_narr.items():
+    e9["root" if key.startswith("point_root") else ("point" if key.startswith("point_round_3_1") else ("auto1" if "mwb4vrek" in key else "auto2"))] = value.get("text") or ""
+b7_inputs = {row["id"]: row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8"))}
+anchors.append(
+    {
+        "id": "neg/e9a5-root",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the opening lowers the already-down rope and lifts the settled muzzle",
+        "input": b7_inputs["f15d-opening"],
+        "text": e9["root"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "The lane is settled with 黄黑绳已放下; the nono's muzzle is settled down."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/e9a5-point-rope-echo",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the player point repeats the opening's first sentence and lowers the down rope again",
+        "input": b7_inputs["f15d-point"],
+        "text": e9["point"],
+        "options": {"minChars": 1, "priorTexts": [e9["root"]]},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.repeated_opening"], "review": [],
+                   "notes": "The point also omits the player's move/read action; the program auto-2 narrates it."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/e9a5-auto1-gun-echo",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the auto-1 model text hangs the in-hand short gun at the waist and echoes the point",
+        "input": b7_inputs["f15d-point"],
+        "text": e9["auto1"],
+        "options": {"minChars": 1, "priorTexts": [e9["point"]]},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.echo_prior"], "review": [],
+                   "notes": "The nono's look settles the short gun in her hand; the page accepted this model text."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/e9a5-auto2-task",
+        "source": "09 run 2026-11-10T2016-5758 (06 e9a51950): the shown auto-2 program paragraph asserts a task although all 73 rows stay pending",
+        "input": b7_inputs["f15d-point"],
+        "text": e9["auto2"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.task_asserted"], "style": ["style.status_panel"], "review": [],
+                   "notes": "The rest of the paragraph (rope down, wall red marks, red band, nono's right sleeve) is settled."},
+    },
+)
+
+run_b7 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-b7cd.json", encoding="utf-8"))
+b7_turn = run_b7["turns"][0]
+b7_rows = {row["id"]: row for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-b7cd.jsonl", encoding="utf-8"))}
+b7_root = b7_rows["b7cd-point_root_world_dragon_raja_free_day"]["input"]
+anchors.append(
+    {
+        "id": "neg/b7cd-point-status",
+        "source": "09 run 2026-11-10T1958-5e35 (06 b7cd274a): the player-point program fallback prints «诺诺：未成功触发…»",
+        "input": b7_rows["b7cd-point_round_3_1"]["input"],
+        "text": b7_rows["b7cd-point_round_3_1"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": [], "style": ["style.status_panel"], "review": [],
+                   "notes": "The first two sentences are settled; the colon line is an internal result."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/b7cd-auto-task",
+        "source": "09 run 2026-11-10T1958-5e35 (06 b7cd274a): the shown auto-round fallback says «行动成功完成» although no task moved",
+        "input": b7_rows["b7cd-point_round_auto_mwb4avcm_2_1"]["input"],
+        "text": b7_rows["b7cd-point_round_auto_mwb4avcm_2_1"]["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.task_asserted"], "style": ["style.status_panel"], "review": [],
+                   "notes": "All 73 task rows stay pending in the updates; the results judgment is not a task transition."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/b7cd-auto-echo",
+        "source": "09 run 2026-11-10T1958-5e35 (06 b7cd274a): the auto-1 model text repeats the opening sentence",
+        "input": b7_rows["b7cd-point_round_auto_mwb49dw4_1_1"]["input"],
+        "text": b7_rows["b7cd-point_round_auto_mwb49dw4_1_1"]["text"],
+        "options": {"minChars": 1, "priorTexts": [b7_rows["b7cd-point_root_world_dragon_raja_free_day"]["text"]]},
+        "expect": {"fact": ["fact.state_contradiction"], "style": ["style.repeated_opening"], "review": [],
+                   "notes": "The first sentence is verbatim the root opening; the page accepted it (fallback=false); the rope is settled down."},
+    },
+)
+
+run21 = json.load(io.open(WT + "/../../results/product/evidence/09-one-legal-turn-21c3.json", encoding="utf-8"))
+run21_turn = run21["turns"][0]
+run21_root = ((run21_turn.get("snapshotAfterTurn") or {}).get("transport") or {}).get("narrations", {}).get("point_root_world_dragon_raja_free_day", {}).get("text")
+run21_point_input = next(row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8")) if row["id"] == "f15d-point")
+run21_root_input = next(row["input"] for row in map(json.loads, io.open(WT + "/.local/narration-quality/batch-f15d.jsonl", encoding="utf-8")) if row["id"] == "f15d-opening")
+anchors.append(
+    {
+        "id": "neg/21c3-final-task",
+        "source": "09 run 2026-11-10T1943-5f25 (06 21c34d67): the program fallback asserts 诺诺 completed a task although every task is still pending",
+        "input": run21_point_input,
+        "text": run21_turn["text"],
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.task_asserted"], "style": [], "review": [],
+                   "notes": "The task sentence has no committed task; the action/time/location sentences are otherwise settled."},
+    },
+)
+anchors.append(
+    {
+        "id": "neg/21c3-opening",
+        "source": "09 run 2026-11-10T1943-5f25 (06 21c34d67): the opening turns the settled muzzle down into «枪口微微抬起»",
+        "input": run21_root_input,
+        "text": run21_root,
+        "options": {"minChars": 1},
+        "expect": {"fact": ["fact.state_contradiction"], "style": [], "review": [],
+                   "notes": "The muzzle is settled down; the hair tying and the rope lowering are re-enactments (review)."},
+    },
+)
+
+
+# The 2026-11-10 prompt-route hour: seven frozen cases, text replayed through
+# the independent checker. The beat packet is converted to the DatasetInput
+# shape so the checker sees the same settled lines the prose saw.
+route_batch = json.load(io.open(ROOT + "/results/product/operations/prompt-route-hour-20261110T222039Z/batch-1.json", encoding="utf-8"))
+route_rows = {run["id"].replace("::prose", ""): run for run in route_batch.get("runs") or [] if run.get("text")}
+route_alias = {"free-day-root-160": "free-day-root-scenario-160", "free-day-move-160": "free-day-move-scenario-160"}
+route_keep = ["free-day-root-160", "free-day-quiet-minute", "free-day-quiet-minute-action", "free-day-move-160",
+              "free-day-dense-point", "free-day-continuation-page", "unseen-archive-page"]
+route_facts = {
+    "free-day-root-160": ["fact.actor_swap", "fact.state_contradiction"],
+    "free-day-quiet-minute": ["fact.state_contradiction"],
+    "free-day-quiet-minute-action": [],
+    "free-day-move-160": ["fact.actor_swap", "fact.state_contradiction"],
+    "free-day-dense-point": ["fact.state_contradiction", "fact.sound_added"],
+    "free-day-continuation-page": ["fact.state_contradiction", "fact.false_position"],
+    "unseen-archive-page": ["fact.object_added"],
+}
+route_notes = {
+    "free-day-root-160": "红发 is 诺诺's; 镜片后 with goggles on the chest; 诺诺 发圈垂落 against the tied hair.",
+    "free-day-quiet-minute": "红发轻垂/发圈 against the tied hair; the rope re-lowered is a separate class.",
+    "free-day-quiet-minute-action": "The read action is narrated; the added wind/bell/red shadow is not yet covered by the checker.",
+    "free-day-move-160": "红发 on 路明非; 发圈垂落 against the tied hair.",
+    "free-day-dense-point": "Water in the 停水 pool; an added sound.",
+    "free-day-continuation-page": "诺诺 发圈垂落; she is settled 不远处 but written 身后.",
+    "unseen-archive-page": "An added object on the desk.",
+}
+route_labels = {"free-day-quiet-minute": "一分钟", "free-day-quiet-minute-action": "一分钟",
+                "free-day-dense-point": "两分钟", "unseen-archive-page": "三分钟"}
+for case_id in route_keep:
+    fixture = json.load(io.open(ROOT + "/results/product/operations/prompt-route-hour-20261110T222039Z/fixtures/" + route_alias.get(case_id, case_id) + ".json", encoding="utf-8"))
+    scene = fixture["scene"]
+    viewpoint = fixture["viewpoint"]["name"] if isinstance(fixture.get("viewpoint"), dict) else (fixture.get("viewpoint") or "路明非")
+    present = [person for person in scene.get("present") or [] if isinstance(person, dict) and person.get("name")]
+    people = {person["name"]: {"位置": scene["location"], "精神值": 0, "外貌": [person.get("note", "")], "个性": [], "任务": {"小任务": []}} for person in present}
+    if viewpoint not in people:
+        people[viewpoint] = {"位置": scene["location"], "精神值": 0, "外貌": [], "个性": [], "任务": {"小任务": []}}
+    route_items = {}
+    for item in list(scene.get("objects") or []) + list(scene.get("inventory") or []):
+        if isinstance(item, dict) and item.get("name"):
+            route_items[item["name"]] = {"位置": scene["location"], "外貌": [item.get("note", "")]}
+    anchors.append({
+        "id": "neg/route/" + case_id,
+        "source": "prompt-route hour batch-1 (" + case_id + "::prose), text replayed through the independent checker",
+        "input": {
+            "视角": "主角视角（" + viewpoint + "）",
+            "上回合状态": {"地点": {scene["location"]: {"位于": None, "外貌": scene.get("placeNotes") or []}}, "人物": people, "物品": route_items},
+            "本回合变化": {"时间推进": route_labels.get(case_id, ""), "变化": {}},
+        },
+        "text": route_rows[case_id]["text"],
+        "options": {"minChars": 1, "priorTexts": [fixture["priorText"]] if fixture.get("priorText") else None},
+        "expect": {"fact": route_facts[case_id], "style": [], "review": [], "notes": route_notes[case_id]},
+    })
+
+
+# The first constrained-beats model text (448e): 485 chars, a state recital
+# that never walks in or reads the board and repeats settled lines.
+run448 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-448e.json", encoding="utf-8"))
+t448 = run448["turns"][0]
+fixture448 = json.load(io.open(ROOT + "/results/product/operations/prompt-route-hour-20261110T222039Z/fixtures/free-day-root-scenario-160.json", encoding="utf-8"))
+scene448 = fixture448["scene"]
+people448 = {person["name"]: {"位置": scene448["location"], "精神值": 0, "外貌": [person["note"]], "个性": [], "任务": {"小任务": []}} for person in scene448["present"]}
+items448 = {item["name"]: {"位置": scene448["location"], "外貌": [item["note"]]} for item in list(scene448.get("objects") or []) + list(scene448.get("inventory") or [])}
+anchors.append({
+    "id": "neg/route/448e-recital",
+    "source": "09 constrained-beats 2026-11-10T2341-711c (head 448e1dd0): the first model text is a 485-char state recital",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t448["text"],
+    "options": {"minChars": 1, "action": t448["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"], "review": [],
+               "notes": "The model recites settled lines (goggles, vest, hair, band, gun, radio) and never walks in or reads the 规则牌; the walk/read is the declared action."},
+})
+
+
+# 05e7: the same root walk/read point on the merged build; mixed provenance,
+# but the text still never walks in or reads the board.
+run5e7 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-05e7.json", encoding="utf-8"))
+t5e7 = run5e7["turns"][0]
+anchors.append({
+    "id": "neg/route/05e7-mixed-recital",
+    "source": "09 constrained-beats 2026-11-11T0002-6075 (head 05e7f4ce): mixed 2 model + 2 program, 323 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t5e7["text"],
+    "options": {"minChars": 1, "action": t5e7["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"], "review": [],
+               "notes": "mixed (2 model + 2 program); the text recites settled lines and says 路明非也没有动, so the declared walk/read is missing."},
+})
+
+
+# 6e3a: the newest constrained run; the program text is a recital and its
+# result-panel wording is «诺诺：因此未被阻止或反应。».
+run6e3 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-6e3a.json", encoding="utf-8"))
+t6e3 = run6e3["turns"][0]
+anchors.append({
+    "id": "neg/route/6e3a-panel-and-item-actor",
+    "source": "09 constrained-beats 2026-11-11T0028-ccaa (head 6e3ac5e0): program 112 chars, too_long rejection",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t6e3["text"],
+    "options": {"minChars": 1, "action": t6e3["input"]},
+    "expect": {"fact": ["fact.action_omitted", "fact.item_actor"], "style": ["style.status_panel"], "review": [],
+               "notes": "program recital; the goggles act; the result panel «诺诺：因此未被阻止或反应» is a status line."},
+})
+
+
+# 6565: partial model sentences, but the board is placed both on the ground and
+# on the right wall in the same text.
+run6565 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-6565.json", encoding="utf-8"))
+t6565 = run6565["turns"][0]
+anchors.append({
+    "id": "neg/route/6565-board-two-places",
+    "source": "09 constrained-beats 2026-11-11T0041-f459 (head 6565dc0f): mixed 502 chars, partial settled sentences",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t6565["text"],
+    "options": {"minChars": 1, "action": t6565["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"], "review": ["review.self_contradiction"],
+               "notes": "the board is «在地面闪烁» and «在右墙贴着» in the same text; the player walk/read is still missing."},
+})
+
+
+# cf3d: program fallback at 06 cf3d027e; viewpoint/place mismatch (凯撒/红方
+# 集结点 instead of 路明非/西侧服务巷) is 06/04 scene assembly, not the composer.
+run_cf3d = json.load(io.open(ROOT + "/results/product/evidence/09-one-legal-turn-cf3d-8a50.json", encoding="utf-8"))
+t_cf3d = run_cf3d["turns"][0]
+anchors.append({
+    "id": "neg/route/cf3d-panel-and-missing-action",
+    "source": "09 one-legal-turn 2026-11-10T1812-fd15 (head cf3d027e): program 122 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_cf3d["text"],
+    "options": {"minChars": 1, "action": t_cf3d["input"]},
+    "expect": {"fact": ["fact.action_omitted"], "style": ["style.status_panel"],
+               "notes": "the panel `诺诺：未成功触发…因此未达成目标。`; the 凯撒/红方集结点 viewpoint is a scene-assembly defect, not caught by an in-cast rule."},
+})
+
+
+# 11a7: the scoped beat prompt loses the settled hair; 诺诺红发垂落 while the
+# state says tied; panel and missing walk/see remain.
+run_11a7 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-11a7.json", encoding="utf-8"))
+t_11a7 = run_11a7["turns"][0]
+anchors.append({
+    "id": "neg/route/11a7-hair-and-panel",
+    "source": "09 constrained-beats 2026-11-11T0053-1d3f (head 11a78afb): mixed 244 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_11a7["text"],
+    "options": {"minChars": 1, "action": t_11a7["input"]},
+    "expect": {"fact": ["fact.action_omitted", "fact.state_contradiction"], "style": ["style.status_panel"],
+               "notes": "诺诺红发垂落 vs settled 束在脑后; panel; walk/see missing."},
+})
+
+
+# 4794 positive case: the walk and the look ARE narrated («路明非向前走»,
+# «他低头看着演习规则牌»), so action_omitted must not fire; the rope and the
+# held board remain.
+t_4794 = t_11a7  # placeholder replaced below
+run_4794 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-4794.json", encoding="utf-8"))
+t_4794 = run_4794["turns"][0]
+anchors.append({
+    "id": "pos/route/4794-action-narrated",
+    "source": "09 constrained-beats 2026-11-11T0105-6174 (head 479421a5): mixed 256 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_4794["text"],
+    "options": {"minChars": 1, "action": t_4794["input"]},
+    "expect": {"fact": ["fact.state_contradiction"], "style": ["style.status_panel"], "forbid": ["fact.action_omitted"],
+               "notes": "walk + look are present, so no action_omitted; the rope is lowered again (settled down)."},
+})
+
+
+# 926e: the model now writes time and the gaze, but takes off goggles settled on
+# the chest and still ends on a mechanics panel; the walk is only partial.
+run_926e = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-926e.json", encoding="utf-8"))
+t_926e = run_926e["turns"][0]
+anchors.append({
+    "id": "neg/route/926e-partial-action-and-goggles",
+    "source": "09 constrained-beats 2026-11-11T0144-fe25 (head 926e5c98): mixed 103 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_926e["text"],
+    "options": {"minChars": 1, "action": t_926e["input"]},
+    "expect": {"fact": ["fact.state_contradiction"], "style": ["style.status_panel"], "review": ["review.action_partial"],
+               "notes": "摘下护目镜 while settled on the chest; walk not narrated (gaze only); panel remains."},
+})
+
+
+# 5810: the panel is gone but the declared action (walk + board) is absent.
+run_5810 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-5810.json", encoding="utf-8"))
+t_5810 = run_5810["turns"][0]
+anchors.append({
+    "id": "neg/route/5810-action-absent",
+    "source": "09 constrained-beats 2026-11-11T0200-d7b1 (head 5810ae87): mixed 53 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_5810["text"],
+    "options": {"minChars": 40, "action": t_5810["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"],
+               "notes": "no panel and no goggles contradiction; the board and the walk are absent."},
+})
+
+
+# 736a (root retest): the projector selected the goggles as viewpoint, so the
+# command became «护目镜沿服务巷往里走» and looped. Hard item_actor, loop,
+# action omission; source=model.
+run_736a = json.load(io.open(ROOT + "/results/product/evidence/root-constrained-736a-retry.json", encoding="utf-8"))
+t_736a = run_736a["turns"][0]
+anchors.append({
+    "id": "neg/route/736a-item-walks-and-loops",
+    "source": "root same-input retest 2026-11-11T0226-4599 (head 736a3841): model 71 chars, accepted 97.2s",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_736a["text"],
+    "options": {"minChars": 40, "action": t_736a["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.item_actor", "fact.action_omitted"], "style": ["style.loop"],
+               "notes": "the goggles walk the alley repeatedly; the player's walk/read is gone."},
+})
+
+
+# 9623: the first real model turn that reads cleanly; a positive anchor so the
+# checker stays able to say "no findings" on faithful short prose.
+run_9623 = json.load(io.open(ROOT + "/results/product/evidence/09-constrained-beats-9623.json", encoding="utf-8"))
+t_9623 = run_9623["turns"][0]
+anchors.append({
+    "id": "pos/route/9623-faithful-short-turn",
+    "source": "09 constrained-beats 2026-11-11T0239-f203 (head d17d6534): model 69 chars",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_9623["text"],
+    "options": {"minChars": 40, "action": t_9623["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": [], "style": [], "review": [],
+               "notes": "walk, time, board reading and Nono's settled look; the board quote is a rule, not worn goggles."},
+})
+
+
+# 35ad t1: an accepted (model) 59-char turn that puts blank ammunition in a hand
+# the settled look calls empty, and hangs Nono's red band on the viewpoint's arm.
+run_35ad = json.load(io.open(ROOT + "/results/product/evidence/09-product-03turn-35ad.json", encoding="utf-8"))
+t_35ad_1 = run_35ad["turns"][0]
+t_35ad_3 = run_35ad["turns"][2]
+anchors.append({
+    "id": "neg/route/35ad-ammo-in-empty-hand-and-band",
+    "source": "09 product 3-turn 2026-11-11T0419-e25a (head 35ad30e3): model 59 chars turn 1",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_35ad_1["text"],
+    "options": {"minChars": 1, "action": t_35ad_1["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.state_contradiction", "fact.item_misattribution"], "style": [],
+               "review": ["review.tone"],
+               "notes": "the settled look says «右手还空着» and denies a band; the prose puts hot blank rounds in the hand and Nono's band on his arm."},
+})
+anchors.append({
+    "id": "neg/route/35ad-route-list-and-absent-nono",
+    "source": "09 product 3-turn 2026-11-11T0419-e25a (head 35ad30e3): model 110 chars turn 3",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_35ad_3["text"],
+    "options": {"minChars": 1, "action": t_35ad_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"], "style": [],
+               "review": ["review.tone", "review.micro_action"],
+               "notes": "«他摘下护目镜…挂在胸前» restores the settled chest look and must not be a contradiction; the real defect is that 诺诺 was asked to lead and never appears."},
+})
+
+
+# d531 t2 (draft): the band is hung on the viewpoint's arm in a clause that does
+# not name its owner, and the rule board speaks by itself. The same run's t1
+# still puts blank rounds in the empty hand.
+run_d531 = json.load(io.open(ROOT + "/results/product/evidence/09-product-03turn-d531.json", encoding="utf-8"))
+t_d531_1 = run_d531["turns"][0]
+t_d531_2 = run_d531["turns"][1]
+t_d531_3 = run_d531["turns"][2]
+anchors.append({
+    "id": "neg/route/d531-band-on-wrong-arm",
+    "source": "09 product 3-turn 2026-11-11T0441-17e3 (head d531040a): model 58 chars turn 1",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_d531_1["text"],
+    "options": {"minChars": 1, "action": t_d531_1["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.state_contradiction"], "style": [],
+               "review": ["review.tone"],
+               "notes": "the empty-hand rule holds; the boards's «护目镜必须戴好» is a rule quote, not worn goggles."},
+})
+anchors.append({
+    "id": "neg/route/d531-band-clause-and-speaking-board",
+    "source": "09 product 3-turn 2026-11-11T0441-17e3 (head d531040a): draft 201 chars turn 2",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_d531_2["text"],
+    "options": {"minChars": 1, "action": t_d531_2["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.item_misattribution", "fact.object_speaks"], "style": ["style.perspective"],
+               "review": ["review.pronoun", "review.micro_action"],
+               "notes": "«红色识别带缠在左臂» is in a clause that never names its owner and follows 路明非; the rule board makes a sound by itself."},
+})
+anchors.append({
+    "id": "neg/route/d531-nono-absent-when-asked-to-lead",
+    "source": "09 product 3-turn 2026-11-11T0441-17e3 (head d531040a): model 68 chars turn 3",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_d531_3["text"],
+    "options": {"minChars": 1, "action": t_d531_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": [],
+               "notes": "«我请诺诺带我走…» but 诺诺 never appears; the accepted prose is also an inventory recital."},
+})
+
+
+# 08f4 t1: the accepted model prose puts the goggles on even though the settled
+# look hangs them on the chest and the update stage kept them there.
+run_08f4 = json.load(io.open(ROOT + "/results/product/evidence/09-product-03turn-08f4.json", encoding="utf-8"))
+t_08f4_1 = run_08f4["turns"][0]
+t_08f4_2 = run_08f4["turns"][1]
+t_08f4_3 = run_08f4["turns"][2]
+anchors.append({
+    "id": "neg/route/08f4-goggles-worn-without-settle",
+    "source": "09 product 3-turn 2026-11-11T0457-4f6f (head 08f4): model 70 chars turn 1",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_08f4_1["text"],
+    "options": {"minChars": 1, "action": t_08f4_1["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.state_contradiction"], "style": [],
+               "review": ["review.micro_action", "review.tone"],
+               "notes": "«他掏出护目镜，戴上后继续向前» contradicts the chest-settled look; the board's «护目镜必须戴好» is a quote and must not itself trigger."},
+})
+anchors.append({
+    "id": "neg/route/08f4-question-left-unanswered",
+    "source": "09 product 3-turn 2026-11-11T0457-4f6f (head 08f4): model 63 chars turn 2",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_08f4_2["text"],
+    "options": {"minChars": 1, "action": t_08f4_2["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": [], "style": ["style.perspective"],
+               "review": ["review.pronoun", "review.tone"],
+               "notes": "the question is restated and never answered, but no fact is contradicted; the missing answer is a product read, not a hard finding yet."},
+})
+anchors.append({
+    "id": "neg/route/08f4-nono-absent-again",
+    "source": "09 product 3-turn 2026-11-11T0457-4f6f (head 08f4): draft 59 chars turn 3",
+    "input": {
+        "视角": "主角视角（路明非）",
+        "上回合状态": {"地点": {scene448["location"]: {"位于": None, "外貌": scene448.get("placeNotes") or []}}, "人物": people448, "物品": items448},
+        "本回合变化": {"时间推进": "一分钟", "变化": {}},
+    },
+    "text": t_08f4_3["text"],
+    "options": {"minChars": 1, "action": t_08f4_3["input"], "genders": {"路明非": "male", "诺诺": "female"}},
+    "expect": {"fact": ["fact.action_omitted"], "style": [], "review": ["review.tone"],
+               "notes": "asked 诺诺 to lead, she never appears; the item note is recited again."},
+})
+
+os.makedirs(OUT, exist_ok=True)
+batch = {
+    "version": "narration-quality-anchors-v1",
+    "createdAt": "2026-11-10",
+    "world": "frontend/public/worlds/dragon-raja-free-day.world.json",
+    "genders": genders,
+    "cases": anchors,
+}
+io.open(OUT + "/anchors.json", "w", encoding="utf-8", newline="\n").write(
+    json.dumps(batch, ensure_ascii=False, indent=2) + "\n")
+print("anchors", len(anchors))

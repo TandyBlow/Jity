@@ -1,0 +1,78 @@
+{
+  "root": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\narration-runtime-v2",
+  "commit": "8f22a086a24f0b1ce030cbaa622862b2b3a16ddc",
+  "dataVersion": "narration-rows-v2",
+  "versions": {
+    "projectionVersion": "narration-result-view-v2",
+    "serializerVersion": "yuyan-prose-result-v2",
+    "legacyProjectionVersion": "narration-result-view-v1",
+    "legacySerializerVersion": "yuyan-prose-legacy-v1",
+    "modelTemplateVersion": "yuyan-raw-completion-v1",
+    "tokenizerHash": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "tokenizerStatus": "bound",
+    "whitespacePolicy": "remove-space-tab-fullwidth-and-record; reject-crlf-and-other-whitespace",
+    "listPunctuationPolicy": "strip-trailing-。；，",
+    "resultTypeOrder": [
+      "地点",
+      "人物",
+      "物品"
+    ],
+    "resultFieldOrder": {
+      "人物": [
+        "位置",
+        "精神值",
+        "外貌",
+        "个性",
+        "任务"
+      ],
+      "地点": [
+        "位于",
+        "外貌"
+      ],
+      "物品": [
+        "位置",
+        "外貌"
+      ]
+    },
+    "itemPositionSyntax": "物品（位于<位置>）"
+  },
+  "tokenizer": {
+    "name": "yuyan-char-v1",
+    "source": "hpc:~/narr_rows/dict.txt",
+    "path": "tokenizers/yuyan-v1/dict.txt",
+    "sha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+    "bytes": 119884,
+    "vocabSize": 13668,
+    "specialTokens": [
+      "<end>",
+      "<mask>",
+      "<sep>",
+      "<hold>"
+    ],
+    "hasSpaceToken": false,
+    "hasTabToken": false,
+    "hasNewlineToken": false
+  },
+  "files": {
+    "vectors.jsonl": {
+      "expected": "d699a69734127c4ea763c1ba53dca1f8c5669d955887c6830d97aa177a35b2fc",
+      "actual": "d699a69734127c4ea763c1ba53dca1f8c5669d955887c6830d97aa177a35b2fc",
+      "ok": true
+    },
+    "rows-v2.jsonl": {
+      "expected": "a9b7ca0971c21b79b348c639a6819ffc2570767484fb28a6c3c99c6fa119fb55",
+      "actual": "a9b7ca0971c21b79b348c639a6819ffc2570767484fb28a6c3c99c6fa119fb55",
+      "ok": true
+    },
+    "rows-yuyan-v2.jsonl": {
+      "expected": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+      "actual": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+      "ok": true
+    },
+    "data/manifest.json": {
+      "expected": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378",
+      "actual": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378",
+      "ok": true
+    }
+  }
+}

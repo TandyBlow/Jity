@@ -1,0 +1,92 @@
+{
+  "batch": "narration-final-batch-v1",
+  "frozenAt": "2026-11-10T12:13:58.996632+00:00",
+  "owner": "01-input",
+  "status": "frozen_before_candidate_output",
+  "purpose": "Independent final batch for model comparison. Authored and frozen before lanes 11/12 produced any output; no candidate has seen it.",
+  "caseCount": 6,
+  "categories": [
+    "item_change",
+    "movement",
+    "no_change",
+    "sanity_change",
+    "task_complete"
+  ],
+  "independence": {
+    "author": "01-input",
+    "reviewers": {
+      "first": "05-kernel",
+      "second": "03-actions"
+    },
+    "recusal": "01 authored every input and reference here, so 01 does not review this batch. 05 must state it did not write, tune for or train on these cases; 03 only if 05 is conflicted. row-0188 stays excluded everywhere.",
+    "notUsableAs": "not a development package; must not be published to lanes that are still training or tuning"
+  },
+  "inputs": {
+    "world": {
+      "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\frontend\\public\\worlds\\dragon-raja-free-day.world.json",
+      "sha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a"
+    },
+    "scenes": {
+      "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\final-batch-v1\\scenes.json",
+      "sha256": "0843f526efa6332c4f050eafde0ee39c6540c99351df254f5daa7fb8e47a188f"
+    },
+    "leakCheckSources": [
+      {
+        "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\corpus-short\\rows.jsonl",
+        "sha256": "b108813aabe9c64bce859ea907439cf0adaa03988a53547f28076564c5e64cde"
+      },
+      {
+        "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\01-input\\experiments\\narration-quality\\dev-package-v1\\cases.jsonl",
+        "sha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b"
+      },
+      {
+        "path": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\narration-dataset-v1\\rows-xy.jsonl",
+        "sha256": "b7cc1c1b33f7b3f179c58c2244fe3d532184840be0ef2827ea72d3f71ca62ef2"
+      },
+      {
+        "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\05-kernel\\experiments\\narration-quality\\corpus-scenes\\generated\\rows.jsonl",
+        "sha256": "d23e0688e147fa120919be36d290c72bdd09d0a6a954849638ec12cbe52feee8"
+      }
+    ]
+  },
+  "leakCheck": {
+    "window": 12,
+    "leaks": [],
+    "clean": true
+  },
+  "cases": [
+    {
+      "caseId": "fb-01-move-su-bridge",
+      "inputSha256": "291d0de27b41893887f9881b559f16d6224835b08e0d959e70a81dc5ff2a32a2",
+      "referenceSha256": "f42b9bdf9798aa31fd871e8284f3649270a5f608798fea8130531714b6db78a3"
+    },
+    {
+      "caseId": "fb-02-no-change-chu",
+      "inputSha256": "3c32d7adafe43bcf30709f913c44394bb82b0192a9f1c8ae83a3894d511ddd8a",
+      "referenceSha256": "733ecf7960ca1b7c067c2aafb14bf880b37c33d01eeed81c680c2d8400f3ca91"
+    },
+    {
+      "caseId": "fb-03-item-cup-tomiyama",
+      "inputSha256": "65699bc3144d1f80281cdc2d0fe869328df8811e7c6ea250509f3f5ad7749f8c",
+      "referenceSha256": "dd6af0dab65931660500f4321af3490e72fd6ab0e980aed64eba196c74cc53a8"
+    },
+    {
+      "caseId": "fb-04-task-doctor-cold-pack",
+      "inputSha256": "9193443a726f4dff7c0e80d5079f986fe133044a0cc1bd7cdcfa7aea8a30cd35",
+      "referenceSha256": "85e3b0a6c4c0145cc0e39e44d5d4cf4555fe95e2192b789fff2b1a04b357ba74"
+    },
+    {
+      "caseId": "fb-05-sanity-shen-rest",
+      "inputSha256": "af64d89f2e449b8ba558269044e546b8afc0b863f43eaafbba6c39744a7ce0be",
+      "referenceSha256": "e1aca0f6e41418b18fbd2d093f3b5813eb971544b0d150bff7f0605aeb27febd"
+    },
+    {
+      "caseId": "fb-06-move-task-lin-aid",
+      "inputSha256": "1db2cb12978ca39cb6c2c3711803e011cd51b8a2aeaa7dd95f24d8d6554f067c",
+      "referenceSha256": "fa124e3793b9ab8fc823689a5909ac733416ebbb01fea57ef5fc9d7ded95691f"
+    }
+  ],
+  "files": {
+    "cases.jsonl": "8039d32c628f1c782b26d5ce48a582854a05af81394cbe072869d53f373f2402"
+  }
+}

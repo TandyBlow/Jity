@@ -1,37 +1,74 @@
-/** Narration input projection and serialization contracts.
+/** Types for the four-field narration projection and its two serializers.
  *
- * Two model-facing serializers share one projection:
- *   - `yuyan-prose-legacy-v1`: the exact byte format the existing YuYan
- *     checkpoint was trained on. It has no result block; the previous state,
- *     the delta and the 正文 marker are the whole input.
- *   - `yuyan-prose-result-v2`: the same projection plus a 本回合状态 block that
- *     carries only the changed entities, only their changed fields, and the
- *     settled values after the round.
- *
- * The projection is name-keyed because the training rows are name-keyed.
- * Entity ids, task ids and change ids stay in the runtime metadata used to
- * build the projection; they are never rendered for the model.
+ * The projection is the model-facing data shape the v2 arm was trained on:
+ *   视角 / 上回合状态 / 本回合变化 / 本回合状态
+ * Entity and task ids stay in the runtime metadata, never in the text.
  */
 import type { Id } from '../../types';
+import type { NarrationVersionSet } from './versions';
 
-export type RowTaskStatus = '未完成' | '已完成';
+export type NarrationStage = 'normalize' | 'build' | 'serialize' | 'tokenizer';
+
+/** Stable serializer refusal. Error codes and paths are part of the contract
+ * shared with the Python reference (`v2_render.NarrationSerializeError`). */
+export class NarrationInputError extends Error {
+  readonly name = 'NarrationInputError';
+  /** Reference-compatible stage label, matching the frozen golden vectors. */
+  stage?: NarrationStage;
+  /** The precise step that threw, for debugging; `stage` can be coarser. */
+  detailStage?: NarrationStage;
+  readonly path: string;
+  readonly context: Record<string, unknown>;
+  constructor(
+    readonly code: string,
+    message: string,
+    pathOrContext: string | Record<string, unknown> = '',
+    context: Record<string, unknown> = {},
+  ) {
+    const path = typeof pathOrContext === 'string' ? pathOrContext : '';
+    super(`${code}: ${message}${path ? ` [${path}]` : ''}`);
+    this.path = path;
+    this.context = typeof pathOrContext === 'string' ? context : pathOrContext;
+  }
+
+  withStage(stage: NarrationStage): this {
+    if (!this.detailStage) this.detailStage = stage;
+    if (!this.stage) this.stage = stage;
+    return this;
+  }
+
+  /** Override the reference stage label while keeping the precise one. */
+  withReferenceStage(stage: NarrationStage): this {
+    this.stage = stage;
+    return this;
+  }
+
+  asDict(): { code: string; message: string; path: string; stage: NarrationStage | null; detailStage: NarrationStage | null } {
+    return {
+      code: this.code,
+      message: this.message,
+      path: this.path,
+      stage: this.stage ?? null,
+      detailStage: this.detailStage ?? null,
+    };
+  }
+}
+
+// ------------------------------------------------------------- projection
 
 export interface RowTask {
   目标: string;
-  状态: RowTaskStatus;
-}
-
-/** A task in the 本回合状态 result. Only tasks touched by this round appear.
- * `属于大任务` stores the immediate parent goal so a changed child keeps its
- * place in the tree; old rows only had one level, so the field keeps the
- * historical name even when the immediate parent is itself a child. */
-export interface RowResultTask extends RowTask {
-  属于大任务?: string;
+  状态: string;
 }
 
 export interface RowTasks {
-  大任务: RowTask | null;
+  大任务?: RowTask | null;
   小任务: RowTask[];
+}
+
+export interface RowPlace {
+  位于: string | null;
+  外貌: string[];
 }
 
 export interface RowPerson {
@@ -39,13 +76,7 @@ export interface RowPerson {
   精神值: number;
   外貌: string[];
   个性: string[];
-  /** null means the person has no registered tasks. */
-  任务: RowTasks | null;
-}
-
-export interface RowLocation {
-  位于: string | null;
-  外貌: string[];
+  任务: RowTasks;
 }
 
 export interface RowItem {
@@ -53,14 +84,19 @@ export interface RowItem {
   外貌: string[];
 }
 
-/** The 上回合状态 block: the scoped state before this round. */
-export interface RowState {
-  地点: Record<string, RowLocation>;
+export interface ProjectionState {
+  地点: Record<string, RowPlace>;
   人物: Record<string, RowPerson>;
   物品: Record<string, RowItem>;
 }
 
-export interface RowDeltaOps {
+export interface DeltaNewTask {
+  目标: string;
+  属于大任务: string;
+  状态: string;
+}
+
+export interface DeltaOps {
   位置?: string;
   精神值?: number;
   解除外貌?: string[];
@@ -68,44 +104,84 @@ export interface RowDeltaOps {
   解除个性?: string[];
   新增个性?: string[];
   完成任务?: string[];
-  新增小任务?: { 目标: string }[];
+  新增小任务?: DeltaNewTask[];
 }
 
-/** The 本回合变化 block. `时间推进` keeps the old "8 分钟" spelling; the
- * serializer squashes it to "8分钟" exactly like the Python converter. */
-export interface RowDelta {
+export interface ProjectionDelta {
   时间推进: string;
-  变化: Record<string, RowDeltaOps>;
+  变化: Record<string, DeltaOps>;
 }
 
-export interface RowResultTaskGroup {
+export interface ResultTaskGroup {
   大任务?: RowTask;
-  小任务?: RowResultTask[];
+  小任务?: RowTask[];
 }
 
-export interface RowResultPerson {
+export interface ResultPerson {
   位置?: string;
   精神值?: number;
   外貌?: string[];
   个性?: string[];
-  任务?: RowResultTaskGroup;
+  任务?: ResultTaskGroup;
 }
 
-export interface RowResultItem {
+export interface ResultPlace {
+  位于?: string | null;
+  外貌?: string[];
+}
+
+export interface ResultItem {
   位置?: string;
   外貌?: string[];
 }
 
-export interface RowResultLocation {
-  外貌?: string[];
+export type ResultEntity = ResultPerson | ResultPlace | ResultItem;
+export type ResultState = Record<string, ResultEntity>;
+
+/** The exact four fields, in the only order the serializer accepts. */
+export interface NarrationProjection {
+  视角: string;
+  上回合状态: ProjectionState;
+  本回合变化: ProjectionDelta;
+  本回合状态: ResultState;
 }
 
-/** The 本回合状态 block: changed entities only, changed fields only. A
- * missing field means "this result does not carry the field", never "the
- * field was deleted" or "the value is zero". */
-export type RowResultEntity = RowResultPerson | RowResultItem | RowResultLocation;
+// ---------------------------------------------------------------- output
 
-export type RowResultState = Record<string, RowResultEntity>;
+export interface NormalizationEntry {
+  path: string;
+  action: 'remove_whitespace';
+  removed: string[];
+  before: string;
+  after: string;
+}
+
+export interface SerializedSegment {
+  kind: 'state' | 'delta' | 'result';
+  block: string;
+  entity: string;
+  entityType: string;
+  field: string;
+  value: unknown;
+  charStart: number;
+  charEnd: number;
+}
+
+export interface SerializedProjection {
+  text: string;
+  blocks: Record<string, string>;
+  segments: SerializedSegment[];
+}
+
+export interface ResultFill {
+  entity: string;
+  type: string;
+  field: string;
+  value: unknown;
+  source: 'delta';
+}
+
+// ------------------------------------------------------------- metadata
 
 export interface NarrationEntitySets {
   characters: Id[];
@@ -119,7 +195,7 @@ export type OmittedFieldReason =
   | 'location_not_referenced'
   | 'location_visible_but_not_a_state_dependency'
   | 'field_not_changed'
-  | 'unknown_or_null_delta_field';
+  | 'unknown_or_unchanged_delta_entity';
 
 export interface OmittedField {
   entityId: Id;
@@ -127,95 +203,62 @@ export interface OmittedField {
   entityType: 'character' | 'location' | 'item' | 'unknown';
   field: string;
   reason: OmittedFieldReason;
-  /** Present for entity-level omissions so an audit can see what was left
-   * out without dumping the whole value into the log. */
-  originalValue?: string | number | string[] | null;
 }
 
-export interface NarrationLengthPolicy {
-  /** Maximum UTF-16 code units in the serialized text. null = no limit. */
-  maxChars: number | null;
-  /** Maximum UTF-8 bytes in the serialized text. null = no limit. */
-  maxUtf8Bytes: number | null;
+/** The full task tree stays here. The v2 text only carries goal + status and
+ * one flat small-task list, so depth and parent links never reach the model. */
+export interface TaskHierarchyEntry {
+  entityId: Id;
+  entityName: string;
+  taskId: Id;
+  goal: string;
+  status: string;
+  parentTaskId: Id | null;
+  parentGoal: string | null;
+  depth: number;
 }
 
-export interface NarrationProjectionPolicy {
-  length: NarrationLengthPolicy;
+export type TextCarryReason =
+  | 'task_parent_relation_not_in_v2_text'
+  | 'task_depth_not_in_v2_text';
+
+/** A field that exists in the structured projection but has no representation
+ * in the model text. Recorded, never silently dropped. */
+export interface TextCarryLimit {
+  entityId: Id;
+  entityName: string;
+  taskId: Id;
+  goal: string;
+  parentTaskId: Id | null;
+  parentGoal: string | null;
+  reason: TextCarryReason;
 }
 
-export const DEFAULT_NARRATION_PROJECTION_POLICY: NarrationProjectionPolicy = {
-  length: { maxChars: null, maxUtf8Bytes: null },
-};
-
-export interface NarrationViewpoint {
-  id: Id;
-  name: string;
-  /** Full perspective sentence, including the "；只表达..." restriction.
-   * The legacy serializer keeps only the segment before the semicolon, as the
-   * Python converter does. */
-  text: string;
-}
-
-export interface NarrationProjection {
-  projectionVersion: 'narration-projection-v1';
-  viewpoint: NarrationViewpoint;
-  beforeState: RowState;
-  delta: RowDelta;
-  resultState: RowResultState;
-  policy: NarrationProjectionPolicy;
-}
-
-export interface NarrationVersionSet {
-  projectionVersion: 'narration-projection-v1';
-  legacySerializerVersion: 'yuyan-prose-legacy-v1';
-  resultSerializerVersion: 'yuyan-prose-result-v2';
-}
-
-export interface ProjectNarrationInputResult {
+export interface ProjectionResult {
   projection: NarrationProjection;
   includedEntities: NarrationEntitySets;
   visibleEntities: NarrationEntitySets;
   omittedFields: OmittedField[];
+  tasks: TaskHierarchyEntry[];
+  textCarryLimits: TextCarryLimit[];
   version: NarrationVersionSet;
 }
 
 export interface RenderedNarrationInput {
   text: string;
+  serializerVersion: string;
+  sha256: string;
+  bytesUtf8Hex: string;
   utf8Bytes: number;
-  /** SHA-256 of the UTF-8 bytes. Async because browsers expose SHA-256 only
-   * through SubtleCrypto. */
-  utf8Sha256: Promise<string>;
-  /** Unicode code points (matches Python `len`). */
   charCount: number;
-  /** UTF-16 code units (JavaScript string length). */
-  utf16CodeUnits: number;
-  serializerVersion: 'yuyan-prose-legacy-v1' | 'yuyan-prose-result-v2';
+  segments: SerializedSegment[];
+  projection: NarrationProjection;
+  normalization: NormalizationEntry[];
+  resultFills: ResultFill[];
+  version: NarrationVersionSet;
 }
 
-export type NarrationInputErrorCode =
-  | 'unknown_entity'
-  | 'ambiguous_entity'
-  | 'duplicate_name'
-  | 'unknown_container'
-  | 'position_cycle'
-  | 'after_mismatch'
-  | 'field_not_allowed'
-  | 'unresolved_supersedes'
-  | 'pure_removal_without_supersedes'
-  | 'multiple_task_roots'
-  | 'invalid_time'
-  | 'whitespace'
-  | 'oov'
-  | 'too_long'
-  | 'invalid_projection';
-
-export class NarrationInputError extends Error {
-  readonly name = 'NarrationInputError';
-  constructor(
-    readonly code: NarrationInputErrorCode,
-    detail: string,
-    readonly context: Record<string, unknown> = {},
-  ) {
-    super(`${code}: ${detail}`);
-  }
+export interface LengthLimits {
+  maxChars: number | null;
+  maxUtf8Bytes: number | null;
 }

@@ -1,0 +1,131 @@
+{
+  "kind": "short-pair-13-way-freeze",
+  "version": "action-pairwise-shortpairs-v1",
+  "files": {
+    "pairs.jsonl": "124fc0ebadc1a31190d03132bf9e74c2480fb5973bddbe53c235d38d3f85e627",
+    "pairs-index.jsonl": "9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59",
+    "rows-meta.jsonl": "919bfe201d7905968ddbb8e2cfbc6a3979d035228bd68dec52b002069310f764",
+    "build-report.json": "55a93484995d764b70b2c7df4f93516019457941709dda5039eb53b34eaba3f6",
+    "check.json": "9d661c81c549fc59a142193c5ab944f43d1cfec758401e26f72f81ce8e3e1df6",
+    "index-report.json": "b5e5ff032c768e7bca1ff59111c4e22786539dd89dd4edc678504be28c5023c6"
+  },
+  "pairs": 4225,
+  "decisions": 325,
+  "positives": 325,
+  "perGroupPositive": {
+    "言语": 53,
+    "立场": 14,
+    "物品": 31,
+    "移动": 36,
+    "感知": 144,
+    "援助": 4,
+    "请求": 19,
+    "战斗": 2,
+    "不动": 22
+  },
+  "indistinguishableTexts": 13,
+  "labelConflictExclusions": {
+    "version": "01-shortx-exclusions-v1",
+    "at": "2026-11-11T14:29:54Z",
+    "by": "01-input",
+    "rule": "same compressed context, different labels, and the full X differs only by the timestamp; keep the row whose action is the direct step of the goal at hand, drop the twin from the short-pair training set only",
+    "excluded": [
+      {
+        "rowId": "b2-0010",
+        "twin": "train13r-0003",
+        "label": "感知",
+        "twinLabel": "言语",
+        "why": "凯撒独自在集结点，短讯机在随身；「恢复联络」是目标直接的那一步，查看地图是另一个目标的准备。保留 train13r-0003。"
+      },
+      {
+        "rowId": "b2-0030",
+        "twin": "train13r-0004",
+        "label": "不动",
+        "twinLabel": "言语",
+        "why": "楚子航在窗口、蓝方短讯机在随身，不离开窗口也能联络苏茜；skip 的理由（守窗口不能离开）不成立。保留 train13r-0004。"
+      },
+      {
+        "rowId": "b2-0027",
+        "twin": "train13r-0006",
+        "label": "不动",
+        "twinLabel": "立场",
+        "why": "记录单就在观察席，任何时刻都能写；「等 15:45」只解释时钟目标。保留 train13r-0006。"
+      },
+      {
+        "rowId": "b2-0028",
+        "twin": "train13r-0006",
+        "label": "不动",
+        "twinLabel": "立场",
+        "why": "同上。"
+      },
+      {
+        "rowId": "b2-0029",
+        "twin": "train13r-0009",
+        "label": "不动",
+        "twinLabel": "物品",
+        "why": "安全绳在腰上，15:20 可扣；与 15:23 的等待互相矛盾。保留 train13r-0009。"
+      }
+    ],
+    "notExcluded": [
+      {
+        "rowIds": [
+          "b5-0035",
+          "b6-0010"
+        ],
+        "why": "same label (skip), same context after the clock is added; report as an indistinguishable duplicate, do not separate by adding fields"
+      }
+    ],
+    "originalsUntouched": true,
+    "labelsUntouched": true,
+    "effect": {
+      "rows": 300,
+      "excluded": 5,
+      "pairsBefore": 4290,
+      "pairsAfter": 4225
+    }
+  },
+  "serializer": {
+    "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\04-settlement\\experiments\\action-next-step\\pairwise_serialize.py",
+    "sha256": "55bc641f18793846179831eec4a527ab2069778fab3172ee2eefab10dad6f95d",
+    "version": "action-pairwise-x2",
+    "tracked": true,
+    "dirty": false
+  },
+  "rows": {
+    "path": "experiments\\action-dataset-v1\\rows\\train13-full-candidates.jsonl",
+    "sha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188"
+  },
+  "model": {
+    "dir": "D:\\others\\Jity\\artifacts\\benchmark\\minirbt-h256-snapshot",
+    "configSha256": "02cc77ba23f292bf5265d76fff662ae8a8057bf85ee9723ba30342bf9ed30746",
+    "vocabSha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+    "maxPositionEmbeddings": 512
+  },
+  "tokens": {
+    "min": 137,
+    "p50": 168,
+    "p95": 191,
+    "p100": 211,
+    "ceil32": 224,
+    "overMaxLen": 0
+  },
+  "omittedTotals": {
+    "goalsClipped": 18564,
+    "presentClipped": 0,
+    "itemsClipped": 5538,
+    "recentClipped": 689
+  },
+  "notes": [
+    "derived from the frozen 300-row file; that file and its freeze are unchanged",
+    "excluded rows are absent from this derived set only; Y and the original rows are untouched",
+    "the serializer file is lane 04's; this freeze pins its sha256",
+    "same-label indistinguishable duplicates are listed in build-report.json",
+    "this is a training-input freeze, not a model result"
+  ],
+  "knownDeviations": [
+    "the user wrote 'add 已做 in front of the same short X'; the serializer puts it after 刚见 and before 动作, which changes token order only; 01 reviewed and passed this exact text (pairs sha 124fc0eb)",
+    "the second step keeps the original X and only adds 已做; it is teacher-forced, not a settled next state",
+    "four groups have no positive rows (胁迫/算计/情绪/身体); they are training-set gaps, not model failures",
+    "pairwise count is 4225, not the 4290 the coordinator measured, because 01 excluded five label-conflict rows"
+  ]
+}

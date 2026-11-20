@@ -1,0 +1,1371 @@
+{
+ "version": "val-01-rows-v1",
+ "createdAt": "2026-11-11T14:50:00Z",
+ "owner": "01-input",
+ "set": "VALIDATION",
+ "splitFile": "D:\\others\\Jity\\.local\\parallel-local-game\\results\\action-dataset-20261111\\01-goal-split-v1.json",
+ "splitSha256": "b4680a9e6b1b4af3ed023eb7bfc7c491afab1200a486254d56098a160d18a8eb",
+ "worldSnapshot": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\06-recovery\\data\\worlds\\dragon-raja-free-day.world.json",
+ "worldSha256": "0a8b63be2932ceb5d597adf332123d8cfb584c2fd92ddd351770d4a9fa09f24a",
+ "goalIds": [
+  "task_shen_account",
+  "task_shen_checked",
+  "task_shen_recover",
+  "task_shen_stay",
+  "task_shen_symptom",
+  "task_tomiyama_boundary",
+  "task_tomiyama_help",
+  "task_tomiyama_refer",
+  "task_tomiyama_shen",
+  "task_tomiyama_support"
+ ],
+ "counts": {
+  "rows": 15,
+  "goals": 10
+ },
+ "note": "Rows are authored by 01 for tuning only. TEST answers stay private. Each row carries the owner's full pending goal list so the trainer's owner-complete split check sees goals inside VALIDATION.",
+ "rows": [
+  {
+   "rowId": "val-01-shen_symptom-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:24:00",
+    "present": [
+     {
+      "id": "tomiyama",
+      "name": "富山雅史",
+      "place": "医护休息区",
+      "appearance": [
+       "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+      ],
+      "holds": []
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "富山雅史在长椅另一端坐下，问沈澄右手指尖现在还麻不麻"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "tomiyama",
+      "name": "富山雅史",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "告知",
+      "object": "tomiyama"
+     }
+    ]
+   },
+   "yGroup": "言语",
+   "yRationale": "富山直接问她麻感，task_shen_symptom 要求说明麻感有没有减轻；人就在旁边，先回答他。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-shen_symptom-b",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:31:00",
+    "present": [
+     {
+      "id": "doctor",
+      "name": "顾岚",
+      "place": "医护休息区",
+      "appearance": [
+       "白色医护外套没有阵营标记，听诊器收到衣袋；站在空床旁，手套尚未戴上，登记夹摊在桌面。"
+      ],
+      "holds": []
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "顾岚从处置室走进休息区，停在她面前看她的右手"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "doctor",
+      "name": "顾岚",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "告知",
+      "object": "doctor"
+     }
+    ]
+   },
+   "yGroup": "言语",
+   "yRationale": "顾岚是能处理麻感的人，task_shen_symptom 要向她说明；医生已经站到面前，先讲清症状。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-shen_account-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:27:00",
+    "present": [
+     {
+      "id": "tomiyama",
+      "name": "富山雅史",
+      "place": "医护休息区",
+      "appearance": [
+       "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+      ],
+      "holds": []
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "富山雅史问她退出前在庭院看见唐骁往哪边移动"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "tomiyama",
+      "name": "富山雅史",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "说明",
+      "object": "tomiyama"
+     }
+    ]
+   },
+   "yGroup": "言语",
+   "yRationale": "task_shen_account 只要求说明退出前亲眼看见的路线；提问的人就在旁边，按记忆说明即可，不需要补传闻。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-shen_stay-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:34:00",
+    "present": [
+     {
+      "id": "caesar",
+      "name": "凯撒",
+      "place": "医护休息区",
+      "appearance": [
+       "金发被护目镜带压出一道痕，红色识别带整齐缠在左臂；手套指节处擦白，地图桌上的笔尖正压着东回廊。"
+      ],
+      "holds": [
+       {
+        "id": "rifle_caesar",
+        "name": "凯撒的演习枪"
+       },
+       {
+        "id": "red_flag",
+        "name": "红方信号旗"
+       },
+       {
+        "id": "red_band_caesar",
+        "name": "凯撒的红色识别带"
+       },
+       {
+        "id": "radio_caesar",
+        "name": "凯撒的红方短讯机"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "凯撒掀帘进来，说红方缺人，要她跟他回庭院"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "caesar",
+      "name": "凯撒",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "拒绝",
+      "object": "caesar"
+     }
+    ]
+   },
+   "yGroup": "胁迫",
+   "yRationale": "task_shen_stay 要求获准离开前不重新加入争旗；凯撒当面叫她回场，最直接的一步是拒绝他（拒绝属胁迫组）。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-shen_stay-b",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:36:00",
+    "present": [],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     },
+     {
+      "id": "water",
+      "name": "休息区饮水杯",
+      "place": "医护休息区",
+      "appearance": [
+       "杯内还有半杯温水，杯沿未破。"
+      ]
+     }
+    ],
+    "recent": [
+     "顾岚说还要再看一次麻感，让她在休息区等"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     },
+     {
+      "id": "water",
+      "name": "休息区饮水杯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": []
+   },
+   "yGroup": "不动",
+   "yRationale": "医生明确让她等复查，庭院那边没有她必须现在做的事，task_shen_stay 也不允许返场；此刻没有能推进的一步。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": "医生让她等复查，返场又被退出规则禁止，休息区里没有别的可做。"
+  },
+  {
+   "rowId": "val-01-shen_recover-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:25:00",
+    "present": [],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "长椅空位旁的保温毯折着，休息区里没有别人"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "取得",
+      "object": "blanket"
+     }
+    ]
+   },
+   "yGroup": "物品",
+   "yRationale": "task_shen_recover 要在休息区恢复；毯子就在长椅旁、她坐着够得到，先拿过来盖上。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-shen_recover-b",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:29:00",
+    "present": [
+     {
+      "id": "tomiyama",
+      "name": "富山雅史",
+      "place": "医护休息区",
+      "appearance": [
+       "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+      ],
+      "holds": []
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "富山雅史把一只未拆的纸杯放在她手边"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "tomiyama",
+      "name": "富山雅史",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "休息",
+      "object": null
+     }
+    ]
+   },
+   "yGroup": "身体",
+   "yRationale": "task_shen_recover 的核心是恢复；纸杯已经放到手边、没有别的事等着她，先靠回长椅休息。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-shen_alone-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "shen",
+   "x": {
+    "character": {
+     "id": "shen",
+     "name": "沈澄",
+     "place": "医护休息区",
+     "appearance": [
+      "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+     ],
+     "holds": [
+      {
+       "id": "water",
+       "name": "休息区饮水杯"
+      }
+     ]
+    },
+    "goals": [
+     "task_shen_recover：在医护休息区恢复并提供不违反退出规则的帮助",
+     "task_shen_symptom：向顾岚说明手指麻感是否减轻",
+     "task_shen_account：若被询问，只说明退出前亲眼看见的庭院路线",
+     "task_shen_stay：在获准离开医护区前不重新加入争旗"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:33:00",
+    "present": [],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "富山雅史出去接人，杯里的水已经喝完，饮水机在房间另一头"
+    ],
+    "sanity": 41,
+    "personality": "红方已退出队员，对提前离场不甘心但认同医护中立。亲眼看过唐骁在庭院换位，可以讲自己当时看到的路线；没有亲眼看到钟楼内部，不会把传闻当作实时位置。",
+    "candidates": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "移动",
+      "object": null
+     }
+    ]
+   },
+   "yGroup": "移动",
+   "yRationale": "想喝水就得去房间另一头的饮水机；她还能走，休息区没有别人能替她拿，先起身过去（目的地不在候选里）。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-tomiyama_shen-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:24:00",
+    "present": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "place": "医护休息区",
+      "appearance": [
+       "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+      ],
+      "holds": [
+       {
+        "id": "water",
+        "name": "休息区饮水杯"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "沈澄刚醒，手里还握着半杯水，没先开口"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "提问",
+      "object": "shen"
+     }
+    ]
+   },
+   "yGroup": "言语",
+   "yRationale": "task_tomiyama_shen 要问清她醒来后的状态；人就在对面、还没开口，先问她麻感和担心什么。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-tomiyama_refer-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:32:00",
+    "present": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "place": "医护休息区",
+      "appearance": [
+       "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+      ],
+      "holds": [
+       {
+        "id": "water",
+        "name": "休息区饮水杯"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "沈澄说手指还是麻，比刚才没轻"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "移动",
+      "object": null
+     }
+    ]
+   },
+   "yGroup": "移动",
+   "yRationale": "task_tomiyama_refer 要求麻感没减轻就交给顾岚；顾岚在隔壁处置室，他先过去叫人（目的地不在候选里）。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-tomiyama_boundary-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:35:00",
+    "present": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "place": "医护休息区",
+      "appearance": [
+       "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+      ],
+      "holds": [
+       {
+        "id": "water",
+        "name": "休息区饮水杯"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "沈澄站起来说想回庭院看一眼，只站在白线外"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "劝阻",
+      "object": "shen"
+     }
+    ]
+   },
+   "yGroup": "请求",
+   "yRationale": "task_tomiyama_boundary 要守住不能回场参战的边界；她正往门口走，先劝阻她（劝阻属请求组）。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-tomiyama_help-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:38:00",
+    "present": [],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "白线外有人喊脚踝扭了，正被扶着往医护附楼来"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "接应",
+      "object": null
+     }
+    ]
+   },
+   "yGroup": "援助",
+   "yRationale": "task_tomiyama_help 要在有人求援时把真实伤情传下去；人正被扶过来，先到门口接应，别让他在白线外等。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-tomiyama_support-b",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:30:00",
+    "present": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "place": "医护休息区",
+      "appearance": [
+       "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+      ],
+      "holds": [
+       {
+        "id": "water",
+        "name": "休息区饮水杯"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "沈澄低头说自己拖累了队友，声音发抖"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "安抚",
+      "object": "shen"
+     }
+    ]
+   },
+   "yGroup": "情绪",
+   "yRationale": "task_tomiyama_support 要让学生稳定下来；她正自责发抖，先安抚情绪，再谈伤情交接。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  },
+  {
+   "rowId": "val-01-tomiyama_wait-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:40:00",
+    "present": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "place": "医护休息区",
+      "appearance": [
+       "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+      ],
+      "holds": [
+       {
+        "id": "water",
+        "name": "休息区饮水杯"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "沈澄靠着长椅睡着了，顾岚在处置室，没人来叫他"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": []
+   },
+   "yGroup": "不动",
+   "yRationale": "沈澄睡着、顾岚在处置室、没有人来求助，task_tomiyama_shen 和 task_tomiyama_help 此刻都没有对象；叫醒她反而打断恢复，先不动作。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": "沈澄睡着，顾岚在处置室，没有人来求助，此刻没有该做的一步。"
+  },
+  {
+   "rowId": "val-01-tomiyama_observe-a",
+   "source": "constructed-validation-01",
+   "worldId": "world_dragon_raja_free_day",
+   "characterId": "tomiyama",
+   "x": {
+    "character": {
+     "id": "tomiyama",
+     "name": "富山雅史",
+     "place": "医护休息区",
+     "appearance": [
+      "胸牌写着心理辅导，外套上没有红蓝标记；手中拿着一只未拆的纸杯，与沈澄隔着一人距离坐着，没有挡住医护通路。"
+     ],
+     "holds": []
+    },
+    "goals": [
+     "task_tomiyama_support：让退出演习的学生稳定下来，并把实际伤情及时交给顾岚",
+     "task_tomiyama_shen：询问沈澄醒来后的状态，听清她担心的是麻感还是拖累队友",
+     "task_tomiyama_refer：若沈澄的麻感没有减轻，协助她向顾岚说明而不是自行认定无事",
+     "task_tomiyama_boundary：说明退出不等于失去价值，同时守住不能回场参战的边界",
+     "task_tomiyama_help：有人来求援时帮助传达真实伤情，不把医疗求助改成战术情报"
+    ],
+    "place": "医护休息区（医护休息区 < 医护附楼 < 卡塞尔学院演习区 < 卡塞尔学院演习区）；时间=2009-10-17T15:26:00",
+    "present": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "place": "医护休息区",
+      "appearance": [
+       "红色识别带已经拆下放在长椅旁，胸口护具留着演习弹痕；中弹后已醒来，现坐着喝水，右手指尖仍有轻微麻感，演习枪不在身边。"
+      ],
+      "holds": [
+       {
+        "id": "water",
+        "name": "休息区饮水杯"
+       }
+      ]
+     }
+    ],
+    "items": [
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "place": "医护休息区",
+      "appearance": [
+       "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。"
+      ]
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "place": "医护休息区",
+      "appearance": [
+       "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。"
+      ]
+     }
+    ],
+    "recent": [
+     "沈澄喝水时右手抖了一下，杯沿碰到牙齿"
+    ],
+    "sanity": 79,
+    "personality": "学院心理辅导教员，本场负责退出人员的安抚与分流，实际伤情交给顾岚处理。善于让紧张的学生先把眼前事实说清，不把输掉演习说成人的失败；不向参赛者传递休息者未同意公开的谈话。",
+    "candidates": [
+     {
+      "id": "shen",
+      "name": "沈澄",
+      "type": "人物"
+     },
+     {
+      "id": "shen_band",
+      "name": "沈澄拆下的红色识别带",
+      "type": "物品"
+     },
+     {
+      "id": "blanket",
+      "name": "保温毯",
+      "type": "物品"
+     }
+    ]
+   },
+   "y": {
+    "steps": [
+     {
+      "action": "观察",
+      "object": "shen"
+     }
+    ]
+   },
+   "yGroup": "感知",
+   "yRationale": "task_tomiyama_shen 要听清她担心的是麻感还是拖累队友；她手抖了一下但没说话，先看清她的动作再决定问什么。",
+   "labelSource": "constructed-validation-01",
+   "skipReason": ""
+  }
+ ]
+}
