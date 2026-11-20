@@ -682,3 +682,59 @@ The page now runs 06's constrained beats. 02's module is merged (05e7f4ce, 181c5
 | `02-narration-beat-prompt-scene-not-list.patch` | one anti-list line + "one action or one attention" for fact-less beats | 4794 recites place note + present notes + objects even with maxDetails 2 |
 
 Measurements behind the budget line: `results/02-narration/beat-style-samples.json` through `style-compare.mjs` against the 71-row reference (dialogue 0% vs 42%, simile 0% vs 1%, perception 14% vs 14%). Dialogue is not bundled: a required-dialogue push on the scene prompt produced 0/3 and new errors (batch-5), and a quiet minute may legitimately have no speech.
+
+
+## 3.21 原样输出阶段（2026-11-11 下午）
+
+用户最终决定（`NARRATION-RAW-OUTPUT-20261111.md`）：运行时只判空，非空模型正文原样显示；不校验、不裁句、不纠错、不替换、不降级；
+不调用模型自查；上一回合正文（含摘要/历史/上下文）不得进入后续调用。02 的职责收缩为**输入提示**：去重、删掉禁止他/她的规则、
+使用有引文的性别资料、任何形式的上一回合正文都不进提示。
+
+已完成：
+- 02 分支 `4a3ac8f6`：`character-gender.ts`（五个有引文来源的性别）、场景提示的性别行、单一时间行、删除上一回合开头/结尾与 beat 的【前一句】、
+  「不要重复本段」。06 已在 `b2977404`/`a38d8564` 合入。
+- 待合：`results/product/ownership-requests/02-narration-prompt-cleanup-constrained.patch`（产品路径 constrained/compose.ts，131 行）：
+  指令行与结算记录相同时不重复印；「已登记细节」去重；长度按事实数给（0 个 1-2 句/20-60 字，1 个 2-4 句/60-120 字，2+ 3-6 句/100-200 字）；
+  性别资料行；「本段」代替「上一段」；视角人物一行写明「这一段写的就是他本人」。在 `76867160` 上可干净应用，临时副本 tsc 无环境外错误。
+
+这一阶段的证据与判断：
+- `09-frozen-raw-7686.json`：三回合模型正文 93/93/135 字，页面原样显示；主要缺陷是物件状态被凭空改写（捏着规则牌、护目镜滑落）、
+  把玩家原话当从句塞进叙述、以及重复状态检查。
+- `09-product-10turn-7686.json`：十回合，七回合有正文；第五回合结算被拒、第六回合只有「…」、第十回合 195.8 秒。
+  最大的可读性问题是**同一个结算事实在同一回合被多个叙述点各写一遍**（01 的 `requests-01-to-06-04-duplicate-group.md` 有逐回合计数）。
+- `09-frozen-raw-b2d4.json` 的两个回合记录为空，但候选证据里模型写了 121/42 字：策略停止（`world_complete`）把已完成的正文丢了。
+  06 在 `76867160` 修好；之后两轮正文正常显示。
+- 证据的 `text` 字段是整块 innerText，包含页面标签（「模型正文（原样显示，未做内容核对）」「move:模型result:模型」），
+  不是正文被污染；已更正并请 09 分开记录，否则「页面文字与模型返回逐字一致」无法证明。
+
+02 不再做守卫/语义覆盖/自查；补丁之外的下一步是 06 合并、09 跑、01 读。
+
+## 3.22 原样输出阶段的后续（2026-11-11 晚）
+
+到 3585a2c3 为止的状态：
+
+**已并入 06**：姿势禁令、失败/问答两行事实提示（b3304a4b）、长度行矛盾（e699f7d0）、视角澄清（810f3cac）、物品归属行（2ef2921a）、
+指令不得照抄（fca63102）、去重与性别资料（23c8fa9e）、物品说明按事实出现（73d00f97）。
+
+**仍开着的唯一提示补丁**：`results/product/ownership-requests/02-narration-tail-and-first-mention.patch`（102 行，只改 compose.ts 的提示文本）。
+- 玩家原句不再紧贴「只输出正文」：实测 `02-run-b33` 在那种位置被逐字照抄（54 字，第一句就是玩家原句）。现在只在「结果拍、主语不是视角人物、且事实里没有视角人物自己的动作」时，才在事实块之前印一句去掉名字的短语；
+- 「关于别人的事实」补一行：从视角人物眼睛写那个人，同时写出视角人物这一回合自己的动作；
+- 说话类事实允许原样引用玩家第一人称原话；
+- 物品移动写成「现在在 X（原来在 Y；这是物品的位置，不是它自己走过去的）」；
+- 「用名字开头（不要用「他」「她」起头）」折进已有的「把它写成一幕」行，没有新增禁令条数。
+- 验证：`git apply --check` 在 3585a2c3 通过；临时树 tsc 只有环境错误；四种拍（走路、物品移动、提问、别人的事实）的提示前后对照见
+  `frontend/scripts/parallel-narration/constrained-prompt-before-after.txt`（02 分支 81103d30）。**页面效果未测。**
+
+**这轮量到、但不在 02 文件里的阻塞**：
+- 结算轮数：`09-overlap-move-yukU` 玩家自己的点 248.3 秒才落定，253.3 秒开始写正文，275.4 秒完成（正文本身只要 22 秒）。
+  早先 10 回合里 1-2 轮、40-90 秒就开始写；661ae966 之后的重叠场景是 3-4 轮、250 秒左右。表在 `results/quality/turn-timeline-02.md`，
+  请求在 `02-turn-timeline-rounds.json`。
+- 每个角色最多 3 次动作调用、约 36-39 次/回合（`02-action-attempt-cost.json`），与轮数叠加把 295 秒吃完。
+- 回合在写正文途中被取消会留下半句（`02-run-ask-e486-b`：「诺诺的身影在墙边若隐」33 字），06 在 2c85cafc 改成「写完再取消」。
+
+**已经做过的证据核查**：`prior-prose-audit.mjs` 对全部保存了提示的证据（13 文件、185 条提示）检查「上一轮正文是否进了后续提示」，
+排除结算记录/玩家指令/地点等材料行后为 0 条；旧的「上一段」「不知道性别」只出现在清理前的构建。工具与结论见
+`results/product/ownership-requests/02-no-prior-prose-audit-all-evidence.json`。
+
+**下一步**：06 合入上面那一条补丁 → 用 `results/product/evidence/02-turns-ab-prompt.json` 的两个输入（与 09-overlap-move-yukU、
+02-run-ask-e486-b 同输入）跑一遍，读三件事：段落是否以名字开头、物品移动是否写成位置、问句与回答是否都出现。
