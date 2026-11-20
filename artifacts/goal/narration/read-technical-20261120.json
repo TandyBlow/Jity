@@ -1,0 +1,116 @@
+{
+  "kind": "jity-goal-narration-technical-read",
+  "at": "2026-11-20T12:05:00Z",
+  "reviewer": "technical self-check (not the user sign-off)",
+  "samples": "artifacts/goal/narration/samples.json (12 G3 points, Qwen3-1.7B)",
+  "checks": [
+    "state_consistency",
+    "no_fabrication",
+    "viewpoint_secrecy",
+    "style_naturalness"
+  ],
+  "points": [
+    {
+      "id": "t1-look-lane",
+      "state": "hard_error",
+      "findings": [
+        "facts say 器材棚门敞开, prose says 虚掩",
+        "invented sound from the shed"
+      ]
+    },
+    {
+      "id": "t2-move-shed",
+      "state": "style_error",
+      "findings": [
+        "fact-list recitation; input copied as action"
+      ]
+    },
+    {
+      "id": "t3-talk-lin",
+      "state": "hard_error",
+      "findings": [
+        "invented blood and torn-cause details",
+        "prose says he did not ask about pain; the input and result say he asked"
+      ]
+    },
+    {
+      "id": "t5-wait-listen",
+      "state": "hard_error",
+      "findings": [
+        "prose places him in 西回廊; the committed state is 器材棚"
+      ]
+    },
+    {
+      "id": "t7-move-foyer",
+      "state": "style_error",
+      "findings": [
+        "fact-list recitation, almost no scene"
+      ]
+    },
+    {
+      "id": "t8-climb-landing",
+      "state": "hard_error",
+      "findings": [
+        "invented '他没有戴眼镜' detail"
+      ]
+    },
+    {
+      "id": "t9-ask-nono",
+      "state": "hard_error",
+      "findings": [
+        "asks 诺诺 while the committed state says the room has nobody else",
+        "invented flag simile"
+      ]
+    },
+    {
+      "id": "t10-hold-and-time",
+      "state": "style_error",
+      "findings": [
+        "fact-list recitation"
+      ]
+    },
+    {
+      "id": "t12-talk-doctor",
+      "state": "hard_error",
+      "findings": [
+        "prose places him at 医护处置室; the committed state is 西侧服务巷",
+        "顾岚 absent"
+      ]
+    },
+    {
+      "id": "e1-stand-listen",
+      "state": "hard_error",
+      "findings": [
+        "NPC inner state ('眼神中带着一丝警惕') invented"
+      ]
+    },
+    {
+      "id": "e2-check-ground",
+      "state": "hard_error",
+      "findings": [
+        "invented hot metal at his feet; facts only place a fresh mark on the wall"
+      ]
+    },
+    {
+      "id": "e3-check-time",
+      "state": "style_error",
+      "findings": [
+        "fact-list recitation"
+      ]
+    }
+  ],
+  "summary": {
+    "samples": 12,
+    "hard_errors": 7,
+    "style_errors": 4,
+    "clean": 1,
+    "hard_error_kinds": [
+      "location contradiction (t5,t12)",
+      "absent actor (t9)",
+      "invented injury/cause (t3)",
+      "invented detail (t1,t8,e2)",
+      "viewpoint leak (e1)"
+    ]
+  },
+  "conclusion": "Qwen3-1.7B with the current instruct/builtin prompt recites the fact list and invents around it; G6 cannot pass without a prompt/projection/candidate change. No runtime check is added."
+}

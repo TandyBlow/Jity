@@ -20,7 +20,14 @@ for (const file of runs) {
   const evidence = JSON.parse(readFileSync(file, 'utf8'));
   sources.push({ file: file.replaceAll('\\', '/'), runId: evidence.runId, status: evidence.status, turnsFile: evidence.turnsFile, arm: evidence.arm ?? null });
   for (const turn of evidence.turns ?? []) {
-    const text = (turn.text ?? '').trim();
+    const rawText = (turn.text ?? '').trim();
+    // The page appends its own settlement note to the entry; it is UI, not the
+    // model's prose. Strip from the marker so the sample is raw model text.
+    let text = rawText;
+    for (const marker of ['这一回合已结算并写入正文', '本回合没有完成：', '本轮已取消，正文未完成。']) {
+      const at = text.lastIndexOf(marker);
+      if (at >= 0) text = text.slice(0, at).trim();
+    }
     if (!text) continue;
     const narration = turn.product?.narration ?? null;
     samples.push({
