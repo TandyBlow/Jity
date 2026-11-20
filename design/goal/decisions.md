@@ -154,16 +154,13 @@
 - 取代：D-014 的「12 个正常点全部过 60/300、状态 PASS」表述；门槛 60/300 不变。
 - 影响文件：`artifacts/goal/timing-baseline.json`、`frontend/scripts/product-acceptance/summarize-timing.mjs`、`design/goal/ledger.md` G3/G5；G3 重开，G5 修复整轮结算与 `request_malformed`。
 
-## D-017 场外 actor 的结算策略（待用户）
+## D-017 场外 actor 的结算策略
 
-- 状态：`pending-user`（2026-11-20，G5 实测；默认不变）。
+- 状态：`signed`（2026-11-21，用户选择「维持 judge」）。
 - 背景：`action` 默认 `offscreenPolicy='judge'`，场外 actor 由模型逐个判断并各自形成结算组。14 人世界一次普通玩家轮产生 10–12 个组；run10 s01 在 295 s 被页面时限中止（9 个场外组），违反「超过 5 分钟不可接受」。
 - 对照臂：`?offscreenPolicy=skip` 下同题 run11 201 s、run13 268.6 s 交还；run13 含 3 个 automatic 点与 `policy_stop:no_progress`，语义违规 0。场外 actor 仍经任务/个性六阶段覆盖，场景内 actor 仍逐个 judge。
-- 选项：
-  - A（推荐）默认 `skip`：只结算主角场景内的 actor；场外世界活动不模拟。
-  - B 保留 `judge`，按理智给场外 actor 每轮 1–2 个预算；保留世界活动，需新增排序与预算策略。
-  - C 保留 `judge` 不设限，接受 >300 s 回合；违反 D-005，不建议。
-- 影响：G5 收口、G3 时间门、G8 20 输入可玩性。用户选定前默认仍 `judge`，skip 只作评估臂。
+- 用户决定：**维持 judge**，不改为 skip，也不加每轮场外限额。
+- 后果：普通回合仍可能 297–330 秒，300 秒单点门槛与之冲突；G3/G8 的时间证据不能宣布通过。要同时保留 judge 又满足 300 秒，只能在实现上降低结算成本（如点级六阶段），或由用户另行改门槛；本版门槛未改。
 
 ## 已确认（2026-11-20）
 本轮 8 个待确认项已全部有答案，记录在 D-004、D-006、D-010–D-013。当前没有 `pending-user` 项。
