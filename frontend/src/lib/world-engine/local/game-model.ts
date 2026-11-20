@@ -40,7 +40,7 @@ export interface GameModelOptions {
   onNarrationComplete?: (progress: { pointId: Id; raw: string; completion: CompletionEvidence }) => void;
   /** Test/evaluation hook: exposes the draft, raw model text and each repair
    * stage. Never used to make a product decision. */
-  onNarrationDebug?: (debug: { pointId: Id; draft: string; raw: string; cleaned: string; pruned: string; supported: string; text: string; violations: string[]; attempts: number[] }) => void;
+  onNarrationDebug?: (debug: { pointId: Id; draft: string; text: string; violations: string[]; beats: { id: string; ask: string; facts: string[]; model: string; fallback: string; reasons: string[] }[] }) => void;
   onTask?: (task: ModelTask, key: string, detail: { ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number }) => void;
 }
 
@@ -270,6 +270,12 @@ export class LocalGameModel implements WorldModelPort {
     return { value: value as unknown as Json, raw: outcome.raw, ms: outcome.ms, fallback: outcome.fallback, error: outcome.error };
   }
 
+  /** Narration is written one small beat at a time. A 1.5B writer asked for a
+   * whole scene invents people, dialogue and physical effects; asked for one
+   * sentence about a named fact, it mostly restates that fact. Each beat is
+   * generated, streamed and gated on its own, and a beat that cannot be
+   * supported falls back to its own grounded draft line instead of dragging the
+   * whole scene down with it. */
   private async narration(key: Id, input: Json): Promise<Generated> {
     const data = input as { pointId?: Id; before?: WorldState | null; delta?: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }; after?: WorldState; perspective?: string };
     const after = data.after;
@@ -279,10 +285,8 @@ export class LocalGameModel implements WorldModelPort {
     const started = performance.now();
     const before = data.before ?? null;
     const delta = data.delta ?? {};
+    const name = after.initial.characters[view]?.name ?? view;
     const draft = factualNarration(before, delta, after, view, this.lastPlayerInput, this.lastResultsText);
-    const brief = this.options.narrationMode === 'instruct'
-      ? instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft)
-      : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
     const packet = alignmentPacket(before, delta, after);
     const alignmentOptions = {
       roster: Object.values(after.initial.characters).map((entity) => entity.name),
@@ -291,122 +295,195 @@ export class LocalGameModel implements WorldModelPort {
       knownPositions: visibleCharacters(after, view).filter((id) => id !== view).map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
       allowedEvents: EVENT_VERBS.filter((verb) => this.lastPlayerInput.includes(verb)),
     };
-
     const sceneNamesList = sceneNames(after, view);
-    const protagonistName = after.initial.characters[view]?.name ?? view;
-    const acceptCandidate = (candidate: ReturnType<typeof evaluate>): boolean => {
-      if (!candidate.validation.ok) return false;
-      const audit = proseAudit(candidate.supported, protagonistName);
-      const grounding = groundingRatio(candidate.supported, sceneNamesList);
-      return audit.ok && grounding.ratio >= 0.5 && grounding.count >= 2 && [...candidate.supported].length >= 100;
-    };
 
-    const evaluate = (raw: string) => {
-      const cleaned = finishSentences(cleanNarration(raw).replace(/※/g, String.fromCharCode(10, 10))).trim();
-      const validation = validateNarration(cleaned, brief.brief, after, view);
-      const alignment = alignNarration(packet, cleaned, alignmentOptions);
-      // Sentence-level repair keeps the literary text and only removes the
-      // claims the settled state cannot support. Whole-text rejection made the
-      // page show a state summary almost every round, which is worse than a
-      // slightly shorter scene.
-      const pruned = pruneNarration(cleaned, alignment, after, view);
-      const supported = supportNarration(bindNarrationAttributes(pruned.text, after, view), draft);
-      return { raw, cleaned, pruned: pruned.text, supported, dropped: pruned.dropped, validation };
-    };
-
-    /** Same repair chain as the final acceptance, applied to the sentences the
-     * model has finished so far. Only used to publish the stream. */
-    const previewNarration = (partial: string): string => {
-      const cleaned = finishSentences(cleanNarration(partial)).trim();
-      if ([...cleaned].length < 12) return '';
-      const alignment = alignNarration(packet, cleaned, alignmentOptions);
-      const pruned = pruneNarration(cleaned, alignment, after, view);
-      const deduped = dedupeSentences(pruned.text);
-      return supportNarration(bindNarrationAttributes(deduped.text, after, view), draft).trim();
-    };
-
-    const generate = async (prompt: string, temperature: number): Promise<{ raw: string; error?: string }> => {
-      try {
-        let published = '';
-        const raw = await this.narrationEngine.complete(this.options.narrationMode === 'instruct' ? chatml(prompt) : prompt, {
-          maxTokens: this.options.narrationMaxTokens ?? 240, temperature,
-          timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
-          onProgress: (progress) => {
-            // Show the scene while it is being written, but only the part that
-            // already holds up against the settled facts. Streaming raw model
-            // text would print invented actions and then take them back.
-            const complete = progress.raw.replace(/[^。！？!?\n]*$/u, '');
-            if ([...complete].length <= [...published].length) return;
-            const preview = previewNarration(complete);
-            if (!preview || preview === published) return;
-            published = preview;
-            this.options.onNarrationProgress?.({ pointId, raw: preview, elapsedMs: performance.now() - started });
-          },
-          ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
-        });
-        return { raw };
-      } catch (error) {
-        // A length-limited generation still carries usable prose: keep the
-        // complete sentences instead of throwing the whole point away.
-        const partial = error instanceof IncompleteGenerationError ? error.completion.raw : '';
-        const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-        return { raw: partial, error: message };
-      }
-    };
-
-    // Two bounded attempts: a free scene first, then a strictly drafted
-    // rewrite when the first answer cannot be supported by settled facts. The
-    // player sees the better accepted candidate, not the last one generated.
-    // Attempt one rewrites the grounded draft under strict rules: the small
-    // writer model invents less when it is told exactly which facts it may
-    // use. The freer scene prompt runs only if that rewrite is rejected, so a
-    // normal round costs one generation instead of two.
-    // Publish the settled draft the moment narration starts. The player reads a
-    // true, third-person scene instead of waiting for the writer model; the
-    // streamed rewrite replaces it only if it passes the same gate.
+    // Publish the settled draft the moment narration starts: the player reads a
+    // true scene at once, and each accepted beat replaces its own draft line as
+    // it streams in.
     this.options.onNarrationProgress?.({ pointId, raw: draft, elapsedMs: performance.now() - started });
 
-    const attempts: ReturnType<typeof evaluate>[] = [];
-    const rewrite = instructNarrationInput(before, delta, after, view, this.lastPlayerInput, this.lastResultsText, draft, 'repair');
-    const first = await generate(rewrite.prompt, Math.min(0.35, this.options.narrationTemperature ?? 0.45));
-    attempts.push(evaluate(first.raw));
-    if (!acceptCandidate(attempts[0]) && this.options.narrationMode === 'instruct') {
-      const second = await generate(brief.prompt, this.options.narrationTemperature ?? 0.45);
-      attempts.push(evaluate(second.raw));
+    const beats = this.narrationBeats(after, before, delta, view);
+    if (!beats.length) {
+      this.finishNarration(key, pointId, started, draft, [], draft, []);
+      return { value: draft as unknown as Json, raw: draft, ms: performance.now() - started, fallback: true, error: 'empty_scene' };
     }
-    const best = attempts.reduce((left, right) => ([...right.supported].length > [...left.supported].length ? right : left));
-    // The support filter works on wording; alignment works on claims. A
-    // sentence can survive the first and still assert an uncommitted result,
-    // so prune again on the accepted candidate until it stops contradicting
-    // the settled facts (bounded: each pass only removes sentences).
-    // Whole-answer acceptance. Pruning sentence by sentence and then gluing the
-    // remains with draft lines produced text that was fact-clean and unreadable
-    // at the same time, so a candidate is judged as a whole: it either passes
-    // alignment, grounding and point of view by itself, or the page shows the
-    // grounded draft.
-    const deduped = dedupeSentences(best.supported);
-    const safe = deduped.text;
-    const finalAlignment = alignNarration(packet, safe, alignmentOptions);
-    const repetition = deduped.dropped;
-    // Sentence pruning is the repair, not a failure: acceptance is decided on
-    // the text the player will read, not on whether repair had to run.
-    const audit = proseAudit(safe, protagonistName);
-    const grounding = groundingRatio(safe, sceneNamesList);
-    const accepted = best.validation.ok && finalAlignment.ok && audit.ok
-      && grounding.ratio >= 0.5 && grounding.count >= 2 && [...safe].length >= 100;
-    const text = accepted ? safe : draft;
-    const reason = accepted ? undefined : [...new Set([
-      best.validation.reason,
-      ...best.dropped.map((entry) => entry.reason),
-      ...finalAlignment.violations.map((entry) => entry.kind),
-      ...(repetition.length ? ['repetition'] : []),
-      ...(grounding.ratio < 0.5 || grounding.count < 2 ? ['ungrounded'] : []),
-      audit.reason ?? 'low_support',
-    ])].filter(Boolean).join(',');
-    this.options.onNarrationDebug?.({ pointId, draft, raw: best.raw, cleaned: best.cleaned, pruned: best.pruned, supported: best.supported, text, violations: finalAlignment.violations.map((entry) => entry.kind), attempts: attempts.map((entry) => [...entry.supported].length) });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: !accepted, error: reason, raw: text, promptChars: brief.prompt.length });
-    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: accepted ? 'stop' : 'drafted', firstTokenMs: null, wallMs: performance.now() - started } });
-    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: !accepted, error: reason };
+
+    const results: BeatResult[] = [];
+    const publish = (): void => {
+      const text = results.map((beat) => beat.text || beat.fallback).join('');
+      this.options.onNarrationProgress?.({ pointId, raw: text || draft, elapsedMs: performance.now() - started });
+    };
+
+    for (const beat of beats) {
+      const prompt = beatPrompt(name, beat);
+      let published = 0;
+      const accepted = await this.writeBeat(prompt, beat, packet, alignmentOptions, after, view, draft, (partial) => {
+        const proven = this.gateBeat(partial, beat, packet, alignmentOptions, after, view, sceneNamesList);
+        if (!proven || [...proven].length <= published) return;
+        published = [...proven].length;
+        results.push({ ...beat, text: proven });
+        publish();
+        results.pop();
+      });
+      results.push({ ...beat, text: accepted });
+      publish();
+    }
+
+    const text = results.map((beat) => beat.text || beat.fallback).join('');
+    const rejected = results.filter((beat) => !beat.text);
+    const reason = rejected.length ? [...new Set(rejected.flatMap((beat) => beat.reasons))].join(',') : undefined;
+    this.finishNarration(key, pointId, started, text, results, draft, rejected.flatMap((beat) => beat.reasons));
+    return { value: text as unknown as Json, raw: text, ms: performance.now() - started, fallback: rejected.length > 0, error: reason };
+  }
+
+  private finishNarration(
+    key: Id,
+    pointId: Id,
+    started: number,
+    text: string,
+    beats: BeatResult[],
+    draft: string,
+    reasons: string[],
+  ): void {
+    this.options.onNarrationDebug?.({
+      pointId, draft, text,
+      beats: beats.map((beat) => ({ id: beat.id, ask: beat.ask, facts: beat.facts, model: beat.text, fallback: beat.fallback, reasons: beat.reasons })),
+      violations: [...new Set(reasons)],
+    });
+    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback: reasons.length > 0, error: reasons.length ? [...new Set(reasons)].join(',') : undefined, raw: text });
+    this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: reasons.length ? 'drafted' : 'stop', firstTokenMs: null, wallMs: performance.now() - started } });
+  }
+
+  /** The three facts the player is entitled to read this round: where the round
+   * happens and who is there, what the protagonist just did and what came of
+   * it, and the one detail worth noticing. Everything else is style. */
+  private narrationBeats(
+    after: WorldState,
+    before: WorldState | null,
+    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
+    view: Id,
+  ): Beat[] {
+    const name = after.initial.characters[view]?.name ?? view;
+    const room = roomOf(after, view);
+    const place = locationName(after, room);
+    const appearance = after.initial.locations[room]?.initialAppearance;
+    const others = visibleCharacters(after, view).filter((id) => id !== view).slice(0, 2);
+    const people = others.map((id) => {
+      const entity = after.initial.characters[id];
+      const looks = [entity?.initialAppearance, ...activeText(after.characters[id]?.appearanceChanges ?? [])].filter(Boolean).join('，');
+      return `${entity?.name ?? id}${looks ? `（${pickClauses(looks, 2)}）` : ''}`;
+    });
+    const scenery = appearance ? pickClauses(appearance, 2) : '';
+    const declared = this.lastPlayerInput.trim().replace(/^我(?!们)/u, '');
+    const resultsText = this.lastResultsText.trim();
+    const change = delta.entityDeltas?.[view];
+    const moved = change?.positionSet ? locationName(after, change.positionSet.containerId) : '';
+
+    const beats: Beat[] = [];
+    beats.push({
+      id: 'scene',
+      facts: [`地点：${place}${scenery ? `；${scenery}` : ''}`, ...(people.length ? [`在场：${people.join('；')}`] : ['在场：没有别人'])],
+      ask: `用一到两句写${name}此刻所在的地方，和在场的人。`,
+      fallback: `${place}里，${scenery || '看不出什么特别'}。${people.length ? `${people.map((person) => person.split('（')[0]).join('、')}也在。` : ''}`,
+      reasons: [],
+      text: '',
+    });
+    if (declared || resultsText) {
+      beats.push({
+        id: 'act',
+        facts: [
+          `玩家这一回合让${name}做的事：${declared || '（没有说话，只是行动）'}`,
+          ...(moved ? [`${name}因此到了${moved}`] : []),
+          ...(resultsText ? [`结算结果：${resultsText}`] : []),
+        ],
+        ask: `用一到两句写${name}刚做了什么，结果怎么样。`,
+        fallback: `${declared ? `${name}${declared}。` : ''}${resultsText ? `${resultsText.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name)}。` : ''}`,
+        reasons: [],
+        text: '',
+      });
+    }
+    const detailSource = others.length
+      ? [after.initial.characters[others[0]]?.name ?? '', ...[after.initial.characters[others[0]]?.initialAppearance ?? ''].map((value) => pickClauses(value, 2))].filter(Boolean).join('：')
+      : scenery;
+    if (detailSource) {
+      beats.push({
+        id: 'detail',
+        facts: [`可以写的细节只有这一条：${detailSource}`],
+        ask: '用一句话写此刻最该被注意到的一个细节。',
+        fallback: '',
+        reasons: [],
+        text: '',
+      });
+    }
+    return beats;
+  }
+
+  private async writeBeat(
+    prompt: string,
+    beat: Beat,
+    packet: ReturnType<typeof alignmentPacket>,
+    alignmentOptions: Parameters<typeof alignNarration>[2],
+    after: WorldState,
+    view: Id,
+    draft: string,
+    onPartial: (text: string) => void,
+  ): Promise<string> {
+    try {
+      const raw = await this.narrationEngine.complete(chatml(prompt), {
+        maxTokens: 96,
+        temperature: this.options.narrationTemperature ?? 0.45,
+        timeoutMs: this.options.narrationTimeoutMs ?? 120_000,
+        stop: ['<|im_end|>'],
+        onProgress: (progress) => {
+          const complete = progress.raw.replace(/[^。！？!?]*$/u, '');
+          if (!complete) return;
+          onPartial(complete);
+        },
+      });
+      const gated = this.gateBeat(raw, beat, packet, alignmentOptions, after, view, sceneNames(after, view));
+      if (gated && [...gated].length >= 6) return gated;
+      beat.reasons.push('beat_unsupported');
+      return '';
+    } catch (error) {
+      const partial = error instanceof IncompleteGenerationError ? error.completion.raw : '';
+      const gated = partial ? this.gateBeat(partial, beat, packet, alignmentOptions, after, view, sceneNames(after, view)) : '';
+      if (gated && [...gated].length >= 6) return gated;
+      beat.reasons.push(error instanceof Error && error.name === 'TimeoutError' ? 'beat_timeout' : 'beat_failed');
+      return '';
+    }
+  }
+
+  /** One beat's text, checked against this round's settled facts. Anything that
+   * asserts a physical effect, invents dialogue, switches to first person or
+   * mentions something outside the beat's own facts is dropped sentence by
+   * sentence; a beat with nothing left is not shown. */
+  private gateBeat(
+    raw: string,
+    beat: Beat,
+    packet: ReturnType<typeof alignmentPacket>,
+    alignmentOptions: Parameters<typeof alignNarration>[2],
+    after: WorldState,
+    view: Id,
+    sceneNamesList: string[],
+  ): string {
+    const cleaned = finishSentences(cleanNarration(raw)).trim();
+    if (!cleaned) return '';
+    const allowed = [...beat.facts, this.lastPlayerInput, this.lastResultsText].join('；');
+    const alignment = alignNarration(packet, cleaned, alignmentOptions);
+    const pruned = pruneNarration(cleaned, alignment, after, view).text || cleaned;
+    const supported = supportNarration(bindNarrationAttributes(pruned, after, view), allowed);
+    const kept: string[] = [];
+    for (const sentence of supported.split(/(?<=[。！？!?])/u)) {
+      const trimmed = sentence.trim();
+      if ([...trimmed].length < 5) continue;
+      if (/[^「『“]我(?!们)/u.test(trimmed.replace(/[「『“][^」』”]*[」』”]/gu, ''))) continue;
+      kept.push(trimmed);
+    }
+    const text = kept.join('');
+    if (!text) return '';
+    const grounding = groundingRatio(text, sceneNamesList);
+    if (grounding.count === 0 && [...text].length > 40) return '';
+    return text;
   }
 
   private fallback(task: ModelTask, key: Id): Json {
@@ -813,6 +890,29 @@ function finishSentences(text: string): string {
 
 /** Rooms the protagonist can reach in one point: the current room, its
  * parent, its siblings and its children, plus any room the player named. */
+interface Beat {
+  id: string;
+  facts: string[];
+  ask: string;
+  fallback: string;
+  reasons: string[];
+  text: string;
+}
+
+interface BeatResult extends Beat {}
+
+function beatPrompt(name: string, beat: Beat): string {
+  return [
+    '你是中文小说作者。只写这一件事，一到两句，直接写正文。',
+    `主角：${name}。第三人称，只能用“${name}”或“他”，不要写“我”。`,
+    '事实：',
+    ...beat.facts.map((fact) => `- ${fact}`),
+    `写什么：${beat.ask}`,
+    '要求：只写事实里出现的动作、位置、外观和结果；不要新增动作、对白、物品、人物、数字、伤情、往事、心理活动或比喻；不要写标题、列表或解释。',
+    '正文：',
+  ].join(String.fromCharCode(10));
+}
+
 export function adjacentLocations(state: WorldState, current: Id, named: string[] = []): string {
   const locations = state.initial.locations;
   const parent = locations[current]?.parentLocationId ?? null;
