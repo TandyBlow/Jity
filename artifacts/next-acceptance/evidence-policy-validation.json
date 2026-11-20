@@ -1,0 +1,25 @@
+{
+  "inputVerification": {
+    "files": 404,
+    "inputRoot": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs",
+    "verified": true,
+    "historicalCopiesVerified": 278
+  },
+  "inputDataHashesUnchangedSince": "3fe0647",
+  "runFreezeChecksPassed": 16,
+  "futureRunOutputsIgnored": true,
+  "selectedArchiveVisible": true,
+  "testsRun": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": [
+    {
+      "test": "test_symlink_output_escape_is_rejected (test_component_paths.PathsTests.test_symlink_output_escape_is_rejected)",
+      "reason": "Symlinks unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\Users\\\\26494\\\\AppData\\\\Local\\\\Temp\\\\tmppc506crg\\\\other' -> 'C:\\\\Users\\\\26494\\\\AppData\\\\Local\\\\Temp\\\\tmppc506crg\\\\branch\\\\outputs\\\\link'"
+    }
+  ],
+  "testLog": "test_historical_copy_is_immutable_and_drift_is_detected (test_component_paths.PathsTests.test_historical_copy_is_immutable_and_drift_is_detected) ... ok\ntest_missing_or_changed_input_fails_instead_of_reading_another_worktree (test_component_paths.PathsTests.test_missing_or_changed_input_fails_instead_of_reading_another_worktree) ... ok\ntest_model_is_explicit_and_checkpoint_is_separate (test_component_paths.PathsTests.test_model_is_explicit_and_checkpoint_is_separate) ... ok\ntest_output_escape_and_input_overwrite_are_rejected (test_component_paths.PathsTests.test_output_escape_and_input_overwrite_are_rejected) ... ok\ntest_symlink_output_escape_is_rejected (test_component_paths.PathsTests.test_symlink_output_escape_is_rejected) ... skipped \"Symlinks unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\\\\\Users\\\\\\\\26494\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmppc506crg\\\\\\\\other' -> 'C:\\\\\\\\Users\\\\\\\\26494\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmppc506crg\\\\\\\\branch\\\\\\\\outputs\\\\\\\\link'\"\ntest_repeating_a_task_does_not_overwrite_evidence_or_start_a_child (test_component_runner.RunnerTests.test_repeating_a_task_does_not_overwrite_evidence_or_start_a_child) ... ok\ntest_unknown_and_traversal_round_ids_are_not_read (test_component_runtime.RoundLookupTests.test_unknown_and_traversal_round_ids_are_not_read) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 1.317s\n\nOK (skipped=1)\n",
+  "modelInferenceRerun": false,
+  "previousRuntimeDevice": "cpu",
+  "gpuValidated": false
+}

@@ -1,0 +1,104 @@
+{
+ "set": "moved24",
+ "frozenAt": "2026-11-05",
+ "units": 24,
+ "file": "world-components/n4-moved24-contract.jsonl",
+ "sha256": "653a4be02bb95682321f4ab477d0e2cdd6ad8df489f38a773f49ecd6d4b3b739",
+ "bytes": 19642,
+ "inputSha256": {
+  "m01:f0": "bc11ed30f9835779cb03f52850957d6d41af77a86fe12eeaad538047a76443f3",
+  "m02:f0": "95253594118920fb503ff0ef33939d635138ddb6851c833ac7b04f3f19a7c4bb",
+  "m03:f0": "e623d505fdf8d53b3ffb51859bc0f34620ee9438021c65efda29a60c493f0211",
+  "m04:f0": "55aaca8b287c9d874067dc88b5efe4dbde336c5d7b016f8fc15dd3f6dd130c2a",
+  "m05:f0": "aa8d965292a2901e442e6ec82a527e5fc8c1158094b976877edeb835537f6024",
+  "m06:f0": "abfa32c6efbeedfa25a306e52c855edb8bd5d0aa5015652368ab1e928884c214",
+  "m07:f0": "f546be1ee805145b7baff5b36458a309e36014103a53f2c9a55427bda50723b1",
+  "m08:f0": "aa618247f774c08f940ec46750214a08e3eccaa19c39789cda3b25a6c7dfc270",
+  "m09:f0": "0188be7d17ac4ed49e3c7dd77e206630e99859d00f621fd3afdd7ea2ada2acea",
+  "m10:f0": "5462c8157d16d16076e7f0b991d5d5fdc0a2dddb0253356a76d6484e187bf2e1",
+  "m11:f0": "5fba6c2824e61f9a099d7c7404539d350b5d0deb5de47c832c63ad1a8202d8fe",
+  "m12:f0": "0043d3a92db853680d974e97e794fccd6c0fb40e5a0de3fb434cd010a15ee55c",
+  "m13:f0": "a2649842f9451568c989e101422bbcc83fcce51c7d65a66fe0c4618385d1c7ec",
+  "m14:f0": "5e06999ce8da57b27cd526ee28eb8bc2f2a48e62d33761af96f2ad459049b5df",
+  "m15:f0": "1789857f030bb9a2686d569230f9216a8ac612f99d8c7e0016e481f3627cc7ea",
+  "m16:f0": "ded2d17da75aac45eeb144ddc623ce524a9440a7a327090b676af6dc10ec78a0",
+  "m17:f0": "68a4d4f7d0b2264ef42554a985bd990e4a645f381963da1245c7413872375394",
+  "m18:f0": "5734934f95fbc3a002a4ec1d34792d6885c50b442b3f75c9cb52325a7048bd53",
+  "m19:f0": "1e2b417c5659b55e1543d8e082ccadac78dbb112abf5850bb4a5b013645c82db",
+  "m20:f0": "79f014ad26e108b829881da2a2f5b21955b44a07a8697c683e2dcc0c277314ce",
+  "m21:f0": "56d4de096b3b59df8d13a956ea92d98c3dae9114a6405b72d9187a0fc0b5a51a",
+  "m22:f0": "8d658a72b8811a224a46f57aa918bf1b9d0f09819306be533ebe6d69797ae65b",
+  "m23:f0": "0e6a7ccf6f5e2e1b6f13ef4b50be2ddb1f860a1099b225eb44eaa463d710048f",
+  "m24:f0": "5f0ccf5a3f5ac130077a693662bd0df57989bc37043ab274e4e88296d116d31c"
+ },
+ "slices": {
+  "moved24-new": [
+   "m01:f0",
+   "m02:f0",
+   "m03:f0",
+   "m04:f0",
+   "m05:f0",
+   "m06:f0",
+   "m07:f0",
+   "m08:f0",
+   "m09:f0",
+   "m10:f0",
+   "m11:f0",
+   "m12:f0",
+   "m13:f0",
+   "m14:f0",
+   "m15:f0",
+   "m16:f0",
+   "m17:f0",
+   "m18:f0",
+   "m19:f0",
+   "m20:f0",
+   "m21:f0",
+   "m22:f0",
+   "m23:f0",
+   "m24:f0"
+  ]
+ },
+ "overlap": {
+  "signatureOverlapWithPoolsOrExistingSets": 0,
+  "note": "河心 appears only as a destination here; existing training pairs already cover 河心 as a start for 顾行舟"
+ },
+ "coverage": {
+  "subjects": {
+   "叶知微": 5,
+   "沈砚": 6,
+   "阿棠": 5,
+   "韩渡": 5,
+   "顾行舟": 3
+  },
+  "starts": {
+   "旧灯塔": 4,
+   "早市": 6,
+   "潮汐档案馆": 4,
+   "潮渡": 6,
+   "潮生巷": 2,
+   "雾堤": 2
+  },
+  "destinations": {
+   "旧灯塔": 3,
+   "早市": 6,
+   "河心": 1,
+   "潮汐档案馆": 4,
+   "潮渡": 5,
+   "潮生巷": 1,
+   "雾堤": 4
+  },
+  "uphill": 6,
+  "downhill": 5,
+  "flat": 13,
+  "aliasedEndpoints": [
+   "旧灯塔",
+   "早市",
+   "潮汐档案馆",
+   "潮渡",
+   "潮生巷",
+   "雾堤"
+  ]
+ },
+ "reporting": "Reported as its own set. final24 keeps its role as the regression set; the two are not merged into one independent number."
+}

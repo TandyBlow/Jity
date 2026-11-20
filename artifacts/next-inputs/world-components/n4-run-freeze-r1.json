@@ -1,0 +1,44 @@
+{
+ "purpose": "freeze code/data/base for the three-arm run",
+ "local": {
+  "python": "3.12.3",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.7.0+cu126",
+  "transformers": "4.57.3",
+  "numpy": "1.26.4"
+ },
+ "remoteEnv": {
+  "torch": "2.5.1+cu124",
+  "transformers": "4.51.3",
+  "gpu": "RTX 4090 D 24GB",
+  "source": "frontend/scripts/_hpc_probe_crf.py 2026-11-04"
+ },
+ "code": {
+  "experiments\\world-components\\n4_narrative_dev\\train_n4_formal.py": "42f72977ff36222415f2d1789354e4853c66e80a4bf354d0bbe00e840dd36158",
+  "experiments\\world-components\\n4_narrative_dev\\train_n4_struct.py": "d5d1ddbb7f1614f0974abba0cf6439b1fec174f447520c2952c9e8162bb71eed",
+  "experiments\\world-components\\n4_narrative_dev\\train_verbalizer.py": "f17bdfd04e354c637eda82ce57ca8735d953dd9c7fd87be03a95ae8d72129b17",
+  "experiments\\world-components\\n4_narrative_dev\\eval_n4_holdout.py": "84ac3a3d74e9243a1610a20418dd4e268b68446852031f41f35d60c50fefc650",
+  "experiments\\world-components\\n4_narrative_dev\\sequence_policy.py": "283203fd88fba3a5e92d45ef4e431ce8e0a1285d308e43ea3fbf451e4b55523f",
+  "experiments\\world-components\\n4_narrative_dev\\smoke_full_length.py": "0123050b4178db19682b5636eee3557c013e6fc5bef102d7fe9e015781bd674d",
+  "experiments\\world-components\\n4_narrative_dev\\verify_sequence_policy.py": "c5152e15fb1b7a721c278118d259700f316774c1e77cc2f0a980768aa729f9cc",
+  "experiments\\world-components\\n4_narrative_dev\\test_sequence_policy.py": "c6c1e16f82a69c78b431081241bbcdcdd39f0e1fdeed291b8b40a8b0a96ca78f"
+ },
+ "data": {
+  "experiments\\world-components\\n4_narrative_dev\\formal_pairs.jsonl": "bda3afb3f037554619c0476f7e07a2f35ee0faf7fb668b2482286be3c9d2a175",
+  "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908",
+  "experiments\\world-components\\n4_narrative_dev\\holdout_pairs.jsonl": "d1522b5ee6cff01a22587a143c4a2b756cd96d26200908ad9e74232195c45759",
+  "experiments\\world-components\\n4_rewrite60\\corpus140.jsonl": "986201851612f04148125ec387bce7caead141cf077d8ea84b3b78071720f2ac",
+  "experiments\\world-components\\n4_rewrite60\\checker.py": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe",
+  "experiments\\world-components\\n4_rewrite60\\checker-v7-freeze.json": "f00b25db7c63013871d1c9c4e2a6dcbb72f13e176273a3f2956b85767181e1fc",
+  "experiments\\world-components\\n4_rewrite60\\isolated-v1\\isolated-v1.jsonl": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+  "experiments\\world-components\\n4_rewrite60\\isolated-v1\\isolated-v1.labels.json": "18f0f8a41d72426212ee7dc679e760089ad2413256af6d8cad9dfcc777d61894"
+ },
+ "base": {
+  "model.safetensors": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "config.json": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+  "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "tokenizer_config.json": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+  "special_tokens_map.json": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4"
+ },
+ "missing": []
+}

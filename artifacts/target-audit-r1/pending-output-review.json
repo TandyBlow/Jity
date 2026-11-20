@@ -1,0 +1,158 @@
+{
+ "runs": 6,
+ "openUnits": 7,
+ "confirmed": 7,
+ "scorerArtefacts": 0,
+ "byVerdict": {
+  "confirmed-missing-object": 1,
+  "confirmed-missing-quantity": 3,
+  "confirmed-missing-quantity+repetition": 1,
+  "confirmed-wrong-qualifier": 2
+ },
+ "scorerFix": {
+  "beforeFix": "props on the 可见 line, sublocations and aliases were not authorised",
+  "flagsRemoved": [
+   "other-place:长桌 (v03:f3, v11:f2, v19:f2, v21:f1)",
+   "other-place:巷子 (v22:f1)",
+   "other-place:摊棚 (v23:f1)"
+  ],
+  "verdictsChanged": 0,
+  "aliasExpansionChangedVerdicts": 0
+ },
+ "records": [
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t09:f2",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把一叠干纸放在桌角"
+   },
+   "output": "叶知微把干纸放到桌角,叶知微把干纸放到桌角。",
+   "mechanical": "REVIEW",
+   "mechanicalNote": "覆盖0.38",
+   "flags": [
+    "repeat:叶知微把干纸放到桌角"
+   ],
+   "verdict": "confirmed-missing-quantity+repetition",
+   "reason": "事实是“一叠干纸”，输出只写“干纸”；后半句把同一句又写了一遍"
+  },
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t13:f1",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f1",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把一叠干纸放在桌角"
+   },
+   "output": "叶知微把干纸放到桌角。",
+   "mechanical": "REVIEW",
+   "mechanicalNote": "覆盖0.38",
+   "flags": [],
+   "verdict": "confirmed-missing-quantity",
+   "reason": "事实是“一叠干纸”，输出只写“干纸”"
+  },
+  {
+   "set": "cf24",
+   "arm": "treatment",
+   "unitId": "t09:f2",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把一叠干纸放在桌角"
+   },
+   "output": "叶知微把干纸放到桌角。",
+   "mechanical": "REVIEW",
+   "mechanicalNote": "覆盖0.38",
+   "flags": [],
+   "verdict": "confirmed-missing-quantity",
+   "reason": "事实是“一叠干纸”，输出只写“干纸”"
+  },
+  {
+   "set": "cf24",
+   "arm": "treatment",
+   "unitId": "t11:f2",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f2",
+    "kind": "outcome",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "resultText": "换好塔顶的灯芯"
+   },
+   "output": "沈砚换好备用灯芯。",
+   "mechanical": "REVIEW",
+   "mechanicalNote": "覆盖0.33",
+   "flags": [],
+   "verdict": "confirmed-wrong-qualifier",
+   "reason": "事实是“塔顶的灯芯”，输出写成“备用灯芯”"
+  },
+  {
+   "set": "cf24",
+   "arm": "treatment",
+   "unitId": "t13:f1",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f1",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把一叠干纸放在桌角"
+   },
+   "output": "叶知微把干纸放到桌角。",
+   "mechanical": "REVIEW",
+   "mechanicalNote": "覆盖0.38",
+   "flags": [],
+   "verdict": "confirmed-missing-quantity",
+   "reason": "事实是“一叠干纸”，输出只写“干纸”"
+  },
+  {
+   "set": "cf24",
+   "arm": "treatment",
+   "unitId": "t23:f3",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f3",
+    "kind": "outcome",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "resultText": "换好塔顶的灯芯"
+   },
+   "output": "沈砚换好备用。",
+   "mechanical": "O",
+   "mechanicalNote": "覆盖0.17",
+   "flags": [],
+   "verdict": "confirmed-missing-object",
+   "reason": "事实是“换好塔顶的灯芯”，输出只有“换好备用”"
+  },
+  {
+   "set": "final24",
+   "arm": "treatment",
+   "unitId": "v13:f1",
+   "kind": "outcome",
+   "fact": {
+    "factId": "f1",
+    "kind": "outcome",
+    "name": "叶知微",
+    "text": "换好塔顶的灯芯"
+   },
+   "output": "叶知微换好备用灯芯。",
+   "mechanical": "REVIEW",
+   "mechanicalNote": "覆盖0.33",
+   "flags": [],
+   "verdict": "confirmed-wrong-qualifier",
+   "reason": "事实是“塔顶的灯芯”，输出写成“备用灯芯”"
+  }
+ ]
+}

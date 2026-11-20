@@ -192,10 +192,24 @@ def plan_v3(selected_facts: list, names: dict,
                           if selected_facts[order[fid]]["kind"] == "time"), None)
         sentences.append({
             "index": gi, "factIds": g, "coreference": grants,
+            "sentenceCount": estimate_sentence_count(g, selected_facts, order),
             "time": ({"amount": time_fact["amount"], "unit": time_fact["unit"]}
                      if time_fact else None)})
         prev_entities = group_entities[gi]
     return {"sentences": sentences, "edges": edges}
+
+
+# 一组事实要写几句：拿 140 条人工稿、按「连续句子按组顺序切段」的 DP 对齐量出来的
+# 实测平均（1 条→2.8 句、2 条→3.4、3 条→5.5、4 条→4.5）。这是程序先验，不是模型
+# 判断；等样本够了再把这一列交给模型学。
+_SENTENCE_COUNT_BY_FACTS = {0: 1, 1: 3, 2: 3, 3: 5, 4: 5}
+
+
+def estimate_sentence_count(fact_ids: list, selected_facts: list,
+                            order: dict) -> int:
+    n = sum(1 for fid in fact_ids
+            if selected_facts[order[fid]].get("kind") != "time")
+    return _SENTENCE_COUNT_BY_FACTS.get(n, 2 + (n - 5) // 3)
 
 
 def _split_same_name(groups: list, selected_facts: list, order: dict,

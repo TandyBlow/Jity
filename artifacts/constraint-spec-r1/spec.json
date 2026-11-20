@@ -1,0 +1,116 @@
+{
+ "version": "constraint-spec-r1",
+ "status": "specification only; no training, no evaluation this round",
+ "namingRule": "if the final implementation is the same cross-entropy over re-arranged rows, it is called a group-sampling scheme, not a component constraint; the word constraint is reserved for a loss term that penalises a missing, reversed or replaced component directly",
+ "currentGap": {
+  "training": "one signal only: teacher-forced CE against the correct target",
+  "whyThatMatters": "the model never sees a target with the name dropped or the relation reversed, so no gradient is aimed at those shapes",
+  "scoring": "the component checks run at acceptance time and produce no gradient, so they cannot serve as an optimisable loss"
+ },
+ "componentMap": {
+  "fields": [
+   "name",
+   "other",
+   "relation",
+   "state"
+  ],
+  "form": "{\"text\",\"start\",\"end\"} with an assertion that target[start:end] == text",
+  "buildTime": "asserted when the pool is built; rows that fail are listed, not silently dropped",
+  "gap": "pool rows currently carry only signature and a target sentence, so this map does not exist yet"
+ },
+ "penalisedErrors": {
+  "entityMissing": true,
+  "entityReplaced": true,
+  "otherMissing": true,
+  "relationMissing": true,
+  "relationReversed": true,
+  "relationReplaced": true,
+  "stateMissing": true,
+  "stateTurnedIntoStasis": true,
+  "directionCharacterMissing": false,
+  "addedTail": false,
+  "lengthOrWordOrder": false
+ },
+ "losses": {
+  "spanWeightedCE": {
+   "formula": "-(sum_t w_t log p(y_t)) / (sum_t w_t), weights 2 on component spans, 1 elsewhere",
+   "gradient": "through the output logits to the whole encoder-decoder, same path as the existing CE",
+   "limits": "under teacher forcing a missing form never appears, so this term reweights tokens but does not penalise omission"
+  },
+  "marginAgainstCorruptions": {
+   "formula": "sum over {drop, rev, state} of max(0, m - s(y) + s(y_c)) with s(y) the per-token mean log-probability",
+   "corruptions": {
+    "y_drop": "delete the name or other span",
+    "y_rev": "reverse the relation for relation facts, otherwise replace the relation slot with 的",
+    "y_state": "replace the state with a stative negation or delete it"
+   },
+   "gradient": "two forward passes (or one batched forward), one backward; no rule branch is differentiated",
+   "whyItPenalisesOmission": "the corrupted sequence is scored by the same model, so a preference for it is measurable and pushable"
+  },
+  "total": "L = L_ce + alpha*L_span + beta*L_margin, starting at alpha 0.5, beta 0.3, m 1.0",
+  "guard": "dry run without updates to check that alpha*L_span + beta*L_margin stays under 30 percent of L_ce"
+ },
+ "normalisation": {
+  "primary": "per-token mean log-probability",
+  "crossCheck": "per-sentence sum, reported alongside",
+  "note": "the two can disagree; if they do, the report says the conclusion depends on the choice instead of picking the friendlier one"
+ },
+ "arms": {
+  "A1": {
+   "data": "one expression per fact",
+   "sampling": "one draw per fact per step",
+   "loss": "L_ce"
+  },
+  "A2": {
+   "data": "k expressions per fact (k = 4)",
+   "sampling": "one draw per fact per step, rotating",
+   "loss": "L_ce"
+  },
+  "B": {
+   "data": "the same rows and ids as A2",
+   "sampling": "the same as A2",
+   "loss": "L_ce + alpha*L_span + beta*L_margin"
+  }
+ },
+ "matching": {
+  "factExposure": "every arm sees each fact exactly once per step; k only changes which expression is used",
+  "targetTokens": "count per step; if the k-expression average differs by more than 5 percent from A1, weight rows by 1/tokens so each fact contributes equal mass, and report the numbers",
+  "updateBudget": "same optimiser steps, facts per batch, lr and warmup; the extra forward for corruptions is recorded as GPU time, not as extra updates",
+  "lossNormalisation": "L_ce and L_span per token; L_margin averaged over the three corruptions so beta does not drift with k"
+ },
+ "ablation": [
+  {
+   "compare": "B against A2",
+   "isolates": "the constraint term itself",
+   "criterion": "at least 8 points on the holdout and no new fact loss"
+  },
+  {
+   "compare": "A2 against A1",
+   "isolates": "more expressions",
+   "criterion": "if A2 already meets the bar, the constraint term is not needed"
+  },
+  {
+   "compare": "A1 against the current setup",
+   "isolates": "the sampling arrangement",
+   "criterion": "if A1 and A2 do not differ, k expressions add no information"
+  }
+ ],
+ "ifBEqualsA2": "call it a group-sampling scheme, drop the margin term, and do not describe it as a component constraint",
+ "ifBEqualsA1": [
+  "check that the corruptions really score higher than the correct target at baseline",
+  "check whether alpha and beta let the auxiliary terms drown the main term",
+  "check whether the span weights cover the tokens that actually get dropped"
+ ],
+ "acceptance": {
+  "holdout": "12-16 new facts frozen before training, unused in any probe or exemplar design",
+  "regressions": "the three regression sets and the existing probes, reported separately",
+  "seeds": "at least three pre-declared seeds, listed per seed, with range and mean shown but not used to hide a failure"
+ },
+ "missingBeforeItCanRun": [
+  "component map builder with span assertions",
+  "per-kind corruption rules plus an assertion that a corruption differs in exactly one component",
+  "a baseline measurement of s(y) - s(y_c) so the margin is not identically zero",
+  "a decision on k and on whether 341 rows may grow to 1364 before calling the arms equal-budget"
+ ],
+ "declaredBefore": "written before any implementation or training"
+}

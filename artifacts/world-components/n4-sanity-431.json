@@ -1,0 +1,88 @@
+{
+ "rows": [
+  {
+   "unitId": "t10:f3:orig",
+   "category": null,
+   "text": "沈砚下降,船头没有新的变化。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "t10:f3:norm",
+   "category": null,
+   "text": "沈砚发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f2:orig",
+   "category": null,
+   "text": "沈砚下降,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f2:norm",
+   "category": null,
+   "text": "沈砚发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f2:orig",
+   "category": null,
+   "text": "沈砚下降,船头没有新的变化。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f2:norm",
+   "category": null,
+   "text": "沈砚发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f2:orig",
+   "category": null,
+   "text": "沈砚下降,心跳才慢下来。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f2:norm",
+   "category": null,
+   "text": "沈砚发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f1:orig",
+   "category": null,
+   "text": "叶知微下降。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f1:norm",
+   "category": null,
+   "text": "叶知微发紧,手指也不太听使唤。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f1:orig",
+   "category": null,
+   "text": "沈砚上升,船头没有新的变化。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f1:norm",
+   "category": null,
+   "text": "沈砚松开手,才发现自己一直提着的那口气落回去了。",
+   "stopReason": "eos",
+   "complete": true
+  }
+ ]
+}

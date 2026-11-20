@@ -1,0 +1,74 @@
+{
+ "purpose": "do the models keep a necessary state relation (缠/挂/系/套/盖/插/搭/卡) between two objects",
+ "job": {
+  "id": 240233,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "units": 30,
+  "models": [
+   "c",
+   "control",
+   "moved"
+  ]
+ },
+ "frozenBeforeRun": {
+  "probes": "0cc83b299078f456de4dfb07b419077dadab01a76137d6ea86599f8731aa7171",
+  "rule": "1633b560d4f39a547fc5cbb04760343e5909692e7718df65593f5c98f3ba1b2e"
+ },
+ "decisionRule": "moved dropping at least half of the 8 relation probes counts as systematic; otherwise the defect stays local and no fidelity revision is designed",
+ "result": {
+  "retained": {
+   "c": 5,
+   "control": 8,
+   "moved": 7
+  },
+  "dropped": {
+   "c": 3,
+   "control": 0,
+   "moved": 1
+  },
+  "inventedInControls": {
+   "c": 0,
+   "control": 0,
+   "moved": 0
+  },
+  "malformedFrame": {
+   "c": 3,
+   "control": 5,
+   "moved": 7
+  },
+  "verdict": "local defect on 缠 only; no fidelity revision, no mechanism claim"
+ },
+ "ruleGap": "the rule has no malformed-frame column; the counts are reported as a secondary observation and do not enter the verdict",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/relation-r1/relation-c/relation-baseline.json",
+   "bytes": 17359,
+   "sha256": "05eeccb7633546ef076a45032102c2d9d82cac851216531e26c48a0305be6281"
+  },
+  {
+   "path": "artifacts/next-acceptance/relation-r1/relation-control/relation-baseline.json",
+   "bytes": 17388,
+   "sha256": "c6565f5df0a4d563ece771270b9e4a7b9b222ee1924861369b2f9f7f54d28d78"
+  },
+  {
+   "path": "artifacts/next-acceptance/relation-r1/relation-moved/relation-baseline.json",
+   "bytes": 17398,
+   "sha256": "0530cbe59ed97d7d39fc4ffa148cc64a5cbe4330d02b241e2ac07a30d26f563b"
+  },
+  {
+   "path": "artifacts/next-acceptance/relation-r1/relation-judged.json",
+   "bytes": 7205,
+   "sha256": "4cb51e51bc0330a4f2697262180ac4357cb407b928a8189b802360270dfa728b"
+  },
+  {
+   "path": "artifacts/next-acceptance/relation-r1/n4-relation-r1.jsonl",
+   "bytes": 9580,
+   "sha256": "0cc83b299078f456de4dfb07b419077dadab01a76137d6ea86599f8731aa7171"
+  },
+  {
+   "path": "artifacts/next-acceptance/relation-r1/n4-relation-r1-rule.json",
+   "bytes": 1165,
+   "sha256": "1633b560d4f39a547fc5cbb04760343e5909692e7718df65593f5c98f3ba1b2e"
+  }
+ ]
+}

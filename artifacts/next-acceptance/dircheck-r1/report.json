@@ -1,0 +1,222 @@
+{
+ "purpose": "does the direction margin cover the errors that actually occur at C",
+ "device": "cuda",
+ "model": "ckpt",
+ "group": "the six location-reference rolepair rows, whole",
+ "confirmedPreviously": {
+  "R02": "p-rp6b",
+  "R08": "p-rp4b",
+  "R09": "p-rp1b",
+  "R15": "p-rp3b",
+  "R17": "p-rp5b",
+  "R35": "p-rp3b",
+  "R36": "p-rp2b"
+ },
+ "marginThreshold": 1.0,
+ "rows": [
+  {
+   "unitId": "p-rp1b",
+   "pair": "rp1",
+   "name": "潮汐簿",
+   "other": "干纸",
+   "relation": "压",
+   "correct": "压在潮汐簿上的干纸滑开了。",
+   "reversed": "潮汐簿压着的干纸滑开了。",
+   "generated": "潮汐簿压着的干纸滑开了。",
+   "stop": null,
+   "sum": {
+    "correct": -0.223,
+    "reversed": -0.247,
+    "generated": -0.247
+   },
+   "mean": {
+    "correct": -0.017,
+    "reversed": -0.019,
+    "generated": -0.019
+   },
+   "tokens": [
+    13,
+    13,
+    13
+   ],
+   "marginSum": 0.025,
+   "marginMean": 0.002,
+   "lossActive": true,
+   "errorTags": [
+    "name-as-agent"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp2b",
+   "pair": "rp2",
+   "name": "木桩",
+   "other": "渡船",
+   "relation": "靠",
+   "correct": "靠在木桩上的渡船退了半尺。",
+   "reversed": "木桩靠着的渡船退了半尺。",
+   "generated": "木桩靠着的渡船退了半尺。",
+   "stop": null,
+   "sum": {
+    "correct": -0.504,
+    "reversed": -0.785,
+    "generated": -0.785
+   },
+   "mean": {
+    "correct": -0.036,
+    "reversed": -0.056,
+    "generated": -0.056
+   },
+   "tokens": [
+    14,
+    14,
+    14
+   ],
+   "marginSum": 0.281,
+   "marginMean": 0.02,
+   "lossActive": true,
+   "errorTags": [
+    "name-as-agent"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp3b",
+   "pair": "rp3",
+   "name": "鱼筐",
+   "other": "银鳞鱼",
+   "relation": "堆",
+   "correct": "堆在鱼筐底的银鳞鱼露出来。",
+   "reversed": "鱼筐堆着的银鳞鱼露出来。",
+   "generated": "鱼筐堆着的银鳞鱼露出来。",
+   "stop": null,
+   "sum": {
+    "correct": -0.985,
+    "reversed": -0.619,
+    "generated": -0.619
+   },
+   "mean": {
+    "correct": -0.07,
+    "reversed": -0.048,
+    "generated": -0.048
+   },
+   "tokens": [
+    14,
+    13,
+    13
+   ],
+   "marginSum": -0.366,
+   "marginMean": -0.023,
+   "lossActive": true,
+   "errorTags": [
+    "name-as-agent"
+   ],
+   "prefersGeneratedOverCorrect": true
+  },
+  {
+   "unitId": "p-rp4b",
+   "pair": "rp4",
+   "name": "铜灯罩",
+   "other": "灯芯",
+   "relation": "插",
+   "correct": "插在铜灯罩里的灯芯歪了。",
+   "reversed": "铜灯罩插着的灯芯歪了。",
+   "generated": "铜灯罩插着的灯芯歪了。",
+   "stop": null,
+   "sum": {
+    "correct": -0.318,
+    "reversed": -0.192,
+    "generated": -0.192
+   },
+   "mean": {
+    "correct": -0.024,
+    "reversed": -0.015,
+    "generated": -0.015
+   },
+   "tokens": [
+    13,
+    13,
+    13
+   ],
+   "marginSum": -0.126,
+   "marginMean": -0.01,
+   "lossActive": true,
+   "errorTags": [
+    "name-as-agent"
+   ],
+   "prefersGeneratedOverCorrect": true
+  },
+  {
+   "unitId": "p-rp5b",
+   "pair": "rp5",
+   "name": "石板",
+   "other": "油纸伞",
+   "relation": "靠",
+   "correct": "靠在石板上的油纸伞歪了。",
+   "reversed": "石板靠着的油纸伞歪了。",
+   "generated": "石板靠着的油纸伞歪了。",
+   "stop": null,
+   "sum": {
+    "correct": -0.207,
+    "reversed": -0.239,
+    "generated": -0.239
+   },
+   "mean": {
+    "correct": -0.016,
+    "reversed": -0.018,
+    "generated": -0.018
+   },
+   "tokens": [
+    13,
+    13,
+    13
+   ],
+   "marginSum": 0.032,
+   "marginMean": 0.002,
+   "lossActive": true,
+   "errorTags": [
+    "name-as-agent"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp6b",
+   "pair": "rp6",
+   "name": "钟架",
+   "other": "钟绳",
+   "relation": "搭",
+   "correct": "搭在钟架上的钟绳垂到堤面。",
+   "reversed": "钟架搭着的钟绳垂到堤面。",
+   "generated": "钟架搭着的钟绳垂到堤面。",
+   "stop": null,
+   "sum": {
+    "correct": -0.049,
+    "reversed": -0.032,
+    "generated": -0.032
+   },
+   "mean": {
+    "correct": -0.003,
+    "reversed": -0.002,
+    "generated": -0.002
+   },
+   "tokens": [
+    14,
+    14,
+    14
+   ],
+   "marginSum": -0.017,
+   "marginMean": -0.001,
+   "lossActive": true,
+   "errorTags": [
+    "name-as-agent"
+   ],
+   "prefersGeneratedOverCorrect": true
+  }
+ ],
+ "optimizer": "never constructed",
+ "fetch": {
+  "source": "report.json",
+  "remoteSha256": "7def19b089c7c588aa5de0c91464505450f83ffe94154a22ec34d7e2994d90a2",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

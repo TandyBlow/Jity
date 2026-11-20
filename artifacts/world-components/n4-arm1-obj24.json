@@ -1,0 +1,172 @@
+{
+ "rows": [
+  {
+   "unitId": "qa1A",
+   "category": "object_confusable",
+   "text": "冷茶的表面结了皮。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa1B",
+   "category": "object_confusable",
+   "text": "墨的表面结了皮。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa2A",
+   "category": "object_confusable",
+   "text": "船灯的罩子裂了缝。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa2B",
+   "category": "object_confusable",
+   "text": "渡口的水面晃了晃,没有新的变化。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa3A",
+   "category": "object_confusable",
+   "text": "抹布的边角磨破了。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qa3B",
+   "category": "object_confusable",
+   "text": "银鳞鱼的鳞片掉了两片。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb1A",
+   "category": "object_whole_part",
+   "text": "灯芯烧黑了一截。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb1B",
+   "category": "object_whole_part",
+   "text": "塔顶的灯还亮着,灯影被擦得发亮。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb2A",
+   "category": "object_whole_part",
+   "text": "油纸伞的断了一根。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb2B",
+   "category": "object_whole_part",
+   "text": "油纸伞被靠在墙根。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb3A",
+   "category": "object_whole_part",
+   "text": "外袍上的痕迹磨破了。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qb3B",
+   "category": "object_whole_part",
+   "text": "外袍被搭在摊棚边。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc1A",
+   "category": "object_position",
+   "text": "沈砚把冷茶端到长桌尽头。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc1B",
+   "category": "object_position",
+   "text": "沈砚把冷茶端到门槛外。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc2A",
+   "category": "object_position",
+   "text": "顾行舟把船灯挂到栈桥的托架下。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc2B",
+   "category": "object_position",
+   "text": "顾行舟把船灯挂到船头前的木桩上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc3A",
+   "category": "object_position",
+   "text": "韩渡把警示灯挂回钟架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qc3B",
+   "category": "object_position",
+   "text": "韩渡把警示灯挂回铁链上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd1A",
+   "category": "object_state_owner",
+   "text": "干纸的边缘发了黄。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd1B",
+   "category": "object_state_owner",
+   "text": "旧纸的边缘发了黄。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd2A",
+   "category": "object_state_owner",
+   "text": "木桩缠的旧绳断了。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd2B",
+   "category": "object_state_owner",
+   "text": "缆绳的中间断了一股。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd3A",
+   "category": "object_state_owner",
+   "text": "抹布拧不干。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "qd3B",
+   "category": "object_state_owner",
+   "text": "玻璃上沾了半罐铜油。",
+   "stopReason": "eos",
+   "complete": true
+  }
+ ]
+}

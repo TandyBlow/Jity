@@ -1,0 +1,126 @@
+{
+ "purpose": "HPC smoke: full-length training + EOS/timeout decoding",
+ "when": "2026-11-04T16:15:01",
+ "host": "linux",
+ "python": "3.11.17",
+ "torch": "2.5.1+cu124",
+ "transformers": "4.51.3",
+ "cuda": true,
+ "deviceName": "NVIDIA GeForce RTX 4090 D",
+ "base": {
+  "path": "~/n4v2_run/base/randeng-t5-77m",
+  "configSha16": "9b2480c0a39fd09b",
+  "weightsSha16": "5cdc572109cf2591"
+ },
+ "corpusSha16": "986201851612f041",
+ "encoding": {
+  "rows": 140,
+  "maxInput": {
+   "id": "r44",
+   "tokens": 574
+  },
+  "maxTarget": {
+   "id": "n4n-01",
+   "tokens": 200
+  },
+  "maxTargetIsExpected200": true,
+  "maxInputIsExpected574": true
+ },
+ "modelLoaded": true,
+ "generateEosOnBase": {
+  "rowId": "r19",
+  "stopReason": "eos",
+  "complete": true,
+  "newTokens": 36,
+  "seconds": 7.532853,
+  "text": "地点外貌=潮生巷尽头的鱼市,帆布棚、蒸汽、鱼鳞、泥水;人流拥挤,白汽不散"
+ },
+ "timeoutOnBase": {
+  "stopReason": "timeout",
+  "complete": false,
+  "newTokens": 410,
+  "countedAsSuccess": false
+ },
+ "trainSteps": {
+  "steps": [
+   {
+    "step": 1,
+    "batch": 8,
+    "inputTokens": 574,
+    "targetTokens": 200,
+    "targetIds": [
+     "n4n-01",
+     "r44",
+     "r01",
+     "r02",
+     "r03",
+     "r04",
+     "r05",
+     "r06"
+    ],
+    "loss": 6.2815,
+    "seconds": 2.446,
+    "peakAllocatedGB": 5.349
+   },
+   {
+    "step": 2,
+    "batch": 8,
+    "inputTokens": 489,
+    "targetTokens": 176,
+    "targetIds": [
+     "r07",
+     "r08",
+     "r09",
+     "r10",
+     "r100",
+     "r11",
+     "r12",
+     "r13"
+    ],
+    "loss": 4.8569,
+    "seconds": 0.072,
+    "peakAllocatedGB": 5.385
+   },
+   {
+    "step": 3,
+    "batch": 8,
+    "inputTokens": 571,
+    "targetTokens": 160,
+    "targetIds": [
+     "r14",
+     "r15",
+     "r16",
+     "r17",
+     "r18",
+     "r19",
+     "r20",
+     "r21"
+    ],
+    "loss": 4.9209,
+    "seconds": 0.074,
+    "peakAllocatedGB": 5.791
+   }
+  ],
+  "oomAt": [],
+  "batchSizeUsed": 8
+ },
+ "saveReload": {
+  "path": "smoke-report.ckpt",
+  "weightsBitEqual": true,
+  "lossReloaded": 4.466,
+  "lossInMemory": 4.466,
+  "lossDelta": 0.0
+ },
+ "generateAfterSteps": {
+  "stopReason": "timeout",
+  "complete": false,
+  "newTokens": 2840,
+  "seconds": 20.002665,
+  "text": "沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内心,沈砚的内"
+ },
+ "baseUntouched": {
+  "key": "shared.weight",
+  "matchesDisk": true,
+  "weightsSha16": "5cdc572109cf2591"
+ }
+}

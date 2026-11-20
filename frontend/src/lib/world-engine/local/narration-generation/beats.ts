@@ -45,7 +45,7 @@ export interface NarrationBeat {
 }
 
 const FACT_ORDER: Record<NarrationFact['kind'], number> = {
-  at: 0, moved: 1, task_achieved: 2, personality_changed: 3, sanity: 4, sanity_changed: 4,
+  at: 0, moved: 1, appearance_changed: 2, task_achieved: 2, personality_changed: 3, sanity: 4, sanity_changed: 4,
 };
 
 const CN_DIGITS = ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];

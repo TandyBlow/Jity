@@ -36,3 +36,7 @@ run_n3_arm.py text eol=lf
 n3_rule_arm.py text eol=lf
 n3_plan.py text eol=lf
 n3_n4_fixture.py text eol=lf
+
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"n2-smoke.tmp.json" -text

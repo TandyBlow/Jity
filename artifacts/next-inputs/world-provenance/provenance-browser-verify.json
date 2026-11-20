@@ -1,0 +1,20 @@
+{
+ "worldId": "world_215",
+ "pointA": "point_221",
+ "pointB": "point_225",
+ "evidenceRefs": [
+  "point_221/person_a/appearance/change_223",
+  "point_225/person_a/appearance/change_227"
+ ],
+ "positive": [],
+ "N2_pointOnly": [
+  "relations[0]: f0 只有点证据，点顺序不构成事件先后",
+  "relations[0]: f1 只有点证据，点顺序不构成事件先后"
+ ],
+ "N3_zeroAdvance": [
+  "relations[0]: 两端之间时间推进为 0，不构成先后证据"
+ ],
+ "N1_missingProvenance": [
+  "拒绝：f9: 没有来源事件，只有点是追溯不到事件的"
+ ]
+}

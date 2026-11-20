@@ -1,10 +1,23 @@
 import { describe, expect, test } from 'vitest';
 import { SHORT_STATE } from './b3-short-samples';
 import { checkFactNarration, projectCommittedNarration, renderCommittedNarration, selectFactNarration,
-  type CommittedNarration, type CommittedRead } from './committed-narration';
+  type CommittedNarration, type CommittedRead, type NarrationFact } from './committed-narration';
 import type { Json, WorldState } from '../types';
 import { projectTaskInput } from './focused-input';
 import { buildTaskPrompt } from './prompts';
+import { alignNarration } from './narration-alignment';
+
+function describeFact(fact: NarrationFact): string {
+  switch (fact.kind) {
+    case 'at': return `${fact.name} / 所在位置 = ${fact.location}`;
+    case 'moved': return `${fact.name} / 位置 = 从 ${fact.from} 到 ${fact.to}`;
+    case 'sanity': return `${fact.name} / 精神值 = ${fact.value}`;
+    case 'sanity_changed': return `${fact.name} / 精神值 = ${fact.from} → ${fact.to}`;
+    case 'task_achieved': return `${fact.name} / 达成任务 = 「${fact.goal}」`;
+    case 'personality_changed': return `${fact.name} / 个性变化 = 「${fact.text}」`;
+    case 'appearance_changed': return `${fact.name} / 外貌变化 = 「${fact.text}」`;
+  }
+}
 
 function reads() {
   const before: CommittedRead = { pointId: 'root', previousPointId: null, version: 0, stateDigest: 'root_digest',
@@ -36,7 +49,57 @@ describe('saved facts, template baseline and bounded polish', () => {
     const wrongValue = structuredClone(after); wrongValue.state.characters.person_c.position.containerId = 'corridor';
     expect(() => projectCommittedNarration(wrongValue, before)).toThrow(/position_delta_disagrees/);
     const unsupported = structuredClone(after); unsupported.entityDeltas.person_c.appearanceChanges = [{ id: 'c', text: '受伤', supersedes: [] }];
-    expect(() => projectCommittedNarration(unsupported, before)).toThrow(/unsupported_committed_delta/);
+    expect(() => projectCommittedNarration(unsupported, before)).toThrow(/appearance_delta_disagrees/);
+  });
+
+  test('the default world opening template passes the full alignment check', () => {
+    const { before } = reads();
+    const packet = projectCommittedNarration(before, null);
+    const text = renderCommittedNarration(packet);
+    expect(text).toBe('林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。');
+    const verdict = alignNarration(packet, text);
+    expect(verdict.ok, JSON.stringify(verdict.violations)).toBe(true);
+    expect(verdict.coverage.every((entry) => entry.expressed)).toBe(true);
+  });
+
+  test('appearance narration requires an allocated change with matching text, source and unchanged history', () => {
+    const { before, after } = reads();
+    const change = { id: 'allocated_smile', text: '面带微笑', supersedes: [] };
+    after.entityDeltas.person_c.appearanceChanges = [change];
+    after.state.characters.person_c.appearanceChanges = [{ ...change, active: true, sourcePointId: after.pointId, sourceSequence: after.version }];
+    const packet = projectCommittedNarration(after, before);
+    const time = { amount: 1, unit: 'second' as const };
+    const factText = renderCommittedNarration(packet);
+    const text = renderCommittedNarration(packet, { time });
+    expect(text).toContain('周宁的外貌变化为「面带微笑」。');
+    expect(checkFactNarration(packet, factText).ok).toBe(true);
+    // 完整模板包（默认世界两名人物精神值同为 10 + 一条外貌变化）必须整体通过
+    const aligned = alignNarration(packet, text, { time });
+    expect(aligned.ok, JSON.stringify(aligned.violations)).toBe(true);
+    expect(aligned.coverage.every((entry) => entry.expressed)).toBe(true);
+    const appearanceFact = packet.facts.find((fact) => fact.kind === 'appearance_changed')!;
+    expect(describeFact(appearanceFact)).toBe('周宁 / 外貌变化 = 「面带微笑」');
+    const swappedAppearance = alignNarration(packet, '林川的外貌变化为「面带微笑」。', { time });
+    expect(swappedAppearance.violations.some((violation) => violation.kind === 'actor_swap')).toBe(true);
+    expect(checkFactNarration(packet, factText.replace('面带微笑', '脸色苍白')).ok).toBe(false);
+    for (const mutate of [
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].text = '脸色苍白'; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourcePointId = 'another_point'; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourceSequence = 0; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].active = false; },
+      (read: CommittedRead) => { read.entityDeltas.person_c.appearanceChanges!.push(change); },
+    ]) {
+      const bad = structuredClone(after); mutate(bad);
+      expect(() => projectCommittedNarration(bad, before)).toThrow(/appearance_delta_disagrees/);
+    }
+    const unrecorded = structuredClone(after); delete unrecorded.entityDeltas.person_c.appearanceChanges;
+    expect(() => projectCommittedNarration(unrecorded, before)).toThrow(/unrecorded_appearance_change/);
+    const oldChange = { id: 'old', text: '神色平静', supersedes: [], active: true, sourcePointId: 'root', sourceSequence: 0 };
+    before.state.characters.person_c.appearanceChanges = [oldChange];
+    after.state.characters.person_c.appearanceChanges.unshift(structuredClone(oldChange));
+    expect(() => projectCommittedNarration(after, before)).not.toThrow();
+    after.state.characters.person_c.appearanceChanges[0].active = false;
+    expect(() => projectCommittedNarration(after, before)).toThrow(/unrecorded_appearance_change/);
   });
 
   test('numeric facts require the saved task and allocated personality cause', () => {

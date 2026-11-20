@@ -1,0 +1,260 @@
+{
+  "version": "statement-verification-binary-run-v1",
+  "runAt": "2026-11-05",
+  "command": "python -X utf8 train_verify_binary.py",
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "selected": {
+    "epoch": 12,
+    "t_conf": 0.53
+  },
+  "data": {
+    "train": 786,
+    "dev": 214,
+    "confirm": 124,
+    "confirmTotal": 125,
+    "boundary": 3,
+    "regression": 36
+  },
+  "lengths": {
+    "n": 1163,
+    "min": 45,
+    "p50": 134,
+    "p90": 153,
+    "max": 183
+  },
+  "confirm": {
+    "metrics": {
+      "n": 124,
+      "nSupported": 62,
+      "nUnsupported": 62,
+      "confusion": {
+        "supported->supported": 59,
+        "supported->unsupported": 3,
+        "supported->uncertain": 0,
+        "unsupported->supported": 2,
+        "unsupported->unsupported": 60,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 0.967741935483871,
+      "legalRejection": 0.04838709677419355,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 0.9523809523809523,
+      "overallUncertainRate": 0.0,
+      "uncertainCount": 0
+    },
+    "gates": {
+      "unsupportedRecall>=0.80": true,
+      "legalRejection<=0.05": true,
+      "legalPending<=0.15": true
+    },
+    "pass": true,
+    "category": {
+      "general": {
+        "n": 108,
+        "nSupported": 54,
+        "nUnsupported": 54,
+        "confusion": {
+          "supported->supported": 54,
+          "supported->unsupported": 0,
+          "supported->uncertain": 0,
+          "unsupported->supported": 1,
+          "unsupported->unsupported": 53,
+          "unsupported->uncertain": 0
+        },
+        "unsupportedRecall": 0.9814814814814815,
+        "legalRejection": 0.0,
+        "legalPending": 0.0,
+        "unsupportedPrecision": 1.0,
+        "overallUncertainRate": 0.0,
+        "uncertainCount": 0
+      },
+      "body": {
+        "n": 4,
+        "nSupported": 2,
+        "nUnsupported": 2,
+        "confusion": {
+          "supported->supported": 1,
+          "supported->unsupported": 1,
+          "supported->uncertain": 0,
+          "unsupported->supported": 0,
+          "unsupported->unsupported": 2,
+          "unsupported->uncertain": 0
+        },
+        "unsupportedRecall": 1.0,
+        "legalRejection": 0.5,
+        "legalPending": 0.0,
+        "unsupportedPrecision": 0.6666666666666666,
+        "overallUncertainRate": 0.0,
+        "uncertainCount": 0
+      },
+      "background": {
+        "n": 4,
+        "nSupported": 2,
+        "nUnsupported": 2,
+        "confusion": {
+          "supported->supported": 2,
+          "supported->unsupported": 0,
+          "supported->uncertain": 0,
+          "unsupported->supported": 1,
+          "unsupported->unsupported": 1,
+          "unsupported->uncertain": 0
+        },
+        "unsupportedRecall": 0.5,
+        "legalRejection": 0.0,
+        "legalPending": 0.0,
+        "unsupportedPrecision": 1.0,
+        "overallUncertainRate": 0.0,
+        "uncertainCount": 0
+      },
+      "visible-state": {
+        "n": 4,
+        "nSupported": 2,
+        "nUnsupported": 2,
+        "confusion": {
+          "supported->supported": 2,
+          "supported->unsupported": 0,
+          "supported->uncertain": 0,
+          "unsupported->supported": 0,
+          "unsupported->unsupported": 2,
+          "unsupported->uncertain": 0
+        },
+        "unsupportedRecall": 1.0,
+        "legalRejection": 0.0,
+        "legalPending": 0.0,
+        "unsupportedPrecision": 1.0,
+        "overallUncertainRate": 0.0,
+        "uncertainCount": 0
+      },
+      "extra-action": {
+        "n": 4,
+        "nSupported": 2,
+        "nUnsupported": 2,
+        "confusion": {
+          "supported->supported": 0,
+          "supported->unsupported": 2,
+          "supported->uncertain": 0,
+          "unsupported->supported": 0,
+          "unsupported->unsupported": 2,
+          "unsupported->uncertain": 0
+        },
+        "unsupportedRecall": 1.0,
+        "legalRejection": 1.0,
+        "legalPending": 0.0,
+        "unsupportedPrecision": 0.5,
+        "overallUncertainRate": 0.0,
+        "uncertainCount": 0
+      }
+    },
+    "boundaryExcluded": 1
+  },
+  "regression": {
+    "n": 34,
+    "nSupported": 24,
+    "nUnsupported": 10,
+    "confusion": {
+      "supported->supported": 22,
+      "supported->unsupported": 2,
+      "supported->uncertain": 0,
+      "unsupported->supported": 10,
+      "unsupported->unsupported": 0,
+      "unsupported->uncertain": 0
+    },
+    "unsupportedRecall": 0.0,
+    "legalRejection": 0.08333333333333333,
+    "legalPending": 0.0,
+    "unsupportedPrecision": 0.0,
+    "overallUncertainRate": 0.0,
+    "uncertainCount": 0
+  },
+  "sourceStatus": "not_implemented",
+  "sourceHeadImplemented": false,
+  "selectionOrder": [
+    "max unsupportedRecall",
+    "min legalRejection",
+    "min legalPending",
+    "earliest epoch",
+    "lowest t_conf"
+  ],
+  "files": {
+    "trainScript": {
+      "path": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\train_verify_binary.py",
+      "sha256": "e3341c581dc47bf0922956dda5cdf3ee7ff0ab574e14727c6ba8f9e2a17f7728"
+    },
+    "verifyInput": {
+      "path": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\verify_input.py",
+      "sha256": "b8c6e720bcc11215beb76a29e2764f2b3f80f26990e336f60eec9ec90e2d5757"
+    },
+    "pairs": {
+      "path": "artifacts\\statement-verification\\pairs-v1.jsonl",
+      "sha256": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e"
+    },
+    "regression": {
+      "path": "artifacts\\statement-verification\\regression-v1.jsonl",
+      "sha256": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58"
+    },
+    "splitFreeze": {
+      "path": "artifacts\\statement-verification\\split-freeze.json",
+      "sha256": "914dcf6522ef65ed2e7b79c717ef9d2d12976d90e351095c35e2681909a56ebf"
+    },
+    "metricFreeze": {
+      "path": "artifacts\\statement-verification\\metric-freeze.json",
+      "sha256": "6014c7d2feca07c4615c354c089f704317040d2a2db8e977834ad60845f6552e"
+    },
+    "reviewSummary": {
+      "path": "artifacts\\statement-verification\\review-v1-summary.json",
+      "sha256": "490c3dbf3a190b4f39d2d4e12d1492f9af98f9e0fe57d2c35d3d29ea4c833794"
+    },
+    "baseModel": {
+      "path": ".local\\world-components-worktree\\experiments\\world-components\\assets\\minirbt-h256-snapshot\\pytorch_model.bin",
+      "sha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc"
+    },
+    "vocab": {
+      "path": ".local\\world-components-worktree\\experiments\\world-components\\assets\\minirbt-h256-snapshot\\vocab.txt",
+      "sha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c"
+    },
+    "selectedCheckpoint": {
+      "path": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-verify-binary\\selected.pt",
+      "sha256": "28b304167f1dd387d11d18634115072183479f5b6d3de186befde8548dffd784"
+    },
+    "confirmJsonl": {
+      "path": "artifacts\\statement-verification\\verify-binary-confirm.jsonl",
+      "sha256": "e17e0b23feb2d4a1f115d907f859e63da3d838da3481973a3f4bc211cf2d8c90"
+    },
+    "confirmSummary": {
+      "path": "artifacts\\statement-verification\\verify-binary-confirm-summary.json",
+      "sha256": "eba3e1d33e1882cdad430e77bd58c014cbfb28532777e5944c93ccf9dd650852"
+    },
+    "regressionJsonl": {
+      "path": "artifacts\\statement-verification\\verify-binary-regression.jsonl",
+      "sha256": "426c58d0fa8b50ec4a845a5db8b170caf98a4b0a25a7e00d262693fa257b7b36"
+    },
+    "regressionSummary": {
+      "path": "artifacts\\statement-verification\\verify-binary-regression-summary.json",
+      "sha256": "a376c4f3fad791527be33846a272e46d715af149e3688b09500e31d68a50a175"
+    },
+    "boundaryJsonl": {
+      "path": "artifacts\\statement-verification\\verify-binary-boundary.jsonl",
+      "sha256": "23be736114696234c455f195d9d79590ac133f3db0a36ec0cafd7b8ba219a6d1"
+    },
+    "devJson": {
+      "path": "artifacts\\statement-verification\\verify-binary-dev.json",
+      "sha256": "fb2be90a4232b561909537f965c892f340f489b19e57ed3b91119d6fa2ff39cb"
+    },
+    "trainReport": {
+      "path": "artifacts\\statement-verification\\train-verify-binary-report.json",
+      "sha256": "2f414f6a8f10d9e5dd8f7f65c126c2b2086770ec6ab943c6c9747314595f129a"
+    },
+    "trainLog": {
+      "path": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\train-verify-binary.log",
+      "sha256": "22b91c4d4ec43166b81c21ea42aa3b203048d318caf9022b5557a0eb7d6cffff"
+    },
+    "runReport": {
+      "path": "design\\world-engine-reports\\statement-verification-binary-run.md",
+      "sha256": "20c8755a1f4b0d9418f55942fc2b93d2c0a2198314ab19cfbea024fdfe391351"
+    },
+    "reviewJsonl": {
+      "path": "artifacts/statement-verification/review-v1.jsonl",
+      "sha256": "d19457faaca92f78feb0556955b37992ed5c61a988e900ce67ff9c6274634b50"
+    }
+  }
+}

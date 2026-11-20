@@ -1,0 +1,59 @@
+{
+ "pools": {
+  "orig": {
+   "moved": 98,
+   "outcome": 51,
+   "sanity_changed": 20,
+   "appearance_changed": 32,
+   "no_change": 14,
+   "personality_changed": 14
+  },
+  "expand80": {
+   "outcome": 52,
+   "appearance_changed": 18,
+   "no_change": 8,
+   "moved": 2
+  },
+  "object40": {
+   "appearance_changed": 30,
+   "outcome": 10
+  }
+ },
+ "sizes": {
+  "orig": 229,
+  "expand80": 80,
+  "object40": 40
+ },
+ "movedShare": {
+  "orig": 0.428,
+  "expand80": 0.025,
+  "object40": 0.0
+ },
+ "expectedMovedPerBatch": {
+  "baseline_8_0_0": {
+   "perBatch": 3.424,
+   "drawsOver2880": 9861
+  },
+  "arm1_4_4_0": {
+   "perBatch": 1.812,
+   "drawsOver2880": 5219
+  },
+  "arm2_4_2_2": {
+   "perBatch": 1.762,
+   "drawsOver2880": 5075
+  }
+ },
+ "drawsOver2880": {
+  "arm1": {
+   "orig": 11520,
+   "expand80": 11520,
+   "object": 0
+  },
+  "arm2": {
+   "orig": 11520,
+   "expand80": 5760,
+   "object": 5760
+  }
+ },
+ "note": "没有逐次采样日志；数字按池内种类比例与固定配比算期望，不是实测"
+}

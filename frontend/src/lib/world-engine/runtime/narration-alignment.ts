@@ -170,6 +170,7 @@ function binds(fact: NarrationFact, sentence: string, names: Set<string>): boole
       && (mentionsNumber(scope, fact.from) || mentionsNumber(scope, fact.to));
     case 'task_achieved': return named && scope.includes(fact.goal) && COMPLETION.test(scope);
     case 'personality_changed': return named && (scope.includes(fact.text) || loosePhrase(fact.text).test(scope));
+    case 'appearance_changed': return named && scope.includes(fact.text);
   }
   return false;
   };
@@ -178,6 +179,68 @@ function binds(fact: NarrationFact, sentence: string, names: Set<string>): boole
   return fact.kind === 'moved' && named && (hasArrival(clause, fact.from, fact.to)
     || (!clause.includes(fact.from) && clause.includes(fact.to)
       && (new RegExp(MOVE_VERB).test(clause) || new RegExp(STANCE).test(clause))));
+}
+
+/** Earliest index of a stated value. Arabic tokens and Chinese readings share
+ * the looseness of mentionsNumber; this helper only compares the ORDER of the
+ * two numbers inside one change clause, it never decides whether a value is
+ * mentioned. */
+function valuePosition(sentence: string, value: number): number {
+  let at = -1;
+  const arabic = new RegExp(`(?<![0-9])${value}(?![0-9])`, 'u').exec(sentence);
+  if (arabic) at = arabic.index;
+  for (const token of [cnNumber(value), ...(CN_ALIASES[value] ?? [])]) {
+    if (!token) continue;
+    const found = sentence.indexOf(token);
+    if (found >= 0 && (at < 0 || found < at)) at = found;
+  }
+  return at;
+}
+
+/** Which direction a sanity-change clause states, read from its own markers
+ * (从/由/原来 = source, 到/至/为/成/降到 = target); with no markers the textual
+ * order is used (first number = source). null = one of the numbers is absent,
+ * so there is no direction to compare. */
+export function statedDirection(clause: string, from: number, to: number): 'forward' | 'reverse' | null {
+  const fromAt = valuePosition(clause, from);
+  const toAt = valuePosition(clause, to);
+  if (fromAt < 0 || toAt < 0 || fromAt === toAt) return null;
+  const source = /(?:从|由|自|原本|原来|此前|之前|先前)(?:有|是|为)?的?\s*$/u;
+  const target = /(?:(?:降|升|变|下降|上升)?(?:到|至|为|成)了?)\s*$/u;
+  const sourceAt = source.test(clause.slice(0, fromAt)) ? fromAt
+    : source.test(clause.slice(0, toAt)) ? toAt : null;
+  const targetAt = target.test(clause.slice(0, toAt)) ? toAt
+    : target.test(clause.slice(0, fromAt)) ? fromAt : null;
+  if (sourceAt !== null && targetAt !== null) {
+    const sourceValue = sourceAt === fromAt ? from : to;
+    const targetValue = targetAt === toAt ? to : from;
+    return sourceValue === from && targetValue === to ? 'forward' : 'reverse';
+  }
+  if (sourceAt !== null) return sourceAt === fromAt ? 'forward' : 'reverse';
+  if (targetAt !== null) return targetAt === toAt ? 'forward' : 'reverse';
+  return fromAt < toAt ? 'forward' : 'reverse';
+}
+
+/** A standing sanity value can be the from/to number of the named actor's
+ * committed change; the template "周宁的精神值从10变为8" contains 10 while 林川
+ * also stands at 10. The change must match the named actor's direction, else it
+ * is not their payload. */
+function ownsNumericPayload(fact: NarrationFact, other: NarrationFact, clause: string): boolean {
+  if (fact.kind !== 'sanity' || other.kind !== 'sanity_changed') return false;
+  return CHANGE_VERB.test(clause) && (fact.value === other.from || fact.value === other.to)
+    && statedDirection(clause, other.from, other.to) === 'forward';
+}
+
+/** Does this fact belong to the actor named in the clause with the SAME payload?
+ * Two people with the same standing value, the same change, the same goal or the
+ * same frozen text make the clause true for both; the surface cannot say which
+ * one was meant, so it must not be convicted as a swap. A mirrored sanity pair
+ * (A 10→8, B 8→10, clause "B 10→8") is NOT the same payload: the clause marks
+ * the direction, so it stays a swap. */
+function sameActorPayload(fact: NarrationFact, clause: string): boolean {
+  if (!signature(fact, clause)) return false;
+  if (fact.kind !== 'sanity_changed') return true;
+  return statedDirection(clause, fact.from, fact.to) !== 'reverse';
 }
 
 /** Content signature: does the sentence talk ABOUT this fact (regardless of
@@ -193,6 +256,7 @@ function signature(fact: NarrationFact, sentence: string): boolean {
     case 'sanity_changed': return mentionsNumber(sentence, fact.from) && mentionsNumber(sentence, fact.to);
     case 'task_achieved': return sentence.includes(fact.goal);
     case 'personality_changed': return sentence.includes(fact.text);
+    case 'appearance_changed': return sentence.includes(fact.text);
   }
 }
 
@@ -310,7 +374,7 @@ export function alignNarration(packet: CommittedNarration, text: string, options
   // 逐字一致的冻结原文引用才豁免（任务目标/人格文本）；自拟引号内容照扫。
   const frozenQuotes = new Set(packet.facts.flatMap((fact) =>
     fact.kind === 'task_achieved' ? [`「${fact.goal}」`]
-      : fact.kind === 'personality_changed' ? [`「${fact.text}」`] : []));
+      : fact.kind === 'personality_changed' || fact.kind === 'appearance_changed' ? [`「${fact.text}」`] : []));
   const maskFrozenQuotes = (masked: string): string =>
     [...frozenQuotes].reduce((text, quote) => text.split(quote).join('「」'), masked);
   if (!parts.length) {
@@ -366,7 +430,10 @@ export function alignNarration(packet: CommittedNarration, text: string, options
       // be swapped between actors.
       if (WEAK_SIGNATURE.has(fact.kind)) continue;
       const swapped = clauses.find((clause) => signature(fact, clause)
-        && [...names].some((name) => bareOf(clause).includes(name) && name !== fact.name));
+        && [...names].some((name) => name !== fact.name && bareOf(clause).includes(name)
+          && !packet.facts.some((other) => other.name === name
+            && (other.kind === fact.kind ? sameActorPayload(other, clause)
+              : ownsNumericPayload(fact, other, clause)))));
       if (swapped) {
         const attributed = [...names].filter((name) => bareOf(swapped).includes(name)).join('/');
         violations.push({ kind: 'actor_swap', sentence,

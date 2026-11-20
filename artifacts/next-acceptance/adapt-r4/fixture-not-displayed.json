@@ -1,0 +1,28 @@
+{
+ "notDisplayed": [
+  {
+   "worldId": "world_1",
+   "pointId": "p6",
+   "sequence": 6,
+   "previousPointId": "p5",
+   "stateSource": "replay",
+   "currentCheckpointDigest": "3ff042c2a988",
+   "currentDigestMatchesPoint": true,
+   "replayOk": true,
+   "replayAgreesWithCheckpoint": true,
+   "replayError": null,
+   "previousPointFound": true,
+   "previousStateSource": "replay",
+   "previousCheckpointFound": true,
+   "branchLinkedFrom": null,
+   "previousDigestMatchesPoint": true,
+   "previousSequence": 5,
+   "entityId": "person_a",
+   "fieldsRead": [
+    "tasksAchieved"
+   ],
+   "reason": "task delta has no display shape yet, so it is not shown",
+   "notAChange": true
+  }
+ ]
+}

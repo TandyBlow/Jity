@@ -1,0 +1,323 @@
+{
+ "purpose": "A/B 确认集（24 个新单事实单元，标签生成前冻结）",
+ "A": {
+  "S": 23,
+  "clean": 23
+ },
+ "B": {
+  "S": 24,
+  "clean": 24
+ },
+ "identical": 21,
+ "diffs": [
+  "c1a",
+  "c2c",
+  "c3a"
+ ],
+ "rows": [
+  {
+   "unitId": "c1a",
+   "category": "attribution",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": false,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c1b",
+   "category": "attribution",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c1c",
+   "category": "attribution",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c1d",
+   "category": "attribution",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c1e",
+   "category": "attribution",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c1f",
+   "category": "attribution",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c2a",
+   "category": "appearance",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c2b",
+   "category": "appearance",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c2c",
+   "category": "appearance",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": false,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c2d",
+   "category": "appearance",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c2e",
+   "category": "appearance",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c2f",
+   "category": "appearance",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c3a",
+   "category": "move",
+   "subjectIsPov": true,
+   "A": "O",
+   "B": "S",
+   "same": false,
+   "A_unsupported": [
+    "把干纸送到潮汐档案馆"
+   ],
+   "B_unsupported": [],
+   "A_clean": false,
+   "B_clean": true,
+   "note": "A 只写终点“走到档案馆门口”，起点潮生巷缺失；按规则 moved 事实的起点属必述"
+  },
+  {
+   "unitId": "c3b",
+   "category": "move",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c3c",
+   "category": "move",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c3d",
+   "category": "move",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c3e",
+   "category": "move",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c3f",
+   "category": "move",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c4a",
+   "category": "binding",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c4b",
+   "category": "binding",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c4c",
+   "category": "binding",
+   "subjectIsPov": true,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c4d",
+   "category": "binding",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c4e",
+   "category": "binding",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  },
+  {
+   "unitId": "c4f",
+   "category": "binding",
+   "subjectIsPov": false,
+   "A": "S",
+   "B": "S",
+   "same": true,
+   "A_unsupported": [],
+   "B_unsupported": [],
+   "A_clean": true,
+   "B_clean": true
+  }
+ ],
+ "paired": {
+  "level": "按事实（每单元一条）计，另附完整源干净层",
+  "A_wrong_B_right": [
+   "c3a"
+  ],
+  "A_right_B_wrong": [],
+  "both_wrong": [],
+  "both_right": 23,
+  "clean_only_A": [],
+  "clean_only_B": [
+   "c3a"
+  ]
+ }
+}

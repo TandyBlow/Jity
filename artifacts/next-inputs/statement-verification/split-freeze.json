@@ -1,0 +1,73 @@
+{
+  "version": "statement-verify-v1",
+  "created": "2026-11-04",
+  "task": "full text + numbered candidate + facts/scene/visible -> supported/unsupported/uncertain + source IDs",
+  "splits": {
+    "train": "N5 A/B source groups hash ~80%; synthetic targeted train sources",
+    "dev": "N5 A/B source groups hash ~20%; synthetic targeted dev sources",
+    "confirm": "N5 family C source groups (66) + synthetic targeted confirm sources",
+    "regression": "20 expression sources + A1; never train/dev/confirm"
+  },
+  "counts": {
+    "total": 1163,
+    "trainDevConfirm": 1127,
+    "regression": 36,
+    "bySplit": {
+      "train": 787,
+      "dev": 215,
+      "confirm": 125
+    },
+    "byLabel": {
+      "train:supported": 393,
+      "train:unsupported": 393,
+      "dev:supported": 107,
+      "dev:unsupported": 107,
+      "confirm:supported": 62,
+      "confirm:unsupported": 62,
+      "confirm:uncertain": 1,
+      "dev:uncertain": 1,
+      "train:uncertain": 1
+    },
+    "byCategory": {
+      "train:general": 754,
+      "dev:general": 190,
+      "confirm:general": 108,
+      "train:background": 8,
+      "dev:background": 6,
+      "confirm:background": 4,
+      "train:body": 8,
+      "dev:body": 6,
+      "confirm:body": 4,
+      "train:extra-action": 8,
+      "dev:extra-action": 6,
+      "confirm:extra-action": 4,
+      "confirm:uncertain": 1,
+      "dev:uncertain": 1,
+      "train:uncertain": 1,
+      "train:visible-state": 8,
+      "dev:visible-state": 6,
+      "confirm:visible-state": 4
+    },
+    "byOrigin": {
+      "train:n5-derived": 754,
+      "dev:n5-derived": 190,
+      "confirm:n5-derived": 108,
+      "train:synthetic": 33,
+      "dev:synthetic": 25,
+      "confirm:synthetic": 17
+    }
+  },
+  "hashes": {
+    "pairs-v1.jsonl": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e",
+    "regression-v1.jsonl": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58",
+    "a1.jsonl": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546"
+  },
+  "auditIssueCount": 0,
+  "metricFreeze": "artifacts/statement-verification/metric-freeze.json",
+  "metricFreezeSha256": "6014c7d2feca07c4615c354c089f704317040d2a2db8e977834ad60845f6552e",
+  "auditSha256": "5711a72b55ddfdb83301ee865f6259865697c7c97e9b9c663f2653f3fb7c31f0",
+  "reviewSha256": "490c3dbf3a190b4f39d2d4e12d1492f9af98f9e0fe57d2c35d3d29ea4c833794",
+  "reviewFile": "artifacts/statement-verification/review-v1-summary.json",
+  "reviewType": "assistant re-read; not independent human gold",
+  "reviewedAt": "2026-11-04"
+}

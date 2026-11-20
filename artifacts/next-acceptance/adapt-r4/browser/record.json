@@ -1,0 +1,142 @@
+{
+  "page": "http://127.0.0.1:3111/world/preview",
+  "cases": {
+    "facts": {
+      "world": "world_1",
+      "point": "p1",
+      "meta": "点位 p1（第 1 点，前驱 root_fx）",
+      "facts": [
+        "林川从走廊到门厅。",
+        "林川的理智下降（10→7）。"
+      ],
+      "quiet": [],
+      "warn": [],
+      "stop": [],
+      "diagnostics": "{\n  \"delta\": {\n    \"person_a\": {\n      \"entityId\": \"person_a\",\n      \"positionSet\": {\n        \"containerId\": \"hall\",\n        \"slotId\": null,\n        \"relativeTo\": null\n      },\n      \"sanitySet\": 7\n    }\n  },\n  \"facts\": [\n    {\n      \"kind\": \"moved\",\n      \"sentence\": \"林川从走廊到门厅。\",\n      \"complete\": true,\n      \"from\": \"corridor\",\n      \"to\": \"hall\",\n      \"provenance\": {\n        \"worldId\": \"world_1\",\n        \"pointId\": \"p1\",\n        \"sequence\": 1,\n        \"previousPointId\": \"root_fx\",\n        \"stateSource\": \"replay\",\n        \"currentCheckpointDigest\": \"2e8ae05ed5ee\",\n        \"currentDigestMatchesPoint\": true,\n        \"replayOk\": true,\n        \"replayAgreesWithCheckpoint\": true,\n        \"replayError\": null,\n        \"previousPointFound\": true,\n        \"previousStateSource\": \"replay\",\n        \"previousCheckpointFound\": true,\n        \"branchLinkedFrom\": null,\n        \"previousDigestMatchesPoint\": true,\n        \"previousSequence\": 0,\n        \"entityId\": \"person_a\",\n        \"fieldsRead\": [\n          \"positionSet\",\n          \"sanitySet\",\n          \"previous.position\"\n        ],\n        \"adapted\": \"origin read from root_fx\"\n      }\n    },\n    {\n      \"kind\": \"sanity_changed\",\n      \"sentence\": \"林川的理智下降（10→7）。\",\n      \"complete\": true,\n      \"from\": 10,\n      \"to\": 7,\n      \"provenance\": {\n        \"worldId\": \"world_1\",\n        \"pointId\": \"p1\",\n        \"sequence\": 1,\n        \"previousPointId\": \"root_fx\",\n        \"stateSource\": \"replay\",\n        \"currentCheckpointDigest\": \"2e8ae05ed5ee\",\n        \"currentDigestMatchesPoint\": true,\n        \"replayOk\": true,\n        \"replayAgreesWithCheckpoint\": true,\n        \"replayError\": null,\n        \"previousPointFound\": true,\n        \"previousStateSource\": \"replay\",\n        \"previousCheckpointFound\": true,\n        \"branchLinkedFrom\": null,\n        \"previousDigestMatchesPoint\": true,\n        \"previousSequence\": 0,\n        \"entityId\": \"person_a\",\n        \"fieldsRead\": [\n          \"positionSet\",\n          \"sanitySet\",\n          \"previous.sanit"
+    },
+    "empty-delta": {
+      "world": "world_1",
+      "point": "p4",
+      "meta": "点位 p4（第 4 点，前驱 p3）",
+      "facts": [
+        "第4点没有实体变化。"
+      ],
+      "quiet": [],
+      "warn": [],
+      "stop": [],
+      "diagnostics": "{\n  \"delta\": {},\n  \"facts\": [\n    {\n      \"kind\": \"no_change\",\n      \"sentence\": \"第4点没有实体变化。\",\n      \"complete\": true,\n      \"scope\": \"point\",\n      \"provenance\": {\n        \"worldId\": \"world_1\",\n        \"pointId\": \"p4\",\n        \"sequence\": 4,\n        \"previousPointId\": \"p3\",\n        \"stateSource\": \"replay\",\n        \"currentCheckpointDigest\": \"335601835631\",\n        \"currentDigestMatchesPoint\": true,\n        \"replayOk\": true,\n        \"replayAgreesWithCheckpoint\": true,\n        \"replayError\": null,\n        \"previousPointFound\": true,\n        \"previousStateSource\": \"replay\",\n        \"previousCheckpointFound\": true,\n        \"branchLinkedFrom\": null,\n        \"previousDigestMatchesPoint\": true,\n        \"previousSequence\": 3,\n        \"entityId\": null,\n        \"fieldsRead\": [\n          \"delta_json\"\n        ],\n        \"adapted\": \"empty delta at this point\"\n      }\n    }\n  ],\n  \"gaps\": []\n}"
+    },
+    "task-unshown": {
+      "world": "world_1",
+      "point": "p6",
+      "meta": "点位 p6（第 6 点，前驱 p5）",
+      "facts": [],
+      "quiet": [],
+      "warn": [
+        "存在尚未展示的任务变化。任务变化目前没有展示形状，因此没有写进上面的句子，也没有被当作“没有变化”。task delta has no display shape yet, so it is not shown"
+      ],
+      "stop": [],
+      "diagnostics": "{\n  \"delta\": {\n    \"person_a\": {\n      \"entityId\": \"person_a\",\n      \"tasksAchieved\": [\n        \"task_watch\"\n      ]\n    }\n  },\n  \"facts\": [],\n  \"gaps\": []\n}"
+    },
+    "ledger-gap": {
+      "world": "world_1",
+      "point": "p7",
+      "meta": "点位 p7（第 7 点，前驱 p6）",
+      "facts": [],
+      "quiet": [],
+      "warn": [],
+      "stop": [
+        "该点位事实暂无法恢复。replay found an inconsistency; the checkpoint is not used to mask it（重放发现摘要不一致，未用检查点兜底）"
+      ],
+      "diagnostics": "{\n  \"delta\": {\n    \"person_a\": {\n      \"entityId\": \"person_a\",\n      \"sanitySet\": 3\n    }\n  },\n  \"facts\": [],\n  \"gaps\": [\n    {\n      \"pointId\": \"p7\",\n      \"gap\": \"replay found an inconsistency; the checkpoint is not used to mask it\",\n      \"checkpointFound\": false,\n      \"checkpointWithheld\": \"withheld: replay found an inconsistency\",\n      \"replayFailure\": \"ledger\",\n      \"replayError\": \"LedgerMismatch: Replayed state differs from the committed digest\",\n      \"checkpointDigestMatchesPoint\": false\n    }\n  ]\n}"
+    },
+    "ledger-with-checkpoint": {
+      "world": "world_3",
+      "point": "t2",
+      "meta": "点位 t2（第 2 点，前驱 t1）",
+      "facts": [],
+      "quiet": [],
+      "warn": [],
+      "stop": [
+        "该点位事实暂无法恢复。replay found an inconsistency; the checkpoint is not used to mask it（重放发现摘要不一致，未用检查点兜底）"
+      ],
+      "diagnostics": "{\n  \"delta\": {\n    \"person_a\": {\n      \"entityId\": \"person_a\",\n      \"sanitySet\": 2\n    }\n  },\n  \"facts\": [],\n  \"gaps\": [\n    {\n      \"pointId\": \"t2\",\n      \"gap\": \"replay found an inconsistency; the checkpoint is not used to mask it\",\n      \"checkpointFound\": true,\n      \"checkpointWithheld\": \"withheld: replay found an inconsistency\",\n      \"replayFailure\": \"ledger\",\n      \"replayError\": \"LedgerMismatch: Replayed state differs from the committed digest\",\n      \"checkpointDigestMatchesPoint\": true\n    }\n  ]\n}"
+    },
+    "checkpoint-fallback": {
+      "world": "world_4",
+      "point": "u1",
+      "meta": "点位 u1（第 1 点，前驱 root_w4）",
+      "facts": [
+        "林川的理智下降（10→8）。"
+      ],
+      "quiet": [],
+      "warn": [],
+      "stop": [],
+      "diagnostics": "{\n  \"delta\": {\n    \"person_a\": {\n      \"entityId\": \"person_a\",\n      \"sanitySet\": 8\n    }\n  },\n  \"facts\": [\n    {\n      \"kind\": \"sanity_changed\",\n      \"sentence\": \"林川的理智下降（10→8）。\",\n      \"complete\": true,\n      \"from\": 10,\n      \"to\": 8,\n      \"provenance\": {\n        \"worldId\": \"world_4\",\n        \"pointId\": \"u1\",\n        \"sequence\": 1,\n        \"previousPointId\": \"root_w4\",\n        \"stateSource\": \"checkpoint\",\n        \"currentCheckpointDigest\": \"9dd36a9aad52\",\n        \"currentDigestMatchesPoint\": true,\n        \"replayOk\": false,\n        \"replayAgreesWithCheckpoint\": null,\n        \"replayError\": \"LedgerMismatch: Committed point has no round\",\n        \"previousPointFound\": true,\n        \"previousStateSource\": \"replay\",\n        \"previousCheckpointFound\": true,\n        \"branchLinkedFrom\": null,\n        \"previousDigestMatchesPoint\": true,\n        \"previousSequence\": 0,\n        \"entityId\": \"person_a\",\n        \"fieldsRead\": [\n          \"sanitySet\",\n          \"previous.sanity\"\n        ],\n        \"adapted\": \"previous value read from root_w4\"\n      }\n    }\n  ],\n  \"gaps\": []\n}"
+    },
+    "unrecoverable": {
+      "world": "world_4",
+      "point": "u2",
+      "meta": "点位 u2（第 2 点，前驱 u1）",
+      "facts": [],
+      "quiet": [],
+      "warn": [],
+      "stop": [
+        "该点位事实暂无法恢复。state not recoverable"
+      ],
+      "diagnostics": "{\n  \"delta\": {\n    \"person_a\": {\n      \"entityId\": \"person_a\",\n      \"sanitySet\": 5\n    }\n  },\n  \"facts\": [],\n  \"gaps\": [\n    {\n      \"pointId\": \"u2\",\n      \"gap\": \"state not recoverable\",\n      \"checkpointFound\": false,\n      \"checkpointWithheld\": null,\n      \"replayFailure\": \"unavailable\",\n      \"replayError\": \"LedgerMismatch: Committed point has no round\",\n      \"checkpointDigestMatchesPoint\": false\n    }\n  ]\n}"
+    },
+    "gap-over-empty-delta": {
+      "world": "world_4",
+      "point": "u3",
+      "meta": "点位 u3（第 3 点，前驱 u2）",
+      "facts": [],
+      "quiet": [],
+      "warn": [],
+      "stop": [
+        "该点位事实暂无法恢复。state not recoverable"
+      ],
+      "diagnostics": "{\n  \"delta\": {},\n  \"facts\": [],\n  \"gaps\": [\n    {\n      \"pointId\": \"u3\",\n      \"gap\": \"state not recoverable\",\n      \"checkpointFound\": false,\n      \"checkpointWithheld\": null,\n      \"replayFailure\": \"unavailable\",\n      \"replayError\": \"LedgerMismatch: Committed point has no round\",\n      \"checkpointDigestMatchesPoint\": false\n    }\n  ]\n}"
+    }
+  },
+  "rapid": {
+    "expected": "world_1/p4",
+    "observed": {
+      "meta": "点位 p4（第 4 点，前驱 p3）",
+      "facts": [
+        "第4点没有实体变化。"
+      ],
+      "quiet": [],
+      "warn": [],
+      "stop": [],
+      "diagnostics": "{\n  \"delta\": {},\n  \"facts\": [\n    {\n      \"kind\": \"no_change\",\n      \"sentence\": \"第4点没有实体变化。\",\n      \"complete\": true,\n      \"scope\": \"point\",\n      \"provenance\": {\n        \"worldId\": \"world_1\",\n        \"pointId\": \"p4\",\n        \"sequence\": 4,\n        \"previousPointId\": \"p3\",\n        \"stateSource\": \"replay\",\n        \"currentCheckpointDigest\": \"335601835631\",\n        \"currentDigestMatchesPoint\": true,\n        \"replayOk\": true,\n        \"replayAgreesWithCheckpoint\": true,\n        \"replayError\": null,\n        \"previousPointFound\": true,\n        \"previousStateSource\": \"replay\",\n        \"previousCheckpointFound\": true,\n        \"branchLinkedFrom\": null,\n        \"previousDigestMatchesPoint\": true,\n        \"previousSequence\": 3,\n        \"entityId\": null,\n        \"fieldsRead\": [\n          \"delta_json\"\n        ],\n        \"adapted\": \"empty delta at this point\"\n      }\n    }\n  ],\n  \"gaps\": []\n}"
+    }
+  },
+  "offline": {
+    "meta": null,
+    "facts": [],
+    "quiet": [],
+    "warn": [],
+    "stop": [
+      "预览服务不可用：先启动 experiments/world-components/preview_server.py"
+    ],
+    "diagnostics": null,
+    "bodyText": "只读展示预览\n\n事实句由冻结适配器直接读出：按点位取已提交记录，沿 previousPointId 读前态。 页面不写回回合记录、不改状态，模型句不参与替换。\n\n世界\n点位\n预览服务不可用：先启动 experiments/world-components/preview_server.py"
+  },
+  "errors": [
+    "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+  ],
+  "staleResponse": {
+    "expected": "world_1/p4",
+    "observed": {
+      "meta": "点位 p4（第 4 点，前驱 p3）",
+      "facts": [
+        "第4点没有实体变化。"
+      ],
+      "quiet": [],
+      "warn": [],
+      "stop": [],
+      "diagnostics": "{\n  \"delta\": {},\n  \"facts\": [\n    {\n      \"kind\": \"no_change\",\n      \"sentence\": \"第4点没有实体变化。\",\n      \"complete\": true,\n      \"scope\": \"point\",\n      \"provenance\": {\n        \"worldId\": \"world_1\",\n        \"pointId\": \"p4\",\n        \"sequence\": 4,\n        \"previousPointId\": \"p3\",\n        \"stateSource\": \"replay\",\n        \"currentCheckpointDigest\": \"335601835631\",\n        \"currentDigestMatchesPoint\": true,\n        \"replayOk\": true,\n        \"replayAgreesWithCheckpoint\": true,\n        \"replayError\": null,\n        \"previousPointFound\": true,\n        \"previousStateSource\": \"replay\",\n        \"previousCheckpointFound\": true,\n        \"branchLinkedFrom\": null,\n        \"previousDigestMatchesPoint\": true,\n        \"previousSequence\": 3,\n        \"entityId\": null,\n        \"fieldsRead\": [\n          \"delta_json\"\n        ],\n        \"adapted\": \"empty delta at this point\"\n      }\n    }\n  ],\n  \"gaps\": []\n}"
+    }
+  }
+}

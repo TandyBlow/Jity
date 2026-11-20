@@ -1,0 +1,30 @@
+{
+ "id": "iso-b",
+ "name": "旧世界 + 新人物地点（隔离评测用）",
+ "locations": {
+  "loc_alley": {"name": "潮生巷", "features": ["石板", "纸灯笼", "排水沟"], "sublocations": [{"name": "巷子"}]},
+  "loc_lighthouse": {"name": "旧灯塔", "features": ["旋梯", "塔顶", "铁链"], "sublocations": [{"name": "石阶"}]},
+  "loc_ferry": {"name": "潮渡", "features": ["木桩", "缆绳", "船灯", "水面"], "sublocations": [{"name": "栈桥"}, {"name": "浅滩"}]},
+  "loc_seawall": {"name": "雾堤", "features": ["铁链", "钟架", "钟绳"], "sublocations": [{"name": "堤面"}]},
+  "loc_market": {"name": "早市", "features": ["帆布棚", "鱼筐", "案板"], "sublocations": [{"name": "摊棚"}]},
+  "loc_salt": {"name": "盐仓", "features": ["仓梁", "盐堆", "木梯"], "sublocations": [{"name": "仓门"}]},
+  "loc_landing": {"name": "渡口棚", "features": ["草棚", "石墩", "麻绳"], "sublocations": []}
+ },
+ "characters": {
+  "char_shen": {"name": "沈砚"},
+  "char_gu": {"name": "顾行舟"},
+  "char_ye": {"name": "叶知微"},
+  "char_atang": {"name": "阿棠"},
+  "char_han": {"name": "韩渡"},
+  "char_shiqing": {"name": "石青"},
+  "char_aluo": {"name": "阿洛"}
+ },
+ "items": {
+  "item_saltbag": {"name": "盐袋"},
+  "item_lantern": {"name": "提灯"},
+  "item_pole": {"name": "竹篙"},
+  "item_rope": {"name": "系泊绳"},
+  "item_basket": {"name": "鱼筐"},
+  "item_cloth": {"name": "抹布"}
+ }
+}

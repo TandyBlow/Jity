@@ -1,0 +1,50 @@
+{
+ "editor": "relation-edit/1",
+ "validator": "world-relation-validator/1",
+ "plain": "林川的袖口沾了雨。周宁的斗篷下摆湿了一片。",
+ "edited": "林川的袖口沾了雨。随后，周宁的斗篷下摆湿了一片。",
+ "ops": [
+  {
+   "op": "加“随后”",
+   "factId": "f1",
+   "afterFactId": "f0",
+   "evidence": [
+    {
+     "type": "event",
+     "evidenceId": "point_95/person_a/appearance/change_97"
+    },
+    {
+     "type": "event",
+     "evidenceId": "point_101/person_b/appearance/change_103"
+    }
+   ],
+   "validatorVersion": "world-relation-validator/1"
+  }
+ ],
+ "checks": {
+  "事件来源真实": [
+   "point_95/person_a/appearance/change_97",
+   "point_101/person_b/appearance/change_103"
+  ],
+  "授权结论": "pass",
+  "校验器版本": "world-relation-validator/1",
+  "两条事实都在": true,
+  "姓名保留": true,
+  "句界未变": true,
+  "连接操作可回退": true,
+  "回退原因": {
+   "no-relation": [
+    "no-authorized-relation"
+   ],
+   "rejected": [
+    "no-authorized-relation"
+   ],
+   "reversed": [
+    "relation-reversed"
+   ],
+   "not-adjacent": [
+    "not-adjacent"
+   ]
+  }
+ }
+}

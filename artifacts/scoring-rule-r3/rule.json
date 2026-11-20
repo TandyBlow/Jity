@@ -1,0 +1,104 @@
+{
+ "version": "review-rule-r3",
+ "why": "Round 2's verdict mixed slices and contradicted the audited training targets. This file fixes the counting unit and the no_change allowance before any re-judgement.",
+ "counting": {
+  "unit": "one unit is one contract row; counts are always reported per set and per slice",
+  "slices": {
+   "all": "every row",
+   "moved": "kind=moved",
+   "nonMoved": "kind!=moved"
+  },
+  "totals": "a cross-set total is allowed only when labelled 'sum of the three sets'",
+  "rule": "a verdict may not compare a moved-only count on one arm with an all-kind count on another"
+ },
+ "facts": {
+  "machine": "frozen cf24 scorer verdict (S/O/A/REVIEW)",
+  "final": "machine S is downgraded to unsupported when the read finds a value token missing; modifiers count as values (e.g. 玻璃 in '玻璃上蒙了盐雾', 缠着 in '缠着的旧缆绳断了')"
+ },
+ "added": {
+  "moved": "split at the first ，; clause 2 violates when it carries a post-arrival action, a carried object, a body detail or a new entity. Allowed clause 2 = movement only (走到/走进/到了/回到/上到/下到/穿过/一直/沿…) and arrival at a named sub-place",
+  "movedVerbList": [
+   "站住",
+   "站了",
+   "蹲到",
+   "蹲在",
+   "推开",
+   "扶着",
+   "停下",
+   "停在",
+   "抵住",
+   "抱着",
+   "抱起",
+   "送到",
+   "抬头",
+   "蹭",
+   "散",
+   "点亮",
+   "绷直",
+   "发暗",
+   "滴",
+   "晃",
+   "透出",
+   "沾着",
+   "等了一会儿",
+   "看了一会儿"
+  ],
+  "noChange": "authorised: absence statements, static scene state, ambient activity, and the viewpoint actor waiting or staying (站了一会儿/等了一会儿) without displacement. The audited targets use '他等了一会儿，周围没有新的变化。' for five rows, so waiting is contract-authorised and must not be counted as added. Not authorised: a new named entity, a new object, a world-changing verb, or displacement",
+  "noChangeForbidden": [
+   "消失",
+   "出现在",
+   "打翻",
+   "点亮",
+   "熄灭",
+   "走进",
+   "离开",
+   "掏出",
+   "放下"
+  ],
+  "movedAllowedForms": [
+   "走到",
+   "走进",
+   "到了",
+   "回到",
+   "上到",
+   "下到",
+   "穿过",
+   "开到",
+   "划到",
+   "来到",
+   "赶到"
+  ],
+  "movedEntityList": [
+   "袖口",
+   "鞋底",
+   "衣摆",
+   "船头",
+   "缆绳",
+   "钟绳",
+   "鱼鳞",
+   "人流",
+   "一叠",
+   "干纸",
+   "铁链",
+   "木桩",
+   "打滑",
+   "灯芯",
+   "铜灯",
+   "人"
+  ],
+  "movedRuleText": "clause 2 violates when it is not a movement continuation (走到/走进/到了/回到/上到/下到/穿过/开到/划到/来到/赶到, optionally after 一直/沿着/顺着/从) or when it names a carried object, a body part or an entity outside the visible list",
+  "knownGap": "an in-clause path noun (e.g. 石滩 in 韩渡从潮生巷沿着石滩上到潮渡) is outside both the entity list and the clause-2 check; such rows stay at their recorded judgement and are marked exceptions"
+ },
+ "repeated": "the same proposition stated twice in one sentence",
+ "language": "malformed wording: double 的, wrong classifier, broken possessive, nonsense collocation",
+ "evidence": {
+  "authorisedWaitingTargets": [
+   "vb:n4n-13:f0",
+   "vb:n4n-111:f0",
+   "vb:n4n-114:f0",
+   "vb:n4n-117:f0",
+   "vb:n4n-120:f0"
+  ],
+  "note": "these five rows were rewritten from 场景里 to 周围 by f79261d; the waiting clause itself was kept and is therefore sanctioned"
+ }
+}

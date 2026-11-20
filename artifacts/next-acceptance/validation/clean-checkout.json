@@ -1,0 +1,13 @@
+{
+  "checkoutAutocrlf": false,
+  "inputFilesByteMatched": 404,
+  "runFreezeCodeAndDataMatched": 16,
+  "cleanCheckoutPathVerification": {
+    "files": 404,
+    "inputRoot": "D:\\others\\Jity\\.local\\world-components-next-worktree\\.local\\runtime-clean-checkout\\artifacts\\next-inputs",
+    "verified": true
+  },
+  "stagedPaths": 444,
+  "newPythonSourcesVisible": true,
+  "unrelatedExperimentsAndWeightsRemainIgnored": true
+}

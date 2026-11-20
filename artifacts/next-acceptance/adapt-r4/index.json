@@ -1,0 +1,202 @@
+{
+ "purpose": "browser acceptance of the read-only preview, plus the strict default for unrecognised replay failures",
+ "noTraining": true,
+ "readOnly": true,
+ "modelSentencesNotUsed": true,
+ "classifierDefault": {
+  "previous": "anything not LedgerMismatch, or not matching the inconsistency markers, counted as unavailable and could fall back to a checkpoint",
+  "now": {
+   "ledger": "gap, checkpoint withheld",
+   "unavailable": "whitelist only: Committed point has no round",
+   "unknown": "gap, checkpoint withheld"
+  },
+  "whitelist": [
+   "Committed point has no round"
+  ]
+ },
+ "fixture": {
+  "worlds": 4,
+  "points": 17,
+  "gaps": 5,
+  "notDisplayed": 1,
+  "newCase": "world_4/u3 empty delta with no checkpoint and no round row: failure outranks the quiet reading"
+ },
+ "browser": {
+  "cases": {
+   "facts": {
+    "facts": [
+     "林川从走廊到门厅。",
+     "林川的理智下降（10→7）。"
+    ],
+    "warn": false,
+    "stop": false,
+    "quiet": false
+   },
+   "empty-delta": {
+    "facts": [
+     "第4点没有实体变化。"
+    ],
+    "warn": false,
+    "stop": false,
+    "quiet": false
+   },
+   "task-unshown": {
+    "facts": [],
+    "warn": true,
+    "stop": false,
+    "quiet": false
+   },
+   "ledger-gap": {
+    "facts": [],
+    "warn": false,
+    "stop": true,
+    "quiet": false
+   },
+   "ledger-with-checkpoint": {
+    "facts": [],
+    "warn": false,
+    "stop": true,
+    "quiet": false
+   },
+   "checkpoint-fallback": {
+    "facts": [
+     "林川的理智下降（10→8）。"
+    ],
+    "warn": false,
+    "stop": false,
+    "quiet": false
+   },
+   "unrecoverable": {
+    "facts": [],
+    "warn": false,
+    "stop": true,
+    "quiet": false
+   },
+   "gap-over-empty-delta": {
+    "facts": [],
+    "warn": false,
+    "stop": true,
+    "quiet": false
+   }
+  },
+  "rapidSwitch": {
+   "expected": "world_1/p4",
+   "observed": "点位 p4（第 4 点，前驱 p3）",
+   "facts": [
+    "第4点没有实体变化。"
+   ]
+  },
+  "staleResponse": {
+   "expected": "world_1/p4",
+   "observed": "点位 p4（第 4 点，前驱 p3）",
+   "facts": [
+    "第4点没有实体变化。"
+   ],
+   "how": "p1 delayed 900 ms while p4 was selected; the abort guard dropped the late result"
+  },
+  "offline": {
+   "banner": [
+    "预览服务不可用：先启动 experiments/world-components/preview_server.py"
+   ],
+   "facts": [],
+   "quiet": []
+  },
+  "consoleErrors": [
+   "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+  ],
+  "screenshots": 11
+ },
+ "pageChange": {
+  "staleGuard": "a request sequence number plus AbortController; a late response neither overwrites nor clears the newer selection",
+  "reason": "rapid switching was previously unguarded"
+ },
+ "checks": {
+  "frontendTests": "608 passed",
+  "typecheck": "tsc clean",
+  "pythonTests": "48 passed, 1 skipped",
+  "build": "next build ok",
+  "lint": "no new warnings"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/fixture-preview.txt",
+   "bytes": 3537,
+   "sha256": "432d3b1b141dcfc7993c016470b8a117a07099c06e8c0d8fc31434c7c3af6b87"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/fixture-preview.json",
+   "bytes": 9141,
+   "sha256": "e2cd1cae4ee2e2bbcabdf2dcca007739f81fee5fe44624ae6e97d5a5cd4d5aad"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/fixture-gaps.json",
+   "bytes": 1640,
+   "sha256": "18abf611d2b2d707e4052cfa98979ffde67bbaa85849f310bf9fc83cd492f3d3"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/fixture-not-displayed.json",
+   "bytes": 684,
+   "sha256": "362f0450551e957ecdc7753d7bab3e5dbfd680d39b99da6ffa06ad7933eb3198"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/checkpoint-fallback.png",
+   "bytes": 34672,
+   "sha256": "98876cd0b1bc6fad36c0f455e788fccdd468ff25a09bfebe081fb16e047b68b7"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/empty-delta.png",
+   "bytes": 34611,
+   "sha256": "f543031d6b52a16972bb7520c6fec5e387cbb66244f20e8b377fec439d2c0c0d"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/facts.png",
+   "bytes": 36588,
+   "sha256": "f5bfb3e1c3eecbbf2517bb5b26fb208d0e2482c405503ce7d1f587c03e438095"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/gap-over-empty-delta.png",
+   "bytes": 37225,
+   "sha256": "d4e1fcea06db03dc1624b0eb097fd478a95beb86880e93c235b8a7ee6dada1d4"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/ledger-gap.png",
+   "bytes": 42864,
+   "sha256": "9ccf25417e4f78ba4a29382825d8598bfe2f25875357905c8b14f0a4dcb76175"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/ledger-with-checkpoint.png",
+   "bytes": 42966,
+   "sha256": "8bc16a3e3dbc335ef1e7d6670c6a43ed8a3b41e87303303e525ca29101a74678"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/offline.png",
+   "bytes": 31325,
+   "sha256": "afad5d52b326b3017c504840edd5385399d0d5169722bf09060f4da3d71afa2d"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/rapid-switch-final.png",
+   "bytes": 34611,
+   "sha256": "f543031d6b52a16972bb7520c6fec5e387cbb66244f20e8b377fec439d2c0c0d"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/stale-response.png",
+   "bytes": 34611,
+   "sha256": "f543031d6b52a16972bb7520c6fec5e387cbb66244f20e8b377fec439d2c0c0d"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/task-unshown.png",
+   "bytes": 43602,
+   "sha256": "c67fa21c0f4fe2a811ea0ee0121aa5764035a64463fe3b2389e16b47939cec37"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/unrecoverable.png",
+   "bytes": 37168,
+   "sha256": "5de20ec92a6c096b00d344e03d7557ee6c0dc84d491a6f3570c1c8ae780c9e50"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r4/browser/record.json",
+   "bytes": 12762,
+   "sha256": "fafa18bb1cbc883116f425ebcb4ce4209675b075aa67dc6fefbfaec4d5c8e6b0"
+  }
+ ]
+}

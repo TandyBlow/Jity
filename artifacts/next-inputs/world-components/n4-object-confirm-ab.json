@@ -1,0 +1,227 @@
+{
+ "purpose": "物件确认集 20 条可判：冻结基线 vs 扩容臂2",
+ "excluded": [
+  "qa1A",
+  "qc1A",
+  "qc1B",
+  "qd1B"
+ ],
+ "excludedReason": "事实引用了本场景不可见的物件",
+ "base": {
+  "verdicts": {
+   "S": 10,
+   "O": 2,
+   "C": 4,
+   "A": 4
+  },
+  "clean": 10
+ },
+ "expand2": {
+  "verdicts": {
+   "S": 18,
+   "O": 0,
+   "C": 0,
+   "A": 2
+  },
+  "clean": 18
+ },
+ "paired": {
+  "base_wrong_expand_right": [
+   "qa1B",
+   "qa3A",
+   "qa3B",
+   "qb2A",
+   "qc2B",
+   "qd2B",
+   "qd3A",
+   "qd3B"
+  ],
+  "base_right_expand_wrong": [],
+  "both_wrong": [
+   "qb3A",
+   "qb3B"
+  ]
+ },
+ "rows": [
+  {
+   "unitId": "qa1B",
+   "base": "C",
+   "expand2": "S",
+   "baseNote": "“墨色变白,皮上结了皮”主体与状态都错",
+   "expand2Note": "",
+   "baseOutput": "墨色变白,皮上结了皮。",
+   "expand2Output": "墨的表面结了皮。"
+  },
+  {
+   "unitId": "qa2A",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "船灯的罩子裂了缝。",
+   "expand2Output": "船灯的罩子裂了缝。"
+  },
+  {
+   "unitId": "qa2B",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "渡船的船板裂了缝,船板裂了缝。",
+   "expand2Output": "渡船的船板裂了缝。"
+  },
+  {
+   "unitId": "qa3A",
+   "base": "A",
+   "expand2": "S",
+   "baseNote": "写成“阿棠把鱼筐的边角磨破”，抹布的边角变成了鱼筐",
+   "expand2Note": "",
+   "baseOutput": "阿棠把鱼筐的边角磨破,鱼鳞的毛孔被抹布擦掉。",
+   "expand2Output": "抹布的边角磨破了。"
+  },
+  {
+   "unitId": "qa3B",
+   "base": "A",
+   "expand2": "S",
+   "baseNote": "写成“鱼筐上的鱼片掉两片”，银鳞鱼被换成鱼筐/鱼片",
+   "expand2Note": "",
+   "baseOutput": "阿棠把鱼筐上的鱼片掉两片,鱼片在石板上打滑。",
+   "expand2Output": "银鳞鱼的鳞片掉了两片。"
+  },
+  {
+   "unitId": "qb1A",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "重复但不改写事实",
+   "expand2Note": "语病多一个“的”",
+   "baseOutput": "灯芯烧黑了一截,灯芯被烧黑了一截。",
+   "expand2Output": "灯芯的烧黑了一截。"
+  },
+  {
+   "unitId": "qb1B",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "铜灯罩被擦得发亮,灯罩已经点亮。",
+   "expand2Output": "铜灯罩被擦得发亮。"
+  },
+  {
+   "unitId": "qb2A",
+   "base": "C",
+   "expand2": "S",
+   "baseNote": "写成“油纸伞的墙根断了一根”，伞骨换成墙根",
+   "expand2Note": "",
+   "baseOutput": "油纸伞的墙根断了一根。",
+   "expand2Output": "油纸伞的伞骨断了一根。"
+  },
+  {
+   "unitId": "qb2B",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "油纸伞靠在墙根,纸灯笼还伸手按住墙根。",
+   "expand2Output": "油纸伞被靠在墙根。"
+  },
+  {
+   "unitId": "qb3A",
+   "base": "A",
+   "expand2": "A",
+   "baseNote": "写成“阿棠的袖口”，主体错（材料上外袍不可见）",
+   "expand2Note": "写成“银鳞鱼的袖口”，主体错（同材料缺陷）",
+   "baseOutput": "阿棠的袖口磨破了,袖口蹭上一道石板。",
+   "expand2Output": "银鳞鱼的袖口磨破了。"
+  },
+  {
+   "unitId": "qb3B",
+   "base": "O",
+   "expand2": "A",
+   "baseNote": "只写“穿过鱼筐,在摊棚边站住”，外袍与动作都没表达",
+   "expand2Note": "写成“银鳞鱼的外袍”，主体错（同材料缺陷）",
+   "baseOutput": "阿棠穿过鱼筐,在摊棚边站住。",
+   "expand2Output": "银鳞鱼的外袍被搭在摊棚边。"
+  },
+  {
+   "unitId": "qc2A",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "顾行舟把船灯挂到栈桥的托架下,船灯从雾里透出来。",
+   "expand2Output": "顾行舟把船灯挂到栈桥的托架下。"
+  },
+  {
+   "unitId": "qc2B",
+   "base": "O",
+   "expand2": "S",
+   "baseNote": "只写“挂到木桩上”，托架/船头这段缺失",
+   "expand2Note": "",
+   "baseOutput": "顾行舟把船灯挂到木桩上,木桩上还挂着木桩。",
+   "expand2Output": "顾行舟把船灯挂到船头前的木桩上。"
+  },
+  {
+   "unitId": "qc3A",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "韩渡把警示灯挂回钟架上,警示灯把警示灯挂回钟架上。",
+   "expand2Output": "韩渡把警示灯挂回钟架上。"
+  },
+  {
+   "unitId": "qc3B",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "韩渡把警示灯挂回铁链上,铁链在铁链上绕了两圈。",
+   "expand2Output": "韩渡把警示灯挂回铁链上。"
+  },
+  {
+   "unitId": "qd1A",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "",
+   "expand2Note": "",
+   "baseOutput": "干纸边缘发黄,纸边缘发黄。",
+   "expand2Output": "干纸的边缘发了黄。"
+  },
+  {
+   "unitId": "qd2A",
+   "base": "S",
+   "expand2": "S",
+   "baseNote": "“木桩断了”是重复但事实在",
+   "expand2Note": "语病“木桩的缠的旧绳”",
+   "baseOutput": "木桩缠的旧绳断了,木桩断了。",
+   "expand2Output": "木桩的缠的旧绳断了。"
+  },
+  {
+   "unitId": "qd2B",
+   "base": "C",
+   "expand2": "S",
+   "baseNote": "写成“缆绳在缆绳上绕了两圈”，断股没表达",
+   "expand2Note": "",
+   "baseOutput": "缆绳在缆绳上绕了两圈。",
+   "expand2Output": "缆绳的中间断了一股。"
+  },
+  {
+   "unitId": "qd3A",
+   "base": "C",
+   "expand2": "S",
+   "baseNote": "写成“抹布上的盐雾被关在身后”，拧不干没表达",
+   "expand2Note": "",
+   "baseOutput": "抹布上的盐雾被关在身后。",
+   "expand2Output": "抹布上拧不干。"
+  },
+  {
+   "unitId": "qd3B",
+   "base": "A",
+   "expand2": "S",
+   "baseNote": "写成“抹布又沾了半罐”，状态挂到抹布",
+   "expand2Note": "语病“擦铜油的洒了半罐”",
+   "baseOutput": "叶知微擦完灯罩,抹布又沾了半罐。",
+   "expand2Output": "擦铜油的洒了半罐。"
+  }
+ ]
+}

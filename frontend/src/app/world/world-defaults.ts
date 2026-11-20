@@ -8,6 +8,7 @@ import type { RulePolicy } from '../../lib/world-engine/runtime/rule-facts';
 import type { InitialState, InitialTemplate } from '../../lib/world-engine/types';
 
 export const WORLD_POLICY: RulePolicy = {
+  appearance: { smile: { text: '面带微笑' } },
   routes: [
     { from: 'corridor', to: 'hall', minimumSanity: 5 },
     { from: 'hall', to: 'corridor' },

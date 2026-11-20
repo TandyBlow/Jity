@@ -1,0 +1,542 @@
+[
+ {
+  "reviewId": "R01",
+  "pair": "rp2",
+  "expectedRole": "possessor",
+  "name": "木桩",
+  "part": "桩身",
+  "other": "渡船",
+  "relation": "靠",
+  "factValue": "桩身裂了一道缝",
+  "required": [
+   "桩身",
+   "裂了一道缝"
+  ],
+  "text": "木桩的桩身裂了一道缝。"
+ },
+ {
+  "reviewId": "R02",
+  "pair": "rp6",
+  "expectedRole": "locationReference",
+  "name": "钟架",
+  "part": "横木",
+  "other": "钟绳",
+  "relation": "搭",
+  "factValue": "搭着的钟绳垂到堤面",
+  "required": [
+   "钟绳",
+   "搭"
+  ],
+  "text": "钟架搭着的钟绳垂到堤面。"
+ },
+ {
+  "reviewId": "R03",
+  "pair": "rp3",
+  "expectedRole": "possessor",
+  "name": "鱼筐",
+  "part": "筐底",
+  "other": "银鳞鱼",
+  "relation": "堆",
+  "factValue": "筐底渗了水",
+  "required": [
+   "筐底",
+   "渗了水"
+  ],
+  "text": "鱼筐底渗了水。"
+ },
+ {
+  "reviewId": "R04",
+  "pair": "rp2",
+  "expectedRole": "possessor",
+  "name": "木桩",
+  "part": "桩身",
+  "other": "渡船",
+  "relation": "靠",
+  "factValue": "桩身裂了一道缝",
+  "required": [
+   "桩身",
+   "裂了一道缝"
+  ],
+  "text": "木桩的桩身裂了一道缝。"
+ },
+ {
+  "reviewId": "R05",
+  "pair": "rp1",
+  "expectedRole": "locationReference",
+  "name": "潮汐簿",
+  "part": "缺页",
+  "other": "干纸",
+  "relation": "压",
+  "factValue": "压着的干纸滑开了",
+  "required": [
+   "干纸",
+   "压"
+  ],
+  "text": "压着的干纸滑开了。"
+ },
+ {
+  "reviewId": "R06",
+  "pair": "rp5",
+  "expectedRole": "possessor",
+  "name": "石板",
+  "part": "边角",
+  "other": "油纸伞",
+  "relation": "靠",
+  "factValue": "边角崩了一小块",
+  "required": [
+   "边角",
+   "崩了一小块"
+  ],
+  "text": "石板的边角崩了一小块。"
+ },
+ {
+  "reviewId": "R07",
+  "pair": "rp6",
+  "expectedRole": "locationReference",
+  "name": "钟架",
+  "part": "横木",
+  "other": "钟绳",
+  "relation": "搭",
+  "factValue": "搭着的钟绳垂到堤面",
+  "required": [
+   "钟绳",
+   "搭"
+  ],
+  "text": "搭着的钟绳垂到堤面。"
+ },
+ {
+  "reviewId": "R08",
+  "pair": "rp4",
+  "expectedRole": "locationReference",
+  "name": "铜灯罩",
+  "part": "罩口",
+  "other": "灯芯",
+  "relation": "插",
+  "factValue": "插着的灯芯歪了",
+  "required": [
+   "灯芯",
+   "插"
+  ],
+  "text": "铜灯罩插着的灯芯歪了。"
+ },
+ {
+  "reviewId": "R09",
+  "pair": "rp1",
+  "expectedRole": "locationReference",
+  "name": "潮汐簿",
+  "part": "缺页",
+  "other": "干纸",
+  "relation": "压",
+  "factValue": "压着的干纸滑开了",
+  "required": [
+   "干纸",
+   "压"
+  ],
+  "text": "潮汐簿压着的干纸滑开了。"
+ },
+ {
+  "reviewId": "R10",
+  "pair": "rp3",
+  "expectedRole": "locationReference",
+  "name": "鱼筐",
+  "part": "筐底",
+  "other": "银鳞鱼",
+  "relation": "堆",
+  "factValue": "堆着的银鳞鱼露出来",
+  "required": [
+   "银鳞鱼",
+   "堆"
+  ],
+  "text": "堆在鱼筐底的银鳞鱼露出来。"
+ },
+ {
+  "reviewId": "R11",
+  "pair": "rp4",
+  "expectedRole": "possessor",
+  "name": "铜灯罩",
+  "part": "罩口",
+  "other": "灯芯",
+  "relation": "插",
+  "factValue": "罩口积了铜绿",
+  "required": [
+   "罩口",
+   "积了铜绿"
+  ],
+  "text": "铜灯罩的罩口积了铜绿。"
+ },
+ {
+  "reviewId": "R12",
+  "pair": "rp1",
+  "expectedRole": "locationReference",
+  "name": "潮汐簿",
+  "part": "缺页",
+  "other": "干纸",
+  "relation": "压",
+  "factValue": "压着的干纸滑开了",
+  "required": [
+   "干纸",
+   "压"
+  ],
+  "text": "压在潮汐簿上的干纸滑开了。"
+ },
+ {
+  "reviewId": "R13",
+  "pair": "rp6",
+  "expectedRole": "possessor",
+  "name": "钟架",
+  "part": "横木",
+  "other": "钟绳",
+  "relation": "搭",
+  "factValue": "横木磨出了毛边",
+  "required": [
+   "横木",
+   "磨出了毛边"
+  ],
+  "text": "钟架的横木磨出了毛边。"
+ },
+ {
+  "reviewId": "R14",
+  "pair": "rp3",
+  "expectedRole": "possessor",
+  "name": "鱼筐",
+  "part": "筐底",
+  "other": "银鳞鱼",
+  "relation": "堆",
+  "factValue": "筐底渗了水",
+  "required": [
+   "筐底",
+   "渗了水"
+  ],
+  "text": "鱼筐底渗了水。"
+ },
+ {
+  "reviewId": "R15",
+  "pair": "rp3",
+  "expectedRole": "locationReference",
+  "name": "鱼筐",
+  "part": "筐底",
+  "other": "银鳞鱼",
+  "relation": "堆",
+  "factValue": "堆着的银鳞鱼露出来",
+  "required": [
+   "银鳞鱼",
+   "堆"
+  ],
+  "text": "鱼筐堆着的银鳞鱼露出来。"
+ },
+ {
+  "reviewId": "R16",
+  "pair": "rp4",
+  "expectedRole": "possessor",
+  "name": "铜灯罩",
+  "part": "罩口",
+  "other": "灯芯",
+  "relation": "插",
+  "factValue": "罩口积了铜绿",
+  "required": [
+   "罩口",
+   "积了铜绿"
+  ],
+  "text": "铜灯罩的罩口积了铜绿。"
+ },
+ {
+  "reviewId": "R17",
+  "pair": "rp5",
+  "expectedRole": "locationReference",
+  "name": "石板",
+  "part": "边角",
+  "other": "油纸伞",
+  "relation": "靠",
+  "factValue": "靠着的油纸伞歪了",
+  "required": [
+   "油纸伞",
+   "靠"
+  ],
+  "text": "石板靠着的油纸伞歪了。"
+ },
+ {
+  "reviewId": "R18",
+  "pair": "rp6",
+  "expectedRole": "possessor",
+  "name": "钟架",
+  "part": "横木",
+  "other": "钟绳",
+  "relation": "搭",
+  "factValue": "横木磨出了毛边",
+  "required": [
+   "横木",
+   "磨出了毛边"
+  ],
+  "text": "钟架的横木磨出了毛边。"
+ },
+ {
+  "reviewId": "R19",
+  "pair": "rp3",
+  "expectedRole": "possessor",
+  "name": "鱼筐",
+  "part": "筐底",
+  "other": "银鳞鱼",
+  "relation": "堆",
+  "factValue": "筐底渗了水",
+  "required": [
+   "筐底",
+   "渗了水"
+  ],
+  "text": "鱼筐渗了水。"
+ },
+ {
+  "reviewId": "R20",
+  "pair": "rp2",
+  "expectedRole": "possessor",
+  "name": "木桩",
+  "part": "桩身",
+  "other": "渡船",
+  "relation": "靠",
+  "factValue": "桩身裂了一道缝",
+  "required": [
+   "桩身",
+   "裂了一道缝"
+  ],
+  "text": "木桩的桩身裂了一道缝。"
+ },
+ {
+  "reviewId": "R21",
+  "pair": "rp4",
+  "expectedRole": "possessor",
+  "name": "铜灯罩",
+  "part": "罩口",
+  "other": "灯芯",
+  "relation": "插",
+  "factValue": "罩口积了铜绿",
+  "required": [
+   "罩口",
+   "积了铜绿"
+  ],
+  "text": "铜灯罩的罩口积了铜绿。"
+ },
+ {
+  "reviewId": "R22",
+  "pair": "rp6",
+  "expectedRole": "locationReference",
+  "name": "钟架",
+  "part": "横木",
+  "other": "钟绳",
+  "relation": "搭",
+  "factValue": "搭着的钟绳垂到堤面",
+  "required": [
+   "钟绳",
+   "搭"
+  ],
+  "text": "搭在钟架的钟绳垂到堤面。"
+ },
+ {
+  "reviewId": "R23",
+  "pair": "rp1",
+  "expectedRole": "possessor",
+  "name": "潮汐簿",
+  "part": "缺页",
+  "other": "干纸",
+  "relation": "压",
+  "factValue": "缺页卷了边",
+  "required": [
+   "缺页",
+   "卷了边"
+  ],
+  "text": "潮汐簿的缺页卷了边。"
+ },
+ {
+  "reviewId": "R24",
+  "pair": "rp5",
+  "expectedRole": "possessor",
+  "name": "石板",
+  "part": "边角",
+  "other": "油纸伞",
+  "relation": "靠",
+  "factValue": "边角崩了一小块",
+  "required": [
+   "边角",
+   "崩了一小块"
+  ],
+  "text": "石板的边角崩了一小块。"
+ },
+ {
+  "reviewId": "R25",
+  "pair": "rp4",
+  "expectedRole": "locationReference",
+  "name": "铜灯罩",
+  "part": "罩口",
+  "other": "灯芯",
+  "relation": "插",
+  "factValue": "插着的灯芯歪了",
+  "required": [
+   "灯芯",
+   "插"
+  ],
+  "text": "插在铜灯罩外,插在铜灯罩外歪了。"
+ },
+ {
+  "reviewId": "R26",
+  "pair": "rp5",
+  "expectedRole": "locationReference",
+  "name": "石板",
+  "part": "边角",
+  "other": "油纸伞",
+  "relation": "靠",
+  "factValue": "靠着的油纸伞歪了",
+  "required": [
+   "油纸伞",
+   "靠"
+  ],
+  "text": "靠着的油纸伞歪了。"
+ },
+ {
+  "reviewId": "R27",
+  "pair": "rp5",
+  "expectedRole": "locationReference",
+  "name": "石板",
+  "part": "边角",
+  "other": "油纸伞",
+  "relation": "靠",
+  "factValue": "靠着的油纸伞歪了",
+  "required": [
+   "油纸伞",
+   "靠"
+  ],
+  "text": "靠在石板上歪了。"
+ },
+ {
+  "reviewId": "R28",
+  "pair": "rp1",
+  "expectedRole": "possessor",
+  "name": "潮汐簿",
+  "part": "缺页",
+  "other": "干纸",
+  "relation": "压",
+  "factValue": "缺页卷了边",
+  "required": [
+   "缺页",
+   "卷了边"
+  ],
+  "text": "潮汐簿的缺页卷了边。"
+ },
+ {
+  "reviewId": "R29",
+  "pair": "rp6",
+  "expectedRole": "possessor",
+  "name": "钟架",
+  "part": "横木",
+  "other": "钟绳",
+  "relation": "搭",
+  "factValue": "横木磨出了毛边",
+  "required": [
+   "横木",
+   "磨出了毛边"
+  ],
+  "text": "钟架的横木磨出了毛边。"
+ },
+ {
+  "reviewId": "R30",
+  "pair": "rp2",
+  "expectedRole": "locationReference",
+  "name": "木桩",
+  "part": "桩身",
+  "other": "渡船",
+  "relation": "靠",
+  "factValue": "靠着的渡船退了半尺",
+  "required": [
+   "渡船",
+   "靠"
+  ],
+  "text": "靠在木桩上的渡船退了半尺。"
+ },
+ {
+  "reviewId": "R31",
+  "pair": "rp4",
+  "expectedRole": "locationReference",
+  "name": "铜灯罩",
+  "part": "罩口",
+  "other": "灯芯",
+  "relation": "插",
+  "factValue": "插着的灯芯歪了",
+  "required": [
+   "灯芯",
+   "插"
+  ],
+  "text": "铜灯罩上的插着的灯芯歪了。"
+ },
+ {
+  "reviewId": "R32",
+  "pair": "rp1",
+  "expectedRole": "possessor",
+  "name": "潮汐簿",
+  "part": "缺页",
+  "other": "干纸",
+  "relation": "压",
+  "factValue": "缺页卷了边",
+  "required": [
+   "缺页",
+   "卷了边"
+  ],
+  "text": "潮汐簿的缺页卷了边。"
+ },
+ {
+  "reviewId": "R33",
+  "pair": "rp2",
+  "expectedRole": "locationReference",
+  "name": "木桩",
+  "part": "桩身",
+  "other": "渡船",
+  "relation": "靠",
+  "factValue": "靠着的渡船退了半尺",
+  "required": [
+   "渡船",
+   "靠"
+  ],
+  "text": "靠着的渡船退了半尺。"
+ },
+ {
+  "reviewId": "R34",
+  "pair": "rp5",
+  "expectedRole": "possessor",
+  "name": "石板",
+  "part": "边角",
+  "other": "油纸伞",
+  "relation": "靠",
+  "factValue": "边角崩了一小块",
+  "required": [
+   "边角",
+   "崩了一小块"
+  ],
+  "text": "石板的边角崩了一小块。"
+ },
+ {
+  "reviewId": "R35",
+  "pair": "rp3",
+  "expectedRole": "locationReference",
+  "name": "鱼筐",
+  "part": "筐底",
+  "other": "银鳞鱼",
+  "relation": "堆",
+  "factValue": "堆着的银鳞鱼露出来",
+  "required": [
+   "银鳞鱼",
+   "堆"
+  ],
+  "text": "鱼筐堆着的银鳞鱼露出来。"
+ },
+ {
+  "reviewId": "R36",
+  "pair": "rp2",
+  "expectedRole": "locationReference",
+  "name": "木桩",
+  "part": "桩身",
+  "other": "渡船",
+  "relation": "靠",
+  "factValue": "靠着的渡船退了半尺",
+  "required": [
+   "渡船",
+   "靠"
+  ],
+  "text": "木桩靠着的渡船退了半尺。"
+ }
+]

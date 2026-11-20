@@ -1,0 +1,242 @@
+{
+ "purpose": "N3 cross-group pronoun guard smoke with the real v2 N4 model (review round): isolate the N3 coref change on held-fixed historical rows and re-run the frozen gates",
+ "scope": "SMOKE, not a quality eval/holdout; rows are the historical v2 corpus (their facts are held fixed; N1 is not re-run)",
+ "checkpoint": "experiments/world-components/n4_corpus_v2/ckpt-v2",
+ "rows": [
+  "v2-c-salt:cross-reference-8minute:v0",
+  "v2-c-salt:alternating-6minute:v0",
+  "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0",
+  "v2-c-salt:conflict-shared-goal:v0"
+ ],
+ "cases": [
+  {
+   "rowId": "v2-c-salt:cross-reference-8minute:v0",
+   "oldGrants": [
+    [
+     [
+      "c_wenrenjing",
+      "他"
+     ]
+    ],
+    [
+     [
+      "c_qinshu_a",
+      "他"
+     ]
+    ]
+   ],
+   "newGrants": [
+    [
+     [
+      "c_wenrenjing",
+      "他"
+     ]
+    ],
+    []
+   ],
+   "groupsUnchanged": true,
+   "inputTokens": 91,
+   "renderText": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n2. 理智：闻人镜 10→14（上升）\n第2组（时间：约八分钟）\n3. 任务达成：秦叔「盘点官仓的存盐」\n4. 时间推进：约八分钟\n正文：",
+   "model": {
+    "text": "闻人镜从老盐滩来到了官仓。他的精神值从10涨到了14。八分钟过去了,秦叔完成了任务「盘点官仓的存盐」。",
+    "finishReason": "eos",
+    "outputTokens": 42,
+    "wallMs": 1234.5
+   },
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:alternating-6minute:v0",
+   "oldGrants": [
+    [
+     [
+      "c_wenrenjing",
+      "他"
+     ]
+    ],
+    [
+     [
+      "c_qinshu_a",
+      "他"
+     ]
+    ],
+    [
+     [
+      "c_liufuyi",
+      "她"
+     ]
+    ]
+   ],
+   "newGrants": [
+    [
+     [
+      "c_wenrenjing",
+      "他"
+     ]
+    ],
+    [],
+    [
+     [
+      "c_liufuyi",
+      "她"
+     ]
+    ]
+   ],
+   "groupsUnchanged": true,
+   "inputTokens": 109,
+   "renderText": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n第2组（时间：无）\n2. 任务达成：秦叔「盘点官仓的存盐」\n第3组（时间：约六分钟；称谓：柳拂衣=她）\n3. 位置：柳拂衣 从团盐棚到老盐滩\n4. 时间推进：约六分钟\n正文：",
+   "model": {
+    "text": "闻人镜从老盐滩来到了官仓。他办妥了任务「盘点官仓的存盐」。六分钟过去了,柳拂衣从团盐棚来到了老盐滩。",
+    "finishReason": "eos",
+    "outputTokens": 47,
+    "wallMs": 1235.1
+   },
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0",
+   "oldGrants": [
+    [
+     [
+      "c_wenrenjing",
+      "他"
+     ]
+    ],
+    [
+     [
+      "c_qinshu_a",
+      "他"
+     ]
+    ]
+   ],
+   "newGrants": [
+    [
+     [
+      "c_wenrenjing",
+      "他"
+     ]
+    ],
+    []
+   ],
+   "groupsUnchanged": true,
+   "inputTokens": 87,
+   "renderText": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：约五分钟）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "model": {
+    "text": "闻人镜从老盐滩来到了官仓。他办妥了任务「收拢三畦盐卤」。五分钟过去了,秦叔已在官仓。",
+    "finishReason": "eos",
+    "outputTokens": 40,
+    "wallMs": 1050.5
+   },
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:conflict-shared-goal:v0",
+   "oldGrants": [
+    [],
+    []
+   ],
+   "newGrants": [
+    [],
+    []
+   ],
+   "groupsUnchanged": true,
+   "inputTokens": 64,
+   "renderText": "叙事生成任务。\n第1组（时间：无）\n1. 任务达成：秦叔「合力抬盐包」\n第2组（时间：约三分钟）\n2. 任务达成：秦叔「合力抬盐包」\n3. 时间推进：约三分钟\n正文：",
+   "model": {
+    "text": "秦叔完成了任务「合力抬盐包」。三分钟过去了,秦叔完成了任务「合力抬盐包」。",
+    "finishReason": "eos",
+    "outputTokens": 30,
+    "wallMs": 795.0
+   },
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G4_conflict_names": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。，。"
+    },
+    "pass": true
+   }
+  }
+ ],
+ "gates": {
+  "S1_guardRemovesAGrant": true,
+  "S2_factGroupsTimeUnchanged": true,
+  "S3_newOutputsPassHardGates": true,
+  "S4_withinTokenLimit": true
+ },
+ "summary": {
+  "rows": 4,
+  "grantsRemoved": 3,
+  "passed": 4
+ },
+ "pass": true
+}

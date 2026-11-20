@@ -1,0 +1,11 @@
+{
+ "gaps": [
+  {
+   "pointId": "p7",
+   "gap": "state not recoverable",
+   "checkpointFound": false,
+   "replayError": "LedgerMismatch: Replayed state differs from the committed digest",
+   "checkpointDigestMatchesPoint": false
+  }
+ ]
+}

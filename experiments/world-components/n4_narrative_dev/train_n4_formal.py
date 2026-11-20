@@ -20,6 +20,10 @@ import torch
 from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
 from transformers.models.t5.tokenization_t5 import T5Tokenizer
 
+from sequence_policy import (DEFAULT_GENERATION_TIMEOUT, encode_training_batch,
+                             generate_greedy, generation_timeout, rethrow_oom,
+                             sequence_policy)
+
 HERE = pathlib.Path(__file__).resolve().parent
 PAIRS = HERE / "formal_pairs.jsonl"
 FREEZE = HERE / "formal-freeze.json"
@@ -27,8 +31,6 @@ BASE = pathlib.Path("base/randeng-t5-77m")
 SEED = 20261102
 BATCH = 8
 LR = 1e-4
-MAX_INPUT = 512
-MAX_OUTPUT = 128
 
 
 def sha_file(p):
@@ -46,6 +48,8 @@ def main():
     parser.add_argument("--eval-every", type=int, default=20)
     parser.add_argument("--base", default=str(BASE))
     parser.add_argument("--out", default="ckpt-formal")
+    parser.add_argument("--generation-timeout", type=generation_timeout,
+                        default=DEFAULT_GENERATION_TIMEOUT)
     args = parser.parse_args()
 
     rows = [json.loads(line) for line in
@@ -74,15 +78,7 @@ def main():
     random.seed(SEED)
 
     def encode(batch):
-        enc = tok([r["input"] for r in batch], padding=True,
-                  truncation=True, max_length=MAX_INPUT,
-                  return_tensors="pt")
-        with tok.as_target_tokenizer():
-            labels = tok([r["target"] for r in batch], padding=True,
-                         truncation=True, max_length=MAX_OUTPUT,
-                         return_tensors="pt")
-        labels.input_ids[labels.input_ids == tok.pad_token_id] = -100
-        return enc, labels
+        return encode_training_batch(tok, batch)
 
     def split_loss(batch):
         enc, labels = encode(batch)
@@ -105,7 +101,10 @@ def main():
             batch = [train[i] for i in order[start:start + BATCH]]
             enc, labels = encode(batch)
             enc = {k: v.to(device) for k, v in enc.items()}
-            out = model(**enc, labels=labels.input_ids.to(device))
+            try:
+                out = model(**enc, labels=labels.input_ids.to(device))
+            except torch.cuda.OutOfMemoryError as exc:
+                rethrow_oom(exc, enc, labels.input_ids)
             optimizer.zero_grad()
             out.loss.backward()
             optimizer.step()
@@ -127,16 +126,15 @@ def main():
     model.eval()
     samples = []
     for r in rows:
-        enc = tok(r["input"], return_tensors="pt", truncation=True,
-                  max_length=MAX_INPUT).to(device)
-        with torch.no_grad():
-            gen = model.generate(**enc, max_new_tokens=MAX_OUTPUT,
-                                 num_beams=1, do_sample=False)
+        enc = tok(r["input"], return_tensors="pt", truncation=False).to(device)
+        gen, completion = generate_greedy(model, enc, args.generation_timeout)
         text = tok.decode(gen[0], skip_special_tokens=True)
         samples.append({
             "rowId": r["rowId"], "split": r["split"],
             "loss": split_loss([r]),
-            "exactNormalized": norm_punct(text) == norm_punct(r["target"]),
+            "exactNormalized": completion["complete"] and
+                               norm_punct(text) == norm_punct(r["target"]),
+            "generation": completion,
             "output": text, "target": r["target"],
         })
 
@@ -158,8 +156,9 @@ def main():
         "hyper": {
             "seed": SEED, "epochs": args.epochs, "steps": total_steps,
             "batch": BATCH, "lr": LR, "optimizer": "AdamW",
-            "precision": "fp32", "maxInput": MAX_INPUT,
-            "maxOutput": MAX_OUTPUT, "evalEvery": args.eval_every,
+            "precision": "fp32", "maxInput": None,
+            "maxOutput": None, "evalEvery": args.eval_every,
+            "sequencePolicy": sequence_policy(args.generation_timeout),
             "selected": "final",
             "device": torch.cuda.get_device_name(0),
         },

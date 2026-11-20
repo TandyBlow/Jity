@@ -1,0 +1,96 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "mg-20261102",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4arm3/artifacts/next-runs/three-arm-c/ckpt",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+   "rows": 229,
+   "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  },
+  {
+   "path": "artifacts/margin-r1/train.jsonl",
+   "rows": 12,
+   "sha256": "c27db61740fb175c4142a40cab2aebb258b4a74aab6ddbb497ec3d38c5792eac"
+  }
+ ],
+ "hyper": {
+  "steps": 120,
+  "batch": 8,
+  "mix": [
+   4,
+   2,
+   1,
+   1
+  ],
+  "lr": 0.0001,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW",
+  "marginBeta": 0.2235,
+  "margin": 1.0,
+  "negatives": "artifacts/margin-r1/train-negatives.jsonl",
+  "negativesSha256": "ea88111c5fefcf80be21d61798de3909565ab74684391c5f6a6f276665ba9a84",
+  "negativeRng": "fork_rng"
+ },
+ "sampling": {
+  "ids": 960,
+  "idSha256": "c3d41f019141cbe09372b345ad935e536f7d4ff34d007e34d5b0260aca63b00c",
+  "targetSha256": "50e8e61eac532c11ba9f3717710f197d558848cc74ca43bedd18bfd53335c405"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.1035,
+   "ce": 0.1035,
+   "marginLoss": 0.0
+  },
+  {
+   "step": 40,
+   "loss": 0.0533,
+   "ce": 0.0533,
+   "marginLoss": 0.0
+  },
+  {
+   "step": 80,
+   "loss": 0.077,
+   "ce": 0.077,
+   "marginLoss": 0.0
+  },
+  {
+   "step": 120,
+   "loss": 0.0322,
+   "ce": 0.0322,
+   "marginLoss": 0.0
+  }
+ ],
+ "seconds": 13.4,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/margin-mg-20261102/ckpt",
+  "modelSha256": "3e5b1229da0bd009e84573e926ee0db7cc4714a3a04f1a2a725c53aea40fa924"
+ },
+ "snapshots": {},
+ "fetch": {
+  "source": "train-report.json",
+  "remoteSha256": "296f00395900288d6a6a472670b6e7f1a49ed5835f1fe10cf174b0823e465c6d",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "purpose": "r9 review: mix start, ctl (mixed pools retrained), dir (direction pairs)",
+ "rule": "r3/r4 reading rules; evals by human count, dev probes by the frozen r4 checks",
+ "entries": [
+  {
+   "arm": "mix",
+   "unitId": "t21:f0",
+   "kind": "fact",
+   "span": "缺页",
+   "reason": "“潮汐簿的边缘毛糙”把“缺页”换成书名，机器判 S（覆盖 0.67）"
+  },
+  {
+   "arm": "mix",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "所有格错位，与起点同句"
+  },
+  {
+   "arm": "mix",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”，与起点同句"
+  },
+  {
+   "arm": "ctl",
+   "unitId": "t21:f0",
+   "kind": "fact",
+   "span": "缺页",
+   "reason": "同 mix，机器判 S"
+  },
+  {
+   "arm": "ctl",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "（已修）",
+   "reason": "ctl 写成“泥水结了一层白盐”，不再错位"
+  },
+  {
+   "arm": "dir",
+   "unitId": "t21:f0",
+   "kind": "fact",
+   "span": "潮汐簿",
+   "reason": "“缺页的边缘毛糙”保住了部件，丢了整体；机器判 A"
+  },
+  {
+   "arm": "dir",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "与起点同句"
+  },
+  {
+   "arm": "dir",
+   "unitId": "m05:f0",
+   "kind": "fact",
+   "span": "终点早市",
+   "reason": "“案板上沾着石板”，起点有、终点缺，机器判 O"
+  },
+  {
+   "arm": "dir",
+   "unitId": "t15:f0",
+   "kind": "added",
+   "span": "木桩",
+   "reason": "“走到潮渡的木桩旁”，事实外子地点"
+  },
+  {
+   "arm": "dir",
+   "unitId": "v13:f0",
+   "kind": "added",
+   "span": "灯芯",
+   "reason": "“走进旧灯塔的灯芯”，事实外物件"
+  },
+  {
+   "arm": "dir",
+   "unitId": "p-np1a",
+   "kind": "repeated",
+   "span": "木桩+木桩",
+   "reason": "name pair with-name 行重复名称"
+  },
+  {
+   "arm": "dir",
+   "unitId": "p-rel3",
+   "kind": "fact",
+   "span": "系",
+   "reason": "关系“系”丢失（关系探针开发集）"
+  },
+  {
+   "arm": "dir",
+   "unitId": "p-rel4",
+   "kind": "fact",
+   "span": "套",
+   "reason": "关系“套”丢失（关系探针开发集）"
+  }
+ ]
+}

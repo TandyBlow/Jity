@@ -1,0 +1,355 @@
+{
+ "unitFile": "world-components/n4-moved24-contract.jsonl",
+ "pools": [
+  "verbalizer_pairs",
+  "expand-train80",
+  "object-train40"
+ ],
+ "criterion": "independent = neither the rendered input nor the fact signature occurs in a training pool",
+ "counts": {
+  "units": 24,
+  "independent": 24,
+  "seen": 0
+ },
+ "independentUnits": [
+  "m01:f0",
+  "m02:f0",
+  "m03:f0",
+  "m04:f0",
+  "m05:f0",
+  "m06:f0",
+  "m07:f0",
+  "m08:f0",
+  "m09:f0",
+  "m10:f0",
+  "m11:f0",
+  "m12:f0",
+  "m13:f0",
+  "m14:f0",
+  "m15:f0",
+  "m16:f0",
+  "m17:f0",
+  "m18:f0",
+  "m19:f0",
+  "m20:f0",
+  "m21:f0",
+  "m22:f0",
+  "m23:f0",
+  "m24:f0"
+ ],
+ "seenUnits": [],
+ "records": [
+  {
+   "unitId": "m01:f0",
+   "sourceId": "m01",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "早市",
+    "雾堤"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m02:f0",
+   "sourceId": "m02",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "早市",
+    "潮渡"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m03:f0",
+   "sourceId": "m03",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "潮渡",
+    "早市"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m04:f0",
+   "sourceId": "m04",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "旧灯塔",
+    "早市"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m05:f0",
+   "sourceId": "m05",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "潮汐档案馆",
+    "早市"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m06:f0",
+   "sourceId": "m06",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "旧灯塔",
+    "雾堤"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m07:f0",
+   "sourceId": "m07",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "潮生巷",
+    "潮汐档案馆"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m08:f0",
+   "sourceId": "m08",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "潮汐档案馆",
+    "旧灯塔"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m09:f0",
+   "sourceId": "m09",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "潮渡",
+    "雾堤"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m10:f0",
+   "sourceId": "m10",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "旧灯塔",
+    "潮汐档案馆"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m11:f0",
+   "sourceId": "m11",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "早市",
+    "潮渡"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m12:f0",
+   "sourceId": "m12",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "早市",
+    "潮渡"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m13:f0",
+   "sourceId": "m13",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "潮渡",
+    "旧灯塔"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m14:f0",
+   "sourceId": "m14",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "潮汐档案馆",
+    "早市"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m15:f0",
+   "sourceId": "m15",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "潮生巷",
+    "潮汐档案馆"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m16:f0",
+   "sourceId": "m16",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "旧灯塔",
+    "早市"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m17:f0",
+   "sourceId": "m17",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "韩渡",
+    "潮渡",
+    "潮汐档案馆"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m18:f0",
+   "sourceId": "m18",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "韩渡",
+    "潮汐档案馆",
+    "雾堤"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m19:f0",
+   "sourceId": "m19",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "韩渡",
+    "雾堤",
+    "旧灯塔"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m20:f0",
+   "sourceId": "m20",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "韩渡",
+    "早市",
+    "潮生巷"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m21:f0",
+   "sourceId": "m21",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "韩渡",
+    "雾堤",
+    "潮渡"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m22:f0",
+   "sourceId": "m22",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "顾行舟",
+    "潮渡",
+    "河心"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m23:f0",
+   "sourceId": "m23",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "顾行舟",
+    "潮渡",
+    "早市"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "m24:f0",
+   "sourceId": "m24",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "顾行舟",
+    "早市",
+    "潮渡"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  }
+ ]
+}

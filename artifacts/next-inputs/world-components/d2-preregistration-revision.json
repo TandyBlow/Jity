@@ -1,0 +1,115 @@
+{
+ "purpose": "D2 pre-registration revision 2: review round 24 fixes (five P2). Revision-1 record preserved byte-identical alongside; that record remains the v1 evidence.",
+ "decision": "D2",
+ "registeredAt": "2026-10-29",
+ "revisionOf": {
+  "file": "artifacts/world-components/d2-metrics-preregistration.json",
+  "sha256": "95a945797c2fde6641e99e3f5749cfdeee87179ef7544f9d9d3229ec55d67c9a",
+  "reviewRound": 24
+ },
+ "reasons": [
+  "P2-1 isolation checker treated missing corpus sources as success; verdict now fails on any missing source (verdict_for + selftest).",
+  "P2-2 order concordance compared frozensets against a tuple set and never read actual positions (always agreed); now compares ACTUAL within-group positions of both labelers; reversal probe pins it.",
+  "P2-3 freeze entry accepted zeroed registered hashes and did not bind identity files; freeze now verifies registered hashes against working tree AND committed blob, validates identity files bound through the protocol, and records both in the freeze record; .gitattributes pins registered files (-text) and tools (eol=lf) so clean checkouts keep identical bytes.",
+  "P2-4 metric tool crashed (KeyError) on legal JSON plans lacking coreference; shape guard now reports structural problems that feed the failure/retry flow (probes T10/T11).",
+  "P2-5 prompt draft had undefined inputs: R3 leading-time self-reference resolved to the first fact WITH an entityId (semantically identical to the frozen annotation interpretation); itemId substitution and the 16-item selected-fact rule (frozen target filter, selected_of-compatible) written down; revision log added. Rubric and annotation evidence unchanged.",
+  "Round 25: P2-3 residual closed - the freeze entry verified the REGISTERED paths but consumed args.items unbound; consumed --items bytes must now equal the registered items hash, labels files must match the protocol annotator labels names (same-name and renamed substitution rejection probes added).",
+  "Round 28: arm-time gold binding added to the metric tool (--expect-gold-sha256 / check_gold_sha); the gate run must verify the consumed gold against the freeze-record pin, closing the reviewer note that the arm evidence chain was unguarded at scoring time."
+ ],
+ "changed": {
+  "metricTool": {
+   "file": "experiments/world-components/n2_selection/d2_metrics.py",
+   "was": "6a19b0d5b6bb1c3f293ae6fd124faf8e3a1d06c54744e96522e6655a2e6545a0",
+   "now": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+   "history": [
+    {
+     "round": 24,
+     "sha256": "a1fca77baa50e4d21650d2af067c9c7ca85c6f78b88ab9457ac4c84d64cc9a97",
+     "note": "review-24 rewrite; superseded by round-27 gold-side validation, strict coreference entry shape and diagnostic16 mode"
+    },
+    {
+     "round": 27,
+     "sha256": "609fa571803230bd7fbfc1face12bcfa3bd17c4e5d319d4dc10f941e4c108ef1",
+     "note": "gold-side validation, strict coreference entry shape, diagnostic16 scope; superseded by round-28 arm-time gold sha binding"
+    }
+   ]
+  },
+  "agreementTool": {
+   "file": "experiments/world-components/n2_selection/d2_labels_agreement.py",
+   "was": "bb6593a9e6ad1fe82dd127e2d9d059b2ed86c765c5cfcfc8ef61c136b6e03723",
+   "now": "1c8c6233b542d422f234e6c320090afa7500c8bcc40fd9077d5e519394c5752d",
+   "history": [
+    {
+     "round": 24,
+     "sha256": "549a4a9fb1d3f0623e02f3fc23fe3dcd439fed0225e55257632d881f91d4692b",
+     "note": "review-24 rewrite; superseded same day"
+    },
+    {
+     "round": 25,
+     "sha256": "8dd6529ebc40bc137643b5f815f2124fa341597700ec0a78aca0c615e18dd6c5",
+     "note": "consumed-file binding; superseded by round-27 protocol/tool pinning, bind_consumed pure function and frozen-path assertions"
+    }
+   ]
+  },
+  "promptDraft": {
+   "file": "experiments/world-components/n2_selection/d2-n3-prompt-draft.md",
+   "was": "82e867dd18c74bb99843efd21bef573511df5455afec8f668f8436a5f1d13e32",
+   "now": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "statusNow": "see artifacts/world-components/d2-n3-prompt-freeze.json"
+  },
+  "isolationTool": {
+   "file": "experiments/world-components/n2_selection/check_isolation_d2.py",
+   "was": null,
+   "now": "d0a52dc1b4867f0da27deebf9b79a655ba344163c6f4ab1cba2d658c613e7cff",
+   "note": "added to the registration; v1 did not pin it"
+  }
+ },
+ "unchanged": {
+  "items": {
+   "file": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+   "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311"
+  },
+  "goldProtocol": {
+   "file": "experiments/world-components/n2_selection/annotation/d2-gold-protocol.json",
+   "sha256": "ff621edebf9d2f25e25bfdbefda7fc480ea6bb3431a166d6d8af6b09409fb172"
+  },
+  "goldRubric": {
+   "file": "experiments/world-components/n2_selection/annotation/d2-gold-rubric.md",
+   "sha256": "fd7eb518c92a5cc585ef2a4127d113df0724d114936f7a38aadcdd57c73e76c0"
+  },
+  "passLine": {
+   "h1": "all items",
+   "h2": "all items",
+   "g1F1": 0.8,
+   "g2Accuracy": 0.8,
+   "pronounProduction": 0.5,
+   "g3": 0.75,
+   "g4": "report only"
+  },
+  "operationalisation": [
+   "pooled rates across items",
+   "G2 antecedent denominator = comparable groups; pronoun-site denominator = all gold sites",
+   "H1/H2 judge raw plans; structural problems void item G-metrics and fail gates"
+  ]
+ },
+ "annotationEvidenceUnchanged": {
+  "note": "rubric, protocol registered hashes, dual-AI labels, identities and the frozen gold are byte-identical to f27af30; the frozen gold file hash is restated in the regenerated freeze record."
+ },
+ "isolation": {
+  "file": "artifacts/world-components/n2-isolation-d2.json",
+  "verdict": "ZERO_HIT",
+  "missingSources": 0
+ },
+ "semanticChanges": [
+  "coreference entries with fields beyond {mention, refersTo} were previously only punished through the G2 exact-entry comparison; they are now a STRUCTURAL violation (H1/H2 fail, the attempt enters the retry flow, the item fails after the retry).",
+  "a gold row missing a factId previously crashed the scorers with KeyError; gold rows are now validated like plan rows and a broken gold voids the item with a reported problem.",
+  "the 16-item v2 set is demoted to diagnostic-only: its H1 denominator was the FULL fact set while the arm consumes the target-selected subset (a correct selected-coverage plan scored h1 0/16), and it has no organisation gold so G1-G4 are undefined; diagnostic16 mode scores H1/H2 over target-intersected facts with gate=false and never pass=true. The 8-item gate is unchanged. Ruling: coordinator decision, recorded by the C reviewer as not a technical endorsement."
+ ],
+ "diagnostic16Input": {
+  "file": "experiments/world-components/n2_selection/items.jsonl",
+  "sha256": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+  "basis": "working-tree bytes (file is text eol=crlf; checkout is deterministic)",
+  "expectedItems": 16,
+  "note": "registered round 30 for the runner diagnostic16 input binding (review R2); the gate8 capability-set pin remains unchanged.items from the v1 record"
+ }
+}

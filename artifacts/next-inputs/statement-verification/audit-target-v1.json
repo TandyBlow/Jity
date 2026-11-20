@@ -1,0 +1,147 @@
+{
+  "issueCount": 0,
+  "issues": [],
+  "counts": {
+    "totalExamples": 248,
+    "totalPairs": 124,
+    "byCategory": {
+      "background": 62,
+      "body": 62,
+      "extra-action": 62,
+      "visible-state": 62
+    },
+    "bySplit": {
+      "confirm": 48,
+      "dev": 40,
+      "train": 160
+    },
+    "byCategorySplit": {
+      "background:confirm": 12,
+      "body:confirm": 12,
+      "extra-action:confirm": 12,
+      "visible-state:confirm": 12,
+      "background:dev": 10,
+      "body:dev": 10,
+      "extra-action:dev": 10,
+      "visible-state:dev": 10,
+      "background:train": 40,
+      "body:train": 40,
+      "extra-action:train": 40,
+      "visible-state:train": 40
+    },
+    "byMode": {
+      "authorization": 128,
+      "statement": 120
+    },
+    "byLabel": {
+      "supported": 124,
+      "unsupported": 124
+    },
+    "pairModeByCategorySplit": {
+      "background:confirm": {
+        "authorization": 3,
+        "statement": 3
+      },
+      "background:dev": {
+        "statement": 2,
+        "authorization": 3
+      },
+      "background:train": {
+        "authorization": 10,
+        "statement": 10
+      },
+      "body:confirm": {
+        "statement": 3,
+        "authorization": 3
+      },
+      "body:dev": {
+        "authorization": 3,
+        "statement": 2
+      },
+      "body:train": {
+        "statement": 10,
+        "authorization": 10
+      },
+      "extra-action:confirm": {
+        "authorization": 3,
+        "statement": 3
+      },
+      "extra-action:dev": {
+        "statement": 2,
+        "authorization": 3
+      },
+      "extra-action:train": {
+        "authorization": 10,
+        "statement": 10
+      },
+      "visible-state:confirm": {
+        "authorization": 3,
+        "statement": 3
+      },
+      "visible-state:dev": {
+        "authorization": 3,
+        "statement": 2
+      },
+      "visible-state:train": {
+        "statement": 10,
+        "authorization": 10
+      }
+    },
+    "familySize": {
+      "tgt:background:confirm:confirm-01": 3,
+      "tgt:background:confirm:confirm-02": 3,
+      "tgt:body:confirm:confirm-01": 3,
+      "tgt:body:confirm:confirm-02": 3,
+      "tgt:extra-action:confirm:confirm-01": 3,
+      "tgt:extra-action:confirm:confirm-02": 3,
+      "tgt:visible-state:confirm:confirm-01": 3,
+      "tgt:visible-state:confirm:confirm-02": 3,
+      "tgt:background:dev:dev-01": 2,
+      "tgt:background:dev:dev-02": 3,
+      "tgt:body:dev:dev-01": 2,
+      "tgt:body:dev:dev-02": 3,
+      "tgt:extra-action:dev:dev-01": 2,
+      "tgt:extra-action:dev:dev-02": 3,
+      "tgt:visible-state:dev:dev-01": 2,
+      "tgt:visible-state:dev:dev-02": 3,
+      "tgt:background:train:train-01": 4,
+      "tgt:background:train:train-02": 4,
+      "tgt:background:train:train-03": 4,
+      "tgt:background:train:train-04": 4,
+      "tgt:background:train:train-05": 4,
+      "tgt:body:train:train-01": 4,
+      "tgt:body:train:train-02": 4,
+      "tgt:body:train:train-03": 4,
+      "tgt:body:train:train-04": 4,
+      "tgt:body:train:train-05": 4,
+      "tgt:extra-action:train:train-01": 4,
+      "tgt:extra-action:train:train-02": 4,
+      "tgt:extra-action:train:train-03": 4,
+      "tgt:extra-action:train:train-04": 4,
+      "tgt:extra-action:train:train-05": 4,
+      "tgt:visible-state:train:train-01": 4,
+      "tgt:visible-state:train:train-02": 4,
+      "tgt:visible-state:train:train-03": 4,
+      "tgt:visible-state:train:train-04": 4,
+      "tgt:visible-state:train:train-05": 4
+    }
+  },
+  "directEasy": {
+    "body": true,
+    "background": true,
+    "visible-state": true,
+    "extra-action": true
+  },
+  "generalCapability": {
+    "n": 298,
+    "labels": {
+      "supported": 149,
+      "unsupported": 149
+    }
+  },
+  "hashes": {
+    "pairs-target-v1.jsonl": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+    "general-capability-v1.jsonl": "259ecbd03f82a33b53a7d57b19b15766eb9f873fad63ee6489e2382be212d5fb",
+    "regression-v1.jsonl": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58"
+  }
+}

@@ -1,0 +1,277 @@
+{
+ "model": {
+  "id": "Qwen3-0.6B-Q4_K_M.gguf",
+  "path": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+  "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+  "bytes": 396705472,
+  "runtime": "wllama 3.8.1 (Edge headless, wllama.wasm)",
+  "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+  "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+  "loadMs": [
+   28800,
+   31667
+  ],
+  "device": {
+   "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+   "logicalCpus": 20
+  },
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0"
+ },
+ "generation": {
+  "params": {
+   "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+   "contextSize": 4096,
+   "numThreads": 4,
+   "channel": "msedge",
+   "seed": 42,
+   "temperature": 0,
+   "maxTokens": 160,
+   "cachePrompt": false,
+   "timeoutMs": 120000,
+   "runsPerPoint": 3
+  },
+  "promptBuilder": "buildNaturalPrompt (narration-eval.ts), facts only, no action text",
+  "runsPerPacket": 3,
+  "worlds": {
+   "world_1": {
+    "points": 13,
+    "primary": 9,
+    "extra": 4
+   },
+   "world_79": {
+    "points": 5,
+    "primary": 4,
+    "extra": 1
+   }
+  },
+  "primaryPackets": 13,
+  "primaryGenerations": 39,
+  "allGenerations": 54,
+  "deterministicPerPacket": "18/18 labels produced identical text across 3 runs (temperature 0, seed 42)"
+ },
+ "results": {
+  "primary": {
+   "generations": 39,
+   "factCheckPass": 0,
+   "factCheckRate": 0,
+   "alignerPass": 15,
+   "alignerRate": 0.38461538461538464,
+   "pageGatePass": 0,
+   "pageGateRate": 0,
+   "distinctTexts": 13
+  },
+  "all": {
+   "generations": 54,
+   "factCheckPass": 0,
+   "factCheckRate": 0,
+   "alignerPass": 30,
+   "alignerRate": 0.5555555555555556,
+   "pageGatePass": 0,
+   "pageGateRate": 0,
+   "distinctTexts": 15
+  },
+  "manual": {
+   "distinctOutputs": 15,
+   "correct": 0,
+   "incorrect": 15,
+   "pureWordingAcceptable": 0
+  },
+  "alignerFalseNegatives": 30,
+  "independentFalseNegativesInErrorList": [
+   "“缓缓前行/沿着走廊前行/跟着走来”这类未列入动词表的移动",
+   "“意识到/个性变化已生效”这类内心或元叙述",
+   "“她”代词的归属"
+  ],
+  "pageGateNote": "逐字分句门连语义正确的自然段也拒绝；这是设计口径，不是误报，但说明页面接不住自然文本。"
+ },
+ "performance": {
+  "calls": 54,
+  "meanMs": 27175,
+  "p50Ms": 26434,
+  "minMs": 21409,
+  "maxMs": 41097,
+  "promptTokensTotal": 10896,
+  "completionTokensTotal": 2205,
+  "promptTokensMean": 202,
+  "completionTokensMean": 41,
+  "totalWallMinutesApprox": 25.5
+ },
+ "fallbacks": {
+  "timeout": {
+   "reason": "generation_error: IncompleteGenerationError: generation deadline exceeded",
+   "raw": ""
+  },
+  "empty": {
+   "reason": "empty_output",
+   "raw": ""
+  },
+  "wrong": {
+   "reason": "fact_check_failed",
+   "raw": "林川完成了任务「完成压力试验」，精神值从10变为8。",
+   "facts": {
+    "ok": false,
+    "problems": [
+     {
+      "kind": "missing",
+      "factId": "person_a:position",
+      "detail": "位置 走廊 未出现"
+     },
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:position",
+      "detail": "周宁 的分句不存在"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:sanity",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "actor",
+      "factId": "person_c:task:task_pressure",
+      "detail": "周宁 的事实出现在 林川 的分句里"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:personality:change_10",
+      "detail": "周宁 的分句不存在"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "covered": []
+   },
+   "alignment": {
+    "ok": false,
+    "timeRequired": true,
+    "coverage": [
+     {
+      "id": "person_a:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_a:sanity",
+      "kind": "sanity",
+      "expressed": true
+     },
+     {
+      "id": "person_c:position",
+      "kind": "at",
+      "expressed": false
+     },
+     {
+      "id": "person_c:sanity",
+      "kind": "sanity_changed",
+      "expressed": false
+     },
+     {
+      "id": "person_c:task:task_pressure",
+      "kind": "task_achieved",
+      "expressed": false
+     },
+     {
+      "id": "person_c:personality:change_10",
+      "kind": "personality_changed",
+      "expressed": false
+     }
+    ],
+    "omissions": [
+     "林川位于走廊",
+     "周宁位于走廊",
+     "周宁的精神值从10变为8",
+     "周宁完成了任务「完成压力试验」",
+     "周宁的人格变化为「经历压力试验后更谨慎」"
+    ],
+    "violations": [
+     {
+      "kind": "actor_swap",
+      "sentence": "林川完成了任务「完成压力试验」，精神值从10变为8",
+      "detail": "payload of person_c:task:task_pressure attributed to 林川 instead of 周宁"
+     }
+    ],
+    "unverified": [],
+    "repetition": 0.2,
+    "timeExpressed": false
+   }
+  },
+  "semanticCorrectNatural": {
+   "adopted": true,
+   "pageGate": {
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause",
+    "text": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+   }
+  }
+ },
+ "negativeControls": [
+  {
+   "id": "template",
+   "factsOk": true,
+   "alignerOk": true,
+   "pageGate": false,
+   "problems": [],
+   "violations": []
+  },
+  {
+   "id": "actor-swap",
+   "factsOk": false,
+   "alignerOk": false,
+   "pageGate": false,
+   "problems": [
+    "frozen_text"
+   ],
+   "violations": [
+    "actor_swap"
+   ]
+  },
+  {
+   "id": "wrong-number",
+   "factsOk": false,
+   "alignerOk": false,
+   "pageGate": false,
+   "problems": [
+    "missing",
+    "number"
+   ],
+   "violations": [
+    "actor_swap"
+   ]
+  },
+  {
+   "id": "goal-rewrite",
+   "factsOk": false,
+   "alignerOk": false,
+   "pageGate": false,
+   "problems": [
+    "frozen_text"
+   ],
+   "violations": [
+    "task_claimed_without_fact"
+   ]
+  },
+  {
+   "id": "semantic-correct-natural",
+   "factsOk": true,
+   "alignerOk": true,
+   "pageGate": false,
+   "problems": [],
+   "violations": []
+  }
+ ],
+ "alignerFixDuringExperiment": {
+  "problem": "task template with 林川 standing 10 and 周宁 changed 10→8 was flagged actor_swap (cross-kind numeric coincidence)",
+  "fix": "ownsNumericPayload: a standing value that is the named actor change endpoint with matching direction is not a swap",
+  "regression": "narration-alignment.test.ts: task template full packet passes"
+ },
+ "recommendation": "current benefit insufficient; do not wire into the page. Needs a model/prompt that preserves standing vs change and frozen text, a stricter semantic gate (the aligner passes 30/54 incorrect outputs), and much lower latency (mean 27s/call at 4 threads).",
+ "databaseSha256": "2c5d1f588df7a560c2db8c9607a9eb0c9cbe6ac2a49b81ee4150cf4b4c7791ba",
+ "evidence": "artifacts/next-runs/narration-model-r1"
+}

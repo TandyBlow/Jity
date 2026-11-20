@@ -1,0 +1,21 @@
+{
+  "sourceCount": 20,
+  "statusCounts": {
+    "pending": 16,
+    "keep": 3,
+    "deleted": 1
+  },
+  "proposedCount": 17,
+  "appliedCount": 1,
+  "flagCounts": {
+    "ambiguous-span": 3,
+    "span-not-found": 3,
+    "sentence-concatenation": 5,
+    "missing-final-period": 1,
+    "fact-coverage-drop:f3": 2,
+    "fact-coverage-drop:f1": 3
+  },
+  "appliedSources": [
+    "v01"
+  ]
+}

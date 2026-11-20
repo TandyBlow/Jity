@@ -1,0 +1,228 @@
+{
+ "cases": 638,
+ "errorSamples": 221,
+ "correctSamples": 417,
+ "wrongPass": {
+  "count": 18,
+  "denominator": 221,
+  "rate": 0.0814
+ },
+ "wrongPassByFamily": {
+  "swap-actor": {
+   "count": 18,
+   "denominator": 55,
+   "rate": 0.3273
+  },
+  "outsider-once": {
+   "count": 0,
+   "denominator": 139,
+   "rate": 0.0
+  },
+  "drop-result-sentence": {
+   "count": 0,
+   "denominator": 27,
+   "rate": 0.0
+  }
+ },
+ "falseReject": {
+  "count": 0,
+  "denominator": 417,
+  "rate": 0.0
+ },
+ "reviewOnCorrect": {
+  "count": 48,
+  "denominator": 417,
+  "rate": 0.1151
+ },
+ "reviewAll": {
+  "count": 92,
+  "denominator": 638,
+  "rate": 0.1442
+ },
+ "byFamily": {
+  "ref": {
+   "ok": 123,
+   "review": 16
+  },
+  "swap-actor": {
+   "review": 37,
+   "wrong-pass": 18
+  },
+  "outsider-once": {
+   "ok": 139
+  },
+  "correct-two-lamps": {
+   "ok": 123,
+   "review": 16
+  },
+  "correct-cold-hot": {
+   "ok": 123,
+   "review": 16
+  },
+  "drop-result-sentence": {
+   "review": 7,
+   "ok": 20
+  }
+ },
+ "dataErrors": [
+  {
+   "id": "n4n-03::ref",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  },
+  {
+   "id": "n4n-03::swap-actor",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  },
+  {
+   "id": "n4n-03::outsider-once",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  },
+  {
+   "id": "n4n-03::correct-two-lamps",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  },
+  {
+   "id": "n4n-03::correct-cold-hot",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  }
+ ],
+ "failures": [
+  {
+   "id": "r05::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r08::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r12::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r34::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r44::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r45::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r49::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r50::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r54::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r71::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r72::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r73::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r80::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r83::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r84::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r93::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r104::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  },
+  {
+   "id": "r115::swap-actor",
+   "family": "swap-actor",
+   "expect": "not-pass",
+   "got": "pass",
+   "codes": []
+  }
+ ],
+ "checkerSha256": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe"
+}

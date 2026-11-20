@@ -1,0 +1,2086 @@
+{
+ "summary": {
+  "width": 2,
+  "budget": 20.0,
+  "cases": 90,
+  "greedySeconds": 31.07,
+  "beamSeconds": 141.92,
+  "greedyComplete": 90,
+  "beamComplete": 90,
+  "greedySteps": 1240,
+  "beamSteps": 1632,
+  "beamTruncated": 0
+ },
+ "rows": [
+  {
+   "caseId": "fixture-r1:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "袖口沾了雨",
+   "greedy": {
+    "text": "林川的袖口沾了雨。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.846
+   },
+   "beam": {
+    "text": "林川的袖口沾了雨。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.971,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2086
+   }
+  },
+  {
+   "caseId": "fixture-r1:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "指节发白",
+   "greedy": {
+    "text": "林川的指节发白,指节发白。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 0.501
+   },
+   "beam": {
+    "text": "林川的指节发白,指节发白。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.924,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.434
+   }
+  },
+  {
+   "caseId": "fixture-r1:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "周宁",
+   "factText": "斗篷下摆湿了一片",
+   "greedy": {
+    "text": "周宁的斗篷下摆湿了一片。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.291
+   },
+   "beam": {
+    "text": "周宁的斗篷下摆湿了一片。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 2.122,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1785
+   }
+  },
+  {
+   "caseId": "fixture-r1:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "鞋底沾了泥",
+   "greedy": {
+    "text": "陈默的鞋底沾了泥。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.24
+   },
+   "beam": {
+    "text": "陈默的鞋底沾了泥。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 1.038,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.6014
+   }
+  },
+  {
+   "caseId": "fixture-r1:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "袖口湿到肘部",
+   "greedy": {
+    "text": "陈默的袖口湿到肘部。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.301
+   },
+   "beam": {
+    "text": "陈默的袖口湿到肘部。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 1.322,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.5155
+   }
+  },
+  {
+   "caseId": "fixture-r2:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "灯罩蒙了灰",
+   "greedy": {
+    "text": "林川的灯罩蒙了灰。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.245
+   },
+   "beam": {
+    "text": "林川的灯罩蒙了灰。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.869,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.3078
+   }
+  },
+  {
+   "caseId": "fixture-r2:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "掌心出汗",
+   "greedy": {
+    "text": "林川的掌心出汗,掌心出汗。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 0.332
+   },
+   "beam": {
+    "text": "林川的掌心出汗。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.231,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.78
+   }
+  },
+  {
+   "caseId": "fixture-r2:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "周宁",
+   "factText": "钟绳磨出了毛边",
+   "greedy": {
+    "text": "周宁的钟绳磨出了毛边。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.329
+   },
+   "beam": {
+    "text": "周宁的钟绳磨出了毛边。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 1.047,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.206
+   }
+  },
+  {
+   "caseId": "fixture-r2:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "衣角结了盐霜",
+   "greedy": {
+    "text": "陈默的衣角结了盐霜。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.267
+   },
+   "beam": {
+    "text": "陈默的衣角结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.934,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.5664
+   }
+  },
+  {
+   "caseId": "fixture-r2:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "鬓发被雾打湿",
+   "greedy": {
+    "text": "陈默的鬓发被雾打湿,湿气被雾打湿。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.491
+   },
+   "beam": {
+    "text": "陈默的鬓发被雾打湿。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.735,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.254
+   }
+  },
+  {
+   "caseId": "fixture-r3:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "被雨打湿半幅",
+   "greedy": {
+    "text": "林川被雨打湿半幅。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.247
+   },
+   "beam": {
+    "text": "林川被雨打湿半幅。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 2.723,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1583
+   }
+  },
+  {
+   "caseId": "fixture-r3:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "袖口开了线",
+   "greedy": {
+    "text": "林川的袖口开了线。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.383
+   },
+   "beam": {
+    "text": "林川的袖口开了线。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.701,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.2669
+   }
+  },
+  {
+   "caseId": "fixture-r3:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "周宁",
+   "factText": "指缝里塞着泥",
+   "greedy": {
+    "text": "周宁的指缝里塞着泥。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.477
+   },
+   "beam": {
+    "text": "周宁的指缝里塞着泥。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 2.264,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0908
+   }
+  },
+  {
+   "caseId": "fixture-r3:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "鞋跟磨塌了",
+   "greedy": {
+    "text": "陈默的鞋跟磨塌了。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.24
+   },
+   "beam": {
+    "text": "陈默的鞋跟磨塌了。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.482,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.9174
+   }
+  },
+  {
+   "caseId": "fixture-r3:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "裤脚沾了铜油",
+   "greedy": {
+    "text": "陈默的裤脚沾了铜油。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.28
+   },
+   "beam": {
+    "text": "陈默的裤脚沾了铜油。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.986,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.5661
+   }
+  },
+  {
+   "caseId": "fixture-r4:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "围巾松开一截",
+   "greedy": {
+    "text": "林川的围巾松开一截。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.26
+   },
+   "beam": {
+    "text": "林川的围巾松开一截。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.419,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2787
+   }
+  },
+  {
+   "caseId": "fixture-r4:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "脸色发白",
+   "greedy": {
+    "text": "林川的脸色发白,发白的脸色发白。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.375
+   },
+   "beam": {
+    "text": "林川的脸色发白,发白发白。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.351,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.7969
+   }
+  },
+  {
+   "caseId": "fixture-r4:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "周宁",
+   "factText": "背上溅了泥点",
+   "greedy": {
+    "text": "周宁的背上溅了泥点。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.283
+   },
+   "beam": {
+    "text": "周宁的背上溅了泥点。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.873,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.4359
+   }
+  },
+  {
+   "caseId": "fixture-r4:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "手背蹭破了皮",
+   "greedy": {
+    "text": "陈默的手背蹭破了皮。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.212
+   },
+   "beam": {
+    "text": "陈默的手背蹭破了皮。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.798,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.6946
+   }
+  },
+  {
+   "caseId": "fixture-r4:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "肩头落着灰",
+   "greedy": {
+    "text": "陈默的肩头落着灰。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.208
+   },
+   "beam": {
+    "text": "陈默的肩头落着灰。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.77,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.0234
+   }
+  },
+  {
+   "caseId": "fixture-r5:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "帽檐压出折痕",
+   "greedy": {
+    "text": "林川的帽檐压出折痕。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.252
+   },
+   "beam": {
+    "text": "林川的帽檐压出折痕。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 1.694,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.1797
+   }
+  },
+  {
+   "caseId": "fixture-r5:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "林川",
+   "factText": "脚踝肿了一块",
+   "greedy": {
+    "text": "林川的脚踝肿了一块。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.238
+   },
+   "beam": {
+    "text": "林川的脚踝肿了一块。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.267,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.4338
+   }
+  },
+  {
+   "caseId": "fixture-r5:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "周宁",
+   "factText": "衣领被雨浸透",
+   "greedy": {
+    "text": "周宁的衣领被雨浸透,袖口被雨浸透。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 0.369
+   },
+   "beam": {
+    "text": "周宁的衣领被雨浸透。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.26,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.2201
+   }
+  },
+  {
+   "caseId": "fixture-r5:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "指尖磨出茧",
+   "greedy": {
+    "text": "陈默的指尖磨出茧。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.213
+   },
+   "beam": {
+    "text": "陈默的指尖磨出茧。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.828,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.7481
+   }
+  },
+  {
+   "caseId": "fixture-r5:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "陈默",
+   "factText": "膝盖沾了泥",
+   "greedy": {
+    "text": "陈默的膝盖沾了泥。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.217
+   },
+   "beam": {
+    "text": "陈默的膝盖沾了泥。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.835,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.5729
+   }
+  },
+  {
+   "caseId": "train-r1:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "袖口沾了雨",
+   "greedy": {
+    "text": "沈砚的袖口沾了雨。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.237
+   },
+   "beam": {
+    "text": "沈砚的袖口沾了雨。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.259,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2964
+   }
+  },
+  {
+   "caseId": "train-r1:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "指节发白",
+   "greedy": {
+    "text": "沈砚的指节发白,指节发白。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 0.312
+   },
+   "beam": {
+    "text": "沈砚的指节发白,指节发白。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.092,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.734
+   }
+  },
+  {
+   "caseId": "train-r1:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "斗篷下摆湿了一片",
+   "greedy": {
+    "text": "顾行舟的斗篷下摆湿了一片。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.323
+   },
+   "beam": {
+    "text": "顾行舟的斗篷下摆湿了一片。",
+    "complete": true,
+    "steps": 24,
+    "seconds": 1.799,
+    "candidates": 4,
+    "truncated": false,
+    "score": -0.1825
+   }
+  },
+  {
+   "caseId": "train-r1:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "鞋底沾了泥",
+   "greedy": {
+    "text": "叶知微的鞋底沾了泥。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.275
+   },
+   "beam": {
+    "text": "叶知微的鞋底沾了泥。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.33,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2023
+   }
+  },
+  {
+   "caseId": "train-r1:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "袖口湿到肘部",
+   "greedy": {
+    "text": "叶知微的袖口湿到肘部。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.279
+   },
+   "beam": {
+    "text": "叶知微的袖口湿到肘部。",
+    "complete": true,
+    "steps": 24,
+    "seconds": 1.772,
+    "candidates": 4,
+    "truncated": false,
+    "score": -0.0913
+   }
+  },
+  {
+   "caseId": "train-r2:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "灯罩蒙了灰",
+   "greedy": {
+    "text": "沈砚的灯罩蒙了灰。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.231
+   },
+   "beam": {
+    "text": "沈砚的灯罩蒙了灰。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.477,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.4381
+   }
+  },
+  {
+   "caseId": "train-r2:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心出汗",
+   "greedy": {
+    "text": "沈砚的掌心出汗,胸口那点发汗发汗。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 0.443
+   },
+   "beam": {
+    "text": "沈砚的掌心出汗。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.121,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.1055
+   }
+  },
+  {
+   "caseId": "train-r2:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "钟绳磨出了毛边",
+   "greedy": {
+    "text": "顾行舟的钟绳磨出了毛边。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.267
+   },
+   "beam": {
+    "text": "顾行舟的钟绳磨出了毛边。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.973,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1702
+   }
+  },
+  {
+   "caseId": "train-r2:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "衣角结了盐霜",
+   "greedy": {
+    "text": "叶知微的衣角结了盐霜。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.28
+   },
+   "beam": {
+    "text": "叶知微的衣角结了盐霜。",
+    "complete": true,
+    "steps": 24,
+    "seconds": 1.881,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1945
+   }
+  },
+  {
+   "caseId": "train-r2:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "鬓发被雾打湿",
+   "greedy": {
+    "text": "叶知微的鬓发被雾打湿,湿气被雾打湿。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 0.426
+   },
+   "beam": {
+    "text": "叶知微的鬓发被雾打湿。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.486,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.0376
+   }
+  },
+  {
+   "caseId": "train-r3:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "被雨打湿半幅",
+   "greedy": {
+    "text": "沈砚被雨打湿半幅。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.231
+   },
+   "beam": {
+    "text": "沈砚被雨打湿半幅。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.517,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.2299
+   }
+  },
+  {
+   "caseId": "train-r3:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "袖口开了线",
+   "greedy": {
+    "text": "沈砚的袖口开了线。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.223
+   },
+   "beam": {
+    "text": "沈砚的袖口开了线。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.118,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.395
+   }
+  },
+  {
+   "caseId": "train-r3:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "指缝里塞着泥",
+   "greedy": {
+    "text": "顾行舟的指缝里塞着泥。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.284
+   },
+   "beam": {
+    "text": "顾行舟的指缝里塞着泥。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 1.559,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0893
+   }
+  },
+  {
+   "caseId": "train-r3:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "鞋跟磨塌了",
+   "greedy": {
+    "text": "叶知微的鞋跟磨塌了。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.256
+   },
+   "beam": {
+    "text": "叶知微的鞋跟磨塌了。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.331,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.5907
+   }
+  },
+  {
+   "caseId": "train-r3:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "裤脚沾了铜油",
+   "greedy": {
+    "text": "叶知微的裤脚沾了铜油。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.273
+   },
+   "beam": {
+    "text": "叶知微的裤脚沾了铜油。",
+    "complete": true,
+    "steps": 24,
+    "seconds": 1.78,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.195
+   }
+  },
+  {
+   "caseId": "train-r4:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "围巾松开一截",
+   "greedy": {
+    "text": "沈砚的围巾松开一截。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.261
+   },
+   "beam": {
+    "text": "沈砚的围巾松开一截。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.429,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.411
+   }
+  },
+  {
+   "caseId": "train-r4:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "脸色发白",
+   "greedy": {
+    "text": "沈砚的脸色发白,发白的脸色发白。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.365
+   },
+   "beam": {
+    "text": "沈砚的脸色发白,胸口发白。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.315,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.6629
+   }
+  },
+  {
+   "caseId": "train-r4:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "背上溅了泥点",
+   "greedy": {
+    "text": "顾行舟的背上溅了泥点。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.28
+   },
+   "beam": {
+    "text": "顾行舟的背上溅了泥点。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.99,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.3807
+   }
+  },
+  {
+   "caseId": "train-r4:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "手背蹭破了皮",
+   "greedy": {
+    "text": "叶知微的手背蹭破了皮。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.671
+   },
+   "beam": {
+    "text": "叶知微的手背蹭破了皮。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 1.397,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2938
+   }
+  },
+  {
+   "caseId": "train-r4:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "肩头落着灰",
+   "greedy": {
+    "text": "叶知微的肩头落着灰。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.401
+   },
+   "beam": {
+    "text": "叶知微的肩头落着灰。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 2.115,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.6405
+   }
+  },
+  {
+   "caseId": "train-r5:f0",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "帽檐压出折痕",
+   "greedy": {
+    "text": "沈砚的帽檐压出折痕。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.424
+   },
+   "beam": {
+    "text": "沈砚的帽檐压出折痕。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.95,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.2803
+   }
+  },
+  {
+   "caseId": "train-r5:f1",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "脚踝肿了一块",
+   "greedy": {
+    "text": "沈砚的脚踝肿了一块。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.252
+   },
+   "beam": {
+    "text": "沈砚的脚踝肿了一块。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.503,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.6044
+   }
+  },
+  {
+   "caseId": "train-r5:f2",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "衣领被雨浸透",
+   "greedy": {
+    "text": "顾行舟的衣领被雨浸透,袖口被雨浸透。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.456
+   },
+   "beam": {
+    "text": "顾行舟的衣领被雨浸透。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.666,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.0926
+   }
+  },
+  {
+   "caseId": "train-r5:f3",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "指尖磨出茧",
+   "greedy": {
+    "text": "叶知微的指尖磨出茧。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.455
+   },
+   "beam": {
+    "text": "叶知微的指尖磨出茧。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 2.325,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.2628
+   }
+  },
+  {
+   "caseId": "train-r5:f4",
+   "source": "round",
+   "group": null,
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "膝盖沾了泥",
+   "greedy": {
+    "text": "叶知微的膝盖沾了泥。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.423
+   },
+   "beam": {
+    "text": "叶知微的膝盖沾了泥。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 2.796,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.1624
+   }
+  },
+  {
+   "caseId": "t03:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.464
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 2.371,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.0299
+   }
+  },
+  {
+   "caseId": "t18:f1",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.459
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 2.592,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.0299
+   }
+  },
+  {
+   "caseId": "v05:f2",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮,玻璃上不再有雾。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 0.578
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 2.205,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.4335
+   }
+  },
+  {
+   "caseId": "ca4B",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "顾行舟",
+   "factText": "把案板擦干净",
+   "greedy": {
+    "text": "顾行舟把案板擦干净。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.454
+   },
+   "beam": {
+    "text": "顾行舟把案板擦干净。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.92,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2079
+   }
+  },
+  {
+   "caseId": "t11:f1",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 0.54
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.629,
+    "candidates": 3,
+    "truncated": false,
+    "score": -3.711
+   }
+  },
+  {
+   "caseId": "t23:f2",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 0.405
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.423,
+    "candidates": 3,
+    "truncated": false,
+    "score": -1.3548
+   }
+  },
+  {
+   "caseId": "v01:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "",
+   "greedy": {
+    "text": "沈砚从潮渡上来,蹲到雾堤的钟架下。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.391
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.304,
+    "candidates": 4,
+    "truncated": false,
+    "score": -1.596
+   }
+  },
+  {
+   "caseId": "v12:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "",
+   "greedy": {
+    "text": "阿棠从潮生巷一路走到早市,帆布棚下散光。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 0.392
+   },
+   "beam": {
+    "text": "阿棠从潮生巷一路走到早市,帆布棚下散光。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 1.526,
+    "candidates": 3,
+    "truncated": false,
+    "score": -3.0841
+   }
+  },
+  {
+   "caseId": "v13:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "",
+   "greedy": {
+    "text": "叶知微从潮渡一路走到旧灯塔脚下,抬头看了看塔身。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 0.478
+   },
+   "beam": {
+    "text": "叶知微从潮渡上来,走进旧灯塔。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 1.677,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.5939
+   }
+  },
+  {
+   "caseId": "t07:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "",
+   "greedy": {
+    "text": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 0.465
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,蹲到雾堤的钟架下。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 1.637,
+    "candidates": 3,
+    "truncated": false,
+    "score": -2.4967
+   }
+  },
+  {
+   "caseId": "t12:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "",
+   "greedy": {
+    "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.403
+   },
+   "beam": {
+    "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 1.521,
+    "candidates": 2,
+    "truncated": false,
+    "score": -5.1239
+   }
+  },
+  {
+   "caseId": "t14:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "顾行舟",
+   "factText": "",
+   "greedy": {
+    "text": "顾行舟从潮渡上来,走进雾堤。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.299
+   },
+   "beam": {
+    "text": "顾行舟从潮渡上来,走进雾堤。",
+    "complete": true,
+    "steps": 24,
+    "seconds": 1.708,
+    "candidates": 3,
+    "truncated": false,
+    "score": -2.1641
+   }
+  },
+  {
+   "caseId": "t15:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "韩渡",
+   "factText": "",
+   "greedy": {
+    "text": "韩渡从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 0.421
+   },
+   "beam": {
+    "text": "韩渡从潮生巷一路走到潮渡。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.573,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.3629
+   }
+  },
+  {
+   "caseId": "t17:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "",
+   "greedy": {
+    "text": "阿棠从潮生巷一路走到早市,鱼筐上沾着鱼鳞。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 0.448
+   },
+   "beam": {
+    "text": "阿棠从潮生巷一路走到早市。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.387,
+    "candidates": 3,
+    "truncated": false,
+    "score": -2.3488
+   }
+  },
+  {
+   "caseId": "t19:f2",
+   "source": "diag",
+   "group": "defect",
+   "kind": "outcome",
+   "name": "阿棠",
+   "factText": "把银鳞鱼装进鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.252
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.514,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.1843
+   }
+  },
+  {
+   "caseId": "v20:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "",
+   "greedy": {
+    "text": "沈砚从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 0.5
+   },
+   "beam": {
+    "text": "沈砚从潮生巷一路走到潮渡。",
+    "complete": true,
+    "steps": 24,
+    "seconds": 1.8,
+    "candidates": 4,
+    "truncated": false,
+    "score": -1.5677
+   }
+  },
+  {
+   "caseId": "t09:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "",
+   "greedy": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.311
+   },
+   "beam": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.69,
+    "candidates": 3,
+    "truncated": false,
+    "score": -2.195
+   }
+  },
+  {
+   "caseId": "t13:f0",
+   "source": "diag",
+   "group": "defect",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "",
+   "greedy": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.304
+   },
+   "beam": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.24,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.1777
+   }
+  },
+  {
+   "caseId": "qd3A",
+   "source": "diag",
+   "group": "defect",
+   "kind": "appearance_changed",
+   "name": "抹布",
+   "factText": "拧不干",
+   "greedy": {
+    "text": "抹布拧不干。",
+    "complete": true,
+    "steps": 8,
+    "seconds": 0.169
+   },
+   "beam": {
+    "text": "抹布拧不干。",
+    "complete": true,
+    "steps": 9,
+    "seconds": 0.64,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.1443
+   }
+  },
+  {
+   "caseId": "qa3A",
+   "source": "diag",
+   "group": "defect",
+   "kind": "appearance_changed",
+   "name": "抹布",
+   "factText": "边角磨破了",
+   "greedy": {
+    "text": "抹布的边角磨破了。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.23
+   },
+   "beam": {
+    "text": "抹布的边角磨破了。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.212,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2771
+   }
+  },
+  {
+   "caseId": "v02:f0",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "阿棠",
+   "factText": "把银鳞鱼按大小分开装进鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼按大小分开装进鱼筐。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.335
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼按大小分开装进鱼筐。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 1.728,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0124
+   }
+  },
+  {
+   "caseId": "v04:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "韩渡",
+   "factText": "把系泊绳收成一卷",
+   "greedy": {
+    "text": "韩渡把系泊绳收成一卷。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.253
+   },
+   "beam": {
+    "text": "韩渡把系泊绳收成一卷。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.382,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0189
+   }
+  },
+  {
+   "caseId": "v06:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "阿棠",
+   "factText": "把纸灯笼扶正",
+   "greedy": {
+    "text": "阿棠把纸灯笼扶正。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.215
+   },
+   "beam": {
+    "text": "阿棠把纸灯笼扶正。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.889,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0261
+   }
+  },
+  {
+   "caseId": "v08:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "韩渡",
+   "factText": "把钟绳重新绕在钟架上",
+   "greedy": {
+    "text": "韩渡把钟绳重新绕在钟架上。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.292
+   },
+   "beam": {
+    "text": "韩渡把钟绳重新绕在钟架上。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.962,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0072
+   }
+  },
+  {
+   "caseId": "v09:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "阿棠",
+   "factText": "把银鳞鱼装进鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.255
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.445,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0354
+   }
+  },
+  {
+   "caseId": "v10:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把擦铜油放回梯脚",
+   "greedy": {
+    "text": "叶知微把擦铜油放回梯脚。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.3
+   },
+   "beam": {
+    "text": "叶知微把擦铜油放回梯脚。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.579,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0138
+   }
+  },
+  {
+   "caseId": "v16:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "阿棠",
+   "factText": "把银鳞鱼摆在案板旁边",
+   "greedy": {
+    "text": "阿棠把银鳞鱼摆在案板旁边。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.292
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼摆在案板旁边。",
+    "complete": true,
+    "steps": 20,
+    "seconds": 1.466,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0064
+   }
+  },
+  {
+   "caseId": "v17:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "叶知微",
+   "factText": "把油壶搁在铜灯罩上",
+   "greedy": {
+    "text": "叶知微把油壶搁在铜灯罩上。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 0.314
+   },
+   "beam": {
+    "text": "叶知微把油壶搁在铜灯罩上。",
+    "complete": true,
+    "steps": 28,
+    "seconds": 2.072,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.003
+   }
+  },
+  {
+   "caseId": "v21:f0",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "沈砚",
+   "factText": "把铜灯挪到长桌另一头",
+   "greedy": {
+    "text": "沈砚把铜灯挪到长桌另一头。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.332
+   },
+   "beam": {
+    "text": "沈砚把铜灯挪到长桌另一头。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 1.075,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0051
+   }
+  },
+  {
+   "caseId": "v23:f0",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "顾行舟",
+   "factText": "把缆绳绕上摊棚边的木桩",
+   "greedy": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.372
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "complete": true,
+    "steps": 30,
+    "seconds": 2.512,
+    "candidates": 4,
+    "truncated": false,
+    "score": -0.007
+   }
+  },
+  {
+   "caseId": "t01:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "沈砚",
+   "factText": "把簿子合上推到桌角",
+   "greedy": {
+    "text": "沈砚把簿子合上推到桌角。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.35
+   },
+   "beam": {
+    "text": "沈砚把簿子合上推到桌角。",
+    "complete": true,
+    "steps": 23,
+    "seconds": 1.805,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.0115
+   }
+  },
+  {
+   "caseId": "t02:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "阿棠",
+   "factText": "把空鱼筐摞到摊棚边上",
+   "greedy": {
+    "text": "阿棠把空鱼筐摞到摊棚边上。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.322
+   },
+   "beam": {
+    "text": "阿棠把空鱼筐摞到摊棚边上。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.801,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.0055
+   }
+  },
+  {
+   "caseId": "t05:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "韩渡",
+   "factText": "把雾警钟敲响",
+   "greedy": {
+    "text": "韩渡把雾警钟敲响。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.268
+   },
+   "beam": {
+    "text": "韩渡把雾警钟敲响。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.262,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.0657
+   }
+  },
+  {
+   "caseId": "t06:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "沈砚",
+   "factText": "把被风吹歪的纸灯笼扶正",
+   "greedy": {
+    "text": "沈砚把被风吹歪的纸灯笼扶正。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.363
+   },
+   "beam": {
+    "text": "沈砚把被风吹歪的纸灯笼扶正。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.778,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1277
+   }
+  },
+  {
+   "caseId": "t08:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "顾行舟",
+   "factText": "把缆绳绕上摊棚边的木桩",
+   "greedy": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.384
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.996,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.008
+   }
+  },
+  {
+   "caseId": "t10:f1",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "沈砚",
+   "factText": "把系泊绳从浅滩拖回岸上",
+   "greedy": {
+    "text": "沈砚把系泊绳从浅滩拖回岸上。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.507
+   },
+   "beam": {
+    "text": "沈砚把系泊绳从浅滩拖回岸上。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 2.761,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0074
+   }
+  },
+  {
+   "caseId": "t20:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "沈砚",
+   "factText": "把警示灯扶正",
+   "greedy": {
+    "text": "沈砚把警示灯扶正。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.45
+   },
+   "beam": {
+    "text": "沈砚把警示灯扶正。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 1.581,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0624
+   }
+  },
+  {
+   "caseId": "t22:f2",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "顾行舟",
+   "factText": "把缆绳重新绕上木桩",
+   "greedy": {
+    "text": "顾行舟把缆绳重新绕上木桩。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.376
+   },
+   "beam": {
+    "text": "顾行舟把缆绳重新绕上木桩。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 2.982,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0135
+   }
+  },
+  {
+   "caseId": "ca1A",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "沈砚",
+   "factText": "把船灯的灯罩扣回去",
+   "greedy": {
+    "text": "沈砚把船灯的灯罩扣回去。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.408
+   },
+   "beam": {
+    "text": "沈砚把船灯的灯罩扣回去。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 2.306,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.1609
+   }
+  },
+  {
+   "caseId": "ca3B",
+   "source": "diag",
+   "group": "clean",
+   "kind": "outcome",
+   "name": "韩渡",
+   "factText": "把铁链绕回钟架上",
+   "greedy": {
+    "text": "韩渡把铁链绕回钟架上。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.289
+   },
+   "beam": {
+    "text": "韩渡把铁链绕回钟架上。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.541,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0144
+   }
+  }
+ ]
+}

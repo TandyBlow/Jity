@@ -1,0 +1,96 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "optdiag-lr3e4",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4arm3/artifacts/next-runs/three-arm-c/ckpt",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+   "rows": 229,
+   "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+  "targetSha256": "0f3d962119317bd293672e98625e5f0b3d2327d311cbd4448dd8ed6925e841d0"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.01
+  },
+  {
+   "step": 40,
+   "loss": 0.068
+  },
+  {
+   "step": 80,
+   "loss": 0.0814
+  },
+  {
+   "step": 120,
+   "loss": 0.1118
+  },
+  {
+   "step": 160,
+   "loss": 0.085
+  },
+  {
+   "step": 200,
+   "loss": 0.1306
+  },
+  {
+   "step": 240,
+   "loss": 0.104
+  }
+ ],
+ "seconds": 16.7,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/optdiag-lr3e4/ckpt",
+  "modelSha256": "d636032486701d3eedc674fea073aeb9546063c21d86483a9652f0a7e243a747"
+ },
+ "snapshots": {
+  "120": {
+   "dir": "artifacts/next-runs/optdiag-lr3e4/ckpt-120",
+   "modelSha256": "1228939824e46873901e1a0756efb709ad43f6690d689581632b636540ad42c7",
+   "ids": 960,
+   "idSha256": "e38f479d97acd7ee0a07bec6c5819de3c94445f6d2a93c8d7fe0462035ba1c34"
+  }
+ },
+ "fetch": {
+  "source": "train-report.json",
+  "remoteSha256": "b2fe06d185f5ef9e6684cfd4dfa00a7f0bb6b3c5f0aa0a07f3f18172d7cf5424",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

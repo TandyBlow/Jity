@@ -1,0 +1,311 @@
+{
+ "n": 1351,
+ "states": {
+  "pass": 1164,
+  "undetermined": 123,
+  "mismatch": 64
+ },
+ "passShare": 0.8616,
+ "undeterminedShare": 0.091,
+ "wrongPassed": [
+  {
+   "arm": "ce-20261103",
+   "unitId": "t24:f1",
+   "why": "the subject and part of the state text are both present",
+   "text": "排水沟里的泥在墙根上蹭了泥。"
+  }
+ ],
+ "goodRejected": [
+  {
+   "arm": "C",
+   "unitId": "t09:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "C",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "C",
+   "unitId": "t16:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在潮生巷站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "v14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m01:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从早市出来,在雾堤的钟架下站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m02:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m05:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在早市的鱼摊前站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m12:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "阿棠从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "阿棠从潮汐档案馆出来,在早市的鱼摊前站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m24:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "顾行舟从早市开到潮渡。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "v14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m05:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "阿棠从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m17:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "t09:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m10:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微离开旧灯塔,沿着墙边走进档案馆。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m11:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m17:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m24:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "t09:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "v14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m24:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "v14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m05:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "沈砚从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m14:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "阿棠从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m17:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "t09:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m10:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微离开旧灯塔,沿着墙边走进档案馆。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m11:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m17:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m24:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "t09:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "t13:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m17:f0",
+   "why": "destination 潮汐档案馆 missing",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m20:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m24:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  }
+ ],
+ "causeCount": {
+  "place name abbreviated (档案馆 vs 潮汐档案馆)": 19,
+  "arrival verb outside the list (站住/抵住/蹲到/开到)": 28
+ },
+ "undeterminedReasons": {
+  "the fact text is relational but the record does not say which entity is the location, so the direction cannot be checked": 91,
+  "direction is neither confirmed nor contradicted": 31,
+  "the state text is not recognisable in the sentence": 1
+ }
+}

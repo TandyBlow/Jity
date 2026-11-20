@@ -1,0 +1,58 @@
+{
+ "purpose": "calibration set for the component-constraint specification; no training",
+ "facts": 24,
+ "rows": 48,
+ "k": 2,
+ "kNote": "the two expressions share the target and differ only in the scene block; the pool has no second surface rendering of the same fact, so this checks the machinery, not surface variety",
+ "kindCounts": {
+  "moved": 6,
+  "appearance_changed": 6,
+  "outcome": 4,
+  "sanity_changed": 4,
+  "personality_changed": 2,
+  "no_change": 2
+ },
+ "negatives": {
+  "name_drop": {
+   "rows": 44,
+   "valid": 44,
+   "invalid": 0
+  },
+  "other_vague": {
+   "rows": 10,
+   "valid": 10,
+   "invalid": 0
+  },
+  "state_negated": {
+   "rows": 10,
+   "valid": 10,
+   "invalid": 0
+  },
+  "state_stasis": {
+   "rows": 20,
+   "valid": 20,
+   "invalid": 0
+  },
+  "state_event": {
+   "rows": 4,
+   "valid": 4,
+   "invalid": 0
+  }
+ },
+ "componentsMissing": {
+  "name": 4,
+  "other": 38,
+  "relation": 46,
+  "state": 4
+ },
+ "failures": [],
+ "rowsWithoutNegatives": [],
+ "negationNotConstructed": {
+  "kinds": [
+   "outcome",
+   "personality_changed"
+  ],
+  "why": "the predicate is a 把/adverb frame or a rewritten behaviour, so mechanical negation produces broken text; only the name-drop negative survives for those kinds",
+  "relationNegatives": "this subset carries almost no relation facts (relation span found on 2 of 48 rows), so relation direction is not calibrated here"
+ }
+}

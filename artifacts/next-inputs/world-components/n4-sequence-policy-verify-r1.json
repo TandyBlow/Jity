@@ -1,0 +1,186 @@
+{
+ "purpose": "verify full-sequence training and uncapped EOS/timeout decoding",
+ "environment": {
+  "torch": "2.7.0+cu126",
+  "cuda": true,
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "python": "3.12.3",
+  "tokenizer": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+  "tokenizerLegacy": false
+ },
+ "policy": {
+  "maxInput": null,
+  "maxTarget": null,
+  "maxNewTokens": null,
+  "truncation": false,
+  "padding": "longest-in-batch",
+  "decoding": "greedy-cached",
+  "normalStop": "eos",
+  "generationTimeoutSeconds": 20.0,
+  "incompleteIsSuccess": false
+ },
+ "data": {
+  "rows": 140,
+  "file": "corpus140.jsonl"
+ },
+ "encoding": {
+  "inputTokens": {
+   "min": 320,
+   "median": 419,
+   "max": 574,
+   "total": 59729
+  },
+  "targetTokens": {
+   "min": 72,
+   "median": 95,
+   "max": 200,
+   "total": 14621
+  },
+  "overOldCaps": {
+   "input512": 8,
+   "target128": 25
+  },
+  "tailLoss": [],
+  "missingEos": []
+ },
+ "batching": {
+  "batches": 18,
+  "paddingEqualsBatchMax": true,
+  "padLabelsAreMinus100": true,
+  "observedShapes": [
+   [
+    555,
+    176
+   ],
+   [
+    489,
+    175
+   ],
+   [
+    571,
+    160
+   ]
+  ]
+ },
+ "decodeEquivalence": {
+  "note": "HF arm bounded by --hf-cap only as a test harness; the new decoder ignores generation_config length limits",
+  "hfCap": 128,
+  "rows": [
+   {
+    "rowId": "r19",
+    "hfEos": true,
+    "hfTokens": 36,
+    "ourTokens": 36,
+    "identicalToShorter": true,
+    "exact": true,
+    "stopReason": "eos",
+    "complete": true,
+    "seconds": 0.954423
+   },
+   {
+    "rowId": "r77",
+    "hfEos": true,
+    "hfTokens": 36,
+    "ourTokens": 36,
+    "identicalToShorter": true,
+    "exact": true,
+    "stopReason": "eos",
+    "complete": true,
+    "seconds": 0.939478
+   },
+   {
+    "rowId": "r81",
+    "hfEos": true,
+    "hfTokens": 3,
+    "ourTokens": 3,
+    "identicalToShorter": true,
+    "exact": true,
+    "stopReason": "eos",
+    "complete": true,
+    "seconds": 0.105464
+   }
+  ],
+  "allExact": true,
+  "allMatchedToShorter": true
+ },
+ "timeout": {
+  "rowId": "r19",
+  "timeoutSeconds": 3.0,
+  "stopReason": "timeout",
+  "complete": false,
+  "keptTokens": 119,
+  "wallSeconds": 3.001,
+  "partialDecoded": "地点外貌=潮生巷尽头的鱼市,帆布棚、蒸汽、鱼鳞、泥水;人流拥挤,白汽不散。;帆布棚、鱼筐、案板、石板、银鳞鱼、白汽;潮湿,白汽散了;棚下散光。 人物: 沈砚|性格=慢而细,习惯把话咽回去|外貌=青灰长衫,袖口常沾墨|随身=油布包、油纸伞、外",
+  "countedAsSuccess": false
+ },
+ "trainStepCost": {
+  "note": "worst-case rows (longest inputs in corpus140); fp32; peak is per batch size after empty_cache",
+  "steps": [
+   {
+    "batch": 1,
+    "ok": true,
+    "inputTokens": 574,
+    "targetTokens": 92,
+    "seconds": 0.39,
+    "loss": 7.2699,
+    "peakAllocatedGB": 1.501,
+    "peakReservedGB": 1.646
+   },
+   {
+    "batch": 2,
+    "ok": true,
+    "inputTokens": 574,
+    "targetTokens": 124,
+    "seconds": 0.226,
+    "loss": 5.4935,
+    "peakAllocatedGB": 1.937,
+    "peakReservedGB": 2.371
+   },
+   {
+    "batch": 4,
+    "ok": true,
+    "inputTokens": 574,
+    "targetTokens": 176,
+    "seconds": 0.235,
+    "loss": 5.2676,
+    "peakAllocatedGB": 3.257,
+    "peakReservedGB": 3.662
+   },
+   {
+    "batch": 8,
+    "ok": true,
+    "inputTokens": 574,
+    "targetTokens": 176,
+    "seconds": 0.435,
+    "loss": 4.9877,
+    "peakAllocatedGB": 5.544,
+    "peakReservedGB": 6.113
+   }
+  ]
+ },
+ "generateCost": {
+  "rows": [
+   {
+    "rowId": "r19",
+    "inputTokens": 320,
+    "newTokens": 37,
+    "seconds": 0.863266,
+    "peakAllocatedGB": 1.219
+   },
+   {
+    "rowId": "r77",
+    "inputTokens": 346,
+    "newTokens": 39,
+    "seconds": 0.898804,
+    "peakAllocatedGB": 1.222
+   },
+   {
+    "rowId": "r81",
+    "inputTokens": 354,
+    "newTokens": 4,
+    "seconds": 0.099816,
+    "peakAllocatedGB": 1.223
+   }
+  ]
+ }
+}

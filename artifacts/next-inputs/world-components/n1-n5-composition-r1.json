@@ -1,0 +1,212 @@
+{
+ "purpose": "batch-4 real-model composition: program N1-N3 + frozen r3-direction N4 + program N5 over normal, failure and over-limit paths; offline CPU evidence, browser evidence is the separate batch-3 archive",
+ "componentProvenance": {
+  "n1/n2/n3/n5": "program (N2 encoder head rejected by batch-2 measurement; N3 model arm blocked by the 0.6B pause - recorded, not substituted)",
+  "n4": "frozen r3-direction, HF generate, fp32, greedy, max_new_tokens 64, deterministic flags"
+ },
+ "checkpoint": {
+  "dir": "assets/n4-finetune/r3-direction",
+  "modelSha256": "baceebff5d33eacfc2aa8373c61e2d231130e9986f0e1da30523299c41c19b45"
+ },
+ "environment": {
+  "python": "3.12.3",
+  "torch": "2.7.0+cu126",
+  "device": "cpu",
+  "deviceName": "cpu",
+  "note": "offline timing only; never merged with browser timings"
+ },
+ "scenarios": [
+  {
+   "name": "normal-second",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.03,
+     "facts": 3,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.01,
+     "status": "ok",
+     "selected": 3
+    },
+    "n3": {
+     "ms": 0.04,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.13,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4Model": {
+     "ms": 1678.8,
+     "outputTokens": 36,
+     "text": "管线甲从管线镇来到钟楼时,管线甲已经办妥任务「把铜铃挂回钟楼」。前后大约四十秒。"
+    },
+    "n5": {
+     "ms": 2.79,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 位置：管线甲 从管线镇到钟楼\n2. 任务达成：管线甲「把铜铃挂回钟楼」\n3. 时间推进：约四十秒\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "normal-zero-empty",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.02,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.01,
+     "status": "ok",
+     "selected": 2
+    },
+    "n3": {
+     "ms": 0.03,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.09,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4Model": {
+     "ms": 570.9,
+     "outputTokens": 13,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    "n5": {
+     "ms": 0.83,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 时间推进：约零分钟\n2. 无变化\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "normal-root",
+   "expect": "ok",
+   "stages": {
+    "n1": {
+     "ms": 0.02,
+     "facts": 1,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.0,
+     "status": "ok",
+     "selected": 1
+    },
+    "n3": {
+     "ms": 0.03,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.07,
+     "status": "accepted",
+     "reason": null,
+     "reasons": null
+    },
+    "n4Model": {
+     "ms": 311.3,
+     "outputTokens": 7,
+     "text": "一切如旧。"
+    },
+    "n5": {
+     "ms": 0.11,
+     "status": "checked",
+     "fails": [],
+     "semanticUncertain": [],
+     "autoPassed": false,
+     "note": "review-class findings are listed for human/model review; this module does not gate the page"
+    }
+   },
+   "modelCalled": true,
+   "modelInput": "叙事生成任务。\n事实：\n1. 无变化\n正文：",
+   "status": "ok",
+   "expectMet": true
+  },
+  {
+   "name": "fail-version-gap",
+   "expect": "stopped-at-binding",
+   "stages": {
+    "n1": {
+     "ms": 0.02,
+     "facts": 2,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.01,
+     "status": "ok",
+     "selected": 2
+    },
+    "n3": {
+     "ms": 0.04,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.06,
+     "status": "binding-failed",
+     "reason": null,
+     "reasons": [
+      "version-gap"
+     ]
+    }
+   },
+   "status": "stopped-at-binding",
+   "modelCalled": false,
+   "expectMet": true
+  },
+  {
+   "name": "limit-five-facts",
+   "expect": "unsupported",
+   "stages": {
+    "n1": {
+     "ms": 0.06,
+     "facts": 6,
+     "diagnostics": []
+    },
+    "n2": {
+     "ms": 0.01,
+     "status": "ok",
+     "selected": 6
+    },
+    "n3": {
+     "ms": 0.06,
+     "status": "ok"
+    },
+    "n4Interface": {
+     "ms": 0.14,
+     "status": "unsupported",
+     "reason": "plan-too-long",
+     "reasons": null
+    }
+   },
+   "status": "unsupported",
+   "modelCalled": false,
+   "expectMet": true
+  }
+ ],
+ "n5SemanticUncertain": [],
+ "n5Note": "review-class findings are listed for review, never auto-passed; the page gate stays B-side",
+ "pass": true
+}

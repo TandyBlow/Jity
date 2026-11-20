@@ -1,0 +1,107 @@
+{
+ "traceability": [
+  {
+   "world": "world_13",
+   "from": "point_20",
+   "to": "point_23",
+   "chain": "point_20.previousPointId=root_15? 否；point_23.previousPointId=point_20",
+   "timeAdvance": "各 elapsed 1 秒",
+   "elapsedSeconds": 1,
+   "authorizes": "before（顺序 + 真实时间推进）"
+  },
+  {
+   "world": "world_35",
+   "from": "point_42",
+   "to": "point_45",
+   "elapsedSeconds": 1,
+   "authorizes": "before"
+  },
+  {
+   "world": "world_13",
+   "advance": "advance_17 同时覆盖 point_20 与 point_23",
+   "authorizes": "仅批次，不构成同时或先后"
+  },
+  {
+   "world": "world_13",
+   "round": "round_19 order=[person_a,person_c] cursor=2",
+   "authorizes": "处理顺序，不构成叙事顺序"
+  },
+  {
+   "world": "任意",
+   "instant": "boundary=instant, duration=0",
+   "authorizes": "只说明引擎未推进时间，不等于同时"
+  }
+ ],
+ "crossSources": [
+  {
+   "sourceId": "v01",
+   "facts": [
+    "f0",
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "eventIdsAvailable": false,
+   "evidenceSearch": "材料由 final24.py / cf24_materials.py 手写，facts 无 pointId/eventId 字段；world.db 里也没有对应记录",
+   "trialRejection": [
+    "relations[0]: 缺少 evidenceEventIds"
+   ]
+  },
+  {
+   "sourceId": "t07",
+   "facts": [
+    "f0",
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "eventIdsAvailable": false,
+   "evidenceSearch": "材料由 final24.py / cf24_materials.py 手写，facts 无 pointId/eventId 字段；world.db 里也没有对应记录",
+   "trialRejection": [
+    "relations[0]: 缺少 evidenceEventIds"
+   ]
+  },
+  {
+   "sourceId": "t09",
+   "facts": [
+    "f0",
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "eventIdsAvailable": false,
+   "evidenceSearch": "材料由 final24.py / cf24_materials.py 手写，facts 无 pointId/eventId 字段；world.db 里也没有对应记录",
+   "trialRejection": [
+    "relations[0]: 缺少 evidenceEventIds"
+   ]
+  },
+  {
+   "sourceId": "t19",
+   "facts": [
+    "f0",
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "eventIdsAvailable": false,
+   "evidenceSearch": "材料由 final24.py / cf24_materials.py 手写，facts 无 pointId/eventId 字段；world.db 里也没有对应记录",
+   "trialRejection": [
+    "relations[0]: 缺少 evidenceEventIds"
+   ]
+  },
+  {
+   "sourceId": "t21",
+   "facts": [
+    "f0",
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "eventIdsAvailable": false,
+   "evidenceSearch": "材料由 final24.py / cf24_materials.py 手写，facts 无 pointId/eventId 字段；world.db 里也没有对应记录",
+   "trialRejection": [
+    "relations[0]: 缺少 evidenceEventIds"
+   ]
+  }
+ ]
+}

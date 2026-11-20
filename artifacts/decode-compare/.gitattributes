@@ -1,0 +1,15 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"arm-ab.json" -text
+"beam-cache-equivalence.json" -text
+"cases.json" -text
+"cases.manifest.json" -text
+"confirm40-ab.json" -text
+"confirm40-cases.json" -text
+"confirm40-scores.json" -text
+"confirm40.json" -text
+"confirm40.manifest.json" -text
+"diag215-ab.json" -text
+"diag215-cases.json" -text
+"diag215-scores.json" -text
+"scores.json" -text
