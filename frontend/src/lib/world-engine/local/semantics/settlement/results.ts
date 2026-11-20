@@ -214,7 +214,7 @@ export async function runResults(
       // A retry has to name the frozen members: the 3turn 9623 repair answered
       // nono only while the group was lu+nono, so «missing judgment for lu» alone
       // did not stop it from omitting the player again.
-      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条；不要给场景里的其他人写 judgment。`,
+      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条，每条 fact 的 memberIds 必须包含这句话写到的人；不要把某人的结果写在别人的 fact 里；不要给场景里的其他人写 judgment。`,
     });
     calls = answer.calls;
     // The accepted answer settled under the same rule the last attempt used.
@@ -642,13 +642,12 @@ function readResultsAnswer(
     }
     const rawRecipients = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
     if (!rawRecipients.length) throw new Error('fact must name at least one member');
-    const recipientIds = rawRecipients.map((raw) => {
+    let recipientIds = rawRecipients.map((raw) => {
       const id = resolveCharacterId(state, raw);
       if (!id) throw new Error(referenceError(state, raw, 'character', members[0]?.memberId));
       if (!memberById.has(id)) throw new Error(`fact names non-member ${raw}${id !== raw ? ` (${id})` : ''}; facts 的 memberIds 只能填本组成员 ${members.map((row) => row.memberId).join(',')}`);
       return id;
-    });
-    if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    });    if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
     // The fact must be this group's own action result. 736a's reaction group
     // answered with 路明非未被掀开袖口，未看到规则牌… — the judgement's
     // explanation of 路明非, who the other group already settled as walking in
@@ -740,9 +739,16 @@ function readResultsAnswer(
         droppedFacts.push({ memberIds: recipientIds, original, reason: 'explains_another_character' });
         continue;
       }
-      const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
-      const inGroup = mentioned.some((id) => memberById.has(id));
-      throw new Error(`fact names only ${names}, who ${inGroup ? 'belong to another group of this turn' : `${names.length > 1 ? 'are' : 'is'} not in this group`}; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+      // On the final attempt the sentence names exactly one member: that member
+      // is its subject and the declared memberIds are the slip. Reattribute it
+      // instead of aborting the point over an id that the text already states.
+      if (options.dropEmptyResults && mentioned.length === 1 && memberById.has(mentioned[0])) {
+        recipientIds = [mentioned[0]];
+      } else {
+        const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
+        const inGroup = mentioned.some((id) => memberById.has(id));
+        throw new Error(`fact names only ${names}, who ${inGroup ? 'belong to another group of this turn' : `${names.length > 1 ? 'are' : 'is'} not in this group`}; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+      }
     }
     // A mechanics clause can take the subject with it. If the remaining result
     // is a continuation (“且未被允许反应”), prefix the recipient's display name

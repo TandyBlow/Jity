@@ -156,6 +156,23 @@ describe('common-group results', () => {
     ]);
   });
 
+  it('reattributes a final-attempt fact to the member its sentence names', async () => {
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推了工具。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙站在原处。', effects: [] },
+      ],
+      facts: [{ text: '乙站在原地没有动。', memberIds: ['a'] }],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { memberIds: string[]; text: string }[]; missingFactMembers: string[] };
+    expect(detail.facts).toHaveLength(1);
+    expect(detail.facts[0]).toMatchObject({ memberIds: ['b'], text: '乙站在原地没有动。' });
+    expect(detail.missingFactMembers).toEqual(['a']);
+  });
+
   it('keeps the structured result fields of a committed fact', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [
