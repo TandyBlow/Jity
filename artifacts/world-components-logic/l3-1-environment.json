@@ -1,0 +1,165 @@
+{
+  "schema": "jity-d-isolated-environment-v1",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "pythonVersion": "3.11.7",
+  "venvRelativePath": ".local/world-components-logic/venv",
+  "baseEnvironmentModified": false,
+  "pipInstallReportSha256": "239227a8e229164d4821c0a850a36d5c4aed8b8aad075c9339ae06f8995455bd",
+  "lockFile": "experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt",
+  "lockSha256": "3068c8e63094dcbf71a367da950c60fc1612ee6a30e94a53d8019c31b250ec3c",
+  "packages": [
+    {
+      "name": "certifi",
+      "version": "2026.10.23",
+      "wheelSha256FromPipReport": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+      "url": "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.2",
+      "wheelSha256FromPipReport": "3d21b8b13c7592db2ac5e544a6d83187b995257472b0c9e8351b6d507ae37ed6",
+      "url": "https://files.pythonhosted.org/packages/22/67/6a0b94a7960d5e1b5eacd2fb529f3fccc47db4644f7f0a7cfdcfc3be578a/charset_normalizer-3.5.2-cp311-cp311-macosx_10_9_universal2.whl"
+    },
+    {
+      "name": "filelock",
+      "version": "4.2.4",
+      "wheelSha256FromPipReport": "301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e",
+      "url": "https://files.pythonhosted.org/packages/e0/1b/5e74289a1878e666bb4b65fe5805a04cafcac2aa5f519ef1ead67ef91c56/filelock-4.2.4-py3-none-any.whl"
+    },
+    {
+      "name": "fsspec",
+      "version": "2026.9.0",
+      "wheelSha256FromPipReport": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+      "url": "https://files.pythonhosted.org/packages/6c/c0/a98505f18594f1bce828bb159cec0fcf9860562f1a2c85913409fc8f3d9e/fsspec-2026.9.0-py3-none-any.whl"
+    },
+    {
+      "name": "hf-xet",
+      "version": "1.7.1",
+      "wheelSha256FromPipReport": "46d09bc6200388622f6aeb6db6d7b47060f63c483b6fb637e0e13e87470bfabf",
+      "url": "https://files.pythonhosted.org/packages/9c/7b/e3fada39f556579503808a93e51231bb2f926f4633c038bc9c5237f6c39c/hf_xet-1.7.1-cp38-abi3-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "huggingface_hub",
+      "version": "0.36.2",
+      "wheelSha256FromPipReport": "48f0c8eac16145dfce371e9d2d7772854a4f591bcb56c9cf548accf531d54270",
+      "url": "https://files.pythonhosted.org/packages/a8/af/48ac8483240de756d2438c380746e7130d1c6f75802ef22f3c6d49982787/huggingface_hub-0.36.2-py3-none-any.whl"
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "wheelSha256FromPipReport": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl"
+    },
+    {
+      "name": "Jinja2",
+      "version": "3.1.6",
+      "wheelSha256FromPipReport": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+      "url": "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl"
+    },
+    {
+      "name": "MarkupSafe",
+      "version": "3.0.4",
+      "wheelSha256FromPipReport": "7d3391b2188d18737cb2fa147028b1096236eaa7e156446c650a489fa2cadc91",
+      "url": "https://files.pythonhosted.org/packages/6c/14/0b05f79b4733e264a18d08fe08fa1df7347630ff32a6cb82180d9dccec55/markupsafe-3.0.4-cp311-cp311-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0",
+      "wheelSha256FromPipReport": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+      "url": "https://files.pythonhosted.org/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl"
+    },
+    {
+      "name": "networkx",
+      "version": "3.6.1",
+      "wheelSha256FromPipReport": "d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762",
+      "url": "https://files.pythonhosted.org/packages/9e/c9/b2622292ea83fbb4ec318f5b9ab867d0a28ab43c5717bb85b0a5f6b3b0a4/networkx-3.6.1-py3-none-any.whl"
+    },
+    {
+      "name": "numpy",
+      "version": "1.26.4",
+      "wheelSha256FromPipReport": "edd8b5fe47dab091176d21bb6de568acdd906d1887a4584a15a9a96a1dca06ef",
+      "url": "https://files.pythonhosted.org/packages/1a/2e/151484f49fd03944c4a3ad9c418ed193cfd02724e138ac8a9505d056c582/numpy-1.26.4-cp311-cp311-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "wheelSha256FromPipReport": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl"
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.3",
+      "wheelSha256FromPipReport": "652cb6edd41e718550aad172851962662ff2681490a8a711af6a4d288dd96824",
+      "url": "https://files.pythonhosted.org/packages/16/19/13de8e4377ed53079ee996e1ab0a9c33ec2faf808a4647b7b4c0d46dd239/pyyaml-6.0.3-cp311-cp311-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "regex",
+      "version": "2026.9.29",
+      "wheelSha256FromPipReport": "066d0e3dbfdd739bce2bf8c2a41dd16f73e3d8adc2eb06dd803a36a307f56075",
+      "url": "https://files.pythonhosted.org/packages/b1/07/9bf3607d8d13a12e436ab9d63f9791e10706827d535695b23964ad79fd79/regex-2026.9.29-cp311-cp311-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "wheelSha256FromPipReport": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+      "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl"
+    },
+    {
+      "name": "safetensors",
+      "version": "0.6.2",
+      "wheelSha256FromPipReport": "d6675cf4b39c98dbd7d940598028f3742e0375a6b4d4277e76beb0c35f4b843b",
+      "url": "https://files.pythonhosted.org/packages/8c/c9/bb114c158540ee17907ec470d01980957fdaf87b4aa07914c24eba87b9c6/safetensors-0.6.2-cp38-abi3-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "sentencepiece",
+      "version": "0.2.1",
+      "wheelSha256FromPipReport": "02593eca45440ef39247cee8c47322a34bdcc1d8ae83ad28ba5a899a2cf8d79a",
+      "url": "https://files.pythonhosted.org/packages/bb/88/2b41e07bd24f33dcf2f18ec3b74247aa4af3526bad8907b8727ea3caba03/sentencepiece-0.2.1-cp311-cp311-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "sympy",
+      "version": "1.14.0",
+      "wheelSha256FromPipReport": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+      "url": "https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl"
+    },
+    {
+      "name": "tokenizers",
+      "version": "0.22.1",
+      "wheelSha256FromPipReport": "8d4e484f7b0827021ac5f9f71d4794aaef62b979ab7608593da22b1d2e3c4edc",
+      "url": "https://files.pythonhosted.org/packages/1c/58/2aa8c874d02b974990e89ff95826a4852a8b2a273c7d1b4411cdd45a4565/tokenizers-0.22.1-cp39-abi3-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "torch",
+      "version": "2.7.1",
+      "wheelSha256FromPipReport": "aea4fc1bf433d12843eb2c6b2204861f43d8364597697074c8d38ae2507f8730",
+      "url": "https://files.pythonhosted.org/packages/5b/2b/d36d57c66ff031f93b4fa432e86802f84991477e522adcdffd314454326b/torch-2.7.1-cp311-none-macosx_11_0_arm64.whl"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.1",
+      "wheelSha256FromPipReport": "c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73",
+      "url": "https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl"
+    },
+    {
+      "name": "transformers",
+      "version": "4.57.3",
+      "wheelSha256FromPipReport": "c77d353a4851b1880191603d36acb313411d3577f6e2897814f333841f7003f4",
+      "url": "https://files.pythonhosted.org/packages/6a/6b/2f416568b3c4c91c96e5a365d164f8a4a4a88030aa8ab4644181fdadce97/transformers-4.57.3-py3-none-any.whl"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "wheelSha256FromPipReport": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0",
+      "wheelSha256FromPipReport": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+      "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl"
+    }
+  ],
+  "hashScope": "SHA256 identities from pip install report; no separate second wheel-byte audit",
+  "modelExecutionPerformed": false
+}

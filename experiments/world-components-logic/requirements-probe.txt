@@ -1,0 +1,9 @@
+# Isolated CPU-only exploratory runtime; exact transitive versions/hashes are
+# recorded by pip's install report and environment inventory before a probe.
+torch==2.7.1
+transformers==4.57.3
+huggingface-hub==0.36.2
+tokenizers==0.22.1
+safetensors==0.6.2
+sentencepiece==0.2.1
+numpy==1.26.4
