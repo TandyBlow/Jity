@@ -195,13 +195,28 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   const room = roomOf(after, view);
   const sentences: string[] = [];
   const declared = actionText.trim().replace(/^我/u, name);
-  if (declared) sentences.push(`玩家这回合让${name}做的事：${declared}。`);
+  // A player sentence may name a place the settlement never moved to (t5:
+  // “在西回廊等” while the committed state stayed in 器材棚). Feeding both the
+  // original place and the settled place made the writer follow the sentence.
+  // Drop the action clauses that claim another place unless the point actually
+  // moved there, and drop the result sentence that repeats the view's claim.
+  const settledPlace = locationName(after, room);
+  const movedTo = delta.entityDeltas?.[view]?.positionSet;
+  const elsewhere = Object.values(after.initial.locations)
+    .map((location) => String(location.name ?? ''))
+    .filter((place) => place && declared.includes(place) && place !== settledPlace
+      && (!movedTo || locationName(after, movedTo.containerId) !== place));
+  const namesElsewhere = (text: string) => elsewhere.some((place) => text.includes(place));
+  const declaredSafe = declared.split(/(?<=[，,；;。！？!?])/u)
+    .filter((clause) => !namesElsewhere(clause)).join('').trim();
+  if (declaredSafe) sentences.push(`玩家这回合让${name}做的事：${declaredSafe}。`);
   // Judgment clauses («…的骰点资格为false», «…未被掀开袖口，未获得任何效果») are
   // settlement mechanics, not scene facts; feeding them to the writer made it
   // dramatize dice (d101) and print judgments (page runs 2026-11-10). Keep only
   // clauses that describe what changed.
   const settled = squash(resultsText).split(/[；;]/u).map((part) => part.trim())
     .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
+    .filter((part) => !(part.includes(name) && namesElsewhere(part)))
     .join('；');
   if (settled) sentences.push(`这一回合的结算结果：${settled.slice(0, 120)}。`);
   const time = after.time.dateTime.slice(11, 16);
