@@ -73,7 +73,7 @@ Python v2 内核降为**开发期差分预言机、金标向量与迁移参考**
 
 | 用途 | 文件 | bytes | sha256 |
 |---|---|---|---|
-| 语义 | `/models/Qwen3-0.6B-Q4_K_M.gguf` | 396,705,472 | 待 G3 清单固定 |
+| 语义 | `/models/Qwen3-0.6B-Q4_K_M.gguf` | 396,705,472 | `ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a` |
 | 叙事默认 | `/models/Qwen3-1.7B-Q4_K_M.gguf` | 1,107,409,472 | `b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897` |
 | 叙事故障备选 | `/models/qwen25-1.5b-narr-Q4_K_M.gguf` | 986,048,096 | `6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b` |
 
