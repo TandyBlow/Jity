@@ -21,6 +21,7 @@ const VIOLATIONS = [
   [/context_capacity_exceeded/i, 'context_overflow'],
   [/conflicting positions/i, 'position_conflict'],
   [/request_malformed/i, 'malformed_request'],
+  [/personality changes and sanity recalculation must pair/i, 'personality_sanity_pair'],
 ];
 
 const violations = [];
@@ -50,6 +51,10 @@ const turns = (evidence.turns ?? []).map((turn) => {
   }
   for (const problem of turn.problems ?? []) {
     for (const [pattern, code] of VIOLATIONS) if (pattern.test(problem)) flag(code, problem);
+  }
+  for (const line of turn.console ?? []) {
+    if (!line.includes('[world-local refusal]')) continue;
+    for (const [pattern, code] of VIOLATIONS) if (pattern.test(line)) flag(code, line.slice(0, 240));
   }
   if (repeated.length) flag('repeated_actor', repeated.join(','));
   return {

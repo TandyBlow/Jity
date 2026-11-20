@@ -149,7 +149,7 @@
 ## D-016 G3 时间包线复核（回合完成门）
 
 - 状态：`signed`（2026-11-20，证据复核）。
-- 决定：时间门同时要求「回合完成」与「单点计时」。`summarize-timing.mjs` 增加 `turnCompletion`；含 `本轮停止`、`submit_refused`、`settlement_failed`、`AbortError` 或 295 秒时限的回合不计为通过。重算原 12 个计分点：60 秒首段（最差 43,526 ms）与单点正文（最差 13,772 ms）仍通过，但 7/12 回合在首点正文后停止（`t1/t3/t5/t9/t12/e1/e3`），`timing-baseline.json` 状态改为 `FAIL_OR_INCOMPLETE`。
+- 决定：时间门同时要求「回合完成」与「单点计时」。`summarize-timing.mjs` 增加 `turnCompletion`；含 `本轮停止`、`submit_refused`、`settlement_failed`、`AbortError` 或 295 秒时限的回合不计为通过。重算原 12 个计分点：60 秒首段（最差 43,526 ms）与单点正文（最差 13,772 ms）仍通过，但 7/12 回合在首点正文后停止（`t1/t3/t5/t9/t12/e1/e3`），`timing-baseline.json` 状态改为 `FAIL_OR_INCOMPLETE`。`acceptance.md` 的 60/300 定义不变；新增门对应 `goal.md` 的「超过 5 分钟不可接受」。
 - 理由：旧门只统计已提交点的朗读完成时间；玩家轮的 instant 尾点未提交时没有记录，导致中途停止的回合被算作通过。G3 的 PASS 结论因此不成立。
 - 取代：D-014 的「12 个正常点全部过 60/300、状态 PASS」表述；门槛 60/300 不变。
 - 影响文件：`artifacts/goal/timing-baseline.json`、`frontend/scripts/product-acceptance/summarize-timing.mjs`、`design/goal/ledger.md` G3/G5；G3 重开，G5 修复整轮结算与 `request_malformed`。
