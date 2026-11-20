@@ -2,33 +2,33 @@
 
 ## 1. 失败回合可终止
 
-- [ ] 1.1 在 `controller`/`local-transport` fixture 中复现：结算失败（updates 语义拒绝）→ cancel → 新 submit；断言当前 `turn_in_progress`。
-- [ ] 1.2 修复 cancel 对 failed head / 过期 bind 的处理；回归测试转绿，且 `checkpoint_start_advance` 仍要求 ready。
-- [ ] 1.3 页面 `turn_in_progress` 分支恢复 `phase='ready'` 并归还输入；验证按钮重新可点。
+- [x] 1.1 在 `controller`/`local-transport` fixture 中复现：结算失败（updates 语义拒绝）→ cancel → 新 submit；断言当前 `turn_in_progress`。
+- [x] 1.2 修复 cancel 对 failed head / 过期 bind 的处理；回归测试转绿，且 `checkpoint_start_advance` 仍要求 ready。
+- [x] 1.3 页面 `turn_in_progress` 分支恢复 `phase='ready'` 并归还输入；验证按钮重新可点。
 
 ## 2. 未决操作定案
 
-- [ ] 2.1 `checkpoint_restore_group_work`：声明非产品语义，保留 `frozen_work_missing`；写入 `decisions.md`。
-- [ ] 2.2 `get_context.recovery:null`：声明本地恢复不依赖服务端 recovery；写入 `decisions.md`。
+- [x] 2.1 `checkpoint_restore_group_work`：声明非产品语义，保留 `frozen_work_missing`；写入 `decisions.md`。
+- [x] 2.2 `get_context.recovery:null`：声明本地恢复不依赖服务端 recovery；写入 `decisions.md`。
 
 ## 3. Restore 不变量
 
-- [ ] 3.1 session restore 前调用 `state-invariants/guarded-restore`；失败拒绝并报告代码。
-- [ ] 3.2 corrupt-restore 夹具（point 链断裂）被拦下，状态不应用、不写回。
-- [ ] 3.3 正常存档恢复仍通过既有 `session-recovery.test.ts`。
+- [x] 3.1 session restore 前调用 `state-invariants/guarded-restore`；失败拒绝并报告代码。
+- [x] 3.2 corrupt-restore 夹具（point 链断裂）被拦下，状态不应用、不写回。
+- [x] 3.3 正常存档恢复仍通过既有 `session-recovery.test.ts`。
 
 ## 4. 差分向量
 
-- [ ] 4.1 Python 生成器输出 `artifacts/goal/kernel-diff.json`：S0、逐点 Δ、期望 digest、拒绝样例。
-- [ ] 4.2 覆盖空列表、0、嵌套位置、物品移动、任务层级、非 BMP 排序、拒绝路径。
-- [ ] 4.3 TS 测试逐字节断言 `buildInitialState`/`applyPoint`/`pointEntityDeltas`/`replayWorld`/canonical digest。
-- [ ] 4.4 证据 `artifacts/goal/kernel-ops.md` 记录 32 操作定案与向量结果。
+- [x] 4.1 Python 生成器输出 `artifacts/goal/kernel-diff.json`：S0、逐点 Δ、期望 digest、拒绝样例。
+- [x] 4.2 覆盖空列表、0、嵌套位置、物品移动、任务层级、非 BMP 排序、拒绝路径。
+- [x] 4.3 TS 测试逐字节断言 `buildInitialState`/`applyPoint`/`pointEntityDeltas`/`replayWorld`/canonical digest。
+- [x] 4.4 证据 `artifacts/goal/kernel-ops.md` 记录 32 操作定案与向量结果。
 
 ## 5. 骰点与恢复
 
-- [ ] 5.1 冻结骰点阈值、程序持有、requestId 去重；测试锁定。
+- [x] 5.1 冻结骰点阈值、程序持有、requestId 去重；测试锁定。
 - [ ] 5.2 补 linked/instant successor time 测试。
-- [ ] 5.3 多标签租约、刷新、重复提交、取消恢复测试。
+- [x] 5.3 多标签租约、刷新、重复提交、取消恢复测试。
 - [ ] 5.4 全量 `npx vitest run` 与两套 typecheck 全绿。
 
 ## 6. 解锁 G3

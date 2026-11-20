@@ -8,7 +8,7 @@
 
 ### Requirement: A failed settlement can be terminated
 
-当结算在提交点之前失败并收到取消时，内核必须关闭该 advance；下一次提交必须被接受，而不是无限返回 `turn_in_progress`。
+A failed settlement MUST be terminable by a cancel, and the next submission SHALL be accepted. 当结算在提交点之前失败并收到取消时，内核必须关闭该 advance；下一次提交必须被接受，而不是无限返回 `turn_in_progress`。
 
 #### Scenario: Next submit after a failed settlement
 
@@ -18,7 +18,7 @@
 
 ### Requirement: Corrupt restore is refused
 
-当存档记录违反 point-continuity、任务层级或可见性不变量时，恢复必须拒绝继续游玩并报告失败的不变量代码。
+A corrupt record SHALL be refused at restore and MUST NOT be played. 当存档记录违反 point-continuity、任务层级或可见性不变量时，恢复必须拒绝继续游玩并报告失败的不变量代码。
 
 #### Scenario: Corrupt record rejected
 
@@ -28,7 +28,7 @@
 
 ### Requirement: Replay digest matches the frozen oracle
 
-对冻结的 S0+Δ 向量，TS 内核重算的 canonical `stateDigest` 必须与 Python 预言机的摘要逐字节相同。
+The TS kernel's canonical `stateDigest` MUST equal the frozen Python oracle digest. 对冻结的 S0+Δ 向量，TS 内核重算的 canonical `stateDigest` 必须与 Python 预言机的摘要逐字节相同。
 
 #### Scenario: Digest parity
 
