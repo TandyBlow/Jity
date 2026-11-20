@@ -1040,7 +1040,9 @@ try {
       null,
       { timeout: 60_000 },
     ).catch(() => undefined);
-    if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
+    // A turn timeout is a case conclusion, not a reason to discard the rest of
+    // the suite. Only a dead page stops the run.
+    if (entry.problems.includes('page_error')) break;
   }
 
   // Two mechanical checks over the whole run, so every later run carries its own
