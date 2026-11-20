@@ -39,7 +39,7 @@ Python v2 内核降为**开发期差分预言机、金标向量与迁移参考**
   - 规模：26 个地点、14 个人物、74 件物品、73 个任务。
   - `stateDigest`：`3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e`。
   - `fileSha256Lf`：`6262d5fcf088959bb427fbd2dfef7472bcf2cbf78edb9c76b98d4ea2b25db92e`。
-- 该世界是公开开发与展示材料，不是未见独立终验世界。跨世界验收是否需要 held-out 世界族见 `decisions.md` 的 `pending-user` 项。
+- 该世界是公开开发与展示材料，不是未见独立终验世界。本版只做该世界；跨世界泛化另开一批（D-011）。
 
 ## 4. 浏览器执行链
 
@@ -78,6 +78,7 @@ Python v2 内核降为**开发期差分预言机、金标向量与迁移参考**
 | 叙事故障备选 | `/models/qwen25-1.5b-narr-Q4_K_M.gguf` | 986,048,096 | `6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b` |
 
 - `frontend/public/models/` 当前为空；GGUF 被 gitignore。G3 必须取得或重建资产，并产 sha256/bytes/license/获取方式清单。
+- 目标设备：RTX 4060 Laptop 8 GB + Edge（D-010）。分发：外部下载脚本；仓库只存清单与脚本，不直接托管权重；目标机器首次获取允许联网。
 - 页面第 5 行的「narration 0.5B」「localStorage」是过期注释；实际默认叙事模型是 Qwen3-1.7B，持久化走 IndexedDB，G4 清理。
 - 不静默换权重；模型变体必须是产品实际服务的文件，并在 `__worldArm` 记录 sha256。
 - 不冻结组件数量、每步模型或调用总数。选择依据是质量、成本、本地可运行性和实测时间，不是架构方便。
@@ -103,6 +104,7 @@ Python v2 内核降为**开发期差分预言机、金标向量与迁移参考**
 - 本地：IndexedDB 进度存储（`local/persistence/`）；每次 transport 写入先 checkpoint，再允许 driver 消费响应；刷新或崩溃恢复重建 scheduler memory，不重放已冻结行动或骰点。
 - 多标签：默认 30 秒写者租约；过期可接管；旧标签的写入被 fence 拒绝。
 - 可选服务器同步：`/local-progress` 只存不透明快照，校验 CAS、父链、单调修订号；冲突时展示分叉，由玩家选择 `keep-remote` 或 `keep-local-fork`。
+- 部署与鉴权：单用户 Bearer + 本地/内网服务；不做多用户鉴权、GC、分页或公网部署（D-013）。
 - 离线：首次静态资源与模型就绪后，禁用游戏计算端点与保存服务仍可游玩与本地保存。
 
 ## 8. 对照臂与不可作验收证据的部分

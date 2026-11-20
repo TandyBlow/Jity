@@ -59,25 +59,25 @@
 |---|---|---|
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
 | G2 浏览器状态内核收口 | 未开始 | 32 操作定案、差分向量、restore/invariants、骰点恢复 |
-| G3 模型资产与时间包线 | 未开始；执行顺序第一 | 先测 60/300；未通过不带病进 G4/G8 |
+| G3 模型资产与时间包线 | 未开始；执行顺序第一 | RTX 4060 + Edge、外部下载脚本；先测 60/300；未通过不带病进 G4/G8 |
 | G4 单机可玩页面接线 | 未开始 | pause/resume/history/delete/regenerate/e2e |
-| G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景 |
-| G6 叙事产品路径与质量 | 未开始 | raw-output 冻结、20+ 点读评 |
-| G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链 |
+| G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
+| G6 叙事产品路径与质量 | 未开始 | 先原样输出；20+ 点读评；G6 后决定是否加事实门 |
+| G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链；单用户 Bearer + 本地/内网 |
 | G8 交付验收与证据 | 未开始 | 20 输入、manifest、用户签字 |
 
 ## 5. 开放任务
 
 按 G 线列，作为唯一进度来源；不另建 progress 文档。
 
-- **G1**：确认文档集与 tag；向用户发一次性决策请求；未答项标 `pending-user`。
+- **G1**：确认文档集与 tag；用户决策已记录（D-004/D-006/D-010–D-013）；当前无 `pending-user`。
 - **G2**：定案 `checkpoint_restore_group_work`、`get_context.recovery:null`；生成 Python 冻结差分向量；接 `state-invariants` 到 restore；补 linked/instant successor time；冻结骰点协议；补多标签/刷新/重复提交/取消恢复测试。
-- **G3**：取得或重建语义/叙事 GGUF 与 tokenizer；写 sha256/bytes/license/获取方式；目标设备 3 次冷启动 + 10 个真实点；产 `timing-baseline.json`；不达标改模型/调度并复测。
+- **G3**：取得或重建语义/叙事 GGUF 与 tokenizer（外部下载脚本，D-010）；写 sha256/bytes/license/获取方式；RTX 4060 + Edge 跑 3 次冷启动 + 10 个真实点；产 `timing-baseline.json`；不达标改模型/调度并复测。
 - **G4**：接 `LocalGameSession.pause()/resume()`、HistoryPanel、`narration_delete`、状态/进度、错误/重试、刷新恢复、租约提示；用 components/world-local；加 `world-local.spec.ts`；清理过期注释；修 `position_invalid`、`turn_in_progress`、自动轮重复、空占位回合。
-- **G5**：建 12–20 例冻结场景；每任务记录原始输出/结构/语义错误/重试/耗时；独立复核；产 `artifacts/goal/semantics/`。
-- **G6**：冻结 raw-output 产品路径；核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5；20+ 点读评；产 `artifacts/goal/narration/`。
-- **G7**：接 `sync.restore()`/`choose()`；离线队列、重连 flush、CAS/父链/修订号；两设备分叉；产 `artifacts/goal/sync/`。
-- **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
+- **G5**：建 12–20 例冻结场景；只做 `dragon-raja-free-day`（D-011）；每任务记录原始输出/结构/语义错误/重试/耗时；用户读评；产 `artifacts/goal/semantics/`。
+- **G6**：先按原样输出冻结产品路径（D-004）；核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5；用户 20+ 点读评；G6 后按实测决定是否加事实门；产 `artifacts/goal/narration/`。
+- **G7**：接 `sync.restore()`/`choose()`；离线队列、重连 flush、CAS/父链/修订号；两设备分叉；单用户 Bearer + 本地/内网服务（D-013）；产 `artifacts/goal/sync/`。
+- **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
 
 ## 6. 证据索引
 

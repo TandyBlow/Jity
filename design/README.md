@@ -6,7 +6,7 @@
 
 1. [`goal/goal.md`](goal/goal.md)：最终目标、硬门槛、G1–G8、执行规则。
 2. [`goal/architecture.md`](goal/architecture.md)：运行期权威、产品路径、静态 S0、模型资产、七项职责。
-3. [`goal/decisions.md`](goal/decisions.md)：冲突裁决与待用户确认项。
+3. [`goal/decisions.md`](goal/decisions.md)：冲突裁决与已确认项。
 4. [`goal/ledger.md`](goal/ledger.md)：R01–R16 状态与开放任务。
 5. [`goal/acceptance.md`](goal/acceptance.md)：20 输入、计时、叙事、离线、两设备、证据格式。
 
