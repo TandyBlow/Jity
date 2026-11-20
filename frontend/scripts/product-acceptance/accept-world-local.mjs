@@ -531,6 +531,10 @@ try {
     try {
       const candidateBefore = await page.evaluate(() => (Array.isArray(globalThis.__worldCandidate) ? globalThis.__worldCandidate.length : 0))
         .catch(() => 0);
+      // A previous turn's done record must not end this turn: the page may not
+      // have pushed the new record yet when the click lands.
+      const expectedRecordIndex = await page.evaluate(() => (Array.isArray(globalThis.__worldTurns) ? globalThis.__worldTurns.length : 0) + 1)
+        .catch(() => null);
       await page.fill('textarea', turn.input);
       const submitAt = Date.now();
       // If the submit control is not actionable, record what the page shows
@@ -698,7 +702,8 @@ try {
           entry.timings.firstVisibleDraftMs = Date.now() - submitAt;
           entry.firstReadableSample = earlyText.slice(0, 120);
         }
-        if (sample.record && (sample.record.done || sample.record.failed || sample.record.stopped)) {
+        if (sample.record && (sample.record.done || sample.record.failed || sample.record.stopped)
+            && (expectedRecordIndex == null || (sample.record.index ?? 0) >= expectedRecordIndex)) {
           entry.terminal = sample.record;
           break;
         }
@@ -1002,6 +1007,14 @@ try {
       console.log(`[refresh-after ${entry.id}] restored=${entry.refreshAfter.restored} history ${entry.refreshAfter.beforeHistory}->${entry.refreshAfter.afterHistory}`);
     }
     console.log(`[turn ${entry.turn}] ${entry.id} chars=${entry.shownChars ?? 0} wait=${entry.timings.doneMs ?? '?'}ms draft=${entry.timings.firstVisibleDraftMs ?? '-'}ms accepted=${entry.product?.acceptedMs ?? '-'}ms problems=${entry.problems.join(',') || 'none'}`);
+    // A failure early-break can land while the page is still running its
+    // recovery; the next turn must not race the busy state (2026-11-20: turn 2
+    // no-op'd in 98 ms because the handler was still busy).
+    await page.waitForFunction(
+      () => !/结算中|正在写正文/.test(document.body.innerText),
+      null,
+      { timeout: 60_000 },
+    ).catch(() => undefined);
     if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
   }
 
