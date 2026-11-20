@@ -1014,7 +1014,8 @@ try {
     // recovery; the next turn must not race the busy state (2026-11-20: turn 2
     // no-op'd in 98 ms because the handler was still busy).
     await page.waitForFunction(
-      () => !/结算中|正在写正文/.test(document.body.innerText),
+      () => (globalThis.__worldBusy !== true)
+        && !/结算中|正在写正文/.test(document.body.innerText),
       null,
       { timeout: 60_000 },
     ).catch(() => undefined);

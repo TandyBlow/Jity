@@ -562,6 +562,9 @@ export default function WorldLocalPage() {
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [stage, setStage] = useState<string>('');
+  // The acceptance driver cannot tell a quiet failure recovery from an idle
+  // page by body text alone; expose the same busy flag the submit guard uses.
+  useEffect(() => { (window as unknown as { __worldBusy?: boolean }).__worldBusy = busy; }, [busy]);
   const sessionRef = useRef<LocalGameSession | null>(null);
   /** Product cap: one submit may wait 300 s at most. Automatic follow-up rounds
    * are stopped at 295 s so the player gets the committed point back inside the
