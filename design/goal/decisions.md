@@ -134,7 +134,7 @@
 ## D-014 G3 时间包线与恢复阻塞
 
 - 状态：`signed`（2026-11-20，实测结论）。
-- 决定：60/300 门槛不变。修复恢复缺口后实测 9 个正常点（`points-10-final4` 8 点 + `points-extra-2` 的 t12）：首段 15.1–43.5 s，正文完成 21.9–54.8 s，完成−提交 6.5–13.8 s，全部通过；冷启动 24.7/18.9/19.3 s（`crossOriginIsolated=true`，RTX 4060，2×200）。t4 结算失败、t6 刷新不计入；自动链 0 次（t1/t3/t5/t9/t12 结论请求 `request_malformed`，t2/t7/t8/t10 自动后续停止），归 G5。还差 1 个正常点补测；不宣称 G3 通过，不降门槛、不删输入。
+- 决定：60/300 门槛不变。修复恢复缺口后实测 12 个正常点（`points-10-final4` 8 点 + `points-extra-2` 的 t12 + `points-extra-4` 的 e1–e3）：首段 9.4–43.5 s，完成−提交 6.4–13.8 s，全部通过，`timing-baseline.json` 状态 PASS；冷启动 24.7/18.9/19.3 s（`crossOriginIsolated=true`，RTX 4060，2×200）。t4/t11 结算失败、t6 刷新不计入；自动链 0 次（结论请求 `request_malformed` 或自动后续在 updates 停止），归 G5。G3 以时间包线通过关闭，不降门槛、不删输入。
 - 理由：时间数据已排除「纯模型速度不达标」，阻塞在内核取消/恢复与页面交互；先修 G2 的取消恢复，再补测十点。
 - 取代：无；细化为 D-005/D-007 的实测记录。
 - 影响文件：`design/goal/ledger.md` G2/G3、`artifacts/goal/timing-baseline.json`、`artifacts/goal/timing-runs/`、`frontend/src/app/world-local/page.tsx`（`e75cd4a6`）、`frontend/src/lib/world-engine/local/session.ts`（待 G2）。
