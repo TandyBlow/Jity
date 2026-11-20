@@ -1,0 +1,36 @@
+{
+ "repo": "google/gemma-3-1b-it",
+ "revision": "dcc83ea841ab6100d6b47a070329e1ba4cf78752",
+ "lastModified": "2025-04-04T13:12:40.000Z",
+ "licenseTags": [
+  "gemma"
+ ],
+ "downloads": 212229,
+ "likes": 1312,
+ "files": [
+  {
+   "path": "README.md",
+   "bytes": 24265,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 899,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "generation_config.json",
+   "bytes": 215,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 1156999,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

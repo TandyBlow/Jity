@@ -1,0 +1,150 @@
+{
+ "kind": "narration-model-search-semantic-probe-preregistration-v1",
+ "owner": "11-model-search",
+ "at": "2026-11-10T16:50:00Z",
+ "purpose": "Check whether 04's corrected per-character task prompt gets 14/14 and a real task decision from the page's 0.6B semantic model, and whether the five narration candidates do better. Separate from the frozen prose-quality batch.",
+ "contractCommit": "f97c90bcc2438006976c970e2a6e233565382989",
+ "contractFixes": [
+  "ad90cfba: one copyable empty decision row per required character",
+  "f97c90bc: ledger records achievedByCharacter/emptyCharacters"
+ ],
+ "promptFreeze": {
+  "manifest": "evidence/semantic-prompts-v1/prompts.manifest.json",
+  "manifestSha256": "03341e788c02c9cd687108f9d5eba29780e2097b41daad8da4daffe3a6e2b2fc",
+  "promptsSha256": "b590ab228ec62ccfc630e7ad628a9f3f546f0ca4ac0b672d792a39d24e59f682",
+  "frozen": true,
+  "promptCount": 2,
+  "pack": "semantic-probes/tasks-73-release.pack.jsonl",
+  "packSha256": "4ba297288c2329f453eaa30fdccfe5dcbaebc74af3e3cd1a6bd7bd362ce3b0f9"
+ },
+ "cases": [
+  {
+   "caseId": "tasks-free-day-real-73-no-change",
+   "caseSha256": "763e5d4b86c8b9e284f44d20182c7c5d390453930a6f0667049ead98fabf4245",
+   "packSha256": "b471f3e983662bd22d08d4b79ed8b2d8718d419d1d39704aafd7e76ec5252043",
+   "promptSha256": "9965adf64473018409ca9aff608c488f3a674e78f8b610576cdb74eef695a329",
+   "promptChars": 6650,
+   "expectedDecisions": 14,
+   "expectedAchieved": [],
+   "constructedResult": false
+  },
+  {
+   "caseId": "tasks-free-day-real-73-one-achieved",
+   "caseSha256": "dd025a9094740c7695cdd0cbf3ed2219cfab9a347e152b0f6699376b49bdb4e5",
+   "packSha256": "b3216c3005ffc751fd9b77c2094df4fbb9848c39a30e7abdcba145968bee1a64",
+   "promptSha256": "4d9719a6f10343838af007bb6b3b62d390470e8e278de3da5c7f8e8581d5611d",
+   "promptChars": 6664,
+   "expectedDecisions": 14,
+   "expectedAchieved": [
+    {
+     "characterId": "lu",
+     "achieved": [
+      "task_lu_goggles"
+     ]
+    }
+   ],
+   "constructedResult": true
+  }
+ ],
+ "models": [
+  {
+   "id": "qwen3-0.6b",
+   "role": "page-semantic-baseline",
+   "repo": "local product model (hash pinned)",
+   "revision": "not-applicable: local blob",
+   "file": "Qwen3-0.6B-Q4_K_M.gguf",
+   "bytes": 396705472,
+   "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+   "localPath": "D:\\others\\Jity\\.local\\world-narration-worktree\frontend\\public\\models\\Qwen3-0.6B-Q4_K_M.gguf",
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   }
+  },
+  {
+   "id": "qwen25-1.5b-instruct",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+   "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+   "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+   "bytes": 1117320736,
+   "sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+   "chatTemplateKwargs": {}
+  },
+  {
+   "id": "internlm2_5-1.8b-chat",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "internlm/internlm2_5-1_8b-chat-gguf",
+   "revision": "916410ad25d03d5dee11b451fe2b6e0353913b64",
+   "file": "internlm2_5-1_8b-chat-q4_k_m.gguf",
+   "bytes": 1172364032,
+   "sha256": "ceb5ea45cddf01b024f6d5d082bcac2d3fffbc62e72fcfa543cfc6f84b805873",
+   "chatTemplateKwargs": {}
+  },
+  {
+   "id": "glm-edge-1.5b-chat",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "zai-org/glm-edge-1.5b-chat-gguf",
+   "revision": "5fee502f1f6312dde56281cc8c5c0db2254198a9",
+   "file": "ggml-model-Q4_K_M.gguf",
+   "bytes": 980470144,
+   "sha256": "c78e1b978b44cd4d88d4bdc81ada1ca26b0089c502704c4e527ff6dc11e08f75",
+   "chatTemplateKwargs": {}
+  },
+  {
+   "id": "hunyuan-1.8b-instruct",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "gabriellarson/Hunyuan-1.8B-Instruct-GGUF",
+   "revision": "f5c690589f011bebe798fa2634b79a94f95463e3",
+   "file": "Hunyuan-1.8B-Instruct-Q4_K_M.gguf",
+   "bytes": 1133085088,
+   "sha256": "9704e6d67dc5bd6ca0add3cda66072dc85eacbd8b9c021f0a7f9182b2c52cee1",
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   }
+  },
+  {
+   "id": "qwen35-2b",
+   "role": "candidate-narration-model-semantic-probe",
+   "repo": "unsloth/Qwen3.5-2B-GGUF",
+   "revision": "f6d5376be1edb4d416d56da11e5397a961aca8ae",
+   "file": "Qwen3.5-2B-Q4_K_M.gguf",
+   "bytes": 1280835840,
+   "sha256": "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223",
+   "chatTemplateKwargs": {
+    "enable_thinking": false
+   }
+  }
+ ],
+ "sampling": {
+  "temperature": 0,
+  "topK": 1,
+  "topP": 1.0,
+  "seed": 42,
+  "maxTokensPerCase": 520,
+  "contextSize": 8192,
+  "template": "each model's own GGUF template via llama-server --jinja",
+  "templateKwargs": "per models[].chatTemplateKwargs; enable_thinking=false for Qwen3/Qwen3.5/Hunyuan"
+ },
+ "scoring": {
+  "structural": "src/semantic_validate.py (ids, placeholders, coverage, declared targets, protagonist continuation)",
+  "expected": "src/semantic_validate.py --expected compares decisions with case.expected; this catches copying the all-empty skeleton",
+  "notScored": "prose quality, speed, browser behaviour, product acceptance"
+ },
+ "gates": {
+  "exploratoryOnly": true,
+  "qualityGateClaim": "none: this is a semantic capability probe, not the narration RUBRIC gate",
+  "routeDecision": "only after both cases and comparison with the 0.6B baseline; one failed case is not proof of incapacity"
+ },
+ "notAQualityGate": true,
+ "knownLimits": [
+  "the no-change result is real but its expected all-empty decision is mechanically derived",
+  "the positive result is constructed to state the goggles task explicitly; expected is lane-11's proposal",
+  "12 calls is a probe, not a benchmark; no latency conclusion"
+ ],
+ "sourceState": {
+  "path": "worktrees/06-recovery/artifacts/local-game/local-turn-15blora.json",
+  "sha256": "33010db02d5ff6488dece53c8b04cc63287379cb27da56de9ef03e54cd071aa9",
+  "characters": 14,
+  "taskRows": 73
+ }
+}

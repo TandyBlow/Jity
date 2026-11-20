@@ -1,0 +1,78 @@
+{
+ "repo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+ "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+ "lastModified": "2024-09-20T06:31:38.000Z",
+ "licenseTags": [
+  "apache-2.0"
+ ],
+ "downloads": 508182,
+ "likes": 197,
+ "files": [
+  {
+   "path": "LICENSE",
+   "bytes": 11343,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "README.md",
+   "bytes": 4856,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-fp16.gguf",
+   "bytes": 3560416288,
+   "lfsSha256": "fc89e330deb3fd8fa560f1c0f35a1e2b8da96d59e13445559ed190307a6f5649",
+   "lfsSize": 3560416288
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q2_k.gguf",
+   "bytes": 752880160,
+   "lfsSha256": "5ede348e91ce1e7a330926ec5b202c27b864d065149dc463257fde1f98865b3a",
+   "lfsSize": 752880160
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q3_k_m.gguf",
+   "bytes": 924455968,
+   "lfsSha256": "58cb5c05ecef48e82961f1a2be6544145ea26136f69dddda4bbbd092f0e4b993",
+   "lfsSize": 924455968
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q4_0.gguf",
+   "bytes": 1066227232,
+   "lfsSha256": "dcd819ff094852c38faba6873d8ff0c9d51eadb2844539e52042ae5d647bbfdb",
+   "lfsSize": 1066227232
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+   "bytes": 1117320736,
+   "lfsSha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+   "lfsSize": 1117320736
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q5_0.gguf",
+   "bytes": 1259173408,
+   "lfsSha256": "a579334a7b19838b19f7855252b6bc08b012b46e338cf1494a88e77509cfe4d9",
+   "lfsSize": 1259173408
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q5_k_m.gguf",
+   "bytes": 1285494304,
+   "lfsSha256": "b46661073c18e5b56a41fa320975f866a00def1ff08feef4718e013258896f8c",
+   "lfsSize": 1285494304
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q6_k.gguf",
+   "bytes": 1464178720,
+   "lfsSha256": "e16d94f3b1eb243f6f6be9eee51090ef5dfd741324394fd5b6e0e425c33df5c7",
+   "lfsSize": 1464178720
+  },
+  {
+   "path": "qwen2.5-1.5b-instruct-q8_0.gguf",
+   "bytes": 1894532128,
+   "lfsSha256": "d7efb072e7724d25048a4fda0a3e10b04bdef5d06b1403a1c93bd9f1240a63c8",
+   "lfsSize": 1894532128
+  }
+ ]
+}
