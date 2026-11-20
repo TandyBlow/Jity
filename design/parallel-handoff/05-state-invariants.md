@@ -1,0 +1,561 @@
+# 05 state invariants — handoff (2026-11-10)
+
+## Scope and ownership
+
+Role: `state-kernel-long-continuity`. Task:
+`D:\others\Jity\.local\parallel-local-game\tasks\product-05-state.md`
+(sha256 `d91f6f69dfc436532e11f45f2894a3fdc8feba2a6655dde17aa50aec4ac25e7c`; current execution status below).
+
+This lane keeps the existing kernel and does **not** create a second world
+protocol. It owns the read-only verifier under
+`frontend/src/lib/world-engine/local/state-invariants/`, the pinned Python
+golden fixture under `frontend/scripts/parallel-kernel/`, and its own evidence.
+06 remains the only product integrator; its page and session files are
+read-only here. No product acceptance is claimed.
+
+## What was added
+
+- `state-invariants/index.ts`
+  - rebuilds S0 from the recorded `initial` template;
+  - replays every committed point through the existing `applyPoint` and
+    `stateDigest`;
+  - checks point sequence/previous chain, `version`, cached point state and
+    digest, head, root and orphan point states;
+  - checks task completion monotonicity, existing task-id re-adds and stored
+    change-id repeats;
+  - checks position/slot graph validity;
+  - checks player-round roster/cursor/acted/visited consistency and the active
+    advance/round/work baseline bindings.
+- `state-invariants/guarded-restore.ts`
+  - `verifyBeforeRestore` / `restoreVerified` reject a bad snapshot before the
+    transport accepts it.
+- `frontend/scripts/parallel-kernel/product-session-bridge.test.ts`
+  - explicit local bridge only; drives 06's real `LocalGameSession` and
+    `MemoryProgressBackend` for 10- and 20-turn chains, mid-settlement
+    refresh, duplicate submit, cancel/restore;
+  - verifies every checkpoint with the same read-only verifier;
+  - not collected by the normal `src/**` include; run it with the dedicated
+    `vitest.bridge.config.mts`.
+- `state-invariants/verify-09-evidence.test.ts`
+  - skipped unless `WORLD_STATE_EVIDENCE` is set; reads a real 09 JSON file or
+    directory and prints per-record results.
+- `state-invariants/README.md`
+  - invariant list and commands.
+
+## Verified locally
+
+```text
+npx vitest run src/lib/world-engine/local/state-invariants --maxWorkers=1
+→ 2 files passed, 1 skipped; 30 tests passed, 1 skipped
+npx vitest run src/lib/world-engine/local --maxWorkers=1
+→ 6 files passed, 1 skipped; 113 tests passed, 1 skipped
+npx vitest run --config scripts/parallel-kernel/vitest.bridge.config.mts --maxWorkers=1
+→ 1 file, 14 bridge tests passed (requires the sibling 06 worktree)
+
+npx tsc --noEmit -p tsconfig.json
+npx tsc --noEmit -p tsconfig.world-contract.json
+→ both exit 0
+```
+
+These are CPU tests only. They do not measure model prose, page latency or user
+acceptance.
+
+## Counterexamples found (actual, not hypothetical)
+
+1. **Restore trusts a tampered state.** `LocalWorldTransport.restore` calls
+   `clone(snapshot)` without replay or digest verification. In the test,
+   `person_c` was moved to `hall` in the cached state while the committed point
+   replay kept them in `corridor`; raw restore and `LocalGameSession.restore`
+   both accepted it. The verifier reports `state_mismatch`.
+   - Source: `worktrees/06-recovery/frontend/src/lib/world-engine/local/transport.ts`
+     (`restore`).
+   - Patch: `results/product/evidence/05-kernel/patches/06-transport-invariants.patch`.
+
+2. **A completed task can move backwards.** After `task_child` was achieved, a
+   later point with `subtasksAdded[{id:'task_child',status:'pending'}]` was
+   accepted by `applyPoint`, which overwrites `merged[task.id]`. The verifier
+   and commit guard reject it with `task_duplicate_add` / `task_regressed`.
+   - Source: `local/state.ts` (`applyTasks`).
+   - The pinned Python reference (`fc60a60`) has the same overwrite shape; no
+     golden record exercises it. The product guard is intentionally stricter.
+
+3. **A discovery id can repeat.** A later point adding an appearance change with
+   an id already stored on the entity is accepted and stored twice; the guard
+   rejects it with `change_duplicate`.
+
+4. **Restore-delete was observed earlier and is now fixed by 06.** At the
+   observed current page hash, `page.tsx` opens a durable `LocalProgressStore`
+   and `LocalGameSession.open`; on an open failure it archives the readable
+   record with `store.backupLegacy`, and only deletes after a successful
+   archive. The earlier `localStorage.removeItem(SAVE_KEY)` path is gone. The
+   old patch is under `patches/superseded/` and must not be applied.
+
+5. **Mid-turn work is saved when the IndexedDB store is durable.** At the
+   observed current page hash, the page creates a durable store and passes it
+   through `LocalGameSession.open`; `refresh` calls `session.flushPersistence`.
+   The page `save` callback still returns early when `transport.work` is set, so
+   the legacy localStorage fallback only stores settled points. 09 must confirm
+   refresh/restore on a normal IndexedDB-capable browser.
+
+6. **Room appearance change is stopped on the second turn.** 04's real-kernel
+   repro shows `dangling_updates_refs:[{stage:appearance,entity:corridor,
+   kind:change,id:change_7}]` because `schedule.ts::inputIds` registers item and
+   character appearance ids but not `state.locations[*].appearanceChanges`.
+   06's current `schedule.ts` already contains the location block; 04's current
+   tree still needs `04-schedule-location-appearance.patch`, then 04 promotes
+   its `it.fails` test (with the first-turn assertion caveat below).
+
+7. **Same-tick page double-submit can still duplicate the visible input.**
+   The page's guard is the asynchronous React `busy` state; two submit calls in
+   the same tick both pass, append two entries, and the second is then refused
+   by `session.submit` as `turn_in_progress`. State is consumed once, but the
+   player sees a duplicate entry/error. Patch:
+   `results/product/evidence/05-kernel/patches/06-page-submit-lock.patch`
+   (synchronous `submitLockRef`). This is static reading, not a real-page
+   reproduction; 09 should double-submit.
+
+8. **Fixed handback was observed earlier and is addressed in 06's current
+   tree.** The page no longer sets `maxAutoContinuations: 0`; `game-model.ts`
+   delegates `continuation` to 04's settlement port and its comment says a
+   policy stop is explicit, not a fabricated handback. 09 must still verify the
+   real page's continuation behaviour.
+
+8. 09's F1 (`/world-local` lacked COOP/COEP) is fixed in 06's current tree:
+   `next.config.ts` sends the headers for `/world-local` and
+   `/world-local/:path*`; the old 05 patch is under `patches/merged/`.
+
+## 21c3 refresh/restore: stale observation vs lost save
+
+`results/product/evidence/09-one-legal-turn-21c3.json` (run
+`2026-11-10T1943-5f25`, product `21c34d67`, page `3b33fccb`) has both a
+per-turn root sample and a post-reload sample. The end-of-turn sample is
+version 0 with no commands/points and history 0; the reload sample is version 3
+with one command, three points (`point_round_3_1`, then two automatic points),
+all four narrations ready, and history 1.
+
+The player point committed, then the automatic continuation threw
+`settlement_failed:continuation:continuation_policy_repeated_candidate`. The
+21c3 page catch did not refresh; 09 read `__worldSnapshot` as a property before
+the submit promise settled. The save was not lost. `__worldRestore` reported
+`stateRestored: true`, `entriesRestored: 1/1` and
+`inputConsumptionRestored: true`; the driver's `overallRestored: false` comes
+only from comparing history 0 with 1.
+
+The protagonist task statuses are identical in both samples; `task_lu_match`
+is still pending. This is not the 1737 false root achievement. The run still
+fails narration predicates (draft source, accepted 167474 ms, draft 81812 ms).
+
+06 `3f54eac0` is an ancestor of current HEAD and refreshes after the catch;
+the page hook is still a direct object. 09 must call a function getter and wait
+for `__worldTurns[last].submission`; patch:
+`results/product/evidence/05-kernel/patches/09-call-live-snapshot.patch`
+(sha256 `c6da6119...`). 05's review is
+`verification-09-21c3-stale-observation.json` and the CPU regression is
+`verify-21c3.test.ts`.
+
+The verifier now accepts the S0/root previous head (stored in `pointStates`, not
+`points`) and validates 04's `affected_projection` ledger only when the
+affected/unaffected task lists partition all 73 rows and the character counts
+cover 14. A missing non-root head or a shrunken task partition still fails.
+
+## b7cd: recovery fixed; display/program text still fails
+
+Run `2026-11-10T1958-5e35` at 06 `b7cd274a`, page `88677e6e`, has
+`snapshotAfterTurn` at version 3 and a stable reload at 1 entry / history 1
+(`stateRestored`, `entriesRestored`, `inputConsumptionRestored` and
+`overallRestored` all true). The 21c3 stale-live-view cause is fixed in a real
+run by 3f54eac0.
+
+The page still displayed only the last automatic point; the player point and
+first automatic point were not in the live `turn.text`. The saved snapshot has
+all three points and all four narrations ready, so this is a page-view issue,
+not a missing save. 06 e9a51950 appends live narration by point; it is newer
+than this run and not yet served.
+
+The b7cd snapshot predates 679f979c and has `narrationSources: null`. With 06
+current `restoredEntries`, the snapshot yields one turn entry containing all
+three point texts, player first; the 05 bridge test proves this (8/8). Without
+narrationSources that old snapshot cannot carry program/draft labels; a new run
+is needed to confirm the labels survive reload.
+
+The b7cd text is a product failure: `source=program`, `acceptedMs=193860`, and
+the displayed task sentence is not in any updates ledger (`achievedByCharacter:
+[]`; `task_lu_match` stays pending). 05 41ab01e8 now rejects program fallback
+and accepted>60s in `verifyDisplayedCommit`; the old verifier incorrectly
+accepted b7cd. Full snapshot chain remains valid.
+
+## e9a5: state/recovery pass; display joins a draft point
+
+Run `2026-11-10T2016-5758` at 06 `e9a51950`, page `bdac63ec`, is COMPLETED
+but not accepted. The save is version 3 with one player point and two automatic
+points; reload is stable at 1 entry / history 1 and all restore booleans are
+true. The root/player/auto-1 narrations are model; the last auto point is
+draft. The displayed turn joins all three paragraphs; the third contains the
+task sentence, while every updates ledger has `achievedByCharacter: []` and
+`task_lu_match` stays pending.
+
+The turn fails `acceptedMs=113267` (>60s), `doneMs=301346` (>300s), program
+fallback and the joined draft. 05 51eb0bfa rejects all four; full snapshot
+chain still passes.
+
+`snapshotAfterTurn.narrationSources` has the draft label, but the public
+after-reload snapshot and `__worldRestore` are null. 06 `5f8f646b` seeds
+`restoredSources` in the public getter; the 05 bridge restores the live
+snapshot; 06 415ccbe0 keeps the player entry source `model` and labels the later
+auto point `draft` per point. 06 d1019f09 merges `restoredSources` into
+`snapshotForPersist`; the bridge next-write test passes. A fresh product run
+still needs to confirm the served page path.
+
+## 95dc: state/provenance pass; program player text still fails
+
+Run `2026-11-10T2032-3f72` at 06 `95dc8e8e`, page `bdac63ec`, has version 2:
+the player point `point_round_3_1` is `program`, the automatic point is
+`model`. Reload is stable 1 entry/history 1 and keeps `narrationSources` in
+both the public snapshot and `__worldRestore`; 5f8f646b works for the restored
+public path.
+
+The saved state is not the failure. The displayed player paragraph is a
+program fallback and `acceptedMs=212874` (>60s); the page joins it with the
+later model paragraph. 05 rejects the program point and the slow accepted
+text; full snapshot chain passes. `restoredEntries` labels the entry by the player point (`program`); the later
+model auto point is kept per point and the note says the turn contains program
+prose, so the player still sees it.
+
+`snapshotForPersist` still reads only the live source ref; 05 patch
+The page already exposes a detached getter; `06-session-persist-restored-sources.patch` merged in 06 d1019f09; the next-write bridge test passes.
+
+## 415c: both points program; state/recovery pass
+
+Run `2026-11-10T2055-3e8a` at 06 `415ccbe0`, page `bdac63ec`, is version 2
+with player and automatic points both `program`. Reload is stable 1 entry /
+history 1 and keeps `narrationSources`; the full chain, digest and visible
+summary pass. The updates ledger keeps `task_lu_match` pending even though the
+raw results call contains a completion sentence.
+
+The product fails on display: no accepted model text (`acceptedMs=null`), total
+240.5s, first visible draft 93.2s, both paragraphs are program fallbacks with
+internal "未成功触发骰点" field language and repeated scene text. 06 415cc
+keeps the player point source and labels both program points per point; 05
+rejects the turn. This is not a state-kernel failure.
+
+## dfde has no committed head
+
+06 `12175c21` describes dfde as a committed point with pending narration. The
+dfde evidence has no point (`updatesCalls=0`, `committedEntries=0`,
+`headPointId=root`); it is the results completion abort. The load-narration
+repair does not address it; 04 `b2e1dab2`/`59bc749f` must be merged.
+
+## dfde: the 2603 results failure repeats
+
+Run `2026-11-10T2210-414a` at 06 `dfdedb18`: results returned only a completion
+claim again; no point committed, input retained as one unfinished entry, and
+all tasks pending. No full snapshot. This is upstream results, not state, and
+predates the 04 `b2e1dab2`/`59bc749f` merge.
+
+## 2603: results completion-only, no point
+
+Run `2026-11-10T2155-228b` at 06 `26035d97`: results returned only a
+completion claim twice, 04 rejected both, no updates or point committed, and
+the page showed a recoverable empty turn. No state changed; no snapshot exists.
+This is upstream results/semantics, not a state-kernel failure. `935ef787` and `d0d1f838`
+make the displayed verifier reject any no-text turn, not just a turn with a
+known failure problem.
+
+## 3-turn d101: turn 1 valid, turn 2 infra-invalid
+
+Run `2026-11-10T2137-ac7c` at 06 `d1019f09`: turn 1 is a valid model/state
+turn (127.4s accepted); turn 2 times out at 330s with zero results/updates and
+no new point. The snapshot stays version 1, and 04 records a 06 restart during
+turn 2. Turn 2 is infrastructure-invalid, not a game/state failure.
+
+## d101: first accepted model turn; only latency fails
+
+Run `2026-11-10T2129-cad9` at 06 `d1019f09`, page `84dcce4f`, produced one
+version-1 player point. Both root and player sources are `model`; reload is
+stable and keeps labels; the point chain/digests and 73-row task coverage pass.
+The player paragraph is accepted model prose, `programFallback=false`; the page
+note only reports a later automatic round that did not finish. The prose still
+invents a dice pickup/throw absent from the settled items; 06 5d4c26f6 adds the
+gate, so this is a provenance failure, not a saved-state change.
+
+`acceptedMs=137786` (>60s), total 144.1s. 05 rejects only that gate. 09 currently
+turns any note into `program_fallback_labelled`; `patches/09-note-not-program.patch`
+fixes the driver to use product source/programMs or a program-specific note.
+
+## Real 09 run found a sync-ownership conflict
+
+The first real 10-turn page run (`results/product/evidence/09-product-10turn.json`,
+product head `bc005e51`) stopped turn 1 with `progress_conflict` after 330 s and
+committed no point. The page calls `sync.save(snapshot)`; the sync adapter writes
+the session-owned IndexedDB record without `expectedRevision`, bumping its
+revision, so the session's next checkpoint conflicts.
+
+06's current tree fixes this with `ProductSync.push` plus `client.skipLocal`
+and the page now calls `sync.push(snapshot)`; the session stays the sole local
+writer. Commit `10c1407a` added the path and a test. The old 05 patch is under
+`patches/merged/`. 09 must rerun the same 10 inputs on the current product
+commit; the failed `bc005e51` run is not acceptance evidence. This was a
+state/persistence failure, not a narration-quality finding.
+
+## Current blockers and patches (2026-11-10T21:2x local)
+
+- `/world-local` on 06 returned HTTP 500 at 21:15 local; 09's queue is blocked
+  on 200 + textarea. 06 must restart/fix the dev server before the rerun.
+- `06-session-persist-restored-sources.patch` (`3fbe8f77…`): merge saved
+  provenance into `snapshotForPersist` as well as the public getter.
+- `09-call-live-snapshot.patch` (sha256 `c6da6119…`) is the active 09 driver
+  patch: call a function `__worldSnapshot`, wait for the submission ledger, and
+  record `snapshotSettled`.
+- `06-page-detached-snapshot.patch` (sha256 `a4523949…`) makes the hook return
+  a detached clone instead of a stale object.
+- `06-transport-invariants.patch` (sha256 `3cfb90b5…`) regenerated for 06's
+  LF transport; apply-check ok. It guards `commit` with continuity checks and
+  `restore` with the full record verifier.
+- `06-page-snapshot-hook.patch` (sha256 `38a1ab63…`) now returns
+  `structuredClone(snapshot)`, a detached copy; apply-check ok.
+- `06-merge-state-invariants.patch` remains `44081b89…`; merge first, then
+  transport/hook.
+
+## Merge bundle
+
+`results/product/evidence/05-kernel/patches/06-merge-state-invariants.patch`
+adds the whole verifier module, the 06-session bridge test/config and this
+handoff to 06 without touching existing 06 sources; `git apply --check` passes
+on the current 06 tree. After it lands, 06 still needs the transport guard and
+the page snapshot hook.
+
+## Patches for 06 (not applied by 05)
+
+The active patches are checked with `git apply --check` in a read-only 06
+worktree:
+
+- `results/product/evidence/05-kernel/patches/06-transport-invariants.patch`
+  - imports `verifyWorldRecord`, `RecordInvariantError`,
+    `pointContinuityIssues` from `./state-invariants`;
+  - verifies before `LocalWorldTransport.restore` clones;
+  - calls `pointContinuityIssues(record.state, point)` before `applyPoint` in
+    `handleCommitPoint` and refuses with `request_malformed`.
+  - **Dependency:** merge `local/state-invariants/index.ts` first.
+- `results/product/evidence/05-kernel/patches/06-page-restore-and-hook.patch`
+  - combined page patch for 06's current `d0dfe99a`: a detached
+    `window.__worldSnapshot()` (`structuredClone`), a synchronous submit lock,
+    `entriesTotal` based on committed player points, and `overallRestored`.
+    Apply-check and disposable typecheck pass. The separate component patches
+    are under `patches/superseded/`.
+- `results/product/evidence/05-kernel/patches/06-state-apply-guards.patch`
+  - `state.ts` fix, not just a verifier: reject a second appearance change with
+    the same id, a second added task with the same id, and task ids/owners/
+    parents that break the world-global hierarchy. Applied in a disposable 05
+    tree; 42 state/transport/guard tests pass. 06 must confirm the shared-file
+    ownership before applying. 04's smaller legacy `state.ts` needs its own
+    patch if it still uses that path.
+- `results/product/evidence/05-kernel/patches/04-schedule-location-appearance.patch`
+  - `inputIds` also registers `state.locations[*].appearanceChanges` ids and
+    their `supersedes` ids. 06's current tree already contains the equivalent
+    block; this patch is for 04's current tree, which still lacks it.
+  - Validated in a disposable copy of 04's tree: without the patch the first
+    run stops with `dangling_updates_refs ... change_7`; with it the run reaches
+    `world_complete` and commits the room changes. 04's current test also has a
+    first-turn assertion problem (its callback can replace its own first change
+    in the same point); 04 should assert the absence of the dangling stop when
+    promoting it.
+
+The patches do not make the page durable and do not choose a UI for the
+restore-failure state. 06 owns that integration.
+
+## Page/session wiring status (06's current tree)
+
+06's current tree already opens the IndexedDB store/session, archives a
+corrupt record before deleting, and (commit `37e2aa38`) rebuilds visible
+entries from committed player points plus `snapshot.narrations`. That replaces
+the earlier 05 page-localStorage patch, which is now under
+`patches/superseded/`. Three gaps remain and are recorded in
+`results/product/ownership-requests/05-kernel.json`:
+
+1. `restoredEntries` pairs `snapshot.commands[index]` with player points sorted
+   by sequence. Failed/cancelled commands are intentionally retained (six
+   existing resume/cancel tests depend on it), so after a failed turn the next
+   committed point can show the wrong input. Pair at commit time or persist a
+   command→point map; do not pop commands.
+2. `__worldRestore` has no `overallRestored`, and `entriesTotal` is
+   `commands.length`, not committed player points/history. The boolean must be
+   the AND of state, entries and input-consumption restoration.
+3. A terminal settlement failure leaves the advance in place; the next submit
+   returns `turn_in_progress`, so the page cannot retry without cancel/refresh.
+   This belongs to 06/04; 05's rejected command-popping patch is kept under
+   `patches/superseded/` only as a counterexample.
+
+## 09 evidence
+
+Ask 09 to keep per-turn either the full `LocalGameSnapshot` or a before state +
+committed point, plus input/advance/point ids, digest, timings, URL/commit/model.
+Then run:
+
+```bash
+WORLD_STATE_EVIDENCE=<file-or-dir> \
+  npx vitest run src/lib/world-engine/local/state-invariants/verify-09-evidence.test.ts --maxWorkers=1
+```
+
+The test is read-only, prints per-record errors/warnings, and fails on any
+invariant violation. It does not accept a hand-written after state as a
+settlement.
+
+## Current evidence and limits
+
+- The 09 run at product `0b173b6a` attempted two inputs: turn 1 committed a
+  labelled program fallback after 272 s; turn 2 timed out at 330 s. Final
+  refresh kept place/sanity/history=1 but entries went 2→0 (`entriesKept=false`,
+  `storageChars=0`). The cause was React-only entries; 06's current
+  `restoredEntries` addresses the display reconstruction, subject to the three
+  gaps above.
+- `results/product/evidence/09-product-10turn.json` is **not** acceptance
+  evidence. `verify-09-evidence` on it reports only `visible-summary` +
+  `evidence_shape`; no point could be replayed.
+- `verifySnapshotSequence` (new in `369b9be9`) checks a turn-ordered series of
+  full snapshots for version/points regression, a missing previous head, and a
+  changed stored digest. The 09 test now accepts `snapshotAfter`/`snapshotBefore`.
+- `verifyDisplayHistory` (new in `28883301`) counts committed player points and
+  ready narration, errors when the command list is shorter than that history,
+  and warns when commands outrun points (failed/cancelled inputs are retained
+  for resume) or a point has no narration. The 09 evidence test prints these
+  `display:*` issues and fails on the error case.
+- Character gender evidence is delivered as
+  `results/product/evidence/05-kernel/character-gender-evidence.json`: five
+  characters have a direct, uniquely bound pronoun in the current world file
+  (路明非/诺诺/楚子航/林亦舟/沈澄); the other nine stay unknown. No schema,
+  world hash, or save-contract change.
+- No real model/browser/GPU run in this lane; 09 owns that queue. The stricter
+  task/change guards are not part of the pinned Python reference; they are
+  product continuity checks, not a second state protocol.
+
+## Current 09 one-turn failure and handoff (read-only)
+
+`results/product/evidence/09-one-legal-turn.json` is a real product run at
+`a16aa465` / page `c4e30b66`. It is **FAILED**, not acceptance:
+
+- turn 1: `results group_10` judged non-member `nono` while the sealed group was
+  only `lu`, twice (17.8 s + 18.1 s). `updates`/`continuation` never ran, no
+  point was committed, and the page produced only a failure note.
+- `waitMs=330031`, `firstReadableMs=190` is a stage label, not prose,
+  `firstTokenMs=null`, `text=null`.
+- refresh: `stateRestored=true`, `entriesRestored=0`, `entriesTotal=1`,
+  `inputConsumptionRestored=false`, `historyRestored=false`,
+  `overallRestored=false`, `storageChars=0`; the page reports restored but the
+  history is the failure note, not a committed point.
+- no visible cancel/stop control; no `__worldSnapshot`, so 05 cannot replay this
+  run.
+
+04 has `c4a78f90` (drop a non-member judgment only when it carries no effect or
+fact) and `d051c149`; 06 merged them at `4757df61`, after this run. The current
+06 page still has `entriesTotal: commands.length` and no hook; apply
+`results/product/evidence/05-kernel/patches/06-page-restore-and-hook.patch`.
+
+The invariant reading of this failure is: the failed turn left the committed
+state at the head (correct atomicity), but the failed input must not be counted
+as display history, and the next submit must not be blocked by a pending
+advance. Do not use this run as a state-replay pass.
+
+## 06 current-tree handoff (2026-11-11T00:xxZ)
+
+06 has merged 04 results membership (`c4a78f90`, `d051c149`) and full-cast
+task/personality/sanity skeleton changes (`7b38971a`, merge `c1027684`), and has
+its own `history.ts` (uncommitted turns plus `committedEntries`/
+`unfinishedEntries`). Its page at `cef95c7e` still does not expose a detached
+snapshot and still reports `entriesTotal`/`entriesRestored` without
+`overallRestored`; `history.ts` still pairs a point to `commands[index]`.
+
+Two 05 patches are apply-check clean on that tree:
+
+- `06-page-restore-and-hook.patch` (sha256 `ff2ca96f...`): detached
+  `__worldSnapshot`, `overallRestored`, synchronous submit lock. It no longer
+  rewrites `restoredEntries`.
+- `06-history-command-pairing.patch` (sha256 `8aa87257...`): conservative
+  count-safe input fallback; it prevents an interleaved failed command from
+  labelling a later committed point, but a real command→point map remains the
+  correct fix.
+
+Do not apply the old `c9da0f63` combined page patch: it contains the removed
+page-local `restoredEntries` and conflicts with 06's `history.ts` extraction.
+
+## Current acceptance blocker (2026-11-11T00:40Z)
+
+`:3221` is down; `:3231` answers but is the older production build and must be
+SHA-checked before use. 09 invalidated the 16:22 run because `:3221` was serving
+the 02 world-narration page, not 06. 06 has merged 04's per-character task
+decision evidence (`f97c90bc`) but its page still lacks the detached snapshot
+hook; 05's rebased page patch (apply-check clean at `f9297864`) and the
+count-safe history patch remain unapplied. 09 must not run the 10/20-turn
+acceptance until a page with the hook and stable server is confirmed.
+
+## Real one-turn after 04 full-cast skeleton (2026-11-11T00:53Z)
+
+The current 09 file (product `81d5507a`, page `f861ace9`) showed a real turn:
+results 14.8 s; first `updates` `tasks` passed with
+`coverage.tasks=14`, `taskRows=73`, `assertedUnchanged=73`; continuation
+returned continue. The following automatic **time_scan** update failed after
+three attempts because the model returned fabricated `task_<character>_flag`
+ids (e.g. `task_doctor_flag` does not exist) and 04 rejected them; it stopped
+after `waitMs=323418`, committed no point, and wrote no prose. This is a
+model-output reference failure in the time-scan task call, not a state-kernel
+failure; the first call is evidence that the full-cast skeleton can work.
+
+
+## Latest 1701 run (2026-11-11T01:12Z)
+
+09 archived the 1646 run (`09-one-legal-turn-1646-81d5507a.json`) and kept the
+1701 run. 1701 at product `a5ca28d7`/page `4d05a899`: full-cast task stage
+passed 14/14/73 on the first updates call; the automatic time_scan then hit
+fabricated `task_<character>_flag` ids and stopped, or the second phase produced
+a 49-char draft (`wrong_person,low_support`) while `historyDelta=0`; no point was
+committed. Reload then failed to become ready in 240 s and showed a blank page.
+No `__worldSnapshot` exists, so 05 cannot replay 1701; atomicity (no point, state
+unchanged) is all that can be asserted. The 1646 archive is the evidence for the
+first full-cast task pass.
+
+## Task-decision evidence (05 39135066)
+
+`verifyTaskDecisionEvidence` reads 04's real updates ledger (14 characters, 73
+rows): it rejects incomplete character coverage or a shrunk row scope and shows
+rejected task ids as warnings. On archived 09 1646 the first updates call passes
+14/14, 73 rows, assertedUnchanged=73; the later time_scan call covers 0/14, so
+the record correctly fails. This is not a state replay; there is no snapshot in
+that archive. The detailed review is
+`results/product/evidence/05-kernel/verification-09-1646-task-coverage.json`.
+
+## Reload entry pairing (05 f3dac9a8 patch)
+
+The current 06 history pairs commands to points by array index. When a failed
+command sits between two successes (commands A,B,C; points A,C), C is labelled
+with B's sentence. The count-safe fallback only avoids a wrong tail label; it
+does not recover the exact mapping. `06-command-point-map-v4.patch` described optional
+`snapshot.commandPointIds` aligned with `commands`: a successful submit binds
+the committed player point to its command, a failed/cancelled command stays
+null, and the map is saved/restored. `history.ts` then shows A and C with their
+own sentences and B as unfinished; older saves with unequal counts show blank
+labels rather than a wrong sentence. 06 implemented the equivalent at `101bb3d2`; do not apply v4 on top. the v2 disposable session
+test passed at the older tree, so current 06 still needs to run it.
+
+## Ten turns with a persisted midpoint restore
+
+`6908ccf0` runs five turns, closes the writer, restores from the same store,
+runs five more, and verifies the saved version-10 chain. The bridge is now
+15 tests. This is CPU continuity, not a product/model acceptance.
+
+## 102f run is infrastructure-invalid
+
+Run `2026-11-10T2230-7ddd` raced the page change (`0d72d63d7a12` vs
+frozen `07690eb4`), the Qwen3 shard fetch failed, and reload was refused. No
+snapshot or point; not state or product evidence.
+
+## a178 accepted model turn
+
+Run `2026-11-10T2236-fb80` completed with model prose (129.3s), one point,
+all tasks pending and clean restore; no full snapshot because 09 still reads the
+function getter as a property. State/recovery pass, product acceptance not.
+
+## a178 3-turn state/recovery
+
+Run `2026-11-10T2241-5ac2`: three points, history 3, recovery 3/3, places
+西侧服务巷 → 钟楼, tasks pending, sources model/program/program/program. State
+holds, but all three narrations fell back to program text at 128-163s and no
+full snapshot exists. Product still fails narration and latency.
