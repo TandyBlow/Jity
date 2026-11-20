@@ -23,7 +23,7 @@ type Fact = {
 type Generation = {
   factId: string;
   name: string;
-  factLine: string;
+  text: string;
   complete: boolean;
   seconds: number;
 };
