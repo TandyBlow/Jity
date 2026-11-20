@@ -945,7 +945,10 @@ export default function WorldLocalPage() {
         storeRef.current = store;
         const syncBase = process.env.NEXT_PUBLIC_LOCAL_PROGRESS_URL ?? 'http://127.0.0.1:8000/local-progress';
         if (store.durable) {
-          const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase });
+          // writeLocal lets restore() persist a remote head before any session
+          // owns the store; the page itself only pushes (skipLocal), so the
+          // session stays the sole writer once open.
+          const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase, writeLocal: true });
           syncRef.current = sync;
           void sync.flush().then((outcome) => {
             if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
@@ -959,6 +962,25 @@ export default function WorldLocalPage() {
         if (migration.status === 'migrated') console.info('[world-local] migrated legacy snapshot', migration.revision);
         if (migration.status !== 'absent' && migration.status !== 'migrated') {
           console.warn('[world-local] legacy migration', migration.status, migration.backupKey ?? '');
+        }
+        // G7: local save first; only when none exists is the remote head pulled,
+        // and only as an opaque snapshot. A conflict keeps both copies for the
+        // player to choose; an unavailable service leaves local play untouched.
+        if (store.durable && syncRef.current) {
+          const localRecord = await store.load(world.worldId).catch(() => null);
+          if (!localRecord) {
+            try {
+              const pulled = await syncRef.current.restore();
+              if (pulled.source === 'remote' && pulled.snapshot) {
+                console.info('[world-local] restored remote progress');
+                setSyncState('synced');
+              } else if (pulled.conflict) {
+                setSyncState('conflict');
+              }
+            } catch (restoreError) {
+              console.warn('[world-local] remote progress restore failed', restoreError);
+            }
+          }
         }
         let session: LocalGameSession;
         let restored = false;
