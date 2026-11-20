@@ -24,8 +24,10 @@
 | 路径 | 用途 |
 |---|---|
 | [`goal/goal.md`](goal/goal.md) | 唯一 goal 入口 |
+| [`goal/goal-mode-short.md`](goal/goal-mode-short.md) | ≤4000 字短 goal（设置入口，指向长文） |
+| [`goal/goal-mode-prompt.md`](goal/goal-mode-prompt.md) | goal 模式长文任务书 |
 | [`goal/architecture.md`](goal/architecture.md) | 运行期与部署事实 |
-| [`goal/decisions.md`](goal/decisions.md) | D-001–D-009 与待确认项 |
+| [`goal/decisions.md`](goal/decisions.md) | D-001–D-013 与已确认项 |
 | [`goal/ledger.md`](goal/ledger.md) | R01–R16 唯一状态账本 |
 | [`goal/acceptance.md`](goal/acceptance.md) | 验收协议 |
 

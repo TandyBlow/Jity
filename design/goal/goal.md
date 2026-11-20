@@ -174,4 +174,6 @@ G8 验收通过、R01–R16 账本关闭、20 次输入与计时证据齐全、�
 - [`decisions.md`](decisions.md)：D-001–D-013、理由、取代对象、已确认项。
 - [`ledger.md`](ledger.md)：R01–R16 唯一状态账本与开放任务。
 - [`acceptance.md`](acceptance.md)：20 输入协议、计时、叙事读评、离线、两设备、证据格式。
+- [`goal-mode-short.md`](goal-mode-short.md)：≤4000 字短 goal，设置入口。
+- [`goal-mode-prompt.md`](goal-mode-prompt.md)：goal 模式长文任务书。
 - [`../README.md`](../README.md)：design 文档索引与 active/reference/historical/superseded 标签。
