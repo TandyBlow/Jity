@@ -232,7 +232,8 @@ export class LocalGameSession {
     // S0 + Δ and the head digest is checked before any state is applied.
     const invariant = await verifySessionSnapshot(snapshot);
     if (!invariant.ok) {
-      throw new Error(`local_restore_invariant:${invariant.errors.map((issue) => issue.code).join(',')}`);
+      const detail = invariant.errors.map((issue) => `${issue.code}@${issue.pointId ?? '-'}:${issue.detail}`).join(' | ');
+      throw new Error(`local_restore_invariant:${invariant.errors.map((issue) => issue.code).join(',')}:${detail}`);
     }
     let session: LocalGameSession | null = null;
     let memory: ControllerMemory | null = null;
