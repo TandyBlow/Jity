@@ -1,12 +1,12 @@
 {
   "kind": "jity-goal-page-e2e",
-  "at": "2026-11-20T10:54:00Z",
+  "at": "2026-11-20T11:48:00Z",
   "command": "cd frontend && npx playwright test e2e/world-local.spec.ts",
   "result": {
     "passed": 1,
     "failed": 0,
-    "testMs": 330000,
-    "totalMs": 372000
+    "testMs": 324000,
+    "totalMs": 348000
   },
   "environment": {
     "browser": "msedge headless",
@@ -22,11 +22,13 @@
     "__worldArm.narrationModel === qwen3-1.7b, sha256 length 64",
     "two real inputs each produce a __worldTurns record and clear __worldBusy",
     "pause sets transport.control.paused true; resume sets it false; head unchanged",
+    "delete+regenerate the head: narration generation increases and pointStates[head].stateDigest is unchanged",
     "reload restores committed history (__worldRestore.entriesRestored >= 1)",
-    "history selection leaves headPointId unchanged"
+    "history selection leaves headPointId unchanged",
+    "no empty placeholder article after a stop (cancel filter)"
   ],
   "gaps": [
-    "historical-point narration delete/regenerate has no visible control",
-    "ProgressStatus/WorldStatusPanel/NarrationView not wired"
+    "WorldStatusPanel not wired (would replace sidebar labels the driver reads)",
+    "position_invalid and automatic-round duplication still lack a real-page regression"
   ]
 }

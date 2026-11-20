@@ -1,10 +1,10 @@
 
 Running 1 test using 1 worker
 
-  ✓  1 e2e\world-local.spec.ts:46:7 › world-local product page › plays, pauses, restores and keeps history read-only (5.5m)
+  ✓  1 e2e\world-local.spec.ts:46:7 › world-local product page › plays, pauses, restores and keeps history read-only (5.4m)
 
-  Slow test file: e2e\world-local.spec.ts (5.5m)
+  Slow test file: e2e\world-local.spec.ts (5.4m)
   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
-  1 passed (6.2m)
+  1 passed (5.8m)
 
 [exited with code 0]

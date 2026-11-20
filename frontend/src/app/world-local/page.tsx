@@ -1441,6 +1441,10 @@ export default function WorldLocalPage() {
       const status = await session.cancel('player_cancelled');
       console.info('[world-local] cancel status', status);
       await refresh();
+      // A cancelled turn with no prose is a placeholder, not a paragraph.
+      setEntries((list) => list.filter((entry) => entry.text.trim()
+        || (entry.points ?? []).some((part) => part.text.trim())
+        || entry.failed || entry.restored));
       setMessage('本轮已取消。可以重新输入行动。');
     } catch (e) {
       // The one refusal that is not an error: the head point's prose was still
