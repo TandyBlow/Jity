@@ -1,0 +1,327 @@
+{
+  "kind": "jity-goal-narration-samples",
+  "generatedAt": "2026-11-20T12:01:41.098Z",
+  "note": "Raw model text as displayed (D-004). Read-eval happens in the review sheet; this file only collects samples.",
+  "sources": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-10-final4.json",
+      "runId": "2026-11-20T0926-4b42",
+      "status": "FAILED",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-10.json",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-extra-2.json",
+      "runId": "2026-11-20T0949-a18c",
+      "status": "FAILED",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-extra-2.json",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-extra-4.json",
+      "runId": "2026-11-20T1010-ba68",
+      "status": "FAILED",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-extra-3.json",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    }
+  ],
+  "count": 12,
+  "samples": [
+    {
+      "id": "2026-11-20T0926-4b42:t1-look-lane",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 1,
+      "turnId": "t1-look-lane",
+      "pointId": "point_round_3_1",
+      "input": "我停在服务巷的墙边，先把领用台上那张演习规则牌看清楚，再抬头打量巷口和器材棚方向。",
+      "purpose": "开局：观察服务巷、读规则牌、不移动",
+      "text": "路明非盯着演习规则牌，指尖轻轻摩挲着边缘。他抬头望向巷口，黄黑绳已放下，演习区入口敞开。右墙的赛区图清晰可见，器材棚门虚掩着，里面传出轻微的响动。他扫视四周，目光落在巷子尽头的低墙，那里留着新鲜的演习弹痕。屋内，护目镜挂在胸前，镜片无裂纹，镜带松着。演习背心前襟完好，胸袋还装着一只弹匣。他摸了摸肩上，没有阵营识别带。赛区路线图在桌面上展开，图上标出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路。地下检修通道用虚线标注，未标。诺诺站在巷口，红发用发圈束在脑后，红色识别带缠在左臂，右袖上有红痕，身上没有",
+      "textChars": 250,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 31416,
+      "doneMs": 108456,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t2-move-shed",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 2,
+      "turnId": "t2-move-shed",
+      "pointId": "point_round_25_1",
+      "input": "我贴着服务巷的低墙往器材棚走，进门后先看领用台后面有没有人，再找林亦舟。",
+      "purpose": "移动到器材棚，找林亦舟",
+      "text": "路明非贴着服务巷的低墙往器材棚走，身后的服务巷被暮色染成暗黄。他先看领用台后面有没有人，再找林亦舟。  \n\n路明非在器材棚停下，推拉门可回服务巷。他伸手摸了摸器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上。芬格尔头盔歪扣着，食指蹭了油，旧相机挂在脖子上，左臂没有阵营布带。秦越灰色器材背心套在校服外，胸前挂着领用牌，右膝护具扣好，手里的记号笔没有笔帽。这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结算部分为准。",
+      "textChars": 221,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 27628,
+      "doneMs": 178332,
+      "stops": [
+        "updates:position:JsonCallError: context_capacity_exceeded: prompt=11582 max=11000"
+      ],
+      "continuationDecision": null,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t3-talk-lin",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 3,
+      "turnId": "t3-talk-lin",
+      "pointId": "point_round_44_1",
+      "input": "我蹲下来问林亦舟脚踝怎么样，那条断掉的蓝布带是在哪儿弄断的。",
+      "purpose": "与林亦舟对话，问脚伤和蓝布带",
+      "text": "路明非蹲下，指尖轻触林亦舟脚踝，那条断掉的蓝布带还在哪儿弄断的。他低头看去，蓝布带断口处有道细痕，像是被什么东西扯断的。林亦舟的脚踝微微发白，血迹在布料上晕开。路明非没有问她疼不疼，只是想知道那条布带到底是在哪儿弄断的。",
+      "textChars": 110,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 44272,
+      "doneMs": 147430,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t5-wait-listen",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 5,
+      "turnId": "t5-wait-listen",
+      "pointId": "point_round_83_1",
+      "input": "我在西回廊的廊柱后面等一会儿，听枪声从哪个方向来，顺便数着时间。",
+      "purpose": "时间推进：在西回廊听枪声，等一会儿",
+      "text": "路明非在西回廊的廊柱后面等一会儿，听枪声从哪个方向来，顺便数着时间。他盯着远处的阴影，等待着什么。时间到了15:24，过去1分钟。他现在在器材棚，推拉门可回服务巷。备用弹药箱已开盖，笼门的挂锁仍扣着。屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹；黄色封套上写明不得与实弹混用。屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔。屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整；器材笼钥匙能开。芬格尔也在器材棚，头盔歪扣着，食指蹭了",
+      "textChars": 245,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 54838,
+      "doneMs": 135298,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t7-move-foyer",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 7,
+      "turnId": "t7-move-foyer",
+      "pointId": "point_round_137_1",
+      "input": "我推开钟楼门厅的门进去，靠墙站住，听楼上有动静没有。",
+      "purpose": "刷新后继续：进入钟楼门厅",
+      "text": "路明非的护目镜挂在胸前，镜片无裂纹，镜带松着。他站在门厅，听着楼上的动静。钟楼正门朝庭院，西门接西回廊，检修口接地下通道。楼内从门厅经下层楼梯、二层平台到顶层旗台。演习信号旗在顶层外廊。路明非的演习背心前襟完好，没有演习弹痕。他肩上没有阵营识别带。这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结算部分为准。",
+      "textChars": 165,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 44515,
+      "doneMs": 136732,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t8-climb-landing",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 8,
+      "turnId": "t8-climb-landing",
+      "pointId": "point_round_158_1",
+      "input": "我沿着楼梯上到二层平台，蹲在栏杆边往下看中央庭院和喷泉池。",
+      "purpose": "移动到钟楼二层平台，观察庭院",
+      "text": "路明非的护目镜挂在胸前，镜片无裂纹，镜带松着。他蹲在栏杆边，目光落在中央庭院和喷泉池上。楼内从门厅经下层楼梯、二层平台到顶层旗台，演习信号旗在顶层外廊。他没有戴眼镜，只靠护目镜看世界。这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结算部分为准。",
+      "textChars": 133,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 21940,
+      "doneMs": 146727,
+      "stops": [
+        "updates:position:JsonCallError: context_capacity_exceeded: prompt=11583 max=11000"
+      ],
+      "continuationDecision": null,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t9-ask-nono",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 9,
+      "turnId": "t9-ask-nono",
+      "pointId": "point_round_178_1",
+      "input": "我问诺诺现在红蓝两方各占哪些地方，我这样两边都不帮算不算违规。",
+      "purpose": "任务达成：问清红蓝局势和自己的中立立场",
+      "text": "路明非摸了摸胸前的护目镜，镜片无裂纹，镜带松着，挂在胸前。他盯着墙上的信号旗，那面旗子在顶层外廊飘动，像一块被风吹动的云。他问诺诺红蓝两方各占哪些地方，我这样两边都不帮算不算违规。路明非的背心前襟完好，没有演习弹痕，胸袋里还能放一只弹匣。他站在钟楼正门，西门接西回廊，检修口接地下通道。楼内从门厅经下层楼梯、二层平台到顶层旗台。",
+      "textChars": 164,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 23486,
+      "doneMs": 127187,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0926-4b42:t10-hold-and-time",
+      "run": "2026-11-20T0926-4b42",
+      "turn": 10,
+      "turnId": "t10-hold-and-time",
+      "pointId": "point_round_198_1",
+      "input": "我在平台上再等一段时间，记下演习还剩多久，检查自己的护目镜和身上的识别带。",
+      "purpose": "长时间等待与状态核对",
+      "text": "路明非的护目镜在平台上晃动，镜片无裂纹，镜带松着，现挂在胸前。他记下演习还剩多久，检查自己的护目镜和身上的识别带。路明非在钟楼，钟楼正门朝庭院，西门接西回廊，检修口接地下通道。楼内从门厅经下层楼梯、二层平台到顶层旗台；演习信号旗位于顶层外廊。路明非的护目镜挂在胸前，镜带松着。路明非的演习背心前襟完好，没有演习弹痕，胸袋能放一只弹匣，肩上没有阵营识别带。这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结算部分为准。",
+      "textChars": 218,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 42750,
+      "doneMs": 162833,
+      "stops": [
+        "updates:position:JsonCallError: context_capacity_exceeded: prompt=11583 max=11000"
+      ],
+      "continuationDecision": null,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T0949-a18c:t12-talk-doctor",
+      "run": "2026-11-20T0949-a18c",
+      "turn": 2,
+      "turnId": "t12-talk-doctor",
+      "pointId": "point_round_21_1",
+      "input": "我在医护处置室门口问顾岚，今天送来的伤员里有没有脚踝扭伤的，演习还剩多少时间。",
+      "purpose": "与顾岚对话，问伤员和演习规则",
+      "text": "路明非的护目镜在胸前微微发烫，镜片无裂纹，镜带松着，现挂在胸前。他望着顾岚，问：“今天送来的伤员里有没有脚踝扭伤的？”  \n路明非在医护处置室门口问顾岚，今天送来的伤员里有没有脚踝扭伤的，演习还剩多少时间。",
+      "textChars": 103,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 36867,
+      "doneMs": 112240,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T1010-ba68:e1-stand-listen",
+      "run": "2026-11-20T1010-ba68",
+      "turn": 1,
+      "turnId": "e1-stand-listen",
+      "pointId": "point_round_3_1",
+      "input": "我在墙边站一会儿，侧耳听服务巷外面的脚步声和远处的枪声。",
+      "purpose": "原地等待，听服务巷动静",
+      "text": "路明非的护目镜微微发烫，镜片无裂纹，镜带松着，挂在胸前。他侧耳听服务巷外面的脚步声和远处的枪声。墙边的诺诺红色识别带微微发烫，她抬起头，眼神中带着一丝警惕。路明非在墙边站一会儿，侧耳听服务巷外面的脚步声和远处的枪声。",
+      "textChars": 108,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 32493,
+      "doneMs": 109986,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T1010-ba68:e2-check-ground",
+      "run": "2026-11-20T1010-ba68",
+      "turn": 2,
+      "turnId": "e2-check-ground",
+      "pointId": "point_round_25_1",
+      "input": "我蹲下检查脚边的地面和墙根，看看有没有新的脚印或擦痕。",
+      "purpose": "观察地面与墙根痕迹",
+      "text": "路明非蹲下检查脚边的地面和墙根，手指触到一块发烫的金属，是演习弹留下的痕迹。他抬头看向右墙，赛区图上庭院、东西回廊、跨溪小桥、钟楼与白线撤离路清晰可见。屋内护目镜挂在胸前，镜片无裂纹，镜带松着。他摸了摸胸前的演习背心，前襟完好，没有弹痕。肩上没有阵营识别带。诺诺在墙角，红发用发圈束在脑后，红色识别带缠在左臂，右袖的红痕是扶过弹着石墙时蹭上的。这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结算部分为准。",
+      "textChars": 213,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 16525,
+      "doneMs": 139662,
+      "stops": [
+        "updates:position:JsonCallError: context_capacity_exceeded: prompt=11592 max=11000"
+      ],
+      "continuationDecision": null,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "note": null
+    },
+    {
+      "id": "2026-11-20T1010-ba68:e3-check-time",
+      "run": "2026-11-20T1010-ba68",
+      "turn": 3,
+      "turnId": "e3-check-time",
+      "pointId": "point_round_45_1",
+      "input": "我抬头看看天色，再低头核对护目镜和识别带，估算演习还剩多久。",
+      "purpose": "看天色估算剩余时间",
+      "text": "路明非抬头看看天色，再低头核对护目镜和识别带，估算演习还剩多久。他摸了摸胸前的护目镜，镜片无裂纹，镜带松着，现挂在胸前。屋内有他的演习背心，前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。他站在西侧服务巷，黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区图，器材棚门敞开。巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。诺诺在巷口，红发用发圈束在脑后，红色识别带缠在左臂，右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面。",
+      "textChars": 235,
+      "source": "model",
+      "narrationModel": "qwen3-1.7b",
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "acceptedMs": 33569,
+      "doneMs": 110488,
+      "stops": [],
+      "continuationDecision": null,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "note": null
+    }
+  ]
+}

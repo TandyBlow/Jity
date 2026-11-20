@@ -38,6 +38,16 @@ async function play(page: import('@playwright/test').Page, text: string) {
     null,
     { timeout: 330_000 },
   );
+  // The displayed prose must be the model's text verbatim (D-004): the page's
+  // own record is the reference, and whitespace is the only tolerated guess.
+  const verbatim = await page.evaluate(() => {
+    const turns = (globalThis as { __worldTurns?: Array<{ points?: Array<{ text?: string }> }> }).__worldTurns;
+    const last = turns?.[turns.length - 1];
+    const recordText = (last?.points ?? []).map((point) => point.text ?? '').join('').replace(/\s+/gu, '');
+    const article = [...document.querySelectorAll('article')].at(-1);
+    return { recordText, shown: (article?.textContent ?? '').replace(/\s+/gu, '') };
+  });
+  if (verbatim.recordText) expect(verbatim.shown).toContain(verbatim.recordText);
 }
 
 test.describe('world-local product page', () => {
