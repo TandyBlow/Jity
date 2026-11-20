@@ -594,10 +594,15 @@ export default function WorldLocalPage() {
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ state: 'idle' });
   const [syncState, setSyncState] = useState<SyncState | null>(null);
-  const [online, setOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine));
+  // Node 22 exposes a global `navigator` without `onLine`, so reading it in the
+  // initializer made SSR render the offline banner and the client the normal
+  // panel. Start from the hydration-safe default and read the real value after
+  // mount.
+  const [online, setOnline] = useState(true);
   const leaseWorldRef = useRef<string | null>(null);
 
   useEffect(() => {
+    setOnline(navigator.onLine);
     const up = () => setOnline(true);
     const down = () => setOnline(false);
     window.addEventListener('online', up);
