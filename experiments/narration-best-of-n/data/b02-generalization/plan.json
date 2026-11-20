@@ -1,0 +1,84 @@
+{
+  "batchId": "b02-generalization",
+  "preparedAt": "2026-11-10T12:13:03.308Z",
+  "pack": {
+    "package": "narration-dev-package-v1",
+    "caseCount": 15,
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+  },
+  "seeds": [
+    17,
+    29,
+    43,
+    61,
+    79,
+    97
+  ],
+  "model": {
+    "hpcPath": "~/qwen15b",
+    "quantization": "none (safetensors)",
+    "why": "Same loaded instance as b01 when 10 can batch them; no new model."
+  },
+  "template": {
+    "kind": "qwen2-chatml",
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "userRenderer": "renderTrainedInstructUser(input)",
+    "addGenerationPrompt": true
+  },
+  "sampling": {
+    "doSample": true,
+    "temperature": 0.45,
+    "topP": 0.95,
+    "topK": 40,
+    "repetitionPenalty": 1,
+    "noRepeatNgramSize": 0,
+    "maxNewTokens": 240,
+    "numReturnSequences": 1,
+    "eosStop": true
+  },
+  "calls": 30,
+  "cases": [
+    {
+      "caseId": "dr-0021-no-change-three-people",
+      "category": "no_change",
+      "inputSha256": "97da3b6a06b00e4b73077d6720f5cbcda3782af3df0d975305c424365d298a37",
+      "userPromptSha256": "3fb911248dc6278f7009a34ed4d8c5e5c5d7ccdbcede9fd55e2dc153790b4097",
+      "userPromptChars": 1340
+    },
+    {
+      "caseId": "short2-0034-carved-line-worn",
+      "category": "move_direction",
+      "inputSha256": "ef2e2a4027e70270c9f337830cdde44f17c38d33aac06607d66de3bc8400ce36",
+      "userPromptSha256": "6b580590172cbcf9d403004d83f3841b813d9ec3344e858bcff127906a0ce024",
+      "userPromptChars": 660
+    },
+    {
+      "caseId": "fixture-goggles-transfer",
+      "category": "item_transfer_fixture",
+      "inputSha256": "38a9662ebce022575ac6e07576c00cb2cfb97f1acb765ae237087839eb0faf6f",
+      "userPromptSha256": "ecd4c66eedf5b94eab19b85ca3f9c7320e3cdc94942910382aca226bd86f254f",
+      "userPromptChars": 650
+    },
+    {
+      "caseId": "short2-0056-duty-name-and-copy",
+      "category": "gender_pronoun",
+      "inputSha256": "a58a72638b17beb49caa67cec8de166efefe5a54d1ea590887faedd9018fc608",
+      "userPromptSha256": "9f4f856c1270a532850780132f4d7f607e5bea2f032a57fc30729da94cac7524",
+      "userPromptChars": 810
+    },
+    {
+      "caseId": "tide-continuity-tide-duty-t2",
+      "category": "continuity",
+      "inputSha256": "9a5ec1fae57223bfa3eba6299c87ba16c14f51c855afb2ab6e3280a3b5386539",
+      "userPromptSha256": "1d70348314237039c13d21f55c829848fc0b0da32fe3f42105809d37f26404df",
+      "userPromptChars": 2037
+    }
+  ],
+  "requestsSha256": "6c6e931f2b03168157088586021e6fbf3843112ee6168f872a036fee40e4816e",
+  "expectedSha256": "a1184e12c6925e95554b704d024007d8bd9ae33fc0467a50fe01db8f8d96db5b",
+  "renderer": "frontend/src/lib/world-engine/local/narration-generation/trained-input.ts:renderTrainedInstructUser",
+  "referenceExcluded": true,
+  "frontendRoot": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\12-best-of-n\\frontend"
+}
