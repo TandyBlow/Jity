@@ -655,6 +655,13 @@ try {
             text = (clone.textContent ?? '').trim();
           }
           const bodyText = document.body.innerText;
+          // A failed turn's note stays in the history; only the last article's
+          // own note may end the current turn.
+          const lastNote = (node, re) => {
+            if (!node) return '';
+            const hit = [...node.querySelectorAll('div,span,p')].find((child) => re.test((child.textContent ?? '').trim()));
+            return hit ? (hit.textContent ?? '').trim() : '';
+          };
           const record = Array.isArray(globalThis.__worldTurns) ? globalThis.__worldTurns.at(-1) : null;
           return {
             record: record ? {
@@ -670,8 +677,8 @@ try {
             doneText: (bodyText.split(String.fromCharCode(10)).find((line) => /本轮(完成|已交还|已到|停止)/.test(line)) ?? ''),
             failed: /Error|加载失败/.test(bodyText),
             cancelVisible: [...document.querySelectorAll('button')].some((node) => /取消|停止|中断/.test(node.textContent ?? '')),
-            failureNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('这一回合的结算没有完成')) ?? ''),
-            turnNote: (bodyText.split(String.fromCharCode(10)).find((line) => line.includes('本回合没有完成：')) ?? ''),
+            failureNote: lastNote(last, /^这一回合的结算没有完成/u),
+            turnNote: lastNote(last, /^本回合没有完成：/u),
           };
         }, beforeCount);
         if (sample.count <= beforeCount && !sample.failed) {
