@@ -27,7 +27,7 @@
 | R01 | 开局固定地点、物品、人物；运行中只更新登记实体；允许在既有大任务下新增小任务 | 实现中 | `local/world-loader.ts`、`local/static-world-registration.ts`、`local/state.ts:83` | `world-loader.test.ts`、`state.test.ts`；`data/worlds/README.md`；摘要 `3f65452d…` / `6262d5fc…` | 真实模型引用未知实体、非法新实体的正反例；未知实体不能靠叙事变成事实。G2/G5 |
 | R02 | 地点嵌套、人物/物品容纳与相对位置；自然语言外貌、任务、个性、理智 | 实现中 | `local/state.ts`、`types.ts`、`world-loader.ts` | 静态世界 26 地点/14 人物/74 物品/73 任务；state 测试 | 嵌套移动、物品移动、地点外貌、相对位置的真实模型场景与页面展示。G2/G5/G6 |
 | R03 | 初始外貌与个性不改写；变化保留历史；位置结构化 | 实现中 | `local/state.ts` 的 initial/current、`pointEntityDeltas` | state 测试；静态世界 README | 真模型合法变化、替代引用、原文保留、纯解除分支。G5 |
-| R04 | 世界事实由 S₀＋Δ 构成；状态/摘要/检查点可重建 | 实现中 | `state.ts:83/906/952`、`canonical.ts`、`history.ts`、`persistence/` | `state.test.ts`、`history.test.ts`、`session-recovery.test.ts`；旧 Python/SQLite H2 是独立冻结范围 | Python–TS 冻结差分向量；缓存与模型切换不能改变事实来源。G2 |
+| R04 | 世界事实由 S₀＋Δ 构成；状态/摘要/检查点可重建 | 实现中 | `state.ts:83/906/952`、`canonical.ts`、`history.ts`、`persistence/` | `state.test.ts`、`history.test.ts`、`session-recovery.test.ts`；Python–TS 冻结差分（`kernel-diff.json`）；restore 接 `verifySessionSnapshot`（`session.ts`、corrupt-chain 测试） | 真实多轮页面回放证据；缓存与模型切换不能改变事实来源。G2 |
 | R05 | 同点同实体合并为一份增量 | 实现中 | `state.ts` 的 `applyPoint` 合并、`transport.ts` 的 work 记录 | state、local-transport 测试 | 真实多组与连续阶段的最终投影一致。G2/G5 |
 | R06 | 非关联新轮按理智排序；关联点沿用冻结顺序 | 实现中 | `controller.ts`、`schedule.ts`、`local/session.ts` | controller、schedule 测试 | 真实多人物行动与续轮、逐人判断、重排、关联顺序不变。G2/G5 |
 | R07 | 骰点驱动被迫行动准入；先冻结全组再统一结算 | 实现中；真实模型未验 | `local/transport.ts` 的 group/work、`turn-execution/`、`controller.ts` | turn-execution 测试；旧脚本候选只作对照 | 模型分析目标、生成反应与共同结果；多级、未准入、环、已冻结成员；不以脚本文本代替。G5 |
