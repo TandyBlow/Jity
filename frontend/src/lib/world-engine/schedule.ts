@@ -241,6 +241,9 @@ export interface ControllerMemory {
    * point-level tasks/subtasks/personality/sanity batch runs and stages
    * through the time-scan unit. Optional so scenario memories stay valid. */
   pointRestPending?: boolean;
+  /** Wall-clock start of the current player turn (Date.now), set by
+   * preparePlayerInput; the controller uses it for the turn budget. */
+  turnStartedAt?: number;
   /** Set when the program-owned round-identity sink (controller ①b) throws or
    * is missing on a confirmed continue with no pre-seeded allocation — visible
    * for diagnostics; the driver continues scheduling (the next discover will

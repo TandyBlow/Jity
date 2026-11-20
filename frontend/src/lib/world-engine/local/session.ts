@@ -70,6 +70,9 @@ export interface LocalGameOptions {
   /** D-018: scene stages per group, the rest of the six stages once per point
    * (default true; false keeps the merged per-group batch for comparison). */
   splitPointUpdates?: boolean;
+  /** Stop the automatic chain at this wall-clock budget (default 240 s), so a
+   * judge-policy turn hands back inside the 300 s cap. */
+  turnBudgetMs?: number;
   /** Evidence sink for the exact commit_point request (see ControllerIo). */
   onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
   onEvent?: (event: LocalSessionEvent) => void;
@@ -186,7 +189,7 @@ export class LocalGameSession {
         const pointId = (event.request as { pointId?: Id }).pointId;
         if (pointId) productModel.onPointCommitted?.(pointId);
       },
-    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: options.splitPointUpdates ?? true });
+    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: options.splitPointUpdates ?? true, turnBudgetMs: options.turnBudgetMs ?? 240_000 });
     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
   }
 

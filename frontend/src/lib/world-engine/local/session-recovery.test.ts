@@ -490,6 +490,35 @@ describe('LocalGameSession durability', () => {
     expect(facts(split.state)).toEqual(facts(merged.state));
   });
 
+  it('stops the automatic chain when the turn budget is spent', async () => {
+    const log: string[] = [];
+    const model = scriptedModel(log, {
+      plan: (input) => {
+        const round = (input as { round?: { roundId?: string; order?: string[] } }).round;
+        return [{ pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal' as const,
+          timeAdvance: { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } },
+          actorIds: round?.order ?? [] }];
+      },
+      action: (key) => key === 'person_a' ? { kind: 'act', text: '林川掀开盒盖。' } : undefined,
+      targets: () => ({ targets: [] }),
+      continuations: [
+        { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_a'], nextRoundId: 'round_auto_budget' },
+        { kind: 'handback', closedBy: 'model', cancelReason: null },
+      ],
+    });
+    const session = await LocalGameSession.create(template(), model, { leaseHeartbeat: false, roll: () => 13, turnBudgetMs: 0 });
+    await session.start();
+    const status = await session.submit('我打开盒盖。');
+    expect(status.kind).not.toBe('error');
+    // The budget stop happens before the continuation model call: a program
+    // stop, never a model handback.
+    expect(log.some((row) => row.startsWith('continuation:'))).toBe(false);
+    const record = session.snapshot.transport;
+    expect(record.round?.conclusion?.cancelReason).toBe('turn_budget');
+    expect(record.advance).toBeNull();
+    expect(Object.keys(record.points)).toHaveLength(1);
+  });
+
   it('refuses a duplicate submit while the same turn is in flight', async () => {
     const log: string[] = [];
     let release!: () => void;

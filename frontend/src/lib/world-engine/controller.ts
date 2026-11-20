@@ -66,6 +66,10 @@ export interface DriverOptions {
    * subtasks, personality and sanity run once per point and stage through the
    * time-scan unit. Scenario drivers keep the historical merged batch. */
   splitPointUpdates?: boolean;
+  /** Wall-clock budget for one player turn. When it runs out at the
+   * continuation boundary, the round is cancelled visibly instead of starting
+   * another automatic round the page deadline would cut anyway. */
+  turnBudgetMs?: number;
 }
 
 export type DriverStatus =
@@ -124,6 +128,7 @@ export class ControllerDriver {
   private readonly identityAliases: Record<string, string>;
   private readonly identityGate: boolean;
   private readonly splitPointUpdates: boolean;
+  private readonly turnBudgetMs: number | null;
   private readonly narration: PointNarrationQueue | null;
   private narrationBootstrapped = false;
   private narrationDirty = false;
@@ -142,6 +147,7 @@ export class ControllerDriver {
     this.identityAliases = options?.identityAliases ?? {};
     this.identityGate = options?.identityGate ?? false;
     this.splitPointUpdates = options?.splitPointUpdates ?? false;
+    this.turnBudgetMs = options?.turnBudgetMs ?? null;
     this.narration = options?.narrationOverlap
       ? new PointNarrationQueue({
         transport: io.transport,
@@ -399,6 +405,7 @@ export class ControllerDriver {
     this.memory.allocPlan = structuredClone(allocPlan);
     for (const key of clearSlotKeys) delete this.memory.ids[key];
     this.memory.playerInput = { text, order: [...order] };
+    this.memory.turnStartedAt = Date.now();
   }
 
   private nextRequestId(): Id {
@@ -447,6 +454,14 @@ export class ControllerDriver {
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
+    // The page's 295 s deadline is the backstop; a spent turn budget stops the
+    // chain at the continuation boundary with a visible cancel reason instead
+    // of starting an automatic round the deadline would abort mid-call.
+    if (this.turnBudgetMs != null && this.state.control.phase === 'assess_continuation'
+      && this.memory.continuation == null && this.memory.continuationStop == null
+      && this.memory.turnStartedAt != null && Date.now() - this.memory.turnStartedAt >= this.turnBudgetMs) {
+      this.memory.continuationStop = { reason: 'turn_budget' };
+    }
     const decision = scheduleNext(this.scheduleView(this.narrationBusy, command && command.kind !== 'player_input' ? command : undefined));
     switch (decision.kind) {
       case 'await_command': {
