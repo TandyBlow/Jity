@@ -77,7 +77,7 @@
 
 ## D-007 模型身份与替换
 
-- 状态：`proposed`（G3 实测后确认）。
+- 状态：`signed`（2026-11-20，G3 实测；资产哈希见 `artifacts/goal/model-manifest.json`）。
 - 决定：当前默认是语义 Qwen3-0.6B + 叙事 Qwen3-1.7B（`world-local/page.tsx` 的 `NARRATION_MODELS` 默认 `qwen3-1.7b`）；`qwen25-1.5b-narr` 为备选。Qwen3-0.6B 退役只适用于组件候选，不自动适用于产品语义槽。替换模型必须记录 sha256、bytes、license、获取方式与前后实测；不静默换权重。
 - 理由：模型选择要以目标设备的质量、时间、内存和事实表现为依据；旧组件实验的退役结论不能直接套到产品槽。
 - 取代：旧文档中「0.5B 叙事」「Qwen3-0.6B 一律退役」等笼统说法。
@@ -131,8 +131,15 @@
 - 取代：`architecture.md` 第 7 节与 `goal.md` G7 中「单用户 Bearer 是否足够」的待确认项。
 - 影响文件：`design/goal/architecture.md` 第 7 节、`design/goal/acceptance.md` 第 7 节、`design/goal/goal.md` G7。
 
-## 已确认（2026-11-20）
+## D-014 G3 时间包线与恢复阻塞
 
+- 状态：`signed`（2026-11-20，实测结论）。
+- 决定：60/300 门槛不变。已测 3 个正常点通过：首段 22.4/39.1/31.4 s，正文完成 29.3/49.2/40.6 s，整点 120/207/117 s；冷启动 24.7/18.9/19.3 s（`crossOriginIsolated=true`，RTX 4060，2×200）。10 点覆盖因结算失败后 advance 未清理而阻塞（t4 `unknown character f1` → t5–10 `turn_in_progress`）；不宣称 G3 通过，不降门槛、不删输入。自动链 0 次（t1 结论请求 `request_malformed`；t2/t3 自动后续在 updates 停止），归 G5。
+- 理由：时间数据已排除「纯模型速度不达标」，阻塞在内核取消/恢复与页面交互；先修 G2 的取消恢复，再补测十点。
+- 取代：无；细化为 D-005/D-007 的实测记录。
+- 影响文件：`design/goal/ledger.md` G2/G3、`artifacts/goal/timing-baseline.json`、`artifacts/goal/timing-runs/`、`frontend/src/app/world-local/page.tsx`（`e75cd4a6`）、`frontend/src/lib/world-engine/local/session.ts`（待 G2）。
+
+## 已确认（2026-11-20）
 本轮 8 个待确认项已全部有答案，记录在 D-004、D-006、D-010–D-013。当前没有 `pending-user` 项。
 
 后续新问题追加编号，不复活已删除的草案参数。

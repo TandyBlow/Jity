@@ -20,14 +20,14 @@
 
 ## 4. 真实点
 
-- [ ] 4.1 跑 `turns-10.json` 全部 10 个输入，逐回合证据落盘。
-- [ ] 4.2 确认至少一次自动链（`continuationDecision=continue`）与一个重负载点；缺失时追加 `turns-20-extra.json` 的点。
-- [ ] 4.3 汇总 `artifacts/goal/timing-baseline.json`：`inputAt`、`pointCommittedAt`、`narrationStartedAt`、`firstReadableAt`、`pointTextFinishedAt`、firstToken、longestStreamGapMs、stages、peakMemoryMB。
-- [ ] 4.4 逐点判定：首段 ≤60,000 ms；`pointTextFinishedAt − pointCommittedAt ≤300,000 ms`；全部记录失败/重试/回退。
+- [x] 4.1 跑 `turns-10.json` 全部 10 个输入，逐回合证据落盘；结果：3 个正常点有完整计时，t4 起被结算失败恢复缺口阻断（见 5.1）。
+- [ ] 4.2 确认至少一次自动链（`continuationDecision=continue`）与一个重负载点；缺失时追加 `turns-20-extra.json` 的点。当前 0 次 continue；重负载点已有（t1/t2 多组结算）。
+- [x] 4.3 汇总 `artifacts/goal/timing-baseline.json`：`inputAt`、`pointCommittedAt`、`narrationStartedAt`、`firstReadableAt`、`pointTextFinishedAt`、firstToken、longestStreamGapMs、stages、peakMemoryMB（3 点 + 冷启动）。
+- [x] 4.4 逐点判定：已测 3 点首段 ≤60,000 ms、`pointTextFinishedAt − pointCommittedAt ≤300,000 ms`；失败/重试/回退全部保留。
 
 ## 5. 结论
 
-- [ ] 5.1 达标：G3 记为通过并写证据路径；不达标：登记失败与下一候选决策，复测。
+- [ ] 5.1 达标：G3 记为通过并写证据路径；不达标：登记失败与下一候选决策，复测。当前结论：已测点时间通过；10 点覆盖阻塞于 G2/G4 的结算失败恢复，G3 保持 active。
 
 ## Workflow follow-up
 

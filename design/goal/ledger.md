@@ -33,11 +33,11 @@
 | R07 | 骰点驱动被迫行动准入；先冻结全组再统一结算 | 实现中；真实模型未验 | `local/transport.ts` 的 group/work、`turn-execution/`、`controller.ts` | turn-execution 测试；旧脚本候选只作对照 | 模型分析目标、生成反应与共同结果；多级、未准入、环、已冻结成员；不以脚本文本代替。G5 |
 | R08 | 已行动人物不重复行动；后续骰点仍影响攻击者结果 | 实现中 | `local/transport.ts` 的 `actedIds`/round、`turn-execution/` | transport、turn-execution、recovery 测试 | 真实模型组场景；恢复不重掷、不重采样。G2/G5 |
 | R09 | 位置→外貌→任务→新增小任务→个性→理智；任务与个性全人物覆盖 | 实现中 | `local/state.ts` 的阶段 apply、`turn-execution/`、`game-model.ts` | state 测试；旧六阶段 preview 只作参考 | 真模型候选按依赖逐阶段；任务扫描全人物；任务达成后个性扫描全人物；允许合法不变化。G5 |
-| R10 | 仅由大概率发生且与主角关联的后续行动触发自动推进 | 实现中 | `controller.ts`、`schedule.ts`、`local/session.ts` | controller 测试；旧固定 handback 只作对照 | 真模型 continue/handback；多轮不重复消费输入；预算暂停不伪装 handback。G5 |
+| R10 | 仅由大概率发生且与主角关联的后续行动触发自动推进 | 实现中 | `controller.ts`、`schedule.ts`、`local/session.ts` | controller 测试；旧固定 handback 只作对照；G3 计时运行 `artifacts/goal/timing-runs/points-10-rerun.json` | 真模型 continue/handback；G3 十点 0 次 continue：t1 结论请求 `request_malformed`，t2/t3 自动后续在 updates 停止（上下文/重复任务），归 G5；多轮不重复消费输入；预算暂停不伪装 handback。G5 |
 | R11 | 每点只读叙事；可省略/暗示/隐藏秘密；不虚构已结算事实 | 实现中；raw-output 边界已定 | `local/point-narration/`、`narration-input/`、`narration-generation/`、`narration-candidates/` | `design/parallel-handoff/01-quality.md:279`（2026-11-11 原样输出）、`02-narration.md`；旧 B3/叙事实验只作参考 | 产品路径正文逐字等于模型返回；20+ 点无硬事实错误；视角/秘密/选择。G6 |
 | R12 | 不另维护人物知识状态；模型从当前世界判断认知 | 实现中 | 无独立知识库；叙事只读已提交状态 | `architecture.md` 第 6 节；local 目录无 knowledge store | 确认提示/模型无隐藏知识真值库；可见性投影规则。G6 |
 | R13 | 行动描述仅作本次分析；不建长期行动历史 | 实现中 | `local/transport.ts` 的 `actionTexts`、`persistence/` 快照、`history.ts` | transport、persistence 测试 | 原文只按工作态生命周期保存；调试归档与世界存档分开。G2/G4 |
-| R14 | 工作职责不等于模型数或调用数 | 实现中 | `game-model.ts` 的 options、`controller.ts` 的 `ModelTask`、`schedule.ts` | `architecture.md` 第 6 节；模型变体清单 | 按质量/成本选择单/多模型；记录每任务贡献。G3/G6 |
+| R14 | 工作职责不等于模型数或调用数 | 实现中 | `game-model.ts` 的 options、`controller.ts` 的 `ModelTask`、`schedule.ts` | `architecture.md` 第 6 节；模型变体清单；G3 逐任务调用记录 `artifacts/goal/timing-runs/points-10-rerun.json` | 按质量/成本选择单/多模型；记录每任务贡献。G3/G6 |
 | R15 | 开局生成 | 已改写：静态载入/校验/封存，实现中 | `world-loader.ts`、`static-world-registration.ts`、`data/worlds/` | loader/registration 测试；摘要与计数；2026-11-10 用户澄清 | 静态世界供给与 held-out 决定；开局校验与页面。G1/G2/G4 |
 | R16 | 小世界完整可玩；≥20 输入；自动链、共同结算、恢复、历史、删叙事重生 | 未实现 | `world-local/page.tsx`、`frontend/scripts/product-acceptance/accept-world-local.mjs`、`turns-10.json` | 10 轮驱动已存在；没有 20 输入真实模型通过记录 | 20 输入、离线、服务器关闭、两设备分叉、用户签字。G8 |
 
@@ -58,8 +58,8 @@
 | 目标线 | 状态 | 说明 |
 |---|---|---|
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
-| G2 浏览器状态内核收口 | 未开始 | 32 操作定案、差分向量、restore/invariants、骰点恢复 |
-| G3 模型资产与时间包线 | 未开始；执行顺序第一 | RTX 4060 + Edge、外部下载脚本；先测 60/300；未通过不带病进 G4/G8 |
+| G2 浏览器状态内核收口 | 进行中 | 32 操作定案、差分向量、restore/invariants、骰点恢复；接手 G3 暴露的结算失败后取消失效 |
+| G3 模型资产与时间包线 | 阻塞（已测点通过） | 资产已取并逐字节校验（`model-manifest.json`）；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；已测 3 个正常点首段 22.4–39.1 s、正文完成 29.3–49.2 s、整点 117–207 s；10 点覆盖被结算失败后的 advance 未清理阻断（t4 `unknown character f1` → t5–10 `turn_in_progress`），转 G2/G4 后补测 |
 | G4 单机可玩页面接线 | 未开始 | pause/resume/history/delete/regenerate/e2e |
 | G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
 | G6 叙事产品路径与质量 | 未开始 | 先原样输出；20+ 点读评；G6 后决定是否加事实门 |
@@ -71,8 +71,8 @@
 按 G 线列，作为唯一进度来源；不另建 progress 文档。
 
 - **G1**：确认文档集与 tag；用户决策已记录（D-004/D-006/D-010–D-013）；当前无 `pending-user`。
-- **G2**：定案 `checkpoint_restore_group_work`、`get_context.recovery:null`；生成 Python 冻结差分向量；接 `state-invariants` 到 restore；补 linked/instant successor time；冻结骰点协议；补多标签/刷新/重复提交/取消恢复测试。
-- **G3**：取得或重建语义/叙事 GGUF 与 tokenizer（外部下载脚本，D-010）；写 sha256/bytes/license/获取方式；RTX 4060 + Edge 跑 3 次冷启动 + 10 个真实点；产 `timing-baseline.json`；不达标改模型/调度并复测。
+- **G2**：定案 `checkpoint_restore_group_work`、`get_context.recovery:null`；生成 Python 冻结差分向量；接 `state-invariants` 到 restore；补 linked/instant successor time；冻结骰点协议；补多标签/刷新/重复提交/取消恢复测试。接手取消恢复：结算失败后 `round_conclusion_cancel` 未清 advance，后续提交恒 `turn_in_progress`（证据 `artifacts/goal/timing-runs/points-10-rerun.json` t4–t10）。
+- **G3**：资产与冷启动完成；已测 3 点 60/300 通过；补测 10 点前置为 G2/G4 的结算失败恢复；自动链 0 次（G5）。
 - **G4**：接 `LocalGameSession.pause()/resume()`、HistoryPanel、`narration_delete`、状态/进度、错误/重试、刷新恢复、租约提示；用 components/world-local；加 `world-local.spec.ts`；清理过期注释；修 `position_invalid`、`turn_in_progress`、自动轮重复、空占位回合。
 - **G5**：建 12–20 例冻结场景；只做 `dragon-raja-free-day`（D-011）；每任务记录原始输出/结构/语义错误/重试/耗时；用户读评；产 `artifacts/goal/semantics/`。
 - **G6**：先按原样输出冻结产品路径（D-004）；核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5；用户 20+ 点读评；G6 后按实测决定是否加事实门；产 `artifacts/goal/narration/`。

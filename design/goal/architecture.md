@@ -77,7 +77,7 @@ Python v2 内核降为**开发期差分预言机、金标向量与迁移参考**
 | 叙事默认 | `/models/Qwen3-1.7B-Q4_K_M.gguf` | 1,107,409,472 | `b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897` |
 | 叙事故障备选 | `/models/qwen25-1.5b-narr-Q4_K_M.gguf` | 986,048,096 | `6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b` |
 
-- `frontend/public/models/` 当前为空；GGUF 被 gitignore。G3 必须取得或重建资产，并产 sha256/bytes/license/获取方式清单。
+- `frontend/public/models/` 由 `frontend/scripts/fetch-models.mjs` 取得并逐字节校验（2026-11-20）；GGUF 被 gitignore；清单见 `artifacts/goal/model-manifest.json`。
 - 目标设备：RTX 4060 Laptop 8 GB + Edge（D-010）。分发：外部下载脚本；仓库只存清单与脚本，不直接托管权重；目标机器首次获取允许联网。
 - 页面第 5 行的「narration 0.5B」「localStorage」是过期注释；实际默认叙事模型是 Qwen3-1.7B，持久化走 IndexedDB，G4 清理。
 - 不静默换权重；模型变体必须是产品实际服务的文件，并在 `__worldArm` 记录 sha256。

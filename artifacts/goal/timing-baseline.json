@@ -1,0 +1,1231 @@
+{
+  "kind": "jity-goal-timing-baseline",
+  "generatedAt": "2026-11-20T08:38:03.510Z",
+  "thresholds": {
+    "firstReadableMs": 60000,
+    "pointTextMs": 300000
+  },
+  "sources": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-1.json",
+      "runId": "2026-11-20T0814-735b",
+      "status": "PREFLIGHT",
+      "intent": "10-turn",
+      "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-2.json",
+      "runId": "2026-11-20T0815-a2f9",
+      "status": "PREFLIGHT",
+      "intent": "10-turn",
+      "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-3.json",
+      "runId": "2026-11-20T0815-a3cb",
+      "status": "PREFLIGHT",
+      "intent": "10-turn",
+      "turnsFile": "D:\\others\\Jity\\frontend\\scripts\\product-acceptance\\turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-10.json",
+      "runId": "2026-11-20T0816-24d4",
+      "status": "FAILED",
+      "intent": "timing-baseline",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-10.json"
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/points-10-rerun.json",
+      "runId": "2026-11-20T0826-bbb8",
+      "status": "FAILED",
+      "intent": "timing-baseline",
+      "turnsFile": "frontend/scripts/product-acceptance/turns-10.json"
+    }
+  ],
+  "coldStarts": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-1.json",
+      "runId": "2026-11-20T0814-735b",
+      "startedAt": "2026-11-20T08:14:55.607Z",
+      "readyMs": 24696,
+      "crossOriginIsolated": true,
+      "adapter": {
+        "available": true,
+        "vendor": "nvidia",
+        "architecture": "lovelace",
+        "device": "",
+        "description": "",
+        "isFallback": null,
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "bgra8unorm-storage",
+          "texture-formats-tier1",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "float32-blendable",
+          "atomic-vec2u-min-max",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "shader-f16",
+          "clip-distances"
+        ]
+      },
+      "models": {
+        "requests": 2,
+        "ok": 2,
+        "failed": []
+      },
+      "jsHeapAtReady": {
+        "usedJSHeapSize": 66509262,
+        "totalJSHeapSize": 85265702,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-2.json",
+      "runId": "2026-11-20T0815-a2f9",
+      "startedAt": "2026-11-20T08:15:27.985Z",
+      "readyMs": 18883,
+      "crossOriginIsolated": true,
+      "adapter": {
+        "available": true,
+        "vendor": "nvidia",
+        "architecture": "lovelace",
+        "device": "",
+        "description": "",
+        "isFallback": null,
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "texture-formats-tier1",
+          "bgra8unorm-storage",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "float32-blendable",
+          "atomic-vec2u-min-max",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "shader-f16",
+          "timestamp-query"
+        ]
+      },
+      "models": {
+        "requests": 2,
+        "ok": 2,
+        "failed": []
+      },
+      "jsHeapAtReady": {
+        "usedJSHeapSize": 64872635,
+        "totalJSHeapSize": 78496739,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/timing-runs/cold-3.json",
+      "runId": "2026-11-20T0815-a3cb",
+      "startedAt": "2026-11-20T08:15:50.984Z",
+      "readyMs": 19341,
+      "crossOriginIsolated": true,
+      "adapter": {
+        "available": true,
+        "vendor": "nvidia",
+        "architecture": "lovelace",
+        "device": "",
+        "description": "",
+        "isFallback": null,
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "texture-formats-tier1",
+          "bgra8unorm-storage",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "float32-blendable",
+          "atomic-vec2u-min-max",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "clip-distances",
+          "texture-formats-tier2"
+        ]
+      },
+      "models": {
+        "requests": 2,
+        "ok": 2,
+        "failed": []
+      },
+      "jsHeapAtReady": {
+        "usedJSHeapSize": 63659791,
+        "totalJSHeapSize": 81492403,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      }
+    }
+  ],
+  "points": [
+    {
+      "run": "2026-11-20T0816-24d4",
+      "turn": 1,
+      "id": "t1-look-lane",
+      "input": "我停在服务巷的墙边，先把领用台上那张演习规则牌看清楚，再抬头打量巷口和器材棚方向。",
+      "purpose": "开局：观察服务巷、读规则牌、不移动",
+      "clocks": {
+        "pointCommittedAtMs": 25589,
+        "narrationStartedAtMs": 27928,
+        "firstReadableAtMs": 27928,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 35448,
+        "firstAcceptedAtMs": 35448,
+        "pointTextFinishedMinusCommitMs": 9859,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_3_1": {
+            "startedAtMs": 27928,
+            "firstTextAtMs": 27928,
+            "completedAtMs": 35448
+          }
+        },
+        "driverDoneMs": 122875,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1505.0099999904633,
+      "longestStreamGapMs": 135.86500000953674,
+      "generation": {
+        "wallMs": 5656.985000014305,
+        "finishReason": "stop",
+        "streamChunks": 154
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 6433,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5",
+          "stage": null,
+          "ms": 11863,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_6",
+          "stage": null,
+          "ms": 4325,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6",
+          "stage": null,
+          "ms": 10781,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_7",
+          "stage": null,
+          "ms": 6761,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7",
+          "stage": null,
+          "ms": 18371,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_8",
+          "stage": null,
+          "ms": 4460,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8",
+          "stage": null,
+          "ms": 8678,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_10",
+          "stage": null,
+          "ms": 5274,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10",
+          "stage": null,
+          "ms": 17347,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 77,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 206,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2624,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 5197,
+          "label": "结算中：即时反应取消本轮"
+        },
+        {
+          "atMs": 7244,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 13671,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 25560,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 28081,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 122847,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 61,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 10,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0816-24d4",
+      "turn": 2,
+      "id": "t2-move-shed",
+      "input": "我贴着服务巷的低墙往器材棚走，进门后先看领用台后面有没有人，再找林亦舟。",
+      "purpose": "移动到器材棚，找林亦舟",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 330080,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": 1505.0099999904633,
+      "longestStreamGapMs": 135.86500000953674,
+      "generation": {
+        "wallMs": 5656.985000014305,
+        "finishReason": "stop",
+        "streamChunks": 154
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": 63,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "turn_timeout",
+        "no_entry_added",
+        "history_delta_0",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "over_300s",
+        "source_unknown",
+        "no_accepted_model_text"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 1,
+      "id": "t1-look-lane",
+      "input": "我停在服务巷的墙边，先把领用台上那张演习规则牌看清楚，再抬头打量巷口和器材棚方向。",
+      "purpose": "开局：观察服务巷、读规则牌、不移动",
+      "clocks": {
+        "pointCommittedAtMs": 20173,
+        "narrationStartedAtMs": 22359,
+        "firstReadableAtMs": 22359,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 29326,
+        "firstAcceptedAtMs": 29326,
+        "pointTextFinishedMinusCommitMs": 9153,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_3_1": {
+            "startedAtMs": 22359,
+            "firstTextAtMs": 22359,
+            "completedAtMs": 29326
+          }
+        },
+        "driverDoneMs": 120140,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1704.945000052452,
+      "longestStreamGapMs": 209.06499993801117,
+      "generation": {
+        "wallMs": 6046.650000095367,
+        "finishReason": "stop",
+        "streamChunks": 163
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 5005,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5",
+          "stage": null,
+          "ms": 12291,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_6",
+          "stage": null,
+          "ms": 4159,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6",
+          "stage": null,
+          "ms": 11468,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_7",
+          "stage": null,
+          "ms": 7250,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7",
+          "stage": null,
+          "ms": 19841,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_8",
+          "stage": null,
+          "ms": 4708,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8",
+          "stage": null,
+          "ms": 8351,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_10",
+          "stage": null,
+          "ms": 5200,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10",
+          "stage": null,
+          "ms": 17124,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 72,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 197,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2776,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 7882,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 20132,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 22414,
+          "label": "正在写正文…取消本轮"
+        },
+        {
+          "atMs": 120104,
+          "label": "本轮停止：fix_request:request_malformed"
+        }
+      ],
+      "peakMemoryMB": 62,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 10,
+      "problems": [
+        "submit_refused:fix_request:request_malformed"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 2,
+      "id": "t2-move-shed",
+      "input": "我贴着服务巷的低墙往器材棚走，进门后先看领用台后面有没有人，再找林亦舟。",
+      "purpose": "移动到器材棚，找林亦舟",
+      "clocks": {
+        "pointCommittedAtMs": 35340,
+        "narrationStartedAtMs": 39143,
+        "firstReadableAtMs": 39144,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 49240,
+        "firstAcceptedAtMs": 49240,
+        "pointTextFinishedMinusCommitMs": 13900,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_24_1": {
+            "startedAtMs": 39143,
+            "firstTextAtMs": 39143,
+            "completedAtMs": 49240
+          }
+        },
+        "driverDoneMs": 207233,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1704.945000052452,
+      "longestStreamGapMs": 394.8899999856949,
+      "generation": {
+        "wallMs": 6046.650000095367,
+        "finishReason": "stop",
+        "streamChunks": 163
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_26",
+          "stage": null,
+          "ms": 10176,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_26",
+          "stage": null,
+          "ms": 16496,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_27",
+          "stage": null,
+          "ms": 7546,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_27",
+          "stage": null,
+          "ms": 11879,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_28",
+          "stage": null,
+          "ms": 3069,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_28",
+          "stage": null,
+          "ms": 9058,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_29",
+          "stage": null,
+          "ms": 4449,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_29",
+          "stage": null,
+          "ms": 9643,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_30",
+          "stage": null,
+          "ms": 5611,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_30",
+          "stage": null,
+          "ms": 19381,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_31",
+          "stage": null,
+          "ms": 6446,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_31",
+          "stage": null,
+          "ms": 18346,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_32",
+          "stage": null,
+          "ms": 3455,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_32",
+          "stage": null,
+          "ms": 38709,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 69,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 195,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 2822,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 5212,
+          "label": "结算中：即时反应取消本轮"
+        },
+        {
+          "atMs": 7357,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 17593,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 34144,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 39239,
+          "label": "正在写正文…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 65,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 14,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 3,
+      "id": "t3-talk-lin",
+      "input": "我蹲下来问林亦舟脚踝怎么样，那条断掉的蓝布带是在哪儿弄断的。",
+      "purpose": "与林亦舟对话，问脚伤和蓝布带",
+      "clocks": {
+        "pointCommittedAtMs": 28662,
+        "narrationStartedAtMs": 31419,
+        "firstReadableAtMs": 31419,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 40611,
+        "firstAcceptedAtMs": 40611,
+        "pointTextFinishedMinusCommitMs": 11949,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_46_1": {
+            "startedAtMs": 31419,
+            "firstTextAtMs": 31419,
+            "completedAtMs": 40611
+          }
+        },
+        "driverDoneMs": 116875,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1704.945000052452,
+      "longestStreamGapMs": 394.8899999856949,
+      "generation": {
+        "wallMs": 6046.650000095367,
+        "finishReason": "stop",
+        "streamChunks": 163
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_48",
+          "stage": null,
+          "ms": 6027,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_48",
+          "stage": null,
+          "ms": 18807,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_49",
+          "stage": null,
+          "ms": 5975,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_49",
+          "stage": null,
+          "ms": 11481,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_50",
+          "stage": null,
+          "ms": 2948,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_50",
+          "stage": null,
+          "ms": 8350,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_51",
+          "stage": null,
+          "ms": 5169,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51",
+          "stage": null,
+          "ms": 9329,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_52",
+          "stage": null,
+          "ms": 5623,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_52",
+          "stage": null,
+          "ms": 15381,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 136,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 265,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 3662,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 9805,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 28708,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 31475,
+          "label": "正在写正文…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 76,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": "model",
+      "continuationDecision": null,
+      "submissionCalls": 10,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 4,
+      "id": "t4-joint-move",
+      "input": "我跟诺诺说一起走，两人沿着器材棚外侧低姿快走到西回廊，贴着廊柱停住。",
+      "purpose": "共同组：和诺诺一起低姿移动到西回廊",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 40000,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": 1704.945000052452,
+      "longestStreamGapMs": 394.8899999856949,
+      "generation": {
+        "wallMs": 6046.650000095367,
+        "finishReason": "stop",
+        "streamChunks": 163
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_69",
+          "stage": null,
+          "ms": 21250,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_69",
+          "stage": null,
+          "ms": 14961,
+          "fallback": true
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 112,
+          "label": "结算中…取消本轮"
+        },
+        {
+          "atMs": 248,
+          "label": "结算中：角色行动取消本轮"
+        },
+        {
+          "atMs": 3007,
+          "label": "结算中：判断牵连取消本轮"
+        },
+        {
+          "atMs": 24778,
+          "label": "结算中：结算取消本轮"
+        },
+        {
+          "atMs": 39829,
+          "label": "结算中：状态更新取消本轮"
+        },
+        {
+          "atMs": 39977,
+          "label": "本轮停止：结算没有完成，可以重试。"
+        }
+      ],
+      "peakMemoryMB": 61,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 2,
+      "problems": [
+        "submit_refused:结算没有完成，可以重试。",
+        "no_readable_prose",
+        "settlement_failed_recoverable",
+        "empty_text",
+        "program_fallback_labelled",
+        "program_text_not_model",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "source_unknown",
+        "no_accepted_model_text"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 5,
+      "id": "t5-wait-listen",
+      "input": "我在西回廊的廊柱后面等一会儿，听枪声从哪个方向来，顺便数着时间。",
+      "purpose": "时间推进：在西回廊听枪声，等一会儿",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 178,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": 1704.945000052452,
+      "longestStreamGapMs": 394.8899999856949,
+      "generation": {
+        "wallMs": 6046.650000095367,
+        "finishReason": "stop",
+        "streamChunks": 163
+      },
+      "stages": [],
+      "uiStages": [
+        {
+          "atMs": 142,
+          "label": "结算中…取消本轮"
+        }
+      ],
+      "peakMemoryMB": 72,
+      "modelId": "Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationModel": "qwen3-1.7b",
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "no_readable_prose",
+        "placeholder_only_text",
+        "very_short_text",
+        "history_delta_0",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "source_unknown",
+        "no_accepted_model_text"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 6,
+      "id": "t6-mid-refresh",
+      "input": "我从西回廊往钟楼门厅走，进门前先看一眼门缝里有没有光。",
+      "purpose": "取消/刷新：结算中途刷新页面，验证恢复与输入不重复消费",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": null,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": null,
+      "longestStreamGapMs": null,
+      "generation": {
+        "wallMs": null,
+        "finishReason": null,
+        "streamChunks": null
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": null,
+      "modelId": null,
+      "narrationModel": null,
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "driver_error:TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 7,
+      "id": "t7-move-foyer",
+      "input": "我推开钟楼门厅的门进去，靠墙站住，听楼上有动静没有。",
+      "purpose": "刷新后继续：进入钟楼门厅",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": null,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": null,
+      "longestStreamGapMs": null,
+      "generation": {
+        "wallMs": null,
+        "finishReason": null,
+        "streamChunks": null
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": null,
+      "modelId": null,
+      "narrationModel": null,
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "driver_error:TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 8,
+      "id": "t8-climb-landing",
+      "input": "我沿着楼梯上到二层平台，蹲在栏杆边往下看中央庭院和喷泉池。",
+      "purpose": "移动到钟楼二层平台，观察庭院",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": null,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": null,
+      "longestStreamGapMs": null,
+      "generation": {
+        "wallMs": null,
+        "finishReason": null,
+        "streamChunks": null
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": null,
+      "modelId": null,
+      "narrationModel": null,
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "driver_error:TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 9,
+      "id": "t9-ask-nono",
+      "input": "我问诺诺现在红蓝两方各占哪些地方，我这样两边都不帮算不算违规。",
+      "purpose": "任务达成：问清红蓝局势和自己的中立立场",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": null,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": null,
+      "longestStreamGapMs": null,
+      "generation": {
+        "wallMs": null,
+        "finishReason": null,
+        "streamChunks": null
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": null,
+      "modelId": null,
+      "narrationModel": null,
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "driver_error:TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n"
+      ],
+      "excluded": null
+    },
+    {
+      "run": "2026-11-20T0826-bbb8",
+      "turn": 10,
+      "id": "t10-hold-and-time",
+      "input": "我在平台上再等一段时间，记下演习还剩多久，检查自己的护目镜和身上的识别带。",
+      "purpose": "长时间等待与状态核对",
+      "clocks": {
+        "pointCommittedAtMs": null,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": null,
+        "firstReadableSource": null,
+        "pointTextFinishedAtMs": null,
+        "firstAcceptedAtMs": null,
+        "pointTextFinishedMinusCommitMs": null,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": null,
+        "commitMissing": true
+      },
+      "firstTokenAtMs": null,
+      "longestStreamGapMs": null,
+      "generation": {
+        "wallMs": null,
+        "finishReason": null,
+        "streamChunks": null
+      },
+      "stages": [],
+      "uiStages": [],
+      "peakMemoryMB": null,
+      "modelId": null,
+      "narrationModel": null,
+      "source": null,
+      "continuationDecision": null,
+      "submissionCalls": 0,
+      "problems": [
+        "driver_error:TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n"
+      ],
+      "excluded": null
+    }
+  ],
+  "gates": {
+    "evaluatedPoints": 3,
+    "firstReadable": {
+      "evaluated": 3,
+      "failed": 0,
+      "worstMs": 39144
+    },
+    "pointText": {
+      "evaluated": 3,
+      "failed": 0,
+      "worstMs": 13900
+    },
+    "autoChainPoints": 0,
+    "status": "FAIL_OR_INCOMPLETE"
+  }
+}
