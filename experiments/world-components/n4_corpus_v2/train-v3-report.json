@@ -1,0 +1,45 @@
+{
+ "purpose": "N4 v3 optimization finetune (guard-on N3 plans + merged same-entity targets)",
+ "base": {
+  "dir": "~/n4v2_run/base/randeng-t5-77m",
+  "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "pathRedacted": true
+ },
+ "data": {
+  "corpus": "corpus_v3/train-v3.jsonl",
+  "corpusSha256": "64e906b1273d4ecff3579ec55a02cd3c629dba6b96cc47080e466195d1218340",
+  "trainPairs": 429,
+  "devHeldOut": 85,
+  "holdoutFrozen": {
+   "rows": 66,
+   "sha256": "c6f675a8652cc552eefadaf8d4f6bb3eb8ae5c188393029d000af04e8a564147"
+  }
+ },
+ "hyper": {
+  "seed": 20261102,
+  "epochs": 12,
+  "steps": 648,
+  "batch": 8,
+  "lr": 0.0001,
+  "optimizer": "AdamW",
+  "precision": "fp32",
+  "maxInput": 160,
+  "maxOutput": 96,
+  "device": "NVIDIA GeForce RTX 4090 D"
+ },
+ "lossFirst5": [
+  4.271,
+  3.2297,
+  2.8287,
+  2.5193,
+  2.3871
+ ],
+ "lossLast5": [
+  0.0019,
+  0.0055,
+  0.0237,
+  0.0025,
+  0.0151
+ ],
+ "wallSeconds": 41.1
+}

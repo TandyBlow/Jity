@@ -1,0 +1,65 @@
+{
+ "component": "N4.0-legacy-sentence",
+ "name": "legacy sentence-row renderer",
+ "role": "legacy path for frozen v2/v3 models; not the current N4 input contract",
+ "version": "n4-legacy-sentence-v0.1",
+ "date": "2026-11-02",
+ "parentCommit": "019396b1c15cfa65862342ab386e0c4fda4cd396",
+ "numbering": {
+  "N4": "input-render",
+  "N5": "generation (old N4)",
+  "N6": "verification (old N5)"
+ },
+ "regression": {
+  "groupedCases": 12,
+  "flatCases": 12,
+  "byteIdentical": true
+ },
+ "units": [
+  "test_missing_environment_is_omitted",
+  "test_time_amount_never_rendered",
+  "test_global_time_fallback",
+  "test_goal_never_rendered",
+  "test_plan_order_is_authoritative",
+  "test_fail_closed",
+  "test_orchestrator_and_determinism"
+ ],
+ "failClosedCodes": [
+  "plan-shape-invalid",
+  "plan-unknown-fact",
+  "duplicate-fact",
+  "selected-unknown-fact",
+  "plan-coverage-mismatch",
+  "unsupported-fact-kind",
+  "outcome-result-missing",
+  "missing-field",
+  "world-location-missing",
+  "world-location-appearance-missing",
+  "world-item-missing",
+  "world-item-appearance-missing",
+  "world-character-missing",
+  "character-name-missing",
+  "character-personality-missing",
+  "character-appearance-missing",
+  "scene-location-path-missing",
+  "perspective-unresolved"
+ ],
+ "notes": [
+  "Grouped and flat previews are byte-identical to the approved 12-case corpus before the N4 extraction.",
+  "No model call; the renderer is deterministic and program-only.",
+  "Old dev files render_narrative.py/build_scene_context.py are compatibility shims over this component.",
+  "Known gaps: wind/light/atmosphere not rendered; held items are also listed as visible; WorldState.Task has no resultText yet."
+ ],
+ "sources": {
+  "experiments/world-components/n4_input_renderer/renderer.py": "8ce82a05b24466c6d9afc64c0ea655290ada197bc9871f52fe600a633173b902",
+  "experiments/world-components/n4_input_renderer/scene_context.py": "3edd636483076ded13723f8dc0f551e09f6cc060c8e379f0184888e59a9e53c8",
+  "experiments/world-components/n4_input_renderer/test_renderer.py": "235975dfbedfdda879f453b750adbe7b9c9df74a05aaa5840b09f9277a15df36",
+  "experiments/world-components/n4_narrative_dev/render_narrative.py": "298a81ba707ee850326bc0ed9e4b0255106ee2b908d3a18aada1607fc359c194",
+  "experiments/world-components/n4_narrative_dev/build_scene_context.py": "b62fae4831c2e106d9250e72c3119c22ad696d108d29dc9b42e8850d14f113cb",
+  "experiments/world-components/n4_narrative_dev/corpus.jsonl": "238ee163c2368ed109fa3412ffd7c9878e75a6bb10b1c50a684a68c1f0992bac",
+  "experiments/world-components/n4_narrative_dev/world.json": "f096f5bdb7539f5b1b3b71eb49bd43b6b1ad53b4fa2ec186ae4b54e00ec6d35c",
+  "experiments/world-components/n4_narrative_dev/pipeline_preview.json": "b1bfa7aabfd1075ebecb9cd2fb2f5bdb3b8c2e21f635d69dd0c8b1cc26cbbf89",
+  "experiments/world-components/n4_narrative_dev/input_preview.json": "6585e93bcbb44da06a449dd5281d004bb6caa0f89b9a7afb8d6ccbf2a4250cb2",
+  "design/world-engine-reports/components/n4-input-packing.md": "96a77fd2448409c586d3cc13170465f50f30f3ec39e4ab974e96c6bc263861c0"
+ }
+}

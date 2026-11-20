@@ -1,0 +1,88 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "moved-fix-moved",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4arm3/artifacts/next-runs/three-arm-c/ckpt",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/moved-fix-r1/arm-moved-verbalizer.jsonl",
+   "rows": 229,
+   "sha256": "0492ea176995c76b96c69688d53cd19fc2d6a8d3fce8a2c68a55af42b10f9b4a"
+  },
+  {
+   "path": "artifacts/moved-fix-r1/arm-moved-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/moved-fix-r1/arm-moved-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+  "targetSha256": "478982ae775fd1b1d3f236789d01b74d680e93006e54add421da7a04b5e5e67e"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.01
+  },
+  {
+   "step": 40,
+   "loss": 0.1434
+  },
+  {
+   "step": 80,
+   "loss": 0.0785
+  },
+  {
+   "step": 120,
+   "loss": 0.0303
+  },
+  {
+   "step": 160,
+   "loss": 0.0311
+  },
+  {
+   "step": 200,
+   "loss": 0.0757
+  },
+  {
+   "step": 240,
+   "loss": 0.0849
+  }
+ ],
+ "seconds": 14.1,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/moved-fix-moved/ckpt",
+  "modelSha256": "bd5434b3b9097bc2290f0128d032f643c60f10bb7aa05ff26f10ae58231b8cf8"
+ },
+ "fetch": {
+  "source": "train-report.json",
+  "remoteSha256": "c29d9031549db48454479ec830c0b42dd30010255192f1d9dc2c930d592f2a8e",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

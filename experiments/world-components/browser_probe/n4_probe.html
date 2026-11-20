@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- N4 browser minimal-feasibility probe (batch 1). Runs the FROZEN
+     r3-direction T5 encoder-decoder graphs in this browser via the stable
+     vendored ORT-web bundle, single-threaded wasm (the >1-thread session
+     create hang is a documented environment fact, see run-classifier-trial
+     v2 header). Inputs are pre-baked token ids from the checkpoint's own
+     Python tokenizer; the browser reproduces the Python greedy reference
+     ids exactly or the case is a DIFF. This page proves runnability and
+     cost — tokenizer parity and int8 are later-batch work. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>N4 browser probe</title></head>
+<body>
+<div id="status">loading…</div>
+<pre id="out"></pre>
+<script type="module">
+  const status = (t) => { document.getElementById("status").textContent = t; };
+  const report = (r) => {
+    window.__N4_PROBE_RESULT__ = r;
+    document.getElementById("out").textContent = JSON.stringify(r, null, 1);
+    status("done");
+  };
+  try {
+    const ort = await import("/ort/ort.bundle.min.mjs");
+    ort.env.wasm.numThreads = 1;      // documented: >1-thread create hangs here
+    ort.env.wasm.wasmPaths = "/ort/";
+    const cases = (await (await fetch("/models/n4-probe/probe_inputs.json")).json()).cases;
+
+    const t0 = performance.now();
+    const so = { executionProviders: ["wasm"], graphOptimizationLevel: "all" };
+    const enc = await ort.InferenceSession.create("/models/n4-probe/encoder.onnx", so);
+    const dec = await ort.InferenceSession.create("/models/n4-probe/decoder_step.onnx", so);
+    const loadMs = performance.now() - t0;
+
+    const results = [];
+    for (const c of cases) {
+      const tCase = performance.now();
+      const hidden = await enc.run({
+        input_ids: new ort.Tensor("int64", BigInt64Array.from(c.inputIds.map(BigInt)), [1, c.inputIds.length]),
+        attention_mask: new ort.Tensor("int64", BigInt64Array.from(c.attentionMask.map(BigInt)), [1, c.attentionMask.length]),
+      });
+      const encMs = performance.now() - tCase;
+      const hiddenStates = hidden.encoder_hidden_states;
+
+      const tGen = performance.now();
+      let prefix = [c.padId];
+      const ids = [];
+      const stepMs = [];
+      for (let step = 0; step < 64; step++) {
+        const tStep = performance.now();
+        const logits = await dec.run({
+          decoder_input_ids: new ort.Tensor("int64", BigInt64Array.from(prefix.map(BigInt)), [1, prefix.length]),
+          encoder_hidden_states: hiddenStates,
+          encoder_attention_mask: new ort.Tensor("int64", BigInt64Array.from(c.attentionMask.map(BigInt)), [1, c.attentionMask.length]),
+        });
+        stepMs.push(performance.now() - tStep);
+        const data = logits.logits.data;
+        const seqLen = logits.logits.dims[1];
+        const vocab = logits.logits.dims[2];
+        let best = 0;
+        for (let v = 1; v < vocab; v++) {
+          if (data[(seqLen - 1) * vocab + v] > data[(seqLen - 1) * vocab + best]) best = v;
+        }
+        if (best === c.eosId) break;
+        ids.push(best);
+        prefix.push(best);
+      }
+      const genMs = performance.now() - tGen;
+      results.push({
+        name: c.name, scope: c.scope,
+        matched: JSON.stringify(ids) === JSON.stringify(c.referenceIds),
+        browserIdCount: ids.length,
+        referenceIdCount: c.referenceIds.length,
+        encoderMs: +encMs.toFixed(1),
+        generationMs: +genMs.toFixed(1),
+        meanStepMs: +(genMs / Math.max(stepMs.length, 1)).toFixed(1),
+        steps: stepMs.length,
+      });
+    }
+    report({
+      ortVersion: ort.env.version ?? null,
+      numThreads: ort.env.wasm.numThreads,
+      sessionLoadMs: +loadMs.toFixed(1),
+      cases: results,
+      allMatched: results.every((r) => r.matched),
+    });
+  } catch (err) {
+    report({ fatal: String(err && err.stack || err) });
+  }
+</script>
+</body>
+</html>

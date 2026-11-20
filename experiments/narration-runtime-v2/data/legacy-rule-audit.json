@@ -1,0 +1,75 @@
+{
+  "schema": "jity-narration-legacy-rule-audit",
+  "rows": 199,
+  "sourceHashes": {
+    "sourceDir": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\10-training\\experiments\\world-components\\narration-dataset-v1",
+    "files": {
+      "rows_common.py": {
+        "exists": true,
+        "sha256": "22f11acde3592b7b47f798fcd1f311f8f070677755dd782b0fe887db1438dea1",
+        "sha256Lf": "cf87c6a7cf7f9441ad2fe8e77cc21bd6323faa9034e073c5bb3ef34938ff7d64",
+        "bytes": 2431
+      },
+      "split_xy.py": {
+        "exists": true,
+        "sha256": "28d9d1fccba55470c2ad2f3e58d323744dea89612e501982652749d3b705dee3",
+        "sha256Lf": "c1160ce76904540b26588463634efa46c4ba314e6bcc458b4365c6113d398022",
+        "bytes": 2964
+      },
+      "yuyan/convert_yuyan.py": {
+        "exists": true,
+        "sha256": "150b558d7d643c50f50849316c534aa85634d32824c55c67fadc24b5fe6cd876",
+        "sha256Lf": "dd21a2c4f30b16ffc4d3fc1fbea3ad19c72cacbfda36b91606d504534478d044",
+        "bytes": 7542
+      },
+      "rows-xy.jsonl": {
+        "exists": true,
+        "sha256": "b1c5bcbfedde869d83edb864b844ec0063c26bd4f4b33277f35ba490a7e0274e",
+        "sha256Lf": "b7cc1c1b33f7b3f179c58c2244fe3d532184840be0ef2827ea72d3f71ca62ef2",
+        "bytes": 958994
+      },
+      "yuyan/rows-yuyan.jsonl": {
+        "exists": true,
+        "sha256": "13c6879a445adb10365e4dfc91b001d48ef2de8ec31aa1b2bbb6ad0127442703",
+        "sha256Lf": "645df1b1438c4a388fbb09fb7d71ed99796b33393005dbda528f3d3d8c5db824",
+        "bytes": 1076854
+      },
+      "README.md": {
+        "exists": true,
+        "sha256": "64a37e2496873c9ad1ef9105c2dd40dc206eb6c1c957330168ca2ade87dd2164",
+        "sha256Lf": "14f33377005c376a0ebc33c9367b500252886f50b48c4ba9a13760405cad99e1",
+        "bytes": 2817
+      },
+      "splits/v1.json": {
+        "exists": true,
+        "sha256": "fdeb259cb532af7c42730aae2b5b04ce9b315c444b7856380e0f531e84906169",
+        "sha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836",
+        "bytes": 3088
+      }
+    },
+    "ok": true,
+    "problems": []
+  },
+  "splitXy": {
+    "buildXOk": 199,
+    "buildTextOk": 199,
+    "rows": 199,
+    "matches": true
+  },
+  "rowsCommon": {
+    "personFieldsChecked": 386,
+    "personFieldsOk": 386,
+    "matches": true,
+    "itemPositionGap": true,
+    "itemPositionSyntheticLegacyResult": {
+      "铜钥匙": {
+        "外貌": [
+          "多了一道刻痕"
+        ]
+      }
+    },
+    "itemPositionFix": "v2 build_result/place line copies item 位置 and renders 物品（位于<位置>）"
+  },
+  "problems": [],
+  "ok": true
+}

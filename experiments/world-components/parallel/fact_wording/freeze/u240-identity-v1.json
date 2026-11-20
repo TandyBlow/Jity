@@ -1,0 +1,160 @@
+{
+ "protocol": "c4-u240-identity-v1",
+ "generated_at": "2026-11-08T05:42:19+00:00",
+ "written_by": "experiments/world-components/parallel/fact_wording/scripts/inventory_u240.py",
+ "u240": {
+  "arch": "T5ForConditionalGeneration, d_model 512, 8 layers, 8 heads, d_ff 1024",
+  "safetensors": {
+   "tensors": 190,
+   "params": 77440384,
+   "dtypes": [
+    "F32"
+   ],
+   "metadata": {
+    "format": "pt"
+   }
+  },
+  "weight_sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+  "weight_bytes": 309783976,
+  "config_sha256": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+  "tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "local_path": "<repo>/.local/models/u240-model.safetensors",
+  "duplicate_path": "<repo>/.local/models/model.safetensors",
+  "duplicate_identical": true
+ },
+ "weights": [
+  {
+   "label": "u240 (canonical local copy)",
+   "path": ".local/models/u240-model.safetensors",
+   "bytes": 309783976,
+   "sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+  },
+  {
+   "label": "duplicate of the same bytes",
+   "path": ".local/models/model.safetensors",
+   "bytes": 309783976,
+   "sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+  },
+  {
+   "label": "config",
+   "path": ".local/models/config.json",
+   "bytes": 782,
+   "sha256": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e"
+  },
+  {
+   "label": "tokenizer",
+   "path": ".local/models/spiece.model",
+   "bytes": 680811,
+   "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+  }
+ ],
+ "declarations": [
+  {
+   "path": ".local/world-components-next-worktree/design/world-engine-reports/components/three-arm-plan-2026-11-05.md",
+   "exists": true,
+   "bytes": 12049,
+   "sha256": "32f3a0d99102f12ff96b90b09301cb4f260c4330a0b40410b9a65ab52590a7f2",
+   "mentions_weight_sha256": 0,
+   "mentions_weight_prefix8": 2,
+   "mentions_config_sha256": 0,
+   "mentions_config_prefix8": 1,
+   "mentions_tokenizer_sha256": 0,
+   "mentions_tokenizer_prefix8": 1,
+   "mentions_u240": 9
+  },
+  {
+   "path": ".local/world-components-next-worktree/design/world-engine-reports/components/cf24-baseline-2026-11-05.md",
+   "exists": true,
+   "bytes": 8792,
+   "sha256": "1a9989c5a0c1013e94ebe57fe0994ca96abf0bd9eb2aec4122560ac170c4bf87",
+   "mentions_weight_sha256": 0,
+   "mentions_weight_prefix8": 1,
+   "mentions_config_sha256": 0,
+   "mentions_config_prefix8": 0,
+   "mentions_tokenizer_sha256": 0,
+   "mentions_tokenizer_prefix8": 0,
+   "mentions_u240": 5
+  },
+  {
+   "path": ".local/world-components-next-worktree/design/world-engine-reports/components/eval-r1-2026-11-05.md",
+   "exists": true,
+   "bytes": 12332,
+   "sha256": "9814e5656eef83077a3d2fa2abeecb209afa7d8c3a7cd7a0364e2d2bae90e96d",
+   "mentions_weight_sha256": 0,
+   "mentions_weight_prefix8": 1,
+   "mentions_config_sha256": 0,
+   "mentions_config_prefix8": 0,
+   "mentions_tokenizer_sha256": 0,
+   "mentions_tokenizer_prefix8": 0,
+   "mentions_u240": 24
+  },
+  {
+   "path": ".local/world-components-next-worktree/artifacts/three-arm-r1/three-arm-freeze.json",
+   "exists": true,
+   "bytes": 3332,
+   "sha256": "c8898e4b31d09fc44000c8dd1c68977a7ba9505d63972cff0d2edbda94df2cee",
+   "mentions_weight_sha256": 1,
+   "mentions_weight_prefix8": 1,
+   "mentions_config_sha256": 0,
+   "mentions_config_prefix8": 0,
+   "mentions_tokenizer_sha256": 0,
+   "mentions_tokenizer_prefix8": 0,
+   "mentions_u240": 0
+  },
+  {
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/cf24-u240-baseline/index.json",
+   "exists": true,
+   "bytes": 3314,
+   "sha256": "45122c2fef12d9e55880ec28f5bfc91d12701abe0f3b8d734df679acfdbad37b",
+   "mentions_weight_sha256": 1,
+   "mentions_weight_prefix8": 1,
+   "mentions_config_sha256": 0,
+   "mentions_config_prefix8": 0,
+   "mentions_tokenizer_sha256": 0,
+   "mentions_tokenizer_prefix8": 0,
+   "mentions_u240": 29
+  },
+  {
+   "path": ".local/world-components-next-worktree/artifacts/next-acceptance/target-revision-r1/index.json",
+   "exists": true,
+   "bytes": 5363,
+   "sha256": "4d73b8897e6dee31df72e0cc227b71a947fd3996daf38b01c199793422fd9087",
+   "mentions_weight_sha256": 1,
+   "mentions_weight_prefix8": 1,
+   "mentions_config_sha256": 0,
+   "mentions_config_prefix8": 0,
+   "mentions_tokenizer_sha256": 0,
+   "mentions_tokenizer_prefix8": 0,
+   "mentions_u240": 5
+  }
+ ],
+ "trees": {
+  "c4": {
+   "path": "<repo>/.local/parallel/c-fact-wording",
+   "commit": "64405346fe63c2f05cf067f3b328893fa9e0d381"
+  },
+  "next": {
+   "path": "<repo>/.local/world-components-next-worktree",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  "wc": {
+   "path": "<repo>/.local/world-components-worktree",
+   "commit": "64405346fe63c2f05cf067f3b328893fa9e0d381"
+  }
+ },
+ "verdicts": {
+  "weight_identity": [
+   "the two local files (u240-model.safetensors, model.safetensors) are byte-identical",
+   "three archives/records declare this exact sha256 for u240: three-arm-freeze.json, cf24-u240-baseline/index.json, target-revision-r1/index.json (base)",
+   "the HPC copy ~/n4uni/ckpt-u240 is only recorded as 'byte-identical' in three-arm-plan-2026-11-05.md; no hash of the HPC file was recomputed here"
+  ],
+  "config_tokenizer": [
+   "config.json and spiece.model are pinned by prefix (cd553527, c65feffa) in three-arm-plan-2026-11-05.md",
+   "spiece.model equals the 784M run tokenizer byte-for-byte per sentence-base-784m-plan-v1.md"
+  ],
+  "blocked": [
+   "decode-compare greedy/beam archives: no checkpoint identity in the files or the scripts; candidate-selection-space-v1.md already refuses to call them u240 results",
+   "no training log or commit-bound record ties this checkpoint to a specific code revision; identity rests on hash agreement across the four records above"
+  ]
+ }
+}

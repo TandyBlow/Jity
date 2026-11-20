@@ -1,0 +1,45 @@
+{
+ "checker": "checker.py v4",
+ "v2Adds": [
+  "repeated-span",
+  "repeated-4gram",
+  "sentence-runaway",
+  "impossible-space"
+ ],
+ "v2Why": "v1 只查'不犯什么错'，放过了复读与崩裂的输出；四项阈值取自人工稿上界（重复片段 5 字 / 4 字串 2 次 / 单句 49 字）",
+ "sha256": "b340958228e1dc20423896c7e44b5da5cf46be959db9ac61f3fe2730fc47fc8d",
+ "world": "world.json",
+ "worldNames": 66,
+ "thresholds": {
+  "minChars": 60,
+  "copyRun": 8,
+  "contentMin": {
+   "outcome": 0.2,
+   "task_achieved": 0.2,
+   "subtask_added": 0.8
+  },
+  "maxRepeatedSpan": 8,
+  "max4gram": 2,
+  "maxSentence": 65
+ },
+ "calibration": {
+  "rows": 140,
+  "pass": 140
+ },
+ "tamper": {
+  "cases": 14,
+  "caught": 14
+ },
+ "v3Adds": [
+  "em-dash",
+  "halfwidth-punct"
+ ],
+ "v4Adds": [
+  "contradiction:lamp-out-lit",
+  "contradiction:nobody-somebody",
+  "contradiction:empty-occupied",
+  "contradiction:cold-hot"
+ ],
+ "v3Why": "用户要求：正文禁用破折号，标点一律中文全角",
+ "registeredBeforeAnyModelRun": true
+}

@@ -1,0 +1,51 @@
+{
+ "purpose": "N5 fact-sentence relation head (commit 3)",
+ "inputFormat": "句子：{sentence}事实：{fact_desc}关系：",
+ "labels": {
+  "support": 0,
+  "contradiction": 1,
+  "unknown": 2
+ },
+ "base": {
+  "dir": "base/minirbt-h256",
+  "sha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc"
+ },
+ "data": {
+  "train": 5919,
+  "dev": 845,
+  "pairsSha256": "321092c78963a6c95f0d22a4c7eaa53ff616afd3f5779d735efddddcbe7bf1ff",
+  "testFrozen": {
+   "rows": 758,
+   "sha256": "ea68c9accc07b5232d0b3662c73fd69085c87a02c5602a84b3971b5b3da457ef"
+  }
+ },
+ "hyper": {
+  "seed": 20261102,
+  "epochs": 8,
+  "batch": 32,
+  "lr": 3e-05,
+  "maxLen": 96,
+  "optimizer": "AdamW",
+  "classWeights": [
+   1.0,
+   1.2,
+   0.8
+  ],
+  "device": "NVIDIA GeForce RTX 4090 D"
+ },
+ "lossFirst5": [
+  1.2116,
+  1.1555,
+  1.1213,
+  0.957,
+  1.26
+ ],
+ "lossLast5": [
+  0.1248,
+  0.023,
+  0.0438,
+  0.0203,
+  0.0571
+ ],
+ "wallSeconds": 31.3
+}

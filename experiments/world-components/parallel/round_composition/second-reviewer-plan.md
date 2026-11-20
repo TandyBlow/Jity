@@ -1,0 +1,62 @@
+# 第二复核者安排（N6 / D4 独立复核）
+
+日期：2026-11-09。按裁决，独立复核要在 N4 对照实验**之前**完成。现在 v3 的两份复核（`review-v3.json` 的 N6、D4）都出自运行实验的同一个会话，`reviewStatus` 仍是 `pending-independent-review`；重试正文从未复核。
+
+## 1. 要复核什么
+
+对象：v3 的 10 个**首次调用**原文（不是重试，不是回退模板）。
+
+逐条标注：
+
+| 项 | 取值 | 要求 |
+| --- | --- | --- |
+| 每条必述事实是否传达 | `yes` / `no` / `undetermined` | 必须附正文原句 |
+| 同名人物是否混淆 | `yes` / `no` / `undetermined` | 附证据 |
+| 是否新增未授权的事件或专名 | 原句列表（可为空） | 专名与事件分开记 |
+| 视角是否改变 | `yes` / `no` / `undetermined` | 第一人称、他人内心都算 |
+| 可读性 | 1–5 | 只作描述，不进通过判定 |
+
+## 2. 材料与隔离
+
+- 盲包：`fixtures/reviewer-packet-v3.json`——每题含**完整场景**（地点、地点外貌、同栋）、**人物身份与 entityId、权威性格/外貌**、可见物品、权威事实行、视角、写作要求、首次调用原文、结束原因。**不含**已有 N6 结论与 D4 标签。
+  - 修正记录：第一版只给事实行，复核者无法判断某段环境描写是否经过授权，也无法区分两个同名人物；现已补上场景与身份信息（`reviewer-packet-v3.json` 的 `scene` 字段）。
+- 校准集：`fixtures/reviewer-calibration.json`（6 条短文），**每条都带权威场景、人物（entityId）、允许的事实与允许的补充**，复核者先看权威资料再标注；答案在 `fixtures/reviewer-calibration-key.json`，提交后对照。
+  - **专名与事件分开**：编造专名 **2 例**（`c2` 王五、`c4` 柳溪渡）；新增事件 **3 条**（`c2` 王五在楼梯口等他、`c3` 钟声散开、`c4` 又去了柳溪渡）。`c5` 是否定句，事实判「未传达」；`c1` 的喘气与 `c6` 的手指发抖属于允许的感受，不算事件。
+- 复核者不参与本实验的批次运行，不看 `review-v3.json`、`fact-omission-v3.md` 与任何 N6 结论。
+
+## 3. 流程
+
+1. 复核者独立完成盲包与校准集，写成 `fixtures/review-v3-independent.json`（字段：每条事实 `conveyed` + 证据、`sameNameConfused`、`inventedProperNames`、`inventedEvents`、`povChanged`、`readability`）。
+2. 校准集先对答案：两例编造专名（王五、柳溪渡）必须被标出，钟声必须记进新增事件，否定句必须判「未传达」。若校准不过，先校准再进入正式标注，不进入分歧统计。
+3. 两份记录（原 `review-v3.json` 与独立版）逐条比较，输出 `review-comparison-v3.md`：
+   - 一致率（按事实条数、按样本）；
+   - 分歧清单，每条附两方证据；
+   - 由你裁定的最终结论（保留原始判断，不覆盖）。
+4. D4 的「真实正例/反例」用校准集补足：v3 的 D4 计数是 0，单看它无法区分「没有错误」与「没检出错误」。
+
+## 4. 交付物
+
+| 文件 | 内容 |
+| --- | --- |
+| `fixtures/reviewer-packet-v3.json` | 盲包（已生成） |
+| `fixtures/reviewer-calibration.json` + `-key.json` | 校准集与答案（已生成） |
+| `fixtures/review-v3-independent.json` | 独立复核记录（待填） |
+| `review-comparison-v3.md` | 一致率、分歧、裁定（待写） |
+
+## 5. 复核者来源（2026-11-09 裁决：隔离的新 AI 会话）
+
+已经看过旧 N6 判断与遗漏分析的会话（包括本实验的会话）**不能充当盲审**。当前选择：**不带本项目历史上下文的临时 AI 会话**。
+
+- 只提供 `fixtures/reviewer-packet-v3.json` 与 `fixtures/reviewer-calibration.json`；隐藏答案、旧版 N6、`fact-omission-v3.md` 与本文件。
+- 记录里必须写明：模型名称/版本、会话隔离方式、标注开始与结束时间，并注明**是 AI 复核，不是人工复核**。
+- 本会话（看过旧结论）不参与盲审，也不能代替它。
+- 记录模板：`fixtures/review-v3-independent-TEMPLATE.json`（10 个 caseId 与事实 id 已预填，等待填标签）。
+- 填写后先对校准答案，再进入 `review-comparison-v3.md` 的分歧比较；两份记录都保留，不覆盖。
+
+当前 `reviewStatus` 仍是 `pending-independent-review`：需要新的临时会话完成标注并把文件交回。
+
+## 6. 与后续实验的关系
+
+- 独立复核完成前，N4 对照批不登记。
+- 独立复核的结果只用于两件事：给 v3 一个可引用的质量记录；把「哪些判据容易分歧」写进 N4 的验收协议（例如「移动算不算完整」）。
+- 复核者不参与 N4 的设计，避免设计者与评判者同源。

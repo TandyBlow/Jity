@@ -1,0 +1,88 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "aug-ctl",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4fix/artifacts/next-runs/moved-fix-moved/ckpt",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "bd5434b3b9097bc2290f0128d032f643c60f10bb7aa05ff26f10ae58231b8cf8"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/aug-r1/pool-ctl-verbalizer.jsonl",
+   "rows": 241,
+   "sha256": "531eb9e266331211bb440549dc591b48f351d48d8967d09cc0aa1887a2b3a2e3"
+  },
+  {
+   "path": "artifacts/aug-r1/pool-ctl-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/aug-r1/pool-ctl-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "0793d32de88f351cc635c235ad23faa4a4620e034293e58f1fa859448ff4ab06",
+  "targetSha256": "4fe4fc0010fbbbfa6a1e5f6ba75518bad4a4a3b2cccc49904856458aef45eccb"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.0695
+  },
+  {
+   "step": 40,
+   "loss": 0.0437
+  },
+  {
+   "step": 80,
+   "loss": 0.2046
+  },
+  {
+   "step": 120,
+   "loss": 0.1415
+  },
+  {
+   "step": 160,
+   "loss": 0.1237
+  },
+  {
+   "step": 200,
+   "loss": 0.0812
+  },
+  {
+   "step": 240,
+   "loss": 0.1354
+  }
+ ],
+ "seconds": 73.2,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/aug-ctl/ckpt",
+  "modelSha256": "226ba170c0274fe8e6a149168a2b6743c4712bec0607e820927f7d7fee42bd20"
+ },
+ "fetch": {
+  "source": "train-report.json",
+  "remoteSha256": "3facc340ccd83bc8b02875a3c1b06e4d8cb4b1621147504c019eac4f6b0c44df",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

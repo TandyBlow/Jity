@@ -1,0 +1,150 @@
+{
+ "packVersion": 3,
+ "pointId": "point_26",
+ "worldId": "world_20",
+ "stateDigest": "70aed1eb20028721b817f6b91f7c41f1170bcd543f053836ebccde50e3cf0c08",
+ "timeAdvance": {
+  "amount": 180,
+  "unit": "second"
+ },
+ "perspective": {
+  "type": "protagonist",
+  "entityId": "fe_wen",
+  "at": "砾脊校准间",
+  "atPath": [
+   "fy_cal",
+   "fy_yard"
+  ]
+ },
+ "mustExpress": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "actorKind": "character",
+   "name": "闻澈岑",
+   "fromId": "fy_pump",
+   "from": "玄藻泵舱",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position",
+   "factId": "fe_wen:position",
+   "n2Class": "must",
+   "n2Ground": "self-position",
+   "n2Reason": "视角人物自己的位置变化，必述",
+   "expression": "must",
+   "requirementSource": "n2-must"
+  },
+  {
+   "kind": "sanity_changed",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "from": 43,
+   "to": 47,
+   "fieldPath": "state.characters.fe_wen.sanity",
+   "factId": "fe_wen:sanity",
+   "n2Class": "must",
+   "n2Ground": "self-safety",
+   "n2Reason": "视角人物自己的理智变化（安全），必述",
+   "expression": "must",
+   "requirementSource": "n2-must"
+  },
+  {
+   "kind": "task_achieved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "taskId": "ft_check",
+   "goal": "核验瓷铯量规的双区刻度",
+   "status": "achieved",
+   "fieldPath": "state.characters.fe_wen.tasks.ft_check.status",
+   "factId": "fe_wen:task:ft_check",
+   "n2Class": "must",
+   "n2Ground": "self-task",
+   "n2Reason": "视角人物自己的任务达成，必述",
+   "expression": "must",
+   "requirementSource": "n2-must"
+  },
+  {
+   "kind": "task_achieved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "taskId": "ft_mark",
+   "goal": "登记量规右区的第三条刻线",
+   "status": "achieved",
+   "fieldPath": "state.characters.fe_wen.tasks.ft_mark.status",
+   "factId": "fe_wen:task:ft_mark",
+   "n2Class": "must",
+   "n2Ground": "self-task",
+   "n2Reason": "视角人物自己的任务达成，必述",
+   "expression": "must",
+   "requirementSource": "n2-must"
+  },
+  {
+   "kind": "personality_changed",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "name": "闻澈岑",
+   "text": "复测一致后愿意把核验步骤交给同伴复查。",
+   "fieldPath": "state.characters.fe_wen.personalityChanges",
+   "factId": "fe_wen:personality",
+   "n2Class": "may",
+   "n2Ground": "self-state",
+   "n2Reason": "视角人物自己的描述类变化，可见但可省",
+   "expression": "must",
+   "requirementSource": "scenario-requirement"
+  }
+ ],
+ "mayMention": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_nie",
+   "actor": "fe_nie",
+   "actorKind": "character",
+   "name": "聂汀穗",
+   "fromId": "fy_cal",
+   "from": "砾脊校准间",
+   "toId": "fy_bridge",
+   "to": "苔铎栈桥",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_nie.position",
+   "factId": "fe_nie:position",
+   "n2Class": "may",
+   "n2Ground": "co-location",
+   "n2Reason": "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）",
+   "expression": "may",
+   "requirementSource": "n2-may"
+  }
+ ],
+ "currentState": [
+  {
+   "entityId": "fe_wen",
+   "name": "闻澈岑",
+   "kind": "task_pending",
+   "value": "更换绛纹阀芯上的锆丝封签"
+  },
+  {
+   "entityId": "fe_yu",
+   "name": "郁棠序",
+   "kind": "at",
+   "value": "苔铎栈桥"
+  }
+ ],
+ "playerInstruction": null,
+ "rules": {
+  "mustExpress": "本点提交的变化事实，必须表达，不得改向、改数、改人。",
+  "mayMention": "可以不提；若提，内容须与事实一致，不得写成必述之外的新事件。",
+  "currentState": "只作可提及的现状，不是必述项；省略不扣分。",
+  "notProvided": "输入里没有的状态不要求模型说出，也不作为矛盾证据。"
+ },
+ "note": "只给事实、现状、视角与时间；完整状态与不可见事实都不作为输入。"
+}

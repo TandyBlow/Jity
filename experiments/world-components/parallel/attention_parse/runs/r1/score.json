@@ -1,0 +1,641 @@
+{
+  "protocol": "c1-attention-parse-v1",
+  "hashes": {
+    "generatedAt": "2026-11-08T05:37:20+00:00",
+    "commit": "0df57f413a1321cdfe7a1eb9da65e81666d5fb4f",
+    "branch": "exp/c-attention-parse",
+    "trackedDirty": false,
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "files": {
+      "attention_parse.py": "3796118a00c9d28c747002c556cdc203e104dbf5008aa8ba9140c2fe389ae2bb",
+      "build_rosters.py": "ad5839d5336b62070e43b72c55abf93073abc7b98a6f4a6074df3b4c6a706fab",
+      "run_experiment.py": "c06dbc3677fe413e8e6618f6dd7a47dd7b30b122b7c8998b6a8f777815f0706f",
+      "freeze/rosters.json": "2e498291130a23c1bd5cb3c256d140196fb68c338276f8b132fc079631845d82",
+      "freeze/samples.json": "e853f127f45ddebead2a99497dd5d70cab29fda508c00f35be1b2a79c75becdd",
+      "freeze/rule-cases.json": "a49dd6cba375292bc819fe1c4b66890b87744fd64c6a8f92a4b5846e830df05e",
+      "freeze/stress-probes.json": "ca64e67cff98658d8507384011de2de0d8d7de98c83c45330dbd0fcec8e8cfda",
+      "rosterSourceW1": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+      "rosterSourceW2": "c7bde5867e7be2bb0e7222a7360ea82fa4d8abe4a33832f20fae6332f7d8d7f5"
+    }
+  },
+  "headline": {
+    "samples": 10,
+    "passed": 10,
+    "failed": 0,
+    "unitCases": 6,
+    "unitPassed": 6,
+    "selectAllHits": 0,
+    "noneOrUnresolvedSamples": 2,
+    "noneOrUnresolvedWithEmptyTargets": 2,
+    "probes": 5,
+    "probeKnownLimits": 5,
+    "probeUnexpectedPasses": 0,
+    "probeUnclassified": 0
+  },
+  "byCategory": {
+    "exact_name": {
+      "total": 1,
+      "passed": 1
+    },
+    "synonym_descriptor": {
+      "total": 2,
+      "passed": 2
+    },
+    "pronoun_unique": {
+      "total": 1,
+      "passed": 1
+    },
+    "pronoun_multi": {
+      "total": 1,
+      "passed": 1
+    },
+    "shared_form": {
+      "total": 1,
+      "passed": 1
+    },
+    "irrelevant": {
+      "total": 1,
+      "passed": 1
+    },
+    "unknown_reference": {
+      "total": 1,
+      "passed": 1
+    },
+    "multi_object": {
+      "total": 1,
+      "passed": 1
+    },
+    "self_reference": {
+      "total": 1,
+      "passed": 1
+    }
+  },
+  "rows": [
+    {
+      "sampleId": "S01",
+      "category": "exact_name",
+      "worldRef": "W2",
+      "utterance": "林川现在在哪儿？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S02",
+      "category": "synonym_descriptor",
+      "worldRef": "W2",
+      "utterance": "穿灰衣的那个还在门口吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S03",
+      "category": "synonym_descriptor",
+      "worldRef": "W1",
+      "utterance": "黄铜钥匙还在走廊吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "item_key",
+          "corridor"
+        ],
+        "resolvedCandidates": [
+          "item_key",
+          "corridor"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "item_key",
+          "corridor"
+        ],
+        "resolvedCandidates": [
+          "item_key",
+          "corridor"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S04",
+      "category": "pronoun_unique",
+      "worldRef": "W2",
+      "utterance": "他还在门口吗？",
+      "priorNarration": "林川走进门厅。",
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S05",
+      "category": "pronoun_multi",
+      "worldRef": "W2",
+      "utterance": "他怎么了？",
+      "priorNarration": "林川走进门厅，周宁留在走廊。",
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_c"
+        ],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_c"
+        ],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S06",
+      "category": "shared_form",
+      "worldRef": "W1",
+      "utterance": "学生还在走廊吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "resolvedCandidates": [
+          "corridor"
+        ],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_b"
+        ],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "resolvedCandidates": [
+          "corridor"
+        ],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_b"
+        ],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S07",
+      "category": "irrelevant",
+      "worldRef": "W2",
+      "utterance": "继续。",
+      "priorNarration": null,
+      "expected": {
+        "status": "none",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "none",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S08",
+      "category": "unknown_reference",
+      "worldRef": "W2",
+      "utterance": "老林怎么想？",
+      "priorNarration": null,
+      "expected": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [
+          "老林"
+        ]
+      },
+      "actual": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [
+          "老林"
+        ]
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S09",
+      "category": "multi_object",
+      "worldRef": "W1",
+      "utterance": "主角的任务「取回柜子里的东西」完成了吗？",
+      "priorNarration": null,
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_c",
+          "task_shelf"
+        ],
+        "resolvedCandidates": [
+          "person_c",
+          "task_shelf"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_c",
+          "task_shelf"
+        ],
+        "resolvedCandidates": [
+          "person_c",
+          "task_shelf"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    },
+    {
+      "sampleId": "S10",
+      "category": "self_reference",
+      "worldRef": "W2",
+      "utterance": "我刚才打开盒盖了吗？",
+      "priorNarration": "周宁站在走廊。",
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_c",
+          "box"
+        ],
+        "resolvedCandidates": [
+          "person_c",
+          "box"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_c",
+          "box"
+        ],
+        "resolvedCandidates": [
+          "person_c",
+          "box"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": [],
+      "unknownIds": []
+    }
+  ],
+  "unitCases": [
+    {
+      "caseId": "U1",
+      "targets": "M1 完全同名",
+      "utterance": "张伟呢？",
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "ambiguousCandidates": [
+          "dup_a",
+          "dup_b"
+        ]
+      },
+      "actual": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "ambiguousCandidates": [
+          "dup_a",
+          "dup_b"
+        ],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": []
+    },
+    {
+      "caseId": "U2",
+      "targets": "M3 描述词不唯一",
+      "utterance": "穿校服的呢？",
+      "expected": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "ambiguousCandidates": [
+          "x1",
+          "x2"
+        ]
+      },
+      "actual": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "ambiguousCandidates": [
+          "x1",
+          "x2"
+        ],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": []
+    },
+    {
+      "caseId": "U3",
+      "targets": "M1/M3 无关语句",
+      "utterance": "嗯，继续。",
+      "expected": {
+        "status": "none",
+        "attentionTargets": [],
+        "ambiguousCandidates": []
+      },
+      "actual": {
+        "status": "none",
+        "attentionTargets": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": []
+    },
+    {
+      "caseId": "U4",
+      "targets": "M4 代词无前文",
+      "utterance": "他呢？",
+      "expected": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "ambiguousCandidates": []
+      },
+      "actual": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": [
+          "他"
+        ]
+      },
+      "match": true,
+      "errors": []
+    },
+    {
+      "caseId": "U5",
+      "targets": "M4 地点代词唯一",
+      "utterance": "那里呢？",
+      "expected": {
+        "status": "resolved",
+        "attentionTargets": [
+          "l2"
+        ],
+        "ambiguousCandidates": []
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "l2"
+        ],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": []
+    },
+    {
+      "caseId": "U6",
+      "targets": "非全选回退",
+      "utterance": "不知道。",
+      "expected": {
+        "status": "none",
+        "attentionTargets": [],
+        "ambiguousCandidates": [],
+        "assertTargetsStrictlySmallerThanRoster": true
+      },
+      "actual": {
+        "status": "none",
+        "attentionTargets": [],
+        "ambiguousCandidates": [],
+        "unresolvedMentions": []
+      },
+      "match": true,
+      "errors": []
+    }
+  ],
+  "probes": [
+    {
+      "probeId": "P1",
+      "mechanism": "代词 × 前文用描述词指代",
+      "utterance": "他呢？",
+      "priorNarration": "穿灰衣的走进门厅。",
+      "expectedRuleBehavior": {
+        "status": "unresolved",
+        "attentionTargets": []
+      },
+      "desiredBehavior": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ]
+      },
+      "actual": {
+        "status": "unresolved",
+        "attentionTargets": []
+      },
+      "outcome": "known_limit",
+      "note": "规则只在上一段里找提交记录的人名，不解析描述词；上一段用「穿灰衣的」指林川时，规则找不到前驱。"
+    },
+    {
+      "probeId": "P2",
+      "mechanism": "同名 × 描述词共同消解",
+      "utterance": "穿灰衣的张伟呢？",
+      "priorNarration": null,
+      "expectedRuleBehavior": {
+        "status": "ambiguous",
+        "attentionTargets": []
+      },
+      "desiredBehavior": {
+        "status": "resolved",
+        "attentionTargets": [
+          "dup_a"
+        ]
+      },
+      "actual": {
+        "status": "ambiguous",
+        "attentionTargets": []
+      },
+      "outcome": "known_limit",
+      "note": "合成 roster（非世界记录）：规则会把同名先判成歧义组，描述词只证明「穿灰衣」属于 dup_a，两条机制不合并，所以不选。"
+    },
+    {
+      "probeId": "P3",
+      "mechanism": "昵称变体",
+      "utterance": "川哥还在吗？",
+      "priorNarration": null,
+      "expectedRuleBehavior": {
+        "status": "none",
+        "attentionTargets": []
+      },
+      "desiredBehavior": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ]
+      },
+      "actual": {
+        "status": "none",
+        "attentionTargets": []
+      },
+      "outcome": "known_limit",
+      "note": "「川哥」不在提交记录任何字段里；规则只认老/小/阿＋一字的昵称形状，也不认识川哥。"
+    },
+    {
+      "probeId": "P4",
+      "mechanism": "无所指的远指",
+      "utterance": "上次说的那个呢？",
+      "priorNarration": null,
+      "expectedRuleBehavior": {
+        "status": "none",
+        "attentionTargets": []
+      },
+      "desiredBehavior": {
+        "status": "unresolved",
+        "attentionTargets": []
+      },
+      "actual": {
+        "status": "none",
+        "attentionTargets": []
+      },
+      "outcome": "known_limit",
+      "note": "「那个」在这里明确指某种对象，但规则只有代词表，没有指示词，于是判成完全无关。两种都不选，但 none 会把“没听懂”说成“没关注”。"
+    },
+    {
+      "probeId": "P5",
+      "mechanism": "否定句里的对象",
+      "utterance": "别管林川，看看盒子。",
+      "priorNarration": null,
+      "expectedRuleBehavior": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a",
+          "box"
+        ]
+      },
+      "desiredBehavior": {
+        "status": "resolved",
+        "attentionTargets": [
+          "box"
+        ]
+      },
+      "actual": {
+        "status": "resolved",
+        "attentionTargets": [
+          "box",
+          "person_a"
+        ]
+      },
+      "outcome": "known_limit",
+      "note": "规则没有极性判断，名字出现就进候选；「别管」把林川排除的意思读不出来。"
+    }
+  ]
+}

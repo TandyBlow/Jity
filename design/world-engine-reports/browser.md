@@ -2,6 +2,8 @@
 
 日期：2026-10-22。共同接口实现：`e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`；S1：`cabb04c`；v1：`26011c8`。接口摘要：`480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`。本报告及 change-list 在随后文档提交中正式验收该实现；两条开发分支从包含冻结记录的同一提交建立并推送。
 
+> **Qwen3-0.6B 已退役（2026-11-02）：** 文中 0.6B 的 codec/输出形态记录为历史证据；模型本身不再作为候选。见 [退役记录](world-engine-reports/components/model-retirement-qwen3-06b.md)。
+
 环境：Windows / PowerShell；Python 3.12.3、SQLite 3.50.4、Pydantic 2.13.4、jsonschema 4.26.0；Node 22.20.0、npm 10.9.3、TypeScript 5.9.3、Ajv 8.20.0、Vitest 5.0.1。CI 配置 Python 3.12、Node 22；Node 升级匹配现有 Vitest 5 的 engines 要求。
 
 统一验收入口：`python -X utf8 backend/scripts/check_world_interface_baseline.py`。在原工作区和从该提交新建的干净 worktree 中运行，后者先执行全新 `npm ci`，均通过。统一入口覆盖 v1/v2 只读生成核对、Python 426 项（109+317）、TS 类型、契约 38 项、轨迹 65 项，以及四类故意破坏探针。默认 v1 导出仍是原 12 个产物字节；v2 为 5 个生成物，manifest 共 147 项。生成与检查不重写手写夹具，pin 由 Python 生成。
@@ -206,7 +208,7 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 按用户指令执行 A2-2 三处 P2 复核与 H1。A 侧已推进至 `d59353b`（A2-1 四轮复审通过后进入 A2-2，本地记忆中「da22a1b 待复核、阻塞 A2-2」为过时状态）。三处 P2（精确 JSON 解析/恢复错误码/读路径 ID 校验）经 B 代码复核与回归复跑确认（HTTP 39、全量 1062、统一入口 PASS；从仓库根直跑 campaign_wiring 两例失败为 cwd 伪失败，按 `cd backend` 规程干净）。
 
-**H1 以默认 fetch 路径通过**：B 的 `83dbe3b`（构造器 `fetch.bind(globalThis)`）兑现——A 的 H1 harness 去掉 `window.fetch.bind(window)` 显式注入（`b496da7`），真实 Edge headless 155.0.4283.62、跨源真实 CORS、A=`b496da7`、B=`adfd506`（本仓主工作树，干净）。T01 双样本由真实 B 控制器经默认 fetch 完成（26 交换/8 模型调用/revision 13，服务端动态分配全部身份，Python 独立摘要三方对拍）；T03 双样本经浏览器 transport 直接固定候选 harness 验证。两次运行摘要逐位一致。**B 侧裁定 A2-2 与 H1 关闭**；完整证据在 [server.md](../.local/world-server-worktree/design/world-engine-reports/server.md) 与 `artifacts/world-http-h1.json`（A 仓）。边界不变：SQLite/H2/真实模型/远端 CI 未验收。下一步按序 B4 会话装配 → B3 提示词评测。
+**H1 以默认 fetch 路径通过**：B 的 `83dbe3b`（构造器 `fetch.bind(globalThis)`）兑现——A 的 H1 harness 去掉 `window.fetch.bind(window)` 显式注入（`b496da7`），真实 Edge headless 155.0.4283.62、跨源真实 CORS、A=`b496da7`、B=`adfd506`（本仓主工作树，干净）。T01 双样本由真实 B 控制器经默认 fetch 完成（26 交换/8 模型调用/revision 13，服务端动态分配全部身份，Python 独立摘要三方对拍）；T03 双样本经浏览器 transport 直接固定候选 harness 验证。两次运行摘要逐位一致。**B 侧裁定 A2-2 与 H1 关闭**；完整证据在 [server.md](../.local/world-server-worktree/design/world-engine-reports/server.md)（路径已退役：该 worktree 默认检出已移除，链接为历史记录）与 `artifacts/world-http-h1.json`（A 仓）。边界不变：SQLite/H2/真实模型/远端 CI 未验收。下一步按序 B4 会话装配 → B3 提示词评测。
 
 ## B4 批次一：会话装配
 

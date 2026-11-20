@@ -1,0 +1,187 @@
+{
+  "kind": "pair-index (no model text)",
+  "source": {
+    "path": "experiments/action-dataset-v1/rows/train13-full-candidates.jsonl",
+    "sha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188"
+  },
+  "labels": {
+    "path": "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json",
+    "sha256": "41372ab43bc16ed90dd488bf334a562f6cec44e5633f07ba01d2833f85bb1829"
+  },
+  "groups": [
+    "感知",
+    "移动",
+    "战斗",
+    "援助",
+    "请求",
+    "胁迫",
+    "言语",
+    "算计",
+    "情绪",
+    "物品",
+    "身体",
+    "立场",
+    "不动"
+  ],
+  "conflicts": [
+    [
+      [
+        "b2-0010",
+        0,
+        "查看"
+      ],
+      [
+        "train13r-0003",
+        0,
+        "联络"
+      ]
+    ],
+    [
+      [
+        "b2-0030",
+        0,
+        "不动"
+      ],
+      [
+        "train13r-0004",
+        0,
+        "联络"
+      ]
+    ],
+    [
+      [
+        "b2-0027",
+        0,
+        "不动"
+      ],
+      [
+        "b2-0028",
+        0,
+        "不动"
+      ],
+      [
+        "train13r-0006",
+        0,
+        "记录"
+      ]
+    ],
+    [
+      [
+        "b2-0029",
+        0,
+        "不动"
+      ],
+      [
+        "train13r-0009",
+        0,
+        "装备"
+      ]
+    ]
+  ],
+  "resolution": {
+    "version": "01-shortx-exclusions-v1",
+    "at": "2026-11-11T14:29:54Z",
+    "by": "01-input",
+    "rule": "same compressed context, different labels, and the full X differs only by the timestamp; keep the row whose action is the direct step of the goal at hand, drop the twin from the short-pair training set only",
+    "excluded": [
+      {
+        "rowId": "b2-0010",
+        "twin": "train13r-0003",
+        "label": "感知",
+        "twinLabel": "言语",
+        "why": "凯撒独自在集结点，短讯机在随身；「恢复联络」是目标直接的那一步，查看地图是另一个目标的准备。保留 train13r-0003。"
+      },
+      {
+        "rowId": "b2-0030",
+        "twin": "train13r-0004",
+        "label": "不动",
+        "twinLabel": "言语",
+        "why": "楚子航在窗口、蓝方短讯机在随身，不离开窗口也能联络苏茜；skip 的理由（守窗口不能离开）不成立。保留 train13r-0004。"
+      },
+      {
+        "rowId": "b2-0027",
+        "twin": "train13r-0006",
+        "label": "不动",
+        "twinLabel": "立场",
+        "why": "记录单就在观察席，任何时刻都能写；「等 15:45」只解释时钟目标。保留 train13r-0006。"
+      },
+      {
+        "rowId": "b2-0028",
+        "twin": "train13r-0006",
+        "label": "不动",
+        "twinLabel": "立场",
+        "why": "同上。"
+      },
+      {
+        "rowId": "b2-0029",
+        "twin": "train13r-0009",
+        "label": "不动",
+        "twinLabel": "物品",
+        "why": "安全绳在腰上，15:20 可扣；与 15:23 的等待互相矛盾。保留 train13r-0009。"
+      }
+    ],
+    "notExcluded": [
+      {
+        "rowIds": [
+          "b5-0035",
+          "b6-0010"
+        ],
+        "why": "same label (skip), same context after the clock is added; report as an indistinguishable duplicate, do not separate by adding fields"
+      }
+    ],
+    "originalsUntouched": true,
+    "labelsUntouched": true,
+    "effect": {
+      "rows": 300,
+      "excluded": 5,
+      "pairsBefore": 4290,
+      "pairsAfter": 4225
+    }
+  },
+  "counts": {
+    "rowsInFile": 300,
+    "rowsUsed": 295,
+    "rowsExcluded": 5,
+    "decisions": 325,
+    "firstStepPairs": 3835,
+    "secondStepPairs": 390,
+    "pairs": 4225,
+    "positives": 325,
+    "perGroupPairs": {
+      "感知": 325,
+      "移动": 325,
+      "战斗": 325,
+      "援助": 325,
+      "请求": 325,
+      "胁迫": 325,
+      "言语": 325,
+      "算计": 325,
+      "情绪": 325,
+      "物品": 325,
+      "身体": 325,
+      "立场": 325,
+      "不动": 325
+    },
+    "perGroupPositive": {
+      "感知": 144,
+      "移动": 36,
+      "战斗": 2,
+      "援助": 4,
+      "请求": 19,
+      "胁迫": 0,
+      "言语": 53,
+      "算计": 0,
+      "情绪": 0,
+      "物品": 31,
+      "身体": 0,
+      "立场": 14,
+      "不动": 22
+    }
+  },
+  "indexSha256": "9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59",
+  "notes": [
+    "pairs here have no text; text is produced only by 04's pairwise serializer",
+    "a decision is (rowId, stepIndex); each decision has 13 pairs and one positive",
+    "the second step carries the first step's group and object as 已做, never its own label"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+ "created": "2026-11-06",
+ "material": "artifacts\\world-components\\organize-wording\\controllability-v1.jsonl",
+ "material_sha256": "08b23367815297cb05adc9cb096ffd6e21684f56342dbc79ece345e3f73930c0",
+ "counts": {
+  "sources": 36,
+  "train": 20,
+  "dev": 6,
+  "holdout": 10,
+  "train_examples": 40,
+  "dev_examples": 12,
+  "holdout_examples": 20
+ },
+ "source_split": {
+  "train": [
+   "fixture-r1",
+   "fixture-r2",
+   "fixture-r3",
+   "t02",
+   "t04",
+   "t06",
+   "t10",
+   "t11",
+   "t14",
+   "t15",
+   "t16",
+   "t17",
+   "t18",
+   "t23",
+   "train-r2",
+   "v04",
+   "v06",
+   "v08",
+   "v10",
+   "train-r5"
+  ],
+  "dev": [
+   "fixture-r4",
+   "t12",
+   "t20",
+   "train-r3",
+   "v09",
+   "v17"
+  ],
+  "holdout": [
+   "v07",
+   "v18",
+   "t22",
+   "fixture-r5",
+   "t03",
+   "t08",
+   "t24",
+   "train-r4",
+   "v14",
+   "v20"
+  ]
+ },
+ "base": "experiments\\world-components\\assets\\randeng-t5-77m",
+ "base_hashes": {
+  "config.json": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+  "model.safetensors": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "special_tokens_map.json": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+  "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "tokenizer_config.json": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880"
+ },
+ "training": {
+  "epochs": 12,
+  "steps_per_epoch": 40,
+  "accum": 4,
+  "updates": 120,
+  "lr": 0.0005,
+  "warmup": 12,
+  "seed": 13,
+  "max_in": 512,
+  "max_target": 128,
+  "max_new": 128,
+  "decode": "greedy"
+ },
+ "selection": "dev paired success (both plans fact-faithful + both plans implemented + expected difference), tie lower dev loss; run all 12 epochs; holdout once",
+ "acceptance": ">=8/10 holdout sources with both outputs fact-faithful, both plans implemented, expected difference; per-source report",
+ "no": "no A arm, no organization model, no parameter sweep, no base change, no re-selection after holdout"
+}

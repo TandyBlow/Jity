@@ -1,0 +1,24 @@
+{
+ "repo": "google/gemma-3-1b-it-qat-q4_0-gguf",
+ "revision": "d1be121d36172a4b0b964657e2ee859d61138593",
+ "lastModified": "2025-04-11T00:54:27.000Z",
+ "licenseTags": [
+  "gemma"
+ ],
+ "downloads": 1285,
+ "likes": 182,
+ "files": [
+  {
+   "path": "README.md",
+   "bytes": 23213,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "gemma-3-1b-it-q4_0.gguf",
+   "bytes": 1003541152,
+   "lfsSha256": "95e5b8d891cd6a794f66c2a6fb59a41e9562b4660560b854274eceffb628b22a",
+   "lfsSize": 1003541152
+  }
+ ]
+}

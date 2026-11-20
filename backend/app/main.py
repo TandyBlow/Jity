@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import get_settings
 from app.routers import backgrounds, campaigns, generate, meta, sessions, slots
 from app.world_app import install_world_routes
+from app.routers.local_progress import router as local_progress_router
 
 settings = get_settings()
 
@@ -37,6 +38,7 @@ app.include_router(generate.router)
 app.include_router(backgrounds.router)
 app.include_router(meta.router)
 install_world_routes(app)
+app.include_router(local_progress_router)
 
 settings.backgrounds_dir.mkdir(parents=True, exist_ok=True)
 app.mount(

@@ -1,0 +1,62 @@
+{
+ "purpose": "locate the 主体＋的 frame conflict: role inventory, input-to-target pairing, three checks",
+ "rule": {
+  "path": "artifacts/scoring-rule-r4/rule.json",
+  "sha256": "0696f955ab0b09f684a591300879a5adfce945ab192cdf0eec6ab530fd2f6fe6",
+  "version": "syntax-frame-r4"
+ },
+ "scores": {
+  "c": {
+   "pass": 3,
+   "relationKept": 5,
+   "attributionWrong": 5,
+   "syntaxBroken": 4
+  },
+  "control": {
+   "pass": 5,
+   "relationKept": 8,
+   "attributionWrong": 5,
+   "syntaxBroken": 5
+  },
+  "moved": {
+   "pass": 1,
+   "relationKept": 7,
+   "attributionWrong": 9,
+   "syntaxBroken": 8
+  }
+ },
+ "diagnosis": {
+  "targetLayerGap": "0 of 1023 targets have a value whose subject is a different object while the name is a location reference; the 30 object-appearance targets only teach possessor or locative-state frames",
+  "notMovedSpecific": "C 3/10, control 5/10, moved 1/10 pass, so the shape is missing in all pools",
+  "relationWordIsOnlyAClue": "control keeps 8/8 relations yet still has 5 attribution failures"
+ },
+ "chosenIntervention": {
+  "layer": "target",
+  "plan": "add 12 exemplars of the shape across three frames (名称上＋关系, 关系＋在名称上, 名称边上/里＋关系)",
+  "notInput": "a role marker in the fact line would invalidate the frozen contracts and there is no evidence the model would use it",
+  "notGeneration": "constraints or post-editing would add an edit layer the scoring rule excludes",
+  "falsifier": "if the same shape still flips roles after the 12 exemplars, the target layer is not the bottleneck and the input expression is next"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/frame-r1/rule.json",
+   "bytes": 1703,
+   "sha256": "0696f955ab0b09f684a591300879a5adfce945ab192cdf0eec6ab530fd2f6fe6"
+  },
+  {
+   "path": "artifacts/next-acceptance/frame-r1/frame-judged.json",
+   "bytes": 7210,
+   "sha256": "63c338fd1b3ca9b0dfe57a2f6d1d06e2687bfbda05f3f9f8ad28b10b09ddd99a"
+  },
+  {
+   "path": "artifacts/next-acceptance/frame-r1/relation-judged.json",
+   "bytes": 7205,
+   "sha256": "4cb51e51bc0330a4f2697262180ac4357cb407b928a8189b802360270dfa728b"
+  },
+  {
+   "path": "artifacts/next-acceptance/frame-r1/n4-relation-r1.jsonl",
+   "bytes": 9580,
+   "sha256": "0cc83b299078f456de4dfb07b419077dadab01a76137d6ea86599f8731aa7171"
+  }
+ ]
+}

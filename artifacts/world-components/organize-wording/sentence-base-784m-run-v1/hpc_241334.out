@@ -1,0 +1,16 @@
+start=Fri Nov  6 15:31:11 CST 2026
+NVIDIA GeForce RTX 4090 D, 24564 MiB
+step 40 update 10
+step 80 update 20
+step 120 update 30
+step 160 update 40
+step 200 update 50
+step 240 update 60
+step 280 update 70
+step 320 update 80
+step 360 update 90
+step 400 update 100
+step 440 update 110
+step 480 update 120
+wrote out/results.json wall 87.18 peak 16469425152
+end=Fri Nov  6 15:34:37 CST 2026 rc=0

@@ -20,7 +20,7 @@
   background: var(--surface-glass);
   color: var(--color-fg);
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+  box-shadow: var(--shadow-menu);
   backdrop-filter: blur(18px);
 }
 
@@ -34,7 +34,7 @@
   border: 1px solid color-mix(in srgb, var(--color-accent) 34%, transparent);
   border-radius: var(--radius-lg);
   background: var(--surface-glass);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--shadow-menu-strong);
   backdrop-filter: blur(22px);
   animation: settings-reveal 180ms ease-out;
 }

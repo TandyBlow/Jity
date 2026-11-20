@@ -1,0 +1,134 @@
+/** Public types for the settlement lane. The handler output schemas are the
+ * existing model-task schemas: results = Record<Id, string>, updates =
+ * UpdatesCall (split stage) or UpdatesCall[] (one merged call), continuation =
+ * Conclusion. Evidence is additive and never becomes a world fact. */
+import type { Id, Json } from '../../../types';
+import type { UpdatesCall, UpdatesStage } from '../../../schedule';
+import type { InferenceEngine } from '../../../runtime/engine';
+
+export type SettlementTask = 'results' | 'updates' | 'continuation';
+
+export interface ContinuationPolicyOptions {
+  /** Consecutive auto rounds with no committed entity change before a policy
+   * handback. This is a no-progress rule, not a call-count limit. */
+  noProgressRounds?: number;
+  /** Consecutive identical accepted candidate sets before a policy handback.
+   * A changed state with the same literal follow-up is still a loop. */
+  repeatRounds?: number;
+  /** Optional runaway safety ceiling. null (the default) means continuation
+   * is never closed by a call count; normal handback is decided by the model
+   * plus the no-progress/repeat rules above. */
+  maxAutoContinuations?: number | null;
+  /** Maximum candidate follow-ups the model may propose in one assessment. */
+  maxCandidates?: number;
+}
+
+export interface SettlementOptions {
+  continuation?: ContinuationPolicyOptions;
+  maxTokens?: Partial<Record<SettlementTask, number>>;
+  temperature?: number;
+  timeoutMs?: number;
+  /** Reject a prompt that does not fit instead of silently truncating state. */
+  maxPromptChars?: number;
+  /** New task budget for one updates call. Exceeding it is a visible failure,
+   * never a partial success. */
+  maxNewTasks?: number;
+  /** Test/embedded allocator for the automatic round identity. The default
+   * uses a timestamp plus a local counter. */
+  nextRoundId?: () => Id;
+  onTask?: (task: SettlementTask, key: string, detail: ModelTaskDetail) => void;
+  /** Product default: a new task achievement must cite a settled result fact
+   * (or a time basis). Unit fixtures may leave this off, but the page port
+   * never does. */
+  requireTaskSupport?: boolean;
+  /** How the tasks stage asks for its answer.
+   *
+   * 'roster': the prompt prints a complete answer that names every affected
+   * character under `unchanged`, and the model must reproduce the roster. A 0.6B
+   * copies that skeleton: across 171 recorded task-stage answers it never once
+   * moved a character out of `unchanged`, and no real 0.6B run produced an
+   * achievement either (2/2 probes, 2026-11-11).
+   *
+   * 'achieved' (default): the model asserts only the characters whose task
+   * condition is now met (with a fact basis); the program applies "everyone else
+   * unchanged", which is the conservative default it already knows. The same
+   * probes achieve the right task under this contract; keep 'roster' only as a
+   * comparison arm. */
+  tasksContract?: 'roster' | 'achieved';
+}
+
+export interface ModelTaskDetail {
+  ms: number;
+  fallback: boolean;
+  error?: string;
+  raw?: string;
+  promptChars?: number;
+  /** Per-stage model time for an updates task, so a slow turn can be attributed
+   * without waiting for the whole submission to close. */
+  stageMs?: Record<string, number>;
+  stages?: string[];
+  /** Affected projection for this updates group (which owners/rows were judged). */
+  scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
+}
+
+export interface ModelCallEvidence {
+  prompt: string;
+  raw: string;
+  ms: number;
+  attempt: number;
+  error?: string;
+  /** A truncated/interrupted call keeps its partial text here instead of
+   * throwing the paid output away (the task book requires every truncation to
+   * be explicit in evidence). */
+  truncated?: boolean;
+  finishReason?: string | null;
+}
+
+export interface SettlementEvidence {
+  task: SettlementTask;
+  key: string;
+  raw: string;
+  ms: number;
+  fallback: boolean;
+  error?: string;
+  calls: ModelCallEvidence[];
+  /** Lane-specific structural/coverage evidence. Never committed as state. */
+  detail: Json;
+}
+
+/** value=null means no candidate may be committed (hard input/protocol/model
+ * failure). results and updates abort the point after a failed repair instead
+ * of inventing a conservative result or committing empty stage deltas;
+ * continuation never converts a failure into a handback. */
+export interface SettlementOutcome<T> {
+  value: T | null;
+  raw: string;
+  ms: number;
+  fallback: boolean;
+  error?: string;
+  evidence: SettlementEvidence;
+}
+
+export interface SettlementHandlers {
+  results(key: Id, input: Json): Promise<SettlementOutcome<Record<Id, string>>>;
+  updates(key: Id, input: Json): Promise<SettlementOutcome<SettlementUpdates>>;
+  continuation(key: Id, input: Json): Promise<SettlementOutcome<SettlementConclusion>>;
+  /** Clear no-progress/repeat streaks and the local continuation counter. */
+  resetContinuation(): void;
+  /** Clear all in-flight batch memory. The controller owns committed state. */
+  reset(): void;
+}
+
+/** The existing schedule output shapes, imported rather than redefined. */
+export type SettlementUpdates = UpdatesCall[] | UpdatesCall;
+
+export type SettlementConclusion =
+  | { kind: 'continue'; closedBy: 'model'; cancelReason: null; candidateCharacterIds: Id[]; nextRoundId: Id }
+  | { kind: 'handback'; closedBy: 'model'; cancelReason: null };
+
+export type { UpdatesCall, UpdatesStage };
+
+export interface SettlementConfig {
+  engine: InferenceEngine;
+  options?: SettlementOptions;
+}

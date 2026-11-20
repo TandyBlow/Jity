@@ -1,0 +1,1622 @@
+{
+ "schemaVersion": 2,
+ "createdUtc": "2026-11-08T07:55:50.532978+00:00",
+ "worktree": {
+  "path": "D:\\others\\Jity\\.local\\parallel\\c-fresh-eval",
+  "head": "b9d62354e65260fa1c5d6213bf319e9e03b491d3"
+ },
+ "method": "分支尖端全量（按 blob 去重）+ 工作树未提交文件；世界按名字被哪些角色的文件提到来分类；不穷举已删除历史与仓库外使用。",
+ "summary": {
+  "refs": 63,
+  "uniqueTips": 24,
+  "worktrees": 67,
+  "uniqueBlobs": 3350,
+  "uniqueContents": 3545,
+  "scannedFileRecords": 25846,
+  "worldOccurrences": 1572,
+  "uniqueWorlds": 11,
+  "eligibleUnseen": 0,
+  "unread": 0
+ },
+ "refs": [
+  {
+   "ref": "refs/heads/agent",
+   "commit": "dd345b826b5f63ed0b9c530271cfb01a945de0ad"
+  },
+  {
+   "ref": "refs/heads/exp/c-attention-parse",
+   "commit": "2d53eddd64f56e9c9d6efc46360883b2283f64c9"
+  },
+  {
+   "ref": "refs/heads/exp/c-browser-t5",
+   "commit": "2bbd5baf0e81ece4b3b5e969ffd855b4372170e8"
+  },
+  {
+   "ref": "refs/heads/exp/c-fact-selection",
+   "commit": "64405346fe63c2f05cf067f3b328893fa9e0d381"
+  },
+  {
+   "ref": "refs/heads/exp/c-fact-wording",
+   "commit": "11cca0502e3334aa49784a030702e05dba2599cf"
+  },
+  {
+   "ref": "refs/heads/exp/c-fresh-eval",
+   "commit": "7706026bb1449ef22804221b9f9081efe7682955"
+  },
+  {
+   "ref": "refs/heads/exp/c-group-wording",
+   "commit": "55bb82ff07ae2bd08897c2c3e3a96e3196d84965"
+  },
+  {
+   "ref": "refs/heads/exp/c-organize-plan",
+   "commit": "56b82345c6f722b618db614cd3116fa8357cc03c"
+  },
+  {
+   "ref": "refs/heads/exp/c-round-composition",
+   "commit": "19350563d3ff70cda3b0389c18527559bcd99e88"
+  },
+  {
+   "ref": "refs/heads/exp/c-scene-expression",
+   "commit": "9439390d9344a9e966748d99fcb8952ced730c93"
+  },
+  {
+   "ref": "refs/heads/exp/d-act-skip",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-action-intent",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-action-realizer",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-appearance-change",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-continue-decision",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-full-flow-500ms",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-group-outcome-plan",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-group-outcome-realizer",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-personality-change",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-position-choice",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-reaction-plan",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-reaction-realizer",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-sanity-prediction",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-shared-runtime",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-subtask-generation",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-target-relations",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-task-completion",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-time-segmentation",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/d-world-bootstrap",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/heads/exp/e-browser-regression",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-conditional-output",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-evidence-schema",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-fact-gate",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-main-preview",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-nonempty-fixtures",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-state-recovery",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-task-display",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/exp/e-usage-metrics",
+   "commit": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6"
+  },
+  {
+   "ref": "refs/heads/master",
+   "commit": "f24cbbabedd1400afe2dcccb0459daebdbba15ef"
+  },
+  {
+   "ref": "refs/heads/tian",
+   "commit": "734750ef54a9fa3f3bfa7f485f22420c5cdafa68"
+  },
+  {
+   "ref": "refs/heads/world-browser",
+   "commit": "871afa91f63fccf26cee0deb422e5dc9d8f6fe94"
+  },
+  {
+   "ref": "refs/heads/world-components",
+   "commit": "74c9c768e7f8c6ae491b0e9de5cdfca091a0d7a3"
+  },
+  {
+   "ref": "refs/heads/world-components-logic",
+   "commit": "aac8b54c46d6faeff3e615e98f9cf751e6a5c6cd"
+  },
+  {
+   "ref": "refs/heads/world-components-next",
+   "commit": "b739b397e4c05f9a8164f49d339bb5811b76e51d"
+  },
+  {
+   "ref": "refs/heads/world-server",
+   "commit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3"
+  },
+  {
+   "ref": "refs/remotes/origin/agent",
+   "commit": "dd345b826b5f63ed0b9c530271cfb01a945de0ad"
+  },
+  {
+   "ref": "refs/remotes/origin/codex/settings-menu",
+   "commit": "c5ec58c6d118dc4e4eb2a22f16317eacf4445b3d"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-attention-parse",
+   "commit": "2d53eddd64f56e9c9d6efc46360883b2283f64c9"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-browser-t5",
+   "commit": "2bbd5baf0e81ece4b3b5e969ffd855b4372170e8"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-fact-wording",
+   "commit": "11cca0502e3334aa49784a030702e05dba2599cf"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-fresh-eval",
+   "commit": "7706026bb1449ef22804221b9f9081efe7682955"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-group-wording",
+   "commit": "55bb82ff07ae2bd08897c2c3e3a96e3196d84965"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-organize-plan",
+   "commit": "8e666e2f35519b1932a6f88e302cb8de81093a7a"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-round-composition",
+   "commit": "19350563d3ff70cda3b0389c18527559bcd99e88"
+  },
+  {
+   "ref": "refs/remotes/origin/exp/c-scene-expression",
+   "commit": "9439390d9344a9e966748d99fcb8952ced730c93"
+  },
+  {
+   "ref": "refs/remotes/origin/master",
+   "commit": "3c76234ff7142e73f939db71051606257642bc38"
+  },
+  {
+   "ref": "refs/remotes/origin/tian",
+   "commit": "734750ef54a9fa3f3bfa7f485f22420c5cdafa68"
+  },
+  {
+   "ref": "refs/remotes/origin/world-browser",
+   "commit": "871afa91f63fccf26cee0deb422e5dc9d8f6fe94"
+  },
+  {
+   "ref": "refs/remotes/origin/world-components",
+   "commit": "74c9c768e7f8c6ae491b0e9de5cdfca091a0d7a3"
+  },
+  {
+   "ref": "refs/remotes/origin/world-components-logic",
+   "commit": "d80a03160c9d3f8a3386ad61349556dc399d9979"
+  },
+  {
+   "ref": "refs/remotes/origin/world-components-next",
+   "commit": "b739b397e4c05f9a8164f49d339bb5811b76e51d"
+  },
+  {
+   "ref": "refs/remotes/origin/world-server",
+   "commit": "9f2b0532d34f3c77c7213605fab9b9b61507e193"
+  },
+  {
+   "ref": "refs/remotes/origin/zjrrrr",
+   "commit": "0468a55814fe66933fd08119b6172849772de8f0"
+  }
+ ],
+ "worktrees": [
+  {
+   "path": "D:/others/Jity",
+   "head": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
+   "branch": "world-server",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/agent-worktree",
+   "head": "dd345b826b5f63ed0b9c530271cfb01a945de0ad",
+   "branch": "agent",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-22e0c7e",
+   "head": "22e0c7e2842dd134fb25a30606ccab4da7fda0ca",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-2f8ca38",
+   "head": "2f8ca38f471cd5766279acf154a072c42d2391f0",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-3a4da18",
+   "head": "3a4da1859a61bcb2fc120fdff3de420fdf79bfba",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-4023288",
+   "head": "402328898932174dddbbd08cb342aad18744339e",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-58ea66b",
+   "head": "58ea66b1ba490fe587260f704546f1978f54bb9c",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-5ba2249",
+   "head": "5ba22498320d1d8ac8cd05d61948ec493380f3fc",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-682fa37",
+   "head": "682fa37ded6976e340cd37a8648c41bbcfe16abe",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-76c8e0e",
+   "head": "76c8e0ebc0fa5a943c77344ab65f80fda6b8b62e",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-a2ba9f5",
+   "head": "a2ba9f54a010d57290a81012f2f6950699a04f5c",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-a7cf585",
+   "head": "a7cf585d617c3e0cba453cd1412abd1ac9c94bfd",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-c30e8e4",
+   "head": "c30e8e484b8cda980088c8358ff828a5086bd86f",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-c67cce0",
+   "head": "c67cce02ef1ad8e05c6ba51af8e1293eefb1d0ae",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d-review-d303974",
+   "head": "d303974d98f04f70cfce2ed17f8b284118a11f00",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/d1-ai-clean-verify",
+   "head": "dd2a5130bfd4bfb5ea4982f40a427901286dee16",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/h2-integration-2f93e8b",
+   "head": "2f93e8b7c5a67cbff059ffedcc7dce95f442a797",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/h2-integration-9931c7a",
+   "head": "9931c7adc6ea1583bc800797af70ca3626e71235",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/h2-integration-beeb510",
+   "head": "beeb51068f7686e6b0001976ce07e793a85afdaa",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/h2-integration-c4fbb97",
+   "head": "c4fbb97de788e17d7106a82e22e64e19c9dbc8a7",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/h2-integration-d1d2de0",
+   "head": "d1d2de0cf2805d0f3ce1d182cde57821800d3bef",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/master-worktree",
+   "head": "f24cbbabedd1400afe2dcccb0459daebdbba15ef",
+   "branch": "master",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-browser-t5",
+   "head": "2bbd5baf0e81ece4b3b5e969ffd855b4372170e8",
+   "branch": "exp/c-browser-t5",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-fact-selection",
+   "head": "64405346fe63c2f05cf067f3b328893fa9e0d381",
+   "branch": "exp/c-fact-selection",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-fact-wording",
+   "head": "11cca0502e3334aa49784a030702e05dba2599cf",
+   "branch": "exp/c-fact-wording",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-fresh-eval",
+   "head": "7706026bb1449ef22804221b9f9081efe7682955",
+   "branch": "exp/c-fresh-eval",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-organize-plan",
+   "head": "56b82345c6f722b618db614cd3116fa8357cc03c",
+   "branch": "exp/c-organize-plan",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-round-composition",
+   "head": "19350563d3ff70cda3b0389c18527559bcd99e88",
+   "branch": "exp/c-round-composition",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/c-scene-expression",
+   "head": "9439390d9344a9e966748d99fcb8952ced730c93",
+   "branch": "exp/c-scene-expression",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-act-skip",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-act-skip",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-action-intent",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-action-intent",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-action-realizer",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-action-realizer",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-appearance-change",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-appearance-change",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-continue-decision",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-continue-decision",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-full-flow-500ms",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-full-flow-500ms",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-group-outcome-plan",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-group-outcome-plan",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-group-outcome-realizer",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-group-outcome-realizer",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-personality-change",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-personality-change",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-position-choice",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-position-choice",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-reaction-plan",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-reaction-plan",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-reaction-realizer",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-reaction-realizer",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-sanity-prediction",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-sanity-prediction",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-shared-runtime",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-shared-runtime",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-subtask-generation",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-subtask-generation",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-target-relations",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-target-relations",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-task-completion",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-task-completion",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-time-segmentation",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-time-segmentation",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/d-world-bootstrap",
+   "head": "d80a03160c9d3f8a3386ad61349556dc399d9979",
+   "branch": "exp/d-world-bootstrap",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-browser-regression",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-browser-regression",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-conditional-output",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-conditional-output",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-evidence-schema",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-evidence-schema",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-fact-gate",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-fact-gate",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-main-preview",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-main-preview",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-nonempty-fixtures",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-nonempty-fixtures",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-state-recovery",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-state-recovery",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-task-display",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-task-display",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/parallel/e-usage-metrics",
+   "head": "8afb54061d56ddd4b029f585ae6a8351b73a2ce6",
+   "branch": "exp/e-usage-metrics",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/tian-worktree",
+   "head": "734750ef54a9fa3f3bfa7f485f22420c5cdafa68",
+   "branch": "tian",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-browser-worktree",
+   "head": "3e1420001df5e3f3da4cd464e5c4434c7fda086e",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-components-logic-worktree",
+   "head": "aac8b54c46d6faeff3e615e98f9cf751e6a5c6cd",
+   "branch": "world-components-logic",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-components-next-worktree",
+   "head": "b739b397e4c05f9a8164f49d339bb5811b76e51d",
+   "branch": "world-components-next",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-components-next-worktree/.local/scratch/appearance-r1",
+   "head": "fd6c52e25e08281fb32f4aa03b99fd6ad47a7085",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-components-worktree",
+   "head": "74c9c768e7f8c6ae491b0e9de5cdfca091a0d7a3",
+   "branch": "world-components",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-integration-a3734a52-b552148c",
+   "head": "48eb3a069e10cbbd2c752ab2d6678930a70dc0af",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/world-server-retired-20261029/integration-9892089",
+   "head": "9892089f46790c691f0dd07e512c03a04ef36120",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.local/ws-facts-005ea5b",
+   "head": "005ea5be46e09b72f219defca047a8fb0d281045",
+   "branch": "(detached)",
+   "isMain": false
+  },
+  {
+   "path": "D:/others/Jity/.planning/checkouts/world-interface-e3b197a",
+   "head": "e3b197a79f95adfbe215dddf5dfd3f9ed5b12823",
+   "branch": "(detached)",
+   "isMain": false
+  }
+ ],
+ "worlds": [
+  {
+   "clusterKey": [
+    "person_a",
+    "person_c",
+    "corridor",
+    "hall"
+   ],
+   "worldId": null,
+   "worldIds": [
+    "world_1",
+    "world_10",
+    "world_19",
+    "world_29"
+   ],
+   "format": "initial-template",
+   "characters": [
+    "person_a",
+    "person_c"
+   ],
+   "locations": [
+    "corridor",
+    "hall"
+   ],
+   "names": [
+    "周宁",
+    "林川",
+    "盒子",
+    "走廊",
+    "门厅"
+   ],
+   "discriminativeNames": [
+    "周宁",
+    "林川",
+    "盒子",
+    "门厅"
+   ],
+   "occurrences": 816,
+   "canonicalVariants": 12,
+   "definedAt": [
+    {
+     "path": "artifacts/b3-short/qwen3-0.6b.json",
+     "role": "live-archive"
+    },
+    {
+     "path": "artifacts/g5-http-recovery/g5-http-recovery.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/rule-facts/http.json",
+     "role": "live-archive"
+    },
+    {
+     "path": "artifacts/rule-facts/latency-first.json",
+     "role": "live-archive"
+    },
+    {
+     "path": "artifacts/rule-facts/latency.json",
+     "role": "live-archive"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline-v1.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline-v2.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline-v3.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline-v4.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline-v5.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline-v6.json",
+     "role": "other"
+    },
+    {
+     "path": "artifacts/world-chain/b3-baseline.json",
+     "role": "other"
+    }
+   ],
+   "usageCounts": {
+    "tuning-run": 53,
+    "eval-sample": 1,
+    "live-archive": 13,
+    "grader": 1,
+    "runtime": 5,
+    "design-doc": 22
+   },
+   "usageExamples": {
+    "tuning-run": [
+     "artifacts/cohesion-split/a1.jsonl",
+     "artifacts/cohesion-split/background-candidates.json",
+     "artifacts/cohesion-split/background-select-results.jsonl",
+     "artifacts/cohesion-split/blind.json"
+    ],
+    "eval-sample": [
+     "frontend/src/lib/world-engine/runtime/b3-short-samples.ts"
+    ],
+    "live-archive": [
+     "artifacts/b3-short/README.md",
+     "artifacts/b3-short/qwen3-0.6b.json",
+     "artifacts/b3-short/review.json",
+     "artifacts/narration-http-review.json"
+    ],
+    "grader": [
+     "frontend/src/lib/world-engine/runtime/narration-alignment.test.ts"
+    ],
+    "runtime": [
+     "frontend/src/lib/world-engine/runtime/committed-narration.test.ts",
+     "frontend/src/lib/world-engine/runtime/narration-factcheck.test.ts",
+     "frontend/src/lib/world-engine/runtime/output-schema.test.ts",
+     "frontend/src/lib/world-engine/runtime/rule-facts.test.ts"
+    ],
+    "design-doc": [
+     "design/world-engine-reports/background-selection-run.md",
+     "design/world-engine-reports/browser-model-port-contract.md",
+     "design/world-engine-reports/components/README.md",
+     "design/world-engine-reports/components/adapt-r1-2026-11-06.md"
+    ]
+   },
+   "class": "used-in-tuning-run",
+   "reason": "被 53 个 tuning-run 文件提到",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "person_a",
+    "person_b",
+    "person_c",
+    "person_d",
+    "person_e",
+    "person_f",
+    "classroom1",
+    "classroom2",
+    "corridor",
+    "floor1",
+    "floor2",
+    "lobby",
+    "school"
+   ],
+   "worldId": "world_school",
+   "worldIds": [
+    "world_school"
+   ],
+   "format": "initial-template",
+   "characters": [
+    "person_a",
+    "person_b",
+    "person_c",
+    "person_d",
+    "person_e",
+    "person_f"
+   ],
+   "locations": [
+    "classroom1",
+    "classroom2",
+    "corridor",
+    "floor1",
+    "floor2",
+    "lobby",
+    "school"
+   ],
+   "names": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "一号教室",
+    "一楼",
+    "书",
+    "二号教室",
+    "二楼",
+    "外套",
+    "大堂",
+    "学校",
+    "手机",
+    "校徽",
+    "水瓶",
+    "硬币",
+    "背包",
+    "走廊",
+    "重门",
+    "铜钥匙",
+    "黑板"
+   ],
+   "discriminativeNames": [
+    "一号教室",
+    "一楼",
+    "二号教室",
+    "二楼",
+    "外套",
+    "大堂",
+    "学校",
+    "手机",
+    "校徽",
+    "水瓶"
+   ],
+   "occurrences": 627,
+   "canonicalVariants": 4,
+   "definedAt": [
+    {
+     "path": "design/world-protocol/v1/fixtures/school.initial-state.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/school.initial.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v1/fixtures/time-only.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/create_world/request.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/get_state/success.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/api/preview_point/success.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/normal.expected.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/segmented.expected.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/fixtures/projections/time.expected.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T01.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T02-empty-linked.json",
+     "role": "protocol-fixture"
+    },
+    {
+     "path": "design/world-protocol/v2/traces/T02.json",
+     "role": "protocol-fixture"
+    }
+   ],
+   "usageCounts": {
+    "tuning-run": 47,
+    "eval-sample": 4,
+    "live-archive": 4,
+    "legacy-product-content": 2,
+    "grader": 1,
+    "runtime": 3,
+    "fixture-or-test": 2,
+    "protocol-fixture": 134,
+    "design-doc": 9
+   },
+   "usageExamples": {
+    "tuning-run": [
+     "artifacts/benchmark/classifier-action-corpus.json",
+     "artifacts/benchmark/classifier-trial-1791485810864-action.json",
+     "artifacts/benchmark/classifier-trial-1791486826233-action.json",
+     "artifacts/benchmark/combo-trial-1791517796952.json"
+    ],
+    "eval-sample": [
+     "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+     "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+     "frontend/src/lib/world-engine/runtime/narration-eval-validation.ts",
+     "frontend/src/lib/world-engine/runtime/narration-split-samples.ts"
+    ],
+    "live-archive": [
+     "artifacts/smoke/campaign-transition-smoke-20260915-165635.json",
+     "artifacts/smoke/campaign-transition-smoke-20260915-165635.md",
+     "artifacts/smoke/campaign-transition-smoke-20260916-153514.json",
+     "artifacts/smoke/campaign-transition-smoke-20260916-153514.md"
+    ],
+    "legacy-product-content": [
+     "backend/data/scripted_story/branch_scenes.json",
+     "backend/data/scripted_story/opening_scenes.json"
+    ],
+    "grader": [
+     "frontend/src/lib/world-engine/runtime/narration-alignment.test.ts"
+    ],
+    "runtime": [
+     "frontend/src/lib/world-engine/runtime/b3.test.ts",
+     "frontend/src/lib/world-engine/runtime/heartbeat.test.ts",
+     "frontend/src/lib/world-engine/runtime/rule-session-continue.test.ts"
+    ],
+    "fixture-or-test": [
+     "frontend/src/lib/world-engine/http-transport.test.ts",
+     "frontend/src/lib/world-engine/recovery.test.ts"
+    ],
+    "protocol-fixture": [
+     "design/world-protocol/v1/fixtures/associated-points.json",
+     "design/world-protocol/v1/fixtures/claims.json",
+     "design/world-protocol/v1/fixtures/requests.json",
+     "design/world-protocol/v1/fixtures/school.initial-state.json"
+    ],
+    "design-doc": [
+     "design/browser-world-state-workflow.md",
+     "design/world-engine-reports/components/n4-narrative-dev-v1.md",
+     "design/world-engine-reports/components/n4-narrative-dev-v2.md",
+     "design/world-engine-reports/components/n4-narrative-dev.md"
+    ]
+   },
+   "class": "used-in-tuning-run",
+   "reason": "被 47 个 tuning-run 文件提到",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_pa",
+    "char_pb",
+    "loc_1",
+    "loc_2"
+   ],
+   "worldId": "w_pipe",
+   "worldIds": [
+    "w_pipe"
+   ],
+   "format": "initial-template",
+   "characters": [
+    "char_pa",
+    "char_pb"
+   ],
+   "locations": [
+    "loc_1",
+    "loc_2"
+   ],
+   "names": [
+    "管线乙",
+    "管线甲",
+    "管线镇",
+    "钟楼"
+   ],
+   "discriminativeNames": [],
+   "occurrences": 68,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v1-cases.json",
+     "role": "component-experiment"
+    },
+    {
+     "path": "experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
+     "role": "component-experiment"
+    },
+    {
+     "path": "experiments/world-components/parallel/round_composition/fixtures/cases.json",
+     "role": "component-experiment"
+    }
+   ],
+   "usageCounts": {},
+   "usageExamples": {},
+   "class": "undetermined-name-overlap",
+   "reason": "只有 0 个专有名字，其余名字在多个世界间共用，无法用名字判定它是否被使用；记为无法判断，不作为独立来源",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "person_a",
+    "person_b",
+    "person_c",
+    "corridor",
+    "hall"
+   ],
+   "worldId": "world_school",
+   "worldIds": [
+    "world_school"
+   ],
+   "format": "initial-template",
+   "characters": [
+    "person_a",
+    "person_b",
+    "person_c"
+   ],
+   "locations": [
+    "corridor",
+    "hall"
+   ],
+   "names": [
+    "主角",
+    "大厅",
+    "学生A",
+    "学生B",
+    "走廊",
+    "钥匙"
+   ],
+   "discriminativeNames": [
+    "大厅",
+    "学生A",
+    "学生B",
+    "钥匙"
+   ],
+   "occurrences": 22,
+   "canonicalVariants": 2,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/parallel/scene_expression/step1/narration-split-samples.export.json",
+     "role": "component-experiment"
+    }
+   ],
+   "usageCounts": {
+    "tuning-run": 1,
+    "eval-sample": 5,
+    "live-archive": 5,
+    "legacy-product-content": 1,
+    "grader": 2,
+    "runtime": 3,
+    "fixture-or-test": 2,
+    "protocol-fixture": 133
+   },
+   "usageExamples": {
+    "tuning-run": [
+     "artifacts/benchmark/target-retest-1791469111243.json"
+    ],
+    "eval-sample": [
+     "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+     "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+     "frontend/src/lib/world-engine/runtime/narration-eval-validation.ts",
+     "frontend/src/lib/world-engine/runtime/narration-split-eval.ts"
+    ],
+    "live-archive": [
+     "artifacts/narration-eval-recheck/README.md",
+     "artifacts/narration-eval-recheck/run.json",
+     "artifacts/narration-eval/README.md",
+     "artifacts/narration-eval/run.json"
+    ],
+    "legacy-product-content": [
+     "backend/data/campaigns/default_campaign.json"
+    ],
+    "grader": [
+     "frontend/src/lib/world-engine/runtime/narration-alignment.test.ts",
+     "frontend/src/lib/world-engine/runtime/narration-alignment.ts"
+    ],
+    "runtime": [
+     "frontend/src/lib/world-engine/runtime/b3.test.ts",
+     "frontend/src/lib/world-engine/runtime/heartbeat.test.ts",
+     "frontend/src/lib/world-engine/runtime/rule-session-continue.test.ts"
+    ],
+    "fixture-or-test": [
+     "frontend/src/lib/world-engine/http-transport.test.ts",
+     "frontend/src/lib/world-engine/recovery.test.ts"
+    ],
+    "protocol-fixture": [
+     "design/world-protocol/v1/fixtures/associated-points.json",
+     "design/world-protocol/v1/fixtures/claims.json",
+     "design/world-protocol/v1/fixtures/requests.json",
+     "design/world-protocol/v1/fixtures/school.initial-state.json"
+    ]
+   },
+   "class": "used-in-tuning-run",
+   "reason": "被 1 个 tuning-run 文件提到",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_aluo",
+    "char_lu",
+    "char_qi",
+    "char_shi",
+    "loc_brook",
+    "loc_inn",
+    "loc_pass",
+    "loc_tower"
+   ],
+   "worldId": "w_snow_pass",
+   "worldIds": [
+    "w_snow_pass"
+   ],
+   "format": "world-map",
+   "characters": [
+    "char_aluo",
+    "char_lu",
+    "char_qi",
+    "char_shi"
+   ],
+   "locations": [
+    "loc_brook",
+    "loc_inn",
+    "loc_pass",
+    "loc_tower"
+   ],
+   "names": [
+    "云关驿",
+    "旧地图",
+    "望雪台",
+    "炭盆",
+    "皮袄",
+    "石青",
+    "祁婶",
+    "绳梯",
+    "药包",
+    "铜壶",
+    "铜铃",
+    "阿洛",
+    "陆行",
+    "雪杖",
+    "雪溪",
+    "风口岭",
+    "马灯"
+   ],
+   "discriminativeNames": [
+    "云关驿",
+    "旧地图",
+    "炭盆",
+    "皮袄",
+    "绳梯",
+    "药包",
+    "铜壶",
+    "铜铃",
+    "雪杖",
+    "雪溪"
+   ],
+   "occurrences": 13,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/n4_narrative_dev/holdout_world.json",
+     "role": "training-or-tuning-corpus"
+    }
+   ],
+   "usageCounts": {
+    "design-doc": 2
+   },
+   "usageExamples": {
+    "design-doc": [
+     "design/world-engine-reports/components/README.md",
+     "design/world-engine-reports/components/n4-training-plan.md"
+    ]
+   },
+   "class": "design-doc-only",
+   "reason": "被 2 个 design-doc 文件提到",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_atang",
+    "char_gu",
+    "char_han",
+    "char_shen",
+    "char_ye",
+    "loc_alley",
+    "loc_archive",
+    "loc_ferry",
+    "loc_lighthouse",
+    "loc_market",
+    "loc_seawall"
+   ],
+   "worldId": "w_fog_harbor",
+   "worldIds": [
+    "w_fog_harbor"
+   ],
+   "format": "world-map",
+   "characters": [
+    "char_atang",
+    "char_gu",
+    "char_han",
+    "char_shen",
+    "char_ye"
+   ],
+   "locations": [
+    "loc_alley",
+    "loc_archive",
+    "loc_ferry",
+    "loc_lighthouse",
+    "loc_market",
+    "loc_seawall"
+   ],
+   "names": [
+    "冷茶",
+    "叶知微",
+    "墨",
+    "备用灯芯",
+    "备用钥匙",
+    "外袍",
+    "干纸",
+    "抹布",
+    "擦铜油",
+    "旧灯塔",
+    "旧纸",
+    "早市",
+    "沈砚",
+    "油壶",
+    "油布包",
+    "油纸伞",
+    "渡船",
+    "潮汐档案馆",
+    "潮汐簿",
+    "潮渡",
+    "潮生巷",
+    "灯芯",
+    "笔",
+    "系泊绳",
+    "缆绳",
+    "船灯",
+    "蜡烛",
+    "警示灯",
+    "钟绳",
+    "铜灯",
+    "铜灯罩",
+    "银鳞鱼",
+    "阿棠",
+    "雾堤",
+    "雾警钟",
+    "韩渡",
+    "顾行舟",
+    "鱼筐"
+   ],
+   "discriminativeNames": [
+    "冷茶",
+    "备用灯芯",
+    "备用钥匙",
+    "外袍",
+    "干纸",
+    "擦铜油",
+    "旧纸",
+    "油壶",
+    "油布包",
+    "油纸伞"
+   ],
+   "occurrences": 13,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/n4_narrative_dev/world.json",
+     "role": "training-or-tuning-corpus"
+    }
+   ],
+   "usageCounts": {
+    "tuning-run": 52,
+    "live-archive": 2,
+    "design-doc": 71
+   },
+   "usageExamples": {
+    "tuning-run": [
+     "artifacts/benchmark/combo-trial-1791517796952.json",
+     "artifacts/benchmark/combo-trial-1791518688043.json",
+     "artifacts/benchmark/combo-trial-python-1791517852354.json",
+     "artifacts/benchmark/combo-trial-python-1791518708451.json"
+    ],
+    "live-archive": [
+     "artifacts/smoke/campaign-transition-smoke-20260915-165635.json",
+     "artifacts/smoke/campaign-transition-smoke-20260915-165635.md"
+    ],
+    "design-doc": [
+     "design/world-engine-reports/b240-gain-loss-table.md",
+     "design/world-engine-reports/background-selection-run.md",
+     "design/world-engine-reports/boundary-arm-closing-record.md",
+     "design/world-engine-reports/boundary-v2-arm.md"
+    ]
+   },
+   "class": "used-in-tuning-run",
+   "reason": "被 52 个 tuning-run 文件提到",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_pa",
+    "char_pb",
+    "char_pc",
+    "loc_1",
+    "loc_2"
+   ],
+   "worldId": "w_pipe",
+   "worldIds": [
+    "w_pipe"
+   ],
+   "format": "initial-template",
+   "characters": [
+    "char_pa",
+    "char_pb",
+    "char_pc"
+   ],
+   "locations": [
+    "loc_1",
+    "loc_2"
+   ],
+   "names": [
+    "管线乙",
+    "管线甲",
+    "管线镇",
+    "钟楼"
+   ],
+   "discriminativeNames": [],
+   "occurrences": 4,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v1-cases.json",
+     "role": "component-experiment"
+    },
+    {
+     "path": "experiments/world-components/parallel/round_composition/fixtures/cases-v3-extra.json",
+     "role": "component-experiment"
+    }
+   ],
+   "usageCounts": {},
+   "usageExamples": {},
+   "class": "undetermined-name-overlap",
+   "reason": "只有 0 个专有名字，其余名字在多个世界间共用，无法用名字判定它是否被使用；记为无法判断，不作为独立来源",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "person_a",
+    "room_a"
+   ],
+   "worldId": "world_fixture",
+   "worldIds": [
+    "world_fixture"
+   ],
+   "format": "initial-template",
+   "characters": [
+    "person_a"
+   ],
+   "locations": [
+    "room_a"
+   ],
+   "names": [
+    "A 房间",
+    "主角",
+    "木箱"
+   ],
+   "discriminativeNames": [
+    "A 房间",
+    "木箱"
+   ],
+   "occurrences": 3,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "backend/tests/fixtures/world/pure-removal.json",
+     "role": "test"
+    }
+   ],
+   "usageCounts": {},
+   "usageExamples": {},
+   "class": "definition-only",
+   "reason": "只有定义该世界的文件提到它的专有名字",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_liu",
+    "char_qin",
+    "loc_oldstore",
+    "loc_qingshi"
+   ],
+   "worldId": null,
+   "worldIds": [],
+   "format": "world-map",
+   "characters": [
+    "char_liu",
+    "char_qin"
+   ],
+   "locations": [
+    "loc_oldstore",
+    "loc_qingshi"
+   ],
+   "names": [
+    "旧仓",
+    "柳七",
+    "油灯",
+    "秦望",
+    "竹篙",
+    "青石渡"
+   ],
+   "discriminativeNames": [],
+   "occurrences": 2,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/n4_rewrite60/fixtures/world-mini.json",
+     "role": "training-or-tuning-corpus"
+    }
+   ],
+   "usageCounts": {},
+   "usageExamples": {},
+   "class": "undetermined-name-overlap",
+   "reason": "只有 0 个专有名字，其余名字在多个世界间共用，无法用名字判定它是否被使用；记为无法判断，不作为独立来源",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_aluo",
+    "char_atang",
+    "char_gu",
+    "char_han",
+    "char_shen",
+    "char_shiqing",
+    "char_ye",
+    "loc_alley",
+    "loc_ferry",
+    "loc_landing",
+    "loc_lighthouse",
+    "loc_market",
+    "loc_salt",
+    "loc_seawall"
+   ],
+   "worldId": null,
+   "worldIds": [],
+   "format": "world-map",
+   "characters": [
+    "char_aluo",
+    "char_atang",
+    "char_gu",
+    "char_han",
+    "char_shen",
+    "char_shiqing",
+    "char_ye"
+   ],
+   "locations": [
+    "loc_alley",
+    "loc_ferry",
+    "loc_landing",
+    "loc_lighthouse",
+    "loc_market",
+    "loc_salt",
+    "loc_seawall"
+   ],
+   "names": [
+    "叶知微",
+    "抹布",
+    "提灯",
+    "旧灯塔",
+    "早市",
+    "沈砚",
+    "渡口棚",
+    "潮渡",
+    "潮生巷",
+    "盐仓",
+    "盐袋",
+    "石青",
+    "竹篙",
+    "系泊绳",
+    "阿棠",
+    "阿洛",
+    "雾堤",
+    "韩渡",
+    "顾行舟",
+    "鱼筐"
+   ],
+   "discriminativeNames": [
+    "提灯",
+    "渡口棚",
+    "盐仓"
+   ],
+   "occurrences": 2,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/n4_rewrite60/isolated-v1/world-b.json",
+     "role": "training-or-tuning-corpus"
+    }
+   ],
+   "usageCounts": {
+    "design-doc": 1
+   },
+   "usageExamples": {
+    "design-doc": [
+     "design/world-engine-reports/components/n4-training-plan.md"
+    ]
+   },
+   "class": "design-doc-only",
+   "reason": "被 1 个 design-doc 文件提到",
+   "eligibleAsUnseen": false
+  },
+  {
+   "clusterKey": [
+    "char_liu",
+    "char_lu",
+    "char_qi",
+    "char_qin",
+    "loc_oldstore",
+    "loc_pass",
+    "loc_qingshi",
+    "loc_snow"
+   ],
+   "worldId": null,
+   "worldIds": [],
+   "format": "world-map",
+   "characters": [
+    "char_liu",
+    "char_lu",
+    "char_qi",
+    "char_qin"
+   ],
+   "locations": [
+    "loc_oldstore",
+    "loc_pass",
+    "loc_qingshi",
+    "loc_snow"
+   ],
+   "names": [
+    "旧仓",
+    "望雪台",
+    "柳七",
+    "油灯",
+    "盐袋",
+    "祁婶",
+    "秦望",
+    "竹篙",
+    "缆索",
+    "陆行",
+    "青石渡",
+    "风口岭",
+    "马灯"
+   ],
+   "discriminativeNames": [
+    "缆索"
+   ],
+   "occurrences": 2,
+   "canonicalVariants": 1,
+   "definedAt": [
+    {
+     "path": "experiments/world-components/n4_rewrite60/isolated-v1/world-c.json",
+     "role": "training-or-tuning-corpus"
+    }
+   ],
+   "usageCounts": {},
+   "usageExamples": {},
+   "class": "undetermined-name-overlap",
+   "reason": "只有 1 个专有名字，其余名字在多个世界间共用，无法用名字判定它是否被使用；记为无法判断，不作为独立来源",
+   "eligibleAsUnseen": false
+  }
+ ],
+ "unread": [],
+ "selection": "存在定义级独立世界时优先复核它们；否则新建评测专用注册夹具。任何世界都不以改名的形式冒充新来源。"
+}

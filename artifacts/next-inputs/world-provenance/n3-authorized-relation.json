@@ -1,0 +1,79 @@
+{
+ "verdict": "pass",
+ "validatorVersion": "world-relation-validator/1",
+ "relations": [
+  {
+   "type": "before",
+   "fromFactId": "f0",
+   "toFactId": "f1",
+   "evidence": [
+    {
+     "type": "event",
+     "evidenceId": "point_95/person_a/appearance/change_97"
+    },
+    {
+     "type": "event",
+     "evidenceId": "point_101/person_b/appearance/change_103"
+    }
+   ],
+   "authorization": {
+    "verdict": "pass",
+    "validatorVersion": "world-relation-validator/1"
+   }
+  }
+ ],
+ "problems": [],
+ "sources": {
+  "f0": {
+   "factId": "f0",
+   "worldId": "world_89",
+   "pointIds": [
+    "point_95"
+   ],
+   "evidenceIds": [
+    "point_95/person_a/appearance/change_97"
+   ],
+   "sustained": false
+  },
+  "f1": {
+   "factId": "f1",
+   "worldId": "world_89",
+   "pointIds": [
+    "point_101"
+   ],
+   "evidenceIds": [
+    "point_101/person_b/appearance/change_103"
+   ],
+   "sustained": false
+  }
+ },
+ "points": [
+  {
+   "id": "root_91",
+   "previousPointId": null,
+   "time": null
+  },
+  {
+   "id": "point_95",
+   "previousPointId": "root_91",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "point_101",
+   "previousPointId": "point_95",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 3,
+     "unit": "second"
+    }
+   }
+  }
+ ]
+}

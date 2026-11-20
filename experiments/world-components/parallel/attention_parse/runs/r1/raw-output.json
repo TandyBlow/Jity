@@ -1,0 +1,376 @@
+{
+  "protocol": "c1-attention-parse-v1",
+  "rows": [
+    {
+      "sampleId": "S01",
+      "worldRef": "W2",
+      "utterance": "林川现在在哪儿？",
+      "priorNarration": null,
+      "parsed": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "targetNames": [
+          "林川"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_a",
+            "surface": "林川",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S02",
+      "worldRef": "W2",
+      "utterance": "穿灰衣的那个还在门口吗？",
+      "priorNarration": null,
+      "parsed": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "targetNames": [
+          "林川"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_a",
+            "surface": "穿灰衣",
+            "via": "descriptor",
+            "start": 0,
+            "end": 3,
+            "note": "from initialAppearance「穿灰衣。」"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S03",
+      "worldRef": "W1",
+      "utterance": "黄铜钥匙还在走廊吗？",
+      "priorNarration": null,
+      "parsed": {
+        "status": "resolved",
+        "attentionTargets": [
+          "item_key",
+          "corridor"
+        ],
+        "targetNames": [
+          "钥匙",
+          "走廊"
+        ],
+        "resolvedCandidates": [
+          "item_key",
+          "corridor"
+        ],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "item_key",
+            "surface": "黄铜钥匙",
+            "via": "descriptor",
+            "start": 0,
+            "end": 4,
+            "note": "from initialAppearance「一把黄铜钥匙。」"
+          },
+          {
+            "entityId": "corridor",
+            "surface": "走廊",
+            "via": "name",
+            "start": 6,
+            "end": 8,
+            "note": "exact committed name"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S04",
+      "worldRef": "W2",
+      "utterance": "他还在门口吗？",
+      "priorNarration": "林川走进门厅。",
+      "parsed": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_a"
+        ],
+        "targetNames": [
+          "林川"
+        ],
+        "resolvedCandidates": [
+          "person_a"
+        ],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_a",
+            "surface": "他",
+            "via": "pronoun_prior",
+            "start": 0,
+            "end": 1,
+            "note": "single antecedent in prior narration"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S05",
+      "worldRef": "W2",
+      "utterance": "他怎么了？",
+      "priorNarration": "林川走进门厅，周宁留在走廊。",
+      "parsed": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "targetNames": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_c"
+        ],
+        "ambiguousGroups": [
+          [
+            "person_a",
+            "person_c"
+          ]
+        ],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_a",
+            "surface": "他",
+            "via": "pronoun_ambiguous",
+            "start": 0,
+            "end": 1,
+            "note": "several antecedents in prior narration"
+          },
+          {
+            "entityId": "person_c",
+            "surface": "他",
+            "via": "pronoun_ambiguous",
+            "start": 0,
+            "end": 1,
+            "note": "several antecedents in prior narration"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S06",
+      "worldRef": "W1",
+      "utterance": "学生还在走廊吗？",
+      "priorNarration": null,
+      "parsed": {
+        "status": "ambiguous",
+        "attentionTargets": [],
+        "targetNames": [],
+        "resolvedCandidates": [
+          "corridor"
+        ],
+        "ambiguousCandidates": [
+          "person_a",
+          "person_b"
+        ],
+        "ambiguousGroups": [
+          [
+            "person_a",
+            "person_b"
+          ]
+        ],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_a",
+            "surface": "学生",
+            "via": "name_stem",
+            "start": 0,
+            "end": 2,
+            "note": "shared stem of ['学生A', '学生B']"
+          },
+          {
+            "entityId": "person_b",
+            "surface": "学生",
+            "via": "name_stem",
+            "start": 0,
+            "end": 2,
+            "note": "shared stem of ['学生A', '学生B']"
+          },
+          {
+            "entityId": "corridor",
+            "surface": "走廊",
+            "via": "name",
+            "start": 4,
+            "end": 6,
+            "note": "exact committed name"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": [
+          {
+            "entityId": "person_a",
+            "surface": "学生",
+            "reason": "substring_of_committed_name"
+          }
+        ]
+      }
+    },
+    {
+      "sampleId": "S07",
+      "worldRef": "W2",
+      "utterance": "继续。",
+      "priorNarration": null,
+      "parsed": {
+        "status": "none",
+        "attentionTargets": [],
+        "targetNames": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S08",
+      "worldRef": "W2",
+      "utterance": "老林怎么想？",
+      "priorNarration": null,
+      "parsed": {
+        "status": "unresolved",
+        "attentionTargets": [],
+        "targetNames": [],
+        "resolvedCandidates": [],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [
+          "老林"
+        ],
+        "matches": [],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S09",
+      "worldRef": "W1",
+      "utterance": "主角的任务「取回柜子里的东西」完成了吗？",
+      "priorNarration": null,
+      "parsed": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_c",
+          "task_shelf"
+        ],
+        "targetNames": [
+          "主角",
+          "取回柜子里的东西"
+        ],
+        "resolvedCandidates": [
+          "person_c",
+          "task_shelf"
+        ],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_c",
+            "surface": "主角",
+            "via": "name",
+            "start": 0,
+            "end": 2,
+            "note": "exact committed name"
+          },
+          {
+            "entityId": "task_shelf",
+            "surface": "取回柜子里的东西",
+            "via": "name",
+            "start": 6,
+            "end": 14,
+            "note": "exact committed name"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    },
+    {
+      "sampleId": "S10",
+      "worldRef": "W2",
+      "utterance": "我刚才打开盒盖了吗？",
+      "priorNarration": "周宁站在走廊。",
+      "parsed": {
+        "status": "resolved",
+        "attentionTargets": [
+          "person_c",
+          "box"
+        ],
+        "targetNames": [
+          "周宁",
+          "盒子"
+        ],
+        "resolvedCandidates": [
+          "person_c",
+          "box"
+        ],
+        "ambiguousCandidates": [],
+        "ambiguousGroups": [],
+        "unresolvedMentions": [],
+        "matches": [
+          {
+            "entityId": "person_c",
+            "surface": "我",
+            "via": "pronoun_self",
+            "start": 0,
+            "end": 1,
+            "note": "player self reference"
+          },
+          {
+            "entityId": "box",
+            "surface": "盒盖",
+            "via": "descriptor",
+            "start": 5,
+            "end": 7,
+            "note": "from initialAppearance「盒盖关闭。」"
+          }
+        ],
+        "nonUniqueDescriptors": [],
+        "droppedDescriptors": []
+      }
+    }
+  ]
+}

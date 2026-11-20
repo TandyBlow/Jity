@@ -1,0 +1,123 @@
+{
+ "purpose": "offline correction: remove the word-overlap pass, check the production contract, replay the same batch",
+ "noModelCalls": true,
+ "noTraining": true,
+ "changes": {
+  "removedBranch": "subject present + state word overlap no longer passes; such rows are undetermined",
+  "adversarialCases": 14,
+  "movedSplit": "arrival and added content judged separately",
+  "aliasRule": "a destination may be written as a trailing form of three or more characters; the pass says so",
+  "displayNoChange": "a turn level no-change sentence needs a scope field; without one it is a contract gap",
+  "displayPlain": "a complete string is not a verified direction; the note says the direction is not verified"
+ },
+ "display": {
+  "units": 205,
+  "complete": 197,
+  "gaps": 1,
+  "gapReasons": {
+   "no_change carries no scope: an entity or action scope cannot be widened to the turn": 8
+  }
+ },
+ "replay": {
+  "sentences": 1351,
+  "states": {
+   "undetermined": 991,
+   "pass": 257,
+   "mismatch": 103
+  },
+  "passShare": 0.1902,
+  "undeterminedShare": 0.7335,
+  "wrongPassed": [],
+  "goodRejectedCount": 86,
+  "goodRejectedCauses": {
+   "no arrival": 17,
+   "arrival holds but adds 抱着/一叠": 7,
+   "arrival holds but adds 站住": 13,
+   "arrival holds but adds 扶着": 27,
+   "arrival holds but adds 船头/抵住": 10,
+   "arrival holds but adds 蹲到": 12
+  },
+  "previousVersion": {
+   "states": {
+    "pass": 1164,
+    "undetermined": 123,
+    "mismatch": 64
+   },
+   "passShare": 0.8616,
+   "wrongPassed": 1,
+   "goodRejectedCount": 47
+  }
+ },
+ "byFactKind": {
+  "moved": {
+   "n": 287,
+   "pass": 201,
+   "mismatch": 86,
+   "undetermined": 0
+  },
+  "noChange": {
+   "n": 56,
+   "pass": 56,
+   "mismatch": 0,
+   "undetermined": 0
+  },
+  "sanity": {
+   "n": 42,
+   "pass": 0,
+   "mismatch": 11,
+   "undetermined": 31
+  },
+  "appearance": {
+   "n": 441,
+   "pass": 0,
+   "mismatch": 6,
+   "undetermined": 435
+  },
+  "outcome": {
+   "n": 525,
+   "pass": 0,
+   "mismatch": 0,
+   "undetermined": 525
+  }
+ },
+ "contractCheck": {
+  "source": "backend/app/schemas/world/contracts.py EntityDelta",
+  "finding": "the production delta carries no relation or anchor, no origin and no previous sanity value",
+  "detail": {
+   "relation": "appearanceChanges[].text is free text; direction exists only inside it",
+   "origin": "positionSet is absolute (containerId, slotId, relativeTo)",
+   "sanity": "sanitySet carries the new value only",
+   "noChange": "there is no no-change entity; an empty delta is the only signal"
+  },
+  "rule": "if a direction field is added, Python writes it from the state event; it is not inferred from model output and frozen inputs are not backfilled",
+  "notVerified": "the prototype rendered from from/to already present in the unit files; reading the previous point was not exercised"
+ },
+ "reading": {
+  "wrongPassed": "cleared to 0 of 1351",
+  "reliablePassRate": "19.0 percent, not 86.2; the old figure leaned on word overlap",
+  "bottleneck": "966 sentences (71.5 percent) rest on facts with no structured fields",
+  "oldRejections": "of the 47, the arrival held in 29 and only 3 can pass; the other 26 add a posture, a contact or an object"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/display-r2/render-all.json",
+   "bytes": 87920,
+   "sha256": "e095aea9ed3d6fab93fc2a8453e7d56d376527b0d59d88d3397302c7442f34da"
+  },
+  {
+   "path": "artifacts/next-acceptance/display-r2/check.json",
+   "bytes": 313761,
+   "sha256": "43f1d30cc0ce2fc553b55fb1d4b9ae2cbf9f3d8984c4689833617e8bd9e951f6"
+  },
+  {
+   "path": "artifacts/next-acceptance/display-r2/metrics.json",
+   "bytes": 16379,
+   "sha256": "f5eed99d83f5e7ce921d838a601923fb211e8d98febf1f00bcafa473397e04f5"
+  },
+  {
+   "path": "artifacts/next-acceptance/display-r2/crossover.json",
+   "bytes": 587,
+   "sha256": "f8177993783655d2a2f21cb3aedbc8b4efd19dd40fccca6f96aa30238fa0be51"
+  }
+ ]
+}

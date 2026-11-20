@@ -1,0 +1,38 @@
+{
+  "purpose": "Byte-preserving migration of the five selected records from 3fe0647; subsequent validation records are archived separately.",
+  "policy": "Selected immutable acceptance records; ordinary run output stays local.",
+  "device": "cpu",
+  "gpuValidated": false,
+  "files": [
+    {
+      "path": "artifacts/next-acceptance/acceptance/runtime-smoke.json",
+      "sourcePath": "artifacts/next-runs/acceptance/runtime-smoke.json",
+      "sourceCommit": "3fe0647",
+      "sha256": "9f1bfcadb70762ad416ba2dcd9e596e354ca2636ca30746be85b641a55c8cc83"
+    },
+    {
+      "path": "artifacts/next-acceptance/acceptance-final/acceptance/runtime-smoke.json",
+      "sourcePath": "artifacts/next-runs/acceptance-final/acceptance/runtime-smoke.json",
+      "sourceCommit": "3fe0647",
+      "sha256": "727192204bd878ab9e1c07fa85437a66fa45007b46685201c5da05787117b2ee"
+    },
+    {
+      "path": "artifacts/next-acceptance/acceptance-final/smoke-run.json",
+      "sourcePath": "artifacts/next-runs/acceptance-final/smoke-run.json",
+      "sourceCommit": "3fe0647",
+      "sha256": "5495df29d7ad28faa46f0ed435afb60e5ec43b16cb46b3c3294dec3afe10f032"
+    },
+    {
+      "path": "artifacts/next-acceptance/validation/clean-checkout.json",
+      "sourcePath": "artifacts/next-runs/validation/clean-checkout.json",
+      "sourceCommit": "3fe0647",
+      "sha256": "c15ca69afd56ab8ea821e21a78b38087313cbe069a8d3dff34ba8c4a9ebfb495"
+    },
+    {
+      "path": "artifacts/next-acceptance/validation/regressions.json",
+      "sourcePath": "artifacts/next-runs/validation/regressions.json",
+      "sourceCommit": "3fe0647",
+      "sha256": "df289db592673243027c7104d4ffce5f72afd5ec6f71bf69cb43b78c26543b3b"
+    }
+  ]
+}

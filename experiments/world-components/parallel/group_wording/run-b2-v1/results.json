@@ -1,0 +1,515 @@
+{
+ "protocol": "group-wording-b2-v1",
+ "freeze_sha256": "34d7be711105a660aa2d4eab29e233f6efd143fe256dd2a6e64f13f74de50f02",
+ "material_sha256": "2f537830797986b7678566d0f90ff605749a7ad8f0aadef34cf7c6cd27f43816",
+ "checkpoint_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+ "organizer_sha256": "867dd6dd424f022d736ff5217b25b289827348e7f7db68becf72adfe0d23678f",
+ "script_sha256": "051f483bbf29be9ba6ed524ba306cd0edc1e188e290e3d1482298841d39a51f4",
+ "device": "NVIDIA GeForce RTX 4090 D",
+ "torch": "2.5.1+cu124",
+ "transformers": "4.51.3",
+ "decoding": {
+  "max_input": 512,
+  "max_new": 128,
+  "num_beams": 1,
+  "do_sample": false,
+  "batch": 6,
+  "stop_on_eos": true
+ },
+ "rows": {
+  "fixture-r5": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "fixture-r5:g1": {
+      "text": "林川的帽檐压出折痕,脚踝肿了一块。",
+      "new_tokens": 18,
+      "stop": "eos",
+      "elapsed_s": 1.0433
+     },
+     "fixture-r5:g2": {
+      "text": "周宁的衣领被雨浸透。",
+      "new_tokens": 18,
+      "stop": "eos",
+      "elapsed_s": 1.0433
+     },
+     "fixture-r5:g3": {
+      "text": "陈默的指尖磨出茧。",
+      "new_tokens": 18,
+      "stop": "eos",
+      "elapsed_s": 1.0433
+     },
+     "fixture-r5:g4": {
+      "text": "陈默的膝盖沾了泥。",
+      "new_tokens": 18,
+      "stop": "eos",
+      "elapsed_s": 1.0433
+     }
+    },
+    "assembled": "林川的帽檐压出折痕,脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "林川的帽檐压出折痕,脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。"
+   },
+   "S": {
+    "calls": {
+     "fixture-r5:f0": {
+      "text": "林川的帽檐压出折痕。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2977
+     },
+     "fixture-r5:f1": {
+      "text": "林川的脚踝肿了一块。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2977
+     },
+     "fixture-r5:f2": {
+      "text": "周宁的衣领被雨浸透。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2977
+     },
+     "fixture-r5:f3": {
+      "text": "陈默的指尖磨出茧。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2977
+     },
+     "fixture-r5:f4": {
+      "text": "陈默的膝盖沾了泥。",
+      "new_tokens": 12,
+      "stop": "eos",
+      "elapsed_s": 0.2977
+     }
+    },
+    "fact_sentences": {
+     "f0": "林川的帽檐压出折痕。",
+     "f1": "林川的脚踝肿了一块。",
+     "f2": "周宁的衣领被雨浸透。",
+     "f3": "陈默的指尖磨出茧。",
+     "f4": "陈默的膝盖沾了泥。"
+    },
+    "assembled": "林川的帽檐压出折痕，脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。"
+   }
+  },
+  "train-r4": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "train-r4:g1": {
+      "text": "沈砚的围巾松开一截,脸色发白。",
+      "new_tokens": 17,
+      "stop": "eos",
+      "elapsed_s": 0.4061
+     },
+     "train-r4:g2": {
+      "text": "顾行舟的背上溅了泥点。",
+      "new_tokens": 17,
+      "stop": "eos",
+      "elapsed_s": 0.4061
+     },
+     "train-r4:g3": {
+      "text": "叶知微的手背蹭破了皮。",
+      "new_tokens": 17,
+      "stop": "eos",
+      "elapsed_s": 0.4061
+     },
+     "train-r4:g4": {
+      "text": "叶知微的肩头落着灰。",
+      "new_tokens": 17,
+      "stop": "eos",
+      "elapsed_s": 0.4061
+     }
+    },
+    "assembled": "沈砚的围巾松开一截,脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "沈砚的围巾松开一截,脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。"
+   },
+   "S": {
+    "calls": {
+     "train-r4:f0": {
+      "text": "沈砚的围巾松开一截。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3207
+     },
+     "train-r4:f1": {
+      "text": "沈砚的脸色发白。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3207
+     },
+     "train-r4:f2": {
+      "text": "顾行舟的背上溅了泥点。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3207
+     },
+     "train-r4:f3": {
+      "text": "叶知微的手背蹭破了皮。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3207
+     },
+     "train-r4:f4": {
+      "text": "叶知微的肩头落着灰。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3207
+     }
+    },
+    "fact_sentences": {
+     "f0": "沈砚的围巾松开一截。",
+     "f1": "沈砚的脸色发白。",
+     "f2": "顾行舟的背上溅了泥点。",
+     "f3": "叶知微的手背蹭破了皮。",
+     "f4": "叶知微的肩头落着灰。"
+    },
+    "assembled": "沈砚的围巾松开一截，脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。"
+   }
+  },
+  "t03": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "t03:g1": {
+      "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+      "new_tokens": 28,
+      "stop": "eos",
+      "elapsed_s": 0.6182
+     }
+    },
+    "assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+   },
+   "S": {
+    "calls": {
+     "t03:f0": {
+      "text": "叶知微把灯罩擦得透亮。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3136
+     },
+     "t03:f1": {
+      "text": "叶知微的袖口沾了铜油。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3136
+     },
+     "t03:f2": {
+      "text": "叶知微把抹布搭回梯脚。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3136
+     }
+    },
+    "fact_sentences": {
+     "f0": "叶知微把灯罩擦得透亮。",
+     "f1": "叶知微的袖口沾了铜油。",
+     "f2": "叶知微把抹布搭回梯脚。"
+    },
+    "assembled": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。"
+   }
+  },
+  "v14": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "v14:g1": {
+      "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+      "new_tokens": 26,
+      "stop": "eos",
+      "elapsed_s": 0.57
+     }
+    },
+    "assembled": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。"
+   },
+   "S": {
+    "calls": {
+     "v14:f0": {
+      "text": "沈砚从潮汐档案馆走到潮渡。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3161
+     },
+     "v14:f1": {
+      "text": "沈砚把系泊绳拖回岸上。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3161
+     },
+     "v14:f2": {
+      "text": "沈砚心里发紧。",
+      "new_tokens": 13,
+      "stop": "eos",
+      "elapsed_s": 0.3161
+     }
+    },
+    "fact_sentences": {
+     "f0": "沈砚从潮汐档案馆走到潮渡。",
+     "f1": "沈砚把系泊绳拖回岸上。",
+     "f2": "沈砚心里发紧。"
+    },
+    "assembled": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。"
+   }
+  },
+  "v18": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "v18:g1": {
+      "text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+      "new_tokens": 22,
+      "stop": "eos",
+      "elapsed_s": 0.4867
+     }
+    },
+    "assembled": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。"
+   },
+   "S": {
+    "calls": {
+     "v18:f0": {
+      "text": "沈砚从潮渡走到雾堤。",
+      "new_tokens": 11,
+      "stop": "eos",
+      "elapsed_s": 0.2702
+     },
+     "v18:f1": {
+      "text": "沈砚把雾警钟敲响。",
+      "new_tokens": 11,
+      "stop": "eos",
+      "elapsed_s": 0.2702
+     },
+     "v18:f2": {
+      "text": "沈砚心里发紧。",
+      "new_tokens": 11,
+      "stop": "eos",
+      "elapsed_s": 0.2702
+     }
+    },
+    "fact_sentences": {
+     "f0": "沈砚从潮渡走到雾堤。",
+     "f1": "沈砚把雾警钟敲响。",
+     "f2": "沈砚心里发紧。"
+    },
+    "assembled": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。"
+   }
+  },
+  "t08": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "t08:g1": {
+      "text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+      "new_tokens": 26,
+      "stop": "eos",
+      "elapsed_s": 0.6094
+     },
+     "t08:g2": {
+      "text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+      "new_tokens": 26,
+      "stop": "eos",
+      "elapsed_s": 0.6094
+     }
+    },
+    "assembled": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。"
+   },
+   "S": {
+    "calls": {
+     "t08:f0": {
+      "text": "阿棠把银鳞鱼搬上案板。",
+      "new_tokens": 16,
+      "stop": "eos",
+      "elapsed_s": 0.384
+     },
+     "t08:f1": {
+      "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+      "new_tokens": 16,
+      "stop": "eos",
+      "elapsed_s": 0.384
+     },
+     "t08:f2": {
+      "text": "阿棠的辫梢沾了白汽。",
+      "new_tokens": 16,
+      "stop": "eos",
+      "elapsed_s": 0.384
+     },
+     "t08:f3": {
+      "text": "顾行舟的外袍下摆沾了泥水。",
+      "new_tokens": 16,
+      "stop": "eos",
+      "elapsed_s": 0.384
+     }
+    },
+    "fact_sentences": {
+     "f0": "阿棠把银鳞鱼搬上案板。",
+     "f1": "顾行舟把缆绳绕上摊棚边的木桩。",
+     "f2": "阿棠的辫梢沾了白汽。",
+     "f3": "顾行舟的外袍下摆沾了泥水。"
+    },
+    "assembled": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。"
+   }
+  },
+  "t22": {
+   "split": "regression",
+   "J": {
+    "calls": {
+     "t22:g1": {
+      "text": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+      "new_tokens": 26,
+      "stop": "eos",
+      "elapsed_s": 0.6159
+     },
+     "t22:g2": {
+      "text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+      "new_tokens": 26,
+      "stop": "eos",
+      "elapsed_s": 0.6159
+     }
+    },
+    "assembled": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+    "matches_recorded_784": true,
+    "recorded_784_assembled": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。"
+   },
+   "S": {
+    "calls": {
+     "t22:f0": {
+      "text": "系泊绳的泥水结了一层白盐。",
+      "new_tokens": 14,
+      "stop": "eos",
+      "elapsed_s": 0.3396
+     },
+     "t22:f1": {
+      "text": "木桩缠着的旧缆绳断了。",
+      "new_tokens": 14,
+      "stop": "eos",
+      "elapsed_s": 0.3396
+     },
+     "t22:f2": {
+      "text": "顾行舟把缆绳重新绕上木桩。",
+      "new_tokens": 14,
+      "stop": "eos",
+      "elapsed_s": 0.3396
+     },
+     "t22:f3": {
+      "text": "沈砚把系泊绳拖回岸上。",
+      "new_tokens": 14,
+      "stop": "eos",
+      "elapsed_s": 0.3396
+     }
+    },
+    "fact_sentences": {
+     "f0": "系泊绳的泥水结了一层白盐。",
+     "f1": "木桩缠着的旧缆绳断了。",
+     "f2": "顾行舟把缆绳重新绕上木桩。",
+     "f3": "沈砚把系泊绳拖回岸上。"
+    },
+    "assembled": "系泊绳的泥水结了一层白盐，木桩缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。"
+   }
+  }
+ },
+ "samples": {
+  "GW-11": {
+   "sourceId": "fixture-r5",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi",
+   "J_text": "林川的帽檐压出折痕,脚踝肿了一块。",
+   "S_text": "林川的帽檐压出折痕，脚踝肿了一块。"
+  },
+  "GW-12": {
+   "sourceId": "train-r4",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi",
+   "J_text": "沈砚的围巾松开一截,脸色发白。",
+   "S_text": "沈砚的围巾松开一截，脸色发白。"
+  },
+  "GW-13": {
+   "sourceId": "t03",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "role": "regression-multi",
+   "J_text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+   "S_text": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。"
+  },
+  "GW-14": {
+   "sourceId": "v14",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "role": "regression-multi",
+   "J_text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+   "S_text": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。"
+  },
+  "GW-15": {
+   "sourceId": "v18",
+   "groupFacts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "role": "regression-multi",
+   "J_text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+   "S_text": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。"
+  },
+  "GW-16": {
+   "sourceId": "t08",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi",
+   "J_text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+   "S_text": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。"
+  },
+  "GW-17": {
+   "sourceId": "t08",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "role": "regression-multi",
+   "J_text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+   "S_text": "阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。"
+  },
+  "GW-18": {
+   "sourceId": "t22",
+   "groupFacts": [
+    "f0",
+    "f1"
+   ],
+   "role": "regression-multi",
+   "J_text": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+   "S_text": "系泊绳的泥水结了一层白盐，木桩缠着的旧缆绳断了。"
+  },
+  "GW-19": {
+   "sourceId": "t22",
+   "groupFacts": [
+    "f2",
+    "f3"
+   ],
+   "role": "regression-multi",
+   "J_text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+   "S_text": "顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。"
+  }
+ },
+ "determinism_ok": true
+}

@@ -1,0 +1,897 @@
+{
+  "kind": "short-pair dataset",
+  "serializer": {
+    "version": "action-pairwise-x1",
+    "sha256": "fa95cafcd9b7d759bffc9e4303209d777961520c010fb4d5fe45ca8b121839c2",
+    "path": "D:\\others\\Jity\\.local\\parallel-local-game\\worktrees\\04-settlement\\experiments\\action-next-step\\pairwise_serialize.py"
+  },
+  "rows": {
+    "path": "experiments\\action-dataset-v1\\rows\\train13-full-candidates.jsonl",
+    "sha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188"
+  },
+  "indexSha256": "9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59",
+  "pairs": 4225,
+  "decisions": 325,
+  "positives": 325,
+  "perGroupPositive": {
+    "言语": 689,
+    "立场": 182,
+    "物品": 403,
+    "移动": 468,
+    "感知": 1872,
+    "援助": 52,
+    "请求": 247,
+    "战斗": 26,
+    "不动": 286
+  },
+  "perCandidate": {
+    "感知": 325,
+    "移动": 325,
+    "战斗": 325,
+    "援助": 325,
+    "请求": 325,
+    "胁迫": 325,
+    "言语": 325,
+    "算计": 325,
+    "情绪": 325,
+    "物品": 325,
+    "身体": 325,
+    "立场": 325,
+    "不动": 325
+  },
+  "omittedTotals": {
+    "goalsClipped": 18564,
+    "presentClipped": 0,
+    "itemsClipped": 5538,
+    "recentClipped": 689
+  },
+  "indistinguishable": [
+    {
+      "textSha256": "1a66584a27ee44da6b698379b63ae12c11d53804f809a2c8549190626b52024b",
+      "pairIds": [
+        "b1-0002#s0#00",
+        "b2-0020#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "f66a8548b5fb9001b8cc4162b41aabe9ddef03802c3cbbfa55203b39218b1256",
+      "pairIds": [
+        "b1-0002#s0#01",
+        "b2-0020#s0#01"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "9dce94a160eb2496db0cfd4c8203eb2a67bb1f16d96de8362c374a64eaff59a6",
+      "pairIds": [
+        "b1-0002#s0#02",
+        "b2-0020#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "e08f707fa2d6ce71e93f2b1b9e9dfdb0b5a5a62248ce267e39f9dc131fa6143f",
+      "pairIds": [
+        "b1-0002#s0#03",
+        "b2-0020#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "dc77e9c9d5073b17ab5b312cc91feffb61e8284f1192cede61bbc351253b0c3a",
+      "pairIds": [
+        "b1-0002#s0#04",
+        "b2-0020#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "988ba69f02744218607852a3b4efe4c775e58bf7ebd97225f7da0a9a6137317b",
+      "pairIds": [
+        "b1-0002#s0#05",
+        "b2-0020#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "288e05cf0ad25d5d571cf1847d16272de8ad9399467cf6d89b473ed0fd7e284b",
+      "pairIds": [
+        "b1-0002#s0#06",
+        "b2-0020#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "86c1b41fb6f7dfdea8f434340545b3df9e35778c1be09d1b9e5c6673c86536cf",
+      "pairIds": [
+        "b1-0002#s0#07",
+        "b2-0020#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "d96f50fca77f7bfea77b8e9f79bc8a3af768d822ff9b2ea9ab529cbc0812199b",
+      "pairIds": [
+        "b1-0002#s0#08",
+        "b2-0020#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "c70b4821a0b2c0543fb8e3131fc902ba535589c141ef7e6396cc71781ad6a524",
+      "pairIds": [
+        "b1-0002#s0#09",
+        "b2-0020#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "fab36c86973c64019097dc4a5f93dacb56fce95f1325fd318c887a43f712fb43",
+      "pairIds": [
+        "b1-0002#s0#10",
+        "b2-0020#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "81a28ef90c6097fbf1b677e3bb0e31cde778418da3bb7f292a668f28f0df1ac1",
+      "pairIds": [
+        "b1-0002#s0#11",
+        "b2-0020#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "457035c8e8fbebbb9e5806dd7cdd277f601d01449231973b8d33925be1ccac28",
+      "pairIds": [
+        "b1-0002#s0#12",
+        "b2-0020#s0#12"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "4db1de030f3e96350d7bedcdceb398350a0b762932d4a46d9b5946a3cc3b1f24",
+      "pairIds": [
+        "b1-0022#s0#00",
+        "b3-0014#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "5775dcef89b6e783a5f5d0184d30ebb90f5fd8617cd969342995260ae27839eb",
+      "pairIds": [
+        "b1-0022#s0#01",
+        "b3-0014#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "aa21dddfffe5dd53001e6a678408e7a9182be8da41439ebb679fbb44f160fb8c",
+      "pairIds": [
+        "b1-0022#s0#02",
+        "b3-0014#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "970e0fa7856c8e99f2a506198b11655047c864324961fe92c89a79c3f61fbdc3",
+      "pairIds": [
+        "b1-0022#s0#03",
+        "b3-0014#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "f8b60c2ca334110c2c9cb2875369bfd108a6157a9bd80bfe549bc6303c9ab679",
+      "pairIds": [
+        "b1-0022#s0#04",
+        "b3-0014#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2362ed1e56e26d2e4f341ea4f1510ca481469f05a588611ab5104ad3a623276e",
+      "pairIds": [
+        "b1-0022#s0#05",
+        "b3-0014#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "49f7f15d3f785300d398fda75beeea58e3801fb6a043db28ba2493bab2c20329",
+      "pairIds": [
+        "b1-0022#s0#06",
+        "b3-0014#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "7d5ab66e7934f45698c852475dba272d3157ad7367e8fba94ce5416be0b4ba43",
+      "pairIds": [
+        "b1-0022#s0#07",
+        "b3-0014#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "6586b0819255a435385d14d0d85b1c38d494ec18b63c719e2493b10ba91670cd",
+      "pairIds": [
+        "b1-0022#s0#08",
+        "b3-0014#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "ef169a9665e99ee22b5fd4bab0dfdc2e24dce53393dc83c7a9113853cd36f7b1",
+      "pairIds": [
+        "b1-0022#s0#09",
+        "b3-0014#s0#09"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "746e6ea51a0f4bf331e59f03b1c3e50ab051d0d8df575df19641a4b76f8d40d3",
+      "pairIds": [
+        "b1-0022#s0#10",
+        "b3-0014#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "7539bc93707f832168ca83c10a556cbe7644820be1aa6590e38d48971bc41e6f",
+      "pairIds": [
+        "b1-0022#s0#11",
+        "b3-0014#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "be084637640c673bcb3edcdb70b43d8044f3fa62f18b9302ff624cde9457a6c4",
+      "pairIds": [
+        "b1-0022#s0#12",
+        "b3-0014#s0#12"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "43f86429014ce6fe5ffdc199d0e438afbada55b68bb504f5fca42dc0685c6205",
+      "pairIds": [
+        "b1-0023#s0#00",
+        "b2-0031#s0#00",
+        "b3-0029#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2731b53ec236a0283f76f7da20b68e28eff241a63a08df84c8ca1f08ab06515d",
+      "pairIds": [
+        "b1-0023#s0#01",
+        "b2-0031#s0#01",
+        "b3-0029#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "8206054512af443546444d9df2f6d6c0f3436628c381832959f1c7005d0a6410",
+      "pairIds": [
+        "b1-0023#s0#02",
+        "b2-0031#s0#02",
+        "b3-0029#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "edf3f5e7a47efcb4eefedc18de09a6edee627f50e0967b2fe5860061dec6a560",
+      "pairIds": [
+        "b1-0023#s0#03",
+        "b2-0031#s0#03",
+        "b3-0029#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "668dbf2db18395100cb7b12914913f40380f37761de44d5c42700819467083b6",
+      "pairIds": [
+        "b1-0023#s0#04",
+        "b2-0031#s0#04",
+        "b3-0029#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "3cc0fce5afc089802a06b98dca35d3600b02e48cdf4576d1d00401596fd9fdd8",
+      "pairIds": [
+        "b1-0023#s0#05",
+        "b2-0031#s0#05",
+        "b3-0029#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "69dbe117bdc7eff5973bf03cf97e13ceb59ee89a43a5b24554755f5bcdb2ba9f",
+      "pairIds": [
+        "b1-0023#s0#06",
+        "b2-0031#s0#06",
+        "b3-0029#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "7fa9a3f28553c9bba7d4ec073b445389bd736f9560248a4f43ba468c9dbcddf2",
+      "pairIds": [
+        "b1-0023#s0#07",
+        "b2-0031#s0#07",
+        "b3-0029#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "11a0e49930da2de5ae02c264096101f268bec8d7ed58b8500bc8730eadc7da86",
+      "pairIds": [
+        "b1-0023#s0#08",
+        "b2-0031#s0#08",
+        "b3-0029#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "5b554351347e59ef54abbeb0126f6caa5472445c43e13ce907c32c6976b0f574",
+      "pairIds": [
+        "b1-0023#s0#09",
+        "b2-0031#s0#09",
+        "b3-0029#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "678644d7664db7c30799a20cd2aa8645d6ff15525def6ea8700a852581f72db1",
+      "pairIds": [
+        "b1-0023#s0#10",
+        "b2-0031#s0#10",
+        "b3-0029#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "18a41fc8635697434f81a874c591d84590205e553c003a6d1529e88bba81060c",
+      "pairIds": [
+        "b1-0023#s0#11",
+        "b2-0031#s0#11",
+        "b3-0029#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "c3e0592fd01cd8e97c010c6cbb88867b94ead653f07df541f54ec0abd406b8c7",
+      "pairIds": [
+        "b1-0023#s0#12",
+        "b2-0031#s0#12",
+        "b3-0029#s0#12"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "992fb9605114b80423e10f4d8c28f78a3d5ba748f8523944ca4ec852a8dea4ea",
+      "pairIds": [
+        "b2-0005#s0#00",
+        "b2-0007#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "28e3c2cc093011524d15579c2ae2d9aabc29a1f4a94172f464887fbd95a534b8",
+      "pairIds": [
+        "b2-0005#s0#01",
+        "b2-0007#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "9417d5c41e016d3f5a51a6ba755cec0bbb4886b6311078d1c51cbbe832dc3233",
+      "pairIds": [
+        "b2-0005#s0#02",
+        "b2-0007#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "80a511e3af003c4ef0946d20cb61ae8f062ceb9503e8b2c318ce7a14270ed8c0",
+      "pairIds": [
+        "b2-0005#s0#03",
+        "b2-0007#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "5e6e301a1233256cee511b2b7d754bcfe2a113a54c519e43cd700af853bddb68",
+      "pairIds": [
+        "b2-0005#s0#04",
+        "b2-0007#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "a3a060aed0de2af28c4b05a8c8c847f90be875ded26b4052b6eb03a51de435b7",
+      "pairIds": [
+        "b2-0005#s0#05",
+        "b2-0007#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "363737312d2447203d8ac6e08ec69a0dfcb4373d8c13c295f7c25cd34646dbe5",
+      "pairIds": [
+        "b2-0005#s0#06",
+        "b2-0007#s0#06"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "dd79c03845e5eed8b518c91299f7c3a7aced7516fd1977684f1adb88693e64bd",
+      "pairIds": [
+        "b2-0005#s0#07",
+        "b2-0007#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "11c51a4b642a36d402a368a3ecc219d6092632f7fcdb5df1169fde0a45dd0af2",
+      "pairIds": [
+        "b2-0005#s0#08",
+        "b2-0007#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "3e9819f0248020f1153ac82d980ce2e19dc1e7b911a33f328d45397274e2e733",
+      "pairIds": [
+        "b2-0005#s0#09",
+        "b2-0007#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "5f770908ce5a747c571631519586500ac1f6957237a36c0f639a7a93114a03b5",
+      "pairIds": [
+        "b2-0005#s0#10",
+        "b2-0007#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2f20f5f8eb016a7a98e375c51cf9c70fb9fbb47a61bb9f2484284e2222c3b48c",
+      "pairIds": [
+        "b2-0005#s0#11",
+        "b2-0007#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "f38ee70f5b926afb80abe2ba81803902aab38db1654d4971a2e1a64224be41d1",
+      "pairIds": [
+        "b2-0005#s0#12",
+        "b2-0007#s0#12"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "8ee82f865822cc23f387a40a87d597a99d466307b838d8faf77e6b2aedd901fe",
+      "pairIds": [
+        "b2-0032#s0#00",
+        "b6-0011#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "166d54276dcf0faecb936d4f6af648facbfc98cdaeeccccc93d3f14bf8ea6676",
+      "pairIds": [
+        "b2-0032#s0#01",
+        "b6-0011#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "3e80e9130e04ebcbfd96da2ee8061cda2040feb4505c8909967a075acedc794f",
+      "pairIds": [
+        "b2-0032#s0#02",
+        "b6-0011#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "19aa3510b1fca8e401aef7611b635651608be07d85be3406d636df3f733241c2",
+      "pairIds": [
+        "b2-0032#s0#03",
+        "b6-0011#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "b341ff97a866a84755dca7561b91c8be004655457c8bd359b7723bef634d69b9",
+      "pairIds": [
+        "b2-0032#s0#04",
+        "b6-0011#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "4134d458498ace57d931ec71a113d45a6d25d9fe5e9457f27fade0b3751e2496",
+      "pairIds": [
+        "b2-0032#s0#05",
+        "b6-0011#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "c3068af84a84f096f30607bdbdc3aa2bf2980e1f74618368f2b5adca89cc10e4",
+      "pairIds": [
+        "b2-0032#s0#06",
+        "b6-0011#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "c2d0a378a00d2d377e1faf8a21a71c48deb21dcdf84881a2b6507be0a7517dd0",
+      "pairIds": [
+        "b2-0032#s0#07",
+        "b6-0011#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "a6a2d9bbab55c80344685fb5a51898037a193f4c5022c92fc75f3520d88192b4",
+      "pairIds": [
+        "b2-0032#s0#08",
+        "b6-0011#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "e3768a3a44fa89ae765251fe5a0d2544d3af8a819a98d4c16205b419f2a01df0",
+      "pairIds": [
+        "b2-0032#s0#09",
+        "b6-0011#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "eb5391a3c3ec91e01bc5cbc59b066d08caf79fc037c4f2bf0900772b0f7ee69f",
+      "pairIds": [
+        "b2-0032#s0#10",
+        "b6-0011#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "8c9bbab33e9c4e83c1e45ae9f3d2f86439ef878ee83f915d45c16a90c62c73c3",
+      "pairIds": [
+        "b2-0032#s0#11",
+        "b6-0011#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "a6bdce43e59f18df16bac3019ef78be88d489390bf19dee612a12e5583716f29",
+      "pairIds": [
+        "b2-0032#s0#12",
+        "b6-0011#s0#12"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "4e1f2f15405dbdd11d214c68afc18ae2a3d4324bf414c723ed1fae85a003e2d2",
+      "pairIds": [
+        "b3-0022#s0#00",
+        "b6-0002#s0#00"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "d764b267ce0e4b74fd5efac2bfe6bfd60786a2503104a790c4bdbabf6046ccce",
+      "pairIds": [
+        "b3-0022#s0#01",
+        "b6-0002#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "39ae8c8bc04de662aeedb2af0a30dec8348a89b9abc2968b583c444473e57337",
+      "pairIds": [
+        "b3-0022#s0#02",
+        "b6-0002#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "ad5ea4ba56ed41f03451fd7e4fecbd8bc3548cfdf31c76ba298afdd6eca13182",
+      "pairIds": [
+        "b3-0022#s0#03",
+        "b6-0002#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "fc50e81888f58e2dc26ceeed252f7e4b650082036cfc7efff28f3c452f13cb6f",
+      "pairIds": [
+        "b3-0022#s0#04",
+        "b6-0002#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "df0ae598b587ee5e0c874802229469fb6c3944df2993eacfeb1a032d70645fd0",
+      "pairIds": [
+        "b3-0022#s0#05",
+        "b6-0002#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "d62f312855c34d5f50cea58dcd5874d4190810a8a8f3a2d1d10714cd0b0fd705",
+      "pairIds": [
+        "b3-0022#s0#06",
+        "b6-0002#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "b4ef27de9f22d39def37b0f8a7a7a5643506fad928dba1db3838be53f5b0c385",
+      "pairIds": [
+        "b3-0022#s0#07",
+        "b6-0002#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "4b561db3f2d9105a25cf082e3ed9ba0c3ba21f08d66774aa415978d11eaba3af",
+      "pairIds": [
+        "b3-0022#s0#08",
+        "b6-0002#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "676a724be505112cd57c2980835a51cd2d23438a2fac8524dfc567aa82f9d36b",
+      "pairIds": [
+        "b3-0022#s0#09",
+        "b6-0002#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "8f606f3ddb197c00d311220bb85477c28d716c70e83c3e3d39197cf600adc571",
+      "pairIds": [
+        "b3-0022#s0#10",
+        "b6-0002#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "652d2f4f8885a6d1943280427be75f8cb56cbc819c96b266de11a624e178756f",
+      "pairIds": [
+        "b3-0022#s0#11",
+        "b6-0002#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "550adeef24f1ceaa7f3ff5006c1b7c71c67e5f98c0beb509a20599669afc68d0",
+      "pairIds": [
+        "b3-0022#s0#12",
+        "b6-0002#s0#12"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "422eac87fc079e0f10394ecc681f58dd8a7c700709754d9a77d02a8f9986452a",
+      "pairIds": [
+        "b3-0024#s0#00",
+        "b6-0003#s0#00"
+      ],
+      "label": true
+    },
+    {
+      "textSha256": "3497ad5978b29adf49167e55907d08ec49d38368305e653f20424b7609c54a6b",
+      "pairIds": [
+        "b3-0024#s0#01",
+        "b6-0003#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "1ce9542d0d372ae4661b3592feecc23a3082d135021fd40ca949a3416e4d69de",
+      "pairIds": [
+        "b3-0024#s0#02",
+        "b6-0003#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "d288dba870c09697fa87ae84f9479ccb2c20c0747cad970b7ec82cf0212d6b03",
+      "pairIds": [
+        "b3-0024#s0#03",
+        "b6-0003#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "49d76c38c84af07045ebefc1b97cfafe21751aaf3ccfc3d4320aacb8d8889006",
+      "pairIds": [
+        "b3-0024#s0#04",
+        "b6-0003#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "3dc6c15223588382ed4317ec28811b483ab424737d8c21fc9fa681bb406208d9",
+      "pairIds": [
+        "b3-0024#s0#05",
+        "b6-0003#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "f68823627446b4928f4b3839e6cce022fa4376cc0e61a7b1ff63f478b12018e8",
+      "pairIds": [
+        "b3-0024#s0#06",
+        "b6-0003#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "0c6e9e03d78d923b531f65e1f28deca65f016cdc34ba3858a9a545785b819fe9",
+      "pairIds": [
+        "b3-0024#s0#07",
+        "b6-0003#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "c98c0d2e419a6c93fc46ce58723a1bd730fb457a3a6903739e2a7e4be88e7a8e",
+      "pairIds": [
+        "b3-0024#s0#08",
+        "b6-0003#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "cd12927213c391b9ba0ff5d7a9e368a1920e4dda9507bf144731da8b5a92ab9e",
+      "pairIds": [
+        "b3-0024#s0#09",
+        "b6-0003#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "70eb318cbce8b4b83be5645c0adf25c263e596ededd69e6cf663da5da8faa0c2",
+      "pairIds": [
+        "b3-0024#s0#10",
+        "b6-0003#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "bc7dd0e8f3b8d0a38b9597ecfac47fd003b8635a6c72c260e2dd877e085be877",
+      "pairIds": [
+        "b3-0024#s0#11",
+        "b6-0003#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "f09d38670dec72106e4d28be4c9352ed8a3a45fd3018c103659ab44d546497c7",
+      "pairIds": [
+        "b3-0024#s0#12",
+        "b6-0003#s0#12"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "6a66ee1364cc09863882fee246f6e6b9166b9381e15463ce2acc3ef7eef5b1ac",
+      "pairIds": [
+        "b5-0035#s0#00",
+        "b6-0010#s0#00"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "0cdeaf058a93c61aa5c07024c6507853d16d7599836081f9f5d843dc031303f2",
+      "pairIds": [
+        "b5-0035#s0#01",
+        "b6-0010#s0#01"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "8e28afd5b3756952b8473311c057f2b763175b9fd5afcc129ce2521f4590c163",
+      "pairIds": [
+        "b5-0035#s0#02",
+        "b6-0010#s0#02"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2e028089b0e2bd520285088f89aa5f6535949f7a300746a7e3517ac2f8ebe864",
+      "pairIds": [
+        "b5-0035#s0#03",
+        "b6-0010#s0#03"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "b221073b9b4cfd3af566040ab0188da1dd20d63a9efd3b391ace071dcde43e53",
+      "pairIds": [
+        "b5-0035#s0#04",
+        "b6-0010#s0#04"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "84e10aa7d4a05080aeaa3eb23fc5afbf03d29f8d21979969de99ab1380273d42",
+      "pairIds": [
+        "b5-0035#s0#05",
+        "b6-0010#s0#05"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "30c7233f2be4b6a64b10a9fff2819bcb5dc1b6f0c076cf1429613b24ba062b83",
+      "pairIds": [
+        "b5-0035#s0#06",
+        "b6-0010#s0#06"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "dcd9094137ed2380b3e4db7ecd1249bb1805e2f588266711ab5d8fe59583b301",
+      "pairIds": [
+        "b5-0035#s0#07",
+        "b6-0010#s0#07"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "3432c130f3ccc725a7a03b86ab928b01aa6c6ff2bb3a0e7bde41a6d6dc372dd3",
+      "pairIds": [
+        "b5-0035#s0#08",
+        "b6-0010#s0#08"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "92f080c0038981200b13b5d0f2d20b1131c0104b4056771049de5e0347320420",
+      "pairIds": [
+        "b5-0035#s0#09",
+        "b6-0010#s0#09"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "2fde2c16ddbae20dcb2d53a141447dbe4bc9fd3a025999e15c349a67530e4497",
+      "pairIds": [
+        "b5-0035#s0#10",
+        "b6-0010#s0#10"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "002e007a9a02df82b1812e94813f9c57e836bc70fc2cbcc3fef035ad2557fdd1",
+      "pairIds": [
+        "b5-0035#s0#11",
+        "b6-0010#s0#11"
+      ],
+      "label": false
+    },
+    {
+      "textSha256": "f151019ca04228d6919de624c73c5b865a04c53f91a63c8c002eac13a07f1991",
+      "pairIds": [
+        "b5-0035#s0#12",
+        "b6-0010#s0#12"
+      ],
+      "label": true
+    }
+  ],
+  "indistinguishableTexts": 104,
+  "pairsSha256": "e2627fb11b21e88e638d4cdebabd21ee44bf3970b6958e73eda38775ba82816f"
+}

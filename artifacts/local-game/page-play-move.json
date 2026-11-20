@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "readyMs": 31137,
+  "wallMs": 297502,
+  "turns": [
+    {
+      "input": "我沿着车道向西回廊快走，贴着墙，注意听枪声",
+      "turnMs": 40314,
+      "text": "。\n你：我沿着车道向西回廊快走，贴着墙，注意听枪声 · 正文 19.3s\n路明非在西回廊。「三把。」路明非说。「三把？」「两把放在前面那条街上，一把在走廊尽头。」林亦舟把手放在桌上，手背贴着石板。「你刚才说过三把。」「我刚才数过。」「数的是什么。」「一共有三把钥匙。」「三把钥匙？」「两把放前面那条街，一把在走廊尽头。」他把纸折起来，压回去，「这两把放在街上，一把放在门口。」「这把钥匙，你从哪儿拿的。」「从走廊那边。」林亦舟说，「走廊对面那堵墙，我推过去了一半。」「现在呢？」「现在在这儿。」他说，「钥匙还在那儿，钥匙在门里。」「那你去拿钥匙。」「别走开。」他把纸折起来，压回去。「三把钥匙，你拿一把，别让别人看见我往哪儿放。」「那我来。」林亦舟说。「不来了。」他说，「我知道你要走了。」「我知道。」两个人面对面站着，谁也不看谁。「走吧。」林亦舟把纸折起来，压回去。「可钥匙在门里，你得先从外面弄出来。」「你从哪儿来。」「从这道墙那边。」他抬头看着她，「墙对面那堵墙，我推过去了一半。」「推过去一半，你还站在这儿？」「站在这儿是正常的。」他说，「站久了不说话，说不清话。」林亦舟没有立刻回答。「我知道你在这里。」她说。「知道也站不下去。」",
+      "warning": null
+    },
+    {
+      "input": "我蹲下来问林亦舟伤得怎么样，需不需要帮忙",
+      "turnMs": 42479,
+      "text": "。」他把纸折起来，压回去，「这两把放在街上，一把放在门口。」「这把钥匙，你从哪儿拿的。」「从走廊那边。」林亦舟说，「走廊对面那堵墙，我推过去了一半。」「现在呢？」「现在在这儿。」他说，「钥匙还在那儿，钥匙在门里。」「那你去拿钥匙。」「别走开。」他把纸折起来，压回去。「三把钥匙，你拿一把，别让别人看见我往哪儿放。」「那我来。」林亦舟说。「不来了。」他说，「我知道你要走了。」「我知道。」两个人面对面站着，谁也不看谁。「走吧。」林亦舟把纸折起来，压回去。「可钥匙在门里，你得先从外面弄出来。」「你从哪儿来。」「从这道墙那边。」他抬头看着她，「墙对面那堵墙，我推过去了一半。」「推过去一半，你还站在这儿？」「站在这儿是正常的。」他说，「站久了不说话，说不清话。」林亦舟没有立刻回答。「我知道你在这里。」她说。「知道也站不下去。」\n你：我蹲下来问林亦舟伤得怎么样，需不需要帮忙 · 正文 20.0s\n路明非在西回廊。「这一列的砖都落下去了。」林亦舟说。「你怎么知道。」「我问过。」「你问过了。」「因为砖上留着脚印。」他把头靠在墙上，「你跑过去看？」「没来。」她说，「我先上去看看。」路明非把手插回腰带上。「那我下去。」「你怎么知道我在这儿。」「因为我问过。」他说，「问了又怎么回去。」「问了又怎么样。」「问了就走不回来。」林亦舟把砖捡起来，「你先上去看看。」「那你呢。」「我自己上不去。」他走到台阶下，弯腰捡起一块，「我往这边走。」「往这边走？」「往那边。」他说，「我往这儿看，你往那儿站。」走廊的灯在两个人中间亮着。「你去哪。」「钟楼西门。」林亦舟说，「那条路是空的。」「那你先回去。」他把手插回腰带上。「我回去。」他说，「可我问的是砖上有脚印的地方。」「有。」她说，「那我就去问。」「等了这么久。」她把砖往台阶下推了推。「你去吧。」「那就去。」「不行。」林亦舟说，「我要看看那一列的砖都落下去了。」路明非没走过去。他把手放在墙壁上。「那我上去。」「我不坐。」他说，「我往这边走。」「你上去就先问？」「先问。」他说，「后边有砖吗。」\n正文已按已结算事实修正：added_event,added_event",
+      "warning": null
+    },
+    {
+      "input": "我检查他放在地上的演习枪，确认保险是关着的",
+      "turnMs": 53397,
+      "text": "跑过去看？」「没来。」她说，「我先上去看看。」路明非把手插回腰带上。「那我下去。」「你怎么知道我在这儿。」「因为我问过。」他说，「问了又怎么回去。」「问了又怎么样。」「问了就走不回来。」林亦舟把砖捡起来，「你先上去看看。」「那你呢。」「我自己上不去。」他走到台阶下，弯腰捡起一块，「我往这边走。」「往这边走？」「往那边。」他说，「我往这儿看，你往那儿站。」走廊的灯在两个人中间亮着。「你去哪。」「钟楼西门。」林亦舟说，「那条路是空的。」「那你先回去。」他把手插回腰带上。「我回去。」他说，「可我问的是砖上有脚印的地方。」「有。」她说，「那我就去问。」「等了这么久。」她把砖往台阶下推了推。「你去吧。」「那就去。」「不行。」林亦舟说，「我要看看那一列的砖都落下去了。」路明非没走过去。他把手放在墙壁上。「那我上去。」「我不坐。」他说，「我往这边走。」「你上去就先问？」「先问。」他说，「后边有砖吗。」\n正文已按已结算事实修正：added_event,added_event\n你：我检查他放在地上的演习枪，确认保险是关着的 · 正文 14.3s\n「这一趟是往回走的。」「往回走？」「往回走的那一条路，我走了两站就折了回来。」她把单子按顺序排列起来，「前天从这到昨天还是一条线，今天就不是。」「怎么不就是一条线。」「因为我往前走了半站就又折回来了。」走廊里只有空的灯管在闪着，走到头是黑。「我刚才问过你是不是走错路了。」她把单子放回桌子上，「可你没接。」顾岚把手插进衣兜。「昨天也是这条路。」「那你往前走。」「往西回廊。」她说，「从那到回来就不是这条路了。」「那我问我自己刚才走的是哪条路。」「你问对了。」「可我又没接这个问号。」走廊尽头的门半开着，两个人站在门口。「你下去看。」她说。「我去。」「等一下。」她往回走，走到门口，停下。「这里有登记夹。」她说，「你把单子放进去。」「我放不下。」「那就自己写。」顾岚完成了「问路」。她从走廊尽头的门走到演习医护处置室。「这一趟是往回走的。」\n正文已按已结算事实修正：task_claimed_without_fact,movement_without_fact",
+      "warning": null
+    },
+    {
+      "input": "我把护目镜戴好，问他红方现在在哪个方向",
+      "turnMs": 69263,
+      "text": "我往前走了半站就又折回来了。」走廊里只有空的灯管在闪着，走到头是黑。「我刚才问过你是不是走错路了。」她把单子放回桌子上，「可你没接。」顾岚把手插进衣兜。「昨天也是这条路。」「那你往前走。」「往西回廊。」她说，「从那到回来就不是这条路了。」「那我问我自己刚才走的是哪条路。」「你问对了。」「可我又没接这个问号。」走廊尽头的门半开着，两个人站在门口。「你下去看。」她说。「我去。」「等一下。」她往回走，走到门口，停下。「这里有登记夹。」她说，「你把单子放进去。」「我放不下。」「那就自己写。」顾岚完成了「问路」。她从走廊尽头的门走到演习医护处置室。「这一趟是往回走的。」\n正文已按已结算事实修正：task_claimed_without_fact,movement_without_fact\n你：我把护目镜戴好，问他红方现在在哪个方向 · 正文 19.2s\n路明非在演习医护处置室。「这台机器是昨天换的。」「什么情况？」路明非问。「因为今天上午有一台机器故障。」顾岚把纸条塞进盒子里，「换了后，机器就自己停了。」「那就是说，昨天那台没毛病，今天却坏了。」「这要从哪方面去查。」「先看登记簿上写的。」她翻到最后一页，「这一栏里写的是‘无记录’，后面是‘无法确认原因’。」「那就把这张单子拿过去问一遍。」「问不到就再问一遍。」她说，「问不着再问。」「那你先看看那台机器的故障记录。」「什么记录。」「就是上面写得清清楚楚，怎么了才换下来的。」顾岚说。「这本没拿。」路明非伸手摸了一下盒子里的纸，「我查过了，可还是不知道是哪一年换的。」「那就从现在开始吧。」她把纸条塞回盒子里，「你看这栏里写的是什么。」「‘故障’。」「那你就查这一栏上的时间。」「昨天上午九点。」「那就问那一台机器的主人。」顾岚把手放回桌面上，「他什么时候来过的？他走了之后呢。」「不知道。」路明非说，「但我知道他今天没再来。」「那他就走了。」顾岚把纸条往盒子里收了收，「你查完了，就把登记簿拿回来。」「那就按这一页的字写。」「按什么写的？」「机器的主人，还是那一台机器。」\n正文已按已结算事实修正：added_event,wrong_time",
+      "warning": null
+    },
+    {
+      "input": "我扶他站起来，一起往钟楼西门走",
+      "turnMs": 47870,
+      "text": "问不到就再问一遍。」她说，「问不着再问。」「那你先看看那台机器的故障记录。」「什么记录。」「就是上面写得清清楚楚，怎么了才换下来的。」顾岚说。「这本没拿。」路明非伸手摸了一下盒子里的纸，「我查过了，可还是不知道是哪一年换的。」「那就从现在开始吧。」她把纸条塞回盒子里，「你看这栏里写的是什么。」「‘故障’。」「那你就查这一栏上的时间。」「昨天上午九点。」「那就问那一台机器的主人。」顾岚把手放回桌面上，「他什么时候来过的？他走了之后呢。」「不知道。」路明非说，「但我知道他今天没再来。」「那他就走了。」顾岚把纸条往盒子里收了收，「你查完了，就把登记簿拿回来。」「那就按这一页的字写。」「按什么写的？」「机器的主人，还是那一台机器。」\n正文已按已结算事实修正：added_event,wrong_time\n你：我扶他站起来，一起往钟楼西门走 · 正文 18.8s\n路明非在卡塞尔学院演习区。路明非把装着纸条的箱子放在台上，压上木板。「这一箱子里有三本报。」「你拿走的是什么。」铁匠问。「一摞。」他站起来，「里面放着三本报，一本是空的，另一两本都写了名字。」「写的人是谁。」「不知道。」他把箱子合上，「可这封信，我得看清楚再做决定。」「你去查。」铁匠说。「不去了。」「那我们先坐车回院。」铁匠从台阶走到门边，「院里有两本报，一本在墙角，另一本藏在走廊尽头的箱子底下。」路明非没接话。他把纸条收进箱子里，压上木板。「你回去看完了没有？」铁匠问。「看了。」他说，「写的是名字和日期。」「名字是谁写的。」「不知道。」铁匠把木板合上，坐下。「那我来查。」「什么。」「这封信是今年四月写的。」他站起来，「写了三个月。」铁匠把纸条背到墙上，压上木板。「你去查。」铁匠对路明非说。「不去了。」「那我们先坐车回院。」铁匠从台阶走到门边，「院里有两本报，一本在墙角，另一本藏在走廊尽头的箱子底下。」「我先回去看完了。」「那我先走。」「等你回来。」铁匠把木板合上，「我走了就不要了。」路明非站了一会儿才坐下。\n正文已按已结算事实修正：added_event,wrong_time,wrong_time,added_event",
+      "warning": null
+    }
+  ],
+  "restored": true,
+  "snapshotBytes": 785658,
+  "snapshotStable": true,
+  "finalText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新开始\n2009-10-17 15:25 · 卡塞尔学院演习区\n已恢复本地存档，继续上次的进度。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：卡塞尔学院演习区\n在附近\n没有别人\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n本地存档\n每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：5 次",
+  "logs": [
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 4034ms fallback=false ",
+    "[info] [world-local task] results group_28 0ms fallback=true program_single_member",
+    "[info] [world-local task] updates move 3571ms fallback=false ",
+    "[info] [world-local task] updates group_28 15642ms fallback=false ",
+    "[info] [world-local task] narration point_round_21_1 20021ms fallback=true added_event,added_event",
+    "[info] [world-local task] continuation continuation 2568ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] action lin 4485ms fallback=false ",
+    "[info] [world-local task] targets lin 3515ms fallback=false ",
+    "[info] [world-local task] results group_46 4119ms fallback=false ",
+    "[info] [world-local task] updates move 4240ms fallback=false ",
+    "[info] [world-local task] updates group_46 16269ms fallback=false ",
+    "[info] [world-local task] results group_47 0ms fallback=true program_single_member",
+    "[warning] slot   operator(): id  3 | task 243 | need to evaluate at least 1 token for each active slot (n_past = 1564, task.n_tokens() = 1564)",
+    "[warning] slot   operator(): id  3 | task 243 | n_past was set to 1563",
+    "[info] [world-local task] updates move 4323ms fallback=false ",
+    "[info] [world-local task] updates group_47 4986ms fallback=false ",
+    "[info] [world-local task] narration point_round_40_1 14289ms fallback=true task_claimed_without_fact,movement_without_fact",
+    "[info] [world-local task] continuation continuation 5438ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 3967ms fallback=false ",
+    "[info] [world-local task] results group_65 3512ms fallback=false ",
+    "[info] [world-local task] updates move 3347ms fallback=false ",
+    "[info] [world-local task] updates group_65 35505ms fallback=false ",
+    "[info] [world-local task] narration point_round_58_1 19242ms fallback=true added_event,wrong_time",
+    "[info] [world-local task] continuation continuation 2635ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] targets lu 2437ms fallback=false ",
+    "[info] [world-local task] results group_84 2153ms fallback=false ",
+    "[info] [world-local task] updates move 4104ms fallback=false ",
+    "[info] [world-local task] updates group_84 16480ms fallback=false ",
+    "[info] [world-local task] narration point_round_77_1 18752ms fallback=true added_event,wrong_time,wrong_time,added_event",
+    "[info] [world-local task] continuation continuation 5139ms fallback=false ",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden"
+  ]
+}

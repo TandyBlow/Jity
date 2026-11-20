@@ -237,7 +237,23 @@ export interface ControllerMemory {
    * ruling). Reset once the group's ladder is consumed (stage/commit) —
    * the dangling stop keeps its refs in the terminal reason. */
   updatesPendingRefs: string[];
+  /** Set when the program-owned round-identity sink (controller ①b) throws or
+   * is missing on a confirmed continue with no pre-seeded allocation — visible
+   * for diagnostics; the driver continues scheduling (the next discover will
+   * fail with the server's own refusal if ids are missing). Sticky: a later
+   * success does not clear an earlier failure. */
+  lastRoundIdentityError: string | null;
+  /** G5（产品组合，identityGate 驱动专用）：待进入的自动轮身份入口尚未就绪
+   * ——sink 失败、无 sink 且无完整预置、或折入补丁缺预期槽位。调度器在
+   * pointPlan/begin 前据此停止，自动轮绝不在陈旧或空身份上开启。与
+   * lastRoundIdentityError（sticky 历史）区分：本字段表达「当前待分配是否
+   * 阻塞」，后续通知补齐入口时清空。gate 关闭的驱动（B3 harness）不写。 */
+  roundIdentityBlocked: string | null;
   continuation: Conclusion | null;
+  /** A continuation judgement that ended on lane-04's policy rule (no model
+   * conclusion value). It closes the round as a visible cancel, never as a
+   * fabricated model handback; the narration pipeline still runs. */
+  continuationStop: { reason: string } | null;
   /** This round's committed point Δs in commit order — the continuation
    * input's 「本轮状态变化」 (§7.1). Built from the client's own committed
    * point projections (no extra read). null until this driver commits a point
@@ -255,7 +271,18 @@ export type Decision =
   | { kind: 'await_command'; reason: string }
   | { kind: 'stop'; reason: string };
 
-export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand; activeInput: { advanceId: Id; inputId: Id; text: string } | null }
+export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand; activeInput: { advanceId: Id; inputId: Id; text: string } | null;
+  /** True while the point-narration queue owns the current head. The serial
+   * narration branch is then skipped; committed narration and the next
+   * point's settlement overlap without letting the gate block state work. */
+  narrationBusy?: boolean;
+  /** Product overlap mode: the results input adds the current pointId so the
+   * model port can freeze per-point result material. Scenario harnesses keep
+   * their historical input fixtures without this field. */
+  narrationOverlap?: boolean;
+  /** G5 产品门：自动轮身份就绪屏障（DriverOptions.identityGate）。缺省
+   * 关闭——B3 harness 的自动轮身份走自己的预分配队列，不受此门约束。 */
+  identityGate?: boolean }
 
 const STATE_COMPUTATION_TASKS: ModelTask[] = ['action', 'targets', 'reaction', 'results', 'updates', 'continuation'];
 
@@ -418,12 +445,24 @@ function roundIdOf(world: WorldContext): Id {
   return world.activeRoundId ?? world.round?.roundId ?? '';
 }
 
+/** A pending gate whose only blocked reason is the head narration. With an
+ * active advance, a committed point's narration may run while the next point
+ * settles; settlement writes remain serial and bind the new head. */
+function settlementOverlapsNarration(view: ScheduleView): boolean {
+  const { world, control } = view;
+  return view.narrationBusy === true
+    && world?.advance.advanceId != null
+    && control.gate.status === 'pending'
+    && control.blockedReasons.length > 0
+    && control.blockedReasons.every((reason) => reason === 'narration_pending');
+}
+
 function modelBlocked(view: ScheduleView, task: ModelTask): Decision | null {
   // Narration, pointPlan and time are never budget- or compute-blocked: the
   // narration pipeline must run through pause (T05) and a budget pause must
   // not deadlock a pending narration.
   if (!STATE_COMPUTATION_TASKS.includes(task)) return null;
-  if (!view.control.canCompute) return { kind: 'await_command', reason: 'phase_not_computable' };
+  if (!view.control.canCompute && !settlementOverlapsNarration(view)) return { kind: 'await_command', reason: 'phase_not_computable' };
   const { max, used } = view.memory.budget;
   if (max != null && used >= max) {
     const bind = writeBind(view);
@@ -450,13 +489,17 @@ export function scheduleNext(view: ScheduleView): Decision {
   }
   // Narration first: it runs through pause (T05 s7/s8), pending gates and the
   // complete phase (T01 s1–s3: phase=complete, gate=pending, narration pending).
-  const narration = narrationDecision(view);
-  if (narration) return narration;
+  // While the per-point queue owns the head, the serial narration branch is
+  // skipped; the queue submits the same point independently.
+  if (!view.narrationBusy) {
+    const narration = narrationDecision(view);
+    if (narration) return narration;
+  }
 
   if (!world.lease || !memory.leaseToken) {
     return { kind: 'transport', operation: 'lease_acquire', request: { protocolVersion: 2, requestId: memory.requestId, worldId: world.worldId, holderId: memory.holderId }, scope: worldScope(view) };
   }
-  if (control.gate.status !== 'none') return { kind: 'await_command', reason: `gate_${control.gate.status}` };
+  if (control.gate.status !== 'none' && !settlementOverlapsNarration(view)) return { kind: 'await_command', reason: `gate_${control.gate.status}` };
   if (control.paused) return { kind: 'await_command', reason: memory.localPause ? 'local_budget_pause' : 'paused_externally' };
   // complete = no settlement work; starting a pending advance stays legal
   // (T01 s4–s5 allocate/start under phase=complete).
@@ -583,6 +626,18 @@ function advanceDecision(view: ScheduleView): Decision {
 
 function continuationDecision(view: ScheduleView): Decision {
   const { world, memory } = view;
+  if (memory.continuationStop) {
+    const bind = writeBind(view);
+    return {
+      kind: 'transport', operation: 'round_conclusion_cancel',
+      request: {
+        protocolVersion: 2, requestId: memory.requestId, ...bind,
+        operation: 'cancel', advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!),
+        cancelReason: memory.continuationStop.reason,
+      } as RequestMap['round_conclusion_cancel'],
+      scope: worldScope(view),
+    };
+  }
   if (memory.continuation) {
     const bind = writeBind(view);
     return {
@@ -617,6 +672,27 @@ function continuationDecision(view: ScheduleView): Decision {
 
 function idlePointDecision(view: ScheduleView): Decision {
   const { world, control, memory } = view;
+  // G5 身份就绪屏障：automatic 轮在 pointPlan/begin 之前必须有完整的程序
+  // 分配入口——roundAllocations[roundId] 存在、已执行 allocate、且服务端
+  // 冻结 order 的每个 group 槽与 point 槽都有 id。空/不完整入口（空 sink、
+  // 空预置、缺 actor 槽）是可辨认的阻断状态，绝不沿用旧身份开轮。
+  if (view.identityGate && world!.round?.trigger === 'automatic') {
+    if (memory.roundIdentityBlocked) return { kind: 'stop', reason: `round_identity_blocked:${memory.roundIdentityBlocked}` };
+    const gateRoundId = roundIdOf(world!);
+    const gatePlan = memory.roundAllocations[gateRoundId];
+    if (!gatePlan) return { kind: 'stop', reason: `round_identity_plan_missing:${gateRoundId}` };
+    // 完整性按「声明覆盖」判定：计划必须声明 point 与冻结 order 逐人的 group
+    // 槽——空槽计划即使 key 已标已分配、旧 ids 仍在，也不能视为就绪
+    // （预审复现的「空 plan 抑制诊断、下一轮沿用旧 point」由此关闭）。
+    const expected = ['point', ...world!.round.order.map((actor) => `group:${actor}`)];
+    const declared = new Set(gatePlan.slots.map((slot) => slot.slotKey));
+    const undeclared = expected.filter((slot) => !declared.has(slot));
+    if (undeclared.length) return { kind: 'stop', reason: `round_identity_incomplete:${gateRoundId}:${undeclared.join(',')}` };
+    if (memory.allocatedKeys.includes(gatePlan.allocationKey)) {
+      const missing = expected.filter((slot) => memory.ids[slot] == null);
+      if (missing.length) return { kind: 'stop', reason: `round_identity_incomplete:${gateRoundId}:${missing.join(',')}` };
+    }
+  }
   const allocation = memory.roundAllocations[roundIdOf(world!)];
   if (allocation && !memory.allocatedKeys.includes(allocation.allocationKey)) {
     const bind = writeBind(view);
@@ -979,6 +1055,7 @@ function settleDecision(view: ScheduleView): Decision {
     return {
       kind: 'model', task: 'results', key: pending.groupId,
       input: {
+        ...(view.narrationOverlap ? { pointId: work!.pointId } : {}),
         groupId: pending.groupId,
         members: memory.groupActions.map((member) => ({ memberId: member.memberId, actionText: member.actionText, rollRefs: member.rolls })),
         workingState: asJson(memory.workingState!.state),
@@ -1000,6 +1077,12 @@ function inputIds(memory: ControllerMemory): { taskIds: Set<Id>; changeIds: Set<
   if (state) {
     for (const item of Object.values(state.items)) {
       for (const change of item.appearanceChanges) { changeIds.add(change.id); for (const id of change.supersedes) changeIds.add(id); }
+    }
+    // Room appearance changes are settled like any other appearance change;
+    // omitting locations here made the stage guard call their ids dangling and
+    // stopped the round on the second room change.
+    for (const location of Object.values(state.locations)) {
+      for (const change of location.appearanceChanges) { changeIds.add(change.id); for (const id of change.supersedes) changeIds.add(id); }
     }
     for (const character of Object.values(state.characters)) {
       for (const task of Object.keys(character.tasks)) taskIds.add(task);

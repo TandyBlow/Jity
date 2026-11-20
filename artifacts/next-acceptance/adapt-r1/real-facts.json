@@ -1,0 +1,234 @@
+{
+ "facts": [
+  {
+   "kind": "no_change",
+   "sentence": "第0点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "root_3",
+    "sequence": 0,
+    "previousPointId": null,
+    "currentCheckpointDigest": "c89e78295e9c",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": false,
+    "previousCheckpointFound": false,
+    "branchLinkedFrom": null,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第1点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "point_8",
+    "sequence": 1,
+    "previousPointId": "root_3",
+    "currentCheckpointDigest": "c5b2331f93a9",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 0,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第0点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_13",
+    "pointId": "root_15",
+    "sequence": 0,
+    "previousPointId": null,
+    "currentCheckpointDigest": "56d8849dafb9",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": false,
+    "previousCheckpointFound": false,
+    "branchLinkedFrom": null,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第1点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_13",
+    "pointId": "point_20",
+    "sequence": 1,
+    "previousPointId": "root_15",
+    "currentCheckpointDigest": "f9fa9070c324",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 0,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第2点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_13",
+    "pointId": "point_23",
+    "sequence": 2,
+    "previousPointId": "point_20",
+    "currentCheckpointDigest": "89fef3bd4224",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 1,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第0点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_25",
+    "pointId": "root_27",
+    "sequence": 0,
+    "previousPointId": null,
+    "currentCheckpointDigest": "385dc878d2a0",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": false,
+    "previousCheckpointFound": false,
+    "branchLinkedFrom": null,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第0点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_30",
+    "pointId": "root_32",
+    "sequence": 0,
+    "previousPointId": null,
+    "currentCheckpointDigest": "3b56db325843",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": false,
+    "previousCheckpointFound": false,
+    "branchLinkedFrom": null,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第0点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_35",
+    "pointId": "root_37",
+    "sequence": 0,
+    "previousPointId": null,
+    "currentCheckpointDigest": "0cbcfb80a0cf",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": false,
+    "previousCheckpointFound": false,
+    "branchLinkedFrom": null,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第1点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_35",
+    "pointId": "point_42",
+    "sequence": 1,
+    "previousPointId": "root_37",
+    "currentCheckpointDigest": "fc7157d2f7cb",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 0,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第2点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_35",
+    "pointId": "point_45",
+    "sequence": 2,
+    "previousPointId": "point_42",
+    "currentCheckpointDigest": "7cf17db2604b",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 1,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  }
+ ]
+}

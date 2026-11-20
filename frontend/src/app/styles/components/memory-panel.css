@@ -108,7 +108,7 @@
   margin-top: var(--space-3);
   border-radius: var(--radius-pill);
   overflow: hidden;
-  background: #2c2b28;
+  background: var(--surface-panel-deep);
 }
 
 .bar-fill {

@@ -1,0 +1,649 @@
+{
+ "purpose": "fact verbalizer n-best filtering/reranking",
+ "ckpt": "ckpt-verbalizer2 (remote HPC run)",
+ "samplesPerFact": 6,
+ "results": {
+  "dev": {
+   "rows": 33,
+   "rerankBinding": 30,
+   "firstSampleBinding": 28,
+   "exactNormalized": 2
+  },
+  "newWorld": {
+   "rows": 23,
+   "rerankBinding": 22,
+   "firstSampleBinding": 18,
+   "exactNormalized": 3
+  }
+ },
+ "samples": {
+  "dev": [
+   {
+    "pairId": "vb:n4n-01:f0",
+    "kind": "moved",
+    "output": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+    "target": "沈砚沿着石阶走进旧灯塔，鞋底在潮气里打滑。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-03:f1",
+    "kind": "moved",
+    "output": "顾行舟把船停在潮渡,缆绳在木桩上绕了两圈。",
+    "target": "顾行舟把渡船从河心靠上潮渡的木桩。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-06:f0",
+    "kind": "moved",
+    "output": "沈砚从潮汐档案馆出来,一直走到潮生巷。",
+    "target": "沈砚从潮汐档案馆出来，回到潮生巷。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-09:f0",
+    "kind": "moved",
+    "output": "沈砚从潮渡一路走到旧灯塔脚下,抬头看了看塔身。",
+    "target": "沈砚从潮渡回来，走进旧灯塔的石阶。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-11:f2",
+    "kind": "outcome",
+    "output": "沈砚扶正警示灯,玻璃罩里的火苗晃了两下。",
+    "target": "沈砚伸手把被风吹歪的警示灯扶正。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-15:f0",
+    "kind": "moved",
+    "output": "沈砚走到潮渡的木桩旁,雾从河面漫上栈桥。",
+    "target": "沈砚推开旧灯塔的木门，潮生巷的雨声被关在身后。",
+    "reasons": [
+     "missing-destination"
+    ],
+    "outsideProps": 0,
+    "binding": false,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-18:f1",
+    "kind": "outcome",
+    "output": "韩渡蹲下去,把松脱的钟绳一圈一圈重新系紧。",
+    "target": "韩渡把松脱的钟绳重新系紧，钟绳绷直了。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-21:f0",
+    "kind": "outcome",
+    "output": "沈砚从抽屉最底层翻出那把备用钥匙。",
+    "target": "沈砚掀开旧纸，从抽屉底下摸出备用钥匙。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-24:f0",
+    "kind": "no_change",
+    "output": "他等了一会儿,场景里没有新的变化。",
+    "target": "四下安静，没有新的事情发生。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-28:f0",
+    "kind": "moved",
+    "output": "沈砚走到雾堤的钟架旁,雾警钟的声音撞进雾里。",
+    "target": "沈砚从潮生巷出来，一直走到雾堤脚下。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-31:f1",
+    "kind": "appearance_changed",
+    "output": "阿棠在围裙上添了一层银亮鱼鳞。",
+    "target": "阿棠的围裙上又添了一层银亮鱼鳞。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-35:f0",
+    "kind": "moved",
+    "output": "沈砚从潮渡一路走到旧灯塔脚下,抬头看了看塔身。",
+    "target": "沈砚离开潮渡，沿着雾里的石阶上到旧灯塔。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-42:f0",
+    "kind": "moved",
+    "output": "沈砚穿过早市的人流,在鱼摊前站住。",
+    "target": "沈砚从潮生巷挤进早市，帆布棚下的白汽扑到脸上。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-46:f1",
+    "kind": "moved",
+    "output": "顾行舟把船停在潮渡,缆绳在木桩上绕了两圈。",
+    "target": "顾行舟把渡船从河心靠上潮渡的木桩。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-50:f0",
+    "kind": "moved",
+    "output": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+    "target": "沈砚推开旧灯塔的木门，潮生巷的雨声被关在身后。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-53:f1",
+    "kind": "moved",
+    "output": "阿棠从早市过来,抱着一叠干纸进了档案馆。",
+    "target": "阿棠离开早市，把干纸送到潮汐档案馆。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-57:f0",
+    "kind": "outcome",
+    "output": "沈砚在潮渡等到最后一班船,船灯从雾里透出来。",
+    "target": "沈砚在潮渡等到了最后一班渡船，船灯从雾里透出来。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-60:f1",
+    "kind": "sanity_changed",
+    "output": "沈砚按住胸口,那阵闷意没有散。",
+    "target": "沈砚的呼吸有些发紧，手指也不太听使唤。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-64:f0",
+    "kind": "outcome",
+    "output": "沈砚把陷在泥里的系泊绳一寸一寸拖回岸上。",
+    "target": "沈砚把系泊绳从浅滩拖了回来，绳子还在滴水。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-67:f1",
+    "kind": "appearance_changed",
+    "output": "阿棠走进来,鞋底还沾着早市的泥水。",
+    "target": "阿棠的鞋底带着早市的泥水，在门槛上蹭了两下。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-71:f0",
+    "kind": "outcome",
+    "output": "阿棠把一叠干纸放在桌角,纸角被风掀起。",
+    "target": "阿棠把一叠干纸放在桌角，纸页还带着潮气。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-74:f1",
+    "kind": "appearance_changed",
+    "output": "叶知微擦完灯罩,袖口蹭上一道铜油。",
+    "target": "叶知微抬起手，袖口那片铜油很显眼。",
+    "reasons": [],
+    "outsideProps": 1,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-78:f0",
+    "kind": "moved",
+    "output": "阿棠从早市过来,抱着一叠干纸进了档案馆。",
+    "target": "阿棠走进档案馆，鞋底在门槛上蹭了两下。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-81:f1",
+    "kind": "outcome",
+    "output": "叶知微用抹布把灯罩擦得透亮。",
+    "target": "叶知微把玻璃罩上的盐雾擦掉，灯罩透亮起来。",
+    "reasons": [],
+    "outsideProps": 1,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-85:f0",
+    "kind": "moved",
+    "output": "叶知微从潮渡上来,走进旧灯塔。",
+    "target": "叶知微离开潮渡，沿着石阶上到旧灯塔。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-89:f0",
+    "kind": "appearance_changed",
+    "output": "沈砚的袖口蹭了一道墨。",
+    "target": "沈砚翻纸时，袖口蹭上一道墨痕。",
+    "reasons": [
+     "foreign-prop:墨@潮汐档案馆"
+    ],
+    "outsideProps": 0,
+    "binding": false,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-96:f0",
+    "kind": "appearance_changed",
+    "output": "沈砚的掌心被铁皮冰得发麻,手指也不太听使唤。",
+    "target": "沈砚的掌心被铁皮冰得发麻。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-100:f1",
+    "kind": "moved",
+    "output": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+    "target": "沈砚推开旧灯塔的木门，潮生巷的雨声被关在身后。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-102:f2",
+    "kind": "personality_changed",
+    "output": "沈砚开口时没有停顿,话已经出口。",
+    "target": "沈砚开口时没有停顿，话已经出口。",
+    "reasons": [
+     "weak-text"
+    ],
+    "outsideProps": 0,
+    "binding": false,
+    "firstSampleBinding": false,
+    "exactNormalized": true
+   },
+   {
+    "pairId": "vb:n4n-105:f0",
+    "kind": "moved",
+    "output": "叶知微从潮渡上来,走进旧灯塔。",
+    "target": "叶知微离开潮渡，沿着石阶上到旧灯塔。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-107:f1",
+    "kind": "moved",
+    "output": "沈砚沿着石阶下到潮渡,河风把外袍下摆吹起来。",
+    "target": "沈砚走到潮渡的木桩旁，雾从河面漫上栈桥。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vb:n4n-109:f2",
+    "kind": "personality_changed",
+    "output": "沈砚本来想把话咽回去,这次却先开了口。",
+    "target": "沈砚本来想把话咽回去，这次却先开了口。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": true
+   },
+   {
+    "pairId": "vb:n4n-116:f0",
+    "kind": "no_change",
+    "output": "他等了一会儿,场景里没有新的变化。",
+    "target": "周围没有别的动静，什么也没有再发生。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   }
+  ],
+  "newWorld": [
+   {
+    "pairId": "vbh:n4w-01:f0",
+    "kind": "moved",
+    "output": "陆行从风口岭下来,回到云关驿。",
+    "target": "陆行从风口岭下来，推开云关驿结霜的木门。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-02:f0",
+    "kind": "outcome",
+    "output": "祁婶把炭盆添满,火苗重新站稳。",
+    "target": "祁婶蹲在炭盆边，把最后一块炭添进去。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-02:f1",
+    "kind": "appearance_changed",
+    "output": "祁婶的围裙上沾了炭灰。",
+    "target": "祁婶的围裙上沾了炭灰。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": true
+   },
+   {
+    "pairId": "vbh:n4w-03:f0",
+    "kind": "outcome",
+    "output": "阿洛把马灯点着,火苗晃了两下。",
+    "target": "阿洛把马灯从门板上取下来，点着了。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-03:f1",
+    "kind": "appearance_changed",
+    "output": "阿洛的手指沾了灯油,在灯影里发亮。",
+    "target": "阿洛的手指沾了灯油，在围裙上擦了擦。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-04:f0",
+    "kind": "moved",
+    "output": "石青离开云关驿,沿着石台上了望雪台。",
+    "target": "石青从云关驿出来，沿着木梯上到望雪台。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-04:f1",
+    "kind": "outcome",
+    "output": "石青把铜铃挂到望雪台,手背上沾着盐沫。",
+    "target": "石青把铜铃挂回望雪台的铃架。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-05:f0",
+    "kind": "moved",
+    "output": "陆行从风口岭出来,在云关驿的栈道边站住。",
+    "target": "陆行从风口岭下来，推开云关驿结霜的木门。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-05:f1",
+    "kind": "outcome",
+    "output": "陆行把旧地图从客房里取出来。",
+    "target": "陆行掀开枕头，从客房里翻出那张旧地图。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-05:f2",
+    "kind": "sanity_changed",
+    "output": "陆行松开手,才发现自己一直提着的那口气落回去了。",
+    "target": "陆行的呼吸慢慢匀下来，胸口那点发紧散了。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-06:f0",
+    "kind": "moved",
+    "output": "陆行从云关驿出来,一直走到雪溪。",
+    "target": "陆行从云关驿出来，走到雪溪的石桥上。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-06:f1",
+    "kind": "appearance_changed",
+    "output": "陆行的外袍下摆结了一层薄冰。",
+    "target": "陆行的外袍下摆结了一层薄冰。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": true
+   },
+   {
+    "pairId": "vbh:n4w-07:f0",
+    "kind": "moved",
+    "output": "阿洛从云关驿上来,走进风口岭。",
+    "target": "阿洛从云关驿出来，一直走到风口岭的隘口。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-07:f1",
+    "kind": "moved",
+    "output": "陆行离开云关驿,沿着石道上到风口岭。",
+    "target": "陆行离开云关驿，沿着驿道走到风口岭。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-07:f2",
+    "kind": "personality_changed",
+    "output": "陆行本来想把话咽回去,这次却先开了口。",
+    "target": "陆行本来想把话咽回去，却先问了一句。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-08:f0",
+    "kind": "no_change",
+    "output": "他等了一会儿,场景里没有新的变化。",
+    "target": "棚里没有别的动静，什么也没有再发生。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-09:f0",
+    "kind": "outcome",
+    "output": "陆行把药包送到马棚,风把他的袖口吹得鼓起来。",
+    "target": "陆行把药包送到旧马棚，放在干草边。",
+    "reasons": [
+     "foreign-prop:药包@云关驿"
+    ],
+    "outsideProps": 0,
+    "binding": false,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-09:f1",
+    "kind": "sanity_changed",
+    "output": "陆行按住胸口,那阵闷意没有散。",
+    "target": "陆行的呼吸有些发紧，手指也冻得不听使唤。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-10:f0",
+    "kind": "moved",
+    "output": "石青离开望雪台,沿着石阶下到云关驿。",
+    "target": "石青从望雪台下来，推门进了云关驿。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-10:f1",
+    "kind": "appearance_changed",
+    "output": "石青的肩上落了一层雪。",
+    "target": "石青的肩上落了一层雪。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": true
+   },
+   {
+    "pairId": "vbh:n4w-11:f0",
+    "kind": "no_change",
+    "output": "他等了一会儿,场景里没有新的变化。",
+    "target": "棚里没有别的动静，什么也没有再发生。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-12:f0",
+    "kind": "moved",
+    "output": "阿洛离开云关驿,沿着石道上到风口岭。",
+    "target": "阿洛从云关驿出来，一直走到风口岭的隘口。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": false,
+    "exactNormalized": false
+   },
+   {
+    "pairId": "vbh:n4w-12:f1",
+    "kind": "outcome",
+    "output": "阿洛把驿道上的积雪清开,心跳才慢下来。",
+    "target": "阿洛把驿道上的积雪一锹一锹清到路边。",
+    "reasons": [],
+    "outsideProps": 0,
+    "binding": true,
+    "firstSampleBinding": true,
+    "exactNormalized": false
+   }
+  ]
+ }
+}

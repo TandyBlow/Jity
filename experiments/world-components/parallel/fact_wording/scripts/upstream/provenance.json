@@ -1,0 +1,46 @@
+{
+ "protocol": "c4-upstream-scripts-v1",
+ "copiedFilesDirtyVsHead": false,
+ "gitStatusForCopiedFiles": "",
+ "note": "read-only copy; originals untouched. Any local change must be a new file with its own hash.",
+ "upstreamTree": "<repo>/.local/world-components-next-worktree",
+ "upstreamCommit": "fd6c52e25e08281fb32f4aa03b99fd6ad47a7085",
+ "scripts": [
+  {
+   "name": "run_cf24_baseline.py",
+   "exists": true,
+   "source": "<repo>/.local/world-components-next-worktree/experiments/world-components/run_cf24_baseline.py",
+   "sourceSha256": "a7d81fc10a10ef4b450b88613b77e71b0c3e94bbb10195bfefd9c803c6aa7331",
+   "copySha256": "a7d81fc10a10ef4b450b88613b77e71b0c3e94bbb10195bfefd9c803c6aa7331",
+   "byteIdentical": true,
+   "sourceBytes": 6205
+  },
+  {
+   "name": "score_cf24_baseline.py",
+   "exists": true,
+   "source": "<repo>/.local/world-components-next-worktree/experiments/world-components/score_cf24_baseline.py",
+   "sourceSha256": "cb3c440f5870f738bbd9e98f4363ec588156276381d1217b14647533e4b37428",
+   "copySha256": "cb3c440f5870f738bbd9e98f4363ec588156276381d1217b14647533e4b37428",
+   "byteIdentical": true,
+   "sourceBytes": 9717
+  },
+  {
+   "name": "review_cf24_baseline.py",
+   "exists": true,
+   "source": "<repo>/.local/world-components-next-worktree/experiments/world-components/review_cf24_baseline.py",
+   "sourceSha256": "2f02fd5e8b55058b20d83ad821a7e5938a93ad6a7abcb2c25170bce9a62cbb0a",
+   "copySha256": "2f02fd5e8b55058b20d83ad821a7e5938a93ad6a7abcb2c25170bce9a62cbb0a",
+   "byteIdentical": true,
+   "sourceBytes": 5924
+  },
+  {
+   "name": "check_cf24_overlap.py",
+   "exists": true,
+   "source": "<repo>/.local/world-components-next-worktree/experiments/world-components/check_cf24_overlap.py",
+   "sourceSha256": "27887a9f426e6cefc71a1fb47cac8c5b3b4aa2e187fb7583f95bf8b4ec368132",
+   "copySha256": "27887a9f426e6cefc71a1fb47cac8c5b3b4aa2e187fb7583f95bf8b4ec368132",
+   "byteIdentical": true,
+   "sourceBytes": 4026
+  }
+ ]
+}

@@ -24,7 +24,7 @@ import { factPhrases, type CommittedNarration, type NarrationFact } from './comm
 export type ViolationKind =
   | 'actor_swap' | 'direction_reversed' | 'wrong_number'
   | 'task_claimed_without_fact' | 'movement_without_fact' | 'state_claim_without_fact'
-  | 'wrong_time' | 'added_event' | 'empty_narration';
+  | 'wrong_time' | 'added_event' | 'empty_narration' | 'wrong_person';
 
 export interface AlignmentViolation { kind: ViolationKind; sentence: string; detail: string }
 export interface FactCoverage { id: string; kind: NarrationFact['kind']; expressed: boolean }
@@ -84,7 +84,7 @@ const CHANGE_VERB = /(变|升|降|掉|减|增|恢复|回落|涨)/;
  * 背书，重复主语也不能豁免). 引用豁免只认与当前事实包冻结原文逐字一致的
  * 「」段（任务目标/人格文本）；其余引号内容照扫——四轮复核：给自己的
  * 捏造套引号不能借无条件剥引号逃过扫描（并「打开」门）。 */
-const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
+export const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
   '捡起', '拾起', '递给', '塞进', '敲门', '打开', '关上', '锁上', '躲到', '藏在', '翻过', '爬上', '跳下',
   '喊住', '大叫', '大喊', '呼喊', '点燃', '砸碎', '撕开'];
 
@@ -170,6 +170,7 @@ function binds(fact: NarrationFact, sentence: string, names: Set<string>): boole
       && (mentionsNumber(scope, fact.from) || mentionsNumber(scope, fact.to));
     case 'task_achieved': return named && scope.includes(fact.goal) && COMPLETION.test(scope);
     case 'personality_changed': return named && (scope.includes(fact.text) || loosePhrase(fact.text).test(scope));
+    case 'appearance_changed': return named && scope.includes(fact.text);
   }
   return false;
   };
@@ -178,6 +179,68 @@ function binds(fact: NarrationFact, sentence: string, names: Set<string>): boole
   return fact.kind === 'moved' && named && (hasArrival(clause, fact.from, fact.to)
     || (!clause.includes(fact.from) && clause.includes(fact.to)
       && (new RegExp(MOVE_VERB).test(clause) || new RegExp(STANCE).test(clause))));
+}
+
+/** Earliest index of a stated value. Arabic tokens and Chinese readings share
+ * the looseness of mentionsNumber; this helper only compares the ORDER of the
+ * two numbers inside one change clause, it never decides whether a value is
+ * mentioned. */
+function valuePosition(sentence: string, value: number): number {
+  let at = -1;
+  const arabic = new RegExp(`(?<![0-9])${value}(?![0-9])`, 'u').exec(sentence);
+  if (arabic) at = arabic.index;
+  for (const token of [cnNumber(value), ...(CN_ALIASES[value] ?? [])]) {
+    if (!token) continue;
+    const found = sentence.indexOf(token);
+    if (found >= 0 && (at < 0 || found < at)) at = found;
+  }
+  return at;
+}
+
+/** Which direction a sanity-change clause states, read from its own markers
+ * (从/由/原来 = source, 到/至/为/成/降到 = target); with no markers the textual
+ * order is used (first number = source). null = one of the numbers is absent,
+ * so there is no direction to compare. */
+export function statedDirection(clause: string, from: number, to: number): 'forward' | 'reverse' | null {
+  const fromAt = valuePosition(clause, from);
+  const toAt = valuePosition(clause, to);
+  if (fromAt < 0 || toAt < 0 || fromAt === toAt) return null;
+  const source = /(?:从|由|自|原本|原来|此前|之前|先前)(?:有|是|为)?的?\s*$/u;
+  const target = /(?:(?:降|升|变|下降|上升)?(?:到|至|为|成)了?)\s*$/u;
+  const sourceAt = source.test(clause.slice(0, fromAt)) ? fromAt
+    : source.test(clause.slice(0, toAt)) ? toAt : null;
+  const targetAt = target.test(clause.slice(0, toAt)) ? toAt
+    : target.test(clause.slice(0, fromAt)) ? fromAt : null;
+  if (sourceAt !== null && targetAt !== null) {
+    const sourceValue = sourceAt === fromAt ? from : to;
+    const targetValue = targetAt === toAt ? to : from;
+    return sourceValue === from && targetValue === to ? 'forward' : 'reverse';
+  }
+  if (sourceAt !== null) return sourceAt === fromAt ? 'forward' : 'reverse';
+  if (targetAt !== null) return targetAt === toAt ? 'forward' : 'reverse';
+  return fromAt < toAt ? 'forward' : 'reverse';
+}
+
+/** A standing sanity value can be the from/to number of the named actor's
+ * committed change; the template "周宁的精神值从10变为8" contains 10 while 林川
+ * also stands at 10. The change must match the named actor's direction, else it
+ * is not their payload. */
+function ownsNumericPayload(fact: NarrationFact, other: NarrationFact, clause: string): boolean {
+  if (fact.kind !== 'sanity' || other.kind !== 'sanity_changed') return false;
+  return CHANGE_VERB.test(clause) && (fact.value === other.from || fact.value === other.to)
+    && statedDirection(clause, other.from, other.to) === 'forward';
+}
+
+/** Does this fact belong to the actor named in the clause with the SAME payload?
+ * Two people with the same standing value, the same change, the same goal or the
+ * same frozen text make the clause true for both; the surface cannot say which
+ * one was meant, so it must not be convicted as a swap. A mirrored sanity pair
+ * (A 10→8, B 8→10, clause "B 10→8") is NOT the same payload: the clause marks
+ * the direction, so it stays a swap. */
+function sameActorPayload(fact: NarrationFact, clause: string): boolean {
+  if (!signature(fact, clause)) return false;
+  if (fact.kind !== 'sanity_changed') return true;
+  return statedDirection(clause, fact.from, fact.to) !== 'reverse';
 }
 
 /** Content signature: does the sentence talk ABOUT this fact (regardless of
@@ -193,6 +256,7 @@ function signature(fact: NarrationFact, sentence: string): boolean {
     case 'sanity_changed': return mentionsNumber(sentence, fact.from) && mentionsNumber(sentence, fact.to);
     case 'task_achieved': return sentence.includes(fact.goal);
     case 'personality_changed': return sentence.includes(fact.text);
+    case 'appearance_changed': return sentence.includes(fact.text);
   }
 }
 
@@ -287,6 +351,12 @@ export interface AlignmentOptions {
    * so without this list a claimed movement to a known place would slip
    * through as an unverified sentence instead of a contradiction. */
   locations?: string[];
+  /** Positions that are already true in the projected scene but are not
+   * required facts (e.g. a bystander who did not move this point). */
+  knownPositions?: { name: string; location: string }[];
+  /** Event verbs licensed by the committed player action for this point. A
+   * player who declared “推开走廊的门” may be narrated doing it. */
+  allowedEvents?: string[];
   /** 是否把「未述时间」算作失败。默认 false：现有 renderCommittedNarration
    * 根本不写时间，把它并进事实错误会掩盖「模板缺时间」这个独立发现。
    * 三个臂都按同一口径判事实，时间覆盖由 harness 单独统计。 */
@@ -304,7 +374,7 @@ export function alignNarration(packet: CommittedNarration, text: string, options
   // 逐字一致的冻结原文引用才豁免（任务目标/人格文本）；自拟引号内容照扫。
   const frozenQuotes = new Set(packet.facts.flatMap((fact) =>
     fact.kind === 'task_achieved' ? [`「${fact.goal}」`]
-      : fact.kind === 'personality_changed' ? [`「${fact.text}」`] : []));
+      : fact.kind === 'personality_changed' || fact.kind === 'appearance_changed' ? [`「${fact.text}」`] : []));
   const maskFrozenQuotes = (masked: string): string =>
     [...frozenQuotes].reduce((text, quote) => text.split(quote).join('「」'), masked);
   if (!parts.length) {
@@ -317,6 +387,15 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // joins a task with its personality/sanity consequence); every bound fact
     // counts, but only once per fact overall.
     for (const fact of bound) coverage.set(fact.id, true);
+
+    // 0. Point of view. The scene is told in third person about the
+    // protagonist; a stray 「我」 turns the narration into the player's own
+    // voice mid-paragraph. Quoted speech is exempt because a character saying
+    // 「我」 is legitimate dialogue.
+    if (/[^「『“‘]我(?!们)/u.test(maskFrozenQuotes(sentence.replace(/[「『“][^」』”]*[」』”]/gu, '')))) {
+      violations.push({ kind: 'wrong_person', sentence, detail: 'first-person pronoun outside dialogue' });
+      continue;
+    }
 
     // 1. Wrong duration. ANY time unit in the sentence is checked, not only
     // the expected one: a 2-second point narrated as "两分钟" states the wrong
@@ -345,9 +424,16 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     const WEAK_SIGNATURE = new Set<NarrationFact['kind']>(['at']);
     let swappedOut = false;
     for (const fact of packet.facts) {
-      if (bound.includes(fact) && WEAK_SIGNATURE.has(fact.kind)) continue;
+      // A bare location is never an actor-swap signature: another character
+      // standing in the same room is a bystander, not a reassignment of the
+      // protagonist's position. Only strong payloads (moved/sanity/task) can
+      // be swapped between actors.
+      if (WEAK_SIGNATURE.has(fact.kind)) continue;
       const swapped = clauses.find((clause) => signature(fact, clause)
-        && [...names].some((name) => bareOf(clause).includes(name) && name !== fact.name));
+        && [...names].some((name) => name !== fact.name && bareOf(clause).includes(name)
+          && !packet.facts.some((other) => other.name === name
+            && (other.kind === fact.kind ? sameActorPayload(other, clause)
+              : ownsNumericPayload(fact, other, clause)))));
       if (swapped) {
         const attributed = [...names].filter((name) => bareOf(swapped).includes(name)).join('/');
         violations.push({ kind: 'actor_swap', sentence,
@@ -424,7 +510,8 @@ export function alignNarration(packet: CommittedNarration, text: string, options
       .find((claim) => !positions.some((fact) => fact.name === claim.name
         && (fact.kind === 'at' ? fact.location === claim.location
           : fact.to === claim.location || fact.from === claim.location)));
-    if (stateClaim) {
+    const knownPosition = stateClaim && (options.knownPositions ?? []).some((entry) => entry.name === stateClaim.name && entry.location === stateClaim.location);
+    if (stateClaim && !knownPosition) {
       violations.push({ kind: 'state_claim_without_fact', sentence,
         detail: `${stateClaim.name} at ${stateClaim.location} has no committed position fact` });
       continue;
@@ -451,7 +538,8 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // («学生A打开门» — the actor's name was read as backing) and the fact's
     // own clause («推开门») escape, though no committed fact kind licenses an
     // event. Only quotes matching the packet's frozen text are exempt.
-    const event = EVENT_VERBS.find((verb) => maskFrozenQuotes(sentence).includes(verb));
+    const licensed = options.allowedEvents ?? [];
+    const event = EVENT_VERBS.find((verb) => !licensed.includes(verb) && maskFrozenQuotes(sentence).includes(verb));
     if (event) {
       violations.push({ kind: 'added_event', sentence, detail: `event verb ${event} has no committed fact` });
       continue;

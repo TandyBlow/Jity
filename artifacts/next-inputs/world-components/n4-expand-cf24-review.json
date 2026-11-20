@@ -1,0 +1,467 @@
+{
+ "purpose": "扩容臂 cf24 v2 人工复核（与冻结基线对比）",
+ "baseline": {
+  "verdicts": {
+   "S": 80,
+   "O": 2,
+   "C": 1,
+   "A": 2
+  },
+  "clean": 16
+ },
+ "expand": {
+  "verdicts": {
+   "S": 81,
+   "O": 1,
+   "C": 1,
+   "A": 2
+  },
+  "clean": 20
+ },
+ "rows": [
+  {
+   "sourceId": "t01",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [
+    "又回到档案馆"
+   ],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t02",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t03",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t04",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t05",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t06",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t07",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t08",
+   "old": {
+    "f0": "S",
+    "f1": "A",
+    "f2": "S",
+    "f3": "A"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t09",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t10",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t11",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t12",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [
+    "抱着一叠鱼筐"
+   ],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t13",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t14",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t15",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [
+    "抱着木桩"
+   ],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t16",
+   "old": {
+    "f0": "S",
+    "f1": "C",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t17",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t18",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t19",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t20",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "A",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": false
+  },
+  {
+   "sourceId": "t21",
+   "old": {
+    "f0": "O",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "A",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": false
+  },
+  {
+   "sourceId": "t22",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [],
+   "old_clean": true,
+   "new_clean": true
+  },
+  {
+   "sourceId": "t23",
+   "old": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "C",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [
+    "在灯芯上结了锈"
+   ],
+   "new_unsupported": [],
+   "old_clean": false,
+   "new_clean": false
+  },
+  {
+   "sourceId": "t24",
+   "old": {
+    "f0": "S",
+    "f1": "O",
+    "f2": "S",
+    "f3": "S"
+   },
+   "new": {
+    "f0": "S",
+    "f1": "O",
+    "f2": "S",
+    "f3": "S"
+   },
+   "old_unsupported": [],
+   "new_unsupported": [
+    "水沟里的风一直吹"
+   ],
+   "old_clean": false,
+   "new_clean": false
+  }
+ ]
+}

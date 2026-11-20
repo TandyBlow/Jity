@@ -1,0 +1,362 @@
+{
+ "counts": {
+  "eval-r1/u240-cf24": {
+   "fact": {
+    "machine": {
+     "S": 85,
+     "O": 0
+    },
+    "finalSupported": 85
+   },
+   "added": {
+    "total": 6,
+    "moved": 5,
+    "nonMoved": 1
+   },
+   "repeated": 2,
+   "language": 3,
+   "units": 85
+  },
+  "eval-r1/u240-final24": {
+   "fact": {
+    "machine": {
+     "S": 76,
+     "O": 0
+    },
+    "finalSupported": 76
+   },
+   "added": {
+    "total": 7,
+    "moved": 5,
+    "nonMoved": 2
+   },
+   "repeated": 2,
+   "language": 0,
+   "units": 76
+  },
+  "eval-r1/u240-moved24": {
+   "fact": {
+    "machine": {
+     "S": 24,
+     "O": 0
+    },
+    "finalSupported": 24
+   },
+   "added": {
+    "total": 7,
+    "moved": 7,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 2,
+   "units": 24
+  },
+  "eval-r1/a-cf24": {
+   "fact": {
+    "machine": {
+     "S": 83,
+     "O": 2
+    },
+    "finalSupported": 83
+   },
+   "added": {
+    "total": 17,
+    "moved": 9,
+    "nonMoved": 8
+   },
+   "repeated": 0,
+   "language": 10,
+   "units": 85
+  },
+  "eval-r1/a-final24": {
+   "fact": {
+    "machine": {
+     "S": 76,
+     "O": 0
+    },
+    "finalSupported": 76
+   },
+   "added": {
+    "total": 9,
+    "moved": 6,
+    "nonMoved": 3
+   },
+   "repeated": 0,
+   "language": 2,
+   "units": 76
+  },
+  "eval-r1/a-moved24": {
+   "fact": {
+    "machine": {
+     "S": 22,
+     "O": 2
+    },
+    "finalSupported": 22
+   },
+   "added": {
+    "total": 13,
+    "moved": 13,
+    "nonMoved": 0
+   },
+   "repeated": 1,
+   "language": 5,
+   "units": 24
+  },
+  "eval-r1/b-cf24": {
+   "fact": {
+    "machine": {
+     "S": 85,
+     "O": 0
+    },
+    "finalSupported": 84
+   },
+   "added": {
+    "total": 10,
+    "moved": 4,
+    "nonMoved": 6
+   },
+   "repeated": 1,
+   "language": 5,
+   "units": 85
+  },
+  "eval-r1/b-final24": {
+   "fact": {
+    "machine": {
+     "S": 76,
+     "O": 0
+    },
+    "finalSupported": 75
+   },
+   "added": {
+    "total": 7,
+    "moved": 5,
+    "nonMoved": 2
+   },
+   "repeated": 1,
+   "language": 1,
+   "units": 76
+  },
+  "eval-r1/b-moved24": {
+   "fact": {
+    "machine": {
+     "S": 24,
+     "O": 0
+    },
+    "finalSupported": 24
+   },
+   "added": {
+    "total": 7,
+    "moved": 7,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 24
+  },
+  "eval-r1/c-cf24": {
+   "fact": {
+    "machine": {
+     "S": 85,
+     "O": 0
+    },
+    "finalSupported": 85
+   },
+   "added": {
+    "total": 5,
+    "moved": 5,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 4,
+   "units": 85
+  },
+  "eval-r1/c-final24": {
+   "fact": {
+    "machine": {
+     "S": 76,
+     "O": 0
+    },
+    "finalSupported": 76
+   },
+   "added": {
+    "total": 4,
+    "moved": 4,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 76
+  },
+  "eval-r1/c-moved24": {
+   "fact": {
+    "machine": {
+     "S": 24,
+     "O": 0
+    },
+    "finalSupported": 24
+   },
+   "added": {
+    "total": 7,
+    "moved": 7,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 24
+  },
+  "eval-r2/c-cf24": {
+   "fact": {
+    "machine": {
+     "S": 85,
+     "O": 0
+    },
+    "finalSupported": 85
+   },
+   "added": {
+    "total": 5,
+    "moved": 5,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 4,
+   "units": 85
+  },
+  "eval-r2/c-final24": {
+   "fact": {
+    "machine": {
+     "S": 76,
+     "O": 0
+    },
+    "finalSupported": 76
+   },
+   "added": {
+    "total": 4,
+    "moved": 4,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 76
+  },
+  "eval-r2/c-moved24": {
+   "fact": {
+    "machine": {
+     "S": 24,
+     "O": 0
+    },
+    "finalSupported": 24
+   },
+   "added": {
+    "total": 7,
+    "moved": 7,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 24
+  },
+  "eval-r2/control-cf24": {
+   "fact": {
+    "machine": {
+     "S": 83,
+     "O": 2
+    },
+    "finalSupported": 83
+   },
+   "added": {
+    "total": 0,
+    "moved": 0,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 3,
+   "units": 85
+  },
+  "eval-r2/control-final24": {
+   "fact": {
+    "machine": {
+     "S": 73,
+     "O": 3
+    },
+    "finalSupported": 73
+   },
+   "added": {
+    "total": 2,
+    "moved": 2,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 76
+  },
+  "eval-r2/control-moved24": {
+   "fact": {
+    "machine": {
+     "S": 24,
+     "O": 0
+    },
+    "finalSupported": 23
+   },
+   "added": {
+    "total": 2,
+    "moved": 2,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 24
+  },
+  "eval-r2/moved-cf24": {
+   "fact": {
+    "machine": {
+     "S": 85,
+     "O": 0
+    },
+    "finalSupported": 84
+   },
+   "added": {
+    "total": 1,
+    "moved": 1,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 3,
+   "units": 85
+  },
+  "eval-r2/moved-final24": {
+   "fact": {
+    "machine": {
+     "S": 76,
+     "O": 0
+    },
+    "finalSupported": 76
+   },
+   "added": {
+    "total": 1,
+    "moved": 1,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 76
+  },
+  "eval-r2/moved-moved24": {
+   "fact": {
+    "machine": {
+     "S": 24,
+     "O": 0
+    },
+    "finalSupported": 24
+   },
+   "added": {
+    "total": 0,
+    "moved": 0,
+    "nonMoved": 0
+   },
+   "repeated": 0,
+   "language": 0,
+   "units": 24
+  }
+ },
+ "note": "added comes from rejudge-r3.json (moved clause 2 + no_change allowance); fact/repeated/language keep the recorded read"
+}

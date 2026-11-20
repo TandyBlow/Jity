@@ -10,6 +10,7 @@
  * so a pause survives a lease detour. */
 import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
 import { readControllerRecovery, recoverPoint, RecoveryStopped, type RecoveryLease } from './recovery';
+import { PointNarrationQueue } from './local/point-narration/queue';
 import {
   assembleCandidates, errorReaction, foldIdentity, initialNarrationAssembly, mergeUpdatesStages, PROGRAM_ROLL_RULE, scheduleNext, timeScanCandidates, workingStateKey,
   type AllocationPlan, type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
@@ -19,14 +20,48 @@ import type {
   PointRecovery, SettlementGroup, TimeAdvance, WorldContext, WorldOperation,
 } from './types';
 
-export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
-export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
+export interface WorldModelPort {
+  generate(task: ModelTask, key: string, input: Json): Promise<Json>;
+  /** Optional product hook: the controller committed this point, so per-point
+   * settlement material may be frozen before the next point overwrites it.
+   * Narration's own input is already point-scoped; this hook only keeps the
+   * model port's mutable result cache from leaking later facts into an older
+   * point's prose. Implementations without a cache may omit it. */
+  onPointCommitted?(pointId: Id): void;
+}
+export interface ControllerIo {
+  transport: WorldTransport;
+  model: WorldModelPort;
+  /** Evidence hook: the exact commit_point request, before and after the
+   * server answers. It never changes the request or the decision; a rejected
+   * commit is the one a diagnosis needs, so it is reported on the attempt. */
+  onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
+}
+/** Program-owned per-round identity allocation (review 20, ①b): continue
+ * conclusions must not strand the next round with used point/groups. The sink
+ * allocates via the transport (program authority, §9.3) and returns a DELTA
+ * patch: `ids`/`roundAllocations` merge key-wise and `allocatedKeys` unions
+ * against the driver's CURRENT memory, so a caller that built its patch from a
+ * snapshot taken before recovery cannot erase recovered identities
+ * (review 20-2). A patch is never a memory snapshot. */
+export type RoundIdentitySink =
+  (roundId: Id, order: Id[]) => Promise<Partial<ControllerMemory> | void> | Partial<ControllerMemory> | void;
+
 export interface DriverOptions {
   retryLimit?: number;
+  /** G5 产品身份就绪屏障：automatic 轮在 pointPlan/begin 前必须有完整的
+   * 程序分配入口（roundAllocations 已执行且覆盖 point + 服务端冻结 order
+   * 的全部 group 槽），失败/缺失转为可辨认的 stop。缺省关闭——B3 harness
+   * 的自动轮身份走自己的预分配队列，保持既有行为与归档可复现性。 */
+  identityGate?: boolean;
   /** Scenario identity binding: scheduler key → allocate slotKey (e.g.
    * 'group:person_a' → 'group'). Applied when allocation responses land, so
    * scenario keying stays config, never mid-flight memory steering. */
   identityAliases?: Record<string, string>;
+  /** Overlap one committed point's narration with the next point's
+   * settlement. The product session enables it; direct controller callers
+   * keep the historical serial behaviour unless they opt in. */
+  narrationOverlap?: boolean;
 }
 
 export type DriverStatus =
@@ -48,7 +83,8 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
     narration: null, workingState: null, sources: [], staged: [], restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-    continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
+    lastRoundIdentityError: null, roundIdentityBlocked: null,
+    continuation: null, continuationStop: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
 }
 
@@ -82,6 +118,12 @@ export class ControllerDriver {
   private requestCounter = 0;
   private readonly retryLimit: number;
   private readonly identityAliases: Record<string, string>;
+  private readonly identityGate: boolean;
+  private readonly narration: PointNarrationQueue | null;
+  private narrationBootstrapped = false;
+  private narrationDirty = false;
+  private narrationRequestSeq = 0;
+  private lastNarrationError: string | null = null;
   private recoveryPromise: Promise<DriverStatus | undefined> | null = null;
   private recoveryBarrier: string | null = null;
   private recoveredSuccessor: PointRecovery | null = null;
@@ -93,9 +135,194 @@ export class ControllerDriver {
     this.state = { world: null, control: INITIAL_CONTROL, work: null, activeInput: null, ...state };
     this.retryLimit = options?.retryLimit ?? 3;
     this.identityAliases = options?.identityAliases ?? {};
+    this.identityGate = options?.identityGate ?? false;
+    this.narration = options?.narrationOverlap
+      ? new PointNarrationQueue({
+        transport: io.transport,
+        model: io.model,
+        worldId: state?.world?.worldId ?? '',
+        requestId: () => `${this.memory.requestId.replace(/_\d+$/, '')}_narration_${++this.narrationRequestSeq}`,
+        lease: () => {
+          const lease = this.state.world?.lease;
+          return lease && this.memory.leaseToken ? { leaseToken: this.memory.leaseToken, fenceEpoch: lease.fenceEpoch } : null;
+        },
+        onOutcome: (outcome) => {
+          this.narrationDirty = true;
+          if (outcome.status === 'failed') this.lastNarrationError = outcome.reason;
+        },
+      })
+      : null;
   }
 
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
+  /** True while a committed point is still producing/displaying narration.
+   * The settlement loop uses this only to skip its serial narration branch;
+   * the queue owns the point identity. */
+  get narrationBusy(): boolean { return this.narration?.busy ?? false; }
+  get narrationError(): string | null { return this.lastNarrationError; }
+
+  /** Enqueue every pending point after a cold start or restore. Points are
+   * discovered through the read-only point list, never inferred from the
+   * current head, so a pending older point is not lost when a newer head has
+   * already committed. */
+  private async bootstrapNarration(): Promise<void> {
+    const narration = this.narration;
+    const world = this.state.world;
+    if (!narration || !world || this.narrationBootstrapped) return;
+    // The queue's head claim is lease-bound. Wait for the controller's
+    // first lease acquisition instead of marking a job that cannot claim.
+    if (!world.lease || !this.memory.leaseToken) return;
+    this.narrationBootstrapped = true;
+    narration.setWorldId(world.worldId);
+    try {
+      const listed = await this.io.transport.execute('list_points', {}, { worldId: world.worldId });
+      const points = [...listed.data.points].sort((a, b) => a.sequence - b.sequence);
+      for (const point of points) {
+        const entry = await this.io.transport.execute('narration_get', {} as RequestMap['narration_get'],
+          { worldId: world.worldId, pointId: point.pointId });
+        if (entry.data.narrationStatus === 'pending') {
+          narration.enqueue(point.pointId);
+        }
+      }
+    } catch (error) {
+      // Reads did not establish the pending set; do not pretend it is empty.
+      // The serial scheduler remains available, and the next drive retries.
+      this.narrationBootstrapped = false;
+      this.lastNarrationError = `narration_bootstrap_failed:${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
+
+  /** Explicit player retry for a failed/empty point narration. Never settles
+   * or replays the point's state. */
+  retryNarration(pointId?: Id): void {
+    const target = pointId ?? this.state.world?.head.pointId;
+    if (this.narration && target) this.narration.retry(target);
+  }
+
+  private scheduleView(narrationBusy: boolean, command?: HarnessCommand) {
+    return { world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, ...(command ? { command } : {}), activeInput: this.state.activeInput, identityGate: this.identityGate, narrationBusy, narrationOverlap: this.narration != null };
+  }
+
+  /** Refresh the controller's served head/control after the queue wrote a
+   * narration response. Without this the scheduler keeps the stale pending
+   * gate and could claim the same point again. */
+  private async refreshNarrationState(): Promise<void> {
+    if (!this.narrationDirty || !this.state.world) return;
+    this.narrationDirty = false;
+    try {
+      const response = await this.io.transport.execute('get_context', {}, { worldId: this.state.world.worldId });
+      this.adoptState(response);
+    } catch {
+      this.narrationDirty = true;
+    }
+  }
+
+  /** Terminal statuses wait for already-committed narration to land, but the
+   * wait starts only after settlement has reached its end: the overlap is in
+   * the middle of the turn, not a second serial phase. */
+  private async settleNarration(status: DriverStatus): Promise<DriverStatus> {
+    if (!this.narration) return status;
+    await this.narration.settled();
+    await this.refreshNarrationState();
+    if (status.kind === 'await' && this.state.world?.head.narrationStatus === 'failed') {
+      return { kind: 'stop', reason: 'narration_failed' };
+    }
+    return status;
+  }
+  /** Program-owned per-round identity allocation (①b, review 20): when the
+   * server confirms a continue conclusion, the NEW round needs fresh point/
+   * group identities that the controller cannot derive (the advance plan
+   * belongs to the scenario). Program callers register this hook BEFORE
+   * running the driver; the driver invokes it exactly once per CONFIRMED
+   * continue conclusion, with the server's nextRoundId and the served order of
+   * the round that round opens — the program allocates via the transport and
+   * returns a delta patch (never a whole-memory snapshot). Returning a
+   * decision is not supported: the allocations happen inside the conclude
+   * followup, never as a step. Unregistered sinks are recorded as
+   * `lastRoundIdentityError` unless the next round's allocation was
+   * pre-seeded. */
+  setRoundIdentitySink(sink: RoundIdentitySink | null): void {
+    this.roundIdentitySink = sink;
+  }
+  private roundIdentitySink: RoundIdentitySink | null = null;
+  /** Internal: the conclude adoption notifies the program sink for a
+   * CONFIRMED continue. The confirmation's own kind decides — a handback keeps
+   * the finished automatic round's summary, so gating on `round.trigger` alone
+   * re-allocates an ended round (review 20-3).
+   *
+   * Missing sink: legal only on the PRE-SEEDED path (scenario fixtures put
+   * `roundAllocations[nextRoundId]` into memory before concluding, and
+   * idlePointDecision allocates it as a step). Everywhere else the absence is
+   * recorded, not papered over: the next step runs into the product rejection
+   * (reused point/group ids) instead of silently degrading. */
+  private async notifyRoundIdentity(roundId: Id, order: Id[]): Promise<void> {
+    if (!this.identityGate) {
+      // gate 关闭（B3 harness/既有测试）：维持历史宽松行为——只记诊断，
+      // 不设阻断，完整性由 harness 自己的预分配队列保证。
+      if (!this.roundIdentitySink) {
+        if (this.memory.roundAllocations[roundId]) return;
+        this.memory.lastRoundIdentityError = `round_identity_sink_missing:${roundId}`;
+        return;
+      }
+      try {
+        const patch = await this.roundIdentitySink(roundId, order);
+        if (patch) this.foldRoundIdentityPatch(patch);
+      } catch (error) {
+        this.memory.lastRoundIdentityError = error instanceof Error ? error.message : String(error);
+      }
+      return;
+    }
+    // gate 开启（产品）：身份入口未就绪即阻断——空 sink、空/不完整补丁、
+    // 缺 point/order group 槽都算失败；成功才清阻断。诊断保留首因（sticky）。
+    const expected = ['point', ...order.map((actor) => `group:${actor}`)];
+    const existing = this.memory.roundAllocations[roundId];
+    if (existing && this.memory.allocatedKeys.includes(existing.allocationKey)
+      && expected.every((slot) => this.memory.ids[slot] != null)) return; // 该轮身份已就绪，幂等跳过
+    const block = (detail: string, diagnostic: string) => {
+      this.memory.roundIdentityBlocked = detail;
+      if (!this.memory.lastRoundIdentityError) this.memory.lastRoundIdentityError = diagnostic;
+    };
+    if (!this.roundIdentitySink) {
+      // 合法预置路径：分配由调度器步骤执行（先 allocate 后 pointPlan），
+      // 槽完整性由调度器门在分配落地后校验——通知期不做「未分配即阻断」。
+      if (existing) return;
+      return block(`sink_missing:${roundId}`, `round_identity_sink_missing:${roundId}`);
+    }
+    try {
+      const patch = await this.roundIdentitySink(roundId, order);
+      if (!patch || !patch.roundAllocations?.[roundId]) {
+        return block(`empty_patch:${roundId}`, `round_identity_empty_patch:${roundId}`);
+      }
+      this.foldRoundIdentityPatch(patch);
+      const plan = this.memory.roundAllocations[roundId];
+      // 完整性以「本轮补丁携带」为准：缺槽判定只看 patch.ids，内存里的旧
+      // point/group 不能冒充本轮分配结果（复审 P2：声明完整 + key 已折入
+      // 但补丁不带 ids 时，旧身份曾被放行进 pointPlan）。
+      const missing = expected.filter((slot) => patch.ids?.[slot] == null);
+      if (!plan || !this.memory.allocatedKeys.includes(plan.allocationKey) || missing.length) {
+        return block(`incomplete:${roundId}:${missing.join(',')}`, `round_identity_incomplete:${roundId}`);
+      }
+      this.memory.roundIdentityBlocked = null;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      return block(`sink_failed:${roundId}:${detail}`, detail);
+    }
+  }
+  /** Delta fold, never a snapshot replacement: map fields merge key-wise
+   * against the driver's own current memory, allocatedKeys unions. The first
+   * recorded error stays (diagnostic only; a later success does not clear it). */
+  private foldRoundIdentityPatch(patch: Partial<ControllerMemory>): void {
+    // 补丁契约收窄：身份补丁只允许三个身份字段，其余字段一律不折入并记
+    // 诊断——整包 memory 快照或夹带字段（budget/plan 等）不再是合法补丁。
+    const allowed = ['ids', 'roundAllocations', 'allocatedKeys'] as const;
+    const extra = Object.keys(patch).filter((key) => !allowed.includes(key as typeof allowed[number]));
+    if (extra.length && !this.memory.lastRoundIdentityError) {
+      this.memory.lastRoundIdentityError = `round_identity_patch_extra_fields:${extra.sort().join(',')}`;
+    }
+    if (patch.ids) this.memory.ids = { ...this.memory.ids, ...patch.ids };
+    if (patch.roundAllocations) this.memory.roundAllocations = { ...this.memory.roundAllocations, ...patch.roundAllocations };
+    if (patch.allocatedKeys) this.memory.allocatedKeys = [...new Set([...this.memory.allocatedKeys, ...patch.allocatedKeys])];
+  }
   getRequestCounter(): number { return this.requestCounter; }
   /** The advance the driver itself started (§6.1): the identity-bound player
    * text model tasks read. A live accessor instead of a captured clone —
@@ -130,6 +357,17 @@ export class ControllerDriver {
       this.recoveringPointIds = new Set(recovered.plan?.map((p) => p.pointId));
       this.nextRequestId();
       this.recoveryBarrier = null;
+      // G5 恢复入口：服务端已接受 continue（automatic 轮开启）但尚未建点时，
+      // 真实 recovery 返回空 ids/plan——conclude 采纳钩子不会再触发。门开启
+      // 的组合在此按当前冻结 order 补调一次身份 sink（稳定 allocationKey，
+      // 服务端幂等重放同一批 id）；失败记阻断，首个 step 以可辨认原因停止。
+      if (this.identityGate) {
+        const world = this.state.world;
+        const round = world?.round;
+        if (world?.advance.advanceId != null && round?.trigger === 'automatic' && !this.state.work && !this.memory.plan) {
+          await this.notifyRoundIdentity(world.activeRoundId ?? round.roundId, round.order);
+        }
+      }
       return undefined;
     } catch (error) {
       this.recoveryBarrier = error instanceof RecoveryStopped ? error.reason : `recovery_failed:${error instanceof Error ? error.message : String(error)}`;
@@ -140,7 +378,7 @@ export class ControllerDriver {
   /** Read-only scheduler introspection for declared scenario boundaries. */
   pendingDecision(): Decision {
     if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
-    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, activeInput: this.state.activeInput });
+    return scheduleNext(this.scheduleView(this.narrationBusy));
   }
 
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
@@ -187,17 +425,34 @@ export class ControllerDriver {
   async step(): Promise<DriverStatus | undefined> {
     this.hasStepped = true;
     if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
+    if (this.narration) await this.bootstrapNarration();
+    if (this.narration) {
+      // The queue may have submitted while this step was awaiting the lease or
+      // bootstrap reads. Drain its served-state update before choosing a
+      // decision; otherwise the stale pending head could be claimed a second
+      // time by the serial narration branch.
+      for (let refresh = 0; refresh < 4 && this.narrationDirty; refresh++) {
+        await this.refreshNarrationState();
+      }
+    }
+    if (this.narration && this.state.world?.lease && this.memory.leaseToken && this.state.world?.head.narrationStatus === 'pending') {
+      this.narration.enqueue(this.state.world.head.pointId);
+    }
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
-    const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined, activeInput: this.state.activeInput });
+    const decision = scheduleNext(this.scheduleView(this.narrationBusy, command && command.kind !== 'player_input' ? command : undefined));
     switch (decision.kind) {
-      case 'await_command':
+      case 'await_command': {
         if (this.command === command) this.command = null;
+        const settled = await this.settleNarration({ kind: 'await', reason: decision.reason });
+        if (settled.kind === 'stop') return settled;
+        if (decision.reason === 'gate_pending' && this.state.world?.head.narrationStatus === 'ready') return undefined;
         return { kind: 'await', reason: decision.reason };
+      }
       case 'stop':
         if (this.command === command) this.command = null;
-        return { kind: 'stop', reason: decision.reason };
+        return this.settleNarration({ kind: 'stop', reason: decision.reason });
       case 'model': {
         const output = await this.io.model.generate(decision.task, decision.key, decision.input);
         if (this.command === command) this.command = null;
@@ -206,18 +461,41 @@ export class ControllerDriver {
       }
       case 'read_working_state':
         if (this.command === command) this.command = null;
-        return this.preview();
+        {
+          const status = await this.preview();
+          return status ? this.settleNarration(status) : undefined;
+        }
       case 'transport': {
         const executesCommand = command != null && this.commandOperation(command) === decision.operation;
+        const commit = decision.operation === 'commit_point';
+        if (commit) this.io.onCommit?.({ phase: 'attempt', request: decision.request });
         const outcome = await this.call(decision.operation, decision.request, decision.scope);
+        if (commit) {
+          this.io.onCommit?.({
+            phase: 'committed', request: decision.request,
+            ...(outcome.ok ? { response: outcome.response } : { error: (outcome as { error?: unknown }).error ?? null }),
+          });
+        }
         if (outcome.ok) {
           if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);
+          if (decision.operation === 'commit_point') {
+            const head = this.state.world?.head;
+            if (head?.narrationStatus === 'pending') this.narration?.enqueue(head.pointId);
+          }
+          if (decision.operation === 'round_conclusion_conclude') {
+            const confirmed = (outcome.response as { data?: { kind?: string; nextRoundId?: Id | null } }).data ?? {};
+            if (confirmed.kind === 'continue') {
+              const nextRoundId = confirmed.nextRoundId ?? this.state.world?.activeRoundId ?? this.state.world?.round?.roundId ?? null;
+              if (nextRoundId) await this.notifyRoundIdentity(nextRoundId, this.state.world?.round?.order ?? []);
+              else this.memory.lastRoundIdentityError = 'round_identity_target_missing';
+            }
+          }
           this.memory.lastModel = null;
           this.nextRequestId();
           return undefined;
         }
-        return outcome.terminal; // definitive rejection: the command survives; state was refreshed, re-schedule
+        return outcome.terminal ? this.settleNarration(outcome.terminal) : undefined;
       }
     }
   }
@@ -369,9 +647,18 @@ export class ControllerDriver {
       case 'time':
         this.memory.successorTime = structuredClone(output) as unknown as TimeAdvance;
         break;
-      case 'continuation':
+      case 'continuation': {
+        const value = output as { kind?: string; reason?: string };
+        if (value?.kind === 'policy_stop') {
+          // Lane 04's policy stop is a real turn ending. It has no model
+          // conclusion value, so it closes the round as a cancel with the
+          // reason; the narration of committed points still runs.
+          this.memory.continuationStop = { reason: String(value.reason ?? 'continuation_policy') };
+          break;
+        }
         this.memory.continuation = structuredClone(output) as unknown as Conclusion;
         break;
+      }
       case 'initial':
         this.memory.initialTemplate = structuredClone(output) as unknown as InitialTemplate;
         break;
@@ -562,6 +849,21 @@ export class ControllerDriver {
           // round-trip must claim afresh (claim_expired/cache_missing).
           this.memory.narration = { pointId, claim: null, input };
           this.memory.lastModel = null;
+          if (this.narration) {
+            // The refusal asked us to finish the head narration. The queue
+            // owns that point, so wait for the already committed job instead
+            // of resending the refused operation every idle step. This is
+            // what keeps an automatic continuation-stop cancel from stalling
+            // while the point prose is still streaming. A failed head is
+            // terminal here; it must not be retried as a fresh narration.
+            this.narration.enqueue(pointId);
+            await this.narration.settled();
+            this.narrationDirty = true;
+            await this.refreshNarrationState();
+            if (this.state.world?.head.narrationStatus === 'failed') {
+              return { kind: 'stop', reason: 'narration_failed' };
+            }
+          }
         }
         return undefined;
       }
@@ -593,6 +895,7 @@ export class ControllerDriver {
       const previousEpoch = this.state.world?.lease?.fenceEpoch ?? null;
       const nextEpoch = envelope.world?.lease?.fenceEpoch ?? null;
       this.state.world = envelope.world;
+      if (envelope.world?.worldId) this.narration?.setWorldId(envelope.world.worldId);
       // A lease-generation change — including losing the lease entirely —
       // fences every held narration claim.
       if (previousEpoch != null && previousEpoch !== nextEpoch && this.memory.narration) {
@@ -830,12 +1133,17 @@ export class ControllerDriver {
         if (kind === 'continue') {
           this.memory.plan = null;
           this.memory.planIndex = 0;
+          // ①b 分配走 execute() 的统一挂点（见 transport 分支）：conclude
+          // 成功且服务端已切到 automatic round 后触发 sink；失败记录在
+          // lastRoundIdentityError，后续 step 按产品拒绝走。
         } else if (kind === 'handback') {
           this.clearRoundWork();
         }
         break;
       }
       case 'round_conclusion_cancel':
+        this.memory.continuationStop = null;
+        this.memory.continuation = null;
         this.clearRoundWork();
         break;
       case 'checkpoint_pause':
@@ -863,7 +1171,7 @@ export class ControllerDriver {
       workingState: null, sources: [], staged: [], stagedTimeScan: null,
       restoredUnit: null,
       groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-      continuation: null, successorTime: null, commitPayload: null, narration: null,
+      continuation: null, continuationStop: null, successorTime: null, commitPayload: null, narration: null, roundIdentityBlocked: null,
     });
   }
 }

@@ -1,0 +1,61 @@
+{
+  "batchId": "b01-template-v2",
+  "title": "b01 with an explicit writing instruction (same model, seeds, sampling and cap)",
+  "status": "ready-to-submit-after-prereg-v2-freeze",
+  "purpose": "Test the cause-analysis H1: b01's zero fact-qualified result may come from a state-view prompt that never asks for prose. Only the user-turn instruction changes; the shared case, model, seeds, sampling, cap and rubric stay identical.",
+  "caseIds": ["frozen-row-0012"],
+  "seeds": [17, 29, 43, 61, 79, 97],
+  "sharedPack": {
+    "owner": "01-input",
+    "package": "narration-dev-package-v1",
+    "root": "D:/others/Jity/.local/parallel-local-game/worktrees/01-input/experiments/narration-quality/dev-package-v1",
+    "manifestSha256": "20da8db9051740a48901bf143fdff5fde01aac2accc691409e74c9acba386dc7",
+    "casesSha256": "8dd2de925c7de03b0f4df43196cb684cd8022bbf198039be74c4470e63b9207b",
+    "rubricSha256": "020c9ca9e19ae474256404e70c985b67b8d56598ba07b65d7ed089d169b58107"
+  },
+  "model": {
+    "hpcPath": "~/qwen15b",
+    "family": "Qwen2.5 instruct base (actual config/weight hashes recorded by the runner)",
+    "quantization": "none (safetensors)",
+    "notTheProductWeights": true
+  },
+  "template": {
+    "kind": "qwen2-chatml",
+    "system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+    "userRenderer": "instruction + two newlines + renderTrainedInstructUser(input)",
+    "addGenerationPrompt": true,
+    "instruction": "请把下面的已结算状态写成一段中文小说正文，180 到 260 字。必须写出【本回合变化】里的移动、时间推进、物品变化和人物变化；可以写细微动作、对白和视角人物的感受，但不得新增人物、物品、地点、事件、往事或承诺；不要逐条复述状态，不要写标题或列表。",
+    "whyThisInstruction": "Uses only the settled change vocabulary and the allowed polish boundary from 01's rubric; it adds no fact and does not reveal the reference. It is the minimal prompt change that tests H1."
+  },
+  "sampling": {
+    "doSample": true,
+    "temperature": 0.45,
+    "topP": 0.95,
+    "topK": 40,
+    "repetitionPenalty": 1.0,
+    "noRepeatNgramSize": 0,
+    "maxNewTokens": 240,
+    "numReturnSequences": 1,
+    "eosStop": true,
+    "unchangedFromB01": true
+  },
+  "stop": ["eos_token_id", "im_end"],
+  "outputs": {
+    "requests": "data/b01-template-v2/requests.jsonl",
+    "expected": "data/b01-template-v2/expected.jsonl",
+    "plan": "data/b01-template-v2/plan.json",
+    "rawDir": "results/b01-template-v2",
+    "rawFile": "raw.jsonl",
+    "envFile": "env.json",
+    "report": "report.json",
+    "reportMd": "report.md"
+  },
+  "gate": "If v2 has zero fact-qualified candidates, stop N expansion and take the evidence to 02/06; do not relax the rubric. If v2 has >=2 fact-qualified non-homogeneous candidates, prepare b02 with this template under a new preregistration and then run the paired N=1/2/4 comparison.",
+  "resource": {
+    "executor": "10-training only",
+    "device": "one HPC GPU; fp16 on V100 is acceptable (b01 measured it), bf16 on 4090 if available",
+    "estimatedCalls": 6,
+    "estimatedMinutes": 5,
+    "network": "offline; no download"
+  }
+}

@@ -1,0 +1,47 @@
+{
+ "version": "rolepair-r1",
+ "question": "does the model keep a possessor role (part belongs to the name) and a location role (the name is where something else sits) apart, when both members omit the name from the value",
+ "design": {
+  "pairs": 6,
+  "probes": 12,
+  "manipulation": "within a pair the name, the scene and the visible list are identical; one member states a part of the name (possessor role), the other states another object placed at the name (location role). The name is absent from both values, so both require insertion",
+  "why": "the two shapes this round failed on were exactly these two roles: 潮汐簿的边缘毛糙 replaced a part (缺页) and 搭在钟架的钟绳 turned a location into a possessor",
+  "length": "values are 5-9 characters and matched within a pair where possible; the possessor member is 1 character longer on average. Length is recorded, not controlled"
+ },
+ "perMember": {
+  "possessor": {
+   "required": [
+    "part noun",
+    "part predicate"
+   ],
+   "roleOk": "the part survives and the name stands as its owner",
+   "roleError": "the part is replaced by the name (the t21:f0 shape)"
+  },
+  "location": {
+   "required": [
+    "other object",
+    "relation"
+   ],
+   "roleOk": "the other object survives and the name is not its possessor",
+   "roleError": "name+的+other, i.e. the name becomes the owner (the np3 shape)"
+  }
+ },
+ "checks": {
+  "entity": "the required noun is present",
+  "role": "ok / replaced / flip / missing",
+  "relation": "kept / dropped / distorted, n/a for possessor members",
+  "syntax": "syntax-frame-r4: duplicated name, 的…的, name+的+other",
+  "fact": "frozen scorer, reported separately"
+ },
+ "declaredDecision": {
+  "roleErrors": "count of possessor members with role=replaced plus location members with role=flip",
+  "ifAtLeast4": "if role errors reach 4 of 12 the failure is concentrated in telling the two roles apart, and the next intervention is a paired role exemplar set",
+  "ifAtMost1": "if role errors stay at or below 1 and syntax or frame problems dominate, the next thing to test is the input expression instead",
+  "otherwise": "report both counts and pick the larger class, without claiming a mechanism"
+ },
+ "notClaimed": [
+  "this is a diagnostic set written for the current hypothesis, not an independent generalisation test",
+  "a single correct member does not show the model has learned the role distinction"
+ ],
+ "declaredBefore": "written before any model ran on these probes"
+}

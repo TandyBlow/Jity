@@ -1,0 +1,980 @@
+{
+ "purpose": "supplementary same-update comparison; A epoch 15 (90 updates) vs existing B_h epoch 15 (90 updates)",
+ "reproduction": "A epoch-15 state was not persisted in the original run; reproduced with the same seed/data/config; dev metrics compared against the original log",
+ "config": {
+  "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+  "data": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\pairs-v2.jsonl",
+  "data_sha256": "7e325dcc254604621d386faf47ec1f85f1f92ad4eb8b845078d70adbcab14a30",
+  "seed": 13,
+  "epochs": 15,
+  "updates": 90,
+  "max_new": 128,
+  "device": "cuda"
+ },
+ "epoch15": {
+  "dev_loss": 0.35809080286708195,
+  "dev_fact": 0.875
+ },
+ "holdout": [
+  {
+   "sourceId": "fixture-r5",
+   "split": "holdout",
+   "target": "林川的帽檐压出折痕，脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+   "new_tokens": 50,
+   "stop": "eos",
+   "text": "林川的帽檐压出折痕,脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+   "sentences": [
+    "林川的帽檐压出折痕,脚踝肿了一块。",
+    "周宁的衣领被雨浸透。",
+    "随后,陈默的指尖磨出茧。",
+    "陈默的膝盖沾了泥。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "林川的帽檐压出折痕,脚踝肿了一块。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "林川的帽檐压出折痕,脚踝肿了一块。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "周宁的衣领被雨浸透。"
+    },
+    "f3": {
+     "support": true,
+     "sent": 2,
+     "score": 1.0,
+     "sentence": "随后,陈默的指尖磨出茧。"
+    },
+    "f4": {
+     "support": true,
+     "sent": 3,
+     "score": 1.0,
+     "sentence": "陈默的膝盖沾了泥。"
+    }
+   },
+   "fact_supported": 5,
+   "fact_total": 5,
+   "fact_score": 1.0,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": true,
+     "sents": [
+      0,
+      1
+     ]
+    },
+    {
+     "pair": [
+      "f2",
+      "f3"
+     ],
+     "different": true,
+     "sents": [
+      1,
+      2
+     ]
+    },
+    {
+     "pair": [
+      "f3",
+      "f4"
+     ],
+     "different": true,
+     "sents": [
+      2,
+      3
+     ]
+    }
+   ],
+   "relations": [
+    {
+     "edge": [
+      "f2",
+      "f3"
+     ],
+     "ok": true,
+     "sents": [
+      1,
+      2
+     ]
+    }
+   ],
+   "omissions": [],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "t03",
+   "split": "holdout",
+   "target": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+   "new_tokens": 50,
+   "stop": "eos",
+   "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+   "sentences": [
+    "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+    }
+   },
+   "fact_supported": 3,
+   "fact_total": 3,
+   "fact_score": 1.0,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [],
+   "relations": [],
+   "omissions": [],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "t08",
+   "split": "holdout",
+   "target": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+   "new_tokens": 50,
+   "stop": "eos",
+   "text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩,顾行舟的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+   "sentences": [
+    "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩,顾行舟的辫梢沾了白汽。",
+    "顾行舟的外袍下摆沾了泥水。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩,顾行舟的辫梢沾了白汽。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩,顾行舟的辫梢沾了白汽。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩,顾行舟的辫梢沾了白汽。"
+    },
+    "f3": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "顾行舟的外袍下摆沾了泥水。"
+    }
+   },
+   "fact_supported": 4,
+   "fact_total": 4,
+   "fact_score": 1.0,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "group": [
+      "f2",
+      "f3"
+     ],
+     "same_sentence": false,
+     "sents": [
+      0,
+      1
+     ]
+    }
+   ],
+   "separated": [
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "relations": [],
+   "omissions": [],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "t24",
+   "split": "holdout",
+   "target": "纸灯笼被风扯破一角，排水沟里面积了泥。沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+   "new_tokens": 50,
+   "stop": "eos",
+   "text": "阿棠把鱼筐放在门槛边。",
+   "sentences": [
+    "阿棠把鱼筐放在门槛边。"
+   ],
+   "facts": {
+    "f0": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "阿棠把鱼筐放在门槛边。"
+    },
+    "f1": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "阿棠把鱼筐放在门槛边。"
+    },
+    "f2": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "阿棠把鱼筐放在门槛边。"
+    },
+    "f3": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "阿棠把鱼筐放在门槛边。"
+    }
+   },
+   "fact_supported": 1,
+   "fact_total": 4,
+   "fact_score": 0.25,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "group": [
+      "f2",
+      "f3"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "relations": [],
+   "omissions": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "train-r4",
+   "split": "holdout",
+   "target": "沈砚的围巾松开一截，脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+   "new_tokens": 50,
+   "stop": "eos",
+   "text": "沈砚的围巾松开一截,顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+   "sentences": [
+    "沈砚的围巾松开一截,顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。",
+    "叶知微的肩头落着灰。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚的围巾松开一截,顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。"
+    },
+    "f1": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "沈砚的围巾松开一截,顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚的围巾松开一截,顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。"
+    },
+    "f3": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚的围巾松开一截,顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。"
+    },
+    "f4": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "叶知微的肩头落着灰。"
+    }
+   },
+   "fact_supported": 4,
+   "fact_total": 5,
+   "fact_score": 0.8,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "pair": [
+      "f2",
+      "f3"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "pair": [
+      "f3",
+      "f4"
+     ],
+     "different": true,
+     "sents": [
+      0,
+      1
+     ]
+    }
+   ],
+   "relations": [
+    {
+     "edge": [
+      "f2",
+      "f3"
+     ],
+     "ok": false,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "omissions": [
+    "f1"
+   ],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "train-r5",
+   "split": "holdout",
+   "target": "沈砚的帽檐压出折痕，脚踝肿了一块。顾行舟的衣领被雨浸透。随后，叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+   "new_tokens": 50,
+   "stop": "eos",
+   "text": "沈砚的帽檐压出折痕,脚踝肿了一块。顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+   "sentences": [
+    "沈砚的帽檐压出折痕,脚踝肿了一块。",
+    "顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。",
+    "叶知微的膝盖沾了泥。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚的帽檐压出折痕,脚踝肿了一块。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚的帽檐压出折痕,脚踝肿了一块。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。"
+    },
+    "f3": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。"
+    },
+    "f4": {
+     "support": true,
+     "sent": 2,
+     "score": 1.0,
+     "sentence": "叶知微的膝盖沾了泥。"
+    }
+   },
+   "fact_supported": 5,
+   "fact_total": 5,
+   "fact_score": 1.0,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": true,
+     "sents": [
+      0,
+      1
+     ]
+    },
+    {
+     "pair": [
+      "f2",
+      "f3"
+     ],
+     "different": false,
+     "sents": [
+      1,
+      1
+     ]
+    },
+    {
+     "pair": [
+      "f3",
+      "f4"
+     ],
+     "different": true,
+     "sents": [
+      1,
+      2
+     ]
+    }
+   ],
+   "relations": [
+    {
+     "edge": [
+      "f2",
+      "f3"
+     ],
+     "ok": false,
+     "sents": [
+      1,
+      1
+     ]
+    }
+   ],
+   "omissions": [],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "v05",
+   "split": "holdout",
+   "target": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮。什么也没有再发生。",
+   "new_tokens": 34,
+   "stop": "eos",
+   "text": "叶知微的袖口沾了铜油,手背上沾了铜油,把灯罩擦得透亮。什么也没有再发生。",
+   "sentences": [
+    "叶知微的袖口沾了铜油,手背上沾了铜油,把灯罩擦得透亮。",
+    "什么也没有再发生。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "叶知微的袖口沾了铜油,手背上沾了铜油,把灯罩擦得透亮。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "叶知微的袖口沾了铜油,手背上沾了铜油,把灯罩擦得透亮。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "叶知微的袖口沾了铜油,手背上沾了铜油,把灯罩擦得透亮。"
+    },
+    "f3": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "什么也没有再发生。"
+    }
+   },
+   "fact_supported": 4,
+   "fact_total": 4,
+   "fact_score": 1.0,
+   "merged": [],
+   "separated": [
+    {
+     "pair": [
+      "f0",
+      "f1"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "pair": [
+      "f2",
+      "f3"
+     ],
+     "different": true,
+     "sents": [
+      0,
+      1
+     ]
+    }
+   ],
+   "relations": [],
+   "omissions": [],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "v14",
+   "split": "holdout",
+   "target": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+   "new_tokens": 34,
+   "stop": "eos",
+   "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。什么也没有再发生。",
+   "sentences": [
+    "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。",
+    "什么也没有再发生。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。"
+    },
+    "f2": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。"
+    }
+   },
+   "fact_supported": 2,
+   "fact_total": 3,
+   "fact_score": 0.6666666666666666,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [],
+   "relations": [],
+   "omissions": [
+    "f2"
+   ],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "v20",
+   "split": "holdout",
+   "target": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+   "new_tokens": 34,
+   "stop": "eos",
+   "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+   "sentences": [
+    "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+    },
+    "f1": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+    }
+   },
+   "fact_supported": 2,
+   "fact_total": 3,
+   "fact_score": 0.6666666666666666,
+   "merged": [
+    {
+     "group": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "same_sentence": true,
+     "sents": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "separated": [],
+   "relations": [],
+   "omissions": [
+    "f1"
+   ],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "v21",
+   "split": "holdout",
+   "target": "沈砚把铜灯挪到长桌另一头。什么也没有再发生。沈砚的指尖沾了墨。",
+   "new_tokens": 34,
+   "stop": "eos",
+   "text": "沈砚把铜灯挪到长桌另一头。什么也没有再发生。沈砚的指尖沾了墨。",
+   "sentences": [
+    "沈砚把铜灯挪到长桌另一头。",
+    "什么也没有再发生。",
+    "沈砚的指尖沾了墨。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "沈砚把铜灯挪到长桌另一头。"
+    },
+    "f1": {
+     "support": true,
+     "sent": 1,
+     "score": 1.0,
+     "sentence": "什么也没有再发生。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 2,
+     "score": 1.0,
+     "sentence": "沈砚的指尖沾了墨。"
+    }
+   },
+   "fact_supported": 3,
+   "fact_total": 3,
+   "fact_score": 1.0,
+   "merged": [],
+   "separated": [
+    {
+     "pair": [
+      "f0",
+      "f1"
+     ],
+     "different": true,
+     "sents": [
+      0,
+      1
+     ]
+    },
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": true,
+     "sents": [
+      1,
+      2
+     ]
+    }
+   ],
+   "relations": [],
+   "omissions": [],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "v23",
+   "split": "holdout",
+   "target": "顾行舟把缆绳绕上摊棚边的木桩。什么也没有再发生。顾行舟的手背上沾了鱼鳞。",
+   "new_tokens": 34,
+   "stop": "eos",
+   "text": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。",
+   "sentences": [
+    "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+    },
+    "f1": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+    }
+   },
+   "fact_supported": 2,
+   "fact_total": 3,
+   "fact_score": 0.6666666666666666,
+   "merged": [],
+   "separated": [
+    {
+     "pair": [
+      "f0",
+      "f1"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "relations": [],
+   "omissions": [
+    "f1"
+   ],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  },
+  {
+   "sourceId": "v24",
+   "split": "holdout",
+   "target": "韩渡把钟绳解开。什么也没有再发生。韩渡的手背上沾了盐沫。",
+   "new_tokens": 34,
+   "stop": "eos",
+   "text": "韩渡把钟绳解开,手背上沾了盐沫。",
+   "sentences": [
+    "韩渡把钟绳解开,手背上沾了盐沫。"
+   ],
+   "facts": {
+    "f0": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "韩渡把钟绳解开,手背上沾了盐沫。"
+    },
+    "f1": {
+     "support": false,
+     "sent": 0,
+     "score": 0.0,
+     "sentence": "韩渡把钟绳解开,手背上沾了盐沫。"
+    },
+    "f2": {
+     "support": true,
+     "sent": 0,
+     "score": 1.0,
+     "sentence": "韩渡把钟绳解开,手背上沾了盐沫。"
+    }
+   },
+   "fact_supported": 2,
+   "fact_total": 3,
+   "fact_score": 0.6666666666666666,
+   "merged": [],
+   "separated": [
+    {
+     "pair": [
+      "f0",
+      "f1"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    },
+    {
+     "pair": [
+      "f1",
+      "f2"
+     ],
+     "different": false,
+     "sents": [
+      0,
+      0
+     ]
+    }
+   ],
+   "relations": [],
+   "omissions": [
+    "f1"
+   ],
+   "contains_pronoun": false,
+   "contains_digit": false,
+   "contains_simultaneous": false
+  }
+ ]
+}

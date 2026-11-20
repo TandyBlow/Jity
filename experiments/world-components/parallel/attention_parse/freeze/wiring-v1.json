@@ -1,0 +1,73 @@
+{
+  "protocol": "c1-n2-wiring-v1",
+  "frozenOn": "2026-11-08",
+  "bundle": "freeze/facts-v1.json",
+  "labelFreeze": "expectedSelectedFactIds 在筛选器实现之前写入；判据是事实 id 列表，顺序按 bundle 顺序。",
+  "gapCheck": "本批只覆盖“关注范围是否被 N2 正确应用”。must/optional/forbidden 来自本实验标注（facts-v1.json），不是真实 N2 判定，也不复用 R-attention-v1 的六条件。",
+  "cases": [
+    {
+      "caseId": "W01",
+      "targets": "part 命中可选事实",
+      "worldRef": "W1",
+      "utterance": "钥匙表面的灰还在吗？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage", "ns-appear-1#appearanceText"],
+      "note": "关注 item_key 的「表面」：只有钥匙外观事实入选；走廊储物柜、学生A移动都在范围外；学生B出汗是 forbidden。"
+    },
+    {
+      "caseId": "W02",
+      "targets": "appearance 范围排除他者",
+      "worldRef": "W1",
+      "utterance": "走廊的样子变了吗？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage", "ns-loc-appear-1#appearanceText"],
+      "note": "关注走廊外观：只有走廊外观事实入选；钥匙外观不可选。"
+    },
+    {
+      "caseId": "W03",
+      "targets": "position 范围",
+      "worldRef": "W1",
+      "utterance": "学生A现在在哪儿？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage", "ns-pos-1#position"],
+      "note": "关注学生A位置：移动事实入选，外观事实不入选。"
+    },
+    {
+      "caseId": "W04",
+      "targets": "part 未锚定不放大",
+      "worldRef": "W1",
+      "utterance": "学生B的鞋底沾了泥吗？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage"],
+      "note": "袖口/鞋底这类局部在学生B的提交文本里不存在；按契约只按字面匹配，没有任何可选事实命中，也不退回整人。"
+    },
+    {
+      "caseId": "W05",
+      "targets": "空目标（歧义）",
+      "worldRef": "W1",
+      "utterance": "那个学生怎么样了？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage"],
+      "note": "学生A／学生B 歧义：targets 为空，可选事实一条不选，必述照旧。"
+    },
+    {
+      "caseId": "W06",
+      "targets": "空目标（无关注）",
+      "worldRef": "W1",
+      "utterance": "继续。",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage"],
+      "note": "完全没有关注对象：targets 为空，可选事实一条不选，不回退全选。"
+    },
+    {
+      "caseId": "W07",
+      "targets": "object 范围",
+      "worldRef": "W1",
+      "utterance": "学生A怎么样了？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage", "ns-pos-1#position"],
+      "note": "整人范围：学生A的全部可选事实（本例只有移动）入选。"
+    },
+    {
+      "caseId": "W08",
+      "targets": "task 范围无对应事实",
+      "worldRef": "W1",
+      "utterance": "学生B的任务怎样了？",
+      "expectedSelectedFactIds": ["ns-task-1#taskGoal", "ns-task-1#timePassage"],
+      "note": "关注学生B的任务，但 bundle 里没有学生B的任务事实；不得用外观事实填空。"
+    }
+  ]
+}

@@ -1,0 +1,890 @@
+{
+ "purpose": "per-unit human review of the 740-unit evaluation; spans are quoted from the generated text",
+ "rule": "fact = machine verdict checked by reading; added = claim the unit does not authorise (arriving at a named sub-place is allowed, lingering states and extra objects are not); repeated = same proposition stated twice; language = malformed wording",
+ "carriedOver": {
+  "cf24-u240": "the 85 u240 cf24 outputs are byte-identical to the reviewed CPU run, so its per-unit review is reused verbatim",
+  "final24-u240": "the 76 u240 final24 outputs are byte-identical to the reviewed CPU run"
+ },
+ "entries": [
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t07:f0",
+   "kind": "added",
+   "span": "鞋底在石阶边站了一会儿",
+   "reason": "到达后追加动作，主语落到鞋底上"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t07:f1",
+   "kind": "added",
+   "span": "钟绳绷直了",
+   "reason": "事实里没有的状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t11:f0",
+   "kind": "added",
+   "span": "抬头看了看塔身",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t12:f0",
+   "kind": "added",
+   "span": "抱起一叠纸",
+   "reason": "事实外动作与物件"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t15:f0",
+   "kind": "added",
+   "span": "鞋底在木桩旁站住",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t17:f0",
+   "kind": "added",
+   "span": "鱼筐上沾着鱼鳞",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t11:f1",
+   "kind": "repeated",
+   "span": "玻璃罩透亮起来",
+   "reason": "与前半句同义复述"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t23:f2",
+   "kind": "repeated",
+   "span": "玻璃罩已经透亮",
+   "reason": "与前半句同义复述"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "双层“的”"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "所有格错位，应为“系泊绳上的泥水”"
+  },
+  {
+   "set": "cf24",
+   "arm": "u240",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t09:f0",
+   "kind": "fact",
+   "span": "从早市",
+   "reason": "起点缺失，只写“到了潮汐档案馆”"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t09:f0",
+   "kind": "added",
+   "span": "袖口带着潮汐簿子",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t11:f0",
+   "kind": "fact",
+   "span": "从潮生巷",
+   "reason": "起点缺失"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t11:f0",
+   "kind": "added",
+   "span": "鞋底在潮气里打滑",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t03:f0",
+   "kind": "added",
+   "span": "玻璃罩上的盐苗不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t03:f0",
+   "kind": "language",
+   "span": "盐苗",
+   "reason": "没有这个词，语料里是“盐雾”"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t11:f1",
+   "kind": "added",
+   "span": "玻璃罩上的盐苗不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t11:f1",
+   "kind": "language",
+   "span": "盐苗",
+   "reason": "没有这个词，语料里是“盐雾”"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t18:f1",
+   "kind": "added",
+   "span": "玻璃罩上的盐苗不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t18:f1",
+   "kind": "language",
+   "span": "盐苗",
+   "reason": "没有这个词，语料里是“盐雾”"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t23:f2",
+   "kind": "added",
+   "span": "玻璃罩上的盐苗不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t23:f2",
+   "kind": "language",
+   "span": "盐苗",
+   "reason": "没有这个词，语料里是“盐雾”"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t06:f2",
+   "kind": "added",
+   "span": "在墙根上蹭了两下",
+   "reason": "事实外动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t06:f2",
+   "kind": "language",
+   "span": "鞋底……蹭了两下",
+   "reason": "主语错位，鞋底不会蹭墙根"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t07:f0",
+   "kind": "added",
+   "span": "河风把他的袖口吹得鼓起来",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t09:f2",
+   "kind": "added",
+   "span": "纸角被风掀起",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t11:f2",
+   "kind": "added",
+   "span": "铜灯罩不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t12:f0",
+   "kind": "added",
+   "span": "抱着一叠鱼筐",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t12:f0",
+   "kind": "language",
+   "span": "一叠鱼筐",
+   "reason": "量词与物件不搭"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t13:f0",
+   "kind": "added",
+   "span": "把干纸送到",
+   "reason": "事实外动作与物件"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t14:f0",
+   "kind": "added",
+   "span": "缆绳上挂着雾水",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t16:f0",
+   "kind": "added",
+   "span": "在墙根上蹭了两下",
+   "reason": "事实外动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t17:f0",
+   "kind": "added",
+   "span": "鱼筐的鱼筐还沾着鱼鳞",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t17:f0",
+   "kind": "language",
+   "span": "鱼筐的鱼筐",
+   "reason": "叠词"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t18:f0",
+   "kind": "added",
+   "span": "抬头看了看塔身",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t23:f3",
+   "kind": "added",
+   "span": "铜灯罩不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "双层“的”，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "所有格错位，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "a",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t05:f0",
+   "kind": "added",
+   "span": "钟绳绷直了",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t07:f0",
+   "kind": "added",
+   "span": "钟绳还挂着雾警钟",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t07:f1",
+   "kind": "added",
+   "span": "钟绳绷直了",
+   "reason": "事实外状态，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t08:f0",
+   "kind": "added",
+   "span": "鱼尾拍得银鳞鱼",
+   "reason": "事实外动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t08:f0",
+   "kind": "language",
+   "span": "鱼尾拍得银鳞鱼",
+   "reason": "语义不通"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t11:f0",
+   "kind": "added",
+   "span": "鞋底在潮气里打滑",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t11:f1",
+   "kind": "repeated",
+   "span": "灯罩透亮起来",
+   "reason": "同义复述"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t11:f2",
+   "kind": "added",
+   "span": "铜灯罩不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t15:f0",
+   "kind": "added",
+   "span": "沿着石滩上到潮渡",
+   "reason": "事实外路径"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t17:f0",
+   "kind": "added",
+   "span": "鱼鳞在鱼摊前站住",
+   "reason": "事实外动作，主语错位"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t17:f0",
+   "kind": "language",
+   "span": "沿着鱼筐走进早市",
+   "reason": "把鱼筐当路径"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t17:f1",
+   "kind": "language",
+   "span": "鱼尾拍得银鳞鱼",
+   "reason": "语义不通"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t19:f2",
+   "kind": "added",
+   "span": "鱼尾拍进鱼筐",
+   "reason": "事实外动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t19:f2",
+   "kind": "language",
+   "span": "鱼尾拍进鱼筐",
+   "reason": "语义不通"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t23:f0",
+   "kind": "fact",
+   "span": "玻璃",
+   "reason": "“铜灯罩外蒙了盐雾”丢了玻璃，机器判 S，复核为覆盖不足"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t23:f3",
+   "kind": "added",
+   "span": "铜灯罩不再发暗",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "b",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t09:f0",
+   "kind": "added",
+   "span": "推开档案馆的门",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t12:f0",
+   "kind": "added",
+   "span": "抱着一叠鱼筐",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t12:f0",
+   "kind": "language",
+   "span": "一叠鱼筐",
+   "reason": "量词与物件不搭"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t13:f0",
+   "kind": "added",
+   "span": "推开档案馆的门",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t16:f0",
+   "kind": "added",
+   "span": "在潮生巷站住",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t17:f0",
+   "kind": "added",
+   "span": "穿过早市的人流",
+   "reason": "事实外物件（人流）"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "双层“的”，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "所有格错位，与 u240 同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”，与 u240 同句"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v01:f1",
+   "kind": "added",
+   "span": "钟绳绷直了",
+   "reason": "事实外状态或动作"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v05:f2",
+   "kind": "added",
+   "span": "玻璃上不再有雾",
+   "reason": "事实外状态或动作"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v12:f0",
+   "kind": "added",
+   "span": "帆布棚下散光",
+   "reason": "事实外状态或动作"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v13:f0",
+   "kind": "added",
+   "span": "抬头看了看塔身",
+   "reason": "事实外状态或动作"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v20:f0",
+   "kind": "added",
+   "span": "鞋底在木桩旁站住",
+   "reason": "事实外状态或动作"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v22:f1",
+   "kind": "repeated",
+   "span": "什么也没有再发生",
+   "reason": "与前半句同义复述"
+  },
+  {
+   "set": "final24",
+   "arm": "u240",
+   "unitId": "v24:f1",
+   "kind": "repeated",
+   "span": "什么也没有再发生",
+   "reason": "与前半句同义复述"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v05:f2",
+   "kind": "added",
+   "span": "玻璃上不再有雾",
+   "reason": "事实外状态，与 u240 同句"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v06:f1",
+   "kind": "added",
+   "span": "在纸边站了一会儿",
+   "reason": "事实外动作"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v06:f1",
+   "kind": "language",
+   "span": "袖口……在纸边站了一会儿",
+   "reason": "主语错位"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v11:f0",
+   "kind": "added",
+   "span": "推开档案馆的门",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v12:f0",
+   "kind": "added",
+   "span": "围裙上沾着鱼鳞",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v13:f0",
+   "kind": "added",
+   "span": "抬头看了看塔顶的灯身",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v13:f0",
+   "kind": "language",
+   "span": "灯身",
+   "reason": "没有这个词"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v13:f1",
+   "kind": "added",
+   "span": "铜灯罩已经点亮",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "final24",
+   "arm": "a",
+   "unitId": "v14:f0",
+   "kind": "added",
+   "span": "在潮渡的栈桥边站住",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v01:f1",
+   "kind": "added",
+   "span": "钟绳绷直了",
+   "reason": "事实外状态，与 u240 同句"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v05:f2",
+   "kind": "repeated",
+   "span": "灯罩透亮起来",
+   "reason": "同义复述"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v10:f1",
+   "kind": "fact",
+   "span": "玻璃",
+   "reason": "“铜灯罩上蒙了盐雾”丢了玻璃，机器判 S"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v11:f0",
+   "kind": "added",
+   "span": "推开档案馆的门",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v12:f0",
+   "kind": "added",
+   "span": "鱼鳞在鱼摊前站住",
+   "reason": "事实外动作，主语错位"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v12:f0",
+   "kind": "language",
+   "span": "沿着鱼筐走进早市",
+   "reason": "把鱼筐当路径"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v13:f0",
+   "kind": "added",
+   "span": "袖口带着铜油味",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v13:f1",
+   "kind": "added",
+   "span": "铜灯罩还亮着",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v14:f0",
+   "kind": "added",
+   "span": "在潮渡的栈桥边站住",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "final24",
+   "arm": "b",
+   "unitId": "v20:f0",
+   "kind": "added",
+   "span": "栈桥边的水面晃了晃",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v01:f0",
+   "kind": "added",
+   "span": "扶着铁链",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v12:f0",
+   "kind": "added",
+   "span": "穿过早市的人流",
+   "reason": "事实外物件（人流）"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v14:f0",
+   "kind": "added",
+   "span": "在潮渡的栈桥边站住",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v18:f0",
+   "kind": "added",
+   "span": "扶着铁链",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "moved24",
+   "arm": "u240",
+   "unitId": "m02:f0",
+   "kind": "language",
+   "span": "抱起栈桥",
+   "reason": "动词与宾语不搭"
+  },
+  {
+   "set": "moved24",
+   "arm": "u240",
+   "unitId": "m24:f0",
+   "kind": "language",
+   "span": "把渡船从早市上来，推开栈桥",
+   "reason": "句子结构损坏"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m14:f0",
+   "kind": "fact",
+   "span": "早市",
+   "reason": "终点缺失，只写到鱼筐前"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m24:f0",
+   "kind": "fact",
+   "span": "潮渡",
+   "reason": "终点缺失"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m24:f0",
+   "kind": "repeated",
+   "span": "船灯从早市过来",
+   "reason": "同一小句重复两次"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m03:f0",
+   "kind": "added",
+   "span": "鱼筐的摊棚下人来人往",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m03:f0",
+   "kind": "language",
+   "span": "鱼筐的摊棚",
+   "reason": "错误所有格"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m05:f0",
+   "kind": "language",
+   "span": "在早市的摊棚外散了两下",
+   "reason": "“散了两下”不成句"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m12:f0",
+   "kind": "language",
+   "span": "抱着一叠木桩",
+   "reason": "量词与物件不搭"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m15:f0",
+   "kind": "added",
+   "span": "鞋底在门槛上蹭了两下",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m22:f0",
+   "kind": "language",
+   "span": "从潮渡渡渡到河心",
+   "reason": "叠字"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m23:f0",
+   "kind": "added",
+   "span": "帆布棚下沾着鱼鳞",
+   "reason": "事实外状态"
+  },
+  {
+   "set": "moved24",
+   "arm": "a",
+   "unitId": "m23:f0",
+   "kind": "language",
+   "span": "帆布棚下沾着鱼鳞",
+   "reason": "主语错位"
+  },
+  {
+   "set": "moved24",
+   "arm": "b",
+   "unitId": "m22:f0",
+   "kind": "added",
+   "span": "船灯从雾里透出来",
+   "reason": "事实外状态"
+  }
+ ]
+}

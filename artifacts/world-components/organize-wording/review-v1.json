@@ -1,0 +1,88 @@
+{
+ "date": "2026-11-06",
+ "reviewer": "agent (single pass; no separate sign-off)",
+ "checked": {
+  "pairs": 44,
+  "facts": 162
+ },
+ "fixed": [
+  {
+   "pairId": "fixture-r3",
+   "before": "林川的被雨打湿半幅",
+   "after": "林川的衣襟被雨打湿了半幅"
+  },
+  {
+   "pairId": "train-r3",
+   "before": "沈砚的被雨打湿半幅",
+   "after": "沈砚的衣襟被雨打湿了半幅"
+  },
+  {
+   "pairId": "v07",
+   "before": "铜灯灯罩上积了灰",
+   "after": "铜灯的灯罩上积了灰"
+  },
+  {
+   "pairId": "v07",
+   "before": "潮汐簿封面蒙了一层灰",
+   "after": "潮汐簿的封面蒙了一层灰"
+  },
+  {
+   "pairId": "v08",
+   "before": "警示灯玻璃罩被风吹歪",
+   "after": "警示灯的玻璃罩被风吹歪"
+  },
+  {
+   "pairId": "v10",
+   "before": "铁链链环上结了锈",
+   "after": "铁链的链环上结了锈"
+  },
+  {
+   "pairId": "v10",
+   "before": "铜灯罩玻璃上蒙了盐雾",
+   "after": "铜灯罩的玻璃上蒙了盐雾"
+  },
+  {
+   "pairId": "t23",
+   "before": "铁链链环上结了锈",
+   "after": "铁链的链环上结了锈"
+  },
+  {
+   "pairId": "t23",
+   "before": "铜灯罩玻璃上蒙了盐雾",
+   "after": "铜灯罩的玻璃上蒙了盐雾"
+  },
+  {
+   "pairId": "t22",
+   "before": "系泊绳泥水结了一层白盐",
+   "after": "系泊绳上泥水结了一层白盐"
+  },
+  {
+   "pairId": "t22",
+   "before": "木桩缠着的旧缆绳断了",
+   "after": "木桩上缠着的旧缆绳断了"
+  },
+  {
+   "pairId": "v09",
+   "before": "鱼筐边沿沾着鱼鳞",
+   "after": "鱼筐的边沿沾着鱼鳞"
+  },
+  {
+   "pairId": "v09",
+   "before": "案板边沿沾着鱼鳞",
+   "after": "案板的边沿沾着鱼鳞"
+  }
+ ],
+ "checks": {
+  "object_attribution": "44/44 targets either name the fact subject or omit it only inside a same-subject continuation; no actor swap found",
+  "direction": "moved facts render 从X走到Y; 0 from/to reversals; 上/下 not always lexicalised (contract allows neutral 走到)",
+  "relation": "9/9 required before edges render 随后 + f3 name; f2/f3 and f3/f4 are in separate sentences",
+  "plan_realization": "44/44 groups render as comma-joined clauses; every group boundary renders as a period; required edge at sentence start",
+  "sanity": "5/5 sanity facts render a symptom (心里发紧/心里松快了些), no digits",
+  "pronoun": "0 occurrences of 他/她 in targets",
+  "order": "all targets follow fact order"
+ },
+ "unresolved": [
+  "target style is templated (authored-render-v1); naturalness is not human-verified; expression-layer claims are limited accordingly"
+ ],
+ "pairs_sha256": "7e325dcc254604621d386faf47ec1f85f1f92ad4eb8b845078d70adbcab14a30"
+}

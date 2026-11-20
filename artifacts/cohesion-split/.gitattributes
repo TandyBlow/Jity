@@ -1,0 +1,9 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"blind.json" -text
+"dw-results.json" -text
+"dw-scores.json" -text
+"plan-compare.json" -text
+"plan-results.json" -text
+"results.json" -text
+"scores.json" -text

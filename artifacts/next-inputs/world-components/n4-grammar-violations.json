@@ -1,0 +1,37 @@
+{
+ "cf24": {
+  "base": {
+   "dupDe": [],
+   "valueLeak": []
+  },
+  "422": {
+   "dupDe": [
+    "t21",
+    "t22"
+   ],
+   "valueLeak": []
+  },
+  "431": {
+   "dupDe": [
+    "t21"
+   ],
+   "valueLeak": []
+  }
+ },
+ "final24": {
+  "base": {
+   "dupDe": [],
+   "valueLeak": []
+  },
+  "422": {
+   "dupDe": [],
+   "valueLeak": []
+  },
+  "431": {
+   "dupDe": [
+    "v24"
+   ],
+   "valueLeak": []
+  }
+ }
+}

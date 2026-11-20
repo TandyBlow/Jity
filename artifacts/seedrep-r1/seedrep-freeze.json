@@ -1,0 +1,85 @@
+{
+ "version": "seedrep-r1",
+ "question": "is the lr 1e-4 / 120-step condition stable across training seeds, or was the previous result a lucky draw",
+ "start": {
+  "name": "C",
+  "ckpt": "artifacts/next-runs/three-arm-c/ckpt",
+  "modelSha256": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c",
+  "humanFact": "185/185"
+ },
+ "pools": {
+  "rows": 341,
+  "files": [
+   {
+    "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+   },
+   {
+    "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   {
+    "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  ],
+  "note": "identical to the previous round: no movement repair, no new exemplars"
+ },
+ "config": {
+  "lr": 0.0001,
+  "steps": 120,
+  "batch": 8,
+  "mix": "4,3,1",
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "seeds": [
+  20261103,
+  20261104
+ ],
+ "notDoing": [
+  "no re-run of the four-condition grid",
+  "no new data",
+  "no change to the decode settings",
+  "no seed selection after the fact"
+ ],
+ "record": [
+  "sampling id sequence per seed",
+  "weight hash per seed"
+ ],
+ "evaluation": {
+  "models": [
+   "C",
+   "seed20261103",
+   "seed20261104"
+  ],
+  "sets": [
+   "cf24",
+   "final24",
+   "moved24",
+   "relation",
+   "namepair",
+   "rolepair"
+  ],
+  "device": "one RTX 4090 D, same job",
+  "decode": "greedy, EOS or 20 s, variant none"
+ },
+ "criteria": {
+  "newFactLoss": "0, judged by hand against C, itemised per unit",
+  "added": "at most 4 of 185 with the frozen r3 detector (C itself carries 16)",
+  "syntax": "no new breakage on the three regression sets; C-clean units that become flagged count, C-inherited issues do not",
+  "probes": "each column reported on its own; a role-set gain never offsets a probe loss",
+  "perSeed": "each seed is reported separately, no averaging, no picking the better one",
+  "ifAnyFails": "report the spread and stop; do not promote the better seed"
+ },
+ "syntaxDetectors": [
+  "double 的 inside one clause: 的[^，。！？的]{1,6}的",
+  "the same place or person name twice in one sentence",
+  "a clause that opens with 沿着 or 顺着 and never arrives (no 走到/走进/到了/回到/上到/下到/穿过)"
+ ],
+ "wording": "if both seeds pass, this becomes the optimisation configuration for later experiments, described only as a repeated result on this data set; it is not a quality baseline and the probe syntax losses stay on the record",
+ "declaredBefore": "written before training"
+}

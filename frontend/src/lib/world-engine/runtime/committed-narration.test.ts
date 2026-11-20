@@ -1,10 +1,23 @@
 import { describe, expect, test } from 'vitest';
 import { SHORT_STATE } from './b3-short-samples';
 import { checkFactNarration, projectCommittedNarration, renderCommittedNarration, selectFactNarration,
-  type CommittedNarration, type CommittedRead } from './committed-narration';
+  type CommittedNarration, type CommittedRead, type NarrationFact } from './committed-narration';
 import type { Json, WorldState } from '../types';
 import { projectTaskInput } from './focused-input';
 import { buildTaskPrompt } from './prompts';
+import { alignNarration } from './narration-alignment';
+
+function describeFact(fact: NarrationFact): string {
+  switch (fact.kind) {
+    case 'at': return `${fact.name} / 所在位置 = ${fact.location}`;
+    case 'moved': return `${fact.name} / 位置 = 从 ${fact.from} 到 ${fact.to}`;
+    case 'sanity': return `${fact.name} / 精神值 = ${fact.value}`;
+    case 'sanity_changed': return `${fact.name} / 精神值 = ${fact.from} → ${fact.to}`;
+    case 'task_achieved': return `${fact.name} / 达成任务 = 「${fact.goal}」`;
+    case 'personality_changed': return `${fact.name} / 个性变化 = 「${fact.text}」`;
+    case 'appearance_changed': return `${fact.name} / 外貌变化 = 「${fact.text}」`;
+  }
+}
 
 function reads() {
   const before: CommittedRead = { pointId: 'root', previousPointId: null, version: 0, stateDigest: 'root_digest',
@@ -36,7 +49,57 @@ describe('saved facts, template baseline and bounded polish', () => {
     const wrongValue = structuredClone(after); wrongValue.state.characters.person_c.position.containerId = 'corridor';
     expect(() => projectCommittedNarration(wrongValue, before)).toThrow(/position_delta_disagrees/);
     const unsupported = structuredClone(after); unsupported.entityDeltas.person_c.appearanceChanges = [{ id: 'c', text: '受伤', supersedes: [] }];
-    expect(() => projectCommittedNarration(unsupported, before)).toThrow(/unsupported_committed_delta/);
+    expect(() => projectCommittedNarration(unsupported, before)).toThrow(/appearance_delta_disagrees/);
+  });
+
+  test('the default world opening template passes the full alignment check', () => {
+    const { before } = reads();
+    const packet = projectCommittedNarration(before, null);
+    const text = renderCommittedNarration(packet);
+    expect(text).toBe('林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。');
+    const verdict = alignNarration(packet, text);
+    expect(verdict.ok, JSON.stringify(verdict.violations)).toBe(true);
+    expect(verdict.coverage.every((entry) => entry.expressed)).toBe(true);
+  });
+
+  test('appearance narration requires an allocated change with matching text, source and unchanged history', () => {
+    const { before, after } = reads();
+    const change = { id: 'allocated_smile', text: '面带微笑', supersedes: [] };
+    after.entityDeltas.person_c.appearanceChanges = [change];
+    after.state.characters.person_c.appearanceChanges = [{ ...change, active: true, sourcePointId: after.pointId, sourceSequence: after.version }];
+    const packet = projectCommittedNarration(after, before);
+    const time = { amount: 1, unit: 'second' as const };
+    const factText = renderCommittedNarration(packet);
+    const text = renderCommittedNarration(packet, { time });
+    expect(text).toContain('周宁的外貌变化为「面带微笑」。');
+    expect(checkFactNarration(packet, factText).ok).toBe(true);
+    // 完整模板包（默认世界两名人物精神值同为 10 + 一条外貌变化）必须整体通过
+    const aligned = alignNarration(packet, text, { time });
+    expect(aligned.ok, JSON.stringify(aligned.violations)).toBe(true);
+    expect(aligned.coverage.every((entry) => entry.expressed)).toBe(true);
+    const appearanceFact = packet.facts.find((fact) => fact.kind === 'appearance_changed')!;
+    expect(describeFact(appearanceFact)).toBe('周宁 / 外貌变化 = 「面带微笑」');
+    const swappedAppearance = alignNarration(packet, '林川的外貌变化为「面带微笑」。', { time });
+    expect(swappedAppearance.violations.some((violation) => violation.kind === 'actor_swap')).toBe(true);
+    expect(checkFactNarration(packet, factText.replace('面带微笑', '脸色苍白')).ok).toBe(false);
+    for (const mutate of [
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].text = '脸色苍白'; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourcePointId = 'another_point'; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].sourceSequence = 0; },
+      (read: CommittedRead) => { read.state.characters.person_c.appearanceChanges[0].active = false; },
+      (read: CommittedRead) => { read.entityDeltas.person_c.appearanceChanges!.push(change); },
+    ]) {
+      const bad = structuredClone(after); mutate(bad);
+      expect(() => projectCommittedNarration(bad, before)).toThrow(/appearance_delta_disagrees/);
+    }
+    const unrecorded = structuredClone(after); delete unrecorded.entityDeltas.person_c.appearanceChanges;
+    expect(() => projectCommittedNarration(unrecorded, before)).toThrow(/unrecorded_appearance_change/);
+    const oldChange = { id: 'old', text: '神色平静', supersedes: [], active: true, sourcePointId: 'root', sourceSequence: 0 };
+    before.state.characters.person_c.appearanceChanges = [oldChange];
+    after.state.characters.person_c.appearanceChanges.unshift(structuredClone(oldChange));
+    expect(() => projectCommittedNarration(after, before)).not.toThrow();
+    after.state.characters.person_c.appearanceChanges[0].active = false;
+    expect(() => projectCommittedNarration(after, before)).toThrow(/unrecorded_appearance_change/);
   });
 
   test('numeric facts require the saved task and allocated personality cause', () => {
@@ -51,11 +114,58 @@ describe('saved facts, template baseline and bounded polish', () => {
     after.state.characters.person_c.personalityChanges = [{ ...change, sourcePointId: 'point_1', sourceSequence: 1, active: true }];
     after.entityDeltas = { person_c: { entityId: 'person_c', tasksAchieved: ['task_pressure'], personalityChanges: [change], sanitySet: 8 } };
     const packet = projectCommittedNarration(after, before);
-    expect(renderCommittedNarration(packet)).toContain('周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。');
-    const missingTask = structuredClone(after); delete missingTask.entityDeltas.person_c.tasksAchieved;
-    expect(() => projectCommittedNarration(missingTask, before)).toThrow(/complete_numeric_cause/);
+    // 事实顺序按六阶段：任务（阶段 3）→ 个性（阶段 5）→ 理智（阶段 6）。
+    expect(renderCommittedNarration(packet)).toContain('周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。周宁的精神值从10变为8。');
+    // 因果链逐级收紧，不再要求三件套同有同无（§6.3）：个性变化必须有本批
+    // 任务达成，理智值必须有个性变化；任务达成可以单独成立。
+    const taskOnly = structuredClone(after);
+    taskOnly.state = structuredClone(before.state);
+    taskOnly.state.characters.person_c.tasks.task_pressure.status = 'achieved';
+    taskOnly.entityDeltas = { person_c: { entityId: 'person_c', tasksAchieved: ['task_pressure'] } };
+    const taskPacket = projectCommittedNarration(taskOnly, before);
+    expect(taskPacket.facts.filter((fact) => fact.kind === 'task_achieved')).toHaveLength(1);
+    expect(taskPacket.facts.find((fact) => fact.id === 'person_c:sanity')).toMatchObject({ kind: 'sanity', value: 10 });
+    expect(renderCommittedNarration(taskPacket)).toContain('周宁完成了任务「完成压力试验」。');
+    const personalityWithoutTask = structuredClone(after);
+    personalityWithoutTask.state.characters.person_c.tasks.task_pressure.status = 'pending';
+    personalityWithoutTask.entityDeltas.person_c = { entityId: 'person_c', personalityChanges: [change], sanitySet: 8 };
+    expect(() => projectCommittedNarration(personalityWithoutTask, before)).toThrow(/personality_requires_task/);
+    const sanityWithoutPersonality = structuredClone(after);
+    sanityWithoutPersonality.entityDeltas.person_c = { entityId: 'person_c', tasksAchieved: ['task_pressure'], sanitySet: 8 };
+    expect(() => projectCommittedNarration(sanityWithoutPersonality, before)).toThrow(/sanity_requires_personality/);
+    // 个性变化但理智重算后数值不变：Δ 可省略 sanitySet（§5.2 允许同值省略）。
+    const personalityWithoutSanity = structuredClone(after);
+    delete personalityWithoutSanity.entityDeltas.person_c.sanitySet;
+    personalityWithoutSanity.state.characters.person_c.sanity = 10;
+    expect(projectCommittedNarration(personalityWithoutSanity, before).facts
+      .filter((fact) => fact.kind === 'personality_changed')).toHaveLength(1);
+    // 理智值真的变了却不报 delta：仍按未登记变化拒绝。
+    const unrecordedSanity = structuredClone(personalityWithoutSanity);
+    unrecordedSanity.state.characters.person_c.sanity = 8;
+    expect(() => projectCommittedNarration(unrecordedSanity, before)).toThrow(/unrecorded_numeric_change/);
     const forgedCause = structuredClone(after); forgedCause.state.characters.person_c.personalityChanges[0].sourcePointId = 'other_point';
     expect(() => projectCommittedNarration(forgedCause, before)).toThrow(/personality_cause/);
+    // §6.3：任何人物的任务达成都可能影响任何人物——A 达成任务、B 个性+理智
+    // 是合法批次；个性与理智仍按 B 自己配对。
+    const crossEntity = structuredClone(after);
+    // 断开 live 状态与 initial 模板的共享引用（SHORT_STATE 里两者同一对象），
+    // 否则改 live 任务会被世界变更检查当成 initial 变化。
+    crossEntity.state.characters = structuredClone(crossEntity.state.characters);
+    crossEntity.state.characters.person_a.tasks.task_watch.status = 'achieved';
+    crossEntity.state.characters.person_c.tasks.task_pressure.status = 'pending';
+    crossEntity.entityDeltas = {
+      person_a: { entityId: 'person_a', tasksAchieved: ['task_watch'] },
+      person_c: { entityId: 'person_c', personalityChanges: [change], sanitySet: 8 },
+    };
+    const crossPacket = projectCommittedNarration(crossEntity, before);
+    expect(crossPacket.facts.filter((fact) => fact.kind === 'task_achieved')).toHaveLength(1);
+    expect(crossPacket.facts.filter((fact) => fact.kind === 'personality_changed')).toHaveLength(1);
+    expect(crossPacket.facts.find((fact) => fact.id === 'person_c:sanity')).toMatchObject({ kind: 'sanity_changed', from: 10, to: 8 });
+    // 理智变化必须属于有个性变化的那个人物。
+    const mispairedSanity = structuredClone(crossEntity);
+    mispairedSanity.state.characters.person_a.sanity = 9;
+    mispairedSanity.entityDeltas.person_a = { entityId: 'person_a', tasksAchieved: ['task_watch'], sanitySet: 9 };
+    expect(() => projectCommittedNarration(mispairedSanity, before)).toThrow(/sanity_requires_personality/);
   });
 
   test('wrong actors, locations, numbers, extra events, omissions and repeats fall back', () => {

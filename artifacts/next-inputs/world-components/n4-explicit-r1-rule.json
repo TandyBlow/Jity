@@ -1,0 +1,29 @@
+{
+ "version": "explicit-r1",
+ "question": "does stating the direction inside the fact value reduce role errors, and does it cost anything",
+ "variants": {
+  "original": "the frozen rolepair value: relation without a location, name absent",
+  "explicit": "the same fact with the direction stated: which object sits at which reference, or which part belongs to which whole"
+ },
+ "sourceOfDirection": "taken from the source fact (the name is the location / the whole), never from a model output",
+ "constraints": "state kept, no action or object added, relation word kept",
+ "judging": {
+  "fields": [
+   "direction",
+   "name",
+   "other-or-part",
+   "state",
+   "relation",
+   "syntax"
+  ],
+  "directionRule": "inverted when the text has 名称+关系着 (+的) or 名称+的+另一方; ok when the name sits in a locative frame with the other object as subject; missing when the name is absent. For possessor members direction is part-whole: ok when the part survives, replaced when the name takes its slot",
+  "syntax": "syntax-frame-r4"
+ },
+ "declaredDecision": {
+  "inputLayerWorthwhile": "the explicit variant must cut direction errors to at most 1 of 6 location members and keep name, other object and state intact (no more losses than the original variant), with syntax not worse",
+  "nearAnswerCaveat": "the explicit value already contains the full relation and both nouns, so a pass shows the model can reproduce a well-formed statement from the input. It does not show it can infer the direction. If the improvement only appears at this level of completeness, that is the capability boundary and must be reported as such",
+  "noSingleAttribution": "length and wording change with the direction statement, so no component may be credited on its own"
+ },
+ "lengthNote": "explicit values run 11-15 characters against 5-9 for the originals; both are recorded per probe",
+ "declaredBefore": "written before any model ran on these probes"
+}

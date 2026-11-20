@@ -1,0 +1,133 @@
+{
+ "pack": "cf24-r1-v2-batch-15",
+ "instruction": "judge each output against its fact and scene only; the requirement clause and model-invisible numbers are withheld on purpose",
+ "judgingNotes": [
+  "只依据 fact 与 scene 判定，不使用记忆中的旧结论",
+  "输出新增 fact/scene 未给出的动作、状态、人物、物品、地点：失败（新增）",
+  "把 fact 换个说法再说一遍：失败（复述）",
+  "输入没有给出的数值：不作为“数值正确”的依据；输出出现具体数值按新增处理",
+  "无法判断记 U；U 不算通过"
+ ],
+ "items": [
+  {
+   "code": "c0141",
+   "fact": {
+    "factId": "f3",
+    "kind": "outcome",
+    "name": "沈砚",
+    "entityGroup": "characters",
+    "resultText": "把系泊绳拖回岸上"
+   },
+   "scene": "短句任务。\n地点=潮渡>浅滩\n地点可见=系泊绳、渡船、缆绳、退潮后的泥滩、系泊绳、冷光、木桩、缆绳、船灯、水面、浅滩\n场景=退潮；雾；天光\n视角=沈砚；第三人称\n事实=沈砚｜结果｜把系泊绳拖回岸上",
+   "output": "沈砚把系泊绳拖回岸上。"
+  },
+  {
+   "code": "c0142",
+   "fact": {
+    "factId": "f0",
+    "kind": "appearance_changed",
+    "name": "纸灯笼",
+    "entityGroup": "items",
+    "text": "被风扯破一角"
+   },
+   "scene": "短句任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=纸灯笼｜外貌变化｜被风扯破一角",
+   "output": "纸灯笼被风扯破一角。"
+  },
+  {
+   "code": "c0143",
+   "fact": {
+    "factId": "f2",
+    "kind": "appearance_changed",
+    "name": "顾行舟",
+    "entityGroup": "characters",
+    "text": "外袍下摆被雾水打湿"
+   },
+   "scene": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、木桩、缆绳、船灯、水面、木桩、缆绳、船灯、水面、浅滩\n场景=傍晚；雾；船灯\n视角=顾行舟；第三人称\n事实=顾行舟｜外貌变化｜外袍下摆被雾水打湿",
+   "output": "顾行舟的外袍下摆被雾水打湿。"
+  },
+  {
+   "code": "c0144",
+   "fact": {
+    "factId": "f1",
+    "kind": "appearance_changed",
+    "name": "排水沟",
+    "entityGroup": "items",
+    "text": "里面积了泥"
+   },
+   "scene": "短句任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=排水沟｜外貌变化｜里面积了泥",
+   "output": "排水沟的里面积了泥。"
+  },
+  {
+   "code": "c0145",
+   "fact": {
+    "factId": "f3",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把抹布搭回梯脚"
+   },
+   "scene": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、抹布、擦铜油、灯芯、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n事实=叶知微｜结果｜把抹布搭回梯脚",
+   "output": "叶知微把抹布搭回梯脚。"
+  },
+  {
+   "code": "c0146",
+   "fact": {
+    "factId": "f0",
+    "kind": "outcome",
+    "name": "叶知微",
+    "entityGroup": "characters",
+    "resultText": "把灯罩擦得透亮"
+   },
+   "scene": "短句任务。\n地点=旧灯塔>塔顶\n地点可见=铜灯罩、抹布、擦铜油、灯芯、铜框信号灯、玻璃罩、火苗、海风直吹、石阶、旋梯、塔顶、铜灯罩、铁链\n场景=夜；夜雾，海风；铜灯已点亮\n视角=叶知微；第三人称\n事实=叶知微｜结果｜把灯罩擦得透亮",
+   "output": "叶知微把灯罩擦得透亮。"
+  },
+  {
+   "code": "c0147",
+   "fact": {
+    "factId": "f1",
+    "kind": "outcome",
+    "name": "顾行舟",
+    "entityGroup": "characters",
+    "resultText": "把渡船推离栈桥"
+   },
+   "scene": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、木桩、缆绳、船灯、水面、木桩、缆绳、船灯、水面、浅滩\n场景=傍晚；雾；船灯\n视角=顾行舟；第三人称\n事实=顾行舟｜结果｜把渡船推离栈桥",
+   "output": "顾行舟把渡船推离栈桥。"
+  },
+  {
+   "code": "c0148",
+   "fact": {
+    "factId": "f0",
+    "kind": "appearance_changed",
+    "name": "纸灯笼",
+    "entityGroup": "items",
+    "text": "被风扯破一角"
+   },
+   "scene": "短句任务。\n地点=潮生巷\n地点可见=鱼筐、石板、纸灯笼、排水沟、墙根、水洼\n场景=雨后；雨停；纸灯笼\n视角=沈砚；第三人称\n事实=纸灯笼｜外貌变化｜被风扯破一角",
+   "output": "纸灯笼被风扯破一角。"
+  },
+  {
+   "code": "c0149",
+   "fact": {
+    "factId": "f0",
+    "kind": "outcome",
+    "name": "顾行舟",
+    "entityGroup": "characters",
+    "resultText": "把缆绳在木桩上绕了三圈"
+   },
+   "scene": "短句任务。\n地点=潮渡>栈桥\n地点可见=缆绳、渡船、船灯、木桩、缆绳、船灯、水面、木桩、缆绳、船灯、水面、浅滩\n场景=傍晚；雾；船灯\n视角=顾行舟；第三人称\n事实=顾行舟｜结果｜把缆绳在木桩上绕了三圈",
+   "output": "顾行舟把缆绳在木桩上绕了三圈。"
+  },
+  {
+   "code": "c0150",
+   "fact": {
+    "factId": "f3",
+    "kind": "appearance_changed",
+    "name": "顾行舟",
+    "entityGroup": "characters",
+    "text": "外袍下摆沾了泥水"
+   },
+   "scene": "短句任务。\n地点=早市\n地点可见=银鳞鱼、鱼筐、缆绳、帆布棚、鱼筐、案板、石板、银鳞鱼、白汽\n场景=清晨；薄雾；棚下散光\n视角=阿棠；第三人称\n事实=顾行舟｜外貌变化｜外袍下摆沾了泥水",
+   "output": "顾行舟的外袍下摆沾了泥水。"
+  }
+ ]
+}

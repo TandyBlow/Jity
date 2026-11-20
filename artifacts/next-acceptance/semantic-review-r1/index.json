@@ -1,0 +1,88 @@
+{
+ "purpose": "blind semantic re-read of the 36 role-contrast outputs; the frozen scoring is kept unchanged",
+ "blind": {
+  "seed": 20261106,
+  "armLabelsRemoved": true,
+  "rows": 36,
+  "limit": "only the arm is blinded; the pair is still inferable from the fact value"
+ },
+ "fields": "name binding, other-object binding, state binding, relation binding; a row may carry several problems",
+ "counts": {
+  "moved": {
+   "pass": 5,
+   "roleErrors": 7,
+   "nameMissing": 0,
+   "otherMissing": 1,
+   "syntax": 0
+  },
+  "ctl": {
+   "pass": 6,
+   "roleErrors": 1,
+   "nameMissing": 4,
+   "otherMissing": 0,
+   "syntax": 1
+  },
+  "mix": {
+   "pass": 9,
+   "roleErrors": 1,
+   "nameMissing": 0,
+   "otherMissing": 2,
+   "syntax": 1
+  }
+ },
+ "totals": {
+  "roleErrors": 9,
+  "nameMissing": 4,
+  "otherMissing": 3,
+  "of": 36
+ },
+ "change": {
+  "frozenPass": {
+   "moved": "11/12",
+   "ctl": "7/12",
+   "mix": "9/12"
+  },
+  "semanticPass": {
+   "moved": "5/12",
+   "ctl": "6/12",
+   "mix": "9/12"
+  },
+  "why": "the frozen rule only flagged 名称+的+另一方, so the six 名称+关系着+的 rows of the start arm passed although they invert the direction"
+ },
+ "mainCause": "not noun omission: role errors 9 against 7 omissions overall, and the dominant class differs by arm (moved role direction, ctl missing name, mix missing object)",
+ "nextInterventionIfAny": {
+  "mustDifferFromMixed": "the mixed exemplars already carry both nouns in every target, so more same-structure exemplars are not a new intervention",
+  "options": [
+   "direction contrast on the same name and relation (干纸压在潮汐簿上 vs 潮汐簿压在干纸上)",
+   "state the direction inside the input value and have the model reproduce it"
+  ],
+  "notExecuted": true
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/semantic-review-r1/semantic-review-sheet.json",
+   "bytes": 10747,
+   "sha256": "a1cb26dced241020cf7477a751b714cc65b69049bedbbc24366d303e3da0b5cb"
+  },
+  {
+   "path": "artifacts/next-acceptance/semantic-review-r1/semantic-review-key.json",
+   "bytes": 1863,
+   "sha256": "ff499c60822c320040b15ea233a90889c79c192d4b5efd58e3e4e946904cebb6"
+  },
+  {
+   "path": "artifacts/next-acceptance/semantic-review-r1/semantic-review.json",
+   "bytes": 12839,
+   "sha256": "03aaf412ff70d7baa34f16373e6d9f194fd045d21f3a19cbbda3c47da49ab37c"
+  },
+  {
+   "path": "artifacts/next-acceptance/semantic-review-r1/rolepair-judged.json",
+   "bytes": 14808,
+   "sha256": "51817d4e8062b0fa314fbb53e614149fde4e5af078147119fc2ea2254853499b"
+  },
+  {
+   "path": "artifacts/next-acceptance/semantic-review-r1/rolepair-summary.json",
+   "bytes": 809,
+   "sha256": "09f6752138bbeb9ef6803f982d546672e945fc3216c6f42aa4439889610019dc"
+  }
+ ]
+}

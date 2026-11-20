@@ -1,0 +1,461 @@
+{
+ "protocol": "attention-selection-v1",
+ "status": "design-only; no training; no selection model; no u240 run",
+ "conditionsOrigin": "all attention text, attentionTargets token lists and prior narration values are synthetic experimental conditions; none is a real player record. The target lists are given inputs; extracting them from raw player text is a separate task.",
+ "rule": {
+  "name": "R-attention-v1",
+  "fixedBeforeSeeingResults": true,
+  "steps": [
+   "always select every authorization=must fact",
+   "remove authorization=forbidden and authorization=uncertain from the optional pool",
+   "remove optional facts listed in alreadyNarratedFactIds",
+   "select optional facts for which any experimental attentionTargets token appears in name/text/goal/from/to/at/scope; attention targets are given conditions, not parsed by this rule",
+   "if no target matches, select no optional fact; never fall back to select-all",
+   "preserve package fact order"
+  ],
+  "notUsed": [
+   "model",
+   "u240",
+   "organization module",
+   "editor change"
+  ]
+ },
+ "groups": [
+  {
+   "groupId": "G1",
+   "packageId": "n2-09",
+   "source": "existing N2 development package (constructed fact bundle, not a real player record)",
+   "viewpoint": {
+    "type": "global",
+    "rule": "all listed facts are authorized; no restricted viewpoint"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "moved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": "石阶码头",
+     "to": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "must"
+    },
+    {
+     "factId": "f2",
+     "kind": "positioned_at",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "at": "旧钟铺",
+     "authorization": "must"
+    },
+    {
+     "factId": "f3",
+     "kind": "personality_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "text": "变得谨慎",
+     "at": "旧钟铺",
+     "authorization": "optional"
+    },
+    {
+     "factId": "f4",
+     "kind": "personality_changed",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "text": "变得急躁",
+     "at": "旧钟铺",
+     "authorization": "optional"
+    },
+    {
+     "factId": "f5",
+     "kind": "time",
+     "amount": 9,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional"
+    },
+    {
+     "factId": "f6",
+     "kind": "no_change",
+     "scope": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "optional"
+    }
+   ],
+   "conditions": [
+    {
+     "conditionId": "G1-A",
+     "attention": "裴行舟现在是什么性子？",
+     "priorNarration": "沈拾在旧钟铺里变得急躁。",
+     "alreadyNarratedFactIds": [
+      "f4"
+     ],
+     "manualSelectedFactIds": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "ruleSelectedFactIds": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "manualReasons": {
+      "f1": "must：裴行舟的移动",
+      "f2": "must：沈拾在旧钟铺的位置",
+      "f3": "当前关注裴行舟的性子，保留",
+      "f4": "上一段已述，省略",
+      "f5": "只是时间推进，不回答关注，省略",
+      "f6": "无变化复述，省略"
+     },
+     "checks": {
+      "mustAll": true,
+      "forbiddenHits": [],
+      "uncertainHits": [],
+      "priorRepeats": [],
+      "selectAll": false,
+      "manualEqualsRule": true
+     },
+     "attentionTargets": [
+      "裴行舟"
+     ]
+    },
+    {
+     "conditionId": "G1-B",
+     "attention": "沈拾现在是什么性子？",
+     "priorNarration": "裴行舟在旧钟铺里变得谨慎。",
+     "alreadyNarratedFactIds": [
+      "f3"
+     ],
+     "manualSelectedFactIds": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "ruleSelectedFactIds": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "manualReasons": {
+      "f1": "must：裴行舟的移动",
+      "f2": "must：沈拾在旧钟铺的位置",
+      "f3": "上一段已述，省略",
+      "f4": "当前关注沈拾的性子，保留",
+      "f5": "时间推进，省略",
+      "f6": "无变化复述，省略"
+     },
+     "checks": {
+      "mustAll": true,
+      "forbiddenHits": [],
+      "uncertainHits": [],
+      "priorRepeats": [],
+      "selectAll": false,
+      "manualEqualsRule": true
+     },
+     "attentionTargets": [
+      "沈拾"
+     ]
+    }
+   ]
+  },
+  {
+   "groupId": "G2",
+   "packageId": "n2-13",
+   "source": "existing N2 development package (constructed fact bundle, not a real player record)",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "at": "西栅桥",
+    "rule": "你只知道自己在西栅桥能看到的，以及自己的行动与状态"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "goal": "修西栅桥的踏板",
+     "at": "西栅桥",
+     "authorization": "must"
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": 12,
+     "to": 10,
+     "at": "西栅桥",
+     "authorization": "must"
+    },
+    {
+     "factId": "f3",
+     "kind": "task_achieved",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "goal": "补好瓦窑的顶棚",
+     "at": "西栅桥",
+     "authorization": "optional"
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "loc_404",
+     "name": "西栅桥",
+     "text": "柜台上的铜锁生了锈",
+     "at": "西栅桥",
+     "authorization": "optional"
+    },
+    {
+     "factId": "f5",
+     "kind": "task_achieved",
+     "entityId": "char_405",
+     "name": "白蘅",
+     "goal": "把账簿送回半窗书舍",
+     "at": "半窗书舍",
+     "authorization": "forbidden"
+    },
+    {
+     "factId": "f6",
+     "kind": "time",
+     "amount": 12,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional"
+    }
+   ],
+   "conditions": [
+    {
+     "conditionId": "G2-A",
+     "attention": "沈拾刚才在忙什么？",
+     "priorNarration": "西栅桥的柜台铜锁生了锈。",
+     "alreadyNarratedFactIds": [
+      "f4"
+     ],
+     "manualSelectedFactIds": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "ruleSelectedFactIds": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "manualReasons": {
+      "f1": "must：裴行舟完成修踏板",
+      "f2": "must：裴行舟理智变化",
+      "f3": "当前关注沈拾在忙什么，保留同地他人任务",
+      "f4": "上一段已述铜锁，省略",
+      "f5": "他处任务，视角不可知，禁止入池",
+      "f6": "时间推进，省略"
+     },
+     "checks": {
+      "mustAll": true,
+      "forbiddenHits": [],
+      "uncertainHits": [],
+      "priorRepeats": [],
+      "selectAll": false,
+      "manualEqualsRule": true
+     },
+     "attentionTargets": [
+      "沈拾"
+     ]
+    },
+    {
+     "conditionId": "G2-B",
+     "attention": "西栅桥的铜锁怎么了？",
+     "priorNarration": "沈拾补好了瓦窑的顶棚。",
+     "alreadyNarratedFactIds": [
+      "f3"
+     ],
+     "manualSelectedFactIds": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "ruleSelectedFactIds": [
+      "f1",
+      "f2",
+      "f4"
+     ],
+     "manualReasons": {
+      "f1": "must：裴行舟完成修踏板",
+      "f2": "must：裴行舟理智变化",
+      "f3": "上一段已述沈拾任务，省略",
+      "f4": "当前关注西栅桥的铜锁，保留本地外观",
+      "f5": "他处任务，视角不可知，禁止入池",
+      "f6": "时间推进，省略"
+     },
+     "checks": {
+      "mustAll": true,
+      "forbiddenHits": [],
+      "uncertainHits": [],
+      "priorRepeats": [],
+      "selectAll": false,
+      "manualEqualsRule": true
+     },
+     "attentionTargets": [
+      "西栅桥",
+      "铜锁"
+     ]
+    }
+   ]
+  },
+  {
+   "groupId": "G3",
+   "packageId": "train-r1",
+   "source": "existing real pipeline turn train-r1 (world_1, artifact/world-provenance/pairs; N2 review)",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_shen",
+    "name": "沈砚",
+    "at": "loc_alley",
+    "rule": "只保留视角本人可确认的事实；同地他人外观没有观察依据，标记可见性未定，不进选择池"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "袖口沾了雨",
+     "at": "loc_alley",
+     "authorization": "optional"
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "指节发白",
+     "at": "loc_alley",
+     "authorization": "optional"
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "text": "斗篷下摆湿了一片",
+     "at": "loc_alley",
+     "authorization": "uncertain"
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "鞋底沾了泥",
+     "at": "loc_alley",
+     "authorization": "uncertain"
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "袖口湿到肘部",
+     "at": "loc_alley",
+     "authorization": "uncertain"
+    }
+   ],
+   "conditions": [
+    {
+     "conditionId": "G3-A",
+     "attention": "我刚才袖口是不是湿了？",
+     "priorNarration": "沈砚的指节发白。",
+     "alreadyNarratedFactIds": [
+      "f1"
+     ],
+     "manualSelectedFactIds": [
+      "f0"
+     ],
+     "ruleSelectedFactIds": [
+      "f0"
+     ],
+     "manualReasons": {
+      "f0": "当前关注自己的袖口，保留本人外观",
+      "f1": "上一段已述，省略",
+      "f2": "同地他人外观，没有观察依据，可见性未定，不入池",
+      "f3": "同地他人外观，可见性未定，不入池",
+      "f4": "同地他人外观，可见性未定，不入池"
+     },
+     "checks": {
+      "mustAll": true,
+      "forbiddenHits": [],
+      "uncertainHits": [],
+      "priorRepeats": [],
+      "selectAll": false,
+      "manualEqualsRule": true
+     },
+     "attentionTargets": [
+      "袖口"
+     ]
+    },
+    {
+     "conditionId": "G3-B",
+     "attention": "我刚才指节怎么了？",
+     "priorNarration": "沈砚的袖口沾了雨。",
+     "alreadyNarratedFactIds": [
+      "f0"
+     ],
+     "manualSelectedFactIds": [
+      "f1"
+     ],
+     "ruleSelectedFactIds": [
+      "f1"
+     ],
+     "manualReasons": {
+      "f0": "上一段已述，省略",
+      "f1": "当前关注自己的指节，保留本人外观",
+      "f2": "同地他人外观，没有观察依据，可见性未定，不入池",
+      "f3": "同地他人外观，可见性未定，不入池",
+      "f4": "同地他人外观，可见性未定，不入池"
+     },
+     "checks": {
+      "mustAll": true,
+      "forbiddenHits": [],
+      "uncertainHits": [],
+      "priorRepeats": [],
+      "selectAll": false,
+      "manualEqualsRule": true
+     },
+     "attentionTargets": [
+      "指节"
+     ]
+    }
+   ]
+  }
+ ],
+ "gapSummary": {
+  "groups": 3,
+  "conditions": 6,
+  "manual_equals_rule": 6,
+  "rule_outside_gain": 0,
+  "note": "In these six designed items the fixed rule reproduces the manual selection; this is not evidence that a model is needed, and not evidence that N2 has no responsibility."
+ },
+ "checks": {
+  "allMustRetained": true,
+  "noForbidden": true,
+  "noUncertain": true,
+  "noPriorRepeat": true,
+  "neverSelectAll": true
+ },
+ "handoff": {
+  "output": "selectedFactIds",
+  "downstream": "frozen u240 one fact at a time, then existing editor layer",
+  "organizationModule": "not included",
+  "executedThisRound": false,
+  "note": "The six selections are handoff inputs; u240/editor were not run or changed in this design round."
+ },
+ "limitations": [
+  "G1/G2 facts come from constructed N2 development packages; G3 comes from a real pipeline turn. This is not a real-player session.",
+  "The rule uses direct target-token matching, not synonym or indirect reference. The attentionTargets lists are experimental inputs; this design does not test parsing raw attention into those tokens.",
+  "The rule baseline is strong on authorization, must, prior dedupe and direct attention matching; it is not a general semantic selector.",
+  "No model was run; no training or comparison protocol is frozen."
+ ],
+ "conclusion": "No rule-outside gain in these six items; do not train a selection model from this evidence. Selection responsibility remains unresolved, not disproved."
+}

@@ -1,0 +1,537 @@
+{
+ "n": 1351,
+ "states": {
+  "undetermined": 991,
+  "pass": 257,
+  "mismatch": 103
+ },
+ "passShare": 0.1902,
+ "undeterminedShare": 0.7335,
+ "wrongPassed": [],
+ "goodRejected": [
+  {
+   "arm": "C",
+   "unitId": "t09:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "C",
+   "unitId": "t12:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "阿棠从早市过来,抱着一叠鱼筐进了潮生巷。"
+  },
+  {
+   "arm": "C",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "C",
+   "unitId": "t16:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在潮生巷站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "C",
+   "unitId": "v14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从早市出来,在雾堤的钟架下站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m02:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "沈砚从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m05:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在早市的鱼摊前站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m12:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "阿棠从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "阿棠从潮汐档案馆出来,在早市的鱼摊前站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m16:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "阿棠从旧灯塔下来,在早市的鱼摊前站住。"
+  },
+  {
+   "arm": "C",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "v14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m05:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "阿棠从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m17:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m19:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "韩渡从雾堤上来,扶着铁链走到旧灯塔脚下。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261102",
+   "unitId": "m21:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "韩渡从雾堤上来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "t09:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "t12:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "阿棠从早市过来,抱着一叠鱼筐进了潮生巷。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m02:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "沈砚从早市过来,抱着一叠木桩走到潮渡的栈桥边。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m09:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "叶知微从潮渡上来,蹲到雾堤的钟架下。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m11:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "叶知微从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m12:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "阿棠从早市过来,抱着一叠木桩进了潮渡。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m17:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m19:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从雾堤上来,蹲到旧灯塔的钟楼下。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261103",
+   "unitId": "m24:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "t09:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "v14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m02:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市过来,扶着木桩走到潮渡的栈桥边。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m09:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "叶知微从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m19:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "韩渡从雾堤上来,扶着铁链走到旧灯塔脚下。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "ce-20261104",
+   "unitId": "m24:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "v14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m05:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "沈砚从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m14:f0",
+   "why": "the arrival holds but the clause adds 站住",
+   "text": "阿棠从潮汐档案馆出来,在早市的摊棚外站住。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m17:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m19:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "韩渡从雾堤上来,扶着铁链走到旧灯塔脚下。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "mg-20261102",
+   "unitId": "m21:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "韩渡从雾堤上来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "t09:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "t12:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "阿棠从早市过来,抱着一叠鱼筐进了潮生巷。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "沈砚从早市上来,蹲到雾堤的钟架下。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m02:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "沈砚从早市过来,抱着一叠木桩走到潮渡的栈桥边。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m09:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "叶知微从潮渡上来,蹲到雾堤的钟架下。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m11:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "叶知微从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m12:f0",
+   "why": "the arrival holds but the clause adds 抱着/一叠",
+   "text": "阿棠从早市过来,抱着一叠木桩进了潮渡。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m17:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m19:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从雾堤上来,蹲到旧灯塔的钟楼下。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "mg-20261103",
+   "unitId": "m24:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "t09:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "t13:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "叶知微从早市过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "v01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "v18:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m01:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m02:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "沈砚从早市过来,扶着木桩走到潮渡的栈桥边。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m09:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "叶知微从潮渡上来,扶着铁链走到雾堤的钟架旁。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m17:f0",
+   "why": "no arrival: the destination is only named, never reached",
+   "text": "韩渡从潮渡过来,推开档案馆的门。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m19:f0",
+   "why": "the arrival holds but the clause adds 扶着",
+   "text": "韩渡从雾堤上来,扶着铁链走到旧灯塔脚下。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m20:f0",
+   "why": "the arrival holds but the clause adds 蹲到",
+   "text": "韩渡从早市过来,蹲到潮生巷。"
+  },
+  {
+   "arm": "mg-20261104",
+   "unitId": "m24:f0",
+   "why": "the arrival holds but the clause adds 船头/抵住",
+   "text": "顾行舟从早市过来,船头抵住潮渡的栈桥。"
+  }
+ ],
+ "causeCount": {
+  "no arrival": 17,
+  "arrival holds but adds 抱着/一叠": 7,
+  "arrival holds but adds 站住": 13,
+  "arrival holds but adds 扶着": 27,
+  "arrival holds but adds 船头/抵住": 10,
+  "arrival holds but adds 蹲到": 12
+ }
+}

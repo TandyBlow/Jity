@@ -1,0 +1,302 @@
+{
+ "purpose": "read-only diagnostic of the historical human-plan group arm; no training, no generation",
+ "sources": {
+  "plan": "artifacts/world-components/n4-group-plan-r1.json",
+  "review": "artifacts/world-components/n4-group-arm-review-r1.json",
+  "single": "artifacts/world-components/n4-arm-fact-r2.json",
+  "targetAudit": "artifacts/world-components/n4-group-target-audit-r1.json"
+ },
+ "contract": {
+  "formal": "train/dev/holdout use the same units and pack_group; training uses input+target, eval uses input only; non-empty visible in all 157 formal group inputs",
+  "cf24": "60/60 cf24 group inputs have an empty visible block; fact labels use 外观 (30), which is absent from train (外貌 27); cf24 is not a training-contract eval",
+  "order": "pack_group preserves fact-block order; formal test uses the same u.input; no separate eval serializer"
+ },
+ "coverage": {
+  "formal-train": {
+   "units": 132,
+   "sizes": {
+    "3": 4,
+    "1": 78,
+    "2": 50
+   },
+   "multi": 54,
+   "targetSource": {
+    "paragraph": 70,
+    "verbalizer": 48,
+    "merged-new": 14
+   },
+   "visible_empty": 0,
+   "labels": {
+    "移动": 79,
+    "结果": 43,
+    "理智": 17,
+    "外貌": 27,
+    "无变化": 12,
+    "行为倾向": 12
+   }
+  },
+  "formal-dev": {
+   "units": 10,
+   "sizes": {
+    "1": 6,
+    "2": 4
+   },
+   "multi": 4,
+   "targetSource": {
+    "verbalizer": 3,
+    "merged-new": 1,
+    "paragraph": 6
+   },
+   "visible_empty": 0,
+   "labels": {
+    "移动": 6,
+    "行为倾向": 1,
+    "无变化": 1,
+    "结果": 3,
+    "理智": 1,
+    "外貌": 2
+   }
+  },
+  "formal-holdout": {
+   "units": 15,
+   "sizes": {
+    "1": 9,
+    "2": 6
+   },
+   "multi": 6,
+   "targetSource": {
+    "verbalizer": 5,
+    "merged-new": 1,
+    "paragraph": 9
+   },
+   "visible_empty": 0,
+   "labels": {
+    "移动": 9,
+    "行为倾向": 1,
+    "无变化": 1,
+    "结果": 5,
+    "理智": 2,
+    "外貌": 3
+   }
+  },
+  "cf24": {
+   "units": 60,
+   "sizes": {
+    "3": 11,
+    "1": 48,
+    "4": 1
+   },
+   "multi": 12,
+   "targetSource": "none",
+   "visible_empty": 60,
+   "labels": {
+    "结果": 43,
+    "外观": 30,
+    "移动": 10,
+    "理智": 2
+   }
+  },
+  "targetAudit": {
+   "flaggedCandidates": 67,
+   "lowCoverageGroups": 33,
+   "lowBySplit": {
+    "formal-train": 31,
+    "formal-holdout": 2
+   },
+   "lowByFacts": {
+    "3": 2,
+    "2": 24,
+    "1": 7
+   },
+   "lowByTargetSource": {
+    "paragraph": 19,
+    "merged-new": 10,
+    "verbalizer": 4
+   }
+  }
+ },
+ "pairedTest": {
+  "sources": 12,
+  "groupFacts": "18/21",
+  "singleFacts": "21/21",
+  "groupErrors": [
+   "n4n-64 f0 C",
+   "n4n-65 f1 O",
+   "n4n-74 f1 A"
+  ],
+  "groupRepeatSources": 1,
+  "singleRepeatSources": 0,
+  "groupClean": "9/12",
+  "singleClean": "9/12 (existing aggregate; 3 sources with unsupported additions, per-source list not stored)",
+  "rows": [
+   {
+    "sourceId": "n4n-109",
+    "facts": 3,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "S",
+     "f2": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡从潮渡上来,蹲下去把手拢在钟架上;他站了一会儿,他才站起来。沈砚从潮渡上来,先开口问韩渡,钟绳还在等着钟架上。",
+    "singleText": "韩渡从潮渡上来,蹲到雾堤的钟架下。沈砚从潮渡上来,走进雾堤。沈砚本来想把话咽回去,这次却先开了口。"
+   },
+   {
+    "sourceId": "n4n-120",
+    "facts": 1,
+    "groupVerdicts": {
+     "f0": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "雨丝斜着落进潮生巷,沈砚沿着墙根慢慢走,鞋底在水洼里慢慢松开。墙根的水洼里没有积水,他听见巷子的气声。",
+    "singleText": "他等了一会儿,场景里没有新的变化。"
+   },
+   {
+    "sourceId": "n4n-40",
+    "facts": 1,
+    "groupVerdicts": {
+     "f0": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": true,
+    "singleRepeat": false,
+    "groupText": "档案馆的天窗漏着雨,沈砚从潮生巷过来,在长桌前坐着。铜灯的光落在纸页上,他听见天窗的雨声。铜灯的光落在纸页上,他听见天窗的雨声。铜灯的光落在纸页上,他听见天窗的雨声。铜灯的光落在纸页上,他听见天窗的雨声。铜灯的光落在纸页上,他听见天窗的雨声。",
+    "singleText": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。"
+   },
+   {
+    "sourceId": "n4n-43",
+    "facts": 1,
+    "groupVerdicts": {
+     "f0": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "雨丝斜着落进潮生巷,沈砚从潮渡过来,扶着墙根走到纸灯笼旁。",
+    "singleText": "沈砚从潮渡回来,走进潮生巷。"
+   },
+   {
+    "sourceId": "n4n-53",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "沈砚从潮生巷过来,推开档案馆的天窗。阿棠从早市过来,推开档案馆的门。",
+    "singleText": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。阿棠从早市过来,抱着一叠干纸进了档案馆。"
+   },
+   {
+    "sourceId": "n4n-54",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "沈砚从潮渡上来,蹲在雾堤的钟架旁。雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡从潮渡上来,蹲下去把手拢在钟架上;他站了一会儿,他才站起来。",
+    "singleText": "沈砚从潮渡上来,走进雾堤。韩渡从潮渡上来,蹲到雾堤的钟架下。"
+   },
+   {
+    "sourceId": "n4n-64",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "C",
+     "f1": "S"
+    },
+    "groupClean": false,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "退潮后的浅滩泛着冷光,沈砚把系泊绳从浅滩拖回浅滩。他把系泊绳从浅滩拖回浅滩,等他直起身,呼吸很快,他才慢慢松开手。",
+    "singleText": "沈砚把系泊绳从浅滩拖回来,绳子从浅滩拖回来。沈砚的呼吸有些发紧,手指也不太听使唤。"
+   },
+   {
+    "sourceId": "n4n-65",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "O"
+    },
+    "groupClean": false,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "档案馆的天窗漏着雨,沈砚把潮汐簿摊在铜灯下,把缺页补的那页补全了。",
+    "singleText": "沈砚把潮汐簿缺的那页补全,又回到了档案馆。沈砚靠在墙边站了一会儿,心跳才慢下来。"
+   },
+   {
+    "sourceId": "n4n-74",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "A"
+    },
+    "groupClean": false,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "海雾把塔顶的铜框吹得发冷,沈砚站在旋梯口。叶知微把玻璃罩上的盐雾擦掉,灯罩透亮起来;他袖口沾了铜油,气味很重。",
+    "singleText": "叶知微把玻璃罩上的盐雾擦掉,灯罩透亮起来。叶知微的袖口沾了铜油,在灯影里发亮。"
+   },
+   {
+    "sourceId": "n4n-75",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "档案馆的天窗漏着雨,沈砚在长桌边摊了两叠干纸。阿棠把一叠干纸放在桌角,纸角发暗;他鞋底带着早市的泥水,她鞋底带着早市的泥水。",
+    "singleText": "阿棠把干纸放到桌角,纸角被风掀起。阿棠的鞋底带着早市的泥水,在门槛上蹭了两下。"
+   },
+   {
+    "sourceId": "n4n-87",
+    "facts": 2,
+    "groupVerdicts": {
+     "f0": "S",
+     "f1": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡从潮渡上来,蹲下去把松脱的钟绳一圈一圈重新系紧;钟绳绷直了,他才站起来。",
+    "singleText": "韩渡从潮渡上来,蹲到雾堤的钟架下。韩渡把松脱的钟绳重新系紧,钟绳绷直了。"
+   },
+   {
+    "sourceId": "n4n-98",
+    "facts": 1,
+    "groupVerdicts": {
+     "f0": "S"
+    },
+    "groupClean": true,
+    "groupRepeat": false,
+    "singleRepeat": false,
+    "groupText": "雨丝斜着落进潮生巷,沈砚鞋底沾了湿石板的水。",
+    "singleText": "沈砚的鞋底沾了湿石板的水。"
+   }
+  ]
+ },
+ "hypothesis": {
+  "id": "H1",
+  "statement": "cf24 上句组臂相对单事实臂的大幅下降，至少有一部分来自评测契约与训练不一致（60/60 组空可见、外观标签不在训练词表），不是纯粹的组内组合能力差异。把同一检查点换到契约匹配的组输入上，句组臂的下降应接近正式留出的量级（3 条事实错、1 个复读源），而不是 59/85 对 80/85。",
+  "evidence": [
+   "cf24 60/60 空可见；train/dev/holdout 157/157 非空",
+   "cf24 外观 30 次，训练 0 次；训练外貌 27 次",
+   "同契约正式留出：句组 18/21、单事实 21/21；句组 3 条事实错、1 个复读源；clean 9/12 对 9/12",
+   "cf24：句组 59/85、单事实 80/85；clean 2/24 对 16/24，但 cf24 不是同契约"
+  ],
+  "falsifiable": "用同一检查点在契约匹配（非空可见、外貌标签、同序）的 cf24 组输入上重新生成；若差距仍接近 59/85 对 80/85，H1 为假。"
+ },
+ "cannotDistinguish": [
+  "正式留出仍有 3 条句组事实错和 1 个复读源；是目标覆盖、仅 14 个非整源合并组、无跨主体组，还是组合能力，现有记录不能分开。",
+  "目标审计只列有问题的 67 组；33 组低覆盖（31 train、2 holdout；24 个两事实组、2 个三事实组），不是全部 157 组的逐条重审。"
+ ]
+}

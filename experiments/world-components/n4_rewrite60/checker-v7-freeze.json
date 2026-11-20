@@ -1,0 +1,90 @@
+{
+ "checker": "checker.py v7",
+ "sha256": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe",
+ "world": "world.json",
+ "thresholds": {
+  "minChars": 60,
+  "copyRun": 8,
+  "contentMin": {
+   "outcome": 0.2,
+   "task_achieved": 0.2,
+   "subtask_added": 0.8
+  },
+  "reviewCoverage": 0.45,
+  "maxRepeatedSpan": 8,
+  "max4gram": 2,
+  "maxSentence": 65
+ },
+ "dataErrors": [
+  {
+   "id": "n4n-03",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  }
+ ],
+ "reference": {
+  "rows": 139,
+  "pass": 123,
+  "review": 16,
+  "fail": 0,
+  "reviewIds": [
+   "r33",
+   "r35",
+   "r52",
+   "r59",
+   "r66",
+   "r101",
+   "r110",
+   "r114",
+   "r117",
+   "r120",
+   "n4n-02",
+   "n4n-04",
+   "n4n-05",
+   "n4n-09",
+   "r127",
+   "r130"
+  ]
+ },
+ "probes": {
+  "file": "semantic_probes.jsonl",
+  "cases": 20,
+  "hit": 20,
+  "categories": [
+   "actor-swap",
+   "actor-unnamed",
+   "added-dialogue",
+   "cold-hot-coexist",
+   "contradiction-same-object",
+   "copied-input",
+   "direction-reversed",
+   "dropped-result",
+   "local-actor-swap",
+   "near-far-lamps",
+   "negated-result",
+   "origin-crossed",
+   "other-negation",
+   "outsider-name",
+   "outsider-once",
+   "partial-result",
+   "pronoun-only",
+   "reordered",
+   "sanity-number",
+   "two-lamps"
+  ]
+ },
+ "tamper": {
+  "cases": 14,
+  "caught": 14
+ },
+ "whyV5": "v4 的 140/140 只证明参考稿在这批复用词上没被判错，不证明事实核对可靠：换主体、写成否定、册外新人物都直接放过，还把‘不同物体一冷一热’和‘远近两盏灯’判成矛盾。v5 把‘判不了’单独列成复核，并用带答案的样本计分。",
+ "whyV7": "隔离集首轮盲测暴露三处结构错：① 方向正则的第二段是惰性的，只吃到一个字，永远比不中目的地；② 判断“谁做的”时只在承载动作的那一小句里找别人，主语在相邻小句就漏；③ 两个人同处一句时，句级“出现过主体”被当成已经绑定。v7 改用整句范围找别人，并要求承载动作的小句主语不能是另一个角色（actor-mismatch）。代价：参考稿待复核 13→16。",
+ "whyV6": "v5 仍有五处被用户复跑抓到：局部换人不报（别处点过名就降级）、出发地互换不报、册外人物只点名一次不报、远近两盏灯判矛盾、别人被否定算成主体结果被否定。v6 逐条改：小句点名别人一律复核、出发地串位复核、单次人名按姓氏+句首+动词、同一物体只认字面相同、否定要落在主体所在小句。",
+ "knownBlindSpots": [
+  "谁做的这件事：小句主语不是事实主体时只进复核，不判违规",
+  "结果只做了一半：词面覆盖对不上才进复核，可能漏",
+  "文笔、心理是否可信、比喻是否误导：不查"
+ ],
+ "registeredBeforeAnyModelRun": true
+}

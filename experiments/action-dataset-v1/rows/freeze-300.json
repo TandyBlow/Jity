@@ -1,0 +1,50 @@
+{
+  "lane": "13-action-dataset",
+  "frozenAt": "2026-11-11",
+  "object": {
+    "commit": "c15e9750",
+    "branch": "goal/local-13-action-dataset"
+  },
+  "files": {
+    "train13-full-candidates.jsonl": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188",
+    "train13-full-provenance.jsonl": "41e55dfdcab4b1e157cec4efd23a407ba14590888c4ae5f10a5a5dd4478bd6c2",
+    "train13-full-check.json": "0cdaafa2b67056a349e09ef75487198c487e901132e53e0846366037cb58176a",
+    "train13-full-report.json": "e956bcfba9c2a256ae55cf3f0c26e57a4c5b0e5e84c675ba4c30ee0b7793b7c9"
+  },
+  "rows": 300,
+  "counts": {
+    "classes": {
+      "A": 176,
+      "B": 98,
+      "skip": 26
+    },
+    "oneStep": 244,
+    "twoStep": 30,
+    "skip": 26
+  },
+  "uniqueX": 300,
+  "labelInputs": {
+    "criterion.txt": "56092d0c6e5ba0a03e8dc4096e3edb1bb2e4123b351b9f14d6884afdea11d21c",
+    "labels-v1.json": "41372ab43bc16ed90dd488bf334a562f6cec44e5633f07ba01d2833f85bb1829",
+    "01-train-goals-for-13.json split": "b4680a9e6b1b4af3ed023eb7bfc7c491afab1200a486254d56098a160d18a8eb"
+  },
+  "serializer": {
+    "version": "action-next-step-x1",
+    "sha256": "4f1403fb6ec982169dbb7a3a98176032a4f0999091c85fa967c1a7fb083ee496"
+  },
+  "review": {
+    "by": "01-input",
+    "file": "results/action-dataset-20261111/01-to-13-full300-r2.md",
+    "verdict": "300/300 pass at the label level",
+    "auditedSha256": "cb4676b3eb74945331f73ee8855be300455c9e11db261c288d7534c7b02ef188"
+  },
+  "knownGaps": [
+    "skip 26 rows (8.7%); 01 waived the ~30% target, every skip tied to a fact in X",
+    "groups 胁迫/算计/情绪/身体 absent; deferred to the next data version pending the first model confusion matrix",
+    "cross-room 移动 rows carry object null until the contract has a destination slot",
+    "time is appended to the 地点 slot; no dedicated time slot yet",
+    "X length p50 629 exceeds the frozen 384 cap; 04 owns the projection decision",
+    "3 goals achieved at S0 (task_chu_line, task_lin_sent, task_lu_rules) can only carry A rows"
+  ],
+  "note": "Reviewed label set, not a model effect result. Do not edit these files; a change needs a new freeze record and a fresh 01 review."
+}

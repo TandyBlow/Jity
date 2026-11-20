@@ -1,0 +1,12 @@
+{
+ "version": "relation-r1",
+ "declaredBefore": "the 10 probes and this rule were written before any model ran",
+ "question": "does the model keep a necessary state relation (缠/挂/系/套/盖/插/搭/卡) between two objects, or does it drop the relation and keep only the entities",
+ "declaration": "for the 8 relation probes the relation is part of the fact value: it says how the two objects are joined, so omitting it changes the fact. It is NOT treated as an omittable modifier. The two controls say adjacency and soaking; there the relation must NOT be replaced by an attachment",
+ "judge": {
+  "relationProbe": "retained if the declared relation token appears; dropped if both entities appear but no relation token; distorted if a different attachment token appears instead",
+  "control": "clean if no attachment token appears; invented if one does",
+  "fact": "frozen cf24 scorer for coverage, reported separately"
+ },
+ "decideBeforeRun": "if moved drops the relation on at least half of the 8 probes it is systematic and a fidelity revision is designed; if it drops only the known t22-style case the defect stays local and no mechanism claim is made"
+}

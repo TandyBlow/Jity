@@ -1,0 +1,807 @@
+{
+ "arm": "fact",
+ "checkpoint": "ckpt-fact",
+ "budgetSeconds": 20.0,
+ "rows": [
+  {
+   "pairId": "A-01",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "沈砚在潮渡等到了最后一班船,船灯从雾里透出来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.375
+  },
+  {
+   "pairId": "A-01",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "沈砚的袖口常沾泥水,在船头停下。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 18,
+   "seconds": 0.127
+  },
+  {
+   "pairId": "A-02",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "沈砚在潮渡等到了最后一班船,船灯从雾里透出来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.149
+  },
+  {
+   "pairId": "A-02",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "顾行舟把船停在潮渡,缆绳在栈桥边绕了两圈船。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 24,
+   "seconds": 0.167
+  },
+  {
+   "pairId": "A-03",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "沈砚把系泊绳从浅滩拖回来,袖口蹭上层盐。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "A-03",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "沈砚把系泊绳从浅滩拖回来,袖口蹭上层盐。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.147
+  },
+  {
+   "pairId": "A-04",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "沈砚把系泊绳从浅滩拖回来,绳子从浅滩拖回来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22,
+   "seconds": 0.155
+  },
+  {
+   "pairId": "A-04",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "顾行舟把系泊绳从浅滩拖回来,系泊绳从浅滩拖回来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 24,
+   "seconds": 0.167
+  },
+  {
+   "pairId": "A-05",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "沈砚把潮汐簿缺的那页补全,纸页还带着水汽。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.147
+  },
+  {
+   "pairId": "A-05",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "沈砚把潮汐簿缺的那页补全,纸页还带着水汽。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "A-06",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "沈砚把潮汐簿缺的那页补全,又回到了档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.141
+  },
+  {
+   "pairId": "A-06",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "顾行舟把潮汐簿缺的那页补全,又回到档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.14
+  },
+  {
+   "pairId": "A-07",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "paragraph"
+   },
+   "output": "阿棠把鱼筐搬上案板,鱼鳞反光,鱼鳞反光。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "A-07",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "paragraph"
+   },
+   "output": "阿棠把鱼筐搬上案板,鱼鳞反光,鱼鳞反光。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "A-08",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "fact"
+   },
+   "output": "阿棠把银鳞鱼搬上案板,鱼尾拍在案板上。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.14
+  },
+  {
+   "pairId": "A-08",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "fact"
+   },
+   "output": "沈砚把银鳞鱼搬上案板,鱼尾拍在案板上。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.147
+  },
+  {
+   "pairId": "C-01",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "沈砚在潮渡等到了最后一班船,船灯从雾里透出来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "C-01",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "沈砚的袖口常沾泥水,外袍还沾着盐沫。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.14
+  },
+  {
+   "pairId": "C-02",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "沈砚在潮渡等到了最后一班船,船灯从雾里透出来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "C-02",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "他等了一会儿,场景里没有新的变化。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14,
+   "seconds": 0.1
+  },
+  {
+   "pairId": "C-03",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "沈砚把系泊绳从浅滩拖回来,袖口蹭上层盐。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.225
+  },
+  {
+   "pairId": "C-03",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "沈砚的袖口常沾泥水,贴在腿上。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 17,
+   "seconds": 0.12
+  },
+  {
+   "pairId": "C-04",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "沈砚把系泊绳从浅滩拖回来,绳子从浅滩拖回来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22,
+   "seconds": 0.153
+  },
+  {
+   "pairId": "C-04",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "他等了一会儿,场景里没有新的变化。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14,
+   "seconds": 0.1
+  },
+  {
+   "pairId": "C-05",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "沈砚把潮汐簿缺的那页补全,纸页还带着水汽。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.148
+  },
+  {
+   "pairId": "C-05",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "沈砚的袖口常沾墨,纸色发暗。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 16,
+   "seconds": 0.113
+  },
+  {
+   "pairId": "C-06",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "沈砚把潮汐簿缺的那页补全,又回到了档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.14
+  },
+  {
+   "pairId": "C-06",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "他等了一会儿,场景里没有新的变化。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14,
+   "seconds": 0.099
+  },
+  {
+   "pairId": "C-07",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "阿棠把鱼筐搬上案板,鱼鳞反光,鱼鳞反光。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21,
+   "seconds": 0.146
+  },
+  {
+   "pairId": "C-07",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "阿棠的辫梢沾了白汽,鱼鳞在鱼尾上蹭了两下。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22,
+   "seconds": 0.153
+  },
+  {
+   "pairId": "C-08",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "阿棠把银鳞鱼搬上案板,鱼尾拍在案板上。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.141
+  },
+  {
+   "pairId": "C-08",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "他等了一会儿,场景里没有新的变化。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14,
+   "seconds": 0.1
+  },
+  {
+   "pairId": "D-01",
+   "family": "D",
+   "sourceId": "n4n-40",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "潮汐档案馆",
+    "destination": "潮生巷",
+    "arm": "fact"
+   },
+   "output": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.14
+  },
+  {
+   "pairId": "D-01",
+   "family": "D",
+   "sourceId": "n4n-40",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "潮汐档案馆",
+    "destination": "潮生巷",
+    "arm": "fact"
+   },
+   "output": "沈砚从潮汐档案馆出来,回到潮生巷。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 16,
+   "seconds": 0.112
+  },
+  {
+   "pairId": "D-02",
+   "family": "D",
+   "sourceId": "n4n-41",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "雾堤",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "沈砚从潮渡上来,走进雾堤。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 13,
+   "seconds": 0.093
+  },
+  {
+   "pairId": "D-02",
+   "family": "D",
+   "sourceId": "n4n-41",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "雾堤",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "沈砚从雾堤下到潮渡,河风把外袍下摆吹起来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22,
+   "seconds": 0.153
+  },
+  {
+   "pairId": "D-03",
+   "family": "D",
+   "sourceId": "n4n-43",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "潮生巷",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "沈砚从潮渡回来,走进潮生巷。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14,
+   "seconds": 0.1
+  },
+  {
+   "pairId": "D-03",
+   "family": "D",
+   "sourceId": "n4n-43",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "潮生巷",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "沈砚走到潮渡的木桩旁,河风把外袍下摆吹起来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22,
+   "seconds": 0.153
+  },
+  {
+   "pairId": "D-04",
+   "family": "D",
+   "sourceId": "n4n-52",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "潮渡",
+    "destination": "潮生巷",
+    "arm": "fact"
+   },
+   "output": "沈砚沿着石阶下到潮渡,河风把外袍下摆吹起来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 23,
+   "seconds": 0.16
+  },
+  {
+   "pairId": "D-04",
+   "family": "D",
+   "sourceId": "n4n-52",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "潮渡",
+    "destination": "潮生巷",
+    "arm": "fact"
+   },
+   "output": "沈砚从潮渡回来,走进潮生巷。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14,
+   "seconds": 0.099
+  },
+  {
+   "pairId": "D-05",
+   "family": "D",
+   "sourceId": "n4n-53",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "潮汐档案馆",
+    "destination": "潮生巷",
+    "arm": "fact"
+   },
+   "output": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20,
+   "seconds": 0.14
+  },
+  {
+   "pairId": "D-05",
+   "family": "D",
+   "sourceId": "n4n-53",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "潮汐档案馆",
+    "destination": "潮生巷",
+    "arm": "fact"
+   },
+   "output": "沈砚从潮汐档案馆出来,回到潮生巷。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 16,
+   "seconds": 0.112
+  },
+  {
+   "pairId": "D-06",
+   "family": "D",
+   "sourceId": "n4n-54",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "雾堤",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "沈砚从潮渡上来,走进雾堤。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 13,
+   "seconds": 0.092
+  },
+  {
+   "pairId": "D-06",
+   "family": "D",
+   "sourceId": "n4n-54",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "雾堤",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "沈砚从雾堤下到潮渡,河风把外袍下摆吹起来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22,
+   "seconds": 0.155
+  },
+  {
+   "pairId": "D-07",
+   "family": "D",
+   "sourceId": "n4n-86",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "潮汐档案馆",
+    "destination": "早市",
+    "arm": "fact"
+   },
+   "output": "阿棠从早市过来,抱着一叠干纸进了档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 18,
+   "seconds": 0.127
+  },
+  {
+   "pairId": "D-07",
+   "family": "D",
+   "sourceId": "n4n-86",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "潮汐档案馆",
+    "destination": "早市",
+    "arm": "fact"
+   },
+   "output": "阿棠从潮汐档案馆出来,在鱼摊前站住。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 17,
+   "seconds": 0.12
+  },
+  {
+   "pairId": "D-08",
+   "family": "D",
+   "sourceId": "n4n-87",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "雾堤",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "韩渡从潮渡上来,蹲到雾堤的钟架下。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 17,
+   "seconds": 0.12
+  },
+  {
+   "pairId": "D-08",
+   "family": "D",
+   "sourceId": "n4n-87",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "雾堤",
+    "destination": "潮渡",
+    "arm": "fact"
+   },
+   "output": "韩渡从雾堤下来,走到潮渡的栈桥边。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 16,
+   "seconds": 0.113
+  }
+ ]
+}

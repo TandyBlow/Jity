@@ -1,0 +1,1804 @@
+{
+ "task": {
+  "id": "c9",
+  "branch": "exp/c-browser-t5",
+  "exclusive_dir": "experiments/world-components/parallel/browser_t5/",
+  "question": "can the existing 77M T5 encoder-decoder run in a real browser: load, inference, cancel, memory, and identical results versus the offline loop",
+  "out_of_scope": [
+   "quality of the generated text",
+   "training",
+   "int8 quantisation",
+   "wiring into the world page",
+   "wllama end-to-end (see wllamaAssessment)"
+  ]
+ },
+ "model": {
+  "checkpoint": "Randeng-T5-77M fine-tune r3-direction",
+  "params": 77440384,
+  "config": {
+   "num_heads": 6,
+   "d_kv": 64,
+   "d_model": 512,
+   "vocab_size": 32596,
+   "num_layers": 8,
+   "num_decoder_layers": 8,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "decoder_start_token_id": 0
+  },
+  "graphs": {
+   "encoder.onnx": {
+    "sha256": "b49b3ad27ee671947c8e6bfd0ab2c2b0b95e1dd4115ca5e253d02e6b1bcc7324",
+    "bytes": 142418864
+   },
+   "decoder_kv.onnx": {
+    "sha256": "6905fc88b9d6483229c536f25905b248b7cabf76d32e11693aa649d5011eb529",
+    "bytes": 234545169
+   },
+   "decoder_step.onnx": {
+    "sha256": "05893d84e50cb267b12329d7cd7fe25d2604415b403ed3e2eefd304175dda757",
+    "bytes": 234486157
+   }
+  },
+  "exportManifestMatchesDisk": true,
+  "spiece": {
+   "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "bytes": 680811
+  },
+  "decode": {
+   "strategy": "greedy (argmax per step, no sampling, no beam)",
+   "max_new_tokens": 64,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "decoder_start_token_id": 0,
+   "num_heads": 6,
+   "d_kv": 64,
+   "d_model": 512,
+   "vocab_size": 32596,
+   "num_layers": 8,
+   "num_decoder_layers": 8,
+   "kv_cache": "self-attention KV only; cross-attention K/V recomputed inside decoder_kv.onnx each step",
+   "input_truncation": "adapter returns unsupported above 128 real tokens (ids include the appended </s>=1)",
+   "note": "max_input 128 / max_output 64 are the r3-direction training contract; the adapter does not pad or truncate below the gate"
+  }
+ },
+ "fixtures": {
+  "file": ".local\\parallel\\c-browser-t5\\experiments\\world-components\\browser_probe\\probe_inputs.json",
+  "sha256": "2f0babc830dbc9e3dc34af7ae29bf0ea52d09062e0db9cc7feaed8d3ed4dfd5a",
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 35,
+    "referenceTokens": 16,
+    "referenceIdsSha256": "981c5d07aaddeb93ae0125269a0fd05d97e40a9db9ec5b1ed852fcb2cc18b6c4"
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 25,
+    "referenceTokens": 10,
+    "referenceIdsSha256": "4b01a7866ace19e0e94c82171aa0f957e89a7b791f9682425ad20dcb6e8a8a76"
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 38,
+    "referenceTokens": 20,
+    "referenceIdsSha256": "4e5a8d9c4ea6742380fdee7e7c1a48f5766f90ace62a4cf50dc1c93e4615f431"
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 63,
+    "referenceTokens": 33,
+    "referenceIdsSha256": "ee054723325128267a7960b3d9a9dbf9aa27c4507edd430b98d940d4a607fc0a"
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "inputTokens": 35,
+    "referenceTokens": 16,
+    "referenceIdsSha256": "7e47d06b341d0acbfc146dcfb6774637cd50dfb488211164e62d545bbd9ca5ac"
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "inputTokens": 21,
+    "referenceTokens": 11,
+    "referenceIdsSha256": "aa92e10e8d3a1ff18948ddac37a1cbb08a7d36fb214a8838f496e84bd6ee9221"
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "inputTokens": 25,
+    "referenceTokens": 10,
+    "referenceIdsSha256": "b2e697775513e5d98e76f5396c431522713f9287318bf6da7d07e4c18df11f77"
+   }
+  ]
+ },
+ "offlineReference": {
+  "purpose": "c9 offline reference: ORT-python greedy on the baked ids, same graphs and loop shape as the browser adapter",
+  "environment": {
+   "python": "3.12.3",
+   "onnxruntime": "1.25.1",
+   "device": "CPUExecutionProvider, intra/inter threads = 1",
+   "graphs": {
+    "encoder.onnx": "b49b3ad27ee671947c8e6bfd0ab2c2b0b95e1dd4115ca5e253d02e6b1bcc7324",
+    "decoder_kv.onnx": "6905fc88b9d6483229c536f25905b248b7cabf76d32e11693aa649d5011eb529"
+   }
+  },
+  "decodeParams": {
+   "strategy": "greedy",
+   "max_new_tokens": 64,
+   "eos_token_id": 1,
+   "pad_token_id": 0,
+   "num_heads": 6,
+   "d_kv": 64
+  },
+  "sessionLoadMs": 3176.6,
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 35,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+    "generationMs": 650.5,
+    "encoderMs": 89.5,
+    "steps": 17,
+    "meanStepMs": 38.3,
+    "idsSha256": "981c5d07aaddeb93ae0125269a0fd05d97e40a9db9ec5b1ed852fcb2cc18b6c4",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 25,
+    "ids": [
+     259,
+     9569,
+     2696,
+     4659,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "一切如旧。前后大约九分钟。",
+    "generationMs": 401.3,
+    "encoderMs": 58.3,
+    "steps": 11,
+    "meanStepMs": 36.5,
+    "idsSha256": "4b01a7866ace19e0e94c82171aa0f957e89a7b791f9682425ad20dcb6e8a8a76",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 38,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     26352,
+     9235,
+     575,
+     2704,
+     2523,
+     4501,
+     6408,
+     798,
+     30691,
+     3699,
+     9301,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+    "generationMs": 863.1,
+    "encoderMs": 63.7,
+    "steps": 21,
+    "meanStepMs": 41.1,
+    "idsSha256": "4e5a8d9c4ea6742380fdee7e7c1a48f5766f90ace62a4cf50dc1c93e4615f431",
+    "matchStoredReference": true
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "inputTokens": 63,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     26352,
+     9235,
+     575,
+     2704,
+     2523,
+     4501,
+     6408,
+     798,
+     30691,
+     3699,
+     559,
+     261,
+     19847,
+     1730,
+     4466,
+     261,
+     5516,
+     4366,
+     1730,
+     410,
+     4749,
+     7746,
+     618,
+     297,
+     25525,
+     24952,
+     3415,
+     2405,
+     297
+    ],
+    "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+    "generationMs": 1875.8,
+    "encoderMs": 172.0,
+    "steps": 34,
+    "meanStepMs": 55.2,
+    "idsSha256": "ee054723325128267a7960b3d9a9dbf9aa27c4507edd430b98d940d4a607fc0a",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "inputTokens": 35,
+    "ids": [
+     259,
+     9375,
+     2894,
+     3786,
+     2772,
+     5650,
+     23880,
+     6043,
+     6094,
+     29782,
+     297,
+     25525,
+     24952,
+     22834,
+     2912,
+     297
+    ],
+    "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+    "generationMs": 676.5,
+    "encoderMs": 52.3,
+    "steps": 17,
+    "meanStepMs": 39.8,
+    "idsSha256": "7e47d06b341d0acbfc146dcfb6774637cd50dfb488211164e62d545bbd9ca5ac",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "inputTokens": 21,
+    "ids": [
+     259,
+     24952,
+     7357,
+     2405,
+     12689,
+     691,
+     261,
+     9569,
+     2696,
+     4659,
+     297
+    ],
+    "text": "大约零分钟过去了,一切如旧。",
+    "generationMs": 500.5,
+    "encoderMs": 71.5,
+    "steps": 12,
+    "meanStepMs": 41.7,
+    "idsSha256": "aa92e10e8d3a1ff18948ddac37a1cbb08a7d36fb214a8838f496e84bd6ee9221",
+    "matchStoredReference": true
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "inputTokens": 25,
+    "ids": [
+     259,
+     9569,
+     2696,
+     4659,
+     297,
+     25525,
+     24952,
+     921,
+     1156,
+     297
+    ],
+    "text": "一切如旧。前后大约三天。",
+    "generationMs": 481.2,
+    "encoderMs": 72.9,
+    "steps": 11,
+    "meanStepMs": 43.7,
+    "idsSha256": "b2e697775513e5d98e76f5396c431522713f9287318bf6da7d07e4c18df11f77",
+    "matchStoredReference": true
+   }
+  ],
+  "allMatchStoredReference": true
+ },
+ "browserRuns": [
+  {
+   "run": "mem1",
+   "deepMemoryPass": true,
+   "wallMs": 166892,
+   "servedMiB": 388.3,
+   "browser": "157.0.4341.42",
+   "stages": {
+    "ortImportMs": 71.6,
+    "tokenizerFetchMs": 55.3,
+    "spLoadMs": 292.8,
+    "encoderCreateMs": 6715.6,
+    "decoderCreateMs": 7663.7,
+    "createTotalMs": 14799,
+    "measuredCreateMs": 14799.9
+   },
+   "cold": {
+    "encoderMs": 285.6,
+    "generationMs": 833.6,
+    "meanStepMs": 49,
+    "steps": 17,
+    "stepMs": [
+     76.1,
+     48.4,
+     53.2,
+     59.1,
+     48.2,
+     48.6,
+     51.8,
+     46.9,
+     42.7,
+     45.6,
+     42.4,
+     46.8,
+     46.8,
+     41.7,
+     48.9,
+     44.2,
+     42.3
+    ]
+   },
+   "warm": {
+    "encoderMs": 113.8,
+    "generationMs": 830.7,
+    "meanStepMs": 48.9,
+    "steps": 17,
+    "stepMs": [
+     47,
+     46.8,
+     45.1,
+     42.8,
+     43.1,
+     45.3,
+     48.3,
+     64.3,
+     54.3,
+     46,
+     52,
+     47.4,
+     48.9,
+     48.8,
+     56,
+     46.4,
+     48.4
+    ]
+   },
+   "noYield": {
+    "encoderMs": 163,
+    "generationMs": 1084.5,
+    "meanStepMs": 63.8,
+    "steps": 17,
+    "stepMs": [
+     63.5,
+     55.8,
+     54.8,
+     59.8,
+     58.3,
+     56.1,
+     63.8,
+     64.6,
+     54.4,
+     52.4,
+     70.7,
+     75.1,
+     63.6,
+     82.1,
+     59.5,
+     77.5,
+     72.5
+    ]
+   },
+   "tokenizerIdMatch": true,
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 2,
+     "wallMs": 405,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 651,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 144.9,
+      "generationMs": 952.2,
+      "meanStepMs": 56,
+      "steps": 17,
+      "stepMs": [
+       56.9,
+       53.2,
+       57.1,
+       58.8,
+       58.8,
+       55.5,
+       63.8,
+       55.6,
+       56.1,
+       60.3,
+       52.6,
+       53.9,
+       51.1,
+       50.6,
+       60.4,
+       54.4,
+       53.2
+      ]
+     }
+    }
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "browserSteps": 17,
+     "browserMeanStepMs": 55.8,
+     "browserEncoderMs": 193.4,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "offlineEncoderMs": 89.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "browserSteps": 11,
+     "browserMeanStepMs": 36.8,
+     "browserEncoderMs": 80.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "offlineEncoderMs": 58.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "browserSteps": 21,
+     "browserMeanStepMs": 46.4,
+     "browserEncoderMs": 128.9,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "offlineEncoderMs": 63.7,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "browserSteps": 34,
+     "browserMeanStepMs": 71.3,
+     "browserEncoderMs": 237.6,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "offlineEncoderMs": 172.0,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "browserSteps": 17,
+     "browserMeanStepMs": 46.9,
+     "browserEncoderMs": 154.2,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "offlineEncoderMs": 52.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "browserSteps": 12,
+     "browserMeanStepMs": 50.1,
+     "browserEncoderMs": 115.3,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "offlineEncoderMs": 71.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "browserSteps": 11,
+     "browserMeanStepMs": 46.7,
+     "browserEncoderMs": 97.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "offlineEncoderMs": 72.9,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ],
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 194,
+      "jsHeapUsedBytes": 1454151,
+      "jsHeapTotalBytes": 2189319,
+      "isolatedBytes": 1104586
+     },
+     {
+      "label": "after-create",
+      "atMs": 31023.9,
+      "jsHeapUsedBytes": 242554171,
+      "jsHeapTotalBytes": 244543359,
+      "isolatedBytes": 973340298
+     },
+     {
+      "label": "after-warm",
+      "atMs": 39558.7,
+      "jsHeapUsedBytes": 14828072,
+      "jsHeapTotalBytes": 17864048,
+      "isolatedBytes": 973751128
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 47554.7,
+      "jsHeapUsedBytes": 19589535,
+      "jsHeapTotalBytes": 21422683,
+      "isolatedBytes": 973819102
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 55524.8,
+      "jsHeapUsedBytes": 10654352,
+      "jsHeapTotalBytes": 12480456,
+      "isolatedBytes": 973803862
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 65766.2,
+      "jsHeapUsedBytes": 17554546,
+      "jsHeapTotalBytes": 18762522,
+      "isolatedBytes": 973824862
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 83604.8,
+      "jsHeapUsedBytes": 11417396,
+      "jsHeapTotalBytes": 12298404,
+      "isolatedBytes": 973847746
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 94646.5,
+      "jsHeapUsedBytes": 14975143,
+      "jsHeapTotalBytes": 15791327,
+      "isolatedBytes": 973854072
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 106425.6,
+      "jsHeapUsedBytes": 12329005,
+      "jsHeapTotalBytes": 13263901,
+      "isolatedBytes": 973863152
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 121096.4,
+      "jsHeapUsedBytes": 11890353,
+      "jsHeapTotalBytes": 12846945,
+      "isolatedBytes": 973870668
+     },
+     {
+      "label": "before-release",
+      "atMs": 138375.2,
+      "jsHeapUsedBytes": 15748355,
+      "jsHeapTotalBytes": 17895139,
+      "isolatedBytes": 973890644
+     },
+     {
+      "label": "after-release",
+      "atMs": 154725,
+      "jsHeapUsedBytes": 15096707,
+      "jsHeapTotalBytes": 17108707,
+      "isolatedBytes": 973897552
+     }
+    ]
+   }
+  },
+  {
+   "run": "run1",
+   "deepMemoryPass": null,
+   "wallMs": 172833,
+   "servedMiB": 388.3,
+   "browser": "157.0.4341.42",
+   "stages": {
+    "ortImportMs": 2381.3,
+    "tokenizerFetchMs": 328.5,
+    "spLoadMs": 279,
+    "encoderCreateMs": 10184.8,
+    "decoderCreateMs": 7946.6,
+    "createTotalMs": 21120.2,
+    "measuredCreateMs": 21121.3
+   },
+   "cold": {
+    "encoderMs": 411.9,
+    "generationMs": 1093.9,
+    "meanStepMs": 64.3,
+    "steps": 17,
+    "stepMs": [
+     128,
+     62.1,
+     60.3,
+     60.6,
+     69.6,
+     60.2,
+     59.4,
+     62.8,
+     58.1,
+     60.6,
+     60.5,
+     58,
+     58.5,
+     58.9,
+     58.8,
+     58.7,
+     58.7
+    ]
+   },
+   "warm": {
+    "encoderMs": 150.2,
+    "generationMs": 1001.8,
+    "meanStepMs": 58.9,
+    "steps": 17,
+    "stepMs": [
+     56.9,
+     59.9,
+     59.5,
+     57.1,
+     57.7,
+     59.6,
+     58.2,
+     60.7,
+     58.9,
+     55.7,
+     59.3,
+     57.6,
+     58,
+     60.7,
+     58.5,
+     56,
+     67.4
+    ]
+   },
+   "noYield": {
+    "encoderMs": 157.8,
+    "generationMs": 1023.1,
+    "meanStepMs": 60.2,
+    "steps": 17,
+    "stepMs": [
+     68.6,
+     64.8,
+     61.4,
+     57.4,
+     56.8,
+     56.4,
+     53,
+     63.3,
+     58,
+     58.5,
+     63.4,
+     58.7,
+     56.1,
+     66.3,
+     64.3,
+     59.5,
+     56.4
+    ]
+   },
+   "tokenizerIdMatch": true,
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 2,
+     "wallMs": 397,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 575,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 127.8,
+      "generationMs": 818.8,
+      "meanStepMs": 48.2,
+      "steps": 17,
+      "stepMs": [
+       46.1,
+       46.6,
+       50.5,
+       58.6,
+       51,
+       48,
+       48.1,
+       46.5,
+       47.9,
+       47.3,
+       48.9,
+       46.6,
+       42.9,
+       46.3,
+       44.2,
+       51.3,
+       47.9
+      ]
+     }
+    }
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "browserSteps": 17,
+     "browserMeanStepMs": 57.9,
+     "browserEncoderMs": 139.7,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "offlineEncoderMs": 89.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "browserSteps": 11,
+     "browserMeanStepMs": 48.7,
+     "browserEncoderMs": 108.7,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "offlineEncoderMs": 58.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "browserSteps": 21,
+     "browserMeanStepMs": 55.3,
+     "browserEncoderMs": 167.1,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "offlineEncoderMs": 63.7,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "browserSteps": 34,
+     "browserMeanStepMs": 72.1,
+     "browserEncoderMs": 254.2,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "offlineEncoderMs": 172.0,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "browserSteps": 17,
+     "browserMeanStepMs": 44.8,
+     "browserEncoderMs": 114.3,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "offlineEncoderMs": 52.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "browserSteps": 12,
+     "browserMeanStepMs": 50.5,
+     "browserEncoderMs": 103.7,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "offlineEncoderMs": 71.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "browserSteps": 11,
+     "browserMeanStepMs": 45,
+     "browserEncoderMs": 87.8,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "offlineEncoderMs": 72.9,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ],
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 983.4,
+      "jsHeapUsedBytes": 1453690,
+      "jsHeapTotalBytes": 2713262,
+      "isolatedBytes": 1098362
+     },
+     {
+      "label": "after-create",
+      "atMs": 39137,
+      "jsHeapUsedBytes": 242550024,
+      "jsHeapTotalBytes": 243756588,
+      "isolatedBytes": 973336834
+     },
+     {
+      "label": "after-warm",
+      "atMs": 47994.3,
+      "jsHeapUsedBytes": 14791349,
+      "jsHeapTotalBytes": 18125853,
+      "isolatedBytes": 973743110
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 53619.8,
+      "jsHeapUsedBytes": 19604232,
+      "jsHeapTotalBytes": 21684488,
+      "isolatedBytes": 973805096
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 62946.2,
+      "jsHeapUsedBytes": 10649197,
+      "jsHeapTotalBytes": 12217973,
+      "isolatedBytes": 973805216
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 65063.7,
+      "jsHeapUsedBytes": 17549459,
+      "jsHeapTotalBytes": 18762183,
+      "isolatedBytes": 973818486
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 79951.9,
+      "jsHeapUsedBytes": 11412269,
+      "jsHeapTotalBytes": 12035921,
+      "isolatedBytes": 973850716
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 95913.9,
+      "jsHeapUsedBytes": 14970116,
+      "jsHeapTotalBytes": 15528844,
+      "isolatedBytes": 973848288
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 111689.4,
+      "jsHeapUsedBytes": 12323834,
+      "jsHeapTotalBytes": 13001418,
+      "isolatedBytes": 973863018
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 123330.9,
+      "jsHeapUsedBytes": 11884886,
+      "jsHeapTotalBytes": 12584462,
+      "isolatedBytes": 973869130
+     },
+     {
+      "label": "before-release",
+      "atMs": 138365.2,
+      "jsHeapUsedBytes": 15730704,
+      "jsHeapTotalBytes": 17632656,
+      "isolatedBytes": 973890126
+     },
+     {
+      "label": "after-release",
+      "atMs": 154708.8,
+      "jsHeapUsedBytes": 15091464,
+      "jsHeapTotalBytes": 16846224,
+      "isolatedBytes": 973899838
+     }
+    ]
+   }
+  },
+  {
+   "run": "run2",
+   "deepMemoryPass": false,
+   "wallMs": 27611,
+   "servedMiB": 388.3,
+   "browser": "157.0.4341.42",
+   "stages": {
+    "ortImportMs": 54.6,
+    "tokenizerFetchMs": 61.3,
+    "spLoadMs": 245.1,
+    "encoderCreateMs": 5456,
+    "decoderCreateMs": 7334.2,
+    "createTotalMs": 13151.2,
+    "measuredCreateMs": 13152.4
+   },
+   "cold": {
+    "encoderMs": 468.1,
+    "generationMs": 985.2,
+    "meanStepMs": 58,
+    "steps": 17,
+    "stepMs": [
+     83,
+     61.4,
+     65.4,
+     59.7,
+     68.4,
+     74.9,
+     56.7,
+     54.6,
+     58.5,
+     57.5,
+     55.1,
+     49.8,
+     43.3,
+     46.9,
+     46.1,
+     46.4,
+     57.5
+    ]
+   },
+   "warm": {
+    "encoderMs": 141.2,
+    "generationMs": 929.6,
+    "meanStepMs": 54.7,
+    "steps": 17,
+    "stepMs": [
+     49,
+     54.7,
+     52.3,
+     54.8,
+     53.3,
+     56.1,
+     68.3,
+     58.1,
+     55,
+     54.8,
+     56.1,
+     52.3,
+     45.2,
+     53.8,
+     53.2,
+     53.1,
+     59.6
+    ]
+   },
+   "noYield": {
+    "encoderMs": 145.8,
+    "generationMs": 831.3,
+    "meanStepMs": 48.9,
+    "steps": 17,
+    "stepMs": [
+     48.1,
+     58.2,
+     46.6,
+     58.1,
+     62.3,
+     50.9,
+     50.6,
+     47.5,
+     45.4,
+     44.6,
+     42,
+     44.6,
+     44.7,
+     46.6,
+     44.1,
+     47.9,
+     49.1
+    ]
+   },
+   "tokenizerIdMatch": true,
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 1,
+     "wallMs": 369,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 791,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 147.2,
+      "generationMs": 1028,
+      "meanStepMs": 60.5,
+      "steps": 17,
+      "stepMs": [
+       51.9,
+       54.3,
+       60.9,
+       57.5,
+       61.7,
+       51.1,
+       60.5,
+       70.8,
+       55.3,
+       60.6,
+       73.9,
+       68.2,
+       52,
+       53.1,
+       63.2,
+       69.1,
+       63.9
+      ]
+     }
+    }
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "browserSteps": 17,
+     "browserMeanStepMs": 56.2,
+     "browserEncoderMs": 129.1,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "offlineEncoderMs": 89.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "browserSteps": 11,
+     "browserMeanStepMs": 52.5,
+     "browserEncoderMs": 94.5,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "offlineEncoderMs": 58.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "browserSteps": 21,
+     "browserMeanStepMs": 47.7,
+     "browserEncoderMs": 157,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "offlineEncoderMs": 63.7,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "browserSteps": 34,
+     "browserMeanStepMs": 55.4,
+     "browserEncoderMs": 199.3,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "offlineEncoderMs": 172.0,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "browserSteps": 17,
+     "browserMeanStepMs": 41.6,
+     "browserEncoderMs": 113,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "offlineEncoderMs": 52.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "browserSteps": 12,
+     "browserMeanStepMs": 35.6,
+     "browserEncoderMs": 67.3,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "offlineEncoderMs": 71.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "browserSteps": 11,
+     "browserMeanStepMs": 40.1,
+     "browserEncoderMs": 88.1,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "offlineEncoderMs": 72.9,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ],
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 360.2,
+      "jsHeapUsedBytes": 1464811,
+      "jsHeapTotalBytes": 2713595
+     },
+     {
+      "label": "after-create",
+      "atMs": 13513.2,
+      "jsHeapUsedBytes": 243347906,
+      "jsHeapTotalBytes": 244019062
+     },
+     {
+      "label": "after-warm",
+      "atMs": 16237.5,
+      "jsHeapUsedBytes": 249789923,
+      "jsHeapTotalBytes": 252374367
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 18394.4,
+      "jsHeapUsedBytes": 250252906,
+      "jsHeapTotalBytes": 252790726
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 19135.6,
+      "jsHeapUsedBytes": 253663451,
+      "jsHeapTotalBytes": 255901483
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 20417.5,
+      "jsHeapUsedBytes": 252656049,
+      "jsHeapTotalBytes": 254058397
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 22679.6,
+      "jsHeapUsedBytes": 261222887,
+      "jsHeapTotalBytes": 262217335
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 23587.9,
+      "jsHeapUsedBytes": 249000190,
+      "jsHeapTotalBytes": 250065074
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 24145,
+      "jsHeapUsedBytes": 252852320,
+      "jsHeapTotalBytes": 253854944
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 24731.2,
+      "jsHeapUsedBytes": 245610068,
+      "jsHeapTotalBytes": 246581076
+     },
+     {
+      "label": "before-release",
+      "atMs": 27156.9,
+      "jsHeapUsedBytes": 253820670,
+      "jsHeapTotalBytes": 254861566
+     },
+     {
+      "label": "after-release",
+      "atMs": 27485.4,
+      "jsHeapUsedBytes": 253832482,
+      "jsHeapTotalBytes": 254861566
+     }
+    ]
+   }
+  },
+  {
+   "run": "run3",
+   "deepMemoryPass": false,
+   "wallMs": 28766,
+   "servedMiB": 388.3,
+   "browser": "157.0.4341.42",
+   "stages": {
+    "ortImportMs": 58.9,
+    "tokenizerFetchMs": 59.5,
+    "spLoadMs": 248.6,
+    "encoderCreateMs": 5507.3,
+    "decoderCreateMs": 7609.6,
+    "createTotalMs": 13483.9,
+    "measuredCreateMs": 13484.8
+   },
+   "cold": {
+    "encoderMs": 473,
+    "generationMs": 1126.7,
+    "meanStepMs": 66.3,
+    "steps": 17,
+    "stepMs": [
+     99.2,
+     62,
+     63.2,
+     74.5,
+     56.7,
+     67.3,
+     60.8,
+     66.2,
+     68.5,
+     63.2,
+     67.5,
+     61,
+     64,
+     67.4,
+     79.7,
+     47.4,
+     58.3
+    ]
+   },
+   "warm": {
+    "encoderMs": 140.6,
+    "generationMs": 913.3,
+    "meanStepMs": 53.7,
+    "steps": 17,
+    "stepMs": [
+     54.4,
+     59.6,
+     58.4,
+     61.4,
+     63.5,
+     58.4,
+     58.1,
+     55.9,
+     55.7,
+     43,
+     48,
+     49.6,
+     47.3,
+     49.2,
+     46.3,
+     49.8,
+     54.8
+    ]
+   },
+   "noYield": {
+    "encoderMs": 133.1,
+    "generationMs": 797.5,
+    "meanStepMs": 46.9,
+    "steps": 17,
+    "stepMs": [
+     48.8,
+     49.6,
+     65.4,
+     57.6,
+     43.8,
+     49.4,
+     53.8,
+     46.1,
+     40.9,
+     43,
+     42.3,
+     42.1,
+     41.9,
+     46.9,
+     43.1,
+     43.9,
+     38.9
+    ]
+   },
+   "tokenizerIdMatch": true,
+   "cancel": {
+    "timerAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 1,
+     "wallMs": 409,
+     "returnedPartialText": false
+    },
+    "stepAbort": {
+     "threw": true,
+     "name": "AbortError",
+     "completedSteps": 5,
+     "stepsSeen": 5,
+     "wallMs": 747,
+     "returnedPartialText": false
+    },
+    "reuseAfterAbort": {
+     "sameIdsAsCold": true,
+     "timings": {
+      "encoderMs": 164.1,
+      "generationMs": 1082.3,
+      "meanStepMs": 63.7,
+      "steps": 17,
+      "stepMs": [
+       60,
+       56.5,
+       64.3,
+       55.8,
+       60.2,
+       69.1,
+       69.4,
+       62.7,
+       69,
+       55.9,
+       50.4,
+       59.2,
+       77.9,
+       81.2,
+       53.4,
+       45.7,
+       91.8
+      ]
+     }
+    }
+   },
+   "cases": [
+    {
+     "name": "n4h-loc-01",
+     "browserSteps": 17,
+     "browserMeanStepMs": 55,
+     "browserEncoderMs": 118.1,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 38.3,
+     "offlineEncoderMs": 89.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-empty-01",
+     "browserSteps": 11,
+     "browserMeanStepMs": 52.5,
+     "browserEncoderMs": 146.6,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 36.5,
+     "offlineEncoderMs": 58.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-task-01",
+     "browserSteps": 21,
+     "browserMeanStepMs": 51.9,
+     "browserEncoderMs": 139.1,
+     "offlineSteps": 21,
+     "offlineMeanStepMs": 41.1,
+     "offlineEncoderMs": 63.7,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。"
+    },
+    {
+     "name": "n4h-chain-01",
+     "browserSteps": 34,
+     "browserMeanStepMs": 63.2,
+     "browserEncoderMs": 215.6,
+     "offlineSteps": 34,
+     "offlineMeanStepMs": 55.2,
+     "offlineEncoderMs": 172.0,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。"
+    },
+    {
+     "name": "synthetic-ext-1",
+     "browserSteps": 17,
+     "browserMeanStepMs": 52.9,
+     "browserEncoderMs": 134.5,
+     "offlineSteps": 17,
+     "offlineMeanStepMs": 39.8,
+     "offlineEncoderMs": 52.3,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。"
+    },
+    {
+     "name": "synthetic-ext-2",
+     "browserSteps": 12,
+     "browserMeanStepMs": 44,
+     "browserEncoderMs": 92.7,
+     "offlineSteps": 12,
+     "offlineMeanStepMs": 41.7,
+     "offlineEncoderMs": 71.5,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "大约零分钟过去了,一切如旧。"
+    },
+    {
+     "name": "synthetic-ext-3",
+     "browserSteps": 11,
+     "browserMeanStepMs": 46.9,
+     "browserEncoderMs": 87.4,
+     "offlineSteps": 11,
+     "offlineMeanStepMs": 43.7,
+     "offlineEncoderMs": 72.9,
+     "tokensMatchOffline": true,
+     "textMatchOffline": true,
+     "tokensMatchStoredFixture": true,
+     "text": "一切如旧。前后大约三天。"
+    }
+   ],
+   "memory": {
+    "samples": [
+     {
+      "label": "before-create",
+      "atMs": 188.3,
+      "jsHeapUsedBytes": 1437694,
+      "jsHeapTotalBytes": 2189294
+     },
+     {
+      "label": "after-create",
+      "atMs": 13673.9,
+      "jsHeapUsedBytes": 242725482,
+      "jsHeapTotalBytes": 244019062
+     },
+     {
+      "label": "after-warm",
+      "atMs": 16566.2,
+      "jsHeapUsedBytes": 249542507,
+      "jsHeapTotalBytes": 251907783
+     },
+     {
+      "label": "case-n4h-loc-01",
+      "atMs": 18643.6,
+      "jsHeapUsedBytes": 250253982,
+      "jsHeapTotalBytes": 251480006
+     },
+     {
+      "label": "case-n4h-empty-01",
+      "atMs": 19439.1,
+      "jsHeapUsedBytes": 253664551,
+      "jsHeapTotalBytes": 254590763
+     },
+     {
+      "label": "case-n4h-task-01",
+      "atMs": 20796.2,
+      "jsHeapUsedBytes": 252658317,
+      "jsHeapTotalBytes": 253534109
+     },
+     {
+      "label": "case-n4h-chain-01",
+      "atMs": 23344.3,
+      "jsHeapUsedBytes": 261223667,
+      "jsHeapTotalBytes": 262217335
+     },
+     {
+      "label": "case-synthetic-ext-1",
+      "atMs": 24465.5,
+      "jsHeapUsedBytes": 249002314,
+      "jsHeapTotalBytes": 250065074
+     },
+     {
+      "label": "case-synthetic-ext-2",
+      "atMs": 25149.4,
+      "jsHeapUsedBytes": 253253312,
+      "jsHeapTotalBytes": 253854944
+     },
+     {
+      "label": "case-synthetic-ext-3",
+      "atMs": 25815.6,
+      "jsHeapUsedBytes": 245616512,
+      "jsHeapTotalBytes": 246581076
+     },
+     {
+      "label": "before-release",
+      "atMs": 28310.6,
+      "jsHeapUsedBytes": 253827294,
+      "jsHeapTotalBytes": 254861566
+     },
+     {
+      "label": "after-release",
+      "atMs": 28641.3,
+      "jsHeapUsedBytes": 253839118,
+      "jsHeapTotalBytes": 254861566
+     }
+    ]
+   }
+  }
+ ],
+ "timingSummary": {
+  "ortImportMs": {
+   "values": [
+    71.6,
+    2381.3,
+    54.6,
+    58.9
+   ],
+   "median": 65.2,
+   "min": 54.6,
+   "max": 2381.3
+  },
+  "tokenizerFetchMs": {
+   "values": [
+    55.3,
+    328.5,
+    61.3,
+    59.5
+   ],
+   "median": 60.4,
+   "min": 55.3,
+   "max": 328.5
+  },
+  "spLoadMs": {
+   "values": [
+    292.8,
+    279,
+    245.1,
+    248.6
+   ],
+   "median": 263.8,
+   "min": 245.1,
+   "max": 292.8
+  },
+  "encoderCreateMs": {
+   "values": [
+    6715.6,
+    10184.8,
+    5456,
+    5507.3
+   ],
+   "median": 6111.5,
+   "min": 5456,
+   "max": 10184.8
+  },
+  "decoderCreateMs": {
+   "values": [
+    7663.7,
+    7946.6,
+    7334.2,
+    7609.6
+   ],
+   "median": 7636.6,
+   "min": 7334.2,
+   "max": 7946.6
+  },
+  "createTotalMs": {
+   "values": [
+    14799,
+    21120.2,
+    13151.2,
+    13483.9
+   ],
+   "median": 14141.5,
+   "min": 13151.2,
+   "max": 21120.2
+  },
+  "browserMeanStepMsAllCases": {
+   "median": 50.3,
+   "min": 35.6,
+   "max": 72.1,
+   "n": 28
+  },
+  "offlineMeanStepMsAllCases": {
+   "median": 41.1,
+   "min": 36.5,
+   "max": 55.2,
+   "n": 7
+  }
+ },
+ "memorySummary": {
+  "run": "mem1",
+  "isolatedBytesBeforeCreate": 1104586,
+  "isolatedBytesAfterCreate": 973340298,
+  "isolatedBytesAfterWarm": 973751128,
+  "isolatedBytesBeforeRelease": 973890644,
+  "isolatedBytesAfterRelease": 973897552,
+  "jsHeapAfterCreate": 242554171,
+  "jsHeapSteadyState": 11417396,
+  "releasedReclaimedMiB": -0.0,
+  "note": "isolated bytes = performance.measureUserAgentSpecificMemory under COOP/COEP; includes the fetched graph bytes and the wasm linear memory, i.e. the whole page's attributable footprint, not the model alone"
+ },
+ "verdict": {
+  "browserRunsModel": true,
+  "tokenParityVsOfflineAllRuns": true,
+  "tokenizerParity": true,
+  "cancelWorks": true,
+  "sessionUsableAfterCancel": true
+ },
+ "wllamaAssessment": {
+  "status": "undetermined for end-to-end; blocked on a real T5 GGUF",
+  "whatWasRun": {
+   "syntheticGguf": "three minimal GGUF v3 headers differing only in general.architecture ('t5', 't5encoder', 'notanarch'), fed to wllama 3.8.1 loadModel() then createCompletion() in headless Edge",
+   "runs": {
+    "wllama1": {
+     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+     "attempts": [
+      {
+       "arch": "t5",
+       "loaded": true,
+       "loadedModel": true,
+       "ms": 2061
+      },
+      {
+       "arch": "t5encoder",
+       "loaded": true,
+       "loadedModel": true,
+       "ms": 578
+      },
+      {
+       "arch": "notanarch",
+       "loaded": true,
+       "loadedModel": true,
+       "ms": 640
+      }
+     ]
+    },
+    "wllama2": {
+     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+     "attempts": [
+      {
+       "arch": "t5",
+       "ms": null,
+       "loaded": true,
+       "loadedModel": true,
+       "loadMs": 1971,
+       "generate": {
+        "ok": false,
+        "name": "RuntimeError",
+        "message": "Invalid typed array length: 1163217991"
+       },
+       "generateMs": 49,
+       "bos": 0
+      },
+      {
+       "arch": "t5encoder",
+       "ms": null,
+       "loaded": true,
+       "loadedModel": true,
+       "loadMs": 583,
+       "generate": {
+        "ok": false,
+        "name": "RuntimeError",
+        "message": "Invalid typed array length: 1163217991"
+       },
+       "generateMs": 49,
+       "bos": 0
+      },
+      {
+       "arch": "notanarch",
+       "ms": null,
+       "loaded": true,
+       "loadedModel": true,
+       "loadMs": 534,
+       "generate": {
+        "ok": false,
+        "name": "RuntimeError",
+        "message": "Invalid typed array length: 1163217991"
+       },
+       "generateMs": 40,
+       "bos": 0
+      }
+     ]
+    }
+   },
+   "llamaCppCli": {
+    "binary": ".local/llama-cpp/llama-cli.exe",
+    "t5": "error loading model hyperparameters: key not found in model: t5.context_length",
+    "t5encoder": "error loading model hyperparameters: key not found in model: t5encoder.context_length",
+    "notanarch": "unknown model architecture: 'notanarch'"
+   }
+  },
+  "reading": [
+   "llama.cpp itself registers both 't5' and 't5encoder': the loader asks for t5.context_length rather than rejecting the arch, so a T5 GGUF is a known file format for that family.",
+   "the same synthetic files fail identically in wllama (RuntimeError: Invalid typed array length) for the bogus arch too, so wllama's load result says nothing about arch support — it does not reach the native loader with a file this thin.",
+   "no T5 GGUF exists in this repository and no HF->GGUF converter is vendored here, so the end-to-end question could not be run."
+  ],
+  "nextStep": "convert the r3-direction (or base 77M) checkpoint to GGUF with a converter that supports the t5 arch, then repeat loadModel + one generation in the browser"
+ },
+ "openItems": [
+  "wllama end-to-end T5 generation (needs a real T5 GGUF)",
+  "int8 graphs in the browser (separate quantisation question)",
+  "load time at network-realistic transfer (all numbers here are localhost, 388 MiB served without throttling)",
+  "whether the 973 MB browser footprint is acceptable in the world page alongside the rest of the app",
+  "Firefox/Safari runtimes (only Edge was exercised)"
+ ]
+}

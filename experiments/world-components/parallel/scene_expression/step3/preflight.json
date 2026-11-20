@@ -1,0 +1,97 @@
+{
+  "head": "d8e03ebfc45020d09f193d067b8f70c7d650b91f",
+  "checks": [
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\step1\\narration-split-samples.export.json",
+      "sha256": "7ed461f12146b56098751520e8b9fdff79789e3f5ba9b28597adbbb80f397f62",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\frozen\\materials.json",
+      "sha256": "790e1d136e8fb304ee188f3207ee1b1917c932e03105c42587459a270ba82738",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\frozen\\inputs.json",
+      "sha256": "13a086d309fbea01639524209950b638bb61f7ac83490b5aadac9e8ef3f52037",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\build_inputs.py",
+      "sha256": "574384e865026b01c6a79d2603a0c56226d1308be02c38990954df15ec31b2d5",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\freeze-protocol.md",
+      "sha256": "48c763eeacc35748234e05a5ec32daaa3da5befa1d10baf6cb93d915be5dcccb",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\README.md",
+      "sha256": "0e8d9efca55c72ef0dd07c4f141f0d55816535fbb3df1d48210b89962a473197",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\frozen\\prompt-tokens.json",
+      "sha256": "68c1f1bf35a37c66ebe08c9ba34937aa800c391c0bfc15f130a27c4b24c53248",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\step1\\step1-verify.json",
+      "sha256": "5e1794cbf32ee20252ed16115c87ad2c74b61f7a5031d7721ef1b7b1650468a6",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\experiments\\world-components\\parallel\\scene_expression\\step1\\step1-token-probe.json",
+      "sha256": "e22b70bc9ae2e8df78fb51c2876c31bfad7bede6ce0d10d2fa6fe881b7e22a60",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\frontend\\src\\lib\\world-engine\\runtime\\narration-split-samples.ts",
+      "sha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\models\\u240-model.safetensors",
+      "sha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\models\\config.json",
+      "sha256": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+      "match": true
+    },
+    {
+      "path": "D:\\others\\Jity\\.local\\models\\spiece.model",
+      "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+      "match": true
+    }
+  ],
+  "sourceFiles": {
+    "experiments/world-components/parallel/scene_expression/run_frozen.py": {
+      "sha256": "718f62a1e592295a39515b09ea93b050eef4dda2c954eb6ee4f9857b8490d867",
+      "workingBlob": "d9c6438f174c0eb202fc09d405b63f6cc1314ae8"
+    },
+    "experiments/world-components/n4_narrative_dev/sequence_policy.py": {
+      "sha256": "283203fd88fba3a5e92d45ef4e431ce8e0a1285d308e43ea3fbf451e4b55523f",
+      "workingBlob": "18ad5acb1dbc99e6f1acc8325f2f786b41a89f47",
+      "committedBlob": "18ad5acb1dbc99e6f1acc8325f2f786b41a89f47"
+    },
+    "frontend/src/lib/world-engine/runtime/narration-split-eval.ts": {
+      "sha256": "f6943ca519a55b03cd592084aae5eff4c6bc46700865dc749418643bff4db4b8",
+      "workingBlob": "bd7609155e115ad3a0001c8b42ea5711a687fa40",
+      "committedBlob": "bd7609155e115ad3a0001c8b42ea5711a687fa40"
+    },
+    "frontend/src/lib/world-engine/runtime/narration-split.ts": {
+      "sha256": "94145dd8150bb6bec1500c246654721382ed4ab5dac6cecaf0af1f68ba8d0d2e",
+      "workingBlob": "a4ded64d6504f68790d6b0abfe81350d43dc579b",
+      "committedBlob": "a4ded64d6504f68790d6b0abfe81350d43dc579b"
+    },
+    "frontend/src/lib/world-engine/runtime/narration-split-samples.ts": {
+      "sha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+      "workingBlob": "2be8c27a9a5a411c9da0fb7fb143a64a0519ea6b",
+      "committedBlob": "2be8c27a9a5a411c9da0fb7fb143a64a0519ea6b"
+    }
+  },
+  "manifestSha256": "593e6309393ce0db2068b6a22c01b8162932691e8b394c7d2a756960bc33947b"
+}

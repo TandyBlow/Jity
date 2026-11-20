@@ -1,0 +1,22 @@
+{
+ "purpose": "single-fact training expansion + frozen confirmation set",
+ "world": "world.json",
+ "rubric": {
+  "S": "表达事实主体、动作/状态、对象或方向",
+  "A": "动作或状态挂到另一个具名实体",
+  "C": "与事实相反（方向反、内外反、所有者错、位置错）",
+  "O": "事实内容缺失（含 moved 起点或终点缺失）",
+  "noChangeMiss": "无变化被写成发生了变化",
+  "unsupported": "出现场景与事实之外的新事件/新状态；场景描写不算"
+ },
+ "trainUnits": 80,
+ "confirmUnits": 40,
+ "byCategory": {
+  "action_actor": 16,
+  "binding": 16,
+  "change_nochange": 16,
+  "container": 16,
+  "owner": 16
+ },
+ "problems": []
+}

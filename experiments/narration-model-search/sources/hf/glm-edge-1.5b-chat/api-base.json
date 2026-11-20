@@ -1,0 +1,42 @@
+{
+ "repo": "zai-org/GLM-Edge-1.5B-Chat",
+ "revision": "7b201d3c160c25beda4cf0d107617ad975cd1ca8",
+ "lastModified": "2024-11-28T09:25:44.000Z",
+ "licenseTags": [
+  "other"
+ ],
+ "downloads": 2240,
+ "likes": 22,
+ "files": [
+  {
+   "path": "LICENSE",
+   "bytes": 6564,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "README.md",
+   "bytes": 1271,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "config.json",
+   "bytes": 680,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "generation_config.json",
+   "bytes": 156,
+   "lfsSha256": null,
+   "lfsSize": null
+  },
+  {
+   "path": "tokenizer_config.json",
+   "bytes": 3501,
+   "lfsSha256": null,
+   "lfsSize": null
+  }
+ ]
+}

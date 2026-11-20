@@ -1,0 +1,221 @@
+{
+ "variant": "A",
+ "rows": [
+  {
+   "unitId": "c1a",
+   "category": "attribution",
+   "subjectIsPov": true,
+   "output": "沈砚把铜灯挪到长桌另一头,铜灯从门槛上蹭掉。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 23
+  },
+  {
+   "unitId": "c1b",
+   "category": "attribution",
+   "subjectIsPov": true,
+   "output": "沈砚把湿伞靠在门槛边,把湿伞靠在门槛边。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22
+  },
+  {
+   "unitId": "c1c",
+   "category": "attribution",
+   "subjectIsPov": true,
+   "output": "沈砚把蜡烛吹灭,蜡烛被风吹得蜡烛熄了。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21
+  },
+  {
+   "unitId": "c1d",
+   "category": "attribution",
+   "subjectIsPov": false,
+   "output": "阿棠把鱼筐搬到案板底下,鱼筐还沾着鱼鳞。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 21
+  },
+  {
+   "unitId": "c1e",
+   "category": "attribution",
+   "subjectIsPov": false,
+   "output": "顾行舟把缆绳收成一卷,缆绳收成一卷。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20
+  },
+  {
+   "unitId": "c1f",
+   "category": "attribution",
+   "subjectIsPov": false,
+   "output": "韩渡把钟绳解开,钟绳解开。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14
+  },
+  {
+   "unitId": "c2a",
+   "category": "appearance",
+   "subjectIsPov": true,
+   "output": "沈砚的袖口沾了铜油,铜油还带着铜油味。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20
+  },
+  {
+   "unitId": "c2b",
+   "category": "appearance",
+   "subjectIsPov": true,
+   "output": "阿棠围裙上沾了鱼鳞,鱼鳞在鱼筐上沾了鱼鳞。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22
+  },
+  {
+   "unitId": "c2c",
+   "category": "appearance",
+   "subjectIsPov": true,
+   "output": "叶知微的指尖沾了墨,纸角被风掀起。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 19
+  },
+  {
+   "unitId": "c2d",
+   "category": "appearance",
+   "subjectIsPov": false,
+   "output": "阿棠的辫梢沾了白汽,发梢微微发潮。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 18
+  },
+  {
+   "unitId": "c2e",
+   "category": "appearance",
+   "subjectIsPov": false,
+   "output": "顾行舟的手背上沾了盐沫。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 14
+  },
+  {
+   "unitId": "c2f",
+   "category": "appearance",
+   "subjectIsPov": false,
+   "output": "韩渡直起身,外袍下摆被雾水打湿,手背上沾着盐沫。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 25
+  },
+  {
+   "unitId": "c3a",
+   "category": "move",
+   "subjectIsPov": true,
+   "output": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20
+  },
+  {
+   "unitId": "c3b",
+   "category": "move",
+   "subjectIsPov": true,
+   "output": "顾行舟把渡船从潮渡上来,抱着石阶上到雾堤。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 22
+  },
+  {
+   "unitId": "c3c",
+   "category": "move",
+   "subjectIsPov": true,
+   "output": "阿棠从早市过来,抱着鱼筐进了档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 16
+  },
+  {
+   "unitId": "c3d",
+   "category": "move",
+   "subjectIsPov": false,
+   "output": "阿棠从潮生巷走进早市,围裙上沾着鱼鳞。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 19
+  },
+  {
+   "unitId": "c3e",
+   "category": "move",
+   "subjectIsPov": false,
+   "output": "叶知微从早市过来,抱着一叠干纸进了档案馆。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 20
+  },
+  {
+   "unitId": "c3f",
+   "category": "move",
+   "subjectIsPov": false,
+   "output": "韩渡从潮渡上来,蹲到雾堤的钟架下。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 17
+  },
+  {
+   "unitId": "c4a",
+   "category": "binding",
+   "subjectIsPov": true,
+   "output": "沈砚把擦铜油塞进油布包的夹层。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 17
+  },
+  {
+   "unitId": "c4b",
+   "category": "binding",
+   "subjectIsPov": true,
+   "output": "沈砚把干纸夹进潮汐簿的扉页,纸页还带着潮气。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 23
+  },
+  {
+   "unitId": "c4c",
+   "category": "binding",
+   "subjectIsPov": true,
+   "output": "叶知微把灯芯收进铜灯罩底下,铜灯罩还带着铜油味。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 25
+  },
+  {
+   "unitId": "c4d",
+   "category": "binding",
+   "subjectIsPov": false,
+   "output": "阿棠把银鳞鱼码进鱼筐,鱼筐沿着石板上沾着鱼鳞。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 24
+  },
+  {
+   "unitId": "c4e",
+   "category": "binding",
+   "subjectIsPov": false,
+   "output": "顾行舟把缆绳缠在木桩下半截,木桩下半截绕在木桩下半截。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 26
+  },
+  {
+   "unitId": "c4f",
+   "category": "binding",
+   "subjectIsPov": false,
+   "output": "韩渡把钟绳挂回钟架,钟绳绷直了。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 17
+  }
+ ]
+}

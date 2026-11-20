@@ -1,0 +1,221 @@
+{
+  "schema": "jity-narration-v2-diagnostic-comparison",
+  "jobId": "251206",
+  "v2": {
+    "best": {
+      "epoch": 3,
+      "devLoss": 1.4106
+    },
+    "final": {
+      "trainLoss": 1.0582,
+      "devLoss": 1.4106,
+      "testLoss": 1.4241
+    },
+    "seconds": 375.6,
+    "identity": {
+      "dataPath": "hpc:~/narr_v2/data/rows-yuyan-v2.jsonl",
+      "dataSha256": "cb6764bfe758c3cf43e3d47bd61108686585ffe80eff4fc47b9f5d0febe9f6bc",
+      "dataManifest": "hpc:~/narr_v2/data/manifest.json",
+      "dataManifestSha256": "90daa17b9c340a1a0f307fbe73df6669351397ed2a493df115e5f841b11e8378",
+      "splitsPath": "hpc:~/narr_v2/splits/v1.json",
+      "splitSha256Lf": "c6686b4b33196aeffb3875eda08e1e6d894febd9f94130301c12cd5bd262b836",
+      "basePath": "hpc:~/narr_rows/checkpoint_best.pt",
+      "baseSha256": "674b897a969f7dbcc11cc7b660bba54c6800d894acab150323eadb1c0c456106",
+      "dictPath": "hpc:~/narr_rows/dict.txt",
+      "dictSha256": "20287a9d1a2ec9d82b2a13f02c10c7b81e8bb015f114134bca6b06e5c8d376b4",
+      "trainIdsSha256": "e108757b002066f9d9068d4effc05318a20fcd819bbc79281bc62a7e99532848",
+      "devIdsSha256": "dd6fc9fc22783d634a82f1713a08c0d73604d51073ae6055e27cd5ff9ec20e0f",
+      "testIdsSha256": "27d0120c1380ca8168de3d20e81aabd809f73ce448512df69bb854555b345ed9",
+      "trainRows": 139,
+      "devRows": 40,
+      "testRows": 20,
+      "seed": 20261109
+    },
+    "responseMask": {
+      "policy": "target_only",
+      "promptField": "xProse",
+      "targetField": "yMarked",
+      "eos": "</s>",
+      "promptLabels": -100,
+      "targetLabels": "token ids",
+      "lengths": {
+        "inputTokens": {
+          "min": 480,
+          "max": 2381,
+          "mean": 847.4
+        },
+        "targetTokens": {
+          "min": 177,
+          "max": 1467,
+          "mean": 417.7
+        },
+        "truncatedRows": 0
+      }
+    }
+  },
+  "legacy": {
+    "jobId": "249837? report-250409",
+    "best": {
+      "epoch": 3,
+      "devLoss": 1.4096
+    },
+    "testLoss": 1.423,
+    "seconds": 545.5,
+    "reportSha256": "f1ec11b9bbc2e19fa9bb3e37f6e8264cbe7765f616d38856a903c9fe96585591"
+  },
+  "differences": {
+    "serializer": "legacy has no 本回合状态 block; v2 has the partial result block and item positions",
+    "maxLen": "legacy used 2048 and silently truncated row-0002; v2 used 2560 and truncated no row",
+    "lossDeltaDev": 0.001,
+    "lossDeltaTest": 0.0011
+  },
+  "sampleMetrics": [
+    {
+      "id": "row-0006",
+      "trainedOnThisRow": false,
+      "targetChars": 721,
+      "greedy": {
+        "chars": 621,
+        "stopReason": "length",
+        "maxRepeat4": 14,
+        "distinct4": 0.568,
+        "legacy": {
+          "chars": 418,
+          "maxRepeat4": 12,
+          "distinct4": 0.725
+        }
+      },
+      "sampled": {
+        "chars": 548,
+        "stopReason": "length",
+        "maxRepeat4": 16,
+        "distinct4": 0.851,
+        "legacy": {
+          "chars": 364,
+          "maxRepeat4": 8,
+          "distinct4": 0.77
+        }
+      }
+    },
+    {
+      "id": "row-0007",
+      "trainedOnThisRow": false,
+      "targetChars": 745,
+      "greedy": {
+        "chars": 593,
+        "stopReason": "length",
+        "maxRepeat4": 13,
+        "distinct4": 0.637,
+        "legacy": {
+          "chars": 321,
+          "maxRepeat4": 8,
+          "distinct4": 0.874
+        }
+      },
+      "sampled": {
+        "chars": 334,
+        "stopReason": "length",
+        "maxRepeat4": 9,
+        "distinct4": 0.876,
+        "legacy": {
+          "chars": 257,
+          "maxRepeat4": 7,
+          "distinct4": 0.874
+        }
+      }
+    },
+    {
+      "id": "row-0017",
+      "trainedOnThisRow": false,
+      "targetChars": 725,
+      "greedy": {
+        "chars": 308,
+        "stopReason": "length",
+        "maxRepeat4": 6,
+        "distinct4": 0.846,
+        "legacy": {
+          "chars": 213,
+          "maxRepeat4": 7,
+          "distinct4": 0.833
+        }
+      },
+      "sampled": {
+        "chars": 278,
+        "stopReason": "length",
+        "maxRepeat4": 5,
+        "distinct4": 0.891,
+        "legacy": {
+          "chars": 296,
+          "maxRepeat4": 3,
+          "distinct4": 0.949
+        }
+      }
+    },
+    {
+      "id": "row-0018",
+      "trainedOnThisRow": false,
+      "targetChars": 695,
+      "greedy": {
+        "chars": 445,
+        "stopReason": "length",
+        "maxRepeat4": 10,
+        "distinct4": 0.443,
+        "legacy": {
+          "chars": 419,
+          "maxRepeat4": 8,
+          "distinct4": 0.428
+        }
+      },
+      "sampled": {
+        "chars": 363,
+        "stopReason": "length",
+        "maxRepeat4": 10,
+        "distinct4": 0.872,
+        "legacy": {
+          "chars": 271,
+          "maxRepeat4": 6,
+          "distinct4": 0.866
+        }
+      }
+    },
+    {
+      "id": "row-0037",
+      "trainedOnThisRow": true,
+      "targetChars": 374,
+      "greedy": {
+        "chars": 460,
+        "stopReason": "length",
+        "maxRepeat4": 10,
+        "distinct4": 0.611,
+        "legacy": {
+          "chars": 415,
+          "maxRepeat4": 7,
+          "distinct4": 0.701
+        }
+      },
+      "sampled": {
+        "chars": 438,
+        "stopReason": "length",
+        "maxRepeat4": 11,
+        "distinct4": 0.899,
+        "legacy": {
+          "chars": 287,
+          "maxRepeat4": 5,
+          "distinct4": 0.901
+        }
+      }
+    }
+  ],
+  "conclusion": [
+    "Dev/test loss is essentially unchanged (dev +0.0010, test +0.0011); loss is not a quality metric.",
+    "v2 greedy/sampled outputs are longer than the legacy outputs on the same rows, but all recorded samples still stop at the 600-token length cap.",
+    "Repeated 4-grams remain high (maxRepeat4 5-16), so the format fix did not remove the repetition failure.",
+    "The v2 sampled row-0006 contains a person name 程雪峰 that is absent from that row input; this is a fabricated person and a hard fact failure.",
+    "No quality improvement is claimed. The data/input path is fixed and the controlled run is recorded; semantic/player acceptance still needs separate review."
+  ],
+  "notes": [
+    "The legacy and v2 arms share the base checkpoint, 199 rows, split, seed, LoRA rank/alpha, lr and epochs.",
+    "The maxLen difference is a recorded confound and must not be described as an identical-condition comparison.",
+    "The target narratives are not written into any model input; answer isolation was checked before both runs."
+  ]
+}

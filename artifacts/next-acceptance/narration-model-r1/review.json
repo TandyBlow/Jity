@@ -1,0 +1,738 @@
+{
+ "reviewedAt": "2026-11-06",
+ "method": "每条不同的模型输出都对照模板与已提交事实逐句复核；自动检查结果取自 checks-final.json（最终代码）。",
+ "distinctOutputs": 15,
+ "manualCorrect": 0,
+ "manualIncorrect": 15,
+ "naturalnessSummary": "所有输出都比模板更像连贯旁白；但没有一条同时保住全部事实。句子层面的改善集中在动词（“走到”“维持在”）、连接和场景细节；这些改善伴随着新增动作、意图、元叙述或数值改写。",
+ "qualityBreakdown": {
+  "naturalnessGainWithUnfoundedAddition": 10,
+  "factDistortionOrOmission": 5,
+  "pureWordingAcceptable": 0
+ },
+ "autoFalseNegatives": {
+  "aligner": {
+   "passingRuns": 30,
+   "allPassingRunsManuallyIncorrect": true,
+   "categories": [
+    "站定精神值被写成下降/上升（降至/提升至/恢复至）",
+    "新增动作（停下脚步、缓缓前行、沿着走廊前行、跟着走来）",
+    "新增意图/元叙述（准备前往、与事实完全一致、意识到、个性变化已生效）",
+    "同值/跨类型数字的宽度问题（已在模板回归中修掉一处误报）"
+   ]
+  },
+  "independent": {
+   "passingRuns": 0,
+   "missedByErrorList": [
+    "“缓缓前行/沿着走廊前行/跟着走来”这类未列入动词表的移动",
+    "“意识到/个性变化已生效”这类内心或元叙述",
+    "“她”代词的归属"
+   ],
+   "falsePositivesFoundAndFixed": [
+    "把共享地点“走廊”的另一位角色当成归属对象（at 互换）",
+    "同值精神值被当成互换（与对齐器同源的等值歧义）"
+   ]
+  }
+ },
+ "pageGate": {
+  "passingRuns": 0,
+  "note": "逐字分句门连语义正确的自然段也拒绝；这是设计口径，不是误报，但说明页面接不住自然文本。"
+ },
+ "entries": [
+  {
+   "labels": [
+    "first-appearance"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在走廊另一端，精神值为8，面带微笑。时间推进自然地结束。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为8。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“降至10”：新增动作/站定值变化",
+     "“时间推进自然地结束”：没写 1 秒",
+     "外貌原文“面带微笑”正确"
+    ],
+    "naturalness": "外貌句自然且原文正确；时间和新增动作不合格",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到动作/变化/时间；对齐器只抓到时间（ok=false），未见动作/站定变化"
+   }
+  },
+  {
+   "labels": [
+    "first-appearance-at-10"
+   ],
+   "primary": true,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁也站在走廊中，精神值同样为10。时间推进自然地结束。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁的外貌变化为「面带微笑」。周宁位于走廊。周宁的精神值为10。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:appearance:change_106",
+      "detail": "外貌原文必须出现：「面带微笑」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [
+     "周宁的外貌变化为「面带微笑」"
+    ],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“缓缓前行”：新增移动",
+     "周宁“面带微笑”完全缺失——这是本点唯一的新事实",
+     "“时间推进自然地结束”：没写 1 秒",
+     "周宁位置/数值 10 正确"
+    ],
+    "naturalness": "读起来顺，但漏掉本点核心外貌事实；不接受",
+    "category": "fact-distortion-omission",
+    "autoMiss": "独立检查抓到外貌缺失和时间，没抓到林川前行；对齐器报外貌省略/时间"
+   }
+  },
+  {
+   "labels": [
+    "initial-equal-sanity",
+    "initial-equal-sanity-2"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值同样为10。两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致。",
+   "template": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现没有事实背书的意图/因果/解释措辞「准备」"
+     },
+     {
+      "kind": "added",
+      "sentence": "两人正准备前往某个目的地，但他们的方向和任务名称与事实完全一致",
+      "detail": "出现了移动动词，但本点没有移动事实"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”：新增动作",
+     "林川“精神值已降至10”：站定值被写成下降",
+     "“正准备前往某个目的地”：新增意图/移动，无目的地事实",
+     "“方向和任务名称与事实完全一致”：新增解释/元叙述",
+     "“尽头/另一端”：新增空间细节"
+    ],
+    "naturalness": "更像小说旁白，但新增动作与意图；不接受",
+    "category": "unfounded",
+    "autoMiss": "对齐器整包通过（未查站定值变化、停下、准备、元叙述）；独立检查全部抓到，除“尽头/另一端”细节"
+   }
+  },
+  {
+   "labels": [
+    "move-corridor-to-hall"
+   ],
+   "primary": true,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至8。时间推进，1秒。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“缓缓前行”：该点没有林川的移动事实，属于新增动作",
+     "周宁“已降至8”：站定 8 被写成下降",
+     "周宁的移动端点正确"
+    ],
+    "naturalness": "移动句比模板自然；但林川多走了一步、周宁数值被写成变化；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到周宁站定变化；两套检查都没抓到林川“缓缓前行”；对齐器整包通过"
+   }
+  },
+  {
+   "labels": [
+    "move-corridor-to-hall-at-10"
+   ],
+   "primary": true,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值也保持在10。时间推进自然地结束。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“缓缓前行”：新增移动",
+     "周宁移动正确、精神值 10 正确",
+     "“时间推进自然地结束”：没写 1 秒"
+    ],
+    "naturalness": "移动句自然、数值对，但多一个林川动作和缺时间；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查只抓到时间；对齐器也只抓到时间（ok=false），都没抓到林川前行"
+   }
+  },
+  {
+   "labels": [
+    "move-hall-to-corridor"
+   ],
+   "primary": true,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从门厅走到走廊，精神值已降至8。时间推进，1秒。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为8。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“缓缓前行”：新增移动",
+     "周宁“已降至8”：站定 8 被写成下降",
+     "移动方向正确"
+    ],
+    "naturalness": "方向对、句子顺；两处事实错误；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到周宁变化；都没抓到林川前行；对齐器通过"
+   }
+  },
+  {
+   "labels": [
+    "move-hall-to-corridor-at-10"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已恢复。周宁从门厅走到走廊，精神值也未变。时间推进仅用一秒钟。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为10。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "missing",
+      "factId": "person_a:sanity",
+      "detail": "精神值 10 未出现"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "精神值 10 未出现"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已恢复",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [
+     "林川的精神值为10",
+     "周宁的精神值为10"
+    ],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”：新增动作",
+     "林川“精神值已恢复”：没写 10",
+     "周宁“精神值也未变”：没写 10",
+     "移动方向正确"
+    ],
+    "naturalness": "移动对，但两个数值都没写；不接受",
+    "category": "fact-distortion-omission",
+    "autoMiss": "两套检查都报了两个省略；动作由独立检查抓到，对齐器未报"
+   }
+  },
+  {
+   "labels": [
+    "recover-task-personality-sanity"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已恢复至10。周宁也跟着走来，精神值提升至9，个性变化已生效。走廊的尽头，时间推进自然地流逝。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从8变为9。周宁完成了任务「完成恢复练习」。周宁的人格变化为「完成恢复练习后更善于自我调节」。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:position",
+      "detail": "位置 走廊 未出现"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 8→9"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_recover",
+      "detail": "任务目标必须原文出现：「完成恢复练习」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_48",
+      "detail": "人格原文必须出现：「完成恢复练习后更善于自我调节」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已恢复至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     },
+     {
+      "kind": "time",
+      "detail": "时间推进 1 second 未写全"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [
+     "周宁位于走廊",
+     "周宁完成了任务「完成恢复练习」",
+     "周宁的人格变化为「完成恢复练习后更善于自我调节」"
+    ],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“恢复至10”：新增动作/站定值变化",
+     "周宁“跟着走来”：新增移动",
+     "周宁“提升至9”：事实是 8→9，但起点 8 未写",
+     "任务目标“完成恢复练习”缺失",
+     "人格原文缺失/被改写",
+     "“个性变化已生效”：元叙述",
+     "“时间推进自然地流逝”：没写 1 秒"
+    ],
+    "naturalness": "最像旁白的一段，但任务/人格/位置/时间都不可用；不接受",
+    "category": "fact-distortion-omission",
+    "autoMiss": "独立检查抓到大部分；“跟着走来”移动和“已生效”未列；对齐器只报位置/任务/人格省略，未报动作、站定变化、时间和移动"
+   }
+  },
+  {
+   "labels": [
+    "refused-appearance-repeat"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也循着同样的方向，精神值却已提升至8。时间推进仅用一秒钟，自然地完成。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为8。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:position",
+      "detail": "位置 走廊 未出现"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 8，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [
+     "周宁位于走廊"
+    ],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“降至10”：新增动作/站定值变化",
+     "周宁位置（走廊）未写；“循着同样的方向”暗示移动，但该点没有移动事实",
+     "周宁“提升至8”：站定 8 被写成变化"
+    ],
+    "naturalness": "读起来顺，但周宁的位置/移动和数值都不对；不接受",
+    "category": "unfounded",
+    "autoMiss": "对齐器只报周宁位置省略；独立检查抓到位置/变化/动作，但“循着方向”的移动未列"
+   }
+  },
+  {
+   "labels": [
+    "refused-recover-repeat",
+    "refused-strain-repeat"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正沿着走廊前行，精神值为9。时间推进仅用一秒钟。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为9。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“降至10”：新增动作/站定值变化",
+     "周宁“沿着走廊前行”：没有移动事实的新增移动",
+     "周宁精神值 9 正确"
+    ],
+    "naturalness": "句子顺，但两处新增；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到林川动作/变化；没抓到“沿着走廊前行”；对齐器整包通过"
+   }
+  },
+  {
+   "labels": [
+    "refused-wrong-location"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁正站在门厅的中央，精神值为8。时间推进仅用一秒钟。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为8。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“降至10”：新增动作/站定值变化",
+     "周宁在门厅、精神值 8 正确"
+    ],
+    "naturalness": "事实基本对，但多出林川动作和下降；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到；对齐器整包通过（漏新增动作/站定变化）"
+   }
+  },
+  {
+   "labels": [
+    "refused-wrong-location-at-10"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已恢复。周宁正站在门厅的中央，精神值也保持在10。时间推进仅用一秒钟。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于门厅。周宁的精神值为10。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "missing",
+      "factId": "person_a:sanity",
+      "detail": "精神值 10 未出现"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已恢复",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [
+     "林川的精神值为10"
+    ],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”：新增动作",
+     "林川“精神值已恢复”：没写数值 10，且暗示变化",
+     "周宁在门厅、精神值 10 正确",
+     "时间 1 秒正确"
+    ],
+    "naturalness": "周宁部分可用；林川数值缺失/动作新增；不接受",
+    "category": "fact-distortion-omission",
+    "autoMiss": "独立检查抓到缺失/动作；对齐器报林川精神值省略，未报动作/“恢复”措辞"
+   }
+  },
+  {
+   "labels": [
+    "task-personality-sanity"
+   ],
+   "primary": true,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁也正站在走廊的另一端，精神值提升至8。周宁的个性变化已生效，她意识到自己在经历压力试验后更加谨慎。时间推进，1秒。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "missing",
+      "factId": "person_c:sanity",
+      "detail": "变化需要两个数值 10→8"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:task:task_pressure",
+      "detail": "任务目标必须原文出现：「完成压力试验」"
+     },
+     {
+      "kind": "frozen_text",
+      "factId": "person_c:personality:change_10",
+      "detail": "人格原文必须出现：「经历压力试验后更谨慎」"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": false,
+    "alignerViolations": [],
+    "alignerOmissions": [
+     "周宁完成了任务「完成压力试验」",
+     "周宁的人格变化为「经历压力试验后更谨慎」"
+    ],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“降至10”：新增动作/站定值变化",
+     "周宁“提升至8”：事实是 10→8 的下降，方向相反且只写了一个数",
+     "任务目标“完成压力试验”完全没写",
+     "人格原文被改写成“她意识到……更加谨慎”（冻结原文缺失，且新增内心活动/代词）",
+     "“个性变化已生效”：元叙述"
+    ],
+    "naturalness": "句子顺，但事实方向和任务/人格原文都错；不接受",
+    "category": "fact-distortion-omission",
+    "autoMiss": "独立检查抓到漏任务/改写/变化不完整/新增；对齐器只报了任务和人格省略，未报方向、站定变化和动作"
+   }
+  },
+  {
+   "labels": [
+    "move-corridor-to-hall-2",
+    "post-refresh-move"
+   ],
+   "primary": false,
+   "text": "林川在走廊中缓缓前行，精神值维持在10。周宁从走廊走到门厅，精神值已降至9。时间推进，1秒。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为9。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“缓缓前行”：新增移动",
+     "周宁“已降至9”：站定 9 被写成下降",
+     "移动正确"
+    ],
+    "naturalness": "同 move-corridor-to-hall 的 9 点版本；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到周宁变化；都没抓到林川前行；对齐器通过"
+   }
+  },
+  {
+   "labels": [
+    "move-hall-to-corridor-2"
+   ],
+   "primary": false,
+   "text": "林川在走廊的尽头停下脚步，精神值已降至10。周宁从门厅走到走廊，精神值已提升至9。时间推进，1秒。",
+   "template": "约一秒过去了。林川位于走廊。林川的精神值为10。周宁从门厅走到走廊。周宁的精神值为9。",
+   "auto": {
+    "factsOk": false,
+    "factProblems": [
+     {
+      "kind": "added",
+      "factId": "person_a:sanity",
+      "detail": "本点精神值是站定值 10，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "factId": "person_c:sanity",
+      "detail": "本点精神值是站定值 9，被写成了变化"
+     },
+     {
+      "kind": "added",
+      "sentence": "林川在走廊的尽头停下脚步，精神值已降至10",
+      "detail": "出现没有事实背书的事件动词「停下」"
+     }
+    ],
+    "alignerOk": true,
+    "alignerViolations": [],
+    "alignerOmissions": [],
+    "pageGate": {
+     "accepted": false,
+     "reason": "unknown_or_ambiguous_clause"
+    }
+   },
+   "manual": {
+    "factsCorrect": false,
+    "problems": [
+     "林川“停下脚步”“降至10”：新增动作/站定变化",
+     "周宁“已提升至9”：站定 9 被写成上升",
+     "移动正确"
+    ],
+    "naturalness": "方向对，但两处数值/动作错误；不接受",
+    "category": "unfounded",
+    "autoMiss": "独立检查抓到两处站定变化和动作；对齐器通过"
+   }
+  }
+ ]
+}

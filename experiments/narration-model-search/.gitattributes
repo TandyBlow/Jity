@@ -1,0 +1,2 @@
+# Keep experiment evidence byte-identical across checkouts: hashes pin these files.
+* -text

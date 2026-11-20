@@ -1,0 +1,43 @@
+=== arm A ===
+[A] epoch 1 update 6 dev_loss 1.0666 dev_fact 0.221
+[A] epoch 2 update 12 dev_loss 0.8255 dev_fact 0.473
+[A] epoch 3 update 18 dev_loss 0.5855 dev_fact 0.885
+[A] epoch 4 update 24 dev_loss 0.4700 dev_fact 0.721
+[A] epoch 5 update 30 dev_loss 0.4578 dev_fact 0.798
+[A] epoch 6 update 36 dev_loss 0.5257 dev_fact 0.700
+[A] epoch 7 update 42 dev_loss 0.3673 dev_fact 0.787
+[A] epoch 8 update 48 dev_loss 0.3732 dev_fact 0.781
+[A] epoch 9 update 54 dev_loss 0.4875 dev_fact 0.750
+[A] epoch 10 update 60 dev_loss 0.3836 dev_fact 0.819
+[A] epoch 11 update 66 dev_loss 0.3516 dev_fact 0.850
+[A] epoch 12 update 72 dev_loss 0.3051 dev_fact 0.819
+[A] epoch 13 update 78 dev_loss 0.3637 dev_fact 0.844
+[A] epoch 14 update 84 dev_loss 0.3608 dev_fact 0.875
+[A] epoch 15 update 90 dev_loss 0.3581 dev_fact 0.875
+[A] epoch 16 update 96 dev_loss 0.3696 dev_fact 0.875
+[A] epoch 17 update 102 dev_loss 0.3789 dev_fact 0.875
+[A] epoch 18 update 108 dev_loss 0.3928 dev_fact 0.875
+[A] epoch 19 update 114 dev_loss 0.4232 dev_fact 0.875
+[A] epoch 20 update 120 dev_loss 0.4294 dev_fact 0.875
+=== arm B_h ===
+[B_h] epoch 1 update 6 dev_loss 1.0639 dev_fact 0.371
+[B_h] epoch 2 update 12 dev_loss 0.7465 dev_fact 0.573
+[B_h] epoch 3 update 18 dev_loss 0.4538 dev_fact 0.721
+[B_h] epoch 4 update 24 dev_loss 0.3827 dev_fact 0.731
+[B_h] epoch 5 update 30 dev_loss 0.2455 dev_fact 0.867
+[B_h] epoch 6 update 36 dev_loss 0.3424 dev_fact 0.696
+[B_h] epoch 7 update 42 dev_loss 0.3596 dev_fact 0.917
+[B_h] epoch 8 update 48 dev_loss 0.3614 dev_fact 0.819
+[B_h] epoch 9 update 54 dev_loss 0.2866 dev_fact 0.812
+[B_h] epoch 10 update 60 dev_loss 0.2884 dev_fact 0.771
+[B_h] epoch 11 update 66 dev_loss 0.3457 dev_fact 0.844
+[B_h] epoch 12 update 72 dev_loss 0.3309 dev_fact 0.927
+[B_h] epoch 13 update 78 dev_loss 0.3988 dev_fact 0.927
+[B_h] epoch 14 update 84 dev_loss 0.3484 dev_fact 0.927
+[B_h] epoch 15 update 90 dev_loss 0.3360 dev_fact 0.958
+[B_h] epoch 16 update 96 dev_loss 0.3062 dev_fact 0.854
+[B_h] epoch 17 update 102 dev_loss 0.3509 dev_fact 0.927
+[B_h] epoch 18 update 108 dev_loss 0.3848 dev_fact 0.854
+[B_h] epoch 19 update 114 dev_loss 0.3861 dev_fact 0.896
+[B_h] epoch 20 update 120 dev_loss 0.3850 dev_fact 0.896
+wrote D:\others\Jity\.local\world-components-worktree\artifacts\world-components\organize-wording\ab-run-v1\results.json

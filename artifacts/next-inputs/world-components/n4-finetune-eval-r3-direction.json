@@ -1,0 +1,2558 @@
+{
+  "purpose": "n4 finetune dev eval r3-direction (per-input; quality accepted separately)",
+  "provenance": {
+    "corpusAndRenderer": {
+      "n4_render.py": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef",
+      "corpus.seeds.jsonl": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
+      "rewrites.jsonl": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3"
+    },
+    "baseModel": {
+      "config.json": "9b2480c0a39fd09b",
+      "model.safetensors": "5cdc572109cf2591",
+      "special_tokens_map.json": "09059cedc26bc46b",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "af072c7d91576727"
+    },
+    "finetuned": {
+      "added_tokens.json": "a247922ac010bc17",
+      "config.json": "a35e9d4382657106",
+      "generation_config.json": "691648bea8d35875",
+      "model.safetensors": "baceebff5d33eacf",
+      "special_tokens_map.json": "65d84a9271d68f12",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "553da19a6ed43c57"
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "transformers": "4.57.3",
+    "device": "cuda",
+    "deviceName": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "note": "v7 correction: r1's eval actually ran on CPU because the model was never moved; reports now record the real placement (model.cuda() before generate)"
+  },
+  "isolation": {
+    "check": "corpus_check.split_isolation_problems(120 train groups, 30 dev groups)",
+    "result": "pass"
+  },
+  "decode": {
+    "greedy": true,
+    "maxNewTokens": 64,
+    "numBeams": 1
+  },
+  "tokenizer": {
+    "legacy": false,
+    "note": "same pin as training and the zero-shot baseline"
+  },
+  "judge": "corpus_check.check_row over the dev row's own plan/refs/must (hashes recomputed for the generated text; planRefs re-expanded to the generated sentence count)",
+  "devInputs": {
+    "devRows": 120,
+    "uniqueInputs": 56,
+    "unseenInputs": 53,
+    "regressionInputs": 3,
+    "regressionDetail": [
+      {
+        "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+        "devGroups": [
+          "n4-empty-027"
+        ],
+        "trainGroups": [
+          "n4-empty-009"
+        ],
+        "rowsMerged": 2
+      },
+      {
+        "input": "叙事生成任务。\n事实：\n1. 无变化\n正文：",
+        "devGroups": [
+          "n4-empty-027",
+          "n4x-d101-empty",
+          "n4x-d107-empty",
+          "n4x-d113-empty",
+          "n4x-d119-empty"
+        ],
+        "trainGroups": [
+          "n4-empty-007",
+          "n4-empty-008",
+          "n4-empty-009",
+          "n4-empty-010",
+          "n4x-t001-empty",
+          "n4x-t007-empty",
+          "n4x-t013-empty",
+          "n4x-t019-empty",
+          "n4x-t025-empty",
+          "n4x-t031-empty",
+          "n4x-t037-empty",
+          "n4x-t043-empty",
+          "n4x-t049-empty",
+          "n4x-t055-empty",
+          "n4x-t061-empty",
+          "n4x-t067-empty",
+          "n4x-t073-empty",
+          "n4x-t079-empty",
+          "n4x-t085-empty",
+          "n4x-t091-empty"
+        ],
+        "rowsMerged": 10
+      },
+      {
+        "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n正文：",
+        "devGroups": [
+          "n4-task-026"
+        ],
+        "trainGroups": [
+          "n4-task-014"
+        ],
+        "rowsMerged": 2
+      }
+    ],
+    "mergeRule": "one generation per distinct rendered input; rows sharing an input share the plan and greedy output (seed/rewrite, expressed/omitted duplicates, frozen duplicates). Seen inputs are excluded from the unseen denominator."
+  },
+  "devGroups": [
+    "n4-appear-029",
+    "n4-chain-028",
+    "n4-empty-027",
+    "n4-loc-025",
+    "n4-multi-030",
+    "n4-task-026",
+    "n4x-d100-loc",
+    "n4x-d101-empty",
+    "n4x-d102-task",
+    "n4x-d103-chain",
+    "n4x-d104-appear",
+    "n4x-d105-multi",
+    "n4x-d106-loc",
+    "n4x-d107-empty",
+    "n4x-d108-task",
+    "n4x-d109-chain",
+    "n4x-d110-appear",
+    "n4x-d111-multi",
+    "n4x-d112-loc",
+    "n4x-d113-empty",
+    "n4x-d114-task",
+    "n4x-d115-chain",
+    "n4x-d116-appear",
+    "n4x-d117-multi",
+    "n4x-d118-loc",
+    "n4x-d119-empty",
+    "n4x-d120-task",
+    "n4x-d121-chain",
+    "n4x-d122-appear",
+    "n4x-d123-multi"
+  ],
+  "arms": {
+    "base": {
+      "unseen": {
+        "inputs": 53,
+        "verdicts": {
+          "pass": 0,
+          "review": 53,
+          "fail": 0
+        },
+        "meanWall": 0.46,
+        "meanTokens": 11.8
+      },
+      "regression": {
+        "inputs": 3,
+        "verdicts": {
+          "pass": 0,
+          "review": 3,
+          "fail": 0
+        },
+        "meanWall": 0.33,
+        "meanTokens": 9.3
+      },
+      "results": {
+        "unseen": [
+          {
+            "devGroups": [
+              "n4-appear-029"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n2. 时间推进：约十二分钟\n正文：",
+            "output": "外貌:水房 墙角的青砖泛了潮",
+            "outputTokens": 17,
+            "wallSeconds": 2.31,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '外貌:水房 墙角的青砖泛了潮' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-appear-029"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n正文：",
+            "output": "墙角的青砖泛了潮",
+            "outputTokens": 11,
+            "wallSeconds": 0.46,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '墙角的青砖泛了潮' not fully covered by plan recognizers (covered 0/8) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-chain-028"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8（下降）\n4. 时间推进：约三分钟\n正文：",
+            "output": "理智:陈舟 10→8(下降)",
+            "outputTokens": 16,
+            "wallSeconds": 0.66,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:陈舟 10→8(下降)' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2, 3] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-chain-028"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8（下降）\n正文：",
+            "output": "理智:陈舟 10→8(下降)",
+            "outputTokens": 16,
+            "wallSeconds": 0.63,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:陈舟 10→8(下降)' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-loc-025"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
+            "output": "时间推进:约一小时",
+            "outputTokens": 9,
+            "wallSeconds": 0.35,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约一小时' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-loc-025"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n正文：",
+            "output": "沈青",
+            "outputTokens": 5,
+            "wallSeconds": 0.21,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '沈青' not fully covered by plan recognizers (covered 0/2) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-multi-030"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n3. 时间推进：约十二分钟\n正文：",
+            "output": "时间推进:约十二分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.35,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约十二分钟' not fully covered by plan recognizers (covered 5/10) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-multi-030"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n正文：",
+            "output": "苏晚 已在水房",
+            "outputTokens": 10,
+            "wallSeconds": 0.37,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '苏晚 已在水房' not fully covered by plan recognizers (covered 0/6) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-task-026"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
+            "output": "任务达成:林望「清点碑亭石刻」",
+            "outputTokens": 16,
+            "wallSeconds": 0.73,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:林望「清点碑亭石刻」' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d100-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n2. 时间推进：约一分钟\n正文：",
+            "output": "苏晚",
+            "outputTokens": 5,
+            "wallSeconds": 0.21,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '苏晚' not fully covered by plan recognizers (covered 0/2) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d100-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n正文：",
+            "output": "苏晚",
+            "outputTokens": 5,
+            "wallSeconds": 0.26,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '苏晚' not fully covered by plan recognizers (covered 0/2) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d101-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约一分钟\n正文：",
+            "output": "时间推进:约一分钟",
+            "outputTokens": 8,
+            "wallSeconds": 0.39,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约一分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d102-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：温以宁「把信笺送去洗砚池」\n2. 时间推进：约十分钟\n正文：",
+            "output": "约十分钟",
+            "outputTokens": 6,
+            "wallSeconds": 0.28,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d102-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：温以宁「把信笺送去洗砚池」\n正文：",
+            "output": "任务达成:温以宁「把信笺送去洗砚池」",
+            "outputTokens": 19,
+            "wallSeconds": 0.84,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:温以宁「把信笺送去洗砚池」' not fully covered by plan recognizers (covered 0/18) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d103-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：苏晚「整理柴房」\n2. 个性：苏晚变得寡言\n3. 理智：苏晚 10→7（下降）\n4. 时间推进：约一分钟\n正文：",
+            "output": "理智:苏晚 10→7(下降)",
+            "outputTokens": 16,
+            "wallSeconds": 0.66,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:苏晚 10→7(下降)' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2, 3] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d103-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：苏晚「整理柴房」\n2. 个性：苏晚变得寡言\n3. 理智：苏晚 10→7（下降）\n正文：",
+            "output": "理智:苏晚 10→7(下降)",
+            "outputTokens": 16,
+            "wallSeconds": 0.61,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:苏晚 10→7(下降)' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d104-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 木牌上的字迹晕开了\n2. 时间推进：约一分钟\n正文：",
+            "output": "外貌:水房 木牌上的字迹晕开了",
+            "outputTokens": 16,
+            "wallSeconds": 0.54,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '外貌:水房 木牌上的字迹晕开了' not fully covered by plan recognizers (covered 0/14) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d104-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 木牌上的字迹晕开了\n正文：",
+            "output": "木牌上的字迹晕开了",
+            "outputTokens": 10,
+            "wallSeconds": 0.31,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '木牌上的字迹晕开了' not fully covered by plan recognizers (covered 0/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d105-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n2. 现状：温以宁 已在钟楼\n3. 时间推进：约一分钟\n正文：",
+            "output": "苏晚 从水房到钟楼",
+            "outputTokens": 12,
+            "wallSeconds": 0.36,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '苏晚 从水房到钟楼' not fully covered by plan recognizers (covered 0/8) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d105-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n2. 现状：温以宁 已在钟楼\n正文：",
+            "output": "苏晚 从水房到钟楼",
+            "outputTokens": 12,
+            "wallSeconds": 0.41,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '苏晚 从水房到钟楼' not fully covered by plan recognizers (covered 0/8) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d106-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：阮秋 从竹径到断碑崖\n2. 时间推进：约一分钟\n正文：",
+            "output": "时间推进:约一分钟",
+            "outputTokens": 8,
+            "wallSeconds": 0.24,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约一分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d106-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：阮秋 从竹径到断碑崖\n正文：",
+            "output": "阮秋",
+            "outputTokens": 5,
+            "wallSeconds": 0.14,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '阮秋' not fully covered by plan recognizers (covered 0/2) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d107-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约四分钟\n正文：",
+            "output": "时间推进:约四分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.36,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约四分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d108-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n2. 时间推进：约四分钟\n正文：",
+            "output": "任务达成:周砚「更换旧灯房的灯油」",
+            "outputTokens": 17,
+            "wallSeconds": 0.49,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:周砚「更换旧灯房的灯油」' not fully covered by plan recognizers (covered 0/17) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d108-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n正文：",
+            "output": "任务达成:周砚「更换旧灯房的灯油」",
+            "outputTokens": 17,
+            "wallSeconds": 0.55,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:周砚「更换旧灯房的灯油」' not fully covered by plan recognizers (covered 0/17) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d109-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n2. 个性：周砚变得急切\n3. 理智：周砚 12→15（上升）\n4. 时间推进：约四分钟\n正文：",
+            "output": "任务达成:周砚「更换旧灯房的灯油」",
+            "outputTokens": 17,
+            "wallSeconds": 0.55,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:周砚「更换旧灯房的灯油」' not fully covered by plan recognizers (covered 0/17) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2, 3] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d109-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n2. 个性：周砚变得急切\n3. 理智：周砚 12→15（上升）\n正文：",
+            "output": "任务达成:周砚「更换旧灯房的灯油」",
+            "outputTokens": 17,
+            "wallSeconds": 0.48,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:周砚「更换旧灯房的灯油」' not fully covered by plan recognizers (covered 0/17) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d110-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：柴房 池面的浮叶堆到了一角\n2. 时间推进：约四分钟\n正文：",
+            "output": "时间推进:约四分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.33,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约四分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d110-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：柴房 池面的浮叶堆到了一角\n正文：",
+            "output": "池面的浮叶堆到了一角",
+            "outputTokens": 11,
+            "wallSeconds": 0.45,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '池面的浮叶堆到了一角' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d111-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：周砚 从钟楼到柴房\n2. 现状：阮秋 已在柴房\n3. 时间推进：约四分钟\n正文：",
+            "output": "时间推进:约四分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.29,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约四分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d111-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：周砚 从钟楼到柴房\n2. 现状：阮秋 已在柴房\n正文：",
+            "output": "阮秋 已在柴房",
+            "outputTokens": 10,
+            "wallSeconds": 0.32,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '阮秋 已在柴房' not fully covered by plan recognizers (covered 0/6) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d112-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n2. 时间推进：约七分钟\n正文：",
+            "output": "时间推进:约七分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.38,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约七分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d112-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n正文：",
+            "output": "林望",
+            "outputTokens": 5,
+            "wallSeconds": 0.17,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '林望' not fully covered by plan recognizers (covered 0/2) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d113-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约七分钟\n正文：",
+            "output": "时间推进:约七分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.29,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约七分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d114-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：岑野「修补灰墙巷的路面」\n2. 时间推进：约四分钟\n正文：",
+            "output": "任务达成:岑野「修补灰墙巷的路面」",
+            "outputTokens": 17,
+            "wallSeconds": 0.64,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:岑野「修补灰墙巷的路面」' not fully covered by plan recognizers (covered 0/17) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d114-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：岑野「修补灰墙巷的路面」\n正文：",
+            "output": "任务达成:岑野「修补灰墙巷的路面」",
+            "outputTokens": 17,
+            "wallSeconds": 0.68,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:岑野「修补灰墙巷的路面」' not fully covered by plan recognizers (covered 0/17) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d115-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 个性：林望变得耐心\n3. 理智：林望 11→8（下降）\n4. 时间推进：约七分钟\n正文：",
+            "output": "任务达成:林望「清点碑亭石刻」",
+            "outputTokens": 16,
+            "wallSeconds": 0.43,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:林望「清点碑亭石刻」' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2, 3] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d115-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 个性：林望变得耐心\n3. 理智：林望 11→8（下降）\n正文：",
+            "output": "理智:林望 11→8(下降)",
+            "outputTokens": 16,
+            "wallSeconds": 0.5,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:林望 11→8(下降)' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d116-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：灰墙巷 桥栏的麻绳磨断了\n2. 时间推进：约七分钟\n正文：",
+            "output": "外貌:灰墙巷 桥栏的麻绳磨断了",
+            "outputTokens": 18,
+            "wallSeconds": 0.46,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '外貌:灰墙巷 桥栏的麻绳磨断了' not fully covered by plan recognizers (covered 0/14) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d116-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：灰墙巷 桥栏的麻绳磨断了\n正文：",
+            "output": "外貌:灰墙巷",
+            "outputTokens": 9,
+            "wallSeconds": 0.24,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '外貌:灰墙巷' not fully covered by plan recognizers (covered 0/6) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d117-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n2. 现状：岑野 已在灰墙巷\n3. 时间推进：约七分钟\n正文：",
+            "output": "时间推进:约七分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.25,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约七分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d117-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n2. 现状：岑野 已在灰墙巷\n正文：",
+            "output": "岑野 已在灰墙巷",
+            "outputTokens": 11,
+            "wallSeconds": 0.31,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '岑野 已在灰墙巷' not fully covered by plan recognizers (covered 0/7) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d118-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n2. 时间推进：约十分钟\n正文：",
+            "output": "时间推进:约十分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.23,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约十分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d118-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n正文：",
+            "output": "沈青",
+            "outputTokens": 5,
+            "wallSeconds": 0.17,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '沈青' not fully covered by plan recognizers (covered 0/2) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d119-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约十分钟\n正文：",
+            "output": "时间推进:约十分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.29,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约十分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d120-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n2. 时间推进：约七分钟\n正文：",
+            "output": "约七分钟",
+            "outputTokens": 6,
+            "wallSeconds": 0.25,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d120-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n正文：",
+            "output": "任务达成:宋知远「把信笺送去洗砚池」",
+            "outputTokens": 19,
+            "wallSeconds": 0.77,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '任务达成:宋知远「把信笺送去洗砚池」' not fully covered by plan recognizers (covered 0/18) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d121-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n2. 个性：宋知远变得寡言\n3. 理智：宋知远 14→11（下降）\n4. 时间推进：约七分钟\n正文：",
+            "output": "理智:宋知远 14→11(下降)",
+            "outputTokens": 17,
+            "wallSeconds": 0.67,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:宋知远 14→11(下降)' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2, 3] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d121-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n2. 个性：宋知远变得寡言\n3. 理智：宋知远 14→11（下降）\n正文：",
+            "output": "理智:宋知远 14→11(下降)",
+            "outputTokens": 17,
+            "wallSeconds": 0.71,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '理智:宋知远 14→11(下降)' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
+              "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d122-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：旧灯房 灯罩积了厚厚的灰\n2. 时间推进：约十分钟\n正文：",
+            "output": "外貌:旧灯房 灯罩积了厚厚的灰",
+            "outputTokens": 17,
+            "wallSeconds": 0.7,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '外貌:旧灯房 灯罩积了厚厚的灰' not fully covered by plan recognizers (covered 0/14) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d122-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：旧灯房 灯罩积了厚厚的灰\n正文：",
+            "output": "旧灯房",
+            "outputTokens": 6,
+            "wallSeconds": 0.24,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '旧灯房' not fully covered by plan recognizers (covered 0/3) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d123-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n2. 现状：宋知远 已在旧灯房\n3. 时间推进：约十分钟\n正文：",
+            "output": "时间推进:约十分钟",
+            "outputTokens": 9,
+            "wallSeconds": 0.35,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约十分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4x-d123-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n2. 现状：宋知远 已在旧灯房\n正文：",
+            "output": "沈青 从柴房到旧灯房",
+            "outputTokens": 13,
+            "wallSeconds": 0.53,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '沈青 从柴房到旧灯房' not fully covered by plan recognizers (covered 0/9) — unrecognized content, needs review",
+              "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          }
+        ],
+        "regression": [
+          {
+            "devGroups": [
+              "n4-empty-027"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": true,
+            "trainGroups": [
+              "n4-empty-009"
+            ],
+            "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+            "output": "时间推进:约二十五分钟",
+            "outputTokens": 10,
+            "wallSeconds": 0.38,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '时间推进:约二十五分钟' not fully covered by plan recognizers (covered 6/11) — unrecognized content, needs review",
+              "mustExpress [1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-empty-027",
+              "n4x-d101-empty",
+              "n4x-d107-empty",
+              "n4x-d113-empty",
+              "n4x-d119-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 10,
+            "seenInTrain": true,
+            "trainGroups": [
+              "n4-empty-007",
+              "n4-empty-008",
+              "n4-empty-009",
+              "n4-empty-010",
+              "n4x-t001-empty",
+              "n4x-t007-empty",
+              "n4x-t013-empty",
+              "n4x-t019-empty",
+              "n4x-t025-empty",
+              "n4x-t031-empty",
+              "n4x-t037-empty",
+              "n4x-t043-empty",
+              "n4x-t049-empty",
+              "n4x-t055-empty",
+              "n4x-t061-empty",
+              "n4x-t067-empty",
+              "n4x-t073-empty",
+              "n4x-t079-empty",
+              "n4x-t085-empty",
+              "n4x-t091-empty"
+            ],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n正文：",
+            "output": "无变化",
+            "outputTokens": 5,
+            "wallSeconds": 0.17,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '无变化' not fully covered by plan recognizers (covered 0/3) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "devGroups": [
+              "n4-task-026"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": true,
+            "trainGroups": [
+              "n4-task-014"
+            ],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n正文：",
+            "output": "林望「清点碑亭石刻」",
+            "outputTokens": 13,
+            "wallSeconds": 0.43,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "sentence '林望「清点碑亭石刻」' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          }
+        ]
+      }
+    },
+    "finetuned": {
+      "unseen": {
+        "inputs": 53,
+        "verdicts": {
+          "pass": 53,
+          "review": 0,
+          "fail": 0
+        },
+        "meanWall": 0.73,
+        "meanTokens": 21.5
+      },
+      "regression": {
+        "inputs": 3,
+        "verdicts": {
+          "pass": 3,
+          "review": 0,
+          "fail": 0
+        },
+        "meanWall": 0.51,
+        "meanTokens": 12.0
+      },
+      "results": {
+        "unseen": [
+          {
+            "devGroups": [
+              "n4-appear-029"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n2. 时间推进：约十二分钟\n正文：",
+            "output": "水房的外观变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 24,
+            "wallSeconds": 0.84,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-appear-029"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n正文：",
+            "output": "水房的外观变了:墙角的青砖泛了潮。",
+            "outputTokens": 19,
+            "wallSeconds": 0.64,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-chain-028"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8（下降）\n4. 时间推进：约三分钟\n正文：",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10降到了8。前后大约三分钟。",
+            "outputTokens": 32,
+            "wallSeconds": 1.14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-chain-028"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8（下降）\n正文：",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10降到了8。",
+            "outputTokens": 27,
+            "wallSeconds": 0.9,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-loc-025"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
+            "output": "沈青由柴房进入了东门。前后大约一小时。",
+            "outputTokens": 18,
+            "wallSeconds": 0.55,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-loc-025"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n正文：",
+            "output": "沈青由柴房进入了东门。",
+            "outputTokens": 13,
+            "wallSeconds": 0.39,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-multi-030"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n3. 时间推进：约十二分钟\n正文：",
+            "output": "沈青由柴房进入了水房,苏晚已在水房。前后大约十二分钟。",
+            "outputTokens": 25,
+            "wallSeconds": 0.96,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-multi-030"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n正文：",
+            "output": "沈青由柴房进入了水房,苏晚已在水房。",
+            "outputTokens": 20,
+            "wallSeconds": 0.78,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-task-026"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 20,
+            "wallSeconds": 0.81,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d100-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n2. 时间推进：约一分钟\n正文：",
+            "output": "苏晚由水房进入了钟楼。前后大约一分钟。",
+            "outputTokens": 17,
+            "wallSeconds": 0.6,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d100-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n正文：",
+            "output": "苏晚从水房来到钟楼。",
+            "outputTokens": 12,
+            "wallSeconds": 0.46,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d101-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约一分钟\n正文：",
+            "output": "一切如旧。前后大约一分钟。",
+            "outputTokens": 11,
+            "wallSeconds": 0.42,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d102-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：温以宁「把信笺送去洗砚池」\n2. 时间推进：约十分钟\n正文：",
+            "output": "温以宁完成了任务「把信笺送去洗砚池」。前后大约十分钟。",
+            "outputTokens": 23,
+            "wallSeconds": 0.88,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d102-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：温以宁「把信笺送去洗砚池」\n正文：",
+            "output": "温以宁完成了任务「把信笺送去洗砚池」。",
+            "outputTokens": 18,
+            "wallSeconds": 0.7,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d103-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：苏晚「整理柴房」\n2. 个性：苏晚变得寡言\n3. 理智：苏晚 10→7（下降）\n4. 时间推进：约一分钟\n正文：",
+            "output": "苏晚完成了任务「整理柴房」,变得寡言,精神值从10降到了7。前后大约一分钟。",
+            "outputTokens": 29,
+            "wallSeconds": 1.05,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d103-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：苏晚「整理柴房」\n2. 个性：苏晚变得寡言\n3. 理智：苏晚 10→7（下降）\n正文：",
+            "output": "苏晚完成了任务「整理柴房」,变得寡言,精神值从10降到了7。",
+            "outputTokens": 25,
+            "wallSeconds": 1.04,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d104-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 木牌上的字迹晕开了\n2. 时间推进：约一分钟\n正文：",
+            "output": "水房的外观变了:木牌上的字迹晕开了。前后大约一分钟。",
+            "outputTokens": 22,
+            "wallSeconds": 0.7,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d104-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：水房 木牌上的字迹晕开了\n正文：",
+            "output": "水房的外观变了:木牌上的字迹晕开了。",
+            "outputTokens": 18,
+            "wallSeconds": 0.54,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d105-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n2. 现状：温以宁 已在钟楼\n3. 时间推进：约一分钟\n正文：",
+            "output": "苏晚从水房来到钟楼时,温以宁已经在钟楼了。前后大约一分钟。",
+            "outputTokens": 26,
+            "wallSeconds": 0.78,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d105-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：苏晚 从水房到钟楼\n2. 现状：温以宁 已在钟楼\n正文：",
+            "output": "苏晚从水房来到钟楼时,温以宁已经在钟楼了。",
+            "outputTokens": 22,
+            "wallSeconds": 0.66,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d106-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：阮秋 从竹径到断碑崖\n2. 时间推进：约一分钟\n正文：",
+            "output": "阮秋由竹径进入了断碑崖。前后大约一分钟。",
+            "outputTokens": 18,
+            "wallSeconds": 0.56,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d106-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：阮秋 从竹径到断碑崖\n正文：",
+            "output": "阮秋从竹径来到断碑崖。",
+            "outputTokens": 13,
+            "wallSeconds": 0.44,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d107-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约四分钟\n正文：",
+            "output": "一切如旧。前后大约四分钟。",
+            "outputTokens": 12,
+            "wallSeconds": 0.37,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d108-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n2. 时间推进：约四分钟\n正文：",
+            "output": "周砚完成了任务「更换旧灯房的灯油」。前后大约四分钟。",
+            "outputTokens": 21,
+            "wallSeconds": 0.65,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d108-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n正文：",
+            "output": "周砚完成了任务「更换旧灯房的灯油」。",
+            "outputTokens": 16,
+            "wallSeconds": 0.52,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d109-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n2. 个性：周砚变得急切\n3. 理智：周砚 12→15（上升）\n4. 时间推进：约四分钟\n正文：",
+            "output": "周砚完成了任务「更换旧灯房的灯油」,变得急切,精神值从12升到了15。前后大约四分钟。",
+            "outputTokens": 34,
+            "wallSeconds": 1.12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d109-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：周砚「更换旧灯房的灯油」\n2. 个性：周砚变得急切\n3. 理智：周砚 12→15（上升）\n正文：",
+            "output": "周砚完成了任务「更换旧灯房的灯油」,变得急切,精神值从12升到了15。",
+            "outputTokens": 29,
+            "wallSeconds": 1.07,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d110-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：柴房 池面的浮叶堆到了一角\n2. 时间推进：约四分钟\n正文：",
+            "output": "柴房的外观变了:池面的浮叶堆到了一角。前后大约四分钟。",
+            "outputTokens": 24,
+            "wallSeconds": 0.7,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d110-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：柴房 池面的浮叶堆到了一角\n正文：",
+            "output": "柴房的外观变了:池面的浮叶堆到了一角。",
+            "outputTokens": 19,
+            "wallSeconds": 0.71,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d111-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：周砚 从钟楼到柴房\n2. 现状：阮秋 已在柴房\n3. 时间推进：约四分钟\n正文：",
+            "output": "周砚从钟楼来到柴房时,阮秋已经在柴房了。前后大约四分钟。",
+            "outputTokens": 26,
+            "wallSeconds": 0.97,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d111-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：周砚 从钟楼到柴房\n2. 现状：阮秋 已在柴房\n正文：",
+            "output": "周砚从钟楼来到柴房时,阮秋已经在柴房了。",
+            "outputTokens": 21,
+            "wallSeconds": 0.79,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d112-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n2. 时间推进：约七分钟\n正文：",
+            "output": "林望由侧院进入灰墙巷。前后大约七分钟。",
+            "outputTokens": 18,
+            "wallSeconds": 0.53,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d112-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n正文：",
+            "output": "林望从侧院来到灰墙巷。",
+            "outputTokens": 13,
+            "wallSeconds": 0.41,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d113-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约七分钟\n正文：",
+            "output": "一切如旧。前后大约七分钟。",
+            "outputTokens": 12,
+            "wallSeconds": 0.33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d114-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：岑野「修补灰墙巷的路面」\n2. 时间推进：约四分钟\n正文：",
+            "output": "岑野完成了任务「修补灰墙巷的路面」。前后大约四分钟。",
+            "outputTokens": 21,
+            "wallSeconds": 0.65,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d114-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：岑野「修补灰墙巷的路面」\n正文：",
+            "output": "岑野完成了任务「修补灰墙巷的路面」。",
+            "outputTokens": 16,
+            "wallSeconds": 0.44,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d115-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 个性：林望变得耐心\n3. 理智：林望 11→8（下降）\n4. 时间推进：约七分钟\n正文：",
+            "output": "林望完成了任务「清点碑亭石刻」,变得耐心,精神值从11降到了8。前后大约七分钟。",
+            "outputTokens": 33,
+            "wallSeconds": 0.92,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d115-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 个性：林望变得耐心\n3. 理智：林望 11→8（下降）\n正文：",
+            "output": "林望完成了任务「清点碑亭石刻」,变得耐心,精神值从11降到了8。",
+            "outputTokens": 28,
+            "wallSeconds": 0.96,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d116-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：灰墙巷 桥栏的麻绳磨断了\n2. 时间推进：约七分钟\n正文：",
+            "output": "灰墙巷的外观变了:桥栏的麻绳磨断了。前后大约七分钟。",
+            "outputTokens": 25,
+            "wallSeconds": 0.75,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d116-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：灰墙巷 桥栏的麻绳磨断了\n正文：",
+            "output": "灰墙巷的外观变了:桥栏的麻绳磨断了。",
+            "outputTokens": 20,
+            "wallSeconds": 0.55,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d117-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n2. 现状：岑野 已在灰墙巷\n3. 时间推进：约七分钟\n正文：",
+            "output": "林望从侧院来到灰墙巷时,岑野已经在灰墙巷了。前后大约七分钟。",
+            "outputTokens": 28,
+            "wallSeconds": 1.12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d117-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：林望 从侧院到灰墙巷\n2. 现状：岑野 已在灰墙巷\n正文：",
+            "output": "林望从侧院来到灰墙巷时,岑野已经在灰墙巷了。",
+            "outputTokens": 23,
+            "wallSeconds": 0.83,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d118-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n2. 时间推进：约十分钟\n正文：",
+            "output": "沈青由柴房进入了旧灯房。前后大约十分钟。",
+            "outputTokens": 19,
+            "wallSeconds": 0.73,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d118-loc"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n正文：",
+            "output": "沈青由柴房进入了旧灯房。",
+            "outputTokens": 14,
+            "wallSeconds": 0.56,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d119-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n2. 时间推进：约十分钟\n正文：",
+            "output": "一切如旧。前后大约十分钟。",
+            "outputTokens": 12,
+            "wallSeconds": 0.48,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d120-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n2. 时间推进：约七分钟\n正文：",
+            "output": "宋知远完成了任务「把信笺送去洗砚池」。前后大约七分钟。",
+            "outputTokens": 23,
+            "wallSeconds": 0.85,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d120-task"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n正文：",
+            "output": "宋知远完成了任务「把信笺送去洗砚池」。",
+            "outputTokens": 18,
+            "wallSeconds": 0.67,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d121-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n2. 个性：宋知远变得寡言\n3. 理智：宋知远 14→11（下降）\n4. 时间推进：约七分钟\n正文：",
+            "output": "宋知远完成了任务「把信笺送去洗砚池」,变得寡言,精神值从14降到了11。前后大约七分钟。",
+            "outputTokens": 36,
+            "wallSeconds": 1.21,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d121-chain"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：宋知远「把信笺送去洗砚池」\n2. 个性：宋知远变得寡言\n3. 理智：宋知远 14→11（下降）\n正文：",
+            "output": "宋知远完成了任务「把信笺送去洗砚池」,变得寡言,精神值从14降到了11。",
+            "outputTokens": 31,
+            "wallSeconds": 0.94,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d122-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：旧灯房 灯罩积了厚厚的灰\n2. 时间推进：约十分钟\n正文：",
+            "output": "旧灯房的外观变了:灯罩积了厚厚的灰。前后大约十分钟。",
+            "outputTokens": 24,
+            "wallSeconds": 0.83,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d122-appear"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 外貌：旧灯房 灯罩积了厚厚的灰\n正文：",
+            "output": "旧灯房的外观变了:灯罩积了厚厚的灰。",
+            "outputTokens": 19,
+            "wallSeconds": 0.56,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d123-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n2. 现状：宋知远 已在旧灯房\n3. 时间推进：约十分钟\n正文：",
+            "output": "沈青从柴房来到旧灯房时,宋知远已经在旧灯房了。前后大约十分钟。",
+            "outputTokens": 29,
+            "wallSeconds": 0.9,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4x-d123-multi"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": false,
+            "trainGroups": [],
+            "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到旧灯房\n2. 现状：宋知远 已在旧灯房\n正文：",
+            "output": "沈青从柴房来到旧灯房时,宋知远已经在旧灯房了。",
+            "outputTokens": 24,
+            "wallSeconds": 0.95,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ],
+        "regression": [
+          {
+            "devGroups": [
+              "n4-empty-027"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": true,
+            "trainGroups": [
+              "n4-empty-009"
+            ],
+            "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "wallSeconds": 0.6,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-empty-027",
+              "n4x-d101-empty",
+              "n4x-d107-empty",
+              "n4x-d113-empty",
+              "n4x-d119-empty"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 10,
+            "seenInTrain": true,
+            "trainGroups": [
+              "n4-empty-007",
+              "n4-empty-008",
+              "n4-empty-009",
+              "n4-empty-010",
+              "n4x-t001-empty",
+              "n4x-t007-empty",
+              "n4x-t013-empty",
+              "n4x-t019-empty",
+              "n4x-t025-empty",
+              "n4x-t031-empty",
+              "n4x-t037-empty",
+              "n4x-t043-empty",
+              "n4x-t049-empty",
+              "n4x-t055-empty",
+              "n4x-t061-empty",
+              "n4x-t067-empty",
+              "n4x-t073-empty",
+              "n4x-t079-empty",
+              "n4x-t085-empty",
+              "n4x-t091-empty"
+            ],
+            "input": "叙事生成任务。\n事实：\n1. 无变化\n正文：",
+            "output": "一切如旧。",
+            "outputTokens": 7,
+            "wallSeconds": 0.31,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "devGroups": [
+              "n4-task-026"
+            ],
+            "rowOrigin": [
+              "rewrite",
+              "template-seed"
+            ],
+            "rowsMerged": 2,
+            "seenInTrain": true,
+            "trainGroups": [
+              "n4-task-014"
+            ],
+            "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n正文：",
+            "output": "林望完成了任务「清点碑亭石刻」。",
+            "outputTokens": 15,
+            "wallSeconds": 0.63,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      }
+    }
+  },
+  "disclaimers": [
+    "unseen-input denominator only; regression inputs are reported separately and never counted as generalization",
+    "quality gate closure needs broader coverage and human review",
+    "Chinese naturalness is left to human review at delivery acceptance",
+    "training saw the plan rendering; zero-shot base did not"
+  ]
+}

@@ -1,0 +1,1520 @@
+{
+ "protocol": "attention-selection-v2",
+ "frozenAt": "2026-11-06",
+ "sourceFixture": {
+  "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+  "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f"
+ },
+ "summary": {
+  "cases": 10,
+  "controlled": 9,
+  "coverage": 1,
+  "groups": {
+   "P": "attention/prior 2x2",
+   "C": "direct/indirect/same-location",
+   "H": "holdout",
+   "R": "real-command coverage"
+  }
+ },
+ "cases": [
+  {
+   "caseId": "P1",
+   "groupId": "G2",
+   "packageId": "n2-13",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "at": "西栅桥",
+    "rule": "你只知道自己在西栅桥能看到的，以及自己的行动与状态"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "goal": "修西栅桥的踏板",
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": 12,
+     "to": 10,
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f2",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "task_achieved",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "goal": "补好瓦窑的顶棚",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f3",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "loc_404",
+     "name": "西栅桥",
+     "text": "柜台上的铜锁生了锈",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f4",
+      "entityId": "loc_404",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "task_achieved",
+     "entityId": "char_405",
+     "name": "白蘅",
+     "goal": "把账簿送回半窗书舍",
+     "at": "半窗书舍",
+     "authorization": "forbidden",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f5",
+      "entityId": "char_405",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "time",
+     "amount": 12,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f6]"
+     }
+    }
+   ],
+   "attention": "沈拾刚才在忙什么？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "沈拾"
+   ],
+   "focus": {
+    "entityId": "char_401",
+    "name": "沈拾",
+    "attribute": "task"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "targetOptionalFactIds": [
+    "f3"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的任务达成",
+    "f2": "must：裴行舟的理智变化",
+    "f3": "关注沈拾，f3 直接回答",
+    "f4": "铜锁外观不回答沈拾在忙什么",
+    "f5": "forbidden",
+    "f6": "time"
+   },
+   "notes": "prior none: f3 and f4 are both un-narrated and compete; the old G2-A had f4 narrated, which removed this competition."
+  },
+  {
+   "caseId": "P2",
+   "groupId": "G2",
+   "packageId": "n2-13",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "at": "西栅桥",
+    "rule": "你只知道自己在西栅桥能看到的，以及自己的行动与状态"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "goal": "修西栅桥的踏板",
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": 12,
+     "to": 10,
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f2",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "task_achieved",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "goal": "补好瓦窑的顶棚",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f3",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "loc_404",
+     "name": "西栅桥",
+     "text": "柜台上的铜锁生了锈",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f4",
+      "entityId": "loc_404",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "task_achieved",
+     "entityId": "char_405",
+     "name": "白蘅",
+     "goal": "把账簿送回半窗书舍",
+     "at": "半窗书舍",
+     "authorization": "forbidden",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f5",
+      "entityId": "char_405",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "time",
+     "amount": 12,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f6]"
+     }
+    }
+   ],
+   "attention": "西栅桥的铜锁怎么了？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "西栅桥",
+    "铜锁"
+   ],
+   "focus": {
+    "entityId": "loc_404",
+    "name": "西栅桥",
+    "attribute": "appearance",
+    "objectText": "铜锁"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "targetOptionalFactIds": [
+    "f4"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的任务达成",
+    "f2": "must：裴行舟的理智变化",
+    "f3": "沈拾的任务不回答铜锁",
+    "f4": "关注铜锁，f4 直接回答",
+    "f5": "forbidden",
+    "f6": "time"
+   },
+   "notes": "prior none: f3 and f4 are both un-narrated; the original lexical rule matches f3 through at=西栅桥."
+  },
+  {
+   "caseId": "P3",
+   "groupId": "G2",
+   "packageId": "n2-13",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "at": "西栅桥",
+    "rule": "你只知道自己在西栅桥能看到的，以及自己的行动与状态"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "goal": "修西栅桥的踏板",
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": 12,
+     "to": 10,
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f2",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "task_achieved",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "goal": "补好瓦窑的顶棚",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f3",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "loc_404",
+     "name": "西栅桥",
+     "text": "柜台上的铜锁生了锈",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f4",
+      "entityId": "loc_404",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "task_achieved",
+     "entityId": "char_405",
+     "name": "白蘅",
+     "goal": "把账簿送回半窗书舍",
+     "at": "半窗书舍",
+     "authorization": "forbidden",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f5",
+      "entityId": "char_405",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "time",
+     "amount": 12,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f6]"
+     }
+    }
+   ],
+   "attention": "沈拾刚才在忙什么？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "沈拾"
+   ],
+   "focus": {
+    "entityId": "char_401",
+    "name": "沈拾",
+    "attribute": "task"
+   },
+   "priorNarration": "西栅桥的柜台铜锁生了锈。",
+   "alreadyNarratedFactIds": [
+    "f4"
+   ],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "targetOptionalFactIds": [
+    "f3"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的任务达成",
+    "f2": "must：裴行舟的理智变化",
+    "f3": "关注沈拾，保留",
+    "f4": "已述，省略",
+    "f5": "forbidden",
+    "f6": "time"
+   },
+   "notes": "prior removes the competitor f4; the no-attention rule now selects only f3. This is the old G2-A shape."
+  },
+  {
+   "caseId": "P4",
+   "groupId": "G2",
+   "packageId": "n2-13",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "at": "西栅桥",
+    "rule": "你只知道自己在西栅桥能看到的，以及自己的行动与状态"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "task_achieved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "goal": "修西栅桥的踏板",
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "sanity_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": 12,
+     "to": 10,
+     "at": "西栅桥",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f2",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "task_achieved",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "goal": "补好瓦窑的顶棚",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f3",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "loc_404",
+     "name": "西栅桥",
+     "text": "柜台上的铜锁生了锈",
+     "at": "西栅桥",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f4",
+      "entityId": "loc_404",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "task_achieved",
+     "entityId": "char_405",
+     "name": "白蘅",
+     "goal": "把账簿送回半窗书舍",
+     "at": "半窗书舍",
+     "authorization": "forbidden",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f5",
+      "entityId": "char_405",
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "time",
+     "amount": 12,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G2",
+      "packageId": "n2-13",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G2].facts[f6]"
+     }
+    }
+   ],
+   "attention": "西栅桥的铜锁怎么了？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "西栅桥",
+    "铜锁"
+   ],
+   "focus": {
+    "entityId": "loc_404",
+    "name": "西栅桥",
+    "attribute": "appearance",
+    "objectText": "铜锁"
+   },
+   "priorNarration": "沈拾补好了瓦窑的顶棚。",
+   "alreadyNarratedFactIds": [
+    "f3"
+   ],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "targetOptionalFactIds": [
+    "f4"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的任务达成",
+    "f2": "must：裴行舟的理智变化",
+    "f3": "已述，省略",
+    "f4": "关注铜锁，保留",
+    "f5": "forbidden",
+    "f6": "time"
+   },
+   "notes": "prior removes the competitor f3; the no-attention rule now selects only f4. This is the old G2-B shape."
+  },
+  {
+   "caseId": "C1",
+   "groupId": "G1",
+   "packageId": "n2-09",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "global",
+    "rule": "all listed facts are authorized; no restricted viewpoint"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "moved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": "石阶码头",
+     "to": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "positioned_at",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "at": "旧钟铺",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f2",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "personality_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "text": "变得谨慎",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f3",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "personality_changed",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "text": "变得急躁",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f4",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "time",
+     "amount": 9,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f5",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "no_change",
+     "scope": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f6]"
+     }
+    }
+   ],
+   "attention": "裴行舟现在是什么性子？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "裴行舟"
+   ],
+   "focus": {
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "attribute": "personality"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "targetOptionalFactIds": [
+    "f3"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的移动",
+    "f2": "must：沈拾的位置",
+    "f3": "关注裴行舟的性子，保留",
+    "f4": "沈拾的性子不回答裴行舟",
+    "f5": "time",
+    "f6": "no_change"
+   },
+   "notes": "direct reference; both f3 and f4 are un-narrated; no prior."
+  },
+  {
+   "caseId": "C2",
+   "groupId": "G1",
+   "packageId": "n2-09",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "global",
+    "rule": "all listed facts are authorized; no restricted viewpoint"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "moved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": "石阶码头",
+     "to": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "positioned_at",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "at": "旧钟铺",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f2",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "personality_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "text": "变得谨慎",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f3",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "personality_changed",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "text": "变得急躁",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f4",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "time",
+     "amount": 9,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f5",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "no_change",
+     "scope": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f6]"
+     }
+    }
+   ],
+   "attention": "他刚才那副小心翼翼的样子是怎么回事？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "他",
+    "小心"
+   ],
+   "focus": {
+    "entityId": "char_400",
+    "name": "裴行舟",
+    "attribute": "personality"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f3"
+   ],
+   "targetOptionalFactIds": [
+    "f3"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的移动",
+    "f2": "must：沈拾的位置",
+    "f3": "关注裴行舟的性子，保留",
+    "f4": "沈拾的性子不回答裴行舟",
+    "f5": "time",
+    "f6": "no_change"
+   },
+   "notes": "indirect pronoun and synonym (小心/谨慎); the lexical arm is given the surface targets 他/小心, which do not match the fact text."
+  },
+  {
+   "caseId": "C3",
+   "groupId": "G1",
+   "packageId": "n2-09",
+   "origin": "constructed-package",
+   "viewpoint": {
+    "type": "global",
+    "rule": "all listed facts are authorized; no restricted viewpoint"
+   },
+   "facts": [
+    {
+     "factId": "f1",
+     "kind": "moved",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "from": "石阶码头",
+     "to": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f1",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "positioned_at",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "at": "旧钟铺",
+     "authorization": "must",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f2",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "personality_changed",
+     "entityId": "char_400",
+     "name": "裴行舟",
+     "text": "变得谨慎",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f3",
+      "entityId": "char_400",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "personality_changed",
+     "entityId": "char_401",
+     "name": "沈拾",
+     "text": "变得急躁",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f4",
+      "entityId": "char_401",
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f4]"
+     }
+    },
+    {
+     "factId": "f5",
+     "kind": "time",
+     "amount": 9,
+     "unit": "minute",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f5",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f5]"
+     }
+    },
+    {
+     "factId": "f6",
+     "kind": "no_change",
+     "scope": "旧钟铺",
+     "at": "旧钟铺",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G1",
+      "packageId": "n2-09",
+      "factId": "f6",
+      "entityId": null,
+      "pointId": null,
+      "fieldPath": "groups[G1].facts[f6]"
+     }
+    }
+   ],
+   "attention": "旧钟铺里，沈拾现在是什么性子？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "旧钟铺",
+    "沈拾"
+   ],
+   "focus": {
+    "entityId": "char_401",
+    "name": "沈拾",
+    "attribute": "personality"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f1",
+    "f2",
+    "f4"
+   ],
+   "targetOptionalFactIds": [
+    "f4"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f1": "must：裴行舟的移动",
+    "f2": "must：沈拾的位置",
+    "f3": "裴行舟的性子不回答沈拾",
+    "f4": "关注沈拾的性子，保留",
+    "f5": "time",
+    "f6": "no_change"
+   },
+   "notes": "same location, two different events: f3 is 裴行舟 personality at 旧钟铺, f4 is 沈拾 personality at 旧钟铺; the original lexical rule matches f3 through at=旧钟铺."
+  },
+  {
+   "caseId": "H1",
+   "groupId": "G3",
+   "packageId": "train-r1",
+   "origin": "real-pipeline-package",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_shen",
+    "name": "沈砚",
+    "at": "loc_alley",
+    "rule": "只保留视角本人可确认的事实；同地他人外观没有观察依据，标记可见性未定，不进选择池"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "袖口沾了雨",
+     "at": "loc_alley",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f0",
+      "entityId": "char_shen",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f0]"
+     }
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "指节发白",
+     "at": "loc_alley",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f1",
+      "entityId": "char_shen",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "text": "斗篷下摆湿了一片",
+     "at": "loc_alley",
+     "authorization": "uncertain",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f2",
+      "entityId": "char_gu",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "鞋底沾了泥",
+     "at": "loc_alley",
+     "authorization": "uncertain",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f3",
+      "entityId": "char_ye",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "袖口湿到肘部",
+     "at": "loc_alley",
+     "authorization": "uncertain",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f4",
+      "entityId": "char_ye",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f4]"
+     }
+    }
+   ],
+   "attention": "我刚才袖口是不是湿了？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "袖口"
+   ],
+   "focus": {
+    "entityId": "char_shen",
+    "name": "沈砚",
+    "attribute": "appearance",
+    "objectText": "袖口"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f0"
+   ],
+   "targetOptionalFactIds": [
+    "f0"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f0": "关注袖口，保留",
+    "f1": "指节不回答袖口",
+    "f2": "uncertain：同地他人外观，没有观察依据",
+    "f3": "uncertain",
+    "f4": "uncertain"
+   },
+   "notes": "holdout package not used to design the rule; both f0 and f1 are un-narrated; f2-f4 are uncertain."
+  },
+  {
+   "caseId": "H2",
+   "groupId": "G3",
+   "packageId": "train-r1",
+   "origin": "real-pipeline-package",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "char_shen",
+    "name": "沈砚",
+    "at": "loc_alley",
+    "rule": "只保留视角本人可确认的事实；同地他人外观没有观察依据，标记可见性未定，不进选择池"
+   },
+   "facts": [
+    {
+     "factId": "f0",
+     "kind": "appearance_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "袖口沾了雨",
+     "at": "loc_alley",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f0",
+      "entityId": "char_shen",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f0]"
+     }
+    },
+    {
+     "factId": "f1",
+     "kind": "appearance_changed",
+     "entityId": "char_shen",
+     "name": "沈砚",
+     "text": "指节发白",
+     "at": "loc_alley",
+     "authorization": "optional",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f1",
+      "entityId": "char_shen",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f1]"
+     }
+    },
+    {
+     "factId": "f2",
+     "kind": "appearance_changed",
+     "entityId": "char_gu",
+     "name": "顾行舟",
+     "text": "斗篷下摆湿了一片",
+     "at": "loc_alley",
+     "authorization": "uncertain",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f2",
+      "entityId": "char_gu",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f2]"
+     }
+    },
+    {
+     "factId": "f3",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "鞋底沾了泥",
+     "at": "loc_alley",
+     "authorization": "uncertain",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f3",
+      "entityId": "char_ye",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f3]"
+     }
+    },
+    {
+     "factId": "f4",
+     "kind": "appearance_changed",
+     "entityId": "char_ye",
+     "name": "叶知微",
+     "text": "袖口湿到肘部",
+     "at": "loc_alley",
+     "authorization": "uncertain",
+     "source": {
+      "file": "artifacts/world-components/organize-wording/attention-selection-v1.json",
+      "sha256": "4af0ae0326d3dae759a0f4324442b4cd877b67cb22ffd2231345159ce124ad1f",
+      "groupId": "G3",
+      "packageId": "train-r1",
+      "factId": "f4",
+      "entityId": "char_ye",
+      "pointId": null,
+      "fieldPath": "groups[G3].facts[f4]"
+     }
+    }
+   ],
+   "attention": "我刚才指节怎么了？",
+   "attentionOrigin": "synthetic",
+   "attentionTargets": [
+    "指节"
+   ],
+   "focus": {
+    "entityId": "char_shen",
+    "name": "沈砚",
+    "attribute": "appearance",
+    "objectText": "指节"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "f1"
+   ],
+   "targetOptionalFactIds": [
+    "f1"
+   ],
+   "relatedOptionalFactIds": [],
+   "manualReasons": {
+    "f0": "袖口不回答指节",
+    "f1": "关注指节，保留",
+    "f2": "uncertain",
+    "f3": "uncertain",
+    "f4": "uncertain"
+   },
+   "notes": "holdout package not used to design the rule; both f0 and f1 are un-narrated; f2-f4 are uncertain."
+  },
+  {
+   "caseId": "R1",
+   "groupId": "R",
+   "packageId": "interaction-sample-v1",
+   "origin": "committed-real-report",
+   "viewpoint": {
+    "type": "protagonist",
+    "entityId": "person_c",
+    "name": "周宁",
+    "at": "走廊"
+   },
+   "facts": [
+    {
+     "factId": "r3_sanity",
+     "kind": "sanity_changed",
+     "entityId": "person_c",
+     "name": "周宁",
+     "from": 10,
+     "to": 8,
+     "at": "走廊",
+     "authorization": "must",
+     "source": {
+      "file": "design/world-engine-reports/components/interaction-sample-v1.md",
+      "section": "2 R3",
+      "pointId": "point_19",
+      "entityId": "person_c",
+      "fieldPath": "sanity/sanitySet",
+      "note": "world.db is local-only; the committed report row is the source used here",
+      "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367"
+     }
+    },
+    {
+     "factId": "r3_task",
+     "kind": "task_achieved",
+     "entityId": "person_c",
+     "name": "周宁",
+     "goal": "完成压力试验",
+     "at": "走廊",
+     "authorization": "must",
+     "source": {
+      "file": "design/world-engine-reports/components/interaction-sample-v1.md",
+      "section": "2 R3",
+      "pointId": "point_19",
+      "entityId": "person_c",
+      "fieldPath": "task_achieved/task_pressure",
+      "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367"
+     }
+    },
+    {
+     "factId": "r3_personality",
+     "kind": "personality_changed",
+     "entityId": "person_c",
+     "name": "周宁",
+     "text": "经历压力试验后更谨慎",
+     "at": "走廊",
+     "authorization": "optional",
+     "source": {
+      "file": "design/world-engine-reports/components/interaction-sample-v1.md",
+      "section": "2 R3",
+      "pointId": "point_19",
+      "entityId": "person_c",
+      "fieldPath": "personality/change_22",
+      "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367"
+     }
+    },
+    {
+     "factId": "r3_time",
+     "kind": "time",
+     "amount": 1,
+     "unit": "second",
+     "at": null,
+     "authorization": "optional",
+     "source": {
+      "file": "design/world-engine-reports/components/interaction-sample-v1.md",
+      "section": "2 R3",
+      "pointId": "point_19",
+      "entityId": null,
+      "fieldPath": "time_json",
+      "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367"
+     }
+    }
+   ],
+   "attention": "完成压力试验",
+   "attentionOrigin": "real-command",
+   "attentionTargets": [
+    "完成压力试验"
+   ],
+   "focus": {
+    "entityId": "person_c",
+    "name": "周宁",
+    "attribute": "task"
+   },
+   "priorNarration": "",
+   "alreadyNarratedFactIds": [],
+   "manualSelectedFactIds": [
+    "r3_sanity",
+    "r3_task",
+    "r3_personality"
+   ],
+   "targetOptionalFactIds": [],
+   "relatedOptionalFactIds": [
+    "r3_personality"
+   ],
+   "manualReasons": {
+    "r3_sanity": "must：视角本人的理智变化",
+    "r3_task": "must：玩家正在推进的任务结果",
+    "r3_personality": "related：同点新的自身状态；任务与人格同点不等于因果",
+    "r3_time": "time：不回答完成情况"
+   },
+   "notes": "real page command, not a free-form question; the personality fact is related but not a target; the report says the raw command is in page-run.json and the DB input_text is NULL. The DB is not in this branch; the committed report row is the source."
+  }
+ ],
+ "sourceReports": [
+  {
+   "id": "interaction-sample-v1",
+   "file": "design/world-engine-reports/components/interaction-sample-v1.md",
+   "sha256": "b7a0715ec3fdc4ab222f96c3b6ff0f9e3e528e5aca4d0649620e5518e7550367"
+  }
+ ]
+}

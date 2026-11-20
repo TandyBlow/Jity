@@ -1,0 +1,138 @@
+{
+ "formVersion": "c3-signoff-v1",
+ "purpose": "项目负责人逐条核对原文、证据与 AI 理由后签认；签认前 gate 状态保持 PROVISIONAL_AI_REVIEW_ONLY",
+ "signer": "pi（AI 编码代理，本机 pi harness）",
+ "signerRole": "delegated-signer",
+ "signerKind": "ai",
+ "delegationNote": "项目负责人在 2026-11-08 的会话中明确指示由本代理完成本轮签认；签认人身份照实记为 AI 代理，不冒充人类复核者。AI 复核结论保留在 aiVerdict/aiNote，逐行人工结论写在 humanVerdict/humanNote。",
+ "date": "2026-11-08",
+ "reviewedCommit": "4dd9df4",
+ "pinnedInputs": {
+  "criteria": {
+   "file": "freeze/criteria-v2.json",
+   "sha256": "b0a313f6fdcfcb967e9b0950e8d944d646d81ea82fb89014017e3dcef1dc1e82",
+   "checkerVersion": "c3-text-conformance-v2"
+  },
+  "checker": {
+   "file": "text_conformance.py",
+   "sha256": "a4444195f6ce6ee6c5ad9d30fd6536a3161510125fed036c1011e1e21cc76d90"
+  },
+  "tamperProbes": {
+   "file": "freeze/tamper-probes.json",
+   "sha256": "75cad427564f24bbd768ff05b66cdd9762fdfee1ad460ac373a5df2ceffe3b12"
+  },
+  "manualReview": {
+   "file": "runs/r2/manual-review.json",
+   "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74"
+  },
+  "acceptanceIdentity": "d3767818d78c89b4f2941c067ea6d0074a33e73531a2cfa73862492634f74a9c"
+ },
+ "instructions": [
+  "逐行填写 humanVerdict：paraphrase-ok / new-content-fail / unsure",
+  "unsure 合法，但该条不算通过（判据 manualReview.verdictValues）",
+  "aiVerdict 与 aiNote 是原表内容，不得改写；不同意见写在 humanNote",
+  "填完运行 python -X utf8 apply_signoff.py"
+ ],
+ "rows": [
+  {
+   "queueId": "T03-add-unlicensed-object:拿走",
+   "code": "added-content-outside-vocabulary",
+   "run": "拿走",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，并拿走了一把刀。",
+   "aiVerdict": "new-content-fail",
+   "aiNote": "Codex AI复核：选中事实仅记录外观变化，没有陈默拿走物品的行动；新增拿走事件，不是事实改写。人工签认待完成。",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：末句断言陈默拿走了一把刀；五条选中事实只有外观变化，没有取物动作。可见清单里也没有刀。"
+  },
+  {
+   "queueId": "T03-add-unlicensed-object:刀",
+   "code": "added-content-outside-vocabulary",
+   "run": "刀",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，并拿走了一把刀。",
+   "aiVerdict": "new-content-fail",
+   "aiNote": "Codex AI复核：选中事实及可见清单均未授权刀及其被拿走的事件；本结论不外推为整个世界不存在刀。人工签认待完成。",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：刀只出现在新增分句里；不是对“袖口湿到肘部”的同义改写。"
+  },
+  {
+   "queueId": "T06-second-sequence-word:退",
+   "code": "added-content-outside-vocabulary",
+   "run": "退",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，随后，陈默退了出去。",
+   "aiVerdict": "new-content-fail",
+   "aiNote": "Codex AI复核：新增陈默退场动作，五条选中外观事实没有该行动；原有关系词硬判失败仍有效。人工签认待完成。",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：新增退场动作；该探针原本已被 sequence-wording-outside-scope 硬判失败，此结论不改变结果。"
+  },
+  {
+   "queueId": "T06-second-sequence-word:出去",
+   "code": "added-content-outside-vocabulary",
+   "run": "出去",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，随后，陈默退了出去。",
+   "aiVerdict": "new-content-fail",
+   "aiNote": "Codex AI复核：出去与退共同断言未经记录的移动/退场事件，不是外观事实的改写；保留既有硬判失败。人工签认待完成。",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：与“退”共同断言未经记录的移动；硬判失败仍在。"
+  },
+  {
+   "queueId": "T07-added-sentence:潮汐簿",
+   "code": "added-content-visible-only",
+   "run": "潮汐簿",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。潮汐簿被合上了。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "aiVerdict": "new-content-fail",
+   "aiNote": "Codex AI复核：潮汐簿虽在可见清单中，但完整分句断言它被合上；可见物存在不能授权合簿事件，不能孤立按名词判为合法。人工签认待完成。",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：物件在可见清单不等于可以断言它被合上；完整分句是事件描述。"
+  },
+  {
+   "queueId": "T07-added-sentence:合上",
+   "code": "added-content-outside-vocabulary",
+   "run": "合上",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。潮汐簿被合上了。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "aiVerdict": "new-content-fail",
+   "aiNote": "Codex AI复核：选中事实未记录潮汐簿被合上的动作/状态变化；不是对原外观事实的同义改写。新增句的硬判失败仍有效。人工签认待完成。",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "复核原文：没有记录合上的动作或状态变化；新增句已被 added-sentence 硬判。"
+  },
+  {
+   "queueId": "T09-props-only-addition:墨",
+   "code": "added-content-visible-only",
+   "run": "墨",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，墨和干纸还在。",
+   "aiVerdict": "unsure",
+   "aiNote": "Codex AI复核：墨列在freeze/contexts.json的可见清单，提到该物品本身不等于编造事件；但还在带有持续状态含义，选中事实没有相应前后状态，且上下文标为仅展示用途，无法确认完整分句受授权。不计通过；人工签认待完成。",
+   "humanVerdict": "unsure",
+   "humanNote": "同意原结论：墨在可见清单里，提到物品不等于编造事件；但“还在”断言的是持续状态，无法从选中事实确认。保留 unsure，本条不计通过。"
+  },
+  {
+   "queueId": "T09-props-only-addition:干纸",
+   "code": "added-content-visible-only",
+   "run": "干纸",
+   "text": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部，墨和干纸还在。",
+   "aiVerdict": "unsure",
+   "aiNote": "Codex AI复核：干纸列在freeze/contexts.json的可见清单，不因重复可见名词自动判错；完整分句的还在是否仅表当前可见、或新增持续状态，现有事实链不能确定。不计通过；人工签认待完成。",
+   "humanVerdict": "unsure",
+   "humanNote": "同上：干纸在可见清单；持续状态无法确认。保留 unsure，不计通过。"
+  },
+  {
+   "queueId": "smoke:fixture-r1:P1",
+   "code": "archived-output-hard-fail",
+   "run": null,
+   "text": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
+   "aiVerdict": "fail",
+   "aiNote": "archived output already fails hard; listed for completeness",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "归档基线输出复读了提示词里的要求行，属于事实外内容；该输出已被程序硬判失败，本行只作留档。"
+  },
+  {
+   "queueId": "smoke:fixture-r1:P2",
+   "code": "archived-output-hard-fail",
+   "run": null,
+   "text": "要求:把全部事实写成一段连贯中文;按给定顺序;不新增人物、物品、地点、动作、关系;不写任务标题、数值、时长、字段名;不写代词,需要称呼时用姓名或承前省略",
+   "aiVerdict": "fail",
+   "aiNote": "archived output already fails hard; listed for completeness",
+   "humanVerdict": "new-content-fail",
+   "humanNote": "同上。"
+  }
+ ]
+}

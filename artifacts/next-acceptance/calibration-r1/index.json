@@ -1,0 +1,153 @@
+{
+ "purpose": "calibration of the component-constraint machinery on 24 facts, k=2, no optimiser",
+ "job": {
+  "id": 241188,
+  "device": "cuda",
+  "model": "C 08276c0c",
+  "rows": 48,
+  "facts": 24
+ },
+ "alignment": {
+  "labelMismatch": 0,
+  "strictSpanMismatch": 0,
+  "spansChecked": 48,
+  "expandedSpans": 8,
+  "expandedList": [
+   {
+    "rowId": "05:a",
+    "component": "state",
+    "decoded": "结了一",
+    "expected": "结了"
+   },
+   {
+    "rowId": "05:b",
+    "component": "state",
+    "decoded": "结了一",
+    "expected": "结了"
+   },
+   {
+    "rowId": "10:a",
+    "component": "state",
+    "decoded": "放在",
+    "expected": "放"
+   },
+   {
+    "rowId": "10:b",
+    "component": "state",
+    "decoded": "放在",
+    "expected": "放"
+   },
+   {
+    "rowId": "19:a",
+    "component": "state",
+    "decoded": "等了一",
+    "expected": "等了"
+   },
+   {
+    "rowId": "19:b",
+    "component": "state",
+    "decoded": "等了一",
+    "expected": "等了"
+   },
+   {
+    "rowId": "23:a",
+    "component": "state",
+    "decoded": "沾了一",
+    "expected": "沾了"
+   },
+   {
+    "rowId": "23:b",
+    "component": "state",
+    "decoded": "沾了一",
+    "expected": "沾了"
+   }
+  ]
+ },
+ "margins": {
+  "name_drop": {
+   "n": 44,
+   "activeAtM1": 20,
+   "min": 0.6925,
+   "median": 1.052,
+   "max": 2.7695
+  },
+  "other_vague": {
+   "n": 10,
+   "activeAtM1": 0,
+   "min": 1.1368,
+   "median": 1.3907,
+   "max": 2.0932
+  },
+  "state_negated": {
+   "n": 10,
+   "activeAtM1": 6,
+   "min": 0.8667,
+   "median": 0.9986,
+   "max": 1.4356
+  },
+  "state_stasis": {
+   "n": 20,
+   "activeAtM1": 0,
+   "min": 2.1782,
+   "median": 2.9142,
+   "max": 3.7099
+  },
+  "state_event": {
+   "n": 4,
+   "activeAtM1": 0,
+   "min": 5.9147,
+   "median": 5.9258,
+   "max": 6.036
+  }
+ },
+ "gradient": {
+  "norms": {
+   "ce": 0.37652,
+   "span": 0.39668,
+   "margin": 0.27623
+  },
+  "cosines": {
+   "ce.span": 0.9445,
+   "ce.margin": 0.3452,
+   "span.margin": 0.2586
+  },
+  "ratioByValue": 0.5992,
+  "ratioByGradient": 0.7469,
+  "marginActiveShare": 0.2222,
+  "subset": [
+   "lm_head.weight",
+   "encoder.block.7.layer.1.DenseReluDense.wo.weight",
+   "decoder.block.7.layer.0.SelfAttention.q.weight"
+  ]
+ },
+ "dropoutRng": {
+  "step1Reproduces": 0.0,
+  "step2NoFork": 59.312576,
+  "step2Forked": 0.0,
+  "step1Forked": 0.0,
+  "note": "an extra forward without a fork shifts the dropout stream of the next correct forward; wrapping it in fork_rng leaves that stream unchanged"
+ },
+ "gaps": {
+  "relation": "no relation fact in this subset; relation direction is not calibrated",
+  "outcomeAndPersonality": "no state negative can be built with a mechanical edit",
+  "k": "the two expressions share the target and differ only in the scene block"
+ },
+ "specRevision": "seven clauses of constraint-spec-r1 amended with measured numbers",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/calibration-r1/set.jsonl",
+   "bytes": 74323,
+   "sha256": "a63e2632bac583adfe7f0af3f7cbdab3abdef5bf7089d66209940500bd34b9c2"
+  },
+  {
+   "path": "artifacts/next-acceptance/calibration-r1/build-report.json",
+   "bytes": 1389,
+   "sha256": "cd13f269531a30f5851cf3d288b4e09372be222a87f118f403b6baffea83361e"
+  },
+  {
+   "path": "artifacts/next-acceptance/calibration-r1/calibration-report.json",
+   "bytes": 20809,
+   "sha256": "7bb3788bcd84000db5606bfc11d6afb706edee262efe9eeb3e47e40076555d15"
+  }
+ ]
+}

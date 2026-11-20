@@ -1,0 +1,287 @@
+{
+ "version": "real-batch-v1-review",
+ "batchId": "real-batch-2026-11-08-v1",
+ "reviewedAt": "2026-11-08",
+ "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
+ "reviewStatus": "pending-independent-review",
+ "scope": "the FINAL model text of each sample (attempt 2 where a retry happened); the program-template fallback is NOT reviewed here and is never counted as model output",
+ "d4Rule": "label a named person/item/place only when it is absent from the state registry AND absent from the authoritative text the model was given (task goals, resultText, appearance text). Generic nouns (木门, 楼梯, 窗户, 阳光, 雾气) are not named entities. isError=true only for genuinely invented names; names quoted from authoritative text are recorded with isError=false so the count stays separable.",
+ "n6Rule": "A facts stated without contradiction; B no invented named entity/event/task-goal leak; C no other character's inner state; D complete and coherent. pass only when A-D hold; undetermined when unreadable.",
+ "cases": {
+  "rb-move-outcome": {
+   "text": "钟楼的旧木门吱呀一声，管线甲推开门，迎面扑来的是陈旧的木香和尘土的气息。他环视了一圈，钟楼内部依旧保持着往日的沉寂，只有偶尔传来的风声，似乎在诉说着岁月的故事。\n\n他走到钟楼中央，那口巨大的铜铃静静地悬挂在半空中，仿佛在等待着什么。管线甲心中一动，他记得上次来的时候，铜铃还挂在钟楼的某个角落，现在需要把它重新挂回原位。\n\n他小心翼翼地将铜铃从肩上取下，铜",
+   "d4": {
+    "annotations": [
+     {
+      "snippet": "铜铃",
+      "position": "第2段",
+      "source": "human",
+      "reviewStatus": "pending-independent-review",
+      "isError": false,
+      "note": "quoted from the task goal; not registered as an item"
+     }
+    ]
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…将铜铃从肩上取下，铜')",
+     "no statement of the move 管线镇→钟楼",
+     "adds invented actions and an inner monologue that no fact supports"
+    ]
+   }
+  },
+  "rb-time-vague": {
+   "text": "钟楼的旧木结构在晨光中显得格外沧桑。管线甲缓缓走上台阶，每一步都踏得稳重而坚定。他环视了一圈，确认周围没有其他人，才开始动手。\n\n他从腰间解下那个铜铃，那是一块沉重的铜制物件，表面已经有些斑驳。他轻轻地将铜铃挂在钟楼的铁环上，听着它发出的清脆声响，心中涌起一股久违的满足感。\n\n时间在这一刻仿佛静止了。过去了一会儿，阳光透过钟楼的窗户，洒在管线甲的脸上，他微微",
+   "d4": {
+    "annotations": [
+     {
+      "snippet": "铁环",
+      "position": "第2段",
+      "source": "human",
+      "reviewStatus": "pending-independent-review",
+      "isError": true,
+      "note": "invented object; not in the registry or the authoritative text"
+     },
+     {
+      "snippet": "铜铃",
+      "position": "第2段",
+      "source": "human",
+      "reviewStatus": "pending-independent-review",
+      "isError": false,
+      "note": "quoted from the task goal"
+     }
+    ]
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…洒在管线甲的脸上，他微微')",
+     "the move and the completed result are not stated",
+     "'时间在这一刻仿佛静止了' is contradicted two clauses later by '过去了一会儿'; that form is also not in the gate vocabulary"
+    ]
+   }
+  },
+  "rb-inner-change": {
+   "text": "雨滴从天而降，打在已经有些破旧的外袍上，发出细微的声响。管线甲的呼吸变得有些急促，他尽量让自己保持冷静，但雨水似乎无孔不入，很快便浸透了他的衣物。他紧紧地裹了裹身上的外袍，试图遮挡更多的雨水，但效果甚微。\n\n他走在熟悉的街道上，这里依旧保持着往日的宁静，但空气中弥漫着一种不同寻常的紧张感。他的脚步声在空旷的街道上显得格外清晰，每一步都似乎在提醒着他，这里已经不是他熟悉的管线镇",
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…这里已经不是他熟悉的管线镇')",
+     "none of the three changes is stated",
+     "adds an invented tension that no fact supports"
+    ]
+   }
+  },
+  "rb-two-actors-move": {
+   "text": "钟楼的旧木结构在风中轻轻摇曳，仿佛在诉说着岁月的故事。管线甲缓缓步入这座古老的建筑，每一步都显得格外谨慎。他环顾四周，旧砖墙上的裂缝似乎在诉说着过往的风雨。他的脚步声在空旷的钟楼内回荡，显得格外清晰。\n\n管线乙急匆匆地跟在管线甲身后，他的脚步声比甲要响亮得多，似乎在催促着什么。管线甲没有回头，只是加快了脚步，尽量与乙保持一定的距离。\n\n管线乙在钟楼内四处张望，显得有些焦",
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": false,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…显得有些焦')",
+     "neither actor's move is stated",
+     "attributes intent to 管线乙 ('在催促着什么') — another character's inner state",
+     "adds invented actions (跟在身后/加快脚步)"
+    ]
+   }
+  },
+  "rb-same-name": {
+   "text": "钟楼的旧钟声在微风中回荡，仿佛在诉说着岁月的故事。管线甲缓缓步入钟楼，脚步声在空旷的走廊中回响，显得格外沉稳。他环顾四周，旧木板发出轻微的吱吱声，空气中弥漫着一股陈旧的气息。\n\n管线乙急匆匆地跟在管线甲身后，脚步声比甲要响亮得多，似乎在催促着什么。甲没有回头，只是加快了脚步，心中默默思考着接下来的任务。\n\n管线乙再次出现在甲的视线中，他似乎在寻找什么，但很快又消失",
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": false,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…但很快又消失')",
+     "three moves are not stated; the two 管线乙 collapse into one continuous follower",
+     "attributes intent to 管线乙 ('似乎在催促着什么')",
+     "adds invented actions (跟/加快脚步/回头)"
+    ]
+   }
+  },
+  "rb-subtask": {
+   "text": "钟楼的旧木门吱吱呀呀地发出声响，管线甲推开门，一股陈旧的气息扑面而来。他环视了一圈，钟楼内部显得更加破败，但任务不能因此而耽搁。他深吸一口气，开始在钟楼内寻找起所需的梯子。\n\n他沿着狭窄的楼梯向上攀爬，每一步都显得格外小心。钟楼内部的光线昏暗，只有微弱的阳光从高处的窗户透进来，照亮了他前行的道路。他心中默念着任务，希望能尽快找到那把梯子。\n\n终于，在钟楼的",
+   "d4": {
+    "annotations": [
+     {
+      "snippet": "梯子",
+      "position": "第1-2段",
+      "source": "human",
+      "reviewStatus": "pending-independent-review",
+      "isError": false,
+      "note": "quoted from the subtask goal 找梯子"
+     }
+    ]
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('终于，在钟楼的')",
+     "the move and the new subtask are not stated",
+     "adds invented actions (推门/攀爬/寻找)"
+    ]
+   }
+  },
+  "rb-sanity-only": {
+   "text": "雾气如同一层薄纱，缓缓弥漫在管线镇的上空，将整个小镇包裹得严严实实。管线甲走在熟悉的街道上，脚步声在空旷的街道上回荡，显得格外清晰。他习惯性地环视四周，但除了偶尔飘过的雾气，没有发现任何异常。\n\n他心中不禁生出一丝警觉，这种感觉在他面对雾天时总是格外强烈。雾天总是让他想起那些不为人知的秘密和可能潜藏的危险。他的理智在这一刻似乎变得模糊，思绪飘忽不定，仿佛有无数个可能的场景在他脑海中",
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…无数个可能的场景在他脑海中')",
+     "the sanity drop and the personality change are not stated in any checkable form",
+     "invents an inner monologue and a threat"
+    ]
+   }
+  },
+  "rb-time-only": {
+   "text": "管线镇依旧保持着那份宁静，街道上空无一人，只有偶尔传来的风声打破了这份沉寂。管线甲站在镇中心，目光投向远方，心中默默思考着什么。\n\n时间一分一秒地过去，他的脚步没有移动，只是偶尔轻轻挪动一下，似乎在寻找着什么。他的眼神中透露出一丝不易察觉的焦虑，但更多的是坚定。\n\n过了一会儿，他依旧没有发现什么异常，心中不禁有些疑惑。他再次环顾四周，希望能从这安静的环境中找到一丝线索。但除了偶尔的风声，这里依旧平静如初。\n\n管线甲深吸",
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('管线甲深吸')",
+     "the no_change fact is not stated; '一分一秒' adds a duration claim the fact does not authorize",
+     "adds invented actions (环顾/挪动/寻找)"
+    ]
+   }
+  },
+  "rb-conflict-two-actors": {
+   "text": "管线镇依旧保持着那份难得的宁静，空气中弥漫着淡淡的金属味道。我，管线甲，今天似乎比往常更加沉稳，心中却藏着一股莫名的期待。钟，那座古老的钟，静静地躺在镇中心的广场上，仿佛在诉说着岁月的故事。\n\n我与管线乙并肩站在钟的两侧，他的急躁性格在这安静的时刻显得格外突出。我尽量不去理会，只是默默地调整着自己的呼吸，让自己更加沉稳。抬钟，这是一项艰巨的任务，但我知道，只有我们齐心协力，才能完成。\n\n“准备好了吗？”我轻",
+   "d4": {
+    "annotations": [
+     {
+      "snippet": "广场",
+      "position": "第1段",
+      "source": "human",
+      "reviewStatus": "pending-independent-review",
+      "isError": true,
+      "note": "invented place; the registry has no 广场"
+     }
+    ]
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": false,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-quote ('“准备好了吗？”我轻')",
+     "switches to first person ('我，管线甲'), violating the third-person limited POV",
+     "attributes 急躁 to 管线乙 and narrates his inner state",
+     "adds invented dialogue, which the narrative contract forbids",
+     "neither result text is stated"
+    ]
+   }
+  },
+  "rb-move-other-appearance": {
+   "text": "钟楼的旧木结构在风中轻轻摇曳，管线甲缓缓步入，每一步都踏在历史的回声上。他没有携带任何额外的工具或装备，只是带着沉稳的步伐，仿佛与这座钟楼有着千丝万缕的联系。\n\nf0｜移动｜管线甲｜管线镇→钟楼\n\n他环视四周，旧钟楼的外墙斑驳陆离，仿佛在诉说着过往的故事。管线甲心中默念着任务，每一步都显得格外谨慎。他沿着钟楼的边缘前行，每到一处，都会仔细检查，确保没有遗漏",
+   "d4": {
+    "annotations": []
+   },
+   "n6": {
+    "status": "executed",
+    "result": "fail",
+    "rubric": {
+     "A": false,
+     "B": false,
+     "C": true,
+     "D": false
+    },
+    "reasons": [
+     "truncated mid-clause ('…确保没有遗漏')",
+     "leaks the input record verbatim ('f0｜移动｜管线甲｜管线镇→钟楼') — a format violation",
+     "the move is not stated in prose"
+    ]
+   }
+  }
+ },
+ "summary": {
+  "reviewed": 10,
+  "n6Executed": 10,
+  "n6Pass": 0,
+  "n6Fail": 10,
+  "n6Undetermined": 0,
+  "d4Labeled": 10,
+  "d4LabelsWithIsErrorTrue": 2,
+  "d4LabelsQuotedFromAuthority": 3,
+  "commonFindings": [
+   "all 10 final texts stop at the pre-registered num_predict=128 cap (done_reason=length); every text is truncated mid-clause",
+   "no sample states its required facts in a checkable form; the model writes atmosphere and inner monologue instead",
+   "two samples narrate another character's inner state; one switches to first person; one leaks the input record verbatim",
+   "two genuinely invented names (铁环, 广场); three names quoted from the authoritative text (铜铃 x2, 梯子)"
+  ],
+  "limit": "a single reviewer cannot measure their own misses; the verdicts are pending independent review"
+ }
+}

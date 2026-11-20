@@ -1,0 +1,1857 @@
+{
+ "rows": 205,
+ "method": "first pass took every fifth row of this list (41); the remaining 164 were read after that sample showed a small extra detail in 5 of 41. Pairs sharing a target string but sitting on different facts were read separately.",
+ "counts": {
+  "defect": 5,
+  "note": 18,
+  "ok": 182
+ },
+ "noteOnNotes": "note rows keep their targets: the detail does not change the fact. They are recorded so a later arm can decide whether such tails should also be deleted.",
+ "records": [
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-02:f0",
+   "fact": "旧灯塔→潮渡",
+   "target": "沈砚从旧灯塔下来，走到潮渡的栈桥边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-02:f2",
+   "fact": "外袍下摆结了一层盐霜",
+   "target": "沈砚的外袍下摆结了一层盐霜。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-03:f0",
+   "fact": "潮生巷→潮渡",
+   "target": "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-03:f1",
+   "fact": "河心→潮渡",
+   "target": "顾行舟把渡船从河心靠上潮渡的木桩。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-04:f0",
+   "fact": "把潮汐簿缺的那页补全了",
+   "target": "沈砚照着旧墨迹，把潮汐簿缺的那页补全了。",
+   "outcome": "note",
+   "reason": "“照着旧墨迹”不在可见物件里，但不改变补全这一事实",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-04:f2",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "outcome": "note",
+   "reason": "“抱着一叠干纸”是事实外的随身物；移动事实本身完整",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-05:f0",
+   "fact": "潮汐档案馆→雾堤",
+   "target": "沈砚从潮汐档案馆出来，一直走到雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-05:f1",
+   "fact": "敲响了雾堤上的雾警钟",
+   "target": "沈砚抓住钟绳，把雾堤上的雾警钟敲响。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-06:f0",
+   "fact": "潮汐档案馆→潮生巷",
+   "target": "沈砚从潮汐档案馆出来，回到潮生巷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-06:f1",
+   "fact": "从抽屉底层翻出了备用钥匙",
+   "target": "沈砚从抽屉最底层翻出那把备用钥匙。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-07:f0",
+   "fact": "",
+   "target": "周围没有别的动静，什么也没有再发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-08:f2",
+   "fact": "衣摆沾了鱼鳞和泥水",
+   "target": "沈砚的衣摆沾了鱼鳞和泥水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-09:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "沈砚从潮渡回来，走进旧灯塔的石阶。",
+   "outcome": "note",
+   "reason": "“回来”带返回义；石阶是旧灯塔的子地点",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-10:f0",
+   "fact": "旧灯塔→潮生巷",
+   "target": "沈砚从旧灯塔下来，回到潮生巷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-11:f0",
+   "fact": "潮渡→雾堤",
+   "target": "沈砚从潮渡上来，扶着铁链走到雾堤的钟架旁。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-11:f1",
+   "fact": "把松脱的钟绳重新系紧",
+   "target": "韩渡蹲下去，把松脱的钟绳一圈一圈重新系紧。",
+   "outcome": "note",
+   "reason": "“蹲下去”是事实外动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-11:f2",
+   "fact": "把被风吹歪的警示灯扶正",
+   "target": "沈砚伸手把被风吹歪的警示灯扶正。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-12:f1",
+   "fact": "河心→潮渡",
+   "target": "顾行舟从河心划过来，船头抵住潮渡的栈桥。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-13:f0",
+   "fact": "",
+   "target": "他等了一会儿，场景里没有新的变化。",
+   "outcome": "defect",
+   "reason": "目标里用了字段名“场景”，要求写的是不写字段名",
+   "fixedTo": "他等了一会儿，周围没有新的变化。"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-16:f0",
+   "fact": "旧灯塔→潮渡",
+   "target": "沈砚离开旧灯塔，沿着石阶下到潮渡。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-16:f1",
+   "fact": "外袍下摆沾满泥水，边角结了一圈白盐",
+   "target": "沈砚的外袍下摆沾满泥水，边角结了一圈白盐。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-18:f0",
+   "fact": "潮渡→雾堤",
+   "target": "韩渡从潮渡上来，蹲到雾堤的钟架下。",
+   "outcome": "note",
+   "reason": "“蹲到钟架下”是到达后的动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-19:f2",
+   "fact": "袖口沾了鱼腥水",
+   "target": "沈砚的袖口沾了鱼腥水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-20:f1",
+   "fact": "河心→潮渡",
+   "target": "顾行舟把渡船从河心靠上潮渡的木桩。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-21:f0",
+   "fact": "从抽屉底层翻出了备用钥匙",
+   "target": "沈砚掀开旧纸，从抽屉底下摸出备用钥匙。",
+   "outcome": "note",
+   "reason": "“旧纸”不在可见清单；“抽屉底下”与事实“抽屉底层”略有出入",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-21:f1",
+   "fact": "指腹沾了薄灰",
+   "target": "沈砚的指腹沾了一层薄灰。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-23:f0",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠离开早市，把干纸送到潮汐档案馆。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-23:f2",
+   "fact": "袖口蹭了一道墨",
+   "target": "沈砚的袖口蹭了一道墨。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-24:f0",
+   "fact": "",
+   "target": "四下安静，没有新的事情发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-26:f0",
+   "fact": "河心→潮渡",
+   "target": "顾行舟从河心划过来，船头抵住潮渡的栈桥。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-26:f1",
+   "fact": "手上的茧被水泡得发白",
+   "target": "顾行舟直起身，手上的茧被水泡得发白。",
+   "outcome": "note",
+   "reason": "“直起身”是事实外动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-27:f0",
+   "fact": "潮生巷→潮汐档案馆",
+   "target": "沈砚从潮生巷过来，推开档案馆的门。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-28:f0",
+   "fact": "潮生巷→雾堤",
+   "target": "沈砚从潮生巷出来，一直走到雾堤脚下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-29:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微从潮渡上来，走进旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-29:f1",
+   "fact": "把灯罩擦得透亮",
+   "target": "叶知微用抹布把灯罩擦得透亮。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-31:f1",
+   "fact": "围裙上又添了一层银亮鱼鳞",
+   "target": "阿棠的围裙上又添了一层银亮鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-32:f0",
+   "fact": "潮生巷→潮渡",
+   "target": "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-33:f0",
+   "fact": "旧灯塔→潮生巷",
+   "target": "沈砚离开旧灯塔，沿着墙根走进潮生巷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-34:f0",
+   "fact": "潮渡→潮生巷",
+   "target": "沈砚从潮渡回来，走进潮生巷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-35:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "沈砚离开潮渡，沿着雾里的石阶上到旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-41:f0",
+   "fact": "潮渡→雾堤",
+   "target": "沈砚离开潮渡，沿着石阶上了雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-43:f0",
+   "fact": "潮渡→潮生巷",
+   "target": "沈砚离开潮渡，沿着墙根回到潮生巷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-44:f1",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微离开潮渡，沿着石阶上到旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-46:f1",
+   "fact": "河心→潮渡",
+   "target": "顾行舟把渡船从河心靠上潮渡的木桩。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-47:f0",
+   "fact": "潮生巷→潮汐档案馆",
+   "target": "沈砚从潮生巷过来，推开档案馆的门。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-47:f1",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "outcome": "note",
+   "reason": "“抱着一叠干纸”是事实外的随身物；移动事实本身完整",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-48:f1",
+   "fact": "潮渡→雾堤",
+   "target": "韩渡离开潮渡，沿着石阶上到雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-50:f1",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微从潮渡上来，走进旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-51:f1",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微离开潮渡，沿着石阶上到旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-52:f0",
+   "fact": "潮生巷→潮渡",
+   "target": "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-52:f1",
+   "fact": "河心→潮渡",
+   "target": "顾行舟从河心划过来，船头抵住潮渡的栈桥。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-53:f1",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠离开早市，把干纸送到潮汐档案馆。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-54:f0",
+   "fact": "潮渡→雾堤",
+   "target": "沈砚从潮渡上来，扶着铁链走到雾堤的钟架旁。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-55:f0",
+   "fact": "从抽屉底层翻出了备用钥匙",
+   "target": "沈砚把备用钥匙从抽屉底层取出来。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-59:f0",
+   "fact": "把潮汐簿缺的那页补全了",
+   "target": "沈砚照着旧墨迹，把潮汐簿缺的那页补全了。",
+   "outcome": "note",
+   "reason": "“照着旧墨迹”不在可见物件里，但不改变补全这一事实",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-61:f0",
+   "fact": "从抽屉底层翻出了备用钥匙",
+   "target": "沈砚从抽屉最底层翻出那把备用钥匙。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-68:f1",
+   "fact": "眉毛上的雾水更重了",
+   "target": "韩渡直起身，眉毛上的雾水更重了。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-71:f1",
+   "fact": "鞋底带着早市的泥水",
+   "target": "阿棠走进来，鞋底还沾着早市的泥水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-72:f0",
+   "fact": "把松脱的钟绳重新系紧",
+   "target": "韩渡蹲下去，把松脱的钟绳一圈一圈重新系紧。",
+   "outcome": "note",
+   "reason": "“蹲下去”是事实外动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-72:f1",
+   "fact": "眉毛上的雾水更重了",
+   "target": "韩渡抬起头，眉毛上挂着的雾水往下滴。",
+   "outcome": "note",
+   "reason": "用“往下滴”表达事实里的“更重”",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-74:f0",
+   "fact": "把灯罩擦得透亮",
+   "target": "叶知微用抹布把灯罩擦得透亮。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-79:f0",
+   "fact": "潮渡→雾堤",
+   "target": "韩渡从潮渡上来，蹲到雾堤的钟架下。",
+   "outcome": "note",
+   "reason": "“蹲到钟架下”是到达后的动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-80:f0",
+   "fact": "潮生巷→早市",
+   "target": "阿棠穿过潮生巷，到早市的鱼摊前停下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-81:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微从潮渡上来，走进旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-82:f0",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "outcome": "note",
+   "reason": "“抱着一叠干纸”是事实外的随身物；移动事实本身完整",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-83:f0",
+   "fact": "潮渡→雾堤",
+   "target": "韩渡离开潮渡，沿着石阶上到雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-83:f1",
+   "fact": "把松脱的钟绳重新系紧",
+   "target": "韩渡蹲下去，把松脱的钟绳一圈一圈重新系紧。",
+   "outcome": "note",
+   "reason": "“蹲下去”是事实外动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-85:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微离开潮渡，沿着石阶上到旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-85:f1",
+   "fact": "把灯罩擦得透亮",
+   "target": "叶知微用抹布把灯罩擦得透亮。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-86:f0",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠离开早市，把干纸送到潮汐档案馆。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-88:f0",
+   "fact": "外袍下摆沾了泥水",
+   "target": "沈砚的外袍下摆沾了泥水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-89:f0",
+   "fact": "袖口蹭了一道墨",
+   "target": "沈砚翻纸时，袖口蹭上一道墨痕。",
+   "outcome": "note",
+   "reason": "“墨痕”与事实里的“墨”同义",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-92:f0",
+   "fact": "袖口沾了铜油",
+   "target": "沈砚的袖口沾了铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-96:f0",
+   "fact": "掌心被铁皮冰得发麻",
+   "target": "沈砚的掌心被铁皮冰得发麻。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-100:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微从潮渡上来，走进旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-103:f0",
+   "fact": "潮渡→雾堤",
+   "target": "韩渡从潮渡上来，蹲到雾堤的钟架下。",
+   "outcome": "note",
+   "reason": "“蹲到钟架下”是到达后的动作",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-103:f1",
+   "fact": "潮渡→雾堤",
+   "target": "沈砚离开潮渡，沿着石阶上了雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-105:f0",
+   "fact": "潮渡→旧灯塔",
+   "target": "叶知微离开潮渡，沿着石阶上到旧灯塔。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-107:f0",
+   "fact": "河心→潮渡",
+   "target": "顾行舟把渡船从河心靠上潮渡的木桩。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-108:f0",
+   "fact": "早市→潮汐档案馆",
+   "target": "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+   "outcome": "note",
+   "reason": "“抱着一叠干纸”是事实外的随身物；移动事实本身完整",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-108:f1",
+   "fact": "潮生巷→潮汐档案馆",
+   "target": "沈砚从潮生巷过来，推开档案馆的门。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-109:f0",
+   "fact": "潮渡→雾堤",
+   "target": "韩渡离开潮渡，沿着石阶上到雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-110:f0",
+   "fact": "",
+   "target": "周围没有别的动静，什么也没有再发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-111:f0",
+   "fact": "",
+   "target": "他等了一会儿，场景里没有新的变化。",
+   "outcome": "defect",
+   "reason": "目标里用了字段名“场景”，要求写的是不写字段名",
+   "fixedTo": "他等了一会儿，周围没有新的变化。"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-112:f0",
+   "fact": "",
+   "target": "四下安静，没有新的事情发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-113:f0",
+   "fact": "",
+   "target": "周围没有别的动静，什么也没有再发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-114:f0",
+   "fact": "",
+   "target": "他等了一会儿，场景里没有新的变化。",
+   "outcome": "defect",
+   "reason": "目标里用了字段名“场景”，要求写的是不写字段名",
+   "fixedTo": "他等了一会儿，周围没有新的变化。"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-115:f0",
+   "fact": "",
+   "target": "四下安静，没有新的事情发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-116:f0",
+   "fact": "",
+   "target": "周围没有别的动静，什么也没有再发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-117:f0",
+   "fact": "",
+   "target": "他等了一会儿，场景里没有新的变化。",
+   "outcome": "defect",
+   "reason": "目标里用了字段名“场景”，要求写的是不写字段名",
+   "fixedTo": "他等了一会儿，周围没有新的变化。"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-118:f0",
+   "fact": "",
+   "target": "四下安静，没有新的事情发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-119:f0",
+   "fact": "",
+   "target": "周围没有别的动静，什么也没有再发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-120:f0",
+   "fact": "",
+   "target": "他等了一会儿，场景里没有新的变化。",
+   "outcome": "defect",
+   "reason": "目标里用了字段名“场景”，要求写的是不写字段名",
+   "fixedTo": "他等了一会儿，周围没有新的变化。"
+  },
+  {
+   "pool": "expand78",
+   "id": "ta1A",
+   "fact": "把铜灯挪到长桌另一头",
+   "target": "沈砚把铜灯挪到长桌另一头。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta1B",
+   "fact": "把铜灯挪到长桌另一头",
+   "target": "阿棠把铜灯挪到长桌另一头。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta2A",
+   "fact": "把潮汐簿合上",
+   "target": "沈砚把潮汐簿合上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta2B",
+   "fact": "把潮汐簿合上",
+   "target": "叶知微把潮汐簿合上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta3A",
+   "fact": "把鱼筐搬到案板底下",
+   "target": "阿棠把鱼筐搬到案板底下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta3B",
+   "fact": "把鱼筐搬到案板底下",
+   "target": "沈砚把鱼筐搬到案板底下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta4A",
+   "fact": "把缆绳收成一卷",
+   "target": "顾行舟把缆绳收成一卷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta4B",
+   "fact": "把缆绳收成一卷",
+   "target": "韩渡把缆绳收成一卷。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta5A",
+   "fact": "把钟绳解开",
+   "target": "韩渡把钟绳解开。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta5B",
+   "fact": "把钟绳解开",
+   "target": "沈砚把钟绳解开。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta6A",
+   "fact": "把抹布拧干",
+   "target": "叶知微把抹布拧干。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta6B",
+   "fact": "把抹布拧干",
+   "target": "顾行舟把抹布拧干。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta7A",
+   "fact": "把油纸伞撑开",
+   "target": "沈砚把油纸伞撑开。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta7B",
+   "fact": "把油纸伞撑开",
+   "target": "阿棠把油纸伞撑开。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta8A",
+   "fact": "把干纸码成一小摞",
+   "target": "叶知微把干纸码成一小摞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "ta8B",
+   "fact": "把干纸码成一小摞",
+   "target": "沈砚把干纸码成一小摞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb1A",
+   "fact": "袖口沾了鱼鳞",
+   "target": "阿棠的袖口沾了鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb1B",
+   "fact": "袖口沾了鱼鳞",
+   "target": "沈砚的袖口沾了鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb2A",
+   "fact": "袖口沾了铜油",
+   "target": "叶知微的袖口沾了铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb2B",
+   "fact": "袖口沾了铜油",
+   "target": "顾行舟的袖口沾了铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb3A",
+   "fact": "手背上沾了盐沫",
+   "target": "顾行舟的手背上沾了盐沫。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb3B",
+   "fact": "手背上沾了盐沫",
+   "target": "韩渡的手背上沾了盐沫。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb4A",
+   "fact": "指尖沾了墨",
+   "target": "沈砚的指尖沾了墨。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb4B",
+   "fact": "指尖沾了墨",
+   "target": "叶知微的指尖沾了墨。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb5A",
+   "fact": "外袍下摆被雾水打湿",
+   "target": "韩渡的外袍下摆被雾水打湿。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb5B",
+   "fact": "外袍下摆被雾水打湿",
+   "target": "沈砚的外袍下摆被雾水打湿。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb6A",
+   "fact": "鞋底沾了湿石板的水",
+   "target": "阿棠的鞋底沾了湿石板的水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb6B",
+   "fact": "鞋底沾了湿石板的水",
+   "target": "沈砚的鞋底沾了湿石板的水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb7A",
+   "fact": "围裙上沾了鱼鳞",
+   "target": "顾行舟的围裙上沾了鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb7B",
+   "fact": "围裙上沾了鱼鳞",
+   "target": "阿棠的围裙上沾了鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb8A",
+   "fact": "手背上沾了铜油",
+   "target": "沈砚的手背上沾了铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tb8B",
+   "fact": "手背上沾了铜油",
+   "target": "叶知微的手背上沾了铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc1A",
+   "fact": "把备用钥匙塞进油布包的内层",
+   "target": "沈砚把备用钥匙塞进油布包的内层。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc1B",
+   "fact": "把备用钥匙塞进油布包的外层",
+   "target": "沈砚把备用钥匙塞进油布包的外层。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc2A",
+   "fact": "把干纸夹进潮汐簿的扉页",
+   "target": "沈砚把干纸夹进潮汐簿的扉页。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc2B",
+   "fact": "把干纸放在潮汐簿的封面上",
+   "target": "沈砚把干纸放在潮汐簿的封面上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc3A",
+   "fact": "把银鳞鱼码进鱼筐",
+   "target": "阿棠把银鳞鱼码进鱼筐。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc3B",
+   "fact": "把银鳞鱼摆在鱼筐旁边",
+   "target": "阿棠把银鳞鱼摆在鱼筐旁边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc4A",
+   "fact": "把灯芯收进铜灯罩底下",
+   "target": "叶知微把灯芯收进铜灯罩底下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc4B",
+   "fact": "把灯芯搁在铜灯罩上",
+   "target": "叶知微把灯芯搁在铜灯罩上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc5A",
+   "fact": "把缆绳缠在木桩下半截",
+   "target": "顾行舟把缆绳缠在木桩下半截。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc5B",
+   "fact": "把缆绳搭在木桩顶头",
+   "target": "顾行舟把缆绳搭在木桩顶头。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc6A",
+   "fact": "把油纸伞插进排水沟里",
+   "target": "沈砚把油纸伞插进排水沟里。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc6B",
+   "fact": "把油纸伞挂在墙根上",
+   "target": "沈砚把油纸伞挂在墙根上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc8A",
+   "fact": "把钟绳塞进钟架底下",
+   "target": "韩渡把钟绳塞进钟架底下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "tc8B",
+   "fact": "把钟绳压在钟架顶上",
+   "target": "韩渡把钟绳压在钟架顶上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td1A",
+   "fact": "把抹布搭回梯脚",
+   "target": "叶知微把抹布搭回梯脚。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td1B",
+   "fact": "把抹布搭在长桌上",
+   "target": "叶知微把抹布搭在长桌上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td2A",
+   "fact": "把铜灯挪到门槛边",
+   "target": "沈砚把铜灯挪到门槛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td2B",
+   "fact": "把铜灯挪到天窗下",
+   "target": "沈砚把铜灯挪到天窗下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td3A",
+   "fact": "把鱼筐摞到摊棚边上",
+   "target": "阿棠把鱼筐摞到摊棚边上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td3B",
+   "fact": "把鱼筐摞到案板底下",
+   "target": "阿棠把鱼筐摞到案板底下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td4A",
+   "fact": "把渡船系在栈桥的木桩上",
+   "target": "顾行舟把渡船系在栈桥的木桩上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td4B",
+   "fact": "把渡船系在石阶边上",
+   "target": "顾行舟把渡船系在石阶边上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td5A",
+   "fact": "把警示灯扶正",
+   "target": "沈砚把警示灯扶正。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td5B",
+   "fact": "把雾警钟扶正",
+   "target": "沈砚把雾警钟扶正。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td6A",
+   "fact": "把鱼筐放在门槛边",
+   "target": "阿棠把鱼筐放在门槛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td6B",
+   "fact": "把鱼筐放在排水沟边",
+   "target": "阿棠把鱼筐放在排水沟边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td7A",
+   "fact": "把干纸放在桌角",
+   "target": "叶知微把干纸放在桌角。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td7B",
+   "fact": "把干纸放在天窗台上",
+   "target": "叶知微把干纸放在天窗台上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td8A",
+   "fact": "把系泊绳拖回岸上",
+   "target": "沈砚把系泊绳拖回岸上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "td8B",
+   "fact": "把系泊绳丢在浅滩上",
+   "target": "沈砚把系泊绳丢在浅滩上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te1A",
+   "fact": "把铜灯擦亮",
+   "target": "沈砚把铜灯擦亮。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te1B",
+   "fact": "",
+   "target": "长桌上的东西都还在原处，屋里没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te2A",
+   "fact": "袖口沾了墨",
+   "target": "沈砚的袖口沾了墨。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te2B",
+   "fact": "",
+   "target": "沈砚站了一会儿，屋里没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te3A",
+   "fact": "把银鳞鱼搬上案板",
+   "target": "阿棠把银鳞鱼搬上案板。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te3B",
+   "fact": "",
+   "target": "摊棚下人来人往，早市没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te4A",
+   "fact": "潮渡→雾堤",
+   "target": "顾行舟从潮渡上到雾堤。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te4B",
+   "fact": "",
+   "target": "栈桥边的水面晃了晃，没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te5A",
+   "fact": "把松脱的钟绳重新系紧",
+   "target": "韩渡把松脱的钟绳重新系紧。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te5B",
+   "fact": "",
+   "target": "雾堤上的风一直吹，堤面没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te6A",
+   "fact": "袖口沾了铜油",
+   "target": "叶知微的袖口沾了一层铜油。",
+   "outcome": "note",
+   "reason": "“一层”是事实外的数量",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te6B",
+   "fact": "",
+   "target": "塔顶的灯还亮着，什么也没有再发生。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te7A",
+   "fact": "把纸灯笼扶正",
+   "target": "沈砚把纸灯笼扶正。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te7B",
+   "fact": "",
+   "target": "水沟里的光没有动，巷子里没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te8A",
+   "fact": "潮生巷→潮渡",
+   "target": "沈砚从潮生巷走到潮渡。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "expand78",
+   "id": "te8B",
+   "fact": "",
+   "target": "渡口的水面晃了晃，没有新的变化。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa2A",
+   "fact": "边沿沾着鱼鳞",
+   "target": "鱼筐的边沿沾着鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa2B",
+   "fact": "边沿沾着鱼鳞",
+   "target": "案板的边沿沾着鱼鳞。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa3A",
+   "fact": "末端起了毛",
+   "target": "缆绳的末端起了毛。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa3B",
+   "fact": "末端起了毛",
+   "target": "系泊绳的末端起了毛。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa4A",
+   "fact": "磨出了毛边",
+   "target": "钟绳磨出了毛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa4B",
+   "fact": "横木磨出了毛边",
+   "target": "钟架的横木磨出了毛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa5A",
+   "fact": "沾着铜油",
+   "target": "抹布上沾着铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oa5B",
+   "fact": "罐口沾着铜油",
+   "target": "擦铜油的罐口沾着铜油。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob1A",
+   "fact": "被风吹歪了",
+   "target": "警示灯被风吹歪了。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob1B",
+   "fact": "玻璃罩被风吹歪了",
+   "target": "警示灯的玻璃罩被风吹歪了。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob2A",
+   "fact": "被挪到了门槛边",
+   "target": "铜灯被挪到了门槛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob2B",
+   "fact": "灯罩歪向门槛边",
+   "target": "铜灯的灯罩歪向门槛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob3A",
+   "fact": "链环上结了锈",
+   "target": "铁链的链环上结了锈。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob3B",
+   "fact": "被拉到钟架边",
+   "target": "铁链被拉到钟架边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob4A",
+   "fact": "扉页卷了边",
+   "target": "潮汐簿的扉页卷了边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "ob4B",
+   "fact": "被推到桌角",
+   "target": "潮汐簿被推到桌角。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc1A",
+   "fact": "把铜灯放在长桌另一头",
+   "target": "沈砚把铜灯放在长桌另一头。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc1B",
+   "fact": "把铜灯放在门槛边",
+   "target": "沈砚把铜灯放在门槛边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc2A",
+   "fact": "把鱼筐放在案板底下",
+   "target": "阿棠把鱼筐放在案板底下。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc2B",
+   "fact": "把鱼筐放在摊棚外",
+   "target": "阿棠把鱼筐放在摊棚外。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc3A",
+   "fact": "把钟绳挂在钟架的横木上",
+   "target": "韩渡把钟绳挂在钟架的横木上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc3B",
+   "fact": "把钟绳挂在铁链上",
+   "target": "韩渡把钟绳挂在铁链上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc4A",
+   "fact": "把抹布搭在梯脚",
+   "target": "叶知微把抹布搭在梯脚。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc4B",
+   "fact": "把抹布搭在灯罩上",
+   "target": "叶知微把抹布搭在灯罩上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc5A",
+   "fact": "把系泊绳放在栈桥的木桩边",
+   "target": "沈砚把系泊绳放在栈桥的木桩边。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "oc5B",
+   "fact": "把系泊绳放到浅滩上",
+   "target": "沈砚把系泊绳放到浅滩上。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od2A",
+   "fact": "结了一层霜",
+   "target": "缆绳上结了一层霜。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od2B",
+   "fact": "结了一层霜",
+   "target": "木桩上结了一层霜。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od3A",
+   "fact": "渗了水",
+   "target": "鱼筐渗了水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od3B",
+   "fact": "渗了水",
+   "target": "案板渗了水。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od4A",
+   "fact": "被风扯破一角",
+   "target": "纸灯笼被风扯破一角。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od4B",
+   "fact": "被风扯破一角",
+   "target": "油纸伞被风扯破一角。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od5A",
+   "fact": "生了锈",
+   "target": "铁链生了锈。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  },
+  {
+   "pool": "object34",
+   "id": "od5B",
+   "fact": "生了锈",
+   "target": "钟架生了锈。",
+   "outcome": "ok",
+   "reason": "",
+   "fixedTo": null
+  }
+ ]
+}

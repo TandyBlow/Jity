@@ -1,0 +1,1994 @@
+{
+ "material": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\controllability-v1.jsonl",
+ "material_sha256": "08b23367815297cb05adc9cb096ffd6e21684f56342dbc79ece345e3f73930c0",
+ "freeze": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\controllability-freeze-v1.json",
+ "freeze_sha256": "03924506970a7628cd7e3eda1ff08b1e717ed3b0d88ddee0a5332055197d4c23",
+ "config": {
+  "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+  "seed": 13,
+  "epochs": 12,
+  "steps_per_epoch": 40,
+  "accum": 4,
+  "updates": 120,
+  "lr": 0.0005,
+  "warmup": 12,
+  "max_in": 512,
+  "max_new": 128,
+  "decode": "greedy",
+  "device": "cuda"
+ },
+ "counts": {
+  "train_sources": 20,
+  "dev_sources": 6,
+  "holdout_sources": 10
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "updates": 10,
+   "dev_loss": 0.5652,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 2,
+   "updates": 20,
+   "dev_loss": 0.3836,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 3,
+   "updates": 30,
+   "dev_loss": 0.2178,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 4,
+   "updates": 40,
+   "dev_loss": 0.2332,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 5,
+   "updates": 50,
+   "dev_loss": 0.2548,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 6,
+   "updates": 60,
+   "dev_loss": 0.185,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 7,
+   "updates": 70,
+   "dev_loss": 0.2246,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 8,
+   "updates": 80,
+   "dev_loss": 0.2364,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 9,
+   "updates": 90,
+   "dev_loss": 0.1673,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 10,
+   "updates": 100,
+   "dev_loss": 0.1759,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 11,
+   "updates": 110,
+   "dev_loss": 0.2017,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  },
+  {
+   "epoch": 12,
+   "updates": 120,
+   "dev_loss": 0.2193,
+   "dev_success": 0,
+   "dev_total": 6,
+   "sources": [
+    {
+     "sourceId": "fixture-r4",
+     "success": false
+    },
+    {
+     "sourceId": "t12",
+     "success": false
+    },
+    {
+     "sourceId": "t20",
+     "success": false
+    },
+    {
+     "sourceId": "train-r3",
+     "success": false
+    },
+    {
+     "sourceId": "v09",
+     "success": false
+    },
+    {
+     "sourceId": "v17",
+     "success": false
+    }
+   ]
+  }
+ ],
+ "selected": {
+  "epoch": 9,
+  "updates": 90,
+  "dev_success": 0,
+  "dev_loss": 0.1673
+ },
+ "holdout": [
+  {
+   "sourceId": "v07",
+   "A": {
+    "new_tokens": 49,
+    "stop": "eos",
+    "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+    "sentences": [
+     "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+     "沈砚把铜灯擦亮。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把铜灯擦亮。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 49,
+    "stop": "eos",
+    "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+    "sentences": [
+     "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+     "沈砚把铜灯擦亮。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把铜灯擦亮。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "v18",
+   "A": {
+    "new_tokens": 49,
+    "stop": "eos",
+    "text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+    "sentences": [
+     "沈砚从潮渡走到雾堤。",
+     "沈砚把雾警钟敲响。",
+     "沈砚心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮渡走到雾堤。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把雾警钟敲响。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "沈砚心里发紧。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 49,
+    "stop": "eos",
+    "text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+    "sentences": [
+     "沈砚从潮渡走到雾堤。",
+     "沈砚把雾警钟敲响。",
+     "沈砚心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮渡走到雾堤。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把雾警钟敲响。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "沈砚心里发紧。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "t22",
+   "A": {
+    "new_tokens": 49,
+    "stop": "eos",
+    "text": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+    "sentences": [
+     "系泊绳的泥水结了一层白盐。",
+     "木桩的缠着的旧缆绳断了。",
+     "顾行舟把缆绳重新绕上木桩。",
+     "沈砚把系泊绳拖回岸上。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "系泊绳的泥水结了一层白盐。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "木桩的缠着的旧缆绳断了。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "顾行舟把缆绳重新绕上木桩。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "沈砚把系泊绳拖回岸上。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "group": [
+       "f2",
+       "f3"
+      ],
+      "same_sentence": false,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 49,
+    "stop": "eos",
+    "text": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+    "sentences": [
+     "系泊绳的泥水结了一层白盐。",
+     "木桩的缠着的旧缆绳断了。",
+     "顾行舟把缆绳重新绕上木桩。",
+     "沈砚把系泊绳拖回岸上。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "系泊绳的泥水结了一层白盐。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "木桩的缠着的旧缆绳断了。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "顾行舟把缆绳重新绕上木桩。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "沈砚把系泊绳拖回岸上。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": true,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "fixture-r5",
+   "A": {
+    "new_tokens": 50,
+    "stop": "eos",
+    "text": "林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+    "sentences": [
+     "林川的帽檐压出折痕。",
+     "林川的脚踝肿了一块。",
+     "周宁的衣领被雨浸透。",
+     "随后,陈默的指尖磨出茧。",
+     "陈默的膝盖沾了泥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "林川的脚踝肿了一块。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "随后,陈默的指尖磨出茧。"
+     },
+     "f4": {
+      "support": true,
+      "sent": 4,
+      "score": 1.0,
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    },
+    "fact_supported": 5,
+    "fact_total": 5,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": true,
+      "sents": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "different": true,
+      "sents": [
+       3,
+       4
+      ]
+     }
+    ],
+    "relations": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "ok": true,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 50,
+    "stop": "eos",
+    "text": "林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+    "sentences": [
+     "林川的帽檐压出折痕。",
+     "林川的脚踝肿了一块。",
+     "周宁的衣领被雨浸透。",
+     "随后,陈默的指尖磨出茧。",
+     "陈默的膝盖沾了泥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "林川的帽檐压出折痕。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "林川的脚踝肿了一块。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "周宁的衣领被雨浸透。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "随后,陈默的指尖磨出茧。"
+     },
+     "f4": {
+      "support": true,
+      "sent": 4,
+      "score": 1.0,
+      "sentence": "陈默的膝盖沾了泥。"
+     }
+    },
+    "fact_supported": 5,
+    "fact_total": 5,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": true,
+      "sents": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "different": true,
+      "sents": [
+       3,
+       4
+      ]
+     }
+    ],
+    "relations": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "ok": true,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "t03",
+   "A": {
+    "new_tokens": 50,
+    "stop": "eos",
+    "text": "叶知微把灯罩擦得透亮,袖口沾了铜油。叶知微把抹布搭回梯脚。",
+    "sentences": [
+     "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+     "叶知微把抹布搭回梯脚。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "叶知微把抹布搭回梯脚。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 50,
+    "stop": "eos",
+    "text": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+    "sentences": [
+     "叶知微把灯罩擦得透亮。",
+     "叶知微的袖口沾了铜油。",
+     "叶知微把抹布搭回梯脚。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯罩擦得透亮。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "叶知微的袖口沾了铜油。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "叶知微把抹布搭回梯脚。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "t08",
+   "A": {
+    "new_tokens": 50,
+    "stop": "eos",
+    "text": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。",
+    "sentences": [
+     "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "group": [
+       "f2",
+       "f3"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 50,
+    "stop": "eos",
+    "text": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。",
+    "sentences": [
+     "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "t24",
+   "A": {
+    "new_tokens": 52,
+    "stop": "eos",
+    "text": "纸灯笼的被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+    "sentences": [
+     "纸灯笼的被风扯破一角,排水沟的里面积了泥。",
+     "沈砚把纸灯笼扶正。",
+     "阿棠把鱼筐放在门槛边。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "纸灯笼的被风扯破一角,排水沟的里面积了泥。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "纸灯笼的被风扯破一角,排水沟的里面积了泥。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把纸灯笼扶正。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "阿棠把鱼筐放在门槛边。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "group": [
+       "f2",
+       "f3"
+      ],
+      "same_sentence": false,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 52,
+    "stop": "eos",
+    "text": "纸灯笼的被风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+    "sentences": [
+     "纸灯笼的被风扯破一角。",
+     "排水沟的里面积了泥。",
+     "沈砚把纸灯笼扶正。",
+     "阿棠把鱼筐放在门槛边。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "纸灯笼的被风扯破一角。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "排水沟的里面积了泥。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "沈砚把纸灯笼扶正。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "阿棠把鱼筐放在门槛边。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": true,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "train-r4",
+   "A": {
+    "new_tokens": 52,
+    "stop": "eos",
+    "text": "沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+    "sentences": [
+     "沈砚的围巾松开一截。",
+     "沈砚的脸色发白。",
+     "顾行舟的背上溅了泥点。",
+     "叶知微的手背蹭破了皮。",
+     "叶知微的肩头落着灰。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚的脸色发白。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "顾行舟的背上溅了泥点。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮。"
+     },
+     "f4": {
+      "support": true,
+      "sent": 4,
+      "score": 1.0,
+      "sentence": "叶知微的肩头落着灰。"
+     }
+    },
+    "fact_supported": 5,
+    "fact_total": 5,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": true,
+      "sents": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "different": true,
+      "sents": [
+       3,
+       4
+      ]
+     }
+    ],
+    "relations": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "ok": false,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 52,
+    "stop": "eos",
+    "text": "沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+    "sentences": [
+     "沈砚的围巾松开一截。",
+     "沈砚的脸色发白。",
+     "顾行舟的背上溅了泥点。",
+     "叶知微的手背蹭破了皮。",
+     "叶知微的肩头落着灰。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚的围巾松开一截。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚的脸色发白。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "顾行舟的背上溅了泥点。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 3,
+      "score": 1.0,
+      "sentence": "叶知微的手背蹭破了皮。"
+     },
+     "f4": {
+      "support": true,
+      "sent": 4,
+      "score": 1.0,
+      "sentence": "叶知微的肩头落着灰。"
+     }
+    },
+    "fact_supported": 5,
+    "fact_total": 5,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": true,
+      "sents": [
+       2,
+       3
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "different": true,
+      "sents": [
+       3,
+       4
+      ]
+     }
+    ],
+    "relations": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "ok": false,
+      "sents": [
+       2,
+       3
+      ]
+     }
+    ],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "v14",
+   "A": {
+    "new_tokens": 52,
+    "stop": "eos",
+    "text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+    "sentences": [
+     "沈砚从潮汐档案馆走到潮渡。",
+     "沈砚把系泊绳拖回岸上。",
+     "沈砚心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮汐档案馆走到潮渡。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把系泊绳拖回岸上。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "沈砚心里发紧。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       1,
+       2
+      ]
+     }
+    ],
+    "separated": [],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 52,
+    "stop": "eos",
+    "text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+    "sentences": [
+     "沈砚从潮汐档案馆走到潮渡。",
+     "沈砚把系泊绳拖回岸上。",
+     "沈砚心里发紧。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮汐档案馆走到潮渡。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把系泊绳拖回岸上。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "沈砚心里发紧。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  },
+  {
+   "sourceId": "v20",
+   "A": {
+    "new_tokens": 22,
+    "stop": "eos",
+    "text": "沈砚从潮生巷走到潮渡。沈砚把渡船推离栈桥。",
+    "sentences": [
+     "沈砚从潮生巷走到潮渡。",
+     "沈砚把渡船推离栈桥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到潮渡。"
+     },
+     "f1": {
+      "support": false,
+      "sent": 0,
+      "score": 0.0,
+      "sentence": "沈砚从潮生巷走到潮渡。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把渡船推离栈桥。"
+     }
+    },
+    "fact_supported": 2,
+    "fact_total": 3,
+    "fact_score": 0.6666666666666666,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "same_sentence": false,
+      "sents": [
+       0,
+       0,
+       1
+      ]
+     }
+    ],
+    "separated": [],
+    "relations": [],
+    "omissions": [
+     "f1"
+    ],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "B": {
+    "new_tokens": 22,
+    "stop": "eos",
+    "text": "沈砚从潮生巷走到潮渡。沈砚把渡船推离栈桥。",
+    "sentences": [
+     "沈砚从潮生巷走到潮渡。",
+     "沈砚把渡船推离栈桥。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到潮渡。"
+     },
+     "f1": {
+      "support": false,
+      "sent": 0,
+      "score": 0.0,
+      "sentence": "沈砚从潮生巷走到潮渡。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "沈砚把渡船推离栈桥。"
+     }
+    },
+    "fact_supported": 2,
+    "fact_total": 3,
+    "fact_score": 0.6666666666666666,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [
+     "f1"
+    ],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "paired_success": false
+  }
+ ],
+ "holdout_success": 0
+}

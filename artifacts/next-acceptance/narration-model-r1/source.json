@@ -1,0 +1,20 @@
+{
+ "baseCommit": "b739b397e4c05f9a8164f49d339bb5811b76e51d",
+ "note": "model generations ran on the base commit plus untracked experiment files; the final checks in checks-final.json were re-run after the checker/aligner fixes, on the same stored raw outputs",
+ "sha256": {
+  "frontend/scripts/run-narration-model-r1.mjs": "350d4c6bba28436e406ddb90db339bab55635eb1ba1038280a9d517c6202938e",
+  "frontend/scripts/narration-experiment-world.mjs": "57c21551dca64d780b5f874317ed38bced0a61ffecb7868e8f635e8837343176",
+  "frontend/scripts/narration-experiment-world-2.mjs": "9a4701640e3b9f2773a332c1fd3b2c1068174fed738ebcd59606415a5eb401f0",
+  "frontend/src/lib/world-engine/runtime/narration-factcheck.ts": "34ee45d2ea065b15aa26200cfbee271579993b9fb89f1b8a65abdff6f24ed46a",
+  "frontend/src/lib/world-engine/runtime/narration-alignment.ts": "384249d47c37e1615ed46626cb99c87b7da560e661b2c1b5949388f1c3a97154",
+  "frontend/src/lib/world-engine/runtime/committed-narration.ts": "aab137f285cb6480d67fc1ea199d8431c2af01105cb04e02cdf79a791ab0dfe5",
+  "frontend/src/lib/world-engine/runtime/narration-eval.ts": "341a6317cd064f2484b3639d33f0126a9e63ef67de1c672f4e955af4347b88ba",
+  "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "070e970dfd0d365d5c0418164f7a044d75ea6067bfa81f2a667ed315e91ea3e9",
+  "frontend/src/lib/world-engine/runtime/engine.ts": "eadd0a2c8f98736f9ac37ed04ad118f3a04ce1850ec8c6c26e5490791c5ae28d"
+ },
+ "readsSha256": {
+  "reads.json": "fa479d541b12d836733c5ccdf4eae698ff9f3693f08ee2ea195241d7fd5a92f5",
+  "reads-2.json": "ec1932093722cacc23f318bc5578c36933a3ec68004c987daddf8711d73bc8ee"
+ },
+ "databaseSha256": "2c5d1f588df7a560c2db8c9607a9eb0c9cbe6ac2a49b81ee4150cf4b4c7791ba"
+}

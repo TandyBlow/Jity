@@ -1,0 +1,47 @@
+{
+ "moved": {
+  "pass": "11/12",
+  "possessorPass": "5/6",
+  "locationPass": "6/6",
+  "entityKept": "11/12",
+  "roleErrors": 1,
+  "roleErrorDetail": {
+   "replaced": 1,
+   "flip": 0,
+   "missing": 0
+  },
+  "relationKept": "6/6",
+  "syntaxBroken": 0,
+  "factS": "12/12"
+ },
+ "ctl": {
+  "pass": "7/12",
+  "possessorPass": "6/6",
+  "locationPass": "1/6",
+  "entityKept": "12/12",
+  "roleErrors": 0,
+  "roleErrorDetail": {
+   "replaced": 0,
+   "flip": 0,
+   "missing": 0
+  },
+  "relationKept": "6/6",
+  "syntaxBroken": 1,
+  "factS": "8/12"
+ },
+ "mix": {
+  "pass": "9/12",
+  "possessorPass": "6/6",
+  "locationPass": "3/6",
+  "entityKept": "10/12",
+  "roleErrors": 1,
+  "roleErrorDetail": {
+   "replaced": 0,
+   "flip": 1,
+   "missing": 2
+  },
+  "relationKept": "6/6",
+  "syntaxBroken": 1,
+  "factS": "10/12"
+ }
+}

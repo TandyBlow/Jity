@@ -1,0 +1,107 @@
+{
+  "ok": true,
+  "readyMs": 76410,
+  "wallMs": 331971,
+  "turns": [
+    {
+      "input": "我沿车道向西回廊快走，贴着墙注意听枪声",
+      "turnMs": 94870,
+      "text": "。\n你：我沿车道向西回廊快走，贴着墙注意听枪声 · 正文 40.4s\n时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：ungrounded,low_support",
+      "debug": {
+        "pointId": "point_round_3_1",
+        "draft": "时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "raw": "走廊尽头那盏灯依旧亮着，只是灯光比往常更加昏暗。\n\n路明非站在西回廊前，目光扫过那些熟悉的面孔。他没有回头，而是沿着墙慢慢走过去，尽量贴着墙壁前进，生怕把刚才听到的动静再惊动一次。\n\n林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处有一道明显的肿痕，鞋帮上方也出现了阴影。\n\n灯下，他清晰地看到那道从门缝间透出的光线斜射而过，似乎是从钟楼那边投来的。\n\n林亦舟抬起头，目光停留在廊柱上那个被折断蓝布带勾勒出来的痕迹。他轻轻抚摸着，手指在上面划过了一道细痕。\n\n灯下的水汽逐渐凝结成一层薄雾，将第三根廊柱的侧面模糊得如同一面镜子。\n\n走廊尽头那盏灯依旧亮着，",
+        "cleaned": "走廊尽头那盏灯依旧亮着，只是灯光比往常更加昏暗。\n\n路明非站在西回廊前，目光扫过那些熟悉的面孔。他没有回头，而是沿着墙慢慢走过去，尽量贴着墙壁前进，生怕把刚才听到的动静再惊动一次。\n\n林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处有一道明显的肿痕，鞋帮上方也出现了阴影。\n\n灯下，他清晰地看到那道从门缝间透出的光线斜射而过，似乎是从钟楼那边投来的。\n\n林亦舟抬起头，目光停留在廊柱上那个被折断蓝布带勾勒出来的痕迹。他轻轻抚摸着，手指在上面划过了一道细痕。\n\n灯下的水汽逐渐凝结成一层薄雾，将第三根廊柱的侧面模糊得如同一面镜子。",
+        "pruned": "走廊尽头那盏灯依旧亮着，只是灯光比往常更加昏暗。路明非站在西回廊前，目光扫过那些熟悉的面孔。他没有回头，而是沿着墙慢慢走过去，尽量贴着墙壁前进，生怕把刚才听到的动静再惊动一次。林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处有一道明显的肿痕，鞋帮上方也出现了阴影。灯下，他清晰地看到那道从门缝间透出的光线斜射而过，似乎是从钟楼那边投来的。林亦舟抬起头，目光停留在廊柱上那个被折断蓝布带勾勒出来的痕迹。他轻轻抚摸着，手指在上面划过了一道细痕。灯下的水汽逐渐凝结成一层薄雾，将第三根廊柱的侧面模糊得如同一面镜子。",
+        "supported": "走廊尽头那盏灯依旧亮着，只是灯光比往常更加昏暗。路明非站在西回廊前，目光扫过那些熟悉的面孔。他没有回头，而是沿着墙慢慢走过去，尽量贴着墙壁前进，生怕把刚才听到的动静再惊动一次。林亦舟坐在第三根廊柱上，背靠着柱子，一动不动。他的左脚踝处有一道明显的肿痕，鞋帮上方也出现了阴影。灯下，他清晰地看到那道从门缝间透出的光线斜射而过，似乎是从钟楼那边投来的。林亦舟抬起头，目光停留在廊柱上那个被折断蓝布带勾勒出来的痕迹。他轻轻抚摸着，手指在上面划过了一道细痕。灯下的水汽逐渐凝结成一层薄雾，将第三根廊柱的侧面模糊得如同一面镜子。",
+        "text": "时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "violations": [],
+        "attempts": [
+          259,
+          164
+        ]
+      },
+      "warning": null
+    },
+    {
+      "input": "蹲下来问林亦舟伤得怎么样",
+      "turnMs": 71916,
+      "text": "。\n你：我沿车道向西回廊快走，贴着墙注意听枪声 · 正文 40.4s\n时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：ungrounded,low_support\n你：蹲下来问林亦舟伤得怎么样 · 正文 37.7s\n时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：wrong_person,low_support",
+      "debug": {
+        "pointId": "point_round_21_1",
+        "draft": "时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "raw": "路明非蹲下去问林亦舟伤得怎么样。\n\n林亦舟抬起头，目光有些涣散。“我这腿……”他咬了咬牙，“是没受着。”\n\n“没受着？”\n\n“没受着。可这一级的台阶我上不了。”\n\n廊柱第三根底下有一条蓝布带折断的地方，很细，几乎看不见。\n\n路明非把布头扯开了一小段。“这条布是哪边的？”\n\n林亦舟指了指，“是那边。”\n\n他弯下腰，开始解开鞋底上的结。布下的台阶边缘刻着一道很深的线，可他还是成功地站了起来，一步一个脚印。\n\n“你这一级全靠墙过。”他说。\n\n“全靠墙过。从一楼到这儿，我一共九级台阶。”\n\n“第九级也行得来吗？”\n\n林亦舟摇了摇头：“不行。前面几步我还能勉强支撑。第九级往后",
+        "cleaned": "路明非蹲下去问林亦舟伤得怎么样。\n\n林亦舟抬起头，目光有些涣散。“我这腿……”他咬了咬牙，“是没受着。”\n\n“没受着？”\n\n“没受着。可这一级的台阶我上不了。”\n\n廊柱第三根底下有一条蓝布带折断的地方，很细，几乎看不见。\n\n路明非把布头扯开了一小段。“这条布是哪边的？”\n\n林亦舟指了指，“是那边。”\n\n他弯下腰，开始解开鞋底上的结。布下的台阶边缘刻着一道很深的线，可他还是成功地站了起来，一步一个脚印。\n\n“你这一级全靠墙过。”他说。\n\n“全靠墙过。从一楼到这儿，我一共九级台阶。”\n\n“第九级也行得来吗？”\n\n林亦舟摇了摇头：“不行。前面几步我还能勉强支撑。",
+        "pruned": "路明非在西回廊。路明非蹲下去问林亦舟伤得怎么样。林亦舟抬起头，目光有些涣散。“我这腿……”他咬了咬牙，“是没受着。”“没受着？”“没受着。”廊柱第三根底下有一条蓝布带折断的地方，很细，几乎看不见。路明非把布头扯开了一小段。“这条布是哪边的？”林亦舟指了指，“是那边。”他弯下腰，开始解开鞋底上的结。布下的台阶边缘刻着一道很深的线，可他还是成功地站了起来，一步一个脚印。“你这一级全靠墙过。”他说。“全靠墙过。”“第九级也行得来吗？”林亦舟摇了摇头：“不行。",
+        "supported": "路明非在西回廊。路明非蹲下去问林亦舟伤得怎么样。林亦舟抬起头，目光有些涣散。路明非把布头扯开了一小段。布下的台阶边缘刻着一道很深的线，可他还是成功地站了起来，一步一个脚印。",
+        "text": "时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。",
+        "violations": [],
+        "attempts": [
+          86,
+          41
+        ]
+      },
+      "warning": null
+    },
+    {
+      "input": "扶他起来，往器材棚方向走",
+      "turnMs": 66772,
+      "text": "。\n你：我沿车道向西回廊快走，贴着墙注意听枪声 · 正文 40.4s\n时间过去了约1分钟。路明非沿车道向西回廊快走，贴着墙注意听枪声，最后停在西回廊。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：ungrounded,low_support\n你：蹲下来问林亦舟伤得怎么样 · 正文 37.7s\n时间过去了约1分钟。路明非蹲下来问林亦舟伤得怎么样。西回廊里，廊柱连接器材区与钟楼西门，第三根廊柱脚下有一条折断的蓝布带。林亦舟左脚踝在鞋帮上方肿起，背靠第三根廊柱坐着。\n正文已按已结算事实修正：wrong_person,low_support\n你：扶他起来，往器材棚方向走 · 正文 41.9s\n时间过去了约1分钟。路明非扶他起来，往器材棚方向走，最后停在器材棚。器材棚里，推拉门可回服务巷，领用台与带锁器材笼分处两侧。芬格尔头盔歪扣着，左臂没有阵营布带。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。\n正文已按已结算事实修正：ungrounded,low_support",
+      "debug": {
+        "pointId": "point_round_40_1",
+        "draft": "时间过去了约1分钟。路明非扶他起来，往器材棚方向走，最后停在器材棚。器材棚里，推拉门可回服务巷，领用台与带锁器材笼分处两侧。芬格尔头盔歪扣着，左臂没有阵营布带。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。",
+        "raw": "路明非扶他起来，可站不稳，就让他靠在推拉门上。\n\n芬格尔头盔歪扣着，左臂空荡荡的。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。\n\n他直起腰，看了一眼那个架子上的带锁器材笼。\n\n“你先去洗个澡吧。”路明非说，“这些东西明天再理。”\n\n“明天又是明天。”\n\n“明天是今天以后的事。先把这身衣服换下，再去洗。”\n\n秦越从门缝中看出去。那道服务巷里有人走过去，推拉门的侧角在灯光照下动了动。\n\n他把记号笔捏紧，往袖子里塞。\n\n器材棚里没有芬格尔头盔。他伸手去摸，摸到的是空荡荡的地方。",
+        "cleaned": "路明非扶他起来，可站不稳，就让他靠在推拉门上。\n\n芬格尔头盔歪扣着，左臂空荡荡的。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。\n\n他直起腰，看了一眼那个架子上的带锁器材笼。\n\n“你先去洗个澡吧。”路明非说，“这些东西明天再理。”\n\n“明天又是明天。”\n\n“明天是今天以后的事。先把这身衣服换下，再去洗。”\n\n秦越从门缝中看出去。那道服务巷里有人走过去，推拉门的侧角在灯光照下动了动。\n\n他把记号笔捏紧，往袖子里塞。\n\n器材棚里没有芬格尔头盔。他伸手去摸，摸到的是空荡荡的地方。",
+        "pruned": "路明非扶他起来，可站不稳，就让他靠在推拉门上。芬格尔头盔歪扣着，左臂空荡荡的。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。他直起腰，看了一眼那个架子上的带锁器材笼。“你先去洗个澡吧。”路明非说，“这些东西明天再理。”“明天又是明天。”“明天是今天以后的事。先把这身衣服换下，再去洗。”秦越从门缝中看出去。那道服务巷里有人走过去，推拉门的侧角在灯光照下动了动。他把记号笔捏紧，往袖子里塞。器材棚里没有芬格尔头盔。他伸手去摸，摸到的是空荡荡的地方。",
+        "supported": "路明非扶他起来，可站不稳，就让他靠在推拉门上。芬格尔头盔歪扣着，左臂空荡荡的。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。他直起腰，看了一眼那个架子上的带锁器材笼。先把这身衣服换下，再去洗。那道服务巷里有人走过去，推拉门的侧角在灯光照下动了动。他把记号笔捏紧，往袖子里塞。器材棚里没有芬格尔头盔。他伸手去摸，摸到的是空荡荡的地方。",
+        "text": "时间过去了约1分钟。路明非扶他起来，往器材棚方向走，最后停在器材棚。器材棚里，推拉门可回服务巷，领用台与带锁器材笼分处两侧。芬格尔头盔歪扣着，左臂没有阵营布带。秦越灰色器材背心套在校服外，手里的记号笔没有笔帽。",
+        "violations": [],
+        "attempts": [
+          168,
+          146
+        ]
+      },
+      "warning": null
+    }
+  ],
+  "restored": true,
+  "reloadError": null,
+  "snapshotBytes": 521640,
+  "snapshotStable": true,
+  "finalText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新开始\n2009-10-17 15:23 · 器材棚\n已恢复本地存档，继续上次的进度。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：器材棚\n在附近\n芬格尔、秦越\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n本地存档\n每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：3 次",
+  "logs": [
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[error] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[info] [world-local task] narration point_root_world_dragon_raja_free_day 54253ms fallback=true added_event,wrong_person,ungrounded,low_support",
+    "[info] [world-local task] action lu 2ms fallback=false ",
+    "[info] [world-local task] targets lu 8898ms fallback=false ",
+    "[info] [world-local task] targets lu 8901ms fallback=false ",
+    "[info] [world-local task] results group_10 16454ms fallback=false ",
+    "[info] [world-local task] updates group_10 25645ms fallback=false ",
+    "[info] [world-local task] narration point_round_3_1 40350ms fallback=true ungrounded,low_support",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] action lu 0ms fallback=false ",
+    "[info] [world-local task] targets lu 6076ms fallback=false ",
+    "[info] [world-local task] targets lu 6077ms fallback=false ",
+    "[info] [world-local task] results group_28 9606ms fallback=false ",
+    "[info] [world-local task] updates group_28 18088ms fallback=false ",
+    "[info] [world-local task] narration point_round_21_1 37655ms fallback=true wrong_person,low_support",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] [world-local task] action lu 0ms fallback=false ",
+    "[info] [world-local task] targets lu 7875ms fallback=false ",
+    "[info] [world-local task] targets lu 7876ms fallback=false ",
+    "[info] [world-local task] results group_47 10397ms fallback=false ",
+    "[info] [world-local task] updates group_47 2962ms fallback=false ",
+    "[info] [world-local task] narration point_round_40_1 41928ms fallback=true ungrounded,low_support",
+    "[info] [world-local] turn status {kind: stop, reason: world_complete}",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden",
+    "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: intel | architecture: gen-12lp | device_id: 0 | name:  | device_desc: ",
+    "[warning] load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden"
+  ]
+}

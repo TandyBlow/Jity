@@ -1,0 +1,310 @@
+{
+ "arms": {
+  "c": [
+   {
+    "unitId": "p-rel1",
+    "family": "relation",
+    "relation": "缠",
+    "text": "木桩缠着的旧缆绳断了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel2",
+    "family": "relation",
+    "relation": "挂",
+    "text": "木桩挂着的旧缆绳断了一截。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel3",
+    "family": "relation",
+    "relation": "系",
+    "text": "木桩上的缆绳松了。",
+    "retention": "dropped",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖0.75"
+   },
+   {
+    "unitId": "p-rel4",
+    "family": "relation",
+    "relation": "套",
+    "text": "木桩上的缆绳滑下来。",
+    "retention": "dropped",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖0.78"
+   },
+   {
+    "unitId": "p-rel5",
+    "family": "relation",
+    "relation": "盖",
+    "text": "长桌的盖在上面的干纸滑开了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel6",
+    "family": "relation",
+    "relation": "插",
+    "text": "铜灯罩插在罩里的备用灯芯歪了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel7",
+    "family": "relation",
+    "relation": "搭",
+    "text": "铁链搭在铁链上的抹布滑下来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel8",
+    "family": "relation",
+    "relation": "卡",
+    "text": "鱼筐的银鳞鱼滑出来。",
+    "retention": "dropped",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖0.60"
+   },
+   {
+    "unitId": "p-ctl1",
+    "family": "control",
+    "relation": "旁边",
+    "text": "木桩的旧缆绳断在木桩旁边。",
+    "retention": "clean",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-ctl2",
+    "family": "control",
+    "relation": "泡",
+    "text": "系泊绳的缆绳泡在浅滩的水里。",
+    "retention": "clean",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   }
+  ],
+  "control": [
+   {
+    "unitId": "p-rel1",
+    "family": "relation",
+    "relation": "缠",
+    "text": "木桩上缠着的旧缆绳断了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel2",
+    "family": "relation",
+    "relation": "挂",
+    "text": "木桩挂着的旧缆绳断了一截。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel3",
+    "family": "relation",
+    "relation": "系",
+    "text": "木桩上系在桩上的缆绳松了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel4",
+    "family": "relation",
+    "relation": "套",
+    "text": "木桩上的套绳滑下来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖0.56"
+   },
+   {
+    "unitId": "p-rel5",
+    "family": "relation",
+    "relation": "盖",
+    "text": "长桌的盖在上面的干纸滑开了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel6",
+    "family": "relation",
+    "relation": "插",
+    "text": "铜灯罩插在罩里的备用灯芯歪了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel7",
+    "family": "relation",
+    "relation": "搭",
+    "text": "铁链搭在铁链上的抹布滑下来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel8",
+    "family": "relation",
+    "relation": "卡",
+    "text": "鱼筐的卡在筐边的银鳞鱼滑出来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-ctl1",
+    "family": "control",
+    "relation": "旁边",
+    "text": "木桩的旧缆绳断在木桩旁边。",
+    "retention": "clean",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-ctl2",
+    "family": "control",
+    "relation": "泡",
+    "text": "系泊绳的缆绳泡在浅滩的水里。",
+    "retention": "clean",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   }
+  ],
+  "moved": [
+   {
+    "unitId": "p-rel1",
+    "family": "relation",
+    "relation": "缠",
+    "text": "木桩的旧缆绳断了。",
+    "retention": "dropped",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖0.71"
+   },
+   {
+    "unitId": "p-rel2",
+    "family": "relation",
+    "relation": "挂",
+    "text": "木桩挂着的旧缆绳断了一截。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel3",
+    "family": "relation",
+    "relation": "系",
+    "text": "木桩的系在桩上的缆绳松了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel4",
+    "family": "relation",
+    "relation": "套",
+    "text": "木桩的套在桩上的缆绳滑下来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel5",
+    "family": "relation",
+    "relation": "盖",
+    "text": "长桌的盖在上面的干纸滑开了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel6",
+    "family": "relation",
+    "relation": "插",
+    "text": "铜灯罩的插在罩里的备用灯芯歪了。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel7",
+    "family": "relation",
+    "relation": "搭",
+    "text": "铁链搭在铁链上的抹布滑下来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-rel8",
+    "family": "relation",
+    "relation": "卡",
+    "text": "鱼筐的卡在筐边的银鳞鱼滑出来。",
+    "retention": "retained",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-ctl1",
+    "family": "control",
+    "relation": "旁边",
+    "text": "木桩的旧缆绳断在木桩旁边。",
+    "retention": "clean",
+    "fact": "S",
+    "malformedFrame": true,
+    "note": "覆盖1.00"
+   },
+   {
+    "unitId": "p-ctl2",
+    "family": "control",
+    "relation": "泡",
+    "text": "系泊绳的缆绳泡在浅滩的水里。",
+    "retention": "clean",
+    "fact": "S",
+    "malformedFrame": false,
+    "note": "覆盖1.00"
+   }
+  ]
+ }
+}

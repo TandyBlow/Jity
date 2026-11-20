@@ -1,0 +1,480 @@
+{"step": 1, "update": 0, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 2, "update": 0, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 3, "update": 0, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 4, "update": 1, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 5, "update": 1, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 6, "update": 1, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 7, "update": 1, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 8, "update": 2, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 9, "update": 2, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 10, "update": 2, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 11, "update": 2, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 12, "update": 3, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 13, "update": 3, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 14, "update": 3, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 15, "update": 3, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 16, "update": 4, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 17, "update": 4, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 18, "update": 4, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 19, "update": 4, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 20, "update": 5, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 21, "update": 5, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 22, "update": 5, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 23, "update": 5, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 24, "update": 6, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 25, "update": 6, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 26, "update": 6, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 27, "update": 6, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 28, "update": 7, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 29, "update": 7, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 30, "update": 7, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 31, "update": 7, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 32, "update": 8, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 33, "update": 8, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 34, "update": 8, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 35, "update": 8, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 36, "update": 9, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 37, "update": 9, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 38, "update": 9, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 39, "update": 9, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 40, "update": 10, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 41, "update": 10, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 42, "update": 10, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 43, "update": 10, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 44, "update": 11, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 45, "update": 11, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 46, "update": 11, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 47, "update": 11, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 48, "update": 12, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 49, "update": 12, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 50, "update": 12, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 51, "update": 12, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 52, "update": 13, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 53, "update": 13, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 54, "update": 13, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 55, "update": 13, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 56, "update": 14, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 57, "update": 14, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 58, "update": 14, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 59, "update": 14, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 60, "update": 15, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 61, "update": 15, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 62, "update": 15, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 63, "update": 15, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 64, "update": 16, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 65, "update": 16, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 66, "update": 16, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 67, "update": 16, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 68, "update": 17, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 69, "update": 17, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 70, "update": 17, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 71, "update": 17, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 72, "update": 18, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 73, "update": 18, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 74, "update": 18, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 75, "update": 18, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 76, "update": 19, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 77, "update": 19, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 78, "update": 19, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 79, "update": 19, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 80, "update": 20, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 81, "update": 20, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 82, "update": 20, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 83, "update": 20, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 84, "update": 21, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 85, "update": 21, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 86, "update": 21, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 87, "update": 21, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 88, "update": 22, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 89, "update": 22, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 90, "update": 22, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 91, "update": 22, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 92, "update": 23, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 93, "update": 23, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 94, "update": 23, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 95, "update": 23, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 96, "update": 24, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 97, "update": 24, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 98, "update": 24, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 99, "update": 24, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 100, "update": 25, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 101, "update": 25, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 102, "update": 25, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 103, "update": 25, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 104, "update": 26, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 105, "update": 26, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 106, "update": 26, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 107, "update": 26, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 108, "update": 27, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 109, "update": 27, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 110, "update": 27, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 111, "update": 27, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 112, "update": 28, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 113, "update": 28, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 114, "update": 28, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 115, "update": 28, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 116, "update": 29, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 117, "update": 29, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 118, "update": 29, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 119, "update": 29, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 120, "update": 30, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 121, "update": 30, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 122, "update": 30, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 123, "update": 30, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 124, "update": 31, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 125, "update": 31, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 126, "update": 31, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 127, "update": 31, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 128, "update": 32, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 129, "update": 32, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 130, "update": 32, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 131, "update": 32, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 132, "update": 33, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 133, "update": 33, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 134, "update": 33, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 135, "update": 33, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 136, "update": 34, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 137, "update": 34, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 138, "update": 34, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 139, "update": 34, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 140, "update": 35, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 141, "update": 35, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 142, "update": 35, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 143, "update": 35, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 144, "update": 36, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 145, "update": 36, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 146, "update": 36, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 147, "update": 36, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 148, "update": 37, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 149, "update": 37, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 150, "update": 37, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 151, "update": 37, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 152, "update": 38, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 153, "update": 38, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 154, "update": 38, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 155, "update": 38, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 156, "update": 39, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 157, "update": 39, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 158, "update": 39, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 159, "update": 39, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 160, "update": 40, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 161, "update": 40, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 162, "update": 40, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 163, "update": 40, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 164, "update": 41, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 165, "update": 41, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 166, "update": 41, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 167, "update": 41, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 168, "update": 42, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 169, "update": 42, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 170, "update": 42, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 171, "update": 42, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 172, "update": 43, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 173, "update": 43, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 174, "update": 43, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 175, "update": 43, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 176, "update": 44, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 177, "update": 44, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 178, "update": 44, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 179, "update": 44, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 180, "update": 45, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 181, "update": 45, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 182, "update": 45, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 183, "update": 45, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 184, "update": 46, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 185, "update": 46, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 186, "update": 46, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 187, "update": 46, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 188, "update": 47, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 189, "update": 47, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 190, "update": 47, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 191, "update": 47, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 192, "update": 48, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 193, "update": 48, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 194, "update": 48, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 195, "update": 48, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 196, "update": 49, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 197, "update": 49, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 198, "update": 49, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 199, "update": 49, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 200, "update": 50, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 201, "update": 50, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 202, "update": 50, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 203, "update": 50, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 204, "update": 51, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 205, "update": 51, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 206, "update": 51, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 207, "update": 51, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 208, "update": 52, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 209, "update": 52, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 210, "update": 52, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 211, "update": 52, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 212, "update": 53, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 213, "update": 53, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 214, "update": 53, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 215, "update": 53, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 216, "update": 54, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 217, "update": 54, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 218, "update": 54, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 219, "update": 54, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 220, "update": 55, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 221, "update": 55, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 222, "update": 55, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 223, "update": 55, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 224, "update": 56, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 225, "update": 56, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 226, "update": 56, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 227, "update": 56, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 228, "update": 57, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 229, "update": 57, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 230, "update": 57, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 231, "update": 57, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 232, "update": 58, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 233, "update": 58, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 234, "update": 58, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 235, "update": 58, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 236, "update": 59, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 237, "update": 59, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 238, "update": 59, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 239, "update": 59, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 240, "update": 60, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 241, "update": 60, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 242, "update": 60, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 243, "update": 60, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 244, "update": 61, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 245, "update": 61, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 246, "update": 61, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 247, "update": 61, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 248, "update": 62, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 249, "update": 62, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 250, "update": 62, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 251, "update": 62, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 252, "update": 63, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 253, "update": 63, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 254, "update": 63, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 255, "update": 63, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 256, "update": 64, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 257, "update": 64, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 258, "update": 64, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 259, "update": 64, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 260, "update": 65, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 261, "update": 65, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 262, "update": 65, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 263, "update": 65, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 264, "update": 66, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 265, "update": 66, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 266, "update": 66, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 267, "update": 66, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 268, "update": 67, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 269, "update": 67, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 270, "update": 67, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 271, "update": 67, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 272, "update": 68, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 273, "update": 68, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 274, "update": 68, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 275, "update": 68, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 276, "update": 69, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 277, "update": 69, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 278, "update": 69, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 279, "update": 69, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 280, "update": 70, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 281, "update": 70, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 282, "update": 70, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 283, "update": 70, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 284, "update": 71, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 285, "update": 71, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 286, "update": 71, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 287, "update": 71, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 288, "update": 72, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 289, "update": 72, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 290, "update": 72, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 291, "update": 72, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 292, "update": 73, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 293, "update": 73, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 294, "update": 73, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 295, "update": 73, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 296, "update": 74, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 297, "update": 74, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 298, "update": 74, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 299, "update": 74, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 300, "update": 75, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 301, "update": 75, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 302, "update": 75, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 303, "update": 75, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 304, "update": 76, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 305, "update": 76, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 306, "update": 76, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 307, "update": 76, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 308, "update": 77, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 309, "update": 77, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 310, "update": 77, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 311, "update": 77, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 312, "update": 78, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 313, "update": 78, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 314, "update": 78, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 315, "update": 78, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 316, "update": 79, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 317, "update": 79, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 318, "update": 79, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 319, "update": 79, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 320, "update": 80, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 321, "update": 80, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 322, "update": 80, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 323, "update": 80, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 324, "update": 81, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 325, "update": 81, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 326, "update": 81, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 327, "update": 81, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 328, "update": 82, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 329, "update": 82, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 330, "update": 82, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 331, "update": 82, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 332, "update": 83, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 333, "update": 83, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 334, "update": 83, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 335, "update": 83, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 336, "update": 84, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 337, "update": 84, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 338, "update": 84, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 339, "update": 84, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 340, "update": 85, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 341, "update": 85, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 342, "update": 85, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 343, "update": 85, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 344, "update": 86, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 345, "update": 86, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 346, "update": 86, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 347, "update": 86, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 348, "update": 87, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 349, "update": 87, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 350, "update": 87, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 351, "update": 87, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 352, "update": 88, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 353, "update": 88, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 354, "update": 88, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 355, "update": 88, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 356, "update": 89, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 357, "update": 89, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 358, "update": 89, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 359, "update": 89, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 360, "update": 90, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 361, "update": 90, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 362, "update": 90, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 363, "update": 90, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 364, "update": 91, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 365, "update": 91, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 366, "update": 91, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 367, "update": 91, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 368, "update": 92, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 369, "update": 92, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 370, "update": 92, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 371, "update": 92, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 372, "update": 93, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 373, "update": 93, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 374, "update": 93, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 375, "update": 93, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 376, "update": 94, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 377, "update": 94, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 378, "update": 94, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 379, "update": 94, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 380, "update": 95, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 381, "update": 95, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 382, "update": 95, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 383, "update": 95, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 384, "update": 96, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 385, "update": 96, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 386, "update": 96, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 387, "update": 96, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 388, "update": 97, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 389, "update": 97, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 390, "update": 97, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 391, "update": 97, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 392, "update": 98, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 393, "update": 98, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 394, "update": 98, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 395, "update": 98, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 396, "update": 99, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 397, "update": 99, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 398, "update": 99, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 399, "update": 99, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 400, "update": 100, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 401, "update": 100, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 402, "update": 100, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 403, "update": 100, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 404, "update": 101, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 405, "update": 101, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 406, "update": 101, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 407, "update": 101, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 408, "update": 102, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 409, "update": 102, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 410, "update": 102, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 411, "update": 102, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 412, "update": 103, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 413, "update": 103, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 414, "update": 103, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 415, "update": 103, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 416, "update": 104, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 417, "update": 104, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 418, "update": 104, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 419, "update": 104, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 420, "update": 105, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 421, "update": 105, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 422, "update": 105, "sourceId": "t16", "callId": "t16:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 423, "update": 105, "sourceId": "train-r5", "callId": "train-r5:g1", "factIds": ["f0", "f1"], "targetTokens": 17}
+{"step": 424, "update": 106, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 425, "update": 106, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 426, "update": 106, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 427, "update": 106, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 428, "update": 107, "sourceId": "fixture-r3", "callId": "fixture-r3:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 429, "update": 107, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 430, "update": 107, "sourceId": "v04", "callId": "v04:g1", "factIds": ["f0", "f1"], "targetTokens": 27}
+{"step": 431, "update": 107, "sourceId": "v10", "callId": "v10:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 432, "update": 108, "sourceId": "fixture-r3", "callId": "fixture-r3:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 433, "update": 108, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 434, "update": 108, "sourceId": "train-r5", "callId": "train-r5:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 435, "update": 108, "sourceId": "t18", "callId": "t18:g1", "factIds": ["f0", "f1", "f2", "f3"], "targetTokens": 35}
+{"step": 436, "update": 109, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 437, "update": 109, "sourceId": "fixture-r3", "callId": "fixture-r3:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 438, "update": 109, "sourceId": "t15", "callId": "t15:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 25}
+{"step": 439, "update": 109, "sourceId": "t10", "callId": "t10:g2", "factIds": ["f2", "f3"], "targetTokens": 21}
+{"step": 440, "update": 110, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 441, "update": 110, "sourceId": "t04", "callId": "t04:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 34}
+{"step": 442, "update": 110, "sourceId": "t10", "callId": "t10:g1", "factIds": ["f0", "f1"], "targetTokens": 30}
+{"step": 443, "update": 110, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}
+{"step": 444, "update": 111, "sourceId": "fixture-r1", "callId": "fixture-r1:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 445, "update": 111, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 446, "update": 111, "sourceId": "train-r2", "callId": "train-r2:g4", "factIds": ["f4"], "targetTokens": 12}
+{"step": 447, "update": 111, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 448, "update": 112, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 449, "update": 112, "sourceId": "fixture-r1", "callId": "fixture-r1:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 450, "update": 112, "sourceId": "t06", "callId": "t06:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 451, "update": 112, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 452, "update": 113, "sourceId": "t02", "callId": "t02:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 35}
+{"step": 453, "update": 113, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 454, "update": 113, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 455, "update": 113, "sourceId": "train-r5", "callId": "train-r5:g4", "factIds": ["f4"], "targetTokens": 11}
+{"step": 456, "update": 114, "sourceId": "t23", "callId": "t23:g1", "factIds": ["f0", "f1"], "targetTokens": 22}
+{"step": 457, "update": 114, "sourceId": "train-r2", "callId": "train-r2:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 458, "update": 114, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 459, "update": 114, "sourceId": "v06", "callId": "v06:g2", "factIds": ["f2"], "targetTokens": 9}
+{"step": 460, "update": 115, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 461, "update": 115, "sourceId": "fixture-r2", "callId": "fixture-r2:g2", "factIds": ["f2"], "targetTokens": 11}
+{"step": 462, "update": 115, "sourceId": "t11", "callId": "t11:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 463, "update": 115, "sourceId": "v08", "callId": "v08:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 464, "update": 116, "sourceId": "fixture-r2", "callId": "fixture-r2:g4", "factIds": ["f4"], "targetTokens": 10}
+{"step": 465, "update": 116, "sourceId": "v06", "callId": "v06:g1", "factIds": ["f0", "f1"], "targetTokens": 21}
+{"step": 466, "update": 116, "sourceId": "t14", "callId": "t14:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 30}
+{"step": 467, "update": 116, "sourceId": "train-r2", "callId": "train-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 468, "update": 117, "sourceId": "fixture-r2", "callId": "fixture-r2:g3", "factIds": ["f3"], "targetTokens": 10}
+{"step": 469, "update": 117, "sourceId": "t11", "callId": "t11:g1", "factIds": ["f0", "f1"], "targetTokens": 23}
+{"step": 470, "update": 117, "sourceId": "t23", "callId": "t23:g2", "factIds": ["f2", "f3"], "targetTokens": 22}
+{"step": 471, "update": 117, "sourceId": "v10", "callId": "v10:g2", "factIds": ["f2"], "targetTokens": 13}
+{"step": 472, "update": 118, "sourceId": "v08", "callId": "v08:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 473, "update": 118, "sourceId": "train-r2", "callId": "train-r2:g3", "factIds": ["f3"], "targetTokens": 12}
+{"step": 474, "update": 118, "sourceId": "fixture-r1", "callId": "fixture-r1:g2", "factIds": ["f2"], "targetTokens": 12}
+{"step": 475, "update": 118, "sourceId": "fixture-r2", "callId": "fixture-r2:g1", "factIds": ["f0", "f1"], "targetTokens": 15}
+{"step": 476, "update": 119, "sourceId": "train-r5", "callId": "train-r5:g3", "factIds": ["f3"], "targetTokens": 11}
+{"step": 477, "update": 119, "sourceId": "v04", "callId": "v04:g2", "factIds": ["f2"], "targetTokens": 10}
+{"step": 478, "update": 119, "sourceId": "t17", "callId": "t17:g1", "factIds": ["f0", "f1", "f2"], "targetTokens": 26}
+{"step": 479, "update": 119, "sourceId": "fixture-r3", "callId": "fixture-r3:g1", "factIds": ["f0", "f1"], "targetTokens": 19}
+{"step": 480, "update": 120, "sourceId": "fixture-r1", "callId": "fixture-r1:g3", "factIds": ["f3"], "targetTokens": 9}

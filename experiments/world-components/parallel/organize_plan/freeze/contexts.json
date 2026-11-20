@@ -1,0 +1,61 @@
+{
+ "source": "artifacts/world-components/organize-wording/controllability-v1.jsonl",
+ "sha256": "8c613633a0e0fa4fa332861346264cbb28eb87f9945cafc8eb6b908c54dcc8e7",
+ "note": "Presentation context only (place/visible/scene/viewpoint). Facts never come from this file.",
+ "contexts": {
+  "fixture-r1": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "fixture-r2": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "fixture-r3": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "fixture-r4": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "fixture-r5": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "train-r2": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "train-r3": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "train-r4": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  },
+  "train-r5": {
+   "place": "潮汐档案馆>长桌",
+   "visible": "潮汐簿、铜灯、干纸、墨、天窗、长桌、门槛",
+   "scene": "夜；浓雾",
+   "viewpoint": "第三人称"
+  }
+ }
+}

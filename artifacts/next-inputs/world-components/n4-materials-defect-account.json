@@ -1,0 +1,68 @@
+{
+ "purpose": "材料缺陷账：哪些单元因“事实引用了本场景不可见物件”被判无效",
+ "rule": "precheck.py 的 visibility 检查：事实主体或引用的物件必须在 地点可见 列表，或属于视角人物随身",
+ "sets": {
+  "object-train40": {
+   "invalid": [
+    "oa1B",
+    "ob5A",
+    "ob5B",
+    "od1A"
+   ],
+   "affectedPairs": [
+    "oa1",
+    "ob5",
+    "od1"
+   ],
+   "cleanFile": "n4-object-train40-clean.jsonl",
+   "cleanUnits": 34
+  },
+  "object-confirm24": {
+   "invalid": [
+    "qa1A",
+    "qb3A",
+    "qb3B",
+    "qc1A",
+    "qc1B",
+    "qd1B"
+   ],
+   "valid": 18,
+   "affectedPairs": [
+    "qa1",
+    "qb3",
+    "qc1",
+    "qd1"
+   ]
+  },
+  "expand-train80": {
+   "invalid": [
+    "tc7A"
+   ],
+   "affectedPairs": [
+    "tc7"
+   ],
+   "cleanFile": "n4-expand-train80-clean.jsonl",
+   "cleanUnits": 78
+  },
+  "expand-confirm40": {
+   "invalid": [
+    "cc2A",
+    "cc2B",
+    "cd1A",
+    "cd1B"
+   ],
+   "valid": 36,
+   "affectedPairs": [
+    "cc2",
+    "cd1"
+   ]
+  }
+ },
+ "previousError": "上一轮把物件确认集写成“20 条可判”，却把 qb3A/qb3B 留在分母里、又用“两边都错 2 条就是缺陷单元”描述它；这两条正是外袍不可见，应与其余四条一起排除。有效分母是 18，不是 20。",
+ "oldVersionsKept": [
+  "n4-object-train40.jsonl",
+  "n4-expand-train80.jsonl",
+  "n4-object-confirm24-units.jsonl",
+  "n4-expand-confirm40-units.jsonl"
+ ]
+}

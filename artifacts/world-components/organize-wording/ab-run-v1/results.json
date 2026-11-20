@@ -1,0 +1,4826 @@
+{
+ "config": {
+  "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+  "base_model_sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "base_spiece_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "data": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\pairs-v2.jsonl",
+  "data_sha256": "7e325dcc254604621d386faf47ec1f85f1f92ad4eb8b845078d70adbcab14a30",
+  "variants": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\plan-variants-v1.jsonl",
+  "variants_sha256": "1813bd179fb39e92916d0a3f48c9fac3d85a1c0abf8e014917e61c39fedf909f",
+  "seed": 13,
+  "epochs": 20,
+  "steps_per_epoch": 24,
+  "accum": 4,
+  "total_updates": 120,
+  "warmup": 12,
+  "lr": 0.0005,
+  "max_in": 512,
+  "max_tgt": 128,
+  "max_new": 128,
+  "device": "cuda",
+  "torch": "2.7.0+cu126",
+  "cuda": "NVIDIA GeForce RTX 4060 Laptop GPU"
+ },
+ "arms": {
+  "A": {
+   "selected_epoch": 3,
+   "selected_update": 18,
+   "selected_dev_loss": 0.5854580346494913,
+   "selected_dev_fact_score": 0.8854166666666666,
+   "history": [
+    {
+     "epoch": 1,
+     "update": 6,
+     "dev_loss": 1.066640179604292,
+     "dev_fact_score": 0.22083333333333333,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.4,
+       "omissions": [
+        "f1",
+        "f2",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.25,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.0,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.25,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.2,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.0,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 2,
+     "update": 12,
+     "dev_loss": 0.8254771362990141,
+     "dev_fact_score": 0.47291666666666665,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.6,
+       "omissions": [
+        "f1",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.5,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.5,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.25,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.6,
+       "omissions": [
+        "f1",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 3,
+     "update": 18,
+     "dev_loss": 0.5854580346494913,
+     "dev_fact_score": 0.8854166666666666,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 4,
+     "update": 24,
+     "dev_loss": 0.4700428368523717,
+     "dev_fact_score": 0.7208333333333333,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.8,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 5,
+     "update": 30,
+     "dev_loss": 0.4577938038855791,
+     "dev_fact_score": 0.7979166666666667,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 6,
+     "update": 36,
+     "dev_loss": 0.525702991115395,
+     "dev_fact_score": 0.7,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.5,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.6,
+       "omissions": [
+        "f0",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 7,
+     "update": 42,
+     "dev_loss": 0.3673229102278128,
+     "dev_fact_score": 0.7875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 8,
+     "update": 48,
+     "dev_loss": 0.37323327362537384,
+     "dev_fact_score": 0.78125,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.5,
+       "omissions": [
+        "f2",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 9,
+     "update": 54,
+     "dev_loss": 0.4874924518080661,
+     "dev_fact_score": 0.75,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.5,
+       "omissions": [
+        "f2",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 10,
+     "update": 60,
+     "dev_loss": 0.38360075501259416,
+     "dev_fact_score": 0.81875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.8,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 11,
+     "update": 66,
+     "dev_loss": 0.3515512539015617,
+     "dev_fact_score": 0.85,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 12,
+     "update": 72,
+     "dev_loss": 0.30508474650559947,
+     "dev_fact_score": 0.81875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 13,
+     "update": 78,
+     "dev_loss": 0.3636668238978018,
+     "dev_fact_score": 0.84375,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 14,
+     "update": 84,
+     "dev_loss": 0.3607513768838544,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 15,
+     "update": 90,
+     "dev_loss": 0.35809080286708195,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 16,
+     "update": 96,
+     "dev_loss": 0.36958820225845557,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 17,
+     "update": 102,
+     "dev_loss": 0.378939806139897,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 18,
+     "update": 108,
+     "dev_loss": 0.3928289249906811,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 19,
+     "update": 114,
+     "dev_loss": 0.4232376121890411,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 20,
+     "update": 120,
+     "dev_loss": 0.42938614581180445,
+     "dev_fact_score": 0.875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    }
+   ],
+   "holdout": [
+    {
+     "sourceId": "fixture-r5",
+     "split": "holdout",
+     "target": "林川的帽檐压出折痕，脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+     "text": "林川的帽檐压出折痕,林川的脚踝肿了一块,周宁的衣领被雨浸透,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+     "sentences": [
+      "林川的帽檐压出折痕,林川的脚踝肿了一块,周宁的衣领被雨浸透,陈默的指尖磨出茧。",
+      "陈默的膝盖沾了泥。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "林川的帽檐压出折痕,林川的脚踝肿了一块,周宁的衣领被雨浸透,陈默的指尖磨出茧。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "林川的帽檐压出折痕,林川的脚踝肿了一块,周宁的衣领被雨浸透,陈默的指尖磨出茧。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "林川的帽檐压出折痕,林川的脚踝肿了一块,周宁的衣领被雨浸透,陈默的指尖磨出茧。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "林川的帽檐压出折痕,林川的脚踝肿了一块,周宁的衣领被雨浸透,陈默的指尖磨出茧。"
+      },
+      "f4": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "陈默的膝盖沾了泥。"
+      }
+     },
+     "fact_supported": 5,
+     "fact_total": 5,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f3",
+        "f4"
+       ],
+       "different": true,
+       "sents": [
+        0,
+        1
+       ]
+      }
+     ],
+     "relations": [
+      {
+       "edge": [
+        "f2",
+        "f3"
+       ],
+       "ok": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "t03",
+     "split": "holdout",
+     "target": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+     "text": "叶知微把灯罩擦得透亮,叶知微把灯罩擦得透亮,袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把抹布搭回梯脚。",
+     "sentences": [
+      "叶知微把灯罩擦得透亮,叶知微把灯罩擦得透亮,袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把抹布搭回梯脚。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微把灯罩擦得透亮,叶知微把灯罩擦得透亮,袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把抹布搭回梯脚。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微把灯罩擦得透亮,叶知微把灯罩擦得透亮,袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把抹布搭回梯脚。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微把灯罩擦得透亮,叶知微把灯罩擦得透亮,袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把袖口沾了铜油,叶知微把抹布搭回梯脚。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 3,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "t08",
+     "split": "holdout",
+     "target": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+     "text": "阿棠把银鳞鱼搬上案板,顾行舟把银鳞鱼搬上案板,辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+     "sentences": [
+      "阿棠把银鳞鱼搬上案板,顾行舟把银鳞鱼搬上案板,辫梢沾了白汽。",
+      "顾行舟的外袍下摆沾了泥水。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把银鳞鱼搬上案板,辫梢沾了白汽。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把银鳞鱼搬上案板,辫梢沾了白汽。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,顾行舟把银鳞鱼搬上案板,辫梢沾了白汽。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "顾行舟的外袍下摆沾了泥水。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 4,
+     "fact_score": 0.75,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "group": [
+        "f2",
+        "f3"
+       ],
+       "same_sentence": false,
+       "sents": [
+        0,
+        1
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "t24",
+     "split": "holdout",
+     "target": "纸灯笼被风扯破一角，排水沟里面积了泥。沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+     "text": "沈砚的被风扯破一角,排水沟的里面积了泥,沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+     "sentences": [
+      "沈砚的被风扯破一角,排水沟的里面积了泥,沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的被风扯破一角,排水沟的里面积了泥,沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的被风扯破一角,排水沟的里面积了泥,沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的被风扯破一角,排水沟的里面积了泥,沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的被风扯破一角,排水沟的里面积了泥,沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+      }
+     },
+     "fact_supported": 4,
+     "fact_total": 4,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "group": [
+        "f2",
+        "f3"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "train-r4",
+     "split": "holdout",
+     "target": "沈砚的围巾松开一截，脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+     "text": "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥",
+     "sentences": [
+      "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 0.75,
+       "sentence": "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥"
+      },
+      "f3": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥"
+      },
+      "f4": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的围巾松开一截,沈砚的脸色发白,顾行舟的背上溅了泥"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 5,
+     "fact_score": 0.6,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f3",
+        "f4"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [
+      {
+       "edge": [
+        "f2",
+        "f3"
+       ],
+       "ok": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "omissions": [
+      "f3",
+      "f4"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "train-r5",
+     "split": "holdout",
+     "target": "沈砚的帽檐压出折痕，脚踝肿了一块。顾行舟的衣领被雨浸透。随后，叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+     "text": "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。",
+     "sentences": [
+      "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。"
+      },
+      "f3": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。"
+      },
+      "f4": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的帽檐压出折痕,沈砚的脚踝肿了一块,顾行舟的衣领被雨浸透,叶知微的膝盖沾了泥。"
+      }
+     },
+     "fact_supported": 4,
+     "fact_total": 5,
+     "fact_score": 0.8,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f3",
+        "f4"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [
+      {
+       "edge": [
+        "f2",
+        "f3"
+       ],
+       "ok": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "omissions": [
+      "f3"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v05",
+     "split": "holdout",
+     "target": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮。什么也没有再发生。",
+     "text": "叶知微的袖口沾了铜油,叶知微的袖口沾了铜油,手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。叶知微的手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。叶知微把灯罩擦得透亮。叶知微把灯罩擦得透亮。叶知微把灯罩擦得透亮。",
+     "sentences": [
+      "叶知微的袖口沾了铜油,叶知微的袖口沾了铜油,手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。",
+      "叶知微的手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。",
+      "叶知微把灯罩擦得透亮。",
+      "叶知微把灯罩擦得透亮。",
+      "叶知微把灯罩擦得透亮。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微的袖口沾了铜油,叶知微的袖口沾了铜油,手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微的袖口沾了铜油,叶知微的袖口沾了铜油,手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微的袖口沾了铜油,叶知微的袖口沾了铜油,手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。"
+      },
+      "f3": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "叶知微的袖口沾了铜油,叶知微的袖口沾了铜油,手背上沾了铜油,手背上沾了铜油,叶知微把灯罩擦得透亮。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 4,
+     "fact_score": 0.75,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f3"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v14",
+     "split": "holdout",
+     "target": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+     "text": "沈砚的潮汐档案馆走到潮渡,把系泊绳拖回岸上,理智的沈砚。",
+     "sentences": [
+      "沈砚的潮汐档案馆走到潮渡,把系泊绳拖回岸上,理智的沈砚。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的潮汐档案馆走到潮渡,把系泊绳拖回岸上,理智的沈砚。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的潮汐档案馆走到潮渡,把系泊绳拖回岸上,理智的沈砚。"
+      },
+      "f2": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚的潮汐档案馆走到潮渡,把系泊绳拖回岸上,理智的沈砚。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [],
+     "relations": [],
+     "omissions": [
+      "f2"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v20",
+     "split": "holdout",
+     "target": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+     "text": "沈砚的潮生巷走到潮渡,潮生巷走到潮渡,方向是平,理智的沈砚的9→12,沈砚把渡船推离栈桥。",
+     "sentences": [
+      "沈砚的潮生巷走到潮渡,潮生巷走到潮渡,方向是平,理智的沈砚的9→12,沈砚把渡船推离栈桥。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的潮生巷走到潮渡,潮生巷走到潮渡,方向是平,理智的沈砚的9→12,沈砚把渡船推离栈桥。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚的潮生巷走到潮渡,潮生巷走到潮渡,方向是平,理智的沈砚的9→12,沈砚把渡船推离栈桥。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的潮生巷走到潮渡,潮生巷走到潮渡,方向是平,理智的沈砚的9→12,沈砚把渡船推离栈桥。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": true,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v21",
+     "split": "holdout",
+     "target": "沈砚把铜灯挪到长桌另一头。什么也没有再发生。沈砚的指尖沾了墨。",
+     "text": "沈砚把铜灯挪到长桌另一头,指尖沾了墨。",
+     "sentences": [
+      "沈砚把铜灯挪到长桌另一头,指尖沾了墨。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚把铜灯挪到长桌另一头,指尖沾了墨。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚把铜灯挪到长桌另一头,指尖沾了墨。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚把铜灯挪到长桌另一头,指尖沾了墨。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v23",
+     "split": "holdout",
+     "target": "顾行舟把缆绳绕上摊棚边的木桩。什么也没有再发生。顾行舟的手背上沾了鱼鳞。",
+     "text": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。",
+     "sentences": [
+      "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "顾行舟把缆绳绕上摊棚边的木桩,顾行舟的手背上沾了鱼鳞。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v24",
+     "split": "holdout",
+     "target": "韩渡把钟绳解开。什么也没有再发生。韩渡的手背上沾了盐沫。",
+     "text": "韩渡把钟绳解开,手背上沾了盐沫。",
+     "sentences": [
+      "韩渡把钟绳解开,手背上沾了盐沫。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "韩渡把钟绳解开,手背上沾了盐沫。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "韩渡把钟绳解开,手背上沾了盐沫。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "韩渡把钟绳解开,手背上沾了盐沫。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    }
+   ]
+  },
+  "B_h": {
+   "selected_epoch": 15,
+   "selected_update": 90,
+   "selected_dev_loss": 0.33598924924444873,
+   "selected_dev_fact_score": 0.9583333333333334,
+   "history": [
+    {
+     "epoch": 1,
+     "update": 6,
+     "dev_loss": 1.0639079362154007,
+     "dev_fact_score": 0.37083333333333335,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.6,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.0,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.25,
+       "omissions": [
+        "f1",
+        "f2",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.25,
+       "omissions": [
+        "f0",
+        "f1",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.2,
+       "omissions": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 2,
+     "update": 12,
+     "dev_loss": 0.7464622240513563,
+     "dev_fact_score": 0.5729166666666666,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.6,
+       "omissions": [
+        "f1",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.5,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.5,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.25,
+       "omissions": [
+        "f0",
+        "f1",
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.4,
+       "omissions": [
+        "f1",
+        "f2",
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 3,
+     "update": 18,
+     "dev_loss": 0.45376858953386545,
+     "dev_fact_score": 0.7208333333333333,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.8,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 4,
+     "update": 24,
+     "dev_loss": 0.38268147013150156,
+     "dev_fact_score": 0.73125,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.5,
+       "omissions": [
+        "f2",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.8,
+       "omissions": [
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 5,
+     "update": 30,
+     "dev_loss": 0.24551196210086346,
+     "dev_fact_score": 0.8666666666666667,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.8,
+       "omissions": [
+        "f4"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 6,
+     "update": 36,
+     "dev_loss": 0.3423609563615173,
+     "dev_fact_score": 0.6958333333333333,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 0.8,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.6,
+       "omissions": [
+        "f0",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 7,
+     "update": 42,
+     "dev_loss": 0.3596364107215777,
+     "dev_fact_score": 0.9166666666666666,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f1",
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 8,
+     "update": 48,
+     "dev_loss": 0.3613930279389024,
+     "dev_fact_score": 0.81875,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 0.8,
+       "omissions": [
+        "f0"
+       ]
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 9,
+     "update": 54,
+     "dev_loss": 0.286639861878939,
+     "dev_fact_score": 0.8125,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 10,
+     "update": 60,
+     "dev_loss": 0.28843643167056143,
+     "dev_fact_score": 0.7708333333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 11,
+     "update": 66,
+     "dev_loss": 0.3456518159946427,
+     "dev_fact_score": 0.84375,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.3333333333333333,
+       "omissions": [
+        "f0",
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 12,
+     "update": 72,
+     "dev_loss": 0.3308962510782294,
+     "dev_fact_score": 0.9270833333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 13,
+     "update": 78,
+     "dev_loss": 0.39876910771999974,
+     "dev_fact_score": 0.9270833333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 14,
+     "update": 84,
+     "dev_loss": 0.3483540916349739,
+     "dev_fact_score": 0.9270833333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 15,
+     "update": 90,
+     "dev_loss": 0.33598924924444873,
+     "dev_fact_score": 0.9583333333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 16,
+     "update": 96,
+     "dev_loss": 0.3061591326550115,
+     "dev_fact_score": 0.8541666666666666,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 0.75,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 17,
+     "update": 102,
+     "dev_loss": 0.3508562537608668,
+     "dev_fact_score": 0.9270833333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.75,
+       "omissions": [
+        "f1"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f1"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 18,
+     "update": 108,
+     "dev_loss": 0.3847676762379706,
+     "dev_fact_score": 0.8541666666666666,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.5,
+       "omissions": [
+        "f1",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f1"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 19,
+     "update": 114,
+     "dev_loss": 0.3861404423369095,
+     "dev_fact_score": 0.8958333333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.5,
+       "omissions": [
+        "f1",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f1"
+       ]
+      }
+     ]
+    },
+    {
+     "epoch": 20,
+     "update": 120,
+     "dev_loss": 0.3849511834268924,
+     "dev_fact_score": 0.8958333333333334,
+     "dev": [
+      {
+       "sourceId": "fixture-r4",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t12",
+       "fact_score": 0.5,
+       "omissions": [
+        "f1",
+        "f3"
+       ]
+      },
+      {
+       "sourceId": "t20",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "t22",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "train-r3",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v09",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v17",
+       "fact_score": 1.0,
+       "omissions": []
+      },
+      {
+       "sourceId": "v19",
+       "fact_score": 0.6666666666666666,
+       "omissions": [
+        "f2"
+       ]
+      }
+     ]
+    }
+   ],
+   "holdout": [
+    {
+     "sourceId": "fixture-r5",
+     "split": "holdout",
+     "target": "林川的帽檐压出折痕，脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+     "text": "林川的帽檐压出折痕,脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的衣领被雨浸透。随后,陈默的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+     "sentences": [
+      "林川的帽檐压出折痕,脚踝肿了一块。",
+      "周宁的衣领被雨浸透。",
+      "随后,陈默的衣领被雨浸透。",
+      "随后,陈默的衣领被雨浸透。",
+      "随后,陈默的指尖磨出茧。",
+      "陈默的膝盖沾了泥。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "林川的帽檐压出折痕,脚踝肿了一块。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "林川的帽檐压出折痕,脚踝肿了一块。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "周宁的衣领被雨浸透。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 4,
+       "score": 1.0,
+       "sentence": "随后,陈默的指尖磨出茧。"
+      },
+      "f4": {
+       "support": true,
+       "sent": 5,
+       "score": 1.0,
+       "sentence": "陈默的膝盖沾了泥。"
+      }
+     },
+     "fact_supported": 5,
+     "fact_total": 5,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": true,
+       "sents": [
+        0,
+        1
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": true,
+       "sents": [
+        1,
+        4
+       ]
+      },
+      {
+       "pair": [
+        "f3",
+        "f4"
+       ],
+       "different": true,
+       "sents": [
+        4,
+        5
+       ]
+      }
+     ],
+     "relations": [
+      {
+       "edge": [
+        "f2",
+        "f3"
+       ],
+       "ok": true,
+       "sents": [
+        1,
+        4
+       ]
+      }
+     ],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "t03",
+     "split": "holdout",
+     "target": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+     "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+     "sentences": [
+      "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 3,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "t08",
+     "split": "holdout",
+     "target": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+     "text": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。",
+     "sentences": [
+      "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。"
+      }
+     },
+     "fact_supported": 4,
+     "fact_total": 4,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "group": [
+        "f2",
+        "f3"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "t24",
+     "split": "holdout",
+     "target": "纸灯笼被风扯破一角，排水沟里面积了泥。沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+     "text": "纸灯笼的被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+     "sentences": [
+      "纸灯笼的被风扯破一角,排水沟的里面积了泥。",
+      "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "纸灯笼的被风扯破一角,排水沟的里面积了泥。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "纸灯笼的被风扯破一角,排水沟的里面积了泥。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+      }
+     },
+     "fact_supported": 4,
+     "fact_total": 4,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "group": [
+        "f2",
+        "f3"
+       ],
+       "same_sentence": true,
+       "sents": [
+        1,
+        1
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": true,
+       "sents": [
+        0,
+        1
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "train-r4",
+     "split": "holdout",
+     "target": "沈砚的围巾松开一截，脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+     "text": "沈砚的围巾松开一截,脸色发白。顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+     "sentences": [
+      "沈砚的围巾松开一截,脸色发白。",
+      "顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。",
+      "叶知微的肩头落着灰。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的围巾松开一截,脸色发白。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的围巾松开一截,脸色发白。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "顾行舟的背上溅了泥点,叶知微的手背蹭破了皮。"
+      },
+      "f4": {
+       "support": true,
+       "sent": 2,
+       "score": 1.0,
+       "sentence": "叶知微的肩头落着灰。"
+      }
+     },
+     "fact_supported": 5,
+     "fact_total": 5,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": true,
+       "sents": [
+        0,
+        1
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        1,
+        1
+       ]
+      },
+      {
+       "pair": [
+        "f3",
+        "f4"
+       ],
+       "different": true,
+       "sents": [
+        1,
+        2
+       ]
+      }
+     ],
+     "relations": [
+      {
+       "edge": [
+        "f2",
+        "f3"
+       ],
+       "ok": false,
+       "sents": [
+        1,
+        1
+       ]
+      }
+     ],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "train-r5",
+     "split": "holdout",
+     "target": "沈砚的帽檐压出折痕，脚踝肿了一块。顾行舟的衣领被雨浸透。随后，叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+     "text": "沈砚的帽檐压出折痕,脚踝肿了一块。顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+     "sentences": [
+      "沈砚的帽檐压出折痕,脚踝肿了一块。",
+      "顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。",
+      "叶知微的膝盖沾了泥。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的帽檐压出折痕,脚踝肿了一块。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚的帽檐压出折痕,脚踝肿了一块。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。"
+      },
+      "f3": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "顾行舟的衣领被雨浸透,叶知微的指尖磨出茧。"
+      },
+      "f4": {
+       "support": true,
+       "sent": 2,
+       "score": 1.0,
+       "sentence": "叶知微的膝盖沾了泥。"
+      }
+     },
+     "fact_supported": 5,
+     "fact_total": 5,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": true,
+       "sents": [
+        0,
+        1
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        1,
+        1
+       ]
+      },
+      {
+       "pair": [
+        "f3",
+        "f4"
+       ],
+       "different": true,
+       "sents": [
+        1,
+        2
+       ]
+      }
+     ],
+     "relations": [
+      {
+       "edge": [
+        "f2",
+        "f3"
+       ],
+       "ok": false,
+       "sents": [
+        1,
+        1
+       ]
+      }
+     ],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v05",
+     "split": "holdout",
+     "target": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮。什么也没有再发生。",
+     "text": "叶知微的袖口沾了铜油,沈砚的手背上沾了铜油,把灯罩擦得透亮,心里发紧。",
+     "sentences": [
+      "叶知微的袖口沾了铜油,沈砚的手背上沾了铜油,把灯罩擦得透亮,心里发紧。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微的袖口沾了铜油,沈砚的手背上沾了铜油,把灯罩擦得透亮,心里发紧。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微的袖口沾了铜油,沈砚的手背上沾了铜油,把灯罩擦得透亮,心里发紧。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "叶知微的袖口沾了铜油,沈砚的手背上沾了铜油,把灯罩擦得透亮,心里发紧。"
+      },
+      "f3": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "叶知微的袖口沾了铜油,沈砚的手背上沾了铜油,把灯罩擦得透亮,心里发紧。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 4,
+     "fact_score": 0.75,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f2",
+        "f3"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f3"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v14",
+     "split": "holdout",
+     "target": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+     "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。沈砚心里发紧。",
+     "sentences": [
+      "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。",
+      "沈砚心里发紧。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "沈砚心里发紧。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 3,
+     "fact_score": 1.0,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "same_sentence": false,
+       "sents": [
+        0,
+        0,
+        1
+       ]
+      }
+     ],
+     "separated": [],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v20",
+     "split": "holdout",
+     "target": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+     "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+     "sentences": [
+      "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [
+      {
+       "group": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "same_sentence": true,
+       "sents": [
+        0,
+        0,
+        0
+       ]
+      }
+     ],
+     "separated": [],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v21",
+     "split": "holdout",
+     "target": "沈砚把铜灯挪到长桌另一头。什么也没有再发生。沈砚的指尖沾了墨。",
+     "text": "沈砚把铜灯挪到长桌另一头。什么也没有再发生。沈砚的指尖沾了墨。",
+     "sentences": [
+      "沈砚把铜灯挪到长桌另一头。",
+      "什么也没有再发生。",
+      "沈砚的指尖沾了墨。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "沈砚把铜灯挪到长桌另一头。"
+      },
+      "f1": {
+       "support": true,
+       "sent": 1,
+       "score": 1.0,
+       "sentence": "什么也没有再发生。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 2,
+       "score": 1.0,
+       "sentence": "沈砚的指尖沾了墨。"
+      }
+     },
+     "fact_supported": 3,
+     "fact_total": 3,
+     "fact_score": 1.0,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": true,
+       "sents": [
+        0,
+        1
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": true,
+       "sents": [
+        1,
+        2
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v23",
+     "split": "holdout",
+     "target": "顾行舟把缆绳绕上摊棚边的木桩。什么也没有再发生。顾行舟的手背上沾了鱼鳞。",
+     "text": "顾行舟把缆绳绕上摊棚边的木桩,手背上沾了鱼鳞。",
+     "sentences": [
+      "顾行舟把缆绳绕上摊棚边的木桩,手背上沾了鱼鳞。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "顾行舟把缆绳绕上摊棚边的木桩,手背上沾了鱼鳞。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "顾行舟把缆绳绕上摊棚边的木桩,手背上沾了鱼鳞。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "顾行舟把缆绳绕上摊棚边的木桩,手背上沾了鱼鳞。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    },
+    {
+     "sourceId": "v24",
+     "split": "holdout",
+     "target": "韩渡把钟绳解开。什么也没有再发生。韩渡的手背上沾了盐沫。",
+     "text": "韩渡把钟绳解开,把钟绳解开,手背上沾了盐沫。",
+     "sentences": [
+      "韩渡把钟绳解开,把钟绳解开,手背上沾了盐沫。"
+     ],
+     "facts": {
+      "f0": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "韩渡把钟绳解开,把钟绳解开,手背上沾了盐沫。"
+      },
+      "f1": {
+       "support": false,
+       "sent": 0,
+       "score": 0.0,
+       "sentence": "韩渡把钟绳解开,把钟绳解开,手背上沾了盐沫。"
+      },
+      "f2": {
+       "support": true,
+       "sent": 0,
+       "score": 1.0,
+       "sentence": "韩渡把钟绳解开,把钟绳解开,手背上沾了盐沫。"
+      }
+     },
+     "fact_supported": 2,
+     "fact_total": 3,
+     "fact_score": 0.6666666666666666,
+     "merged": [],
+     "separated": [
+      {
+       "pair": [
+        "f0",
+        "f1"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      },
+      {
+       "pair": [
+        "f1",
+        "f2"
+       ],
+       "different": false,
+       "sents": [
+        0,
+        0
+       ]
+      }
+     ],
+     "relations": [],
+     "omissions": [
+      "f1"
+     ],
+     "contains_pronoun": false,
+     "contains_digit": false,
+     "contains_simultaneous": false
+    }
+   ]
+  }
+ },
+ "plan_response": {
+  "t11": {
+   "planA": {
+    "text": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。",
+    "sentences": [
+     "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "group": [
+       "f2",
+       "f3"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "planB": {
+    "text": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。",
+    "sentences": [
+     "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。"
+     }
+    },
+    "fact_supported": 4,
+    "fact_total": 4,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   }
+  },
+  "v09": {
+   "planA": {
+    "text": "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。什么也没有再发生。阿棠把银鳞鱼装进鱼筐。",
+    "sentences": [
+     "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。",
+     "什么也没有再发生。",
+     "阿棠把银鳞鱼装进鱼筐。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼装进鱼筐。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       2
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "planB": {
+    "text": "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。什么也没有再发生。阿棠把银鳞鱼装进鱼筐。",
+    "sentences": [
+     "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。",
+     "什么也没有再发生。",
+     "阿棠把银鳞鱼装进鱼筐。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "阿棠的衣襟沾着鱼鳞,案板的边沿沾着鱼鳞。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "阿棠把银鳞鱼装进鱼筐。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       2
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   }
+  },
+  "v17": {
+   "planA": {
+    "text": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。",
+    "sentences": [
+     "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "planB": {
+    "text": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。",
+    "sentences": [
+     "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。"
+     }
+    },
+    "fact_supported": 3,
+    "fact_total": 3,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "relations": [],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   }
+  },
+  "fixture-r4": {
+   "planA": {
+    "text": "林川的围巾松开一截,脸色发白。周宁的背上溅了泥点,陈默的手背蹭破了皮。陈默的肩头落着灰。",
+    "sentences": [
+     "林川的围巾松开一截,脸色发白。",
+     "周宁的背上溅了泥点,陈默的手背蹭破了皮。",
+     "陈默的肩头落着灰。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截,脸色发白。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截,脸色发白。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点,陈默的手背蹭破了皮。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点,陈默的手背蹭破了皮。"
+     },
+     "f4": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "陈默的肩头落着灰。"
+     }
+    },
+    "fact_supported": 5,
+    "fact_total": 5,
+    "fact_score": 1.0,
+    "merged": [
+     {
+      "group": [
+       "f0",
+       "f1"
+      ],
+      "same_sentence": true,
+      "sents": [
+       0,
+       0
+      ]
+     }
+    ],
+    "separated": [
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": false,
+      "sents": [
+       1,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "relations": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "ok": false,
+      "sents": [
+       1,
+       1
+      ]
+     }
+    ],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   },
+   "planB": {
+    "text": "林川的围巾松开一截,脸色发白。周宁的背上溅了泥点,陈默的手背蹭破了皮。陈默的肩头落着灰。",
+    "sentences": [
+     "林川的围巾松开一截,脸色发白。",
+     "周宁的背上溅了泥点,陈默的手背蹭破了皮。",
+     "陈默的肩头落着灰。"
+    ],
+    "facts": {
+     "f0": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截,脸色发白。"
+     },
+     "f1": {
+      "support": true,
+      "sent": 0,
+      "score": 1.0,
+      "sentence": "林川的围巾松开一截,脸色发白。"
+     },
+     "f2": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点,陈默的手背蹭破了皮。"
+     },
+     "f3": {
+      "support": true,
+      "sent": 1,
+      "score": 1.0,
+      "sentence": "周宁的背上溅了泥点,陈默的手背蹭破了皮。"
+     },
+     "f4": {
+      "support": true,
+      "sent": 2,
+      "score": 1.0,
+      "sentence": "陈默的肩头落着灰。"
+     }
+    },
+    "fact_supported": 5,
+    "fact_total": 5,
+    "fact_score": 1.0,
+    "merged": [],
+    "separated": [
+     {
+      "pair": [
+       "f0",
+       "f1"
+      ],
+      "different": false,
+      "sents": [
+       0,
+       0
+      ]
+     },
+     {
+      "pair": [
+       "f1",
+       "f2"
+      ],
+      "different": true,
+      "sents": [
+       0,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f2",
+       "f3"
+      ],
+      "different": false,
+      "sents": [
+       1,
+       1
+      ]
+     },
+     {
+      "pair": [
+       "f3",
+       "f4"
+      ],
+      "different": true,
+      "sents": [
+       1,
+       2
+      ]
+     }
+    ],
+    "relations": [
+     {
+      "edge": [
+       "f2",
+       "f3"
+      ],
+      "ok": false,
+      "sents": [
+       1,
+       1
+      ]
+     }
+    ],
+    "omissions": [],
+    "contains_pronoun": false,
+    "contains_digit": false,
+    "contains_simultaneous": false
+   }
+  }
+ },
+ "model_state_sha256": null
+}

@@ -1,0 +1,167 @@
+---
+library_name: gguf
+license: apache-2.0
+language:
+- en
+- zh
+pipeline_tag: text-generation
+base_model: taobao-mnn/MNN-Pocket-0.3B
+tags:
+- mnn
+- mnn-pocket
+- on-device
+- gguf
+- llama-cpp
+---
+
+<div align="center">
+  <img src="https://cdn-uploads.huggingface.co/production/uploads/6881be3a7d8f27f6508ef8de/hPDaFYzlZb3m07kc8a4ho.png" alt="MNN-Pocket" style="width: 100%; max-width: 100%; height: auto; display: inline-block; margin-bottom: 0.5em; margin-top: 0.5em;" />
+  <div style="display: flex; justify-content: center; gap: 0.5em; margin-bottom: 1em;">
+    <a href="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B"><strong>Main Model</strong></a> •
+    <a href="https://huggingface.co/collections/taobao-mnn/mnn-pocket-03b"><strong>Collection</strong></a> •
+    <a href="https://github.com/alibaba/MNN"><strong>GitHub (MNN)</strong></a> •
+    <a href="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/resolve/main/MNN-Pocket-0.3B-Technical-Report.pdf"><strong>Tech Report</strong></a>
+  </div>
+</div>
+
+<p align="center">
+English |
+<a href="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/blob/main/README-cn.md" target="_blank">中文</a>
+</p>
+
+# MNN-Pocket-0.3B-GGUF
+
+GGUF export of [MNN-Pocket-0.3B](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B) for llama.cpp and compatible runtimes (LM Studio, ollama, ...).
+
+MNN-Pocket is a family of compact (~300M parameter) language models co-designed with the [MNN](https://github.com/alibaba/MNN) inference stack for on-device deployment, targeting phones, tablets, laptops and smart glasses.
+
+- **Three quants to trade quality against footprint**: F16 (726 MB), Q8_0 (387 MB), Q4_1 (192 MB)
+- **Q4_1 is quantization-aware trained**, so the 4-bit file keeps near-BF16 accuracy (49.59 vs 50.00 average on the 11-benchmark suite)
+- **32K context** and ChatML-style chat template embedded in the GGUF metadata
+- Best for on-device assistants, data extraction and lightweight agentic pipelines; like other sub-billion models it is not recommended for reasoning-heavy workloads (advanced math, long-horizon code)
+
+Find more details in the original model card: https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B
+
+## Demo
+
+<p><span style="font-size: 0.85em; color: #666;">iPhone 18 Pro Demo</span></p>
+
+<div align="center">
+  <video width="80%" controls>
+    <source src="https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B/resolve/main/assets/demo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+## 🏃 How to run
+
+This repo ships three GGUF files, so always pass `--hf-file` to pick one explicitly. Example usage
+with llama.cpp (QAT `Q4_1`, the recommended on-device quant):
+
+```
+llama-cli -hf taobao-mnn/MNN-Pocket-0.3B-GGUF \
+    --hf-file MNN-Pocket-0.3B-Instruct-Q4_1.gguf \
+    --temp 0.8 --top-p 0.8 --top-k 20
+```
+
+Local server (OpenAI-compatible endpoint):
+
+```
+llama-server -hf taobao-mnn/MNN-Pocket-0.3B-GGUF --hf-file MNN-Pocket-0.3B-Instruct-Q4_1.gguf \
+    -c 4096 --port 8080
+```
+
+The GGUF metadata carries the ChatML-style chat template, so conversation formatting is automatic in recent llama.cpp versions.
+
+### Which file is picked by default
+
+Without `--hf-file`, llama.cpp searches the repo for `Q4_K_M`, then `Q8_0`, and otherwise falls back
+to the first GGUF it finds. In this repo that resolves to
+**`MNN-Pocket-0.3B-Instruct-Q8_0.gguf` (387 MB)** — note this is *not* the QAT `Q4_1` build.
+To select a quant explicitly, either pass `--hf-file` as above, or use the shorthand tag form:
+
+```
+llama-cli -hf taobao-mnn/MNN-Pocket-0.3B-GGUF:Q4_1
+```
+
+## Files
+
+| File | Size | Converted from | Pick it when |
+|------|------|----------------|--------------|
+| `MNN-Pocket-0.3B-Instruct-F16.gguf` | 726 MB | BF16 instruction-tuned checkpoint | you want the reference quality / plan to fine-tune |
+| `MNN-Pocket-0.3B-Instruct-Q8_0.gguf` | 387 MB | BF16 instruction-tuned checkpoint | desktop CPU with room to spare |
+| `MNN-Pocket-0.3B-Instruct-Q4_1.gguf` | 192 MB | QAT checkpoint (see below) | memory-constrained / on-device, best size-quality ratio |
+
+## QAT Q4_1 GGUF
+
+The quantization-aware-training checkpoint is available as
+[`MNN-Pocket-0.3B-Instruct-Q4_1.gguf`](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-GGUF/blob/main/MNN-Pocket-0.3B-Instruct-Q4_1.gguf).
+
+This is distinct from the BF16-derived `F16` / `Q8_0` files: Q4_1 is converted from the QAT
+checkpoint, i.e. the model was trained with quantization in the loop rather than quantized
+after the fact, so it keeps near-BF16 accuracy at a 4-bit footprint.
+
+```shell
+llama-cli -hf taobao-mnn/MNN-Pocket-0.3B-GGUF \
+  --hf-file MNN-Pocket-0.3B-Instruct-Q4_1.gguf \
+  -p "What is MNN?"
+```
+
+## Model Details
+
+| Property | Value |
+|----------|-------|
+| Parameters | ~300M |
+| Architecture | Decoder-only transformer, 28 layers |
+| Hidden size | 896 |
+| Attention | 14 heads, GQA with 2 KV heads, head_dim 64 |
+| FFN intermediate | 2560 (SiLU) |
+| Context Length | 32K (40,960 position embeddings) |
+| Vocabulary | 65,536 |
+| Embeddings | tied input/output |
+| Chat template | ChatML-style (embedded in GGUF metadata) |
+| Languages | Chinese, English |
+
+### Chat Template
+
+ChatML-style conversation format; the template is embedded in the GGUF metadata, so llama.cpp
+enters conversation mode automatically — no extra flag needed. Schematic:
+
+```
+[IM_START]system
+You are a helpful assistant.[IM_END]
+[IM_START]user
+Hello![IM_END]
+[IM_START]assistant
+```
+
+## 📊 Benchmarks
+
+Scores of the underlying model (higher is better). `F16` / `Q8_0` track the BF16 column, `Q4_1`
+tracks the INT4 (QAT) column.
+
+| Benchmark   | BF16  | INT4 (QAT) | Gemma-3-270M | ERNIE-4.5-0.3B | LFM2.5-350M | SmolLM2-360M | Hunyuan-0.5B | MiniCPM4-0.5B | Qwen3-0.6B |
+|-------------|-------|------------|--------------|----------------|-------------|--------------|--------------|---------------|------------|
+| **Average** | 50.00 | 49.59      | 6.42         | 31.99          | 31.28       | 18.43        | 31.22        | 46.81         | 44.28      |
+| C-Eval      | 38.86 | 40.27      | 6.84         | 32.17          | 32.10       | 23.77        | 35.29        | 67.98         | 44.06      |
+| CMMLU       | 40.11 | 39.65      | 4.94         | 33.91          | 31.65       | 24.87        | 35.69        | 66.04         | 44.50      |
+| MMLU-Redux  | 44.00 | 43.40      | 13.58        | 32.68          | 41.01       | 24.17        | 36.29        | 52.85         | 51.63      |
+| BBH         | 47.38 | 46.63      | 8.09         | 31.07          | 26.03       | 27.74        | 54.65        | 47.61         | 41.94      |
+| IFEval      | 73.20 | 74.12      | 20.15        | 44.92          | 72.09       | 32.16        | 24.58        | 52.13         | 56.93      |
+| IFEval-zh   | 74.59 | 72.49      | 17.02        | 32.87          | 44.06       | 25.64        | 25.87        | 30.30         | 50.35      |
+| GSM8K       | 54.36 | 52.84      | 0.00         | 31.24          | 33.66       | 11.60        | 36.01        | 42.46         | 45.49      |
+| MGSM-zh     | 51.20 | 48.80      | 0.00         | 25.20          | 18.00       | 3.60         | 34.80        | 37.60         | 40.00      |
+| MATH500     | 35.40 | 35.40      | 0.00         | 21.40          | 14.80       | 4.60         | 35.80        | 23.00         | 45.20      |
+| HumanEval   | 53.66 | 53.66      | 0.00         | 38.41          | 14.63       | 0.00         | 14.63        | 48.17         | 36.59      |
+| MBPP        | 37.20 | 38.20      | 0.00         | 28.00          | 16.00       | 24.60        | 9.80         | 46.80         | 30.40      |
+
+## Other Formats
+
+- [MNN-Pocket-0.3B](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B) — BF16 safetensors, full model card (723 MB)
+- [MNN-Pocket-0.3B-MNN](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-MNN) — INT4 W4A16 QAT build for the MNN runtime (173 MB)
+- [MNN-Pocket-0.3B-Base](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-Base) / [MNN-Pocket-0.3B-SFT](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-SFT) — pre-training / SFT checkpoints
+- [MNN-Pocket-0.3B-Dec](https://huggingface.co/taobao-mnn/MNN-Pocket-0.3B-Dec) — non-autoregressive decision model (LoRA adapter + pointer head)
+
+## License
+
+Apache License 2.0. See `LICENSE.txt`.

@@ -1,0 +1,39 @@
+{
+ "source": "artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/raw.jsonl",
+ "sourceSha256": "616da43f6f9906afa8d30473684c078e97eaa5231b7c7e983c05343009acec21",
+ "rows": 170,
+ "batches": 17,
+ "batchSize": 10,
+ "seed": 20261108,
+ "unitFile": "artifacts/world-components/n4-cf24-contract.jsonl",
+ "unitFileSha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+ "hides": [
+  "arm",
+  "score",
+  "seconds",
+  "stopReason",
+  "unitId",
+  "archived labels"
+ ],
+ "batchHashes": {
+  "batch-01.json": "932de6fd0c9c43c43483566596926e40f542a8ce2608b112793328948d075ec9",
+  "batch-02.json": "fde53e60218adf9e260230d7458373761d3d75f9137e5f49c52629c38afcbcb8",
+  "batch-03.json": "dcfb17fd7bc0d899270587f3ead59371fc217f3a5e7d778db1d4e5deae8d0e36",
+  "batch-04.json": "2aa93dad5d5a1d0d7bbc0e7ad64ad9ae0f3b517b5ff61e110d553755bd548419",
+  "batch-05.json": "d0874f3ac22434030b83276f120c23ac212b14fe06098496f5a158d62abcc96d",
+  "batch-06.json": "41414af9771db332ae04a2cf64f9681e86a5dbe14e2c206aa346afa4f3addab6",
+  "batch-07.json": "2480fbdc46056b2ef33cc6721cb9694cd205c4b12cb2d8c9ead1fc363aaac86a",
+  "batch-08.json": "87924d77c238151d9c27ec5baee9c03444418ef2b8cd3c1db467c7bd5b1edf94",
+  "batch-09.json": "591bf84dff7fe6ab271a5aa3810ebfb290666566cd83f3fb90ab59dea069f5bb",
+  "batch-10.json": "3bae163ec67485adf00e6e10753b63492da074d53aa6f904346a9e78c2828aca",
+  "batch-11.json": "1b84411f9ac6aaa50f621bb26d79ac12238d60b0a8f97257ca492e5ae36aaa96",
+  "batch-12.json": "df7291578a6a8c557ae47d1939da4efda45a7861dc55a9cee1e891bdcc401974",
+  "batch-13.json": "f79970989fe5a5ce49486d2787d516286c94f127a575816d991c4cbe41c0dd24",
+  "batch-14.json": "f55466171f9b7e9fd5e86bd662d3e1912b605c146cd15b8887cba75c1e4ed3cb",
+  "batch-15.json": "df03261e3507b04dcb3bfff6190cc792fc8b6e64463ac94260e4eefd9b34814f",
+  "batch-16.json": "94728670090d1633931171508bc988851b062b0bce243616ef62144c69707af3",
+  "batch-17.json": "33c2fb57ba72521569912bb4abc2f87d637455ef4ae6bf2ba77cfcb294da2d92"
+ },
+ "mapSha256": "f024ffc249d34d85bfb463abb13dc16f6919db0dec4e89ac34685e1ab06d032c",
+ "note": "map.json is the only file that reveals the arm; do not open it while judging"
+}

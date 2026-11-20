@@ -1,0 +1,165 @@
+{
+ "purpose": "commit-1 manifest (three-commit budget, first commit): every file that MUST enter the commit, with BOTH hashes per entry — sha256Bytes = sha256 of the exact working-tree bytes at manifest time (environment-bound; CRLF on this autocrlf=true checkout), blobSha256 = the git blob hash git hash-object --path produces (newline-conversion independent; what any autocrlf setting commits and what a clean checkout must reproduce). DISCIPLINE (replaces the fix-round manifest): the manifest carries NO self-hash — its identity is the committed blob of its own path (git ls-files -s recites it); re-verify every entry against final bytes immediately before committing (verify_commit_manifest.py --mode blob after staging, --mode bytes in this checkout); the clean-checkout re-verification runs --mode blob inside a fresh clone (byte hashes are NOT expected to match there under a different autocrlf).",
+ "modifiedTracked": [
+  {
+   "file": "artifacts/world-components/d2-n3-prompt-freeze.json",
+   "sha256Bytes": "63e2b746f1de55a164eb534da9bc89b90089868fe9d16730ba7ba5230a432007",
+   "blobSha256": "d00a2cd44c12cb9bc66ab31050495b67905bea06"
+  },
+  {
+   "file": "design/world-engine-reports/components/README.md",
+   "sha256Bytes": "2b8eb785446e0a7cf78b69f4c769190f04205267c5cf4255f194a6c559f28758",
+   "blobSha256": "35b10cccaf94625620ba67319c14bf670e243f9c"
+  },
+  {
+   "file": "design/world-engine-reports/components/d2-gold-prep.md",
+   "sha256Bytes": "75b6a849104ead08e7ecb94c9a784980703deeddde8ff09210da3d5dbbc0e2a9",
+   "blobSha256": "fc86aca70e12190f72b349c8be9cbc27a0a42d5e"
+  },
+  {
+   "file": "experiments/world-components/browser_probe/n4_adapter_probe.html",
+   "sha256Bytes": "cc2b098cb488bcc54318a35fab2578727382cbad66056246aeae8318ebf0c200",
+   "blobSha256": "00e59746032ff208684ec348c470b19cf17f132c"
+  },
+  {
+   "file": "experiments/world-components/browser_probe/n4_browser_adapter.mjs",
+   "sha256Bytes": "33002f27faf237ae6d17017235f37fcf43859c5741c89fc93d81793dda0c03d3",
+   "blobSha256": "7d99f03dec965332e24ffe20f6b9b7e1c833521e"
+  },
+  {
+   "file": "experiments/world-components/browser_probe/run_adapter_probe.mjs",
+   "sha256Bytes": "16b284ab7556fcbcb026ad211ef4bd9a73849d6c5b77536d6b11b1ed77ec0489",
+   "blobSha256": "b31875af5c99d91469db8beaee98576b382a3e60"
+  },
+  {
+   "file": "experiments/world-components/n2_selection/run_n3_arm.py",
+   "sha256Bytes": "798289cdd7a62cc299ec0216bdf00b3326c662fdb939f034696fd7f15a2a5769",
+   "blobSha256": "ed2a8225d668366be9e29e6a141f8be6b8a71cd9"
+  },
+  {
+   "file": "experiments/world-components/n4_corpus/n4_render.py",
+   "sha256Bytes": "2166c77b082e7e86e83f2c921022d8d69f3998dede07c2185aded2c36820649f",
+   "blobSha256": "0e8fae6ffd016b8190eb9c0cbf29c76301f6bdce"
+  },
+  {
+   "file": "experiments/world-components/narration_pipeline.py",
+   "sha256Bytes": "585a40e528c5a7465d30653ab5c3c713c73b0ad4ac9f5e68839ae05118762138",
+   "blobSha256": "cae80f4d15ea3e155132a28f6e692da6af0cd98d"
+  },
+  {
+   "file": "experiments/world-components/redact_batch1_paths.py",
+   "sha256Bytes": "374cc1d9f2ded0b8462160aa5600c3eb980f4ba1208f84066bc1ac81f7db4cff",
+   "blobSha256": "6004c3d1017c1c0873a5c9801d38c4f692a9c1dd"
+  },
+  {
+   "file": "experiments/world-components/run_composition.py",
+   "sha256Bytes": "49051fd2810a53caeef8194aed259bd06e98675b56aeecabd7d997fe4664deb8",
+   "blobSha256": "0bbe5e516d09790ee0d246dab283a0bce6fe8662"
+  },
+  {
+   "file": "experiments/world-components/n4_corpus/n4_units_regression.py",
+   "sha256Bytes": "8a5344b5fcf0861097bfe832ef25aa80c12c4d75da00e1d45800b1812f09322e",
+   "blobSha256": "89cff70672b51c2f82f56d31e9819cb5fdfdcb16"
+  }
+ ],
+ "untrackedNormalAdd": [
+  {
+   "file": "artifacts/world-components/n1-n5-composition-r2.json",
+   "sha256Bytes": "4f1ed76a3b056efe5b965af213ce99f65f496fa2cf4a423f9c80a7052ea350a6",
+   "blobSha256": "cbe24b50caf9b25d75ff00b79e4d171e15368bac"
+  },
+  {
+   "file": "artifacts/world-components/n1-n5-composition-r3.json",
+   "sha256Bytes": "dc5938057d521d3ab583b8d03c9b253dfffe5747eec8e25804b3fe7b8ef870c7",
+   "blobSha256": "756447bc88ba7337da7fa939005dbf295df0e228"
+  },
+  {
+   "file": "artifacts/world-components/n2-perspective-rule-r1.json",
+   "sha256Bytes": "02637f06dc4a5ba47d66f654362bd714f14e9f9591f46e5d4ef41a54d7e0d09b",
+   "blobSha256": "70fb5ac5d765f62c07fc91da4ed1edf50b395b49"
+  },
+  {
+   "file": "artifacts/world-components/n3-freeze-amendment-r1.json",
+   "sha256Bytes": "6024925ef40504709039a7b0649003092ced8d7042481f04b4ac1562f532c5e2",
+   "blobSha256": "4db2cec1340b09d658fc69386c568e416be66c4a"
+  },
+  {
+   "file": "artifacts/world-components/n3-rulearm-gate8-r2.json",
+   "sha256Bytes": "bd8940ac2bcd8ea981a143d22960ed64d8e984547f8485724c88cf7c7fb1a471",
+   "blobSha256": "afc10518430d1d75bdef605b2322d8d8ca29ff5e"
+  },
+  {
+   "file": "artifacts/world-components/n3-rulearm-registration-r2.json",
+   "sha256Bytes": "a35e242d92e101708d5c94b37612f8acab3be79077ebdda353d41159c5e0c7c4",
+   "blobSha256": "e4e4d61c16ad1907eb8469502afe1e38a788a0b0"
+  },
+  {
+   "file": "artifacts/world-components/n4-browser-adapter-r2.json",
+   "sha256Bytes": "926a332a1e96fdd22422dfb5933414f2d805de7bb51e8995712f7f8768a006f1",
+   "blobSha256": "f2584d536b4721ea8b683673d18ab73099f5986f"
+  },
+  {
+   "file": "design/world-engine-reports/components/fix-round-1c41587.md",
+   "sha256Bytes": "f4dcce8f0b193098d43fc8b8873e46287db8a0716c3247ab634f14377a7b7d72",
+   "blobSha256": "9b9b37e3d2697170426b34cfead88a7757d90804"
+  }
+ ],
+ "untrackedForceAdd": [
+  {
+   "file": "experiments/world-components/n2_selection/amend_freeze_fixround.py",
+   "sha256Bytes": "f225b378ffa67f5f8e379af4e76ad5e0bbaadee2d82280acd503ad65121576f4",
+   "blobSha256": "75be86117a4a71e1b5f0f429eab46fc7a72b8e71",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  },
+  {
+   "file": "experiments/world-components/n2_selection/build_registration_r2.py",
+   "sha256Bytes": "3e7190859eec41df5f05ba2deade2e342a1c0150e7a536570197474304e693ff",
+   "blobSha256": "73bd3fb1ed8ed7dee27a38db027b60ca24cfd7f0",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  },
+  {
+   "file": "experiments/world-components/n2_selection/record_approval_confirmation.py",
+   "sha256Bytes": "b43c83b48840eadae8436f1afa30169c262e2cf3bdca8d8f05e7a40637e4c3bf",
+   "blobSha256": "1a7de54283fe93ee550e47cc94dbc287360b8dc1",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  },
+  {
+   "file": "experiments/world-components/n2_selection/unify_approval_pending.py",
+   "sha256Bytes": "44468600af9ff66b2e26a9d269028df9d958d209d2a488e7371e9437468e1f67",
+   "blobSha256": "bb91a9f0834c79c44da70e1e4635cd678c7bfeca",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  },
+  {
+   "file": "experiments/world-components/n2_perspective.py",
+   "sha256Bytes": "689e199c303a592740cd931376062f69b8331973ab3dfd29d09c59a1cba45e2c",
+   "blobSha256": "188b70f103317480ebb34e1c722a591b7896beac",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  },
+  {
+   "file": "experiments/world-components/run_n2_perspective_eval.py",
+   "sha256Bytes": "02356dd2490191a91fd366688cdf6a994786534076f72deaa9ee0803182adca9",
+   "blobSha256": "13e761cc55d4a7254d3b449cea388f65d1282b7e",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  },
+  {
+   "file": "experiments/world-components/verify_commit_manifest.py",
+   "sha256Bytes": "e6db481859f84037235f06e230ca845786e77c860bc44e0bd57dfcd809d2262e",
+   "blobSha256": "e05de0f06f192620a1d5be26df489bddd180182a",
+   "reason": "under gitignore:96 experiments/ — invisible to git status; a normal commit silently drops it (review 11-02 finding 4); requires git add -f"
+  }
+ ],
+ "verification": [
+  "verify_commit_manifest.py --manifest design/world-engine-reports/components/fix-round-commit-manifest.json --mode blob  -> 0 failures (after staging, and inside a clean checkout)",
+  "verify_commit_manifest.py --manifest ... --mode bytes --eol-normalised  -> 0 failures in THIS checkout (byte hashes bound to this checkout state)",
+  "git show 2ef930e:artifacts/world-components/d2-n3-prompt-freeze.json | sha256sum  -> 77b37b43... (v1 registration pin reproduced)",
+  "python -B -X utf8 experiments/world-components/n2_selection/n3_rule_arm.py --scope gate8 --registration artifacts/world-components/n3-rulearm-registration-r2.json --out <tmp>  -> 8/8, gate=True",
+  "tamper: copy r2 registration, flip freezeRecord sha -> same command refuses with exit 3",
+  "python -B -X utf8 experiments/world-components/narration_pipeline.py --selftest  -> PASS (S1-S16: position-aspect matrix, appearance add/modify/remove, subtask, duplicate names, N2 classification, empty-selection and must-without-ground stops)",
+  "python -B -X utf8 experiments/world-components/run_n2_perspective_eval.py  -> pass=true (per-item must recall 1.0, invalid 0, forbidden 0; select-all baseline reported)",
+  "python -B -X utf8 experiments/world-components/run_composition.py --out <tmp>  -> 10 scenarios + 4 controls + gate-no-counter all expectMet, pass=True (loads the frozen checkpoint on CPU)",
+  "python -B -X utf8 experiments/world-components/n4_corpus/n4_units_regression.py  -> pass (frozen renderings byte-identical; stdout JSON is truncated to 2000 chars by design — judge by exit code)",
+  "node experiments/world-components/browser_probe/run_adapter_probe.mjs  -> pass true incl. boundary.exact129.refusedNoModelCall",
+  "python -X utf8 experiments/world-components/scan_privacy_paths.py  -> no new-path hits beyond the classified set",
+  "tamper note: the r2 registration refuses drift in the fields its runs BIND (ruleArm/dependencies/gold/freezeRecord/inputs); non-bound fields (e.g. plan.sha256) are not re-checked by design"
+ ]
+}

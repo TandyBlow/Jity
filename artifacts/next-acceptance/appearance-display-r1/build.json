@@ -1,0 +1,13 @@
+{
+ "worktree": ".local/scratch/appearance-r1 (detached at fd6c52e + working patch before commit)",
+ "patchSha256": "7aeb1bde9fb614dfa982d5b71b88c8cbe1d71161adf6d2e0199cc20b9a68ac5b",
+ "command": "npm run build",
+ "exit": 0,
+ "next": "15.5.19",
+ "node": "22.20.0",
+ "routes": {
+  "/world": "93 kB / 198 kB first load",
+  "/world/preview": "2.11 kB / 104 kB first load"
+ },
+ "whyTempWorktree": "the running 3111 server serves the previous build; building in place would disturb that scene"
+}

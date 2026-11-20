@@ -1,0 +1,607 @@
+{
+  "version": "route-split-selection-basis-v1",
+  "created": "2026-11-05",
+  "ruleFrozenBeforeTraining": true,
+  "ruleSource": "artifacts\\world-components\\route-split-freeze-v1.json",
+  "ruleSha256": "cb73af80d4d494cd5c1d268e27067be07a7a08cefb4a8c8a3f82a2b2ba8491d0",
+  "rule": [
+    "one shared observation point for the whole arm-B pair (never per model)",
+    "primary: dev must-express units / total routed dev units (higher)",
+    "secondary: fewer dev unauthorized-addition units",
+    "tertiary: fewer dev repetition units",
+    "tie: earliest observation point"
+  ],
+  "ruleReading": "The freeze has ONE shared-point rule for the arm-B pair. The control checkpoint is taken at that same global point; it is not independently selected. If the same lexicographic rule were applied to control alone, 240 also has its highest mustExpress (12), but that is a descriptive check, not the selection basis.",
+  "observationPoints": [
+    240,
+    480,
+    720,
+    960,
+    1200,
+    1440,
+    1680,
+    1920,
+    2160,
+    2400,
+    2640,
+    2880
+  ],
+  "devSet": {
+    "path": "experiments/world-components/n4_narrative_dev/dev-units-v1.jsonl",
+    "units": 14,
+    "routedToAct": 9,
+    "routedToState": 4,
+    "noChange": 1
+  },
+  "devTable": [
+    {
+      "point": 240,
+      "control": {
+        "units": 14,
+        "mustExpress": 12,
+        "binding": 14,
+        "repetition": 3,
+        "addition": 2,
+        "extraAction": 1,
+        "extraObject": 1,
+        "extraState": 0,
+        "clean": 9
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 13,
+        "binding": 14,
+        "repetition": 1,
+        "addition": 3,
+        "extraAction": 3,
+        "extraObject": 1,
+        "extraState": 0,
+        "clean": 11
+      }
+    },
+    {
+      "point": 480,
+      "control": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 14,
+        "repetition": 0,
+        "addition": 5,
+        "extraAction": 2,
+        "extraObject": 3,
+        "extraState": 0,
+        "clean": 8
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 12,
+        "binding": 13,
+        "repetition": 1,
+        "addition": 3,
+        "extraAction": 2,
+        "extraObject": 1,
+        "extraState": 0,
+        "clean": 9
+      }
+    },
+    {
+      "point": 720,
+      "control": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 2,
+        "extraAction": 1,
+        "extraObject": 1,
+        "extraState": 0,
+        "clean": 9
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 6,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 7,
+        "extraAction": 1,
+        "extraObject": 6,
+        "extraState": 0,
+        "clean": 5
+      }
+    },
+    {
+      "point": 960,
+      "control": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 14,
+        "repetition": 1,
+        "addition": 1,
+        "extraAction": 0,
+        "extraObject": 1,
+        "extraState": 0,
+        "clean": 9
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 11,
+        "binding": 14,
+        "repetition": 0,
+        "addition": 2,
+        "extraAction": 1,
+        "extraObject": 1,
+        "extraState": 0,
+        "clean": 9
+      }
+    },
+    {
+      "point": 1200,
+      "control": {
+        "units": 14,
+        "mustExpress": 11,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 2,
+        "extraObject": 2,
+        "extraState": 0,
+        "clean": 10
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 6,
+        "binding": 13,
+        "repetition": 1,
+        "addition": 5,
+        "extraAction": 1,
+        "extraObject": 4,
+        "extraState": 0,
+        "clean": 5
+      }
+    },
+    {
+      "point": 1440,
+      "control": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 1,
+        "extraObject": 3,
+        "extraState": 0,
+        "clean": 8
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 11,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 2,
+        "extraObject": 2,
+        "extraState": 0,
+        "clean": 8
+      }
+    },
+    {
+      "point": 1680,
+      "control": {
+        "units": 14,
+        "mustExpress": 8,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 5,
+        "extraAction": 1,
+        "extraObject": 4,
+        "extraState": 0,
+        "clean": 6
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 8,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 5,
+        "extraAction": 1,
+        "extraObject": 4,
+        "extraState": 0,
+        "clean": 7
+      }
+    },
+    {
+      "point": 1920,
+      "control": {
+        "units": 14,
+        "mustExpress": 7,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 6,
+        "extraAction": 1,
+        "extraObject": 5,
+        "extraState": 0,
+        "clean": 5
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 8,
+        "binding": 14,
+        "repetition": 0,
+        "addition": 5,
+        "extraAction": 0,
+        "extraObject": 5,
+        "extraState": 0,
+        "clean": 6
+      }
+    },
+    {
+      "point": 2160,
+      "control": {
+        "units": 14,
+        "mustExpress": 9,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 1,
+        "extraObject": 3,
+        "extraState": 0,
+        "clean": 7
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 1,
+        "extraObject": 3,
+        "extraState": 0,
+        "clean": 8
+      }
+    },
+    {
+      "point": 2400,
+      "control": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 1,
+        "extraObject": 3,
+        "extraState": 0,
+        "clean": 8
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 6,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 8,
+        "extraAction": 1,
+        "extraObject": 7,
+        "extraState": 0,
+        "clean": 4
+      }
+    },
+    {
+      "point": 2640,
+      "control": {
+        "units": 14,
+        "mustExpress": 8,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 5,
+        "extraAction": 1,
+        "extraObject": 4,
+        "extraState": 0,
+        "clean": 6
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 7,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 6,
+        "extraAction": 1,
+        "extraObject": 5,
+        "extraState": 0,
+        "clean": 5
+      }
+    },
+    {
+      "point": 2880,
+      "control": {
+        "units": 14,
+        "mustExpress": 6,
+        "binding": 13,
+        "repetition": 0,
+        "addition": 6,
+        "extraAction": 1,
+        "extraObject": 5,
+        "extraState": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 10,
+        "binding": 14,
+        "repetition": 0,
+        "addition": 4,
+        "extraAction": 0,
+        "extraObject": 4,
+        "extraState": 0,
+        "clean": 8
+      }
+    }
+  ],
+  "selectedPoint": 240,
+  "selectedScore": [
+    13,
+    -3,
+    -1,
+    -240
+  ],
+  "selectionArithmetic": {
+    "primary": "routed mustExpress (higher)",
+    "secondary": "routed addition (lower)",
+    "tertiary": "routed repetition (lower)",
+    "tie": "earliest point",
+    "note": "both specialist checkpoints are taken from the SAME global point; the control checkpoint at that point is the arm-B no-change path and the control arm of the comparison"
+  },
+  "exposureAtSelectedPoint": {
+    "control": {
+      "units": 302,
+      "draws": 1920,
+      "min": 4,
+      "max": 10,
+      "mean": 6.36
+    },
+    "act": {
+      "units": 184,
+      "draws": 1170,
+      "min": 4,
+      "max": 10,
+      "mean": 6.36,
+      "perUnitMatchesControl": 184,
+      "perUnitCompared": 184,
+      "maxAbsoluteDifference": 0,
+      "routedUnitsMissingFromControl": []
+    },
+    "state": {
+      "units": 98,
+      "draws": 617,
+      "min": 4,
+      "max": 10,
+      "mean": 6.3,
+      "perUnitMatchesControl": 98,
+      "perUnitCompared": 98,
+      "maxAbsoluteDifference": 0,
+      "routedUnitsMissingFromControl": []
+    }
+  },
+  "exposureFullRun": {
+    "control": {
+      "units": 302,
+      "draws": 23040,
+      "min": 58,
+      "max": 111,
+      "mean": 76.29
+    },
+    "act": {
+      "units": 184,
+      "draws": 14007,
+      "min": 59,
+      "max": 111,
+      "mean": 76.12,
+      "perUnitMatchesControl": 184,
+      "perUnitCompared": 184,
+      "maxAbsoluteDifference": 0,
+      "routedUnitsMissingFromControl": []
+    },
+    "state": {
+      "units": 98,
+      "draws": 7424,
+      "min": 58,
+      "max": 111,
+      "mean": 75.76,
+      "perUnitMatchesControl": 98,
+      "perUnitCompared": 98,
+      "maxAbsoluteDifference": 0,
+      "routedUnitsMissingFromControl": []
+    }
+  },
+  "computeAtSelectedPoint": {
+    "globalSteps": 240,
+    "examples": {
+      "control": 1920,
+      "act": 1170,
+      "state": 617,
+      "routed": 1787,
+      "threeModels": 3707
+    },
+    "optimizerUpdates": {
+      "control": 240,
+      "act": 240,
+      "state": 230,
+      "routed": 470,
+      "threeModels": 710
+    },
+    "tokens": {
+      "control": {
+        "inputTokens": 316075,
+        "targetTokens": 29777,
+        "totalTokens": 345852
+      },
+      "act": {
+        "inputTokens": 194760,
+        "targetTokens": 19011,
+        "totalTokens": 213771
+      },
+      "state": {
+        "inputTokens": 100565,
+        "targetTokens": 8872,
+        "totalTokens": 109437
+      },
+      "routed": {
+        "inputTokens": 295325,
+        "targetTokens": 27883,
+        "totalTokens": 323208
+      },
+      "threeModels": {
+        "inputTokens": 611400,
+        "targetTokens": 57660,
+        "totalTokens": 669060
+      }
+    },
+    "parameters": {
+      "perModel": 77440384,
+      "controlArm": 77440384,
+      "routedDeployment": 232321152,
+      "trainingRun": 232321152
+    },
+    "approximateTrainingFlops": {
+      "formula": "6 * parameters * tokens (order-of-magnitude only)",
+      "control": 160697470123008,
+      "act": 99327049968384,
+      "state": 50849059822848,
+      "routed": 150176109791232,
+      "threeModels": 310873579914240
+    },
+    "exposure": {
+      "control": {
+        "units": 302,
+        "draws": 1920,
+        "min": 4,
+        "max": 10,
+        "mean": 6.36
+      },
+      "act": {
+        "units": 184,
+        "draws": 1170,
+        "min": 4,
+        "max": 10,
+        "mean": 6.36,
+        "perUnitMatchesControl": 184,
+        "perUnitCompared": 184,
+        "maxAbsoluteDifference": 0,
+        "routedUnitsMissingFromControl": []
+      },
+      "state": {
+        "units": 98,
+        "draws": 617,
+        "min": 4,
+        "max": 10,
+        "mean": 6.3,
+        "perUnitMatchesControl": 98,
+        "perUnitCompared": 98,
+        "maxAbsoluteDifference": 0,
+        "routedUnitsMissingFromControl": []
+      }
+    }
+  },
+  "computeFullRun": {
+    "globalSteps": 2880,
+    "examples": {
+      "control": 23040,
+      "act": 14007,
+      "state": 7424,
+      "routed": 21431,
+      "threeModels": 44471
+    },
+    "optimizerUpdates": {
+      "control": 2880,
+      "act": 2879,
+      "state": 2786,
+      "routed": 5665,
+      "threeModels": 8545
+    },
+    "tokens": {
+      "control": {
+        "inputTokens": 3792362,
+        "targetTokens": 357317,
+        "totalTokens": 4149679
+      },
+      "act": {
+        "inputTokens": 2331563,
+        "targetTokens": 227817,
+        "totalTokens": 2559380
+      },
+      "state": {
+        "inputTokens": 1209937,
+        "targetTokens": 106588,
+        "totalTokens": 1316525
+      },
+      "routed": {
+        "inputTokens": 3541500,
+        "targetTokens": 334405,
+        "totalTokens": 3875905
+      },
+      "threeModels": {
+        "inputTokens": 7333862,
+        "targetTokens": 691722,
+        "totalTokens": 8025584
+      }
+    },
+    "parameters": {
+      "perModel": 77440384,
+      "controlArm": 77440384,
+      "routedDeployment": 232321152,
+      "trainingRun": 232321152
+    },
+    "approximateTrainingFlops": {
+      "formula": "6 * parameters * tokens (order-of-magnitude only)",
+      "control": 1928116411420416,
+      "act": 1189196220011520,
+      "state": 611713209273600,
+      "routed": 1800909429285120,
+      "threeModels": 3729025840705536
+    },
+    "exposure": {
+      "control": {
+        "units": 302,
+        "draws": 23040,
+        "min": 58,
+        "max": 111,
+        "mean": 76.29
+      },
+      "act": {
+        "units": 184,
+        "draws": 14007,
+        "min": 59,
+        "max": 111,
+        "mean": 76.12,
+        "perUnitMatchesControl": 184,
+        "perUnitCompared": 184,
+        "maxAbsoluteDifference": 0,
+        "routedUnitsMissingFromControl": []
+      },
+      "state": {
+        "units": 98,
+        "draws": 7424,
+        "min": 58,
+        "max": 111,
+        "mean": 75.76,
+        "perUnitMatchesControl": 98,
+        "perUnitCompared": 98,
+        "maxAbsoluteDifference": 0,
+        "routedUnitsMissingFromControl": []
+      }
+    }
+  },
+  "exposureNote": "Per-unit exposure is compared against control at the same global point. Totals are not the comparison: act and state are smaller pools by design, so their total draws are lower even when every routed unit has exactly the same draw count as in control.",
+  "trainingCostNote": "threeModels is the TRAINING cost of this experiment, not a deployment cost. Deployment keeps 3 models resident (act, state, control for no_change); resident memory, cold load and model switch were not measured.",
+  "deployment": {
+    "models": 3,
+    "modelRoles": [
+      "act",
+      "state",
+      "control (no_change)"
+    ],
+    "residentParameters": 232321152,
+    "residentMemory": "unmeasured",
+    "requestLatency": "measured per generation in route-split-eval-v1.json",
+    "coldLoad": "unmeasured",
+    "modelSwitch": "unmeasured"
+  }
+}

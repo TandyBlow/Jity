@@ -1,0 +1,19 @@
+commit 44a23687fc41 branch exp/c-attention-parse trackedDirty=False
+python 3.11.15 Windows-10-10.0.26200-SP0
+scope: v2 parse only; no fact filtering
+
+A01 scope_object                 exp=resolved/person_a/object                    act=resolved/person_a/object                    ok
+A02 scope_position               exp=resolved/person_a/position                  act=resolved/person_a/position                  ok
+A03 scope_appearance             exp=resolved/person_c/appearance                act=resolved/person_c/appearance                ok
+A04 scope_task                   exp=resolved/person_a/task                      act=resolved/person_a/task                      ok
+A05 scope_part_anchored_initial  exp=resolved/box/part/盒盖(True)                  act=resolved/box/part/盒盖(True)                  ok
+A06 scope_part_anchored_change   exp=resolved/item_key/part/表面(True)             act=resolved/item_key/part/表面(True)             ok
+A07 scope_part_unanchored        exp=resolved/person_a/part/袖口(False)            act=resolved/person_a/part/袖口(False)            ok
+A08 state_ambiguous              exp=ambiguous/-                                  act=ambiguous/-                                  ok
+A09 state_unresolved             exp=unresolved/-                                  act=unresolved/-                                  ok
+A10 state_none                   exp=none/-                                  act=none/-                                  ok
+
+X1 任务目标原句 -> 负责人 + task 范围        resolved    ok
+X2 词表外局部 -> 保守空目标                 unresolved  ok
+
+summary: 10/10 parse labels matched; extra probes 2/2
