@@ -1,0 +1,83 @@
+{
+ "packageId": "holdout-a-v1",
+ "producedBy": "A (world-server): backend/scripts/build_holdout_v1.py",
+ "createdAt": "2026-11-08T08:21:57+00:00",
+ "worldInternalTime": "2027-01-16T05:00:00",
+ "baseCommit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
+ "sources": [
+  "h01",
+  "h02",
+  "h03",
+  "h04",
+  "h05",
+  "h06",
+  "h07",
+  "h08",
+  "h09",
+  "h10",
+  "h11",
+  "h12"
+ ],
+ "databases": {
+  "h": "world.db"
+ },
+ "generationProcess": {
+  "method": "12 independent worlds; each committed through the authority writer: WorldService.create_world (root) then SQLiteBaselineStore.transact for three normal points; world_evidence and world_points.delta_json are written by app/database/world_repository._save_point inside the same transaction",
+  "worldRounds": [
+   "h01:world_1:h01_p1,h01_p2,h01_p3",
+   "h02:world_9:h02_p1,h02_p2,h02_p3",
+   "h03:world_17:h03_p1,h03_p2,h03_p3",
+   "h04:world_25:h04_p1,h04_p2,h04_p3",
+   "h05:world_33:h05_p1,h05_p2,h05_p3",
+   "h06:world_41:h06_p1,h06_p2,h06_p3",
+   "h07:world_49:h07_p1,h07_p2,h07_p3",
+   "h08:world_57:h08_p1,h08_p2,h08_p3",
+   "h09:world_65:h09_p1,h09_p2,h09_p3",
+   "h10:world_73:h10_p1,h10_p2,h10_p3",
+   "h11:world_81:h11_p1,h11_p2,h11_p3",
+   "h12:world_89:h12_p1,h12_p2,h12_p3"
+  ],
+  "dedupeMethod": "build_holdout_v1.precheck: every fact text is compared to all old material fact texts (controllability-v1, pairs-v2, c3 freeze/sources) by character-bigram Jaccard; the build refuses at >= 0.8 before any world is created, and refuses to run if any old corpus is missing",
+  "dedupeCorpora": [
+   {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\controllability-v1.jsonl",
+    "sha256": "8c613633a0e0fa4fa332861346264cbb28eb87f9945cafc8eb6b908c54dcc8e7",
+    "factTexts": 120
+   },
+   {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\pairs-v2.jsonl",
+    "sha256": "7a7205b32cc2367c3410a6176c6e243e6dc469bd355ec3a3b44c5c8f2ff9b987",
+    "factTexts": 137
+   },
+   {
+    "file": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\experiments\\world-components\\parallel\\organize_plan\\freeze\\sources.json",
+    "sha256": "e1c58c2c67a2228d0729f9e155a5210f69615de449e801f44e028da1c99423dd",
+    "factTexts": 45
+   }
+  ],
+  "dedupeFactTexts": 302,
+  "packageDigestRule": "sha256 over sorted {relative path: sha256} of manifest.json and pairs/*.json; the digest itself lives only in the sign-off template",
+  "producedAt": "2026-11-08T08:21:57+00:00",
+  "producerCommit": "b9d62354e65260fa1c5d6213bf319e9e03b491d3",
+  "authorityEvidence": "world_evidence + world_point_evidence + world_points.delta_json",
+  "relationValidator": "world-relation-validator/1",
+  "producerStatus": "D artifacts/holdout-a-v1/SEMANTIC-REVIEW-TODO.md\n D artifacts/holdout-a-v1/build-log.json\n D artifacts/holdout-a-v1/manifest.json\n D artifacts/holdout-a-v1/semantic-review-evidence.json\n D artifacts/holdout-a-v1/semantic-review-signoff.template.json\n D artifacts/holdout-a-v1/semantic-review.json\n M artifacts/holdout-a-v1/world.db\n M backend/app/database/world_repository.py\n M backend/scripts/build_holdout_v1.py\n M frontend/next.config.ts\n?? artifacts/cohesion-split/\n?? artifacts/decode-compare/\n?? artifacts/statement-extractor/\n?? artifacts/statement-verification/\n?? artifacts/world-provenance/\n?? backend/app/database/world_evidence_store.py\n?? backend/app/database/world_evidence_v1.sql\n?? backend/app/services/world/provenance.py\n?? backend/scripts/authorize_relations.py\n?? backend/scripts/authorize_round.py\n?? backend/scripts/build_mixed_round.py\n?? backend/scripts/build_pair_worlds.py\n?? backend/scripts/round_input.py\n?? backend/tests/test_world_provenance_chain.py\n?? design/world-engine-reports/b240-diagnostic-point.md\n?? design/world-engine-reports/b240-gain-loss-table.md\n?? design/world-engine-reports/background-selection-run.md\n?? design/world-engine-reports/boundary-arm-closing-record.md\n?? design/world-engine-reports/boundary-data-arm.md\n?? design/world-engine-reports/boundary-v2-arm.md\n?? design/world-engine-reports/cohesion-split-pilot.md\n?? design/world-engine-reports/decode-beam-vs-greedy.md\n?? design/world-engine-reports/direction-cases-review.md\n?? design/world-engine-reports/expression-contract-v2.md\n?? design/world-engine-reports/incomplete-round-assembly.md\n?? design/world-engine-reports/joint-label-compatibility-v1.md\n?? design/world-engine-reports/manual-reachability-5.md\n?? design/world-engine-reports/narration-service-loop.md\n?? design/world-engine-reports/organization-a1-freeze.md\n?? design/world-engine-reports/organization-run-v2.md\n?? design/world-engine-reports/pipeline-round-acceptance.md\n?? design/world-engine-reports/planner-split-trial.m"
+ },
+ "files": {
+  "world.db": "9d7f26a8bf1028cdf0da3e43d849c02b4649a877cee3b24bd2c04b56b50a735e",
+  "pairs": {
+   "h01": "73d2e7cbf757b863af603fd6c7364449f42f2585ea4e69e00643ba75d15f7fbe",
+   "h02": "6d0c6fbfd233fb5f9f66143d7b7943a7681c2ec7a1a4576f3743f9db0d417afb",
+   "h03": "487e889ac700fc0670fe2607469958f0f2bcb6a1013de68505e78efb7465cae0",
+   "h04": "8e92d2dec6a9367c26bbe1e5a3ecdc1eaa6f5dc2148556f1e47b85dafe2c7872",
+   "h05": "220a0065977af840c954287b23c85e016a3705e1e9a51538fddb6b093399f008",
+   "h06": "f8174abd60e5f84b3fc2758e2cfe66cd520c912a8fade62dac3faf53e09de7c6",
+   "h07": "cd73d45a4816ec5a26e6b7f87af16e28a8ca0630daa2b9b40d4ffd8dae75ea97",
+   "h08": "c4f794d91a4e42e202e91db0e39d5f2da38b2b9c415a676aabbb2285a0bf87fb",
+   "h09": "65f63c4f4878316a2b1132ae98f995c6c7673304e0de3922c831d2f6337cf28a",
+   "h10": "087982bb2ce5096730bbbd93ac32c8b84a616ec0f5559b1da8ea8515e1b13102",
+   "h11": "5c8a0a9024281f604f0f310dc691bc4429cde6a8389d49fb668709486309a221",
+   "h12": "9e1d5357f99aa62af4dc27184daaa8d7ed4004d1bdabc949d3345a1e66b90098"
+  }
+ }
+}
