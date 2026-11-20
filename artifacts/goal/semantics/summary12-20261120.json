@@ -1,0 +1,620 @@
+{
+  "kind": "jity-goal-semantics-summary",
+  "generatedAt": "2026-11-20T14:18:17.779Z",
+  "source": {
+    "runFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run12-20261120.json",
+    "runId": "2026-11-20T1413-343f",
+    "status": "COMPLETED",
+    "intent": "semantics-s01-skip-restore",
+    "turnsFile": "frontend/scripts/product-acceptance/turns-semantics-s01.json"
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "texture-formats-tier1",
+        "bgra8unorm-storage",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "texture-formats-tier2",
+        "shader-f16"
+      ]
+    },
+    "isolated": true,
+    "arm": {
+      "candidate": "auto",
+      "mode": null,
+      "shape": null,
+      "offscreenPolicy": "skip",
+      "narrationModel": "qwen3-1.7b",
+      "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+      "narrationBytes": 1107409472,
+      "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+    }
+  },
+  "totals": {
+    "turns": 1,
+    "withAcceptedProse": 1,
+    "actionDecisions": 15,
+    "calls": 8,
+    "fallbacks": 1,
+    "attemptsWithError": 5,
+    "deadlineAborts": 0,
+    "continuation": {
+      "continue": 1
+    },
+    "violations": 0,
+    "violationKinds": {}
+  },
+  "violations": [],
+  "turns": [
+    {
+      "turn": 1,
+      "id": "s01-act-move",
+      "input": "我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。",
+      "purpose": "act/移动 + 目标识别",
+      "acceptedMs": 30695,
+      "doneMs": 124133,
+      "actionRows": 15,
+      "acts": [
+        {
+          "actorId": "lu",
+          "source": "program",
+          "issueCode": "protagonist_command"
+        },
+        {
+          "actorId": "fingel",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "qin",
+          "source": "model",
+          "issueCode": "repair_requested"
+        },
+        {
+          "actorId": "fingel",
+          "source": "model",
+          "issueCode": "repair_requested"
+        }
+      ],
+      "skips": [
+        {
+          "actorId": "caesar",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "chu",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "doctor",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "lin",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "manstein",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "nono",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "shen",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "su",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "tang",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "tomiyama",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        },
+        {
+          "actorId": "zhou",
+          "source": "program",
+          "issueCode": "actor_out_of_scene"
+        }
+      ],
+      "actionsSourceBasis": "page-recorded-source",
+      "calls": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 4105,
+          "fallback": false,
+          "error": null,
+          "rawChars": 175,
+          "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"partial\",\"reason\":\"诺诺的骰点资格为true，准入为false，因此被阻止\"}],\"facts\":[{\"text\":\"路明非看懂了规则牌\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_5",
+          "stage": null,
+          "ms": 10228,
+          "fallback": false,
+          "error": null,
+          "rawChars": 289,
+          "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"lu\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"路明非看懂了规则牌\"}]}",
+          "attempts": 3,
+          "stageMs": {
+            "position": 4972,
+            "appearance": 0,
+            "tasks": 3211,
+            "subtasks": 2046,
+            "personality": 0,
+            "sanity": 0
+          },
+          "coverage": {
+            "tasks": 14,
+            "personality": 0,
+            "taskRows": 73,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "assertedUnchanged": 17,
+            "affectedCharacters": 3,
+            "unaffectedCharacters": [
+              "caesar",
+              "chu",
+              "doctor",
+              "lin",
+              "manstein",
+              "qin",
+              "shen",
+              "su",
+              "tang",
+              "tomiyama",
+              "zhou"
+            ],
+            "affectedTaskIds": [
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded"
+            ],
+            "unaffectedTaskIds": [
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "rejectedTaskIds": [
+              {
+                "characterId": "lu",
+                "taskId": "f1",
+                "reason": "unknown_task_id"
+              }
+            ],
+            "supports": []
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_9",
+          "stage": null,
+          "ms": 4742,
+          "fallback": false,
+          "error": null,
+          "rawChars": 164,
+          "raw": "{\"judgments\":[{\"memberId\":\"fingel\",\"label\":\"partial\",\"reason\":\"芬格尔让路\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"fingel\"],\"actorId\":\"fingel\",\"outcome\":\"completed\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_9",
+          "stage": null,
+          "ms": 12736,
+          "fallback": false,
+          "error": null,
+          "rawChars": 318,
+          "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_counter\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"fingel\", \"tasks\": [{\"taskId\": \"t1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\"}]}",
+          "attempts": 3,
+          "stageMs": {
+            "position": 7303,
+            "appearance": 0,
+            "tasks": 3190,
+            "subtasks": 2243,
+            "personality": 0,
+            "sanity": 0
+          },
+          "coverage": {
+            "tasks": 14,
+            "personality": 0,
+            "taskRows": 74,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "assertedUnchanged": 17,
+            "affectedCharacters": 3,
+            "unaffectedCharacters": [
+              "caesar",
+              "chu",
+              "doctor",
+              "lin",
+              "manstein",
+              "nono",
+              "shen",
+              "su",
+              "tang",
+              "tomiyama",
+              "zhou"
+            ],
+            "affectedTaskIds": [
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher"
+            ],
+            "unaffectedTaskIds": [
+              "task_20",
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "rejectedTaskIds": [
+              {
+                "characterId": "fingel",
+                "taskId": "task_20",
+                "reason": "unknown_task_id"
+              }
+            ],
+            "supports": []
+          }
+        },
+        {
+          "task": "results",
+          "key": "group_13",
+          "stage": null,
+          "ms": 6047,
+          "fallback": false,
+          "error": null,
+          "rawChars": 167,
+          "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"路明非的骰点资格未获取，因此被阻止\"}],\"facts\":[{\"text\":\"秦越让路给路明非\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"}]}",
+          "attempts": 1,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "updates",
+          "key": "group_13",
+          "stage": null,
+          "ms": 14185,
+          "fallback": false,
+          "error": null,
+          "rawChars": 299,
+          "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_left_hand\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"qin\", \"tasks\": [{\"taskId\": \"t1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"路明非看懂了规则牌\"}]}",
+          "attempts": 3,
+          "stageMs": {
+            "position": 7508,
+            "appearance": 0,
+            "tasks": 3995,
+            "subtasks": 2682,
+            "personality": 0,
+            "sanity": 0
+          },
+          "coverage": {
+            "tasks": 14,
+            "personality": 0,
+            "taskRows": 74,
+            "mode": "affected_projection",
+            "achievedByCharacter": [],
+            "assertedUnchanged": 28,
+            "affectedCharacters": 5,
+            "unaffectedCharacters": [
+              "chu",
+              "doctor",
+              "lin",
+              "manstein",
+              "shen",
+              "su",
+              "tang",
+              "tomiyama",
+              "zhou"
+            ],
+            "affectedTaskIds": [
+              "task_20",
+              "task_caesar_bridge",
+              "task_caesar_contact",
+              "task_caesar_flag",
+              "task_caesar_tang",
+              "task_caesar_win",
+              "task_fingel_camera",
+              "task_fingel_deal",
+              "task_fingel_help",
+              "task_fingel_map",
+              "task_fingel_soup",
+              "task_lu_ally",
+              "task_lu_choice",
+              "task_lu_goggles",
+              "task_lu_kit",
+              "task_lu_match",
+              "task_lu_route",
+              "task_lu_rules",
+              "task_nono_battery",
+              "task_nono_lu",
+              "task_nono_signal",
+              "task_nono_squad",
+              "task_nono_wounded",
+              "task_qin_battery",
+              "task_qin_gear",
+              "task_qin_ladder",
+              "task_qin_return",
+              "task_qin_stretcher"
+            ],
+            "unaffectedTaskIds": [
+              "task_chu_flag",
+              "task_chu_hatch",
+              "task_chu_hold",
+              "task_chu_lin",
+              "task_chu_line",
+              "task_chu_su",
+              "task_doctor_prepare",
+              "task_doctor_rest",
+              "task_doctor_signal",
+              "task_doctor_treat",
+              "task_doctor_triage",
+              "task_lin_call",
+              "task_lin_carry",
+              "task_lin_leave",
+              "task_lin_safe",
+              "task_lin_sent",
+              "task_manstein_clock",
+              "task_manstein_injury",
+              "task_manstein_log",
+              "task_manstein_order",
+              "task_manstein_radio",
+              "task_shen_account",
+              "task_shen_checked",
+              "task_shen_recover",
+              "task_shen_stay",
+              "task_shen_symptom",
+              "task_su_exit",
+              "task_su_lin",
+              "task_su_reload",
+              "task_su_report",
+              "task_su_watch",
+              "task_tang_ammo",
+              "task_tang_fallback",
+              "task_tang_pause",
+              "task_tang_push",
+              "task_tang_report",
+              "task_tomiyama_boundary",
+              "task_tomiyama_help",
+              "task_tomiyama_refer",
+              "task_tomiyama_shen",
+              "task_tomiyama_support",
+              "task_zhou_guard",
+              "task_zhou_latch",
+              "task_zhou_retreat",
+              "task_zhou_rope",
+              "task_zhou_warn"
+            ],
+            "rejectedTaskIds": [
+              {
+                "characterId": "qin",
+                "taskId": "task_20",
+                "reason": "task_belongs_to_caesar"
+              }
+            ],
+            "supports": []
+          }
+        },
+        {
+          "task": "continuation",
+          "key": "round_3",
+          "stage": null,
+          "ms": 7177,
+          "fallback": false,
+          "error": null,
+          "rawChars": 154,
+          "raw": "{\"candidates\":[{\"characterId\":\"fingel\",\"text\":\"路明非的反应\"}]}\n---\n{\"judgments\":[{\"candidateId\":\"c1\",\"likely\":true,\"related\":true,\"reason\":\"路明非听到远处枪声会下意识缩肩\"}]}",
+          "attempts": 2,
+          "stageMs": null,
+          "coverage": null
+        },
+        {
+          "task": "results",
+          "key": "group_9",
+          "stage": null,
+          "ms": 18579,
+          "fallback": true,
+          "error": "JsonCallError: model_output_invalid: Error: fact names only 路明非, who belong to another group of this turn; 只写本组成员自己的行动结果（秦越：秦越低头整理着自己的装备，神情略显紧张。；路明非：路明非没有作出反应。；芬格尔：让路给路明非），不要写其他人物的行动或判定理由。",
+          "rawChars": 1357,
+          "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"no_change\",\"reason\":\"秦越低头整理装备，神情略显紧张\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非没有作出反应\"},{\"memberId\":\"fingel\",\"label\":\"no_change\",\"reason\":\"让路给路明非\"}],\"facts\":[{\"text\":\"秦越低头整理装备，神情略显紧张\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"},{\"text\":\"路明非没有作出反应\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"blocked\"},{\"text\":\"路明非没有作出反应\",\"memberIds\":[\"fingel\"],\"actorId\":\"fingel\",\"outcome\":\"blocked\"}]}\n---\n{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"no_change\",\"reason\":\"秦越低头整理装备，神情略显紧张\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非没有作出反应\"},{\"memberId\":\"fingel\",\"label\":\"no_change\",\"reason\":\"让路给路明非\"}],\"facts\":[{\"text\":\"秦越低头整理装备，神情略显紧张\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"},{\"text\":\"路明非没有作出反应\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"blocked\"},{\"text\":\"让路给路明非\",\"memberIds\":[\"fingel\"],\"actorId\":\"fingel\",\"outcome\":\"blocked\"}]}\n---\n{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"no_change\",\"reason\":\"秦越低头整理装备，神情略显紧张\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非没有作出反应\"},{\"memberId\":\"fingel\",\"label\":\"no_change\",\"reason\":\"让路给路明非\"}],\"facts\":[{\"text\":\"秦越低头整理装备，神情略显紧张\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"},{\"text\":\"路明非没有作出反应\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"blocked\"},{\"text\":\"让路给路明非\",\"memberIds\":[\"fingel\"],\"actorId\":\"fingel\",\"outcome\":\"blocked\"}]}",
+          "attempts": 3,
+          "stageMs": null,
+          "coverage": null
+        }
+      ],
+      "continuationDecision": "continue",
+      "stops": [
+        "results:JsonCallError: model_output_invalid: Error: fact names only 路明非, who belong to another group of this turn; 只写本组成员自己的行动结果（秦越：秦越低头整理着自己的装备，神情略显紧张。；路明非：路明非没有作出反应。；芬格尔：让路给路明非），不要写其他人物的行动或判定理由。"
+      ],
+      "deadlineAbort": false,
+      "violations": [
+        {
+          "code": "repeated_actor_across_rounds",
+          "detail": "fingel"
+        }
+      ],
+      "problems": [
+        "internal_note_in_prose"
+      ]
+    }
+  ]
+}

@@ -56,7 +56,9 @@ const turns = (evidence.turns ?? []).map((turn) => {
     if (!line.includes('[world-local refusal]')) continue;
     for (const [pattern, code] of VIOLATIONS) if (pattern.test(line)) flag(code, line.slice(0, 240));
   }
-  const automaticCommitted = Object.values(turn.after?.transportPoints ?? {}).some((point) => point?.trigger === 'automatic');
+  const automaticCommitted = Object.values(turn.after?.transportPoints ?? {}).some((point) => point?.trigger === 'automatic')
+    || submission?.continuationDecision === 'continue'
+    || submission?.continuationDecision === 'policy_stop';
   if (repeated.length && automaticCommitted) seen.push({ code: 'repeated_actor_across_rounds', detail: repeated.join(',') });
   else if (repeated.length) flag('repeated_actor', repeated.join(','));
   return {
