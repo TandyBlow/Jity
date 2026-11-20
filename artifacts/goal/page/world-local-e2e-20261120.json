@@ -1,0 +1,32 @@
+{
+  "kind": "jity-goal-page-e2e",
+  "at": "2026-11-20T10:54:00Z",
+  "command": "cd frontend && npx playwright test e2e/world-local.spec.ts",
+  "result": {
+    "passed": 1,
+    "failed": 0,
+    "testMs": 330000,
+    "totalMs": 372000
+  },
+  "environment": {
+    "browser": "msedge headless",
+    "server": "next build && next start :3100",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ]
+  },
+  "assertions": [
+    "crossOriginIsolated === true",
+    "__worldArm.narrationModel === qwen3-1.7b, sha256 length 64",
+    "two real inputs each produce a __worldTurns record and clear __worldBusy",
+    "pause sets transport.control.paused true; resume sets it false; head unchanged",
+    "reload restores committed history (__worldRestore.entriesRestored >= 1)",
+    "history selection leaves headPointId unchanged"
+  ],
+  "gaps": [
+    "historical-point narration delete/regenerate has no visible control",
+    "ProgressStatus/WorldStatusPanel/NarrationView not wired"
+  ]
+}

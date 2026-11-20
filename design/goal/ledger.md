@@ -60,7 +60,7 @@
 | G1 目标与文档基线 | 进行中 | 本文档集、索引、横幅、账本 v1、baseline tag |
 | G2 浏览器状态内核收口 | 完成（2026-11-20） | 32 操作定案（31 实现、`restore_group_work` 非产品，D-015）；取消恢复与 corrupt-restore 测试通过；restore 接 `verifySessionSnapshot`；差分夹具由 canonical/state/transport 测试逐字节断言；骰点协议冻结；全量 90 files / 1256 passed，两套 typecheck 通过；证据 `artifacts/goal/kernel-{diff.json,ops.md}`；Change 已归档，tag `goal-g2-kernel-diff-20261120` |
 | G3 模型资产与时间包线 | 完成（2026-11-20） | 资产已取并逐字节校验；冷启动 24.7/18.9/19.3 s（isolated、RTX 4060、2×200）；12 个正常点首段 9.4–43.5 s、完成−提交 6.4–13.8 s，全部过 60/300，`timing-baseline.json` 状态 PASS；自动链 0 次归 G5；Change 已归档，tag `goal-g3-model-timing-20261120` |
-| G4 单机可玩页面接线 | 未开始 | pause/resume/history/delete/regenerate/e2e |
+| G4 单机可玩页面接线 | 进行中 | 隔离告警、pause/resume、HistoryPanel 只读选中、构建与 e2e 通过（`artifacts/goal/page/`）；缺口：历史点删除/重生、ProgressStatus/WorldStatusPanel/NarrationView 接线、block-api 与恢复路径回归 |
 | G5 非叙事语义验收 | 未开始 | 12–20 例冻结场景；只做 `dragon-raja-free-day` |
 | G6 叙事产品路径与质量 | 未开始 | 先原样输出；20+ 点读评；G6 后决定是否加事实门 |
 | G7 进度同步与跨设备 | 未开始 | 两设备分叉、离线队列、CAS/父链；单用户 Bearer + 本地/内网 |

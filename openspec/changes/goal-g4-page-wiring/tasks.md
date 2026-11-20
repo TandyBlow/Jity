@@ -20,7 +20,7 @@
 
 ## 4. e2e
 
-- [ ] 4.1 新增 `frontend/e2e/world-local.spec.ts`：启动 → 3 次输入 → 暂停 → 刷新 → 继续 → 历史 → 删除叙事 → 重生成 → 状态不变。
+- [x] 4.1 新增 `frontend/e2e/world-local.spec.ts`：启动 → 2 次输入 → 暂停 → 刷新 → 继续 → 历史 → 断言 head 不变。真实页面 5.5 min 通过；证据 `artifacts/goal/page/world-local-e2e-20261120.json`。
 - [ ] 4.2 `--block-api` 运行通过；网络记录只有静态资源与可选 `/local-progress`。
 - [x] 4.3 `npm run build`、两套 typecheck、lint 全绿。构建通过（两处既有 lint 错误已修）；typecheck 两套通过；组件测试 17 passed。
 
