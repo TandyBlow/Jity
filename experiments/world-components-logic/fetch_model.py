@@ -24,12 +24,18 @@ FILES = ('README.md', 'config.json', 'tokenizer_config.json',
 
 def fetch_verified(spec: dict, destination: Path) -> dict:
     expected = spec.get('lfs_sha256') or spec.get('sha256_of_fetched_bytes')
-    if not expected:
-        raise ValueError(f"unregistered payload hash: {spec['path']}")
+    git_blob=spec.get('git_blob_sha1')
+    if not expected and not git_blob:
+        raise ValueError(f"unregistered payload identity: {spec['path']}")
+    def verified(path):
+        if path.stat().st_size!=spec['size_bytes']:return False
+        if expected:return sha256_file(path)==expected
+        raw=path.read_bytes()
+        return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==git_blob
     size = spec['size_bytes']
     if destination.exists():
-        if destination.stat().st_size == size and sha256_file(destination) == expected:
-            return {'path': destination.name, 'sha256': expected, 'bytes': size,
+        if verified(destination):
+            return {'path': destination.name, 'sha256': sha256_file(destination), 'bytes': size,
                     'cacheHit': True}
         raise ValueError(f'local payload differs: {destination}')
     part = destination.with_suffix(destination.suffix + '.part')
@@ -59,10 +65,10 @@ def fetch_verified(spec: dict, destination: Path) -> dict:
                             if offset - last_progress >= 32 * 1024 * 1024:
                                 print(f"{spec['path']}: {offset}/{size} bytes", flush=True)
                                 last_progress = offset
-            if part.stat().st_size != size or sha256_file(part) != expected:
+            if not verified(part):
                 raise ValueError(f"payload verification failed: {spec['path']}")
             os.replace(part, destination)
-            return {'path': destination.name, 'sha256': expected, 'bytes': size,
+            return {'path': destination.name, 'sha256': sha256_file(destination), 'bytes': size,
                     'cacheHit': False}
         except ValueError:
             raise
@@ -75,21 +81,23 @@ def fetch_verified(spec: dict, destination: Path) -> dict:
 
 
 def main() -> None:
-    argparse.ArgumentParser(description=__doc__).parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--model',choices=('M02','M03'),default='M02');args=parser.parse_args()
     source = json.loads(REGISTRY.read_text(encoding='utf-8'))
-    model = next(row for row in source['models'] if row['id'] == M02)
-    destination = ROOT / '.local/world-components-logic/models/M02' / model['revision']
+    model = next(row for row in source['models'] if row['id'] == (M02 if args.model=='M02' else 'Qwen/Qwen2.5-0.5B-Instruct'))
+    destination = ROOT / '.local/world-components-logic/models' / args.model / model['revision']
     destination.mkdir(parents=True, exist_ok=True)
     specifications = {row['path']: row for row in model['files']}
     start = time.perf_counter()
-    files = [fetch_verified(specifications[name], destination / name) for name in FILES]
+    files = [fetch_verified(specifications[name], destination / name) for name in (FILES if args.model=='M02' else tuple(specifications))]
     manifest = {
-        'schema': 'jity-d-local-model-payload-v1', 'modelId': M02,
+        'schema': 'jity-d-local-model-payload-v1', 'modelId': model['id'],
         'revision': model['revision'], 'sourceRegistrySha256': sha256_file(REGISTRY),
         'files': files, 'downloadWallMs': (time.perf_counter() - start) * 1000,
         'scope': 'independent payload verification; no model execution',
     }
-    (destination / 'payload-manifest.json').write_bytes(canonical_bytes(manifest) + b'\n')
+    manifest_path=destination/'payload-manifest.json'
+    if not manifest_path.exists():
+        with manifest_path.open('xb') as f:f.write(canonical_bytes(manifest)+b'\n')
     print(json.dumps({'modelDirectory': str(destination), 'verifiedFiles': len(files),
                       'wallMs': manifest['downloadWallMs']}, ensure_ascii=False), flush=True)
 

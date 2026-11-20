@@ -1,0 +1,520 @@
+{
+  "schema": "jity-d-m01-shared-summary-v1",
+  "date": "2026-11-02",
+  "scope": "exposed_old_development_probe_only",
+  "oldDevelopmentGroups": 20,
+  "fitGroups": 16,
+  "retainedPreviouslyObservedGroups": 4,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "baselineQuality": {
+    "D02": {
+      "fit": {
+        "matched": 8,
+        "groups": 8
+      },
+      "retained_development": {
+        "matched": 2,
+        "groups": 2
+      }
+    },
+    "D03": {
+      "fit": {
+        "matched": 2,
+        "groups": 8,
+        "requiredTargets": 8,
+        "missedTargets": 1,
+        "extraTargets": 7
+      },
+      "retained_development": {
+        "matched": 1,
+        "groups": 2,
+        "requiredTargets": 2,
+        "missedTargets": 2,
+        "extraTargets": 0
+      }
+    }
+  },
+  "runs": [
+    {
+      "runId": "m01-shared-dev42-20261102-r2",
+      "planSha256": "01dcb6f9cb96f69d2a7a22c9b9d5f917d880a61cdf74063f01a358778e945487",
+      "learningRate": 0.01,
+      "encoderParameters": 10279424,
+      "headParameters": 180418,
+      "checkpoint": {
+        "contains": "two_shared_fusion_heads_only",
+        "path": ".local/world-components-logic/checkpoints/m01-shared-dev42-20261102-r2.pt",
+        "sha256": "45c7ced949aecf18d1bf01cec3e560db8d78c3f5c1c202addef97b194c655496"
+      },
+      "encoderUnchanged": true,
+      "quality": {
+        "D02": {
+          "fit": {
+            "matched": 4,
+            "groups": 8
+          },
+          "retained_development": {
+            "matched": 1,
+            "groups": 2
+          }
+        },
+        "D03": {
+          "fit": {
+            "matched": 2,
+            "groups": 8,
+            "requiredTargets": 8,
+            "missedTargets": 8,
+            "extraTargets": 0
+          },
+          "retained_development": {
+            "matched": 1,
+            "groups": 2,
+            "requiredTargets": 2,
+            "missedTargets": 2,
+            "extraTargets": 0
+          }
+        }
+      },
+      "timing": [
+        {
+          "arm": "legacy",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 177.368208,
+          "p95Ms": 207.025333,
+          "maxMs": 207.025333,
+          "windows": 4,
+          "maxWindowTokens": 506,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.4988192915916443
+          ],
+          "headMedianMs": 0.04583399277180433
+        },
+        {
+          "arm": "legacy",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 179.745583,
+          "p95Ms": 206.357875,
+          "maxMs": 206.357875,
+          "windows": 4,
+          "maxWindowTokens": 506,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.545242190361023
+          ],
+          "headMedianMs": 0.04600000102072954
+        },
+        {
+          "arm": "legacy",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 485.589375,
+          "p95Ms": 514.884791,
+          "maxMs": 514.884791,
+          "windows": 12,
+          "maxWindowTokens": 495,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.4158635437488556,
+            0.40375617146492004,
+            0.4377584755420685
+          ],
+          "headMedianMs": 0.05033300840295851
+        },
+        {
+          "arm": "legacy",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 495.108375,
+          "p95Ms": 528.630542,
+          "maxMs": 528.630542,
+          "windows": 12,
+          "maxWindowTokens": 504,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.41010966897010803,
+            0.4264732599258423,
+            0.49614644050598145
+          ],
+          "headMedianMs": 0.049792026402428746
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 186.710458,
+          "p95Ms": 215.671292,
+          "maxMs": 215.671292,
+          "windows": 4,
+          "maxWindowTokens": 509,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.5000174045562744
+          ],
+          "headMedianMs": 0.15087498468346894
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 184.554208,
+          "p95Ms": 213.805083,
+          "maxMs": 213.805083,
+          "windows": 4,
+          "maxWindowTokens": 509,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.5000174045562744
+          ],
+          "headMedianMs": 0.1462079817429185
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 199.270417,
+          "p95Ms": 225.742875,
+          "maxMs": 225.742875,
+          "windows": 4,
+          "maxWindowTokens": 511,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.499980092048645,
+            0.499980092048645,
+            0.499980092048645
+          ],
+          "headMedianMs": 0.2118749835062772
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 205.61825,
+          "p95Ms": 234.65825,
+          "maxMs": 234.65825,
+          "windows": 4,
+          "maxWindowTokens": 495,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.499980092048645,
+            0.499980092048645,
+            0.499980092048645
+          ],
+          "headMedianMs": 0.17387501429766417
+        }
+      ],
+      "forwardWindowsIncludingFitFeatures": 323,
+      "timedInferenceItems": 40,
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 435.03125,
+        "stopReason": null,
+        "wallMs": 19468.46029200242
+      },
+      "fitLossFirstLast": {
+        "D02": [
+          0.6955406665802002,
+          0.6931471824645996
+        ],
+        "D03": [
+          0.9382476210594177,
+          0.924196183681488
+        ]
+      }
+    },
+    {
+      "runId": "m01-shared-dev42-20261102-r3",
+      "planSha256": "50ffb347d5ad00f444c9acacc58087bf81a616f3e301a4d674440a4b178f5c41",
+      "learningRate": 0.0003,
+      "encoderParameters": 10279424,
+      "headParameters": 180418,
+      "checkpoint": {
+        "contains": "two_shared_fusion_heads_only",
+        "path": ".local/world-components-logic/checkpoints/m01-shared-dev42-20261102-r3.pt",
+        "sha256": "8875d8b44d2641e6c3829ab6c46a3cadd3db32d9a7fc1d40fe6aa8bd69e6b18c"
+      },
+      "encoderUnchanged": true,
+      "quality": {
+        "D02": {
+          "fit": {
+            "matched": 8,
+            "groups": 8
+          },
+          "retained_development": {
+            "matched": 2,
+            "groups": 2
+          }
+        },
+        "D03": {
+          "fit": {
+            "matched": 8,
+            "groups": 8,
+            "requiredTargets": 8,
+            "missedTargets": 0,
+            "extraTargets": 0
+          },
+          "retained_development": {
+            "matched": 1,
+            "groups": 2,
+            "requiredTargets": 2,
+            "missedTargets": 0,
+            "extraTargets": 2
+          }
+        }
+      },
+      "timing": [
+        {
+          "arm": "legacy",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 179.143292,
+          "p95Ms": 209.823417,
+          "maxMs": 209.823417,
+          "windows": 4,
+          "maxWindowTokens": 506,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.4988192915916443
+          ],
+          "headMedianMs": 0.046375003876164556
+        },
+        {
+          "arm": "legacy",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 181.1885,
+          "p95Ms": 208.781292,
+          "maxMs": 208.781292,
+          "windows": 4,
+          "maxWindowTokens": 506,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.545242190361023
+          ],
+          "headMedianMs": 0.04487502155825496
+        },
+        {
+          "arm": "legacy",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 492.574542,
+          "p95Ms": 515.42325,
+          "maxMs": 515.42325,
+          "windows": 12,
+          "maxWindowTokens": 495,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.4158635437488556,
+            0.40375617146492004,
+            0.4377584755420685
+          ],
+          "headMedianMs": 0.0509590026922524
+        },
+        {
+          "arm": "legacy",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 503.153584,
+          "p95Ms": 529.828917,
+          "maxMs": 529.828917,
+          "windows": 12,
+          "maxWindowTokens": 504,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.41010966897010803,
+            0.4264732599258423,
+            0.49614644050598145
+          ],
+          "headMedianMs": 0.051915994845330715
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 188.172166,
+          "p95Ms": 215.697833,
+          "maxMs": 215.697833,
+          "windows": 4,
+          "maxWindowTokens": 509,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.08529818803071976
+          ],
+          "headMedianMs": 0.16645900905132294
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 186.369958,
+          "p95Ms": 214.564875,
+          "maxMs": 214.564875,
+          "windows": 4,
+          "maxWindowTokens": 509,
+          "local50ms": "fail",
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.9695144891738892
+          ],
+          "headMedianMs": 0.1446670212317258
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 198.839875,
+          "p95Ms": 225.719666,
+          "maxMs": 225.719666,
+          "windows": 4,
+          "maxWindowTokens": 511,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.018044568598270416,
+            0.5487032532691956,
+            0.7279428243637085
+          ],
+          "headMedianMs": 0.1822909980546683
+        },
+        {
+          "arm": "shared",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 206.902583,
+          "p95Ms": 233.101833,
+          "maxMs": 233.101833,
+          "windows": 4,
+          "maxWindowTokens": 495,
+          "local50ms": "fail",
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.019564399495720863,
+            0.8203742504119873,
+            0.7377943396568298
+          ],
+          "headMedianMs": 0.186417018994689
+        }
+      ],
+      "forwardWindowsIncludingFitFeatures": 323,
+      "timedInferenceItems": 40,
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 460.765625,
+        "stopReason": null,
+        "wallMs": 19011.661666998407
+      },
+      "fitLossFirstLast": {
+        "D02": [
+          0.6955406665802002,
+          0.02944815345108509
+        ],
+        "D03": [
+          0.9382476210594177,
+          0.04415261745452881
+        ]
+      }
+    }
+  ],
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-shared-dev42-20261102-r2.record.json.gz",
+      "gzipSha256": "44a46c0f46fa14e9a2e5a75cc7c08e6b984ac7e82b0e181cba7ca955c0c14983",
+      "rawSha256": "82a17f360aaf45cf0cc0ff7c3a8a273b00ae7d81c13102bb53a8743c9522947f",
+      "rawBytes": 2736400
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-shared-dev42-20261102-r2.record.windows.jsonl.gz",
+      "gzipSha256": "353a17b60048e16b220f3ebf36cd9b8bcc87f15586c88b59d0f5d2a91ff6504a",
+      "rawSha256": "0a034efd7824375569c158d1bbed8266916de0d9eb602845782896098780fddb",
+      "rawBytes": 2393923
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-shared-dev42-20261102-r3.record.json.gz",
+      "gzipSha256": "6658a252beb8d2d7908f8efdfeb803108d92bcbc1b457ce99ee5f12497ad9e41",
+      "rawSha256": "04512f3a376a4982dd8287a2f3512e79e6ac0f2f13c928ba3b9d1ef712aa3277",
+      "rawBytes": 2737729
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-shared-dev42-20261102-r3.record.windows.jsonl.gz",
+      "gzipSha256": "39102a6932ee0b333dd4ca9aa7248149f642ddaef0118caa05e3d9a1321e3418",
+      "rawSha256": "1989c369207454ff2abffbc6fcc9747d72f2042edb1ee874730928d5b433ce41",
+      "rawBytes": 2393944
+    }
+  ],
+  "firstStartFailure": {
+    "runId": "m01-shared-dev42-20261102-r1",
+    "reason": "[Errno 1] Operation not permitted: 'ps'",
+    "businessCalls": 0,
+    "plannedUnstartedItems": 40,
+    "historicalSupervisorOmittedSlots": true
+  }
+}

@@ -76,8 +76,10 @@ def reconcile_claims(claims, packet):
                           ("reviewDraftFileSha256", packet["reviewDraftSha256"])):
         if claims.get(key) != expected:
             raise ValueError(f"批次不匹配：{key}")
-    if "provenanceFileSha256" in claims and claims["provenanceFileSha256"] != packet["provenanceSha256"]:
-        raise ValueError("来源登记版本不匹配")
+    # All three files define this review batch. A missing provenance binding
+    # cannot be treated as an identity match, including in older exports.
+    if claims.get("provenanceFileSha256") != packet["provenanceSha256"]:
+        raise ValueError("来源登记版本缺失或不匹配")
     cases = {c["caseId"]: c for c in packet["cases"]}
     decisions = claims.get("decisions")
     if not isinstance(decisions, list) or not 1 <= len(decisions) <= len(cases):
@@ -192,6 +194,8 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     reconciliation = commands.add_parser("reconcile", help="核对导出声明，不改标签、不审批")
     reconciliation.add_argument("file", type=Path)
+    reconciliation.add_argument("--batch", choices=("dev42", "round1-source-cards", "round1-inputs"),
+                                default="dev42", help="显式选择批次，不能把旧42题意见套用到新卡")
     audit = commands.add_parser("audit-sources", help="只核对 D 身份与 B/C Git 元数据")
     for command in (reconciliation, audit):
         command.add_argument("--out", type=Path, help="独占新建结果文件；拒绝覆盖既有记录")
@@ -201,7 +205,15 @@ def main():
             raw = args.file.read_bytes()
             if len(raw) > 2_000_000:
                 raise ValueError("审阅导出文件过大")
-            result = reconcile_claims(_parse_json(raw.decode("utf-8")), build_packet())
+            if args.batch == "round1-source-cards":
+                from prepare_round1 import build_packet as build_source_packet
+                packet = build_source_packet()
+            elif args.batch == "round1-inputs":
+                from prepare_input_review import build_packet as build_input_packet
+                packet = build_input_packet()
+            else:
+                packet = build_packet()
+            result = reconcile_claims(_parse_json(raw.decode("utf-8")), packet)
             result["exportFileSha256"] = hashlib.sha256(raw).hexdigest()
         else:
             result = audit_sources()

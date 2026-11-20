@@ -1,0 +1,189 @@
+{
+  "schema": "jity-d-realizer-assistant-label-audit-v1",
+  "date": "2026-11-04",
+  "batchId": "d-realizer-new12-r2",
+  "stage": "L3-16 twelve candidate labels audited by assistant; one source context repaired",
+  "reviewKind": "assistant_precheck_not_human_label_approval",
+  "auditAuthor": "assistant",
+  "auditSpecificationSha256": "a5cbc9b92dfe065ace3e6b240381e60b039a3e95de49c2a3b398da99706f0e59",
+  "checkedAnnotations": 12,
+  "originalWithoutBlockingFinding": 11,
+  "correctedSourceInputs": 1,
+  "changedExpressionTargets": 0,
+  "changedRealizerInputs": 0,
+  "originalDataSha256": "b2a20f6ff5abfeba75632e2ba45ef7a17abf714247ef006c0622f3c9bb250678",
+  "originalPacketSha256": "42e1a4114ed097c3d9e84d8f83a64cfb9ee72266cb203f1aac4f50b20e8cf908",
+  "packetSha256": "ef7f597f6e19152a7b5eea04c6d1c5f3d33f28b617932d5dee19075d440ae1fb",
+  "draftSourceGroups": 12,
+  "trainCandidateGroups": 6,
+  "developmentCandidateGroups": 6,
+  "review": {
+    "reviewedGroups": 0,
+    "missingReviews": 12,
+    "trainingDataReady": false,
+    "formalEvaluationAllowed": false
+  },
+  "entries": [
+    {
+      "annotationId": "realizer-new-01",
+      "sourceGroup": "d-realizer-new-source-01",
+      "role": "train_candidate",
+      "coverage": "object",
+      "originalAnnotationSha256": "e444cbebd7b1ff6d227b81eb2421294f41ca99666aa1c9434dfb1a4343063fc2",
+      "revisedAnnotationSha256": "e444cbebd7b1ff6d227b81eb2421294f41ca99666aa1c9434dfb1a4343063fc2",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "主角pending输入与当前任务均要求合上铜印匣；计划引用已有item_1，表达只说尝试，没有宣布匣子已合好。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-02",
+      "sourceGroup": "d-realizer-new-source-02",
+      "role": "development_candidate",
+      "coverage": "object",
+      "originalAnnotationSha256": "7aeb1b8df93a665cf9a3b6db7b9042dd275e84841cb6aad975b5c3554f964add",
+      "revisedAnnotationSha256": "7aeb1b8df93a665cf9a3b6db7b9042dd275e84841cb6aad975b5c3554f964add",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "主角pending输入要求打开木笛盒；计划只先尝试打开，没有擅自写成已经查看完收纳情况。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-03",
+      "sourceGroup": "d-realizer-new-source-03",
+      "role": "train_candidate",
+      "coverage": "tool",
+      "originalAnnotationSha256": "0c5c267452346ca454b2c91b9b5ca0b1784ba0a402db8d759f1d12913b4b41e2",
+      "revisedAnnotationSha256": "0c5c267452346ca454b2c91b9b5ca0b1784ba0a402db8d759f1d12913b4b41e2",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "当前NPC是林芩p2，软毛刷在p2身上，托盘在同一位置；清扫依据自己的待办任务，未重做consumed登记请求。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-04",
+      "sourceGroup": "d-realizer-new-source-04",
+      "role": "development_candidate",
+      "coverage": "tool",
+      "originalAnnotationSha256": "cc13d5e8b6571d391451352218131f823b340dd54a69d925189b78780889aa68",
+      "revisedAnnotationSha256": "cc13d5e8b6571d391451352218131f823b340dd54a69d925189b78780889aa68",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "当前NPC沈墨p2使用自己持有的竹夹夹试茶片，表达保留工具/对象；expired计时询问没有被重新执行。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-05",
+      "sourceGroup": "d-realizer-new-source-05",
+      "role": "train_candidate",
+      "coverage": "destination",
+      "originalAnnotationSha256": "42133c5dbfd09d55dd43d1905cf4c1dec8b03678adfcfbed4e0a903f5c055118",
+      "revisedAnnotationSha256": "42133c5dbfd09d55dd43d1905cf4c1dec8b03678adfcfbed4e0a903f5c055118",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "渠澈p1从封蜡台走向已登记的验章桌，只表达移动尝试，没有提前完成当班事务。与06为相近移动题型，独立性待核。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-06",
+      "sourceGroup": "d-realizer-new-source-06",
+      "role": "development_candidate",
+      "coverage": "destination",
+      "originalAnnotationSha256": "e3253a26328e7affe6cec663e1371d9281dfa84cdd816db31239f1443644f338",
+      "revisedAnnotationSha256": "e3253a26328e7affe6cec663e1371d9281dfa84cdd816db31239f1443644f338",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "覃漪p1的pending输入和任务均支持走向资料柜；未宣告已完成星表整理。与05为相近移动题型，独立性待核。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-07",
+      "sourceGroup": "d-realizer-new-source-07",
+      "role": "train_candidate",
+      "coverage": "recipient_utterance",
+      "originalAnnotationSha256": "a3ffff6c763deb385817ae9e97b5fd31f36a65fae25c418cdce5e48f204ad90e",
+      "revisedAnnotationSha256": "a3ffff6c763deb385817ae9e97b5fd31f36a65fae25c418cdce5e48f204ad90e",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "季玄p1向另一人物闻简p2提出停机请求；压版机已登记，原话保留，没有写成闻简已服从或机器已停止。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-08",
+      "sourceGroup": "d-realizer-new-source-08",
+      "role": "development_candidate",
+      "coverage": "recipient_utterance",
+      "originalAnnotationSha256": "4fc505d94157f0015989729861f1d61970c56205fe655d02b244e0ce7755a6b8",
+      "revisedAnnotationSha256": "4fc505d94157f0015989729861f1d61970c56205fe655d02b244e0ce7755a6b8",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "安砚p2基于自身任务向闻简p1请求样签，人物方向正确；consumed釉温请求未重做，也未把样签转移写成既成事实。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-09",
+      "sourceGroup": "d-realizer-new-source-09",
+      "role": "train_candidate",
+      "coverage": "ordered_steps",
+      "originalAnnotationSha256": "22d9ec647a686bcad547e18fecae912532e3a2d17b36ff92dd6a094ce8394e26",
+      "revisedAnnotationSha256": "22d9ec647a686bcad547e18fecae912532e3a2d17b36ff92dd6a094ce8394e26",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "先尝试把折尺放进量尺袋，再尝试把袋子放到标定台；对象/容器/地点及顺序保留，没有新增人物或物品。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-10",
+      "sourceGroup": "d-realizer-new-source-10",
+      "role": "development_candidate",
+      "coverage": "ordered_steps",
+      "originalAnnotationSha256": "a87106c1870facff5c27e9ff8be3a0a71ac76bcb3baaa5bc79108fbc59a8c3af",
+      "revisedAnnotationSha256": "45b1041cc207f3dd0c9b130b2901e22ab1f5f94f3a030f7b4dd4677362ccb674",
+      "verdict": "context_gap_corrected",
+      "assistantReason": "原任务涉及从已熄灭灯具抽出旧灯芯，但灯具未登记，灯芯却直接在桌面。r2补item_3灯具及灯芯嵌套位置和可抽出条件；计划/表达的动作及次序不改。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-11",
+      "sourceGroup": "d-realizer-new-source-11",
+      "role": "train_candidate",
+      "coverage": "open_verb_no_entity",
+      "originalAnnotationSha256": "009265c83f345dac5fb7545215ececb0766d1cc6e4b211576299808e561efbd1",
+      "revisedAnnotationSha256": "009265c83f345dac5fb7545215ececb0766d1cc6e4b211576299808e561efbd1",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "楚澜p2按自己的待办任务尝试回想字音；开放动词无需伪造物品ID，未重做consumed编号请求，未宣告已经想起。",
+      "humanReviewPerformed": false
+    },
+    {
+      "annotationId": "realizer-new-12",
+      "sourceGroup": "d-realizer-new-source-12",
+      "role": "development_candidate",
+      "coverage": "open_verb_no_entity",
+      "originalAnnotationSha256": "0169ba1198227419346b07fccb7d6335d1a864e6ce7f482d55eb7beca4557f50",
+      "revisedAnnotationSha256": "0169ba1198227419346b07fccb7d6335d1a864e6ce7f482d55eb7beca4557f50",
+      "verdict": "no_blocking_contradiction_found",
+      "assistantReason": "谷雨p2按待办任务尝试辨听滴水间隔；expired报时询问不作为新命令，未新增数值答案或宣告辨听成功。",
+      "humanReviewPerformed": false
+    }
+  ],
+  "sourceRisks": [
+    {
+      "caseIds": [
+        "realizer-new-05",
+        "realizer-new-06"
+      ],
+      "risk": "similar_movement_to_workstation_family_cross_split",
+      "note": "两题均从工作台走向另一工作点，不能只用换名/哈希不同证明独立；保留原角色，不签独立泛化，正式比较前需同源复核。"
+    }
+  ],
+  "coverageLimits": [
+    "all_12_are_act_expression_examples_not_act_skip_training",
+    "no_wrong_plan_negatives",
+    "no_open_planner_reaction_or_joint_outcome_validation",
+    "only_one_candidate_per_split_per_coverage"
+  ],
+  "namePolicy": "甲/乙为schema helper附加的显示后缀；参考句省略后缀，各场景基础姓名唯一，无人物方向混淆；不要求参考句逐字唯一。",
+  "realizerTrainerImplemented": true,
+  "plannerModelImplemented": false,
+  "realizerTrained": false,
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "businessTrainingSteps": 0,
+  "businessInferenceCalls": 0,
+  "lastModelRun": "action-focus-dev42-20261104-r2",
+  "trainingPacketSupersedes": "d-realizer-new12-r1",
+  "sourceIndependence": "unverified",
+  "newIndependentTrainingGroups": 0
+}

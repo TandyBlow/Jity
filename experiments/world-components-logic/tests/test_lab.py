@@ -650,10 +650,13 @@ class RuntimeSmokeTests(unittest.TestCase):
                 smoke.resolve_run_paths(bad)
 
     def test_prepare_only_freezes_the_plan_without_loading_any_model(self):
+        from unittest import mock
         with tempfile.TemporaryDirectory() as directory:
             local, registry_path = _stub_payload_environment(directory)
             with _stub_smoke(local=local, registry_path=registry_path,
-                             argv=["runtime_smoke.py", "--prepare-only"]):
+                             dependency_versions=lambda: {"fixture": "no dependency import"},
+                             argv=["runtime_smoke.py", "--prepare-only"]), mock.patch.object(
+                                 smoke, "resolve_run_paths", return_value=(local / "runtime-smoke-plan.json", local / "prepare-only-record.json")):
                 output = io.StringIO()
                 with contextlib.redirect_stdout(output):
                     smoke.main()
@@ -664,6 +667,8 @@ class RuntimeSmokeTests(unittest.TestCase):
                 plan = json.loads(plan_path.read_text(encoding="utf-8"))
                 self.assertEqual(plan["formalVerdict"], "not_evaluated")
                 self.assertEqual(plan["model"]["revision"], "r1")
+                self.assertEqual(plan["dependencies"], {"fixture": "no dependency import"})
+                self.assertFalse((local / "prepare-only-record.json").exists())
                 plan_bytes_after_first = plan_path.read_bytes()
                 output = io.StringIO()
                 with contextlib.redirect_stdout(output):
