@@ -759,9 +759,19 @@ function handleCancel(record: PersistedRecord, request: RequestMap['round_conclu
   checkExpected(record, request);
   checkChain(record, request.advanceId, request.roundId);
   // A failed narration is terminal: the round can be closed, and a later
-  // regenerate retries the text. A pending/missing head still blocks cancel.
+  // regenerate retries the text. A pending/missing head still blocks cancel,
+  // except at the hard turn deadline: 300 s wins over an unfinished line, the
+  // claim is abandoned and the player can regenerate the text.
   const headStatus = headEntry(record).status;
-  if (headStatus !== 'ready' && headStatus !== 'failed') refuse('narration_blocked', 'the head narration is not ready');
+  if (headStatus !== 'ready' && headStatus !== 'failed') {
+    const deadline = request.cancelReason === 'turn_deadline' && headStatus === 'pending';
+    if (!deadline) refuse('narration_blocked', 'the head narration is not ready');
+    const entry = headEntry(record);
+    entry.claim = null;
+    entry.status = 'failed';
+    entry.text = null;
+    entry.generation += 1;
+  }
   const abandoned: Id[] = [];
   if (record.work?.pendingGroup) abandoned.push(record.work.pendingGroup.groupId);
   record.work = null;
