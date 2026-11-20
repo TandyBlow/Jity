@@ -76,7 +76,7 @@
 - **G4**：完成（有缺口）。隔离、pause/resume、历史只读、叙事删除/重生、NarrationView/ProgressStatus、空占位清理；构建、1257 passed、e2e（含重生）与 `--block-api` 通过。缺口：WorldStatusPanel 未接；`position_invalid`（t4 `lu receives conflicting positions`）与自动轮重复转 G5；尚无 10 轮无停止的整轮运行；自动链（4 点含两个 automatic）在刷新时被 invariants 拒绝，恢复失败转 G4/G5。
 - **G5**：进行中。`turns-semantics-16` + 分类器；证据 `artifacts/goal/semantics/`（run1–run15；run16 全量在跑）；已修：任务 characterId/basis、行对象修复、fact id 归属、上下文 11,900、295 s 引擎中止、`turn_deadline` 放弃 pending 叙事、KernelViolation 响应详情、个性-理智配对、自动轮 order 外目标、恢复时间比较、多成员 results 末次改归。run11 201 s、run13 268.6 s 交还并有 automatic 点；run14 恢复通过；run15 前三例语义违规 0，s01 297 s 首段超 60、s03 330 s 超 300。计时主因：每组合都跑六阶段 updates（任务阶段扫全名册），每点 3–5 组串行。
 - **G6**：进行中。原样输出路径保持；12 个 G3 样本技术读评：7 个硬事实/视角错误、4 个事实清单复述、1 个干净（`artifacts/goal/narration/read-technical-20261120.json`）；样本与投影提示已收（`samples.json`）；待 20+ 点与用户读评，G6 后按实测决定事实门。
-- **G7**：进行中（小步）。`progress-sync` 客户端/适配器、离线队列、CAS/父链已有单元测试；`status().localRevision` 已修（从 store 元数据读取）。剩余：页面启动 `sync.restore()`（本地优先、否则远端头）、冲突分叉展示与 `sync.choose`、重连 flush 的页面状态、两设备分叉证据（`artifacts/goal/sync/`）；单用户 Bearer + 本地/内网服务（D-013）。
+- **G7**：进行中（小步）。`progress-sync` 客户端/适配器、离线队列、CAS/父链已有单元测试；`status().localRevision` 已修；页面启动已接「本地优先、无本地时拉远端头并落盘」。剩余：冲突分叉展示与 `sync.choose`、重连 flush 的页面状态、两设备分叉证据（`artifacts/goal/sync/`）；单用户 Bearer + 本地/内网服务（D-013）。
 - **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
 
 ## 6. 证据索引
