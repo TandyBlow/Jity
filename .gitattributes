@@ -23,3 +23,8 @@ nul -text
 # the review packet; checkout and commit must not rewrite line endings.
 experiments/world-components-logic/** text eol=lf
 artifacts/world-components-logic/** text eol=lf
+
+# c2 attention-selection v2: freeze input/evidence bytes (hash checks)
+artifacts/world-components/parallel/fact-selection-v2/** -text
+experiments/world-components/parallel/fact_selection/** -text
+design/world-engine-reports/components/attention-selection-v2.md -text
