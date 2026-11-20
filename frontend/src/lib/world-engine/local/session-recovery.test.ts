@@ -382,15 +382,34 @@ describe('LocalGameSession durability', () => {
     expect(record.narrations[record.headPointId].status).toBe('ready');
   });
 
-  it('keeps an admitted out-of-order target out of an automatic round acted set', async () => {
+  it('restores an automatic round whose reaction admitted an out-of-order target', async () => {
     const log: string[] = [];
     const model = scriptedModel(log, {
-      // In the automatic round only person_c is scheduled; its reaction admits
-      // the protagonist, who has no slot in that round's frozen order.
-      action: (key) => key === 'person_c' ? { kind: 'act', text: '周宁掀开盒盖。' } : undefined,
-      targets: (key) => key === 'person_c' ? { targets: [{ targetId: 'person_a' }] } : { targets: [] },
+      // The product plan: the player alone in the first point, the rest in an
+      // instant point, then a normal point for the automatic round. The instant
+      // point leaves instantOrdinal=1 and the next elapsed advance resets it.
+      plan: (input) => {
+        const round = (input as { round?: { roundId?: string; order?: string[] } }).round;
+        const order = round?.order ?? [];
+        const first = { pointId: `point_${round?.roundId ?? 'round'}_1`, kind: 'normal' as const,
+          timeAdvance: { boundary: 'elapsed' as const, duration: { amount: 1, unit: 'minute' as const } } };
+        // The automatic round's order has one candidate: one normal point. The
+        // player round (full roster) splits into the player's point and an
+        // instant point, as the product plan does.
+        if (order.length <= 1) return [{ ...first, actorIds: order }];
+        const rest = order.filter((id) => id !== 'person_c');
+        return [
+          { ...first, actorIds: ['person_c'] },
+          ...(rest.length ? [{ pointId: `point_${round?.roundId ?? 'round'}_2`, kind: 'instant' as const,
+            timeAdvance: { boundary: 'instant' as const, duration: { amount: 0, unit: 'second' as const } }, actorIds: rest }] : []),
+        ];
+      },
+      // In the automatic round only person_a is scheduled; its reaction admits
+      // the protagonist person_c, who has no slot in that round's frozen order.
+      action: (key) => key === 'person_a' ? { kind: 'act', text: '林川掀开盒盖。' } : undefined,
+      targets: (key) => key === 'person_a' ? { targets: [{ targetId: 'person_c' }] } : { targets: [] },
       continuations: [
-        { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_c'], nextRoundId: 'round_auto_test' },
+        { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_a'], nextRoundId: 'round_auto_test' },
         { kind: 'handback', closedBy: 'model', cancelReason: null },
       ],
     });
@@ -400,9 +419,9 @@ describe('LocalGameSession durability', () => {
     expect(status.kind).not.toBe('error');
     const record = session.snapshot.transport;
     expect(record.round?.trigger).toBe('automatic');
-    expect(record.round?.order).toEqual(['person_c']);
-    expect(record.round?.actedIds).toEqual(['person_c']);
-    expect(record.round?.visitedIds).toEqual(['person_c']);
+    expect(record.round?.order).toEqual(['person_a']);
+    expect(record.round?.actedIds).toEqual(['person_a']);
+    expect(record.round?.visitedIds).toEqual(['person_a']);
     // The record the page saves must pass the same invariants restore runs.
     await expect(LocalGameSession.restore(session.snapshot, scriptedModel([]), { leaseHeartbeat: false })).resolves.toBeTruthy();
   });
