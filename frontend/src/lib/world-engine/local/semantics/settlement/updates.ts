@@ -353,7 +353,7 @@ export class UpdatesRunner {
     };
     if (stage) {
       const outcome = await this.runStage(stage, ctx);
-      const changes = this.guardStage(stage, ctx.state, outcome);
+      const changes = this.guardStage(stage, ctx.state, outcome, splitPersonalityOwners);
       if (outcome.error) {
         // A failed stage cannot be replaced by an empty delta: that would
         // commit a partial six-stage point and hide the model error.
@@ -402,7 +402,7 @@ export class UpdatesRunner {
         personalityOwners: mergedPersonalityOwners,
       };
       const outcome = await this.runStage(currentStage, stageCtx);
-      const changes = this.guardStage(currentStage, view, outcome);
+      const changes = this.guardStage(currentStage, view, outcome, mergedPersonalityOwners);
       outcomes.push(outcome);
       calls.push({ stage: currentStage, changes: changes as UpdatesCall['changes'] });
       try {
@@ -467,13 +467,15 @@ export class UpdatesRunner {
     return stageSanity(ctx);
   }
 
-  private guardStage(stage: SettlementStage, state: WorldState, outcome: StageOutcome): Record<Id, Partial<EntityDelta>> {
+  private guardStage(stage: SettlementStage, state: WorldState, outcome: StageOutcome, personalityOwners: ReadonlySet<Id> = new Set()): Record<Id, Partial<EntityDelta>> {
     if (!Object.keys(outcome.changes).length) return {};
     try {
       projectStage(state, stage, outcome.changes);
       // A model may echo the current position/sanity. Those deltas are not
       // progress; leaving them in makes the continuation policy believe a
-      // repeated unchanged group moved the world.
+      // repeated unchanged group moved the world. An unchanged sanity still
+      // has to stay when the same batch changed that character's personality:
+      // the kernel requires the pair, and dropping it refuses the whole group.
       const dropped: Id[] = [];
       const cleaned: Record<Id, Partial<EntityDelta>> = {};
       for (const [entityId, delta] of Object.entries(outcome.changes)) {
@@ -481,7 +483,8 @@ export class UpdatesRunner {
           dropped.push(entityId);
           continue;
         }
-        if (stage === 'sanity' && delta.sanitySet != null && state.characters[entityId]?.sanity === delta.sanitySet) {
+        if (stage === 'sanity' && delta.sanitySet != null && state.characters[entityId]?.sanity === delta.sanitySet
+          && !personalityOwners.has(entityId)) {
           dropped.push(entityId);
           continue;
         }

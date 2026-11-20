@@ -1124,6 +1124,25 @@ describe('six-stage updates', () => {
     for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`id=${id}`);
   });
 
+  it('keeps an unchanged sanity when the same batch changed that personality', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ unchanged: ['b'], achieved: [{ characterId: 'a', achieved: ['a1'] }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [
+        { entityId: 'a', op: 'add', recordIds: [], text: '更愿意相信同伴' },
+      ] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 60 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine }).updates('g1', updatesInput());
+    expect(outcome.value).not.toBeNull();
+    const calls = outcome.value as UpdatesCall[];
+    // 60 is a's current sanity; the pair rule still needs the value present.
+    expect(calls[5].changes.a?.sanitySet).toBe(60);
+    expect(Object.keys(calls[4].changes)).toEqual(['a']);
+  });
+
   it('accepts a changes-only personality answer and keeps everyone else', async () => {
     // Same defect class as the tasks roster: the prompt printed
     // {"scanned":[...],"changes":[]}, the 0.6B copied it, and no personality
