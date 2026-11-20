@@ -1,0 +1,223 @@
+{
+ "protocol": "c3-checkpoint-forensics-a1",
+ "created": "2026-11-08T07:04:48.133478+00:00",
+ "route": "A (recover the old trained weights); B and C are explicitly out of scope",
+ "claimsInRecords": {
+  "controllabilityReport": {
+   "file": "artifacts\\world-components\\organize-wording\\controllability-report-v1.md",
+   "linesMentioningWeights": [],
+   "linesMentioningSavedOrCommitted": [],
+   "mentionsWeightsAtAll": false
+  },
+  "otherRunStatement": {
+   "file": "design\\world-engine-reports\\components\\README.md",
+   "lines": [
+    "> **A/B_h 首轮训练结果（2026-11-06，120 次更新）：** 两臂各跑满 120 次更新；按 dev 事实 S 率选点，A 选中 epoch 3（18 次更新），B_h epoch 15（90 次更新），**选中曝光不同**。固定留出 12 源人工事实通过 A 2/12、B_h 6/12；B_h 计划"
+   ],
+   "appliesTo": "A/B_h sentence arm (120-update A/B_h run), NOT the controllability run"
+  },
+  "planDocMentionsCheckpoint": []
+ },
+ "freezeRecord": {
+  "file": "artifacts\\world-components\\organize-wording\\controllability-freeze-v1.json",
+  "keys": [
+   "acceptance",
+   "base",
+   "base_hashes",
+   "counts",
+   "created",
+   "material",
+   "material_sha256",
+   "no",
+   "selection",
+   "source_split",
+   "training"
+  ],
+  "baseHashes": {
+   "config.json": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+   "model.safetensors": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+   "special_tokens_map.json": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "tokenizer_config.json": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880"
+  },
+  "trainedCheckpointPins": [],
+  "note": "baseHashes describe the base model; they do not identify a trained run"
+ },
+ "runDirectory": {
+  "path": "artifacts\\world-components\\organize-wording\\controllability-run-v1",
+  "files": [
+   {
+    "name": "results.json",
+    "sizeBytes": 40003,
+    "sha256": "3c2633d3b1d295e255ef4f28b8e0cc1f42241a5613f46eb6b97c58eab953e951"
+   },
+   {
+    "name": "run.log",
+    "sizeBytes": 5016,
+    "sha256": "79bdad49c6e6e331336374108e86a4431944948a19857a2bd2bba49094b9bcd4"
+   }
+  ],
+  "weightFiles": []
+ },
+ "resultsRecord": {
+  "keys": [
+   "config",
+   "counts",
+   "freeze",
+   "freeze_sha256",
+   "history",
+   "holdout",
+   "holdout_success",
+   "material",
+   "material_sha256",
+   "selected"
+  ],
+  "hashLikeFields": [
+   "freeze_sha256",
+   "material_sha256"
+  ],
+  "selected": {
+   "epoch": 9,
+   "updates": 90,
+   "dev_success": 0,
+   "dev_loss": 0.1673
+  }
+ },
+ "trainingScript": {
+  "path": "experiments/world-components/organize_wording/train_controllability.py",
+  "versions": [
+   {
+    "commit": "80ed473a6324ff8d5fc54a90ec2133611b4c84a2",
+    "commitShort": "80ed473a",
+    "meta": "2026-11-06 run(components): one plan-controllability training, negative on both-plan control",
+    "bytes": 9578,
+    "sha256": "f47efc904c0dc867ec1ef122a5f856556788eaf64a8118468d1a34e9f4a2388a",
+    "saveCalls": [],
+    "inMemoryStateLines": [
+     "\"state\": {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}}"
+    ]
+   }
+  ],
+  "versionsWithSaveCall": []
+ },
+ "filesystemSearch": {
+  "roots": [
+   "D:\\others\\Jity\\.local",
+   "C:\\Users\\26494",
+   "D:\\others\\Jity\\artifacts"
+  ],
+  "nameHints": [
+   "ckpt-group",
+   "controllab",
+   "n4group"
+  ],
+  "maxDepth": 8,
+  "searchSeconds": 88.1,
+  "dirsWithWeights": [],
+  "matchingRunRecordDirs": [
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-browser-t5\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-fact-selection\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-fact-wording\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-fresh-eval\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-group-wording\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-organize-plan\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-round-composition\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\parallel\\c-scene-expression\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   },
+   {
+    "dir": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\controllability-run-v1",
+    "files": [
+     "results.json",
+     "run.log"
+    ],
+    "weightFiles": []
+   }
+  ]
+ },
+ "remainingChannels": [
+  {
+   "channel": "HPC ~/n4group_run/ckpt-group (historical record name)",
+   "checked": false,
+   "why": "no SSH credentials in this environment; and the record carries no file hash, so even a recovered file could not be tied to this run"
+  },
+  {
+   "channel": "archived tarball / offline backup",
+   "checked": false,
+   "why": "no such archive exists under the searched roots; a copy supplied later must carry a hash that matches some record, otherwise it stays unattributable"
+  }
+ ],
+ "existingInventory": {
+  "count": 30,
+  "withHash": 29,
+  "mentionedInRecords": 1,
+  "planTrained": 0,
+  "why": "no record ties any of these weight hashes to training that consumed a plan block; the controllability run reported that its checkpoint was not saved, and the frozen protocol only pins the base weight hash"
+ },
+ "verdict": {
+  "found": false,
+  "verdict": "not-found-locally",
+  "scope": "the committed training script has no checkpoint-writing call, and no attributable weight file exists in the searched local roots; this does NOT prove no copy ever existed elsewhere",
+  "reason": [
+   "no committed version of the training script contains save_pretrained/torch.save; it keeps the best state in memory only and reloads it with load_state_dict, so running that script cannot produce a weight file (scope: this committed script, not every possible run)",
+   "the frozen record pins only base model hashes; there is no trained-checkpoint field",
+   "the controllability report never mentions weights at all, so it neither claims nor denies saving them; the script's missing save call is the decisive evidence",
+   "9 name-matching directories exist, but every one of them is a run record (results.json/run.log); none contains model.safetensors, pytorch_model.bin, model.bin",
+   "the only pinned weight is the base model 5cdc5721…, which is present locally and unchanged"
+  ]
+ }
+}

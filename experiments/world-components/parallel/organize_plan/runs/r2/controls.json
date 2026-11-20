@@ -1,0 +1,328 @@
+{
+ "rows": [
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r1",
+   "family": "edge",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r2",
+   "family": "edge",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r3",
+   "family": "edge",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r4",
+   "family": "edge",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "fixture-r5",
+   "family": "edge",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r2",
+   "family": "grouping",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r3",
+   "family": "grouping",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r4",
+   "family": "grouping",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "strategy": "split-all",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "strategy": "merge-all-adjacent",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "strategy": "merge-first-pair",
+   "planLegal": true,
+   "matchesP1": true,
+   "matchesP2": false,
+   "paired": false
+  },
+  {
+   "sourceId": "train-r5",
+   "family": "grouping",
+   "strategy": "merge-last-pair",
+   "planLegal": true,
+   "matchesP1": false,
+   "matchesP2": true,
+   "paired": false
+  }
+ ]
+}

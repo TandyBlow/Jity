@@ -1,0 +1,24 @@
+{
+ "created": "2026-11-08T06:01:06.840061+00:00",
+ "runtimeHead": "1664997a79b22456a6ad6ff65f4fd68aa6841b1b",
+ "runtimeBranch": "exp/c-organize-plan",
+ "runtimeStatus": "M experiments/world-components/parallel/organize_plan/README.md\n M experiments/world-components/parallel/organize_plan/run_experiment.py\n M experiments/world-components/parallel/organize_plan/runs/r1/input-hashes.json\n?? TASK.md",
+ "python": "3.12.3",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "code": {
+  "plan_contract.py": "2788e95559cdfa128afe67dfccb38251e71c1a8ff22e4bf43f2a1680b2360c46",
+  "build_freeze.py": "a0f7eb4d8f30b27e570c0d8759eb46284e503c82d4ff73da7f5616a174160620",
+  "reference_compose.py": "9bd893bd727a2d97ef9c46ba661b1ffb38b5503bbf4ca26652961207135bef09",
+  "text_conformance.py": "d28abeccc5736b116f97b7698a040df3feeecaf5c3ef8043d71a9cc528d1dca7",
+  "render_input.py": "143548e16df10c644d9e7638e6bb7d0ec74efd1579278330e225d67132363c05",
+  "run_experiment.py": "2a20e6ea6cbb70083272a40da46cb7bf9d02afab097eeed9ed1e45f01b8dfe8b",
+  "model_smoke.py": "de6769d40bbedc374162c81fe5272c4da16c65eb6eaf4e02176a51f073b48e80"
+ },
+ "freeze": {
+  "sources.json": "e1c58c2c67a2228d0729f9e155a5210f69615de449e801f44e028da1c99423dd",
+  "plans-v1.jsonl": "2d0876d174709ceda35de8cd074bba17f9010c3341bd30facf513a9501f023d7",
+  "negative-cases.json": "da8d754b2eb88e52cff048bda993764befbc6b712a0df63580d1e82570575702",
+  "contexts.json": "def4fe6789320734dfaa839acbdbb105477c3e7c78a635b418cb67c9d80431fd",
+  "source-hashes.json": "d96abcd3d7394732eb6eda754884b6ff4eb95824da51dfff2b517d532c75dd3b"
+ }
+}
