@@ -1,0 +1,18 @@
+[
+  { "id": "s01-act-move", "purpose": "act/移动 + 目标识别", "input": "我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。" },
+  { "id": "s02-act-observe", "purpose": "act/观察（NPC skip）", "input": "我停在原地，观察器材棚门口进出的人，记下他们身上的识别带颜色。" },
+  { "id": "s03-act-talk", "purpose": "act/对话", "input": "我问器材棚门口的人，今天演习的红蓝两方各在哪些区域活动。" },
+  { "id": "s04-act-wait", "purpose": "act/等待与时间推进", "input": "我在墙边等一会儿，听远处的枪声间隔，估算时间过去了多久。" },
+  { "id": "s05-act-inventory", "purpose": "act/清点物品", "input": "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。" },
+  { "id": "s06-legal-failure", "purpose": "合法失败：未知实体/越界行动", "input": "我把领用台上的红色电台递给阿豹，让他转交给裁判。" },
+  { "id": "s07-partial", "purpose": "部分成功", "input": "我试着把脚边的器材箱推到门口，但箱子很沉，只挪动了一点。" },
+  { "id": "s08-joint-move", "purpose": "共同组：与 NPC 同行", "input": "我跟门口的人说一起走，两人沿器材棚外侧快走到西回廊。" },
+  { "id": "s09-confront", "purpose": "对峙/被迫反应", "input": "我举起手示意不介入，慢慢从对峙的两人中间走过去。" },
+  { "id": "s10-strike", "purpose": "未准入行动：挥拳", "input": "我突然抬手向挡路的人挥拳，想把他逼退。" },
+  { "id": "s11-task-ask", "purpose": "任务达成候选", "input": "我问诺诺现在红蓝局势，以及我两边都不帮算不算违规。" },
+  { "id": "s12-climb", "purpose": "移动/六阶段位置", "input": "我沿钟楼楼梯上到二层平台，蹲在栏杆边观察庭院。" },
+  { "id": "s13-already-acted", "purpose": "已行动不重复", "input": "等这一轮结束后，我再往前走一步，看看刚才同行的人有没有跟上来。" },
+  { "id": "s14-auto-chain", "purpose": "自动链：跑向热点", "input": "我朝钟楼门厅方向跑过去，想赶在下一波枪声前进去。" },
+  { "id": "s15-handback", "purpose": "handback：原地等待", "input": "我站着不动，等这一轮结束，看看还有没有人行动。" },
+  { "id": "s16-time-check", "purpose": "时间推进与状态核对", "input": "我再等一段时间，核对护目镜和识别带，记下演习还剩多久。" }
+]
