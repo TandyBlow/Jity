@@ -1,0 +1,258 @@
+<!doctype html>
+<!-- c9 worker probe.
+     Same 77M T5 as probe.html, but the runtime lives in a DedicatedWorker so
+     the browser can be asked to take the memory back:
+       baseline memory
+       -> spawn worker A, init (stages timed inside the worker), one inference
+       -> memory with A alive and hot
+       -> cancel a generation through a message; both timestamps recorded
+       -> memory, then A.terminate()
+       -> memory at +100ms / +500ms / +2s / +5s after terminate
+       -> spawn worker B, init, run all 7 registered cases
+       -> compare B's ids to A's and to the baked fixture ids, then terminate
+     The point is two numbers: does terminate() return the ~1 GB, and does a
+     rebuilt worker produce identical tokens. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>c9 T5 worker probe</title>
+<style>body{font:13px ui-monospace,monospace;margin:1.2rem}pre{white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="status">loading…</div>
+<div id="mem"></div>
+<pre id="out"></pre>
+<script type="module">
+const status = (t) => { document.getElementById("status").textContent = t; };
+const memEl = document.getElementById("mem");
+const QS = new URLSearchParams(location.search);
+const DEEP_MEM = QS.has("mem");
+const NOREBUILD = QS.has("norebuild");
+const GRAPH_DIR = QS.get("graphs") === "int8" ? "/graphs-int8" : "/graphs";
+const VARIANT = QS.get("graphs") === "int8" ? "int8" : "fp32";
+
+const result = {
+  environment: { userAgent: navigator.userAgent,
+                 crossOriginIsolated: self.crossOriginIsolated,
+                 deepMemory: DEEP_MEM, graphVariant: VARIANT,
+                 hardwareConcurrency: navigator.hardwareConcurrency },
+  memory: { samples: [] },
+  workerA: null, terminate: null, workerB: null,
+  cancel: {}, cases: [],
+};
+
+// A deep sample is slow (~18 s here): measureUserAgentSpecificMemory forces a
+// full GC. The value describes some instant inside that window, so the sample
+// records when it started and ended, and latency claims are bounded by the
+// pair, never by the start stamp alone.
+async function sampleMemory(label) {
+  const s = { label, atMs: +performance.now().toFixed(1) };
+  if (performance.memory) s.jsHeapUsedBytes = performance.memory.usedJSHeapSize;
+  if (DEEP_MEM && typeof performance.measureUserAgentSpecificMemory === "function") {
+    try {
+      const m = await performance.measureUserAgentSpecificMemory();
+      s.isolatedBytes = m.bytes;
+      s.measuredUntilMs = +performance.now().toFixed(1);
+      s.measureDurationMs = +(s.measuredUntilMs - s.atMs).toFixed(1);
+    } catch (e) { s.isolatedError = String(e && e.name || e); }
+  }
+  result.memory.samples.push(s);
+  memEl.textContent = result.memory.samples
+    .map((x) => `${x.label}: heap=${x.jsHeapUsedBytes ?? "?"} iso=${x.isolatedBytes ?? "-"}`)
+    .join(" | ");
+  return s;
+}
+
+let nextId = 1;
+function spawnWorker() {
+  const w = new Worker("/app/t5_worker.mjs", { type: "module" });
+  const pending = new Map();
+  w.onmessage = (ev) => {
+    const m = ev.data;
+    const p = pending.get(m.id);
+    if (p) { pending.delete(m.id); p(m); }
+  };
+  w.onerror = (e) => { console.error("worker error", e.message); };
+  return {
+    worker: w,
+    call(cmd, extra = {}, timeoutMs = 600000) {
+      const id = nextId++;
+      const payload = { id, cmd, ...extra };
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("worker timeout: " + cmd)), timeoutMs);
+        pending.set(id, (m) => { clearTimeout(timer); resolve(m); });
+        w.postMessage(payload);
+      });
+    },
+    send(cmd, extra = {}) { w.postMessage({ id: nextId++, cmd, ...extra }); },
+  };
+}
+
+try {
+  const fixture = await (await fetch("/fixtures/probe_inputs.json")).json();
+  const cases = fixture.cases;
+
+  // tokenizer on the main thread, model in the worker
+  status("tokenizer…");
+  const tokT0 = performance.now();
+  const { createTokenizer } = await import("/app/t5_adapter.mjs");
+  const tokenizer = await createTokenizer({
+    spBundleUrl: "/sp/index.js", modelBytesUrl: "/graphs/spiece.model",
+  });
+  result.tokenizer = { stages: tokenizer.stages,
+                       wallMs: +(performance.now() - tokT0).toFixed(1),
+                       idsMatchBaked: cases.map((c) => {
+                         const ids = tokenizer.encode(c.renderText);
+                         return { name: c.name,
+                                  match: JSON.stringify(ids) === JSON.stringify(c.inputIds) };
+                       }) };
+  result.fixture = { count: cases.length, names: cases.map((c) => c.name) };
+
+  await sampleMemory("baseline");
+
+  // --- worker A: init + one inference ---
+  status("worker A: init…");
+  const a = spawnWorker();
+  const initA = await a.call("init", { graphDir: GRAPH_DIR, variant: VARIANT });
+  if (initA.type !== "stages") {
+    throw new Error("worker init failed: " + JSON.stringify(initA));
+  }
+  result.workerA = { stages: initA.stages, mem: initA.mem };
+  await sampleMemory("after-A-init");
+
+  status("worker A: inference…");
+  const genA = await a.call("generate", { ids: tokenizer.encode(cases[0].renderText) });
+  result.workerA.firstInference = {
+    timings: genA.result.timings, workerWallMs: genA.workerWallMs,
+    ids: genA.result.ids, text: tokenizer.decode(genA.result.ids),
+    status: genA.result.status, finishReason: genA.result.finishReason,
+    mem: genA.mem,
+  };
+  await sampleMemory("after-A-inference");
+
+  // --- cancel through a message ---
+  status("worker A: cancel…");
+  const ctrl = a.call("generate", { ids: tokenizer.encode(cases[3].renderText) });
+  let ackPromise = null;
+  setTimeout(() => {
+    result.cancel.mainIssuedAbortAt = +performance.now().toFixed(1);
+    ackPromise = a.call("cancel", {}, 30000); // resolves when the worker sees it
+  }, 120);
+  let cancelled;
+  try {
+    cancelled = await ctrl;
+  } catch (e) {
+    cancelled = { type: "error", error: { message: String(e) } };
+  }
+  result.cancel.outcome = {
+    type: cancelled.type,
+    completedSteps: cancelled.completedSteps ?? null,
+    cancelReceivedAt: cancelled.detail ? undefined : undefined,
+    stepEndOffsetsMs: cancelled.stepEndOffsetsMs ?? null,
+    mainObservedAt: +performance.now().toFixed(1),
+  };
+  // the worker-side ack tells us when the message was actually received
+  const ack = ackPromise ? await ackPromise : { aborted: false, receivedAt: NaN, stepsBefore: null };
+  result.cancel.ack = { aborted: ack.aborted, receivedAt: +ack.receivedAt.toFixed(1),
+                        stepsBefore: ack.stepsBefore };
+  // The worker's performance.now() has its own time origin, so ack.receivedAt
+  // is NOT comparable to main-thread stamps. Only main-thread deltas are
+  // latencies; the ack time is reported as worker-local context.
+  result.cancel.workerClockNote = "ack.receivedAt and outcome.stepEndOffsetsMs "
+    + "use the worker time origin; they are not comparable to main*At fields";
+  if (result.cancel.mainIssuedAbortAt != null) {
+    result.cancel.issueToThrowMs =
+      +(result.cancel.outcome.mainObservedAt - result.cancel.mainIssuedAbortAt).toFixed(1);
+  }
+  await sampleMemory("after-A-cancel");
+
+  // --- terminate A, watch memory ---
+  status("terminate worker A…");
+  const memBeforeTerminate = (result.memory.samples.at(-1) || {}).isolatedBytes ?? null;
+  const tTerminate = performance.now();
+  a.worker.terminate(); // returns immediately; reclamation is asynchronous
+  const terminateWallClockMs = Date.now();
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const afterTerminate = [];
+  // first sample starts as soon as terminate() returns; its own runtime is the
+  // only resolution this API offers, so it is recorded instead of assumed
+  for (const delay of [0, 800, 5000]) {
+    if (delay) await wait(delay);
+    const start = performance.now();
+    const s = await sampleMemory(`terminated+${Math.round(start - tTerminate)}ms-start`);
+    afterTerminate.push({ startedAtMs: s.atMs, endedAtMs: s.measuredUntilMs ?? null,
+                          measureDurationMs: s.measureDurationMs ?? null,
+                          isolatedBytes: s.isolatedBytes ?? null,
+                          jsHeapUsedBytes: s.jsHeapUsedBytes ?? null });
+  }
+  const last = afterTerminate.at(-1);
+  result.terminate = {
+    terminatedAtMs: +tTerminate.toFixed(1),
+    terminateWallClockMs,
+    memBeforeTerminate,
+    samples: afterTerminate,
+    firstSample: afterTerminate[0] ? {
+      startOffsetMs: +(afterTerminate[0].startedAtMs - tTerminate).toFixed(1),
+      endOffsetMs: afterTerminate[0].endedAtMs != null
+        ? +(afterTerminate[0].endedAtMs - tTerminate).toFixed(1) : null,
+      isolatedBytes: afterTerminate[0].isolatedBytes,
+    } : null,
+    // the honest bound: by the END of the first completed measurement the
+    // value was already X; when inside that window it dropped is unresolved
+    releaseResolvedWithinMs: afterTerminate[0] && afterTerminate[0].endedAtMs != null
+      ? +(afterTerminate[0].endedAtMs - tTerminate).toFixed(1) : null,
+    reclaimedBytes: last?.isolatedBytes != null && memBeforeTerminate != null
+      ? memBeforeTerminate - last.isolatedBytes : null,
+  };
+
+  if (NOREBUILD) {
+    // reclaim-time mode: keep sampling for a while with nothing else running,
+    // so the RSS series reflects the terminate alone. No worker B, so this run
+    // cannot also test rebuild parity.
+    status("no-rebuild: sampling reclaim window…");
+    await new Promise((r) => setTimeout(r, 12000));
+    await sampleMemory("after-terminate-window");
+    result.noRebuild = true;
+  } else {
+  // --- worker B: rebuild, verify the same tokens ---
+  status("worker B: rebuild…");
+  const b = spawnWorker();
+  const initB = await b.call("init", { graphDir: GRAPH_DIR, variant: VARIANT });
+  result.workerB = { stages: initB.stages };
+  const idsA = JSON.stringify(result.workerA.firstInference.ids);
+  for (const c of cases) {
+    status(`worker B case ${c.name}`);
+    const ids = tokenizer.encode(c.renderText);
+    const g = await b.call("generate", { ids });
+    result.cases.push({
+      name: c.name, scope: c.scope,
+      ids: g.result.ids, text: tokenizer.decode(g.result.ids),
+      status: g.result.status, finishReason: g.result.finishReason,
+      idsMatchBakedInput: JSON.stringify(ids) === JSON.stringify(c.inputIds),
+      inputTokens: g.result.inputTokens,
+      timings: g.result.timings,
+      workerWallMs: g.workerWallMs,
+      tokenMatchVsBakedReference: JSON.stringify(g.result.ids) === JSON.stringify(c.referenceIds),
+      sameAsWorkerACase0: c.name === cases[0].name
+        ? JSON.stringify(g.result.ids) === idsA : null,
+    });
+  }
+  await sampleMemory("after-B-cases");
+  b.worker.terminate();
+  await wait(500);
+  await sampleMemory("after-B-terminate");
+  }
+
+  result.ok = true;
+  window.__C9_WORKER_RESULT__ = result;
+  document.getElementById("out").textContent = JSON.stringify(result, null, 1);
+  status("done");
+} catch (e) {
+  result.ok = false;
+  result.fatal = { name: e && e.name, message: String(e && e.message || e),
+                   stack: e && e.stack ? String(e.stack).slice(0, 2000) : null };
+  window.__C9_WORKER_RESULT__ = result;
+  document.getElementById("out").textContent = JSON.stringify(result, null, 1);
+  status("fatal");
+}
+</script>
+</body>
+</html>
