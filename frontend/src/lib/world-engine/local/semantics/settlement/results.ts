@@ -97,7 +97,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -731,6 +731,21 @@ function readResultsAnswer(
     // An ownership swap can remove the only mention of the wrong owner; the
     // “another character's action” check must read the corrected sentence.
     if (ownershipAdjusted.length) mentioned = mentionedCharacterIds(state, cleaned.text);
+    // A settled fact may not give a character an identification band the
+    // committed appearance says they do not have (s02/s05/s16 audit: the fact
+    // asserted a ready band while the state said 身上没有红蓝识别带).
+    if (mentioned.length <= 1 && /识别带/u.test(cleaned.text) && !/没有[^。；]*识别带/u.test(cleaned.text)) {
+      const contradicted = recipientIds.filter((id) => /没有[^。；]*识别带/u.test(effectiveAppearance(state, id)));
+      if (contradicted.length) {
+        if (!options.dropEmptyResults) {
+          const names = contradicted.map((id) => state.initial.characters[id]?.name ?? id).join('、');
+          throw new Error(`fact gives ${names} an identification band, but the committed appearance says none: ${original}。只写已结算的物件和状态。`);
+        }
+        droppedFacts.push({ memberIds: recipientIds, original, reason: 'contradicts_appearance' });
+        for (const id of recipientIds) coveredByDrop.add(id);
+        continue;
+      }
+    }
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -946,6 +961,15 @@ function readResultsAnswer(
     ...(subjectRestored.length ? { subjectRestored } : {}),
     ...(missingFactMembers.length ? { missingFactMembers } : {}),
   };
+}
+
+/** Effective appearance (initial + active changes) for the band/ownership check. */
+function effectiveAppearance(state: WorldState, id: Id): string {
+  const initial = state.initial.characters[id]?.initialAppearance ?? '';
+  const changes = (state.characters[id]?.appearanceChanges ?? [])
+    .filter((change) => change.active)
+    .map((change) => String(change.text ?? ''));
+  return [initial, ...changes].filter(Boolean).join('；');
 }
 
 /** The results prompt writes its example fact as «<name>做了什么/看到什么».

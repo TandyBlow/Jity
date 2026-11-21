@@ -179,6 +179,27 @@ describe('common-group results', () => {
     expect(detail.missingFactMembers).toEqual(['a']);
   });
 
+  it('drops a fact that puts a band on a character whose appearance says none', async () => {
+    const state = world();
+    state.initial.characters.a.initialAppearance = '右手还空着，身上没有红蓝识别带。';
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '推到了门边。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '接住了。', effects: [] },
+      ],
+      facts: [
+        { text: '甲的红色识别带微微发烫。', memberIds: ['a'] },
+        { text: '乙伸手接住工具。', memberIds: ['b'] },
+      ],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput(state));
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { text: string }[]; droppedFacts: { reason: string }[] };
+    expect(detail.facts.some((fact) => fact.text.includes('识别带'))).toBe(false);
+    expect(detail.droppedFacts.some((row) => row.reason === 'contradicts_appearance')).toBe(true);
+  });
+
   it('keeps the structured result fields of a committed fact', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [
