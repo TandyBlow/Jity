@@ -1,6 +1,6 @@
 {
   "kind": "jity-goal-acceptance-summary",
-  "generatedAt": "2026-11-21T10:59:31.473Z",
+  "generatedAt": "2026-11-21T11:19:48.443Z",
   "thresholds": {
     "firstReadableMs": 60000,
     "turnMs": 300000
@@ -9,7 +9,8 @@
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
-    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json"
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json"
   ],
   "inputs": [
     {
@@ -245,13 +246,69 @@
       "firstReadablePass": true,
       "turnCapPass": true,
       "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json",
+      "run": "2026-11-21T1059-1f04",
+      "id": "g8-t1-look-lane",
+      "input": "我停在服务巷的墙边，先把领用台上那张演习规则牌看清楚，再抬头打量巷口和器材棚方向。",
+      "firstReadableAtMs": 18973,
+      "acceptedMs": 27817,
+      "turnWaitMs": 295321,
+      "longestPointTextMs": 8844,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json",
+      "run": "2026-11-21T1059-1f04",
+      "id": "g8-t2-move-shed",
+      "input": "我贴着服务巷的低墙往器材棚走，进门后先看领用台后面有没有人，再找林亦舟。",
+      "firstReadableAtMs": 18329,
+      "acceptedMs": 25607,
+      "turnWaitMs": 295364,
+      "longestPointTextMs": 7278,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json",
+      "run": "2026-11-21T1059-1f04",
+      "id": "g8-t3-talk-lin",
+      "input": "我蹲下来问林亦舟脚踝怎么样，那条断掉的蓝布带是在哪儿弄断的。",
+      "firstReadableAtMs": 21349,
+      "acceptedMs": 31941,
+      "turnWaitMs": 259491,
+      "longestPointTextMs": 10592,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json",
+      "run": "2026-11-21T1059-1f04",
+      "id": "g8-t4-joint-move",
+      "input": "我跟诺诺说一起走，两人沿着器材棚外侧低姿快走到西回廊，贴着廊柱停住。",
+      "firstReadableAtMs": 32141,
+      "acceptedMs": 46315,
+      "turnWaitMs": 276961,
+      "longestPointTextMs": 14174,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
     }
   ],
   "gates": {
-    "inputs": 16,
-    "firstReadablePass": 12,
-    "turnCapPass": 16,
-    "deadlineStops": 10,
+    "inputs": 20,
+    "firstReadablePass": 16,
+    "turnCapPass": 20,
+    "deadlineStops": 12,
     "failures": [
       {
         "id": "s01-act-move",
