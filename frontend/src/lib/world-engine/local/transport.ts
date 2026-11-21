@@ -481,7 +481,14 @@ function handleDiscoverGroup(record: PersistedRecord, request: RequestMap['check
   checkNotPaused(record);
   if (work.sealed || work.pendingGroup) refuse('phase_invalid', 'group discovery needs an open work without a pending group');
   if (!record.round || request.initiatorId !== record.round.order[work.working.cursor]) {
-    refuse('request_malformed', 'group initiator is not the next frozen character slot');
+    refuse('request_malformed', 'group initiator is not the next frozen character slot', {
+      initiatorId: request.initiatorId,
+      cursor: work.working.cursor,
+      expected: record.round?.order[work.working.cursor] ?? null,
+      order: record.round?.order ?? [],
+      visited: work.working.visitedIds,
+      acted: work.working.actedIds,
+    });
   }
   work.pendingGroup = { groupId: request.groupId, sourceId: request.initiatorId, memberIds: [request.initiatorId],
     targetIds: request.targetIds ?? [], targetIdsBySource: { [request.initiatorId]: request.targetIds ?? null },
