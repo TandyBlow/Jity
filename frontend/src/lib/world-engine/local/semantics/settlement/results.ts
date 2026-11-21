@@ -7,7 +7,7 @@ import type { InferenceEngine } from '../../../runtime/engine';
 import { callJson, JsonCallError, joinedMs, joinedRaw } from './engine-call';
 import type { ModelCallEvidence, SettlementEvidence, SettlementOptions, SettlementOutcome } from './types';
 import {
-  asInteger, asRecord, asString, errorText, isRecord, normalizeChangeText, referenceError, resolveCharacterId, resolveEntityId, toJson,
+  asInteger, asRecord, asString, errorText, isRecord, referenceError, resolveCharacterId, resolveEntityId, toJson,
 } from './support';
 import { describeCharacter, describeItem, sameRoomItems, visibleCharacters } from '../../prompt';
 
@@ -581,23 +581,6 @@ function readResultsAnswer(
     if (!isRecord(rawFact)) throw new Error('fact must be an object');
     const original = asString(rawFact.text);
     if (!original) throw new Error('fact text must be non-empty');
-    // The player's own command restated as a fact settles nothing (s05 audit:
-    // the fact was the input sentence «检查护目镜、识别带和胸袋里的弹匣，确认都在»).
-    // A result adds what happened; an echo with only a name/verb added is not one.
-    const factNorm = normalizeChangeText(original);
-    const echoesAction = members.some((member) => {
-      const actionNorm = normalizeChangeText(member.actionText ?? '');
-      return actionNorm.length >= 8 && factNorm.includes(actionNorm) && factNorm.length - actionNorm.length <= 8;
-    });
-    if (echoesAction) {
-      if (!options.dropEmptyResults) {
-        throw new Error(`fact only repeats the action, not its result: ${original}。只写这次行动的直接可见结果（${actionHint}）。`);
-      }
-      const droppedIds = recipientsFor(rawFact);
-      droppedFacts.push({ memberIds: droppedIds, original, reason: 'no_result_text' });
-      for (const id of droppedIds) coveredByDrop.add(id);
-      continue;
-    }
     // 10turn turn 4 (run 2026-11-11T0928-94ef): the accepted group_72 answer
     // copied the prompt's example text verbatim — «秦越做了什么/看到什么» — and
     // the six stages settled on it. A template is not a result.

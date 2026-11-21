@@ -179,32 +179,6 @@ describe('common-group results', () => {
     expect(detail.missingFactMembers).toEqual(['a']);
   });
 
-  it('drops a fact that only echoes a member action', async () => {
-    const echo = '甲把工具推向门边，再退半步看清门口。';
-    const answer = {
-      judgments: [
-        { memberId: 'a', label: 'partial', reason: '推到了门边。', effects: [{ targetId: 'b', reacted: true }] },
-        { memberId: 'b', label: 'achieved', reason: '接住了。', effects: [] },
-      ],
-      facts: [
-        { text: echo, memberIds: ['a'] },
-        { text: '乙伸手接住工具。', memberIds: ['b'] },
-      ],
-    };
-    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
-    const base = resultsInput() as { members: { memberId: string; actionText: string }[] };
-    const input = {
-      ...base,
-      members: base.members.map((member) => member.memberId === 'a' ? { ...member, actionText: echo } : member),
-    } as unknown as Json;
-    const outcome = await createSettlementHandlers({ engine }).results('g1', input);
-    expect(outcome.value).not.toBeNull();
-    const detail = outcome.evidence.detail as { facts: { memberIds: string[]; text: string }[]; droppedFacts: { reason: string }[] };
-    expect(detail.facts).toHaveLength(1);
-    expect(detail.facts[0].text).toContain('乙伸手接住');
-    expect(detail.droppedFacts.some((row) => row.reason === 'no_result_text')).toBe(true);
-  });
-
   it('keeps the structured result fields of a committed fact', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [
