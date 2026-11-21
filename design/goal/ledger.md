@@ -64,7 +64,7 @@
 | G5 非叙事语义验收 | 技术自检不通过（2026-11-21 复核） | 16 例跨 run17/18/19 有结论、分类器硬违规 0，但叙事技术读评（16/16 case id）发现上游事实缺陷：s02/s05/s16 给路明非凭空识别带、s03 fact「紧闭的门」与 lane「门敞开」相反、s06 judgment 写电台交接成功而 fact/updates 无此变化、s07 同一 fact 双挂、s09 占位句。已修：占位句拒绝、识别带与外观矛盾拒绝、门与地点外观矛盾拒绝、叙事 prompt 物品归属；行动回声启发式已回退。未修：s06 judgment/fact 一致性。G5 change 已归档、tag 保留为历史；本行状态以复核为准，G5 重开 |
 | G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 硬/4 复述/1 干净；2026-11-21 的 16 例技术读评（16/16 case id）：hard 13、style 3、clean 0；主要模式为投影清单原句搬入、凭空短枪/人物对调、无依据移动、元语言；t5 地点冲突投影、物品归属 prompt、识别带与占位句事实已修；待真机复测、20+ 点读评、G6 后事实门决定 |
 | G7 进度同步与跨设备 | 进行中（小步） | 客户端/适配器与离线队列已有测试；`status().localRevision` 已从 store 元数据返回；页面 startup `restore()`、冲突分叉选择 UI 与两设备证据未做；单用户 Bearer + 本地/内网（D-013） |
-| G8 交付验收与证据 | 未开始 | 20 输入、manifest、技术证据；D-019 取消用户签字 |
+| G8 交付验收与证据 | 进行中 | 生产构建通过（Next 15.5.19），`next start` 服务；20 输入拆 5 个四回合 session；chunk1 四例完成但首段 63.5/154/73/112 秒全超 60，run 收尾被宿主回收；离线、服务器关闭、两设备分叉、manifest 待做；D-019 取消用户签字；change `goal-g8-delivery` |
 
 ## 5. 开放任务
 
@@ -74,10 +74,10 @@
 - **G2**：完成。32 操作按 D-015 定案；取消恢复回归（`local-transport.test.ts`）与 corrupt-restore 拒绝通过；restore 已接 invariants；冻结差分夹具（LF sha `7d68a392…f977`）由 canonical/state/transport 测试消费；骰点协议见 `kernel-ops.md`；全量 1256 passed / 17 skipped，两套 typecheck 通过。failed head 的 cancel 已在 G4 放宽为 ready|failed。
 - **G3**：复核不通过。原 `timing-baseline.json` 只统计已提交首点的朗读时钟，未提交的尾点不可见；加回合完成门后 12 个计分点中 7 个回合中途停止（`t1/t3/t5/t9/t12/e1/e3`），状态改为 `FAIL_OR_INCOMPLETE`。60 秒首段（最差 43,526 ms）与单点正文（最差 13,772 ms）本身仍通过；G5 run10–15 显示普通回合 250–330 s：每组合都跑六阶段 updates 是主因，首段 40–90 s 也会超 60。t4/t11 结算失败、t6 刷新保留为失败证据；自动链已有 automatic 点（run11/13）但 0 次干净 continue 结论完成整链。修正见 D-016；原 change 已归档、tag 保留。
 - **G4**：完成（有缺口）。隔离、pause/resume、历史只读、叙事删除/重生、NarrationView/ProgressStatus、空占位清理；构建、1257 passed、e2e（含重生）与 `--block-api` 通过。缺口：WorldStatusPanel 未接；`position_invalid`（t4 `lu receives conflicting positions`）与自动轮重复转 G5；尚无 10 轮无停止的整轮运行；自动链（4 点含两个 automatic）在刷新时被 invariants 拒绝，恢复失败转 G4/G5。
-- **G5**：技术自检不通过（2026-11-21 复核），用户抽检豁免。16 例有结论、分类器硬违规 0；16/16 技术读评发现上游事实缺陷：s02/s05/s16 凭空识别带（已加外观矛盾拒绝）、s09 占位句（已加检测）、s03 门状态相反（已加地点外观矛盾拒绝）、s06 judgment 与 fact 不一致（未修）、s06 物品 memberId/重复 judgment/状态字段事实（状态字段已拒；其余待核对）、s07 双挂（读取层已有改写/去重）。G5 change 已归档、tag `goal-g5-semantics-20261121` 保留为历史；按本行重开。计时问题仍在：judge 回合普遍 295 s、s04 首段>60；D-018 + 240 s 预算后 s01 探针 280.1 s 交还。
+- **G5**：技术自检不通过（2026-11-21 复核），用户抽检豁免；change `goal-g5-semantics-followup` 复开。16 例有结论、分类器硬违规 0；16/16 技术读评发现上游事实缺陷：s02/s05/s16 凭空识别带（已加外观矛盾拒绝）、s09 占位句（已加检测）、s03 门状态相反（已加地点外观矛盾拒绝）、s06 judgment 与 fact 不一致（未修）、s06 物品 memberId/重复 judgment/状态字段事实（状态字段已拒；其余待核对）、s07 双挂（读取层已有改写/去重）。G5 原 change 已归档、tag `goal-g5-semantics-20261121` 保留为历史。计时问题仍在：judge 回合普遍 295 s、s04 首段>60；D-018 + 240 s 预算后 s01 探针 280.1 s 交还。
 - **G6**：进行中。原样输出路径保持；12 个 G3 样本技术读评 7 硬/4 复述/1 干净；2026-11-21 的 16 例技术读评（16/16）hard 13、style 3、clean 0（`artifacts/goal/narration/read-16-20261121.md`、`audit-16-raw-20261121.txt`、`audit-16-followup-raw-20261121.txt`）；已修 t5 地点冲突、物品归属 prompt、仅结算动作才算发生、占位句、识别带矛盾；未修：投影清单原句复述（系统性文风）、凭空短枪在叙事层仍需真机验证、s03/s06 上游。用户无法逐段读评（抽检豁免），阈值与事实门待实测。
 - **G7**：进行中（小步）。`progress-sync` 客户端/适配器、离线队列、CAS/父链已有单元测试；`status().localRevision` 已修；页面启动已接「本地优先、无本地时拉远端头并落盘」。剩余：冲突分叉展示与 `sync.choose`、重连 flush 的页面状态、两设备分叉证据（`artifacts/goal/sync/`）；单用户 Bearer + 本地/内网服务（D-013）。
-- **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；D-019 取消用户签字与独立输入。
+- **G8**：进行中（change `goal-g8-delivery`）。生产构建通过、`next start` 服务；`turns-20.json` 拆 5 个四回合 session；chunk1 四例完成、全部 60 秒首段不过（63.5/154/73/112 s），收尾被宿主回收，证据 `artifacts/goal/acceptance/g8-chunk1-20261121-partial.json`。剩余：chunks 2–5、离线、服务器关闭（`--block-api`）、两设备分叉（`artifacts/goal/sync/`）、manifest 与验收报告；D-019 取消用户签字与独立输入。
 
 ## 6. 证据索引
 
