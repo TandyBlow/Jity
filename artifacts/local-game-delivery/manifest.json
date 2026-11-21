@@ -1,0 +1,94 @@
+{
+  "kind": "jity-local-game-delivery",
+  "generatedAt": "2026-11-21T11:20:35.777Z",
+  "code": {
+    "gitHead": "f3d41ec9d88ad41bf2a7e775f4dadacf81d59871",
+    "branch": "agent"
+  },
+  "world": {
+    "asset": "/worlds/dragon-raja-free-day.world.json",
+    "stateDigest": "3f65452daf352c636ac4b24dcefcfb1cc8633ee811a6613a34ce5c43ef233f4e",
+    "fileSha256Lf": "6262d5fcf088959bb427fbd2dfef7472bcf2cbf78edb9c76b98d4ea2b25db92e",
+    "initialDigest": "c82f058fda8fbe8000887b36b05a9b62a1bf5ae72672f3460472056381061ccb",
+    "counts": {
+      "locations": 26,
+      "items": 74,
+      "characters": 14,
+      "tasks": 73
+    }
+  },
+  "models": [
+    {
+      "role": "semantic",
+      "file": "Qwen3-0.6B-Q4_K_M.gguf",
+      "path": "frontend/public/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "url": "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf",
+      "repo": "unsloth/Qwen3-0.6B-GGUF",
+      "repoRevision": "50968a4468ef4233ed78cd7c3de230dd1d61a56b",
+      "bytes": 396705472,
+      "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+      "license": "Apache-2.0",
+      "verifiedAt": "2026-11-20T08:12:08.206Z"
+    },
+    {
+      "role": "narration",
+      "file": "Qwen3-1.7B-Q4_K_M.gguf",
+      "path": "frontend/public/models/Qwen3-1.7B-Q4_K_M.gguf",
+      "url": "https://huggingface.co/unsloth/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf",
+      "repo": "unsloth/Qwen3-1.7B-GGUF",
+      "repoRevision": "d7f544eead698dbd1f15126ef60b45a1e1933222",
+      "bytes": 1107409472,
+      "sha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+      "license": "Apache-2.0",
+      "verifiedAt": "2026-11-20T08:13:50.516Z"
+    }
+  ],
+  "acceptance": {
+    "summary": "artifacts/goal/acceptance/summary.json",
+    "evidence": [
+      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json"
+    ],
+    "inputs": 20,
+    "firstReadablePass": 16,
+    "turnCapPass": 20,
+    "deadlineStops": 12,
+    "thresholds": {
+      "firstReadableMs": 60000,
+      "turnMs": 300000
+    },
+    "failures": [
+      {
+        "id": "s01-act-move",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      },
+      {
+        "id": "s02-act-observe",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      },
+      {
+        "id": "s03-act-talk",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      },
+      {
+        "id": "s04-act-wait",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      }
+    ],
+    "note": "D-019: the user abandoned the signature and the ten independent inputs; acceptance is technical evidence."
+  },
+  "reproduce": {
+    "install": "cd frontend && npm ci",
+    "models": "node frontend/scripts/fetch-models.mjs",
+    "build": "cd frontend && npm run build",
+    "serve": "cd frontend && npx next start -p 3177",
+    "accept": "node frontend/scripts/product-acceptance/accept-world-local.mjs --base http://127.0.0.1:3177 --turns <chunk> --out <evidence> --fresh"
+  }
+}
