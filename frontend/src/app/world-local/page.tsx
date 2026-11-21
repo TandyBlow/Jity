@@ -13,6 +13,7 @@ import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore 
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
 import type { GenerationEvidence, ModelLoadEvidence } from '@/lib/world-engine/local/runtime-diagnostics/types';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
+import type { ProgressConflictError } from '@/lib/world-engine/local/progress-sync/types';
 import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
 import { HistoryPanel, NarrationView, ProgressStatus, historyEntriesFromPoints, type HistoryEntry, type NarrationState, type SaveStatus, type SyncState } from '@/components/world-local';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
@@ -604,6 +605,8 @@ export default function WorldLocalPage() {
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ state: 'idle' });
   const [syncState, setSyncState] = useState<SyncState | null>(null);
+  /** A 409 fork: both copies stay stored until the player chooses (G7). */
+  const [syncConflict, setSyncConflict] = useState<ProgressConflictError<LocalGameSnapshot> | null>(null);
   // Node 22 exposes a global `navigator` without `onLine`, so reading it in the
   // initializer made SSR render the offline banner and the client the normal
   // panel. Start from the hydration-safe default and read the real value after
@@ -641,6 +644,7 @@ export default function WorldLocalPage() {
       // sync layer can never bump the revision behind the session's back.
       void sync.push(snapshot).then((result) => {
         const outcome = result.outcome;
+        if (outcome?.status === 'conflict') setSyncConflict(outcome.conflict);
         setSyncLabel(outcome?.status === 'synced' ? '已同步'
           : outcome?.status === 'queued' ? '已存本地，等待联网同步'
           : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
@@ -707,6 +711,25 @@ export default function WorldLocalPage() {
     setPhase((current) => current === 'streaming' ? 'ready' : current);
     return context;
   }, [save]);
+
+  /** G7: the player resolves a fork. keep-remote replaces the local store and
+   * reloads (the open session is stale); keep-local-fork uploads the local
+   * branch and leaves the remote branch readable. */
+  const chooseSync = useCallback(async (choice: 'keep-remote' | 'keep-local-fork') => {
+    const sync = syncRef.current;
+    const conflict = syncConflict;
+    if (!sync || !conflict) return;
+    try {
+      await sync.choose(choice, conflict);
+      setSyncConflict(null);
+      setSyncState(choice === 'keep-remote' ? 'synced' : 'local-only');
+      if (choice === 'keep-remote') { window.location.reload(); return; }
+      setMessage('已保留本地分支并上传；另一支仍可从远端恢复。');
+      await refresh();
+    } catch (error) {
+      setMessage(`冲突选择失败：${error instanceof Error ? error.message : String(error)}`);
+    }
+  }, [syncConflict, refresh]);
 
   useEffect(() => {
     let alive = true;
@@ -962,6 +985,7 @@ export default function WorldLocalPage() {
           const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase, writeLocal: true });
           syncRef.current = sync;
           void sync.flush().then((outcome) => {
+            if (outcome.conflictList.length) setSyncConflict(outcome.conflictList[0]);
             if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
           }).catch(() => undefined);
         }
@@ -1751,10 +1775,19 @@ export default function WorldLocalPage() {
               sync={syncRef.current ? {
                 state: syncState ?? 'local-only',
                 onSync: () => void syncRef.current?.flush().then((result) => {
+                  if (result.conflictList.length) setSyncConflict(result.conflictList[0]);
                   setSyncState(result.conflicts > 0 ? 'conflict' : result.offline || result.remaining > 0 ? 'offline' : 'synced');
                 }),
               } : null}
             />
+            {syncConflict && (
+              <div className={styles.sideMutedSpaced}>
+                <div>另一台设备也保存了：远端与本地已分叉，请选择保留哪一支。</div>
+                <div>远端 {syncConflict.remote.headSnapshotId ?? '—'} · 分支 {syncConflict.branches.join('、') || '—'}</div>
+                <button className={styles.ghostButton} onClick={() => void chooseSync('keep-remote')}>保留远端</button>{' '}
+                <button className={styles.ghostButton} onClick={() => void chooseSync('keep-local-fork')}>保留本地并分叉</button>
+              </div>
+            )}
           </div>
         </aside>
       </section>
