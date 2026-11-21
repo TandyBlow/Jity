@@ -114,6 +114,7 @@ const evidence = {
     launchArgs: null,
     coopCoepShim: has('--header-shim'),
     saveServiceBlocked: has('--block-api'),
+    offline: has('--offline'),
     candidateInjection: false,
     storageReset: fresh,
     note: '--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence',
@@ -514,6 +515,13 @@ try {
     };
   });
 
+  if (!preflightOnly && has('--offline')) {
+    // The page and both models have loaded; every turn now runs with no
+    // network. The reload check below switches the network back on because it
+    // needs the server for a fresh page.
+    await page.context().setOffline(true);
+    console.info('[acceptance] network offline for the turns');
+  }
   if (preflightOnly) {
     evidence.status = 'PREFLIGHT';
     evidence.finishedAt = new Date().toISOString();
@@ -1118,6 +1126,7 @@ try {
   const stateBeforeReload = await snapshot();
   evidence.reload = { startedAt: new Date().toISOString(), status: 'reloading' };
   save();
+  if (has('--offline')) await page.context().setOffline(false);
   await page.reload({ waitUntil: 'domcontentloaded' });
   const reloadStarted = Date.now();
   const reloadTimeoutMs = Math.min(readyTimeoutMs, 240000);
