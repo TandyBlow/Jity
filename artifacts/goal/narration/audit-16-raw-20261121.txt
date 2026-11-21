@@ -1,0 +1,260 @@
+{
+  "summary": "Audit the sixteen G5 case narrations against their settled facts",
+  "agentCount": 5,
+  "logs": [],
+  "result": {
+    "report": {
+      "cases": [
+        {
+          "findings": [
+            "「路明非的视线落在秦越身上，对方头盔歪扣着，食指蹭了油」：头盔歪扣、食指蹭油是已结算的芬格尔外貌，却写给了秦越，属于张冠李戴。",
+            "「右膝护具扣好，但护膝一边扣紧，一边还敞着」：前半句属秦越，后半句是芬格尔的护膝外貌，两个人的身体细节被拼进同一句。",
+            "「路明非的靴底碾过潮湿的青石板，脚踝处的旧伤隐隐作痛」：无已结算依据的旧伤/往事，事实只说他沿墙根走。",
+            "「他注意到器材棚的门框上挂着一把钥匙……扣在秦越腰环上。他伸手去取」：钥匙已结算在秦越腰环上，不在门框；「伸手去取」是未结算事件。",
+            "「路明非的衣袖被风掀起，露出内侧的护膝」：路明非已结算外貌没有护膝，属于新增物件。"
+          ],
+          "id": "s01-act-move",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「路明非的短枪枪口压向地面，枪管微微发烫」：路明非没有短枪；短枪与「枪口压向地面」是诺诺的已结算外貌，张冠李戴，且「枪管发烫」无依据。",
+            "「路明非的护目镜微微发烫」：护目镜已结算外貌只有镜片无裂纹、镜带松着，没有发热状态。",
+            "「诺诺在巷口，红发用发圈束在脑后，左臂缠着红痕」：诺诺左臂已结算为红色识别带、红痕在右袖；同一段后文又写「红色识别带缠在左臂」，自相矛盾。",
+            "「他把器材箱挪动了一点，箱子沉得像块石头」「路明非的护目镜挂在胸前，镜片无裂纹，镜带松着」等句各重复三次，句子级重复。",
+            "结尾「她手里的短Aborted」在词中截断，正文不完整。"
+          ],
+          "id": "s07-partial",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「路明非把器材箱挪了半寸」：本点事实没有推箱事件，新增未结算事件，且与上一轮动作重复。",
+            "「他低头看着手电筒的光束，照亮了检修口边的绝缘手电」：绝缘手电已结算为开关关闭，未结算他取用或点亮；「光束」与状态相反。",
+            "「他抬起手，将拉环轻轻拉紧……盖子缓缓滑开……用脚踩在梯子上……向下移动」：新增开盖、下梯的位置变化；after 位置仍是服务巷检修口，未到地下通道。",
+            "「诺诺在巷口，红发用发圈束在脑后，左臂缠着红色识别带，右袖有红痕」：本点投影写「房间里没有别人」，诺诺不在场，属于视角泄露。",
+            "「他摸了摸腰间的枪套，确认枪支完好」：路明非没有枪套和枪，新增物品。"
+          ],
+          "id": "s08-joint-move",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「路明非抬起手，示意不介入，慢慢从两人之间走过」：本点投影写「房间里没有别人」，没有对峙的两人，属于新增人物/视角泄露。",
+            "「他摘下护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前」：护目镜已结算为挂在胸前而非戴在眼前，本来未戴；「摘下」是新增动作且与状态相抵。",
+            "「他摘下演习背心」：背心已结算为穿在身上，把未结算的摘除写成已发生。",
+            "「他现在在西侧器材区，器材棚、服务巷和西侧集结点围成一条后勤线」：整段是地点字段原句复述，不是场景。"
+          ],
+          "id": "s09-confront",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「他从西侧器材区走到了西回廊，腰高石栏可作掩体。第三根廊柱脚下有一条折断的蓝布带……路明非的护目镜镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。……钟楼方向的石板湿滑……林亦舟……演习枪已经放到右手碰不到的地面」：连续多句把投影的外貌/地点行原句搬进正文，属于事实清单复述。",
+            "「他现在在西回廊」是状态播报式句子，模板腔明显；整段没有形成场景推进。"
+          ],
+          "id": "s10-strike",
+          "state": "style_error"
+        },
+        {
+          "findings": [
+            "「他蹲下身，指尖触到第三根廊柱脚下的蓝布带」：本点结算结果只有「看懂了规则牌」，蹲下和触碰是新增移动/事件。",
+            "「路明非的护目镜挂在胸前，镜片无裂纹，镜带松着……林亦舟背靠廊柱……腰高石栏作掩体」：逐行复述投影外貌与地点。",
+            "输入的「问诺诺」没有落点；诺诺不在场可以省略，但正文用蓝布带的小动作顶替了这次行动。"
+          ],
+          "id": "s11-task-ask",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「他蹲在栏杆边，目光落在庭院里。第三根廊柱脚下有一条折断的蓝布带……林亦舟坐在第三根廊柱旁……路明非的演习背心前襟完好，没有演习弹痕，胸袋能放一只弹匣」：连续四句照抄投影的外貌/地点行，是事实清单复述，几乎没有场景。",
+            "全篇只是把护目镜、蓝布带、林亦舟、背心四条状态依次排出，句式模板化。"
+          ],
+          "id": "s12-climb",
+          "state": "style_error"
+        },
+        {
+          "findings": [
+            "「他低头看着手里的短枪，枪口压向地面」：路明非没有短枪；「枪口压向地面」是诺诺的已结算外貌，张冠李戴/新增物品。",
+            "「路明非摘下护目镜」：护目镜已结算为挂在胸前而非戴在眼前，「摘下」是新增动作并与状态相抵。",
+            "「诺诺站在他身后」：只结算她也在西侧服务巷，未结算具体站位，属于无依据的站立位置。",
+            "「他望着墙上的赛区图，目光落在庭院、东西回廊、跨溪小桥、钟楼与白线撤离路」：地图字段原句复述。"
+          ],
+          "id": "s13-already-acted",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「路明非的红发用发圈束在脑后，红色识别带缠在左臂」：红发、发圈、红色识别带都是诺诺的已结算外貌，却写给了路明非，人物对调。",
+            "「他走到巷口，黄黑绳已放下，他迈步进入演习区」：after 位置仍是西侧服务巷，本点结算没有移动，正文写成已进入演习区。",
+            "「他解开背心前襟，露出里面整洁的衣料，胸袋里装着一只弹匣」：新增动作；已结算只是「胸袋能放一只弹匣」，不是已装着弹匣。",
+            "「路明非摘下护目镜」：护目镜已挂在胸前，新增摘下动作。",
+            "「他手里的短枪枪口压向地面，枪管微微发烫」：路明非没有枪；短枪属诺诺，新增物品与热度。"
+          ],
+          "id": "s14-auto-chain",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「短枪枪口压向地面，枪身在墙边微微晃动」：路明非没有短枪；「枪口压向地面」是诺诺的已结算外貌，新增物品/位置。",
+            "「墙边的红发女子用发圈束在脑后，左臂缠着红痕，身上没有本场标记」：诺诺左臂已结算为红色识别带、红痕在右袖；写成左臂红痕且无本场标记，与已结算外貌矛盾。",
+            "「路明非站在巷口，看着对面的玩家不动声色地等待」：「玩家」是元语言，不是投影里的可见人物；「站在巷口」也没有结算依据。",
+            "「他松开手」：新增动作。"
+          ],
+          "id": "s15-handback",
+          "state": "hard_error"
+        },
+        {
+          "findings": [
+            "「他低头查看识别带，确认准备就绪」：路明非已结算外貌是「身上没有红蓝识别带」，同段后文又写「肩上没有识别带」，正文自相矛盾。",
+            "「墙角的演习弹红痕还新鲜，说明演习尚未结束」：只结算「新鲜的」红痕，「说明演习尚未结束」是新增推断。",
+            "「路明非的手指在护目镜边缘轻轻摩挲」「他盯着墙上的赛区图，确认路线清晰」：结算结果只有「确认护目镜和识别带准备就绪」，这些动作和判断没有依据。",
+            "「屋内没有本场命中标记」：把诺诺的「身上没有本场命中标记」外貌写进「屋内」，指代和地点都错。"
+          ],
+          "id": "s16-time-check",
+          "state": "hard_error"
+        }
+      ],
+      "summary": {
+        "clean": 0,
+        "hard": 9,
+        "patterns": [
+          "投影事实清单被原句搬进正文：11 例都有外貌/地点行复述，s10、s12 几乎只剩清单，是系统性文风问题。",
+          "路明非的短枪是最高频的凭空物件：s07、s13、s14、s15 直接写他持短枪，s08 写枪套；已结算外貌明写「右手还空着」，短枪只属于诺诺。",
+          "人物对调集中在两处：s01 把芬格尔的头盔歪扣、油手、敞开的护膝写给秦越；s14 把诺诺的红发、发圈、红色识别带写给路明非。",
+          "无结算依据的移动/事件：s08 开检修盖下梯、s11 蹲下触碰蓝布带、s14 迈步进入演习区；s08/s09 还写出了投影明说「没有别人」的诺诺/两人。",
+          "s07 词中截断（「短Aborted」）并同句三连重复；s15 出现「玩家」这种元语言；s16 同一段里「查看识别带」与「肩上没有识别带」自相矛盾。",
+          "上游语义层本身有重复 judgment、占位句「〈这一步实际做了什么…〉」和自相矛盾的事实，叙事照抄后把问题放大成硬错。"
+        ],
+        "style": 2
+      }
+    },
+    "critique": "结论先说：判断本身大多有据，但这份 review 不能按现状记为 G5 的 16 例技术通过；它只是 11 例正文层自检的草稿，且证据链不完整。\n\n1. 覆盖缺 5 例，`clean:0` 不成立。16 例包只审了 s01、s07–s16，s02–s06 没有条目。s02 正是 packet 写「结算失败后恢复（无正文）」的那例，但 `run17-20261121-partial6-memory.json` 里仍有 100 字正文；无论算不算，报告都应写明。s03–s06 也有正文，且 s05「识别带……确认都在」直接撞已结算的「身上没有红蓝识别带 / 肩上没有阵营识别带」，s06「秦越的头盔歪着，食指蹭了油」重复了 s01 的芬格尔→秦越张冠李戴；s03「他摸了摸钥匙，发现它还在腰环上」钥匙在秦越腰环，且「没有等她回答」与结算「她低声说道」相反。这些都没进报告。\n\n2. 多数只拿正文对投影外貌，没对 input、judgment label 和结算 fact。s07 判 `not_achieved`（推箱未成功），正文写「挪了半寸」；s08 结算写「从西侧服务巷走到了服务巷检修口」，正文没写这段移动，报告还误称 after「仍是服务巷检修口」（before 是西侧服务巷）；s12 input 是上钟楼二层平台，结算只「观察庭院」，after 仍在西回廊，报告只判 style；s14 判 `blocked`、目标是钟楼门厅，正文写「进入演习区」；s16 input 问「还剩多久」，正文没答。这些是事实没比对，不是文风。\n\n3. 同型错误漏判，报告内部不一致。s14 把「胸袋里装着一只弹匣」判 hard（结算只说「能放」），s07 同样写「胸袋里还装着一个弹匣」却没判；s13 把「诺诺站在他身后」判无依据，s07 同样写「诺诺站在他身后」却没判。s07「各重复三次」也不准：只有「箱子沉得像块石头」出现三次，护目镜那句只出现一次。\n\n4. 归属和方向推断过强。s15「短枪枪口压向地面」没有主语，投影里唯一的短枪是诺诺的，不能判成路明非新增物品；「身上没有本场标记」与投影「身上没有本场命中标记」基本一致，不算矛盾。s01「伸手去取」、s11「蹲下」、s13「摸了摸背心」、s16「手指摩挲」都不在状态 schema 里，after state 不能证明没发生，应标 unverified，不是 hard。s12「林亦舟坐在第三根廊柱旁」把投影「背靠第三根廊柱坐着」改写了，报告却叫「照抄」。\n\n5. 总结层有无引文断言。第 6 条「重复 judgment、占位句、自相矛盾事实」没有 case id 和引句；实际能在 s09 找到 `〈这一步实际做了什么、谁回应了什么〉`，在 s07 找到同一 fact 同时挂 nono/lu 且写「路明非的红色识别带」，在 s16 找到结算「确认护目镜和识别带准备就绪」与「身上没有红蓝识别带」互撞。报告应把根因写进对应 case，而不是一句概括。s10 的「原句复述」也只引正文，不引投影原句；s08 的「仍是」没有 before/after 引文；s15 的「新增物品」没有归属引文。\n\n6. D-018 与截断没有标。s01、s07–s12 是 D-018 前（run17/run18），s13–s16 是后（run19）；报告把 11 例合成一个「都有」的比率，没有逐例 build/run/时间戳，也没提所有 judge 例都在 295 s 时限截断。style 结论可能只是截断段落的产物。没有这些标签，无法复现，也无法判断 D-018 前后差异。\n\n是否适合归档：只能登记为「11 例、正文层、带限制的技术自检草稿」。不能当 16 例套件通过，也不能支撑 `docs` 里 G5 的「技术通过」；用户已说看不到全部信息，这只能记为抽检豁免，不是签字或通过。补齐 s02–s06、逐例 source/build、并把 hard 与 unverified 分开后，才适合作为技术自检归档。\n\n证据文件：`D:\\others\\Jity\\artifacts\\goal\\semantics\\spot-check-20261121.md`、`run17-20261121-partial6-memory.json`、`run18-20261121.json`、`run19-20261121.json`；D-018 见 `D:\\others\\Jity\\design\\goal\\decisions.md`。\n\n跳过：没有逐个重算全部 16 例的每一句；风险是 s02–s06 中可能还有未列出的硬错，尤其 s03/s04 的钥匙归属和 s02 的相机归属需要人工再核。",
+    "extractedCases": 11
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Extract"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 3,
+      "title": "Critique"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "extract-1",
+      "phaseIndex": 1,
+      "phaseTitle": "Extract",
+      "agentId": "a59bb68eb647cf2c7",
+      "model": "deepseek-v4.1-flash",
+      "state": "done",
+      "startedAt": 1795239289700,
+      "queuedAt": 1795239289639,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "Read the Jity driver evidence for the narration audit.\nFiles (repo root is the cwd): artifacts/goal/semantics/run17-20261121-partial6-memory.json, artifacts/goal/semantics/run18-20261121.json, artifacts/goal/semantics/run19-20261121.json\nCases: s01-act-move, s02-act-observe, s03-act-talk, s04-act-wait, s05-act-inventory, s06-legal-failure\nUse Bash with node to extract each turn, for example:\nnode …",
+      "promptFramed": true,
+      "lastProgressAt": 1795239419533,
+      "tokens": 82573,
+      "toolCalls": 18,
+      "durationMs": 129832,
+      "resultPreview": "{\"cases\":[{\"facts\":\"[results group_5] {\\\"judgments\\\":[{\\\"memberId\\\":\\\"nono\\\",\\\"label\\\":\\\"achieved\\\",\\\"reason\\\":\\\"诺诺的红色识别带在墙根处微微发烫，脚步轻盈地接近了服务巷的入口。\\\"},{\\\"memberId\\\":\\\"lu\\\",\\\"label\\\":\\\"achieved\\\",\\\"reason\\\":\\\"路明非沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。\\\"}],\\\"facts\\\":[{\\\"text\\\":\\\"诺诺的红色识别带在墙根处微微发烫，脚步轻盈地接近了服务巷的入口。\\\",\\\"memberIds\\\":[\\\"nono\\\"],\\\"actorId\\\":\\\"nono\\\",\\\"outcome\\\":\\\"completed\\\"},{\\\"text\\\":\\\"路明非沿着服务巷的墙根往器材…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "extract-2",
+      "phaseIndex": 1,
+      "phaseTitle": "Extract",
+      "agentId": "ab744d874709c7fdb",
+      "model": "deepseek-v4.1-flash",
+      "state": "done",
+      "startedAt": 1795239289700,
+      "queuedAt": 1795239289640,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "Read the Jity driver evidence for the narration audit.\nFiles (repo root is the cwd): artifacts/goal/semantics/run17-20261121-partial6-memory.json, artifacts/goal/semantics/run18-20261121.json, artifacts/goal/semantics/run19-20261121.json\nCases: s07-partial, s08-joint-move, s09-confront, s10-strike, s11-task-ask, s12-climb\nUse Bash with node to extract each turn, for example:\nnode -e \"const r=requi…",
+      "promptFramed": true,
+      "lastProgressAt": 1795239441166,
+      "tokens": 57466,
+      "toolCalls": 9,
+      "durationMs": 147886,
+      "resultPreview": "{\"cases\":[{\"facts\":\"CALL results group_5 (7933ms, error=null): {\\\"judgments\\\":[{\\\"memberId\\\":\\\"nono\\\",\\\"label\\\":\\\"partial\\\",\\\"reason\\\":\\\"诺诺迅速将故障短讯机贴近胸口，语气中带着紧张，成功将短讯机放回原位\\\"},{\\\"memberId\\\":\\\"lu\\\",\\\"label\\\":\\\"not_achieved\\\",\\\"reason\\\":\\\"路明非尝试推器材箱，但箱子太重，未能成功\\\"}],\\\"facts\\\":[{\\\"text\\\":\\\"路明非的红色识别带微微发烫，她迅速将故障短讯机贴近胸口，语气中带着紧张：路明非，我……我需要你帮我把短讯机放回原位。\\\",\\\"memberIds\\\":[\\\"nono\\\"],\\\"actorId\\\":\\\"nono\\\",\\\"outcome\\…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "extract-3",
+      "phaseIndex": 1,
+      "phaseTitle": "Extract",
+      "agentId": "ac3d8f5deef1fafcc",
+      "model": "deepseek-v4.1-flash",
+      "state": "done",
+      "startedAt": 1795239289700,
+      "queuedAt": 1795239289640,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "Read the Jity driver evidence for the narration audit.\nFiles (repo root is the cwd): artifacts/goal/semantics/run17-20261121-partial6-memory.json, artifacts/goal/semantics/run18-20261121.json, artifacts/goal/semantics/run19-20261121.json\nCases: s13-already-acted, s14-auto-chain, s15-handback, s16-time-check\nUse Bash with node to extract each turn, for example:\nnode -e \"const r=require('./artifacts…",
+      "promptFramed": true,
+      "lastProgressAt": 1795239406096,
+      "tokens": 52565,
+      "toolCalls": 13,
+      "durationMs": 112808,
+      "resultPreview": "{\"cases\":[{\"facts\":\"[results:group_5] {\\\"judgments\\\":[{\\\"memberId\\\":\\\"lu\\\",\\\"label\\\":\\\"partial\\\",\\\"reason\\\":\\\"目标诺诺的骰点资格为true，准入为false，因此部分成功\\\"},{\\\"memberId\\\":\\\"nono\\\",\\\"label\\\":\\\"not_achieved\\\",\\\"reason\\\":\\\"诺诺的骰点资格为true，准入为false，因此未达成目标\\\"}],\\\"facts\\\":[{\\\"text\\\":\\\"看懂了规则牌\\\",\\\"memberIds\\\":[\\\"lu\\\"],\\\"actorId\\\":\\\"lu\\\",\\\"outcome\\\":\\\"completed\\\"}]}\\n[updates:group_5#position] {\\\"positions\\\":[{\\\"entityId\\…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a710b726c7db02b08",
+      "model": "deepseek-v4.1-flash",
+      "state": "done",
+      "startedAt": 1795239444547,
+      "queuedAt": 1795239444520,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "You are doing the technical read of Jity narration, not the user sign-off.\nFor each case below, compare the narration text with the settled facts and the after state.\nHard errors (acceptance 4.2): character swap, position/direction opposite the committed state, wrong number/duration, an event/past/commitment with no settled basis, viewpoint leakage (things the protagonist cannot see), or a withhel…",
+      "promptFramed": true,
+      "lastProgressAt": 1795240132314,
+      "tokens": 127634,
+      "toolCalls": 33,
+      "durationMs": 687767,
+      "resultPreview": "{\"cases\":[{\"findings\":[\"「路明非的视线落在秦越身上，对方头盔歪扣着，食指蹭了油」：头盔歪扣、食指蹭油是已结算的芬格尔外貌，却写给了秦越，属于张冠李戴。\",\"「右膝护具扣好，但护膝一边扣紧，一边还敞着」：前半句属秦越，后半句是芬格尔的护膝外貌，两个人的身体细节被拼进同一句。\",\"「路明非的靴底碾过潮湿的青石板，脚踝处的旧伤隐隐作痛」：无已结算依据的旧伤/往事，事实只说他沿墙根走。\",\"「他注意到器材棚的门框上挂着一把钥匙……扣在秦越腰环上。他伸手去取」：钥匙已结算在秦越腰环上，不在门框；「伸手去取」是未结算事件。\",\"「路明非的衣袖被风掀起，露出内侧的护膝」：路明非已结算外貌没有护膝，属于新增物件。\"],\"id\":\"s01-act-move\",\"state\":\"hard_error\"},{\"findings\":[\"「路明非的短枪枪口压向地面，枪管微微发烫」：路明非没有…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "critique",
+      "phaseIndex": 3,
+      "phaseTitle": "Critique",
+      "agentId": "a703799bf4a7a0750",
+      "model": "deepseek-v4.1-flash",
+      "state": "done",
+      "startedAt": 1795240134681,
+      "queuedAt": 1795240134671,
+      "attempt": 1,
+      "lastToolName": "Bash",
+      "lastToolSummary": "PYTHONIOENCODING=utf-8 python - <<'PY' import json p='artif…",
+      "promptPreview": "Audit this narration review for gaps. The review:\n{\"cases\":[{\"findings\":[\"「路明非的视线落在秦越身上，对方头盔歪扣着，食指蹭了油」：头盔歪扣、食指蹭油是已结算的芬格尔外貌，却写给了秦越，属于张冠李戴。\",\"「右膝护具扣好，但护膝一边扣紧，一边还敞着」：前半句属秦越，后半句是芬格尔的护膝外貌，两个人的身体细节被拼进同一句。\",\"「路明非的靴底碾过潮湿的青石板，脚踝处的旧伤隐隐作痛」：无已结算依据的旧伤/往事，事实只说他沿墙根走。\",\"「他注意到器材棚的门框上挂着一把钥匙……扣在秦越腰环上。他伸手去取」：钥匙已结算在秦越腰环上，不在门框；「伸手去取」是未结算事件。\",\"「路明非的衣袖被风掀起，露出内侧的护膝」：路明非已结算外貌没有护膝，属于新增物件。\"],\"id\":\"s01-act-move\",\"state\":\"hard…",
+      "promptFramed": true,
+      "lastProgressAt": 1795240490291,
+      "tokens": 134090,
+      "toolCalls": 33,
+      "durationMs": 355610,
+      "resultPreview": "结论先说：判断本身大多有据，但这份 review 不能按现状记为 G5 的 16 例技术通过；它只是 11 例正文层自检的草稿，且证据链不完整。\n\n1. 覆盖缺 5 例，`clean:0` 不成立。16 例包只审了 s01、s07–s16，s02–s06 没有条目。s02 正是 packet 写「结算失败后恢复（无正文）」的那例，但 `run17-20261121-partial6-memory.json` 里仍有 100 字正文；无论算不算，报告都应写明。s03–s06 也有正文，且 s05「识别带……确认都在」直接撞已结算的「身上没有红蓝识别带 / 肩上没有阵营识别带」，s06「秦越的头盔歪着，食指蹭了油」重复了 s01 的芬格尔→秦越张冠李戴；s03「他摸了摸钥匙，发现它还在腰环上」钥匙在秦越腰环，且「没有等她回答」与结算「她低声说道」相反。这些都没进报告。\n\n2. 多数只拿正文对投…"
+    }
+  ],
+  "totalTokens": 454328,
+  "totalToolCalls": 106
+}
