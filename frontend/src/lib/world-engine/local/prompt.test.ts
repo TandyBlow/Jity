@@ -20,5 +20,10 @@ describe('instruct narration input', () => {
     expect(brief).toContain('周宁现在在走廊');
     expect(brief).toContain('听走廊那边的声音');
     expect(brief).toContain('林川：看了他一眼');
+    // The standard prompt states ownership: the short gun belongs to its
+    // holder, never to the viewpoint by default.
+    const { prompt } = instructNarrationInput(null, {}, state, 'person_c', '', '');
+    expect(prompt).toContain('每个人物的伤势、衣物和物品只属于本人');
+    expect(prompt).toContain('主角只拿自己持有的物品');
   });
 });
