@@ -7,6 +7,7 @@ import { buildInitialState } from '../../state';
 import { projectStage, unwrapIdBrackets } from './support';
 import type { RoundProgressEvidence } from './support';
 import { createContinuationPolicy, createSettlementHandlers, continuationPolicy } from './index';
+import { isExampleFactText } from './results';
 
 class ScriptedEngine implements InferenceEngine {
   readonly info = { backend: 'scripted', modelId: 'scripted' };
@@ -131,6 +132,11 @@ const continueJudgment = (text = '乙继续向前走。') => JSON.stringify({
 });
 
 describe('common-group results', () => {
+  it('treats the results fact placeholder as no result', () => {
+    expect(isExampleFactText('〈这一步实际做了什么、谁回应了什么〉')).toBe(true);
+    expect(isExampleFactText('甲把工具推给乙。')).toBe(false);
+  });
+
   it('attributes shared facts to every member and keeps member facts separate', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [

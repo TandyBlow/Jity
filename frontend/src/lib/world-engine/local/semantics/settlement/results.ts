@@ -954,6 +954,9 @@ function readResultsAnswer(
 export function isExampleFactText(text: string): boolean {
   const compact = text.replace(/\s+/gu, '');
   if (/做了什么\/看到什么|做了什么\/看到了什么|做了什么\/听见了什么/u.test(compact)) return true;
+  // The results prompt's fact placeholder is copied verbatim by the small
+  // model (s09 audit: 〈这一步实际做了什么、谁回应了什么〉 settled as a fact).
+  if (/〈[^〉]*(?:做了什么|谁回应)[^〉]*〉/u.test(compact)) return true;
   // The worked examples that sat in the rules block until 2026-11-11. A 0.6B
   // repeats a concrete example sentence as if it were this point's result, so
   // a prompt that still carries one (older build, cached page) must not let it
