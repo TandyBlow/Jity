@@ -1005,6 +1005,9 @@ export function isExampleFactText(text: string): boolean {
   // The results prompt's fact placeholder is copied verbatim by the small
   // model (s09 audit: 〈这一步实际做了什么、谁回应了什么〉 settled as a fact).
   if (/〈[^〉]*(?:做了什么|谁回应)[^〉]*〉/u.test(compact)) return true;
+  // A state row is not a result (s06 audit: 唐骁（id=tang）在中央庭院的
+  // 位置为中央庭院；精神为38。).
+  if (/[（(]id=|位置为|精神为|精神值|任务状态|待办=/u.test(text)) return true;
   // The worked examples that sat in the rules block until 2026-11-11. A 0.6B
   // repeats a concrete example sentence as if it were this point's result, so
   // a prompt that still carries one (older build, cached page) must not let it

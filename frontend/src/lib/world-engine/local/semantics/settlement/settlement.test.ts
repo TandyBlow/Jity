@@ -134,6 +134,7 @@ const continueJudgment = (text = '乙继续向前走。') => JSON.stringify({
 describe('common-group results', () => {
   it('treats the results fact placeholder as no result', () => {
     expect(isExampleFactText('〈这一步实际做了什么、谁回应了什么〉')).toBe(true);
+    expect(isExampleFactText('唐骁（id=tang）在中央庭院的位置为中央庭院；精神为38。')).toBe(true);
     expect(isExampleFactText('甲把工具推给乙。')).toBe(false);
   });
 
