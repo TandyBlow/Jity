@@ -616,7 +616,14 @@ export default function WorldLocalPage() {
 
   useEffect(() => {
     setOnline(navigator.onLine);
-    const up = () => setOnline(true);
+    const up = () => {
+      setOnline(true);
+      // Reconnect flush (G7): queued offline saves upload; a 409 opens the
+      // fork panel instead of being lost.
+      void syncRef.current?.flush().then((result) => {
+        if (result.conflictList.length) setSyncConflict(result.conflictList[0]);
+      }).catch(() => undefined);
+    };
     const down = () => setOnline(false);
     window.addEventListener('online', up);
     window.addEventListener('offline', down);
