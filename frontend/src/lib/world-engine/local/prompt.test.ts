@@ -25,5 +25,6 @@ describe('instruct narration input', () => {
     const { prompt } = instructNarrationInput(null, {}, state, 'person_c', '', '');
     expect(prompt).toContain('每个人物的伤势、衣物和物品只属于本人');
     expect(prompt).toContain('主角只拿自己持有的物品');
+    expect(prompt).toContain('只有结算结果里实际发生的动作才算发生');
   });
 });
