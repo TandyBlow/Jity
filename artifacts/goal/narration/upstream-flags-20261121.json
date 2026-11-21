@@ -1,0 +1,757 @@
+{
+ "cases": [
+  {
+   "id": "s07-partial",
+   "input": "我试着把脚边的器材箱推到门口，但箱子很沉，只挪动了一点。",
+   "text": "路明非的护目镜微微发烫，镜片无裂纹，镜带松着，现挂在胸前。他把器材箱挪了半寸，箱子沉得像块石头。诺诺的红色识别带微微发烫，她迅速将故障短讯机贴近胸口，语气中带着紧张。路明非需要帮她把短讯放回原位。路明非的护目镜挂在胸前，镜片无裂纹，镜带松着。他把器材箱挪动了一点，箱子沉得像块石头。屋内有演习背心，前襟完好，没有弹痕。他摸了摸肩上，没有阵营识别带。诺诺在巷口，红发用发圈束在脑后，左臂缠着红痕。路明非的短枪枪口压向地面，枪管微微发烫。路明非把器材箱挪动了一点，箱子沉得像块石头。他低头看着镜片，无裂纹的镜片映出他略显疲惫的脸。护目镜挂在胸前，镜带松着，风一吹就晃。他摸了摸背心，前襟完好，没有弹痕。肩上没有识别带，但胸袋里还装着一个弹匣。诺诺站在他身后，红发束在脑后，红色识别带缠在左臂。她手里的短Aborted",
+   "waitMs": 295585,
+   "place": "西侧服务巷",
+   "nearby": "诺诺",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#3已提交行动行动 · 当前正文生成中",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动瞬时正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ],
+   "calls": [
+    {
+     "task": "results",
+     "key": "group_5",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺迅速将故障短讯机贴近胸口，语气中带着紧张，成功将短讯机放回原位\"},{\"memberId\":\"lu\",\"label\":\"not_achieved\",\"reason\":\"路明非尝试推器材箱，但箱子太重，未能成功\"}],\"facts\":[{\"text\":\"路明非的红色识别带微微发烫，她迅速将故障短讯机贴近胸口，语气中带着紧张：路明非，我……我需要你帮我把短讯机放回原位。\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"},{\"text\":\"路明非的红色识别带微微发烫，她迅速将故障短讯机贴近胸口，语气中带着紧张：路明非，我……我需要你帮我把短讯机放回原位。\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_5",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_left_hand\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [],\"achieved\":[{\"characterId\":\"lu\",\"tasks\":[{\"taskId\":\"t39\",\"basis\":\"f1\"}]}],\"subtasks\":[]}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_6",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"no_change\",\"reason\":\"凯撒让路，未被阻止\"}],\"facts\":[{\"text\":\"凯撒让路，未被阻止\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_6",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"caesar\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让红方在松动护栏处保持队形安全\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_7",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航确认了撤离路线并成功行动\"}],\"facts\":[{\"text\":\"楚子航查看了周围环境并确认撤离路线\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_7",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"chu\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"确认撤离路线并确保安全\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_8",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_8",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_empty_bed\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"doctor\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"完成实际受伤人员的接诊并让医护区保持中立\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_10",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"partial\",\"reason\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机已发送求助，电量两格，已请求帮助。\"}],\"facts\":[{\"text\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_10",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"lin\", \"tasks\": [{\"taskId\": \"t1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让林亦舟说明是实际扭伤，而不是弗里嘉弹造成的暂时失能\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_11",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"manstein\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"manstein\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_11",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"manstein\",\"containerId\":\"control\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"manstein\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让自由一日按中立规则结束，真实伤情得到处置\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_13",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"fingel\",\"label\":\"achieved\",\"reason\":\"芬格尔将相机电池从口袋里取出\"},{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"让路\"}],\"facts\":[{\"text\":\"芬格尔将相机电池从口袋里取出\",\"memberIds\":[\"fingel\"],\"actorId\":\"fingel\",\"outcome\":\"completed\"},{\"text\":\"让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_13",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_counter\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"fingel\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t19\",\"goal\":\"拍到有辨识度的争旗场面\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_14",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"沈澄成功拆下红色识别带并将其从身体中取出\"}],\"facts\":[{\"text\":\"沈澄（id=shen）拆下了红色识别带（id=shen_band）位置=医护休息区；外貌=红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_14",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"shen\", \"tasks\": [{\"taskId\": \"t53\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"judgments\":[{\"characterId\":\"shen\",\"taskId\":\"task_shen_recover\",\"satisfied\":\"yes\",\"reason\":\"沈澄（id=shen）拆下了红色识别带（id=shen_band）位置=医护休息区；外貌=红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。\"}\n]}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"沈澄需要说明手指麻感是否减轻\"}]}\n---\n{\"changes\":[{\"entityId\":\"<shen>\",\"op\":\"add\",\"recordIds\":[\"<shen_band>\"],\"text\":\"<红方已退出队员，对提前离场不甘心但认同医护中立>\"}]}\n---\n{\"sanity\":[{\"characterId\":\"shen\",\"value\":41}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_15",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"partial\",\"reason\":\"苏茜查看了东回廊中的遮光帘和物品\"}],\"facts\":[{\"text\":\"苏茜看懂了规则牌\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_15",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"su\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"守住钟楼旗台，让蓝方真正受伤的人安全撤离\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_16",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"拦住了对手的行动\"}],\"facts\":[{\"text\":\"唐骁（id=tang）在中央庭院的位置为中央庭院；精神为38。\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"blocked\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_16",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_east_cover\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"tang\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"确认撤离路线并确保安全\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_17",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"partial\",\"reason\":\"沈澄的骰点资格未获得，因此未被阻止\"},{\"memberId\":\"tomiyama\",\"label\":\"no_change\",\"reason\":\"富山雅史确认行动已成功\"}],\"facts\":[{\"text\":\"富山雅史（tomiyama）让沈澄把红色识别带拆开\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\"},{\"text\":\"富山雅史（tomiyama）看到沈澄的骰点资格未获得\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\"}]}\n---\n{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"blocked\",\"reason\":\"富山雅史没有看到沈澄的骰点资格未获得\"}],\"facts\":[{\"text\":\"富山雅史（tomiyama）看到沈澄的骰点资格未获得\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\",\"outcome\":\"blocked\"}]}\n---\n{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"partial\",\"reason\":\"富山雅史让沈澄拆开红色识别带，成功完成任务\"}],\"facts\":[{\"text\":\"富山雅史看到沈澄的骰点资格未获得\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_17",
+     "stage": null,
+     "raw": "",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_18",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"zhou\",\"label\":\"achieved\",\"reason\":\"没有被阻止\"},{\"memberId\":\"zhou\",\"label\":\"partial\",\"reason\":\"没有被阻止\"},{\"memberId\":\"zhou\",\"label\":\"no_change\",\"reason\":\"没有被阻止\"}],\"facts\":[{\"text\":\"〈周映拦住了护栏〉\",\"memberIds\":[\"zhou\"],\"actorId\":\"zhou\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_18",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"zhou\",\"containerId\":\"balcony\",\"slotId\":\"slot_flag_base\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"zhou\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"周映拦住了护栏\"}]}",
+     "error": null
+    },
+    {
+     "task": "continuation",
+     "key": "round_3",
+     "stage": null,
+     "raw": "{\"candidates\":[{\"characterId\":\"nono\",\"text\":\"确认撤离路线并确保安全\"}]}\n---\n{\"judgments\":[{\"candidateId\":\"c1\",\"likely\":true,\"related\":true,\"reason\":\"确认撤离路线并确保安全\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_12",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"骰点=10 资格=true 未被阻止\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_12",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"nono\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"路明非在自由一日结束前作出自己的参赛选择并完成有效行动后安全离场\"}]}",
+     "error": null
+    },
+    {
+     "task": "continuation",
+     "key": "round_auto_mwpapd8k_1",
+     "stage": null,
+     "raw": "",
+     "error": "JsonCallError: model_output_invalid: AbortError: Aborted"
+    }
+   ]
+  },
+  {
+   "id": "s09-confront",
+   "input": "我举起手示意不介入，慢慢从对峙的两人中间走过去。",
+   "text": "路明非抬起手，示意不介入，慢慢从两人之间走过。他走到服务巷检修口，转身朝西侧器材区走去。他现在在西侧器材区，器材棚、服务巷和西侧集结点围成一条后勤线。他从服务巷可到庭院西口，也能绕进检修通道。运送伤员可沿白线到医护附楼，不必穿越庭院。他摘下护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。他摘下演习背心，前襟完好，没有演习弹痕，胸袋能放一只弹匣，肩上没有阵营识别带。",
+   "waitMs": 295426,
+   "place": "西侧器材区",
+   "nearby": "没有别人",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#5已提交行动行动 · 当前正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#4已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#3已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动瞬时正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ],
+   "calls": [
+    {
+     "task": "results",
+     "key": "group_56",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"〈这一步实际做了什么、谁回应了什么〉\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_56",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"hatch\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"lu\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"向诺诺问清当前红蓝两方局势和自己是否可以保持中立\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_57",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"achieved\",\"reason\":\"凯撒确认了红方地图桌的内容\"}],\"facts\":[{\"text\":\"凯撒查看了红方地图桌并确认地图内容\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_57",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"caesar\", \"tasks\": [{\"taskId\": \"t1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"judgments\":[{\"characterId\":\"caesar\",\"taskId\":\"task_21\",\"satisfied\":\"yes\",\"reason\":\"凯撒查看了红方地图桌并确认地图内容。\"}\n]}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让红方取得可确认的旗台控制权\"}]}\n---\n{\"changes\":[{\"entityId\":\"caesar\",\"op\":\"add\",\"recordIds\":[\"f1\"],\"text\":\"带领红方，与楚子航争夺旗台\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_58",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航确认撤离路线并行动\"}],\"facts\":[{\"text\":\"楚子航查看周围环境并确认撤离路线\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_58",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"chu\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"守住钟楼旗台，同时让蓝方真正受伤的人安全撤离\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_59",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_59",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"doctor\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"完成实际受伤人员的接诊并让医护区保持中立\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_61",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"achieved\",\"reason\":\"林亦舟放下的演习枪在西回廊的位置\"},{\"memberId\":\"lu\",\"label\":\"partial\",\"reason\":\"路明非的演习背心位置与路明非相同\"},{\"memberId\":\"broken_blue_band\",\"label\":\"blocked\",\"reason\":\"折断的蓝布带无法证明佩戴者已被演习淘汰\"},{\"memberId\":\"goggles_lu\",\"label\":\"no_change\",\"reason\":\"路明非的护目镜位置与路明非相同\"},{\"memberId\":\"jacket_lu\",\"label\":\"no_change\",\"reason\":\"路明非的演习背心位置与路明非相同\"},{\"memberId\":\"lin_gun\",\"label\":\"partial\",\"reason\":\"林亦舟的演习枪位置与林亦舟相同\"},{\"memberId\":\"lin_radio\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机位置与林亦舟相同\"}],\"facts\":[{\"text\":\"林亦舟放下的演习枪在西回廊的位置\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}\n---\n{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟放下的演习枪在西回廊的位置\"}],\"facts\":[{\"text\":\"林亦舟放下的演习枪在西回廊的位置\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_61",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"lin\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让林亦舟说明是实际扭伤，而不是弗里嘉弹造成的暂时失能\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_62",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"no_change\",\"reason\":\"没有被阻止\"},{\"memberId\":\"manstein\",\"label\":\"achieved\",\"reason\":\"成功拦下广播\"}],\"facts\":[{\"text\":\"曼施坦因（id=manstein）拦下广播\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_62",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [ \n  ],\n  \"achieved\": [ \n    ],\n  \"subtasks\": []\n}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让自由一日按中立规则结束，真实伤情得到处置\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_63",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺查看了周围环境并询问是否有需要帮助的人\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_63",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"nono\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"nono\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"让红方的旗台行动有可执行的掩护，而不把路明非当诱饵\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_64",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"目标芬格尔的骰点资格为true，但准入为false，因此部分成功\"}],\"facts\":[{\"text\":\"秦越让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_64",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"qin\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t21\",\"goal\":\"在自己不被淘汰的前提下用路线情报换到演习照片的拍摄机会\"},{\"parentTaskId\":\"t23\",\"goal\":\"把检修门从里面插闩这件事告诉准备走地下路线的人\"},{\"parentTaskId\":\"t20\",\"goal\":\"换上相机备用电池，拍到有辨识度的争旗场面\"},{\"parentTaskId\":\"t22\",\"goal\":\"若路明非求助，给出可验证的器材或路线帮助，而不是空口保证安全\"},{\"parentTaskId\":\"t24\",\"goal\":\"保住自己腰包里的饭票，不拿别人的补给抵债\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_65",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"not_achieved\",\"reason\":\"未完成目标\"},{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"成功完成目标\"}],\"facts\":[{\"text\":\"富山雅史（tomiyama）\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\",\"outcome\":\"blocked\"},{\"text\":\"沈澄（shen）\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_65",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"shen\", \"tasks\": [{\"taskId\": \"t1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t56\",\"goal\":\"向顾岚说明手指麻感是否减轻\"},{\"parentTaskId\":\"t52\",\"goal\":\"只说明退出前亲眼看见的庭院路线\"},{\"parentTaskId\":\"t55\",\"goal\":\"在获准离开医护区前不重新加入争旗\"},{\"parentTaskId\":\"t52\",\"goal\":\"若被询问，只说明退出前亲眼看见的庭院路线\"},{\"parentTaskId\":\"t55\",\"goal\":\"在获准离开医护区前不重新加入争旗\"},{\"parentTaskId\":\"t55\",\"goal\":\"在获准离开医护区前不重新加入争旗\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_66",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"partial\",\"reason\":\"苏茜观察并记录了现场细节\"}],\"facts\":[{\"text\":\"苏茜观察并记录了现场细节\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_66",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}\n---\n{\"unchanged\": [], \"achieved\": [{\"characterId\": \"su\", \"tasks\": [{\"taskId\": \"f1\", \"basis\": \"f1\"}]}], \"subtasks\": []}\n---\n{\"subtasks\":[{\"parentTaskId\":\"t1\",\"goal\":\"苏茜需要确认东回廊对钟楼的接近线是否安全，以确保蓝方信息可信\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_67",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"拦住了对手的行动\"}],\"facts\":[{\"text\":\"唐骁（id=tang）在中央庭院的位置为中央庭院；精神为38。\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"blocked\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_67",
+     "stage": null,
+     "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_east_cover\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": "tasks:JsonCallError: model_output_invalid: AbortError: Aborted; subtasks:JsonCallError: model_output_invalid: AbortError: Aborted"
+    }
+   ]
+  },
+  {
+   "id": "s16-time-check",
+   "input": "我再等一段时间，核对护目镜和识别带，记下演习还剩多久。",
+   "text": "路明非的手指在护目镜边缘轻轻摩挲，镜片无裂纹，镜带松着，现挂在胸前。他盯着墙上的赛区图，确认路线清晰。墙角的演习弹红痕还新鲜，说明演习尚未结束。他低头查看识别带，确认准备就绪。屋内没有本场命中标记，胸袋里装着一只弹匣，肩上没有识别带。诺诺在巷口，红发用发圈束在脑后，红色识别带缠在左臂，枪口压向地面。",
+   "waitMs": 297878,
+   "place": "西侧服务巷",
+   "nearby": "诺诺",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#4已提交行动行动 · 当前正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#3已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ],
+   "calls": [
+    {
+     "task": "results",
+     "key": "group_72",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非确认护目镜和识别带准备就绪\"},{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺查看了演习规则牌并确认使用弗里嘉演习弹\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非核对了护目镜和识别带并准备演习\"}],\"facts\":[{\"text\":\"路明非确认护目镜和识别带准备就绪\",\"memberIds\":[\"lu\"],\"actorId\":\"lu\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_72#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_72#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_73",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"caesar\",\"label\":\"no_change\",\"reason\":\"凯撒询问红方信号旗是否已升起\"}],\"facts\":[{\"text\":\"凯撒询问红方信号旗是否已升起\",\"memberIds\":[\"caesar\"],\"actorId\":\"caesar\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_73#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_left_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_73#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"caesar\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_74",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"chu\",\"label\":\"achieved\",\"reason\":\"楚子航确认撤离路线并行动\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"chu\"],\"actorId\":\"chu\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_74#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"chu\",\"containerId\":\"landing\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_74#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"blue_band_chu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_75",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"},{\"memberId\":\"doctor\",\"label\":\"achieved\",\"reason\":\"没有判定\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"doctor\"],\"actorId\":\"doctor\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_75#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"doctor\",\"containerId\":\"aid\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_75#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_77",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"lin\",\"label\":\"partial\",\"reason\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lin\",\"label\":\"no_change\",\"reason\":\"林亦舟的短讯机已发送求助，电量两格，已请求帮助。\"}],\"facts\":[{\"text\":\"林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"lin\"],\"actorId\":\"lin\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_77#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"lin\",\"containerId\":\"west_arcade\",\"slotId\":\"slot_pillar3\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_77#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"broken_blue_band\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_78",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"manstein\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"manstein\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"manstein\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"曼施坦因（id=manstein）行动：拦下安全广播话筒\",\"memberIds\":[\"manstein\"],\"actorId\":\"manstein\",\"outcome\":\"blocked\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_78#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"caesar\",\"containerId\":\"red_rally\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_78#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"aid\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_79",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"partial\",\"reason\":\"诺诺向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\"},{\"memberId\":\"lu\",\"label\":\"no_change\",\"reason\":\"路明非在西侧服务巷的第三根柱子旁，精神状态良好，未发生任何行动或反应。\"},{\"memberId\":\"goggles_lu\",\"label\":\"no_change\",\"reason\":\"路明非的护目镜未被拆下，且镜带松着，位置正确。\"},{\"memberId\":\"jacket_lu\",\"label\":\"no_change\",\"reason\":\"路明非的演习背心完好，没有弹痕，胸袋能放弹匣，肩上无阵营识别带。\"},{\"memberId\":\"map\",\"label\":\"no_change\",\"reason\":\"赛区路线图上标注了西侧服务巷的路线，位置正确且未被修改。\"},{\"memberId\":\"pistol_nono\",\"label\":\"partial\",\"reason\":\"诺诺的短枪上仍有黄色演习标记，弹匣内有3发弗里嘉演习弹，保险合上。\"},{\"memberId\":\"radio_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的故障短讯机电量灯不亮，电池盖扣牢，位置正确且未被拆下。\"},{\"memberId\":\"red_band_nono\",\"label\":\"no_change\",\"reason\":\"诺诺的红色识别带系在左臂，结头朝外，完整且未被拆下。\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"completed\"}]}\n---\n{\"judgments\":[{\"memberId\":\"nono\",\"label\":\"not_achieved\",\"reason\":\"诺诺并未成功说明扭伤情况\"}],\"facts\":[{\"text\":\"诺诺在西侧服务巷第三根柱子旁向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能。\",\"memberIds\":[\"nono\"],\"actorId\":\"nono\",\"outcome\":\"blocked\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_79#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"lu\",\"containerId\":\"lane\",\"slotId\":\"slot_body\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_79#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"goggles_lu\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_80",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"qin\",\"label\":\"partial\",\"reason\":\"目标芬格尔的骰点资格为true，但准入为false，因此部分成功\"}],\"facts\":[{\"text\":\"秦越让路\",\"memberIds\":[\"qin\"],\"actorId\":\"qin\",\"outcome\":\"blocked\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_80#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"fingel\",\"containerId\":\"shed\",\"slotId\":\"slot_top\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_80#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"spare_mag1\",\"op\":\"keep\",\"recordIds\":[],\"text\":\"装有8发弗里嘉演习弹，无阵营标记，可装入未领用演习短枪\"}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_81",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"tomiyama\",\"label\":\"not_achieved\",\"reason\":\"富山雅史低头整理衣领，眼神中带着担忧\"},{\"memberId\":\"shen\",\"label\":\"achieved\",\"reason\":\"沈澄拆下红色识别带并离开\"}],\"facts\":[{\"text\":\"富山雅史低头整理衣领，眼神中带着担忧\",\"memberIds\":[\"tomiyama\"],\"actorId\":\"tomiyama\",\"outcome\":\"blocked\"},{\"text\":\"沈澄拆下红色识别带并离开\",\"memberIds\":[\"shen\"],\"actorId\":\"shen\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_81#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"shen\",\"containerId\":\"rest\",\"slotId\":\"slot_right_hand\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_81#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"blanket\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_82",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"su\",\"label\":\"partial\",\"reason\":\"苏茜观察并记录了现场细节\"}],\"facts\":[{\"text\":\"苏茜观察并记录了现场细节\",\"memberIds\":[\"su\"],\"actorId\":\"su\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_82#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"su\",\"containerId\":\"east_arcade\",\"slotId\":\"slot_window\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_82#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"canvas_blind\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_83",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"tang\",\"label\":\"partial\",\"reason\":\"唐骁拦下庭院长椅\"}],\"facts\":[{\"text\":\"看懂了规则牌\",\"memberIds\":[\"tang\"],\"actorId\":\"tang\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_83#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"tang\",\"containerId\":\"yard\",\"slotId\":\"slot_waist\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_83#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"bench_cover\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "results",
+     "key": "group_85",
+     "stage": null,
+     "raw": "{\"judgments\":[{\"memberId\":\"zhou\",\"label\":\"no_change\",\"reason\":\"没有判定\"},{\"memberId\":\"zhou\",\"label\":\"partial\",\"reason\":\"部分成功\"},{\"memberId\":\"zhou\",\"label\":\"blocked\",\"reason\":\"被阻止\"}],\"facts\":[{\"text\":\"〈周映拦下白旗锁扣〉\",\"memberIds\":[\"zhou\"],\"actorId\":\"zhou\",\"outcome\":\"completed\"}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_85#position",
+     "stage": "position",
+     "raw": "{\"positions\":[{\"entityId\":\"zhou\",\"containerId\":\"balcony\",\"slotId\":\"slot_flag_base\",\"relativeTo\":null}],\"appearances\":[]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "group_85#appearance",
+     "stage": "appearance",
+     "raw": "{\"operations\":[{\"entityId\":\"balcony\",\"op\":\"keep\",\"recordIds\":[],\"text\":null}]}",
+     "error": null
+    },
+    {
+     "task": "updates",
+     "key": "point_rest:point_round_70_2#tasks",
+     "stage": "tasks",
+     "raw": "",
+     "error": "JsonCallError: model_output_invalid: AbortError: Aborted"
+    }
+   ]
+  }
+ ]
+}
