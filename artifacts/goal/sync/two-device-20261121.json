@@ -1,0 +1,114 @@
+{
+  "kind": "jity-g7-two-device-fork",
+  "startedAt": "2026-11-21T12:41:12.773Z",
+  "base": "http://127.0.0.1:3177",
+  "api": "http://127.0.0.1:8000/local-progress",
+  "world": "world_dragon_raja_free_day",
+  "arm": "narrationModel=semantic&offscreenPolicy=skip",
+  "choice": "keep-local-fork",
+  "inputs": [
+    "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。",
+    "我沿着器材棚外侧往仓库方向走，留意有没有人跟着。",
+    "我先在门口站住，听里面的动静，再决定下一步。"
+  ],
+  "steps": {
+    "A1": {
+      "boot": {
+        "label": "A1",
+        "readyMs": 6423,
+        "restored": true,
+        "text": "里的弹匣，确认都在。他站在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区。右墙贴着赛区路线图，器材棚门敞开；巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕。屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标。诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别\n模型正文（原样显示，未做内容核对）\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n得到至少一名在场者明确同意的协作，不替他人擅自承诺\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n把胸前护目镜戴好并确认镜片没有裂纹\n在进入交火区前拿到可用的护目镜与演习装备\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n历史时间点\n5 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n#5\n已提交行动\n行动 · 当前\n正文已缓存\n#4\n已提交行动\n行动\n正文已缓存\n#3\n已提交行动\n行动\n正文已缓存\n#2\n已提交行动\n瞬时\n正文已缓存\n#1\n已提交行动\n行动\n正文已缓存\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：1 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n20:41:19\n进度同步\n已同步\n立即同步",
+        "arm": {
+          "candidate": "auto",
+          "mode": null,
+          "shape": null,
+          "offscreenPolicy": "skip",
+          "narrationModel": "semantic",
+          "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "narrationBytes": 396705472,
+          "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+        }
+      },
+      "console": [
+        "[world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"texture-formats-tier1\",\"bgra8unorm-storage\",\"chromium-experimental-multi-draw-indirect",
+        "[world-local] restored remote progress",
+        "[world-local] restored entries 1 with text 1 unfinished 0"
+      ],
+      "headBeforeTurn": {
+        "worldId": "world_dragon_raja_free_day",
+        "headSnapshotId": "snap_170378c32cc8d75e31235a0c94b33f0d31e6dae7b2f302db27d522de1dc35ab2",
+        "revision": 3,
+        "updatedAt": "2026-11-21T12:41:19.660Z"
+      },
+      "turn": {
+        "input": "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。",
+        "ms": 235819,
+        "record": {
+          "index": 1,
+          "done": null,
+          "failed": null,
+          "stopped": null
+        },
+        "doneLine": "本轮已交还，继续输入下一步行动。",
+        "timedOut": false,
+        "pageError": false,
+        "syncLine": "已同步"
+      },
+      "base": {
+        "worldId": "world_dragon_raja_free_day",
+        "headSnapshotId": "snap_0748900f1f4c3b411fd3c07e011c8048fc20096287ee7e900a32a7aaa049fbb7",
+        "revision": 4,
+        "updatedAt": "2026-11-21T12:45:14.536Z"
+      }
+    },
+    "B1": {
+      "boot": {
+        "label": "B1",
+        "readyMs": 5829,
+        "restored": true,
+        "text": "诺在西侧服务巷，红发束在脑后，红色识别带缠在左臂，右袖的红痕是扶过弹着石墙时蹭上的，身上的没有本场命中标记，手里的短枪枪口压向地面。  \n\n屋内有路明非的演习背心，前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋内还有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路；地下检修通道用虚线标注，未标。\n模型正文（原样显示，未做内容核对）\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n得到至少一名在场者明确同意的协作，不替他人擅自承诺\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n把胸前护目镜戴好并确认镜片没有裂纹\n在进入交火区前拿到可用的护目镜与演习装备\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n历史时间点\n9 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n#9\n已提交行动\n行动 · 当前\n正文已缓存\n#8\n已提交行动\n行动\n正文已缓存\n#7\n已提交行动\n行动\n正文已缓存\n#6\n已提交行动\n行动\n正文已缓存\n#5\n已提交行动\n行动\n正文已缓存\n#4\n已提交行动\n行动\n正文已缓存\n#3\n已提交行动\n行动\n正文已缓存\n#2\n已提交行动\n瞬时\n正文已缓存\n#1\n已提交行动\n行动\n正文已缓存\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：2 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n20:45:21\n进度同步\n已同步\n立即同步",
+        "arm": {
+          "candidate": "auto",
+          "mode": null,
+          "shape": null,
+          "offscreenPolicy": "skip",
+          "narrationModel": "semantic",
+          "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "narrationBytes": 396705472,
+          "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+        }
+      },
+      "console": [
+        "[world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect",
+        "[world-local] restored remote progress",
+        "[world-local] restored entries 2 with text 2 unfinished 0"
+      ]
+    }
+  },
+  "failures": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "G7 two-device fork http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-21T12:41:12.871340+00:00",
+    "supervisorPid": null,
+    "holderPid": 29656,
+    "token": "7c6d80bd554931448e83ef1fc7dab832"
+  },
+  "harness": {
+    "edgeVersion": "158.0.4370.33",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ]
+  },
+  "apiHealth": {
+    "status": "ok",
+    "storage": "data\\local_progress.sqlite3",
+    "worlds": 1,
+    "snapshots": 2,
+    "maxPayloadBytes": 4194304,
+    "maxSnapshotsPerWorld": 5000
+  }
+}
