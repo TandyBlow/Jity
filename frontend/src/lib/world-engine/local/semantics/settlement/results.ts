@@ -746,6 +746,22 @@ function readResultsAnswer(
         continue;
       }
     }
+    // A closed door may not contradict a location whose committed appearance
+    // says the door is open (s03 audit: the fact said 紧闭的门 while the lane
+    // was 器材棚门敞开).
+    if (mentioned.length <= 1 && /门/u.test(cleaned.text) && /(紧闭|关着|关着门|锁着)/u.test(cleaned.text)
+      && !/没有|不/u.test(cleaned.text)) {
+      const rooms = new Set(recipientIds.map((id) => state.characters[id]?.position.containerId).filter((room): room is Id => Boolean(room)));
+      const openRoom = [...rooms].some((room) => /门[^。；]{0,4}(敞开|开着|打开)/u.test(effectiveLocationAppearance(state, room)));
+      if (openRoom) {
+        if (!options.dropEmptyResults) {
+          throw new Error(`fact closes a door the committed location says is open: ${original}。只写已结算的物件和状态。`);
+        }
+        droppedFacts.push({ memberIds: recipientIds, original, reason: 'contradicts_appearance' });
+        for (const id of recipientIds) coveredByDrop.add(id);
+        continue;
+      }
+    }
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -967,6 +983,14 @@ function readResultsAnswer(
 function effectiveAppearance(state: WorldState, id: Id): string {
   const initial = state.initial.characters[id]?.initialAppearance ?? '';
   const changes = (state.characters[id]?.appearanceChanges ?? [])
+    .filter((change) => change.active)
+    .map((change) => String(change.text ?? ''));
+  return [initial, ...changes].filter(Boolean).join('；');
+}
+
+function effectiveLocationAppearance(state: WorldState, id: Id): string {
+  const initial = state.initial.locations[id]?.initialAppearance ?? '';
+  const changes = (state.locations[id]?.appearanceChanges ?? [])
     .filter((change) => change.active)
     .map((change) => String(change.text ?? ''));
   return [initial, ...changes].filter(Boolean).join('；');

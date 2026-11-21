@@ -200,6 +200,27 @@ describe('common-group results', () => {
     expect(detail.droppedFacts.some((row) => row.reason === 'contradicts_appearance')).toBe(true);
   });
 
+  it('drops a fact that closes a door the location says is open', async () => {
+    const state = world();
+    state.initial.locations.room.initialAppearance = '房间的门敞开着，通向走廊。';
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '推到了门边。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '接住了。', effects: [] },
+      ],
+      facts: [
+        { text: '甲看了一眼紧闭的门。', memberIds: ['a'] },
+        { text: '乙伸手接住工具。', memberIds: ['b'] },
+      ],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput(state));
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { text: string }[]; droppedFacts: { reason: string }[] };
+    expect(detail.facts.some((fact) => fact.text.includes('紧闭'))).toBe(false);
+    expect(detail.droppedFacts.some((row) => row.reason === 'contradicts_appearance')).toBe(true);
+  });
+
   it('keeps the structured result fields of a committed fact', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [
