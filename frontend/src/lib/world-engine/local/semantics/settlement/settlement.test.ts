@@ -180,6 +180,25 @@ describe('common-group results', () => {
     expect(detail.missingFactMembers).toEqual(['a']);
   });
 
+  it('narrows a shared fact to the single member its sentence names', async () => {
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推了工具。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙站着没动。', effects: [] },
+      ],
+      facts: [
+        { text: '甲把工具推向乙。', memberIds: ['a'] },
+        { text: '乙站在原地没有动。', memberIds: ['a', 'b'] },
+      ],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { memberIds: string[]; text: string }[] };
+    const shared = detail.facts.find((fact) => fact.text.includes('站在原地'));
+    expect(shared?.memberIds).toEqual(['b']);
+  });
+
   it('drops a fact that puts a band on a character whose appearance says none', async () => {
     const state = world();
     state.initial.characters.a.initialAppearance = '右手还空着，身上没有红蓝识别带。';

@@ -731,6 +731,12 @@ function readResultsAnswer(
     // An ownership swap can remove the only mention of the wrong owner; the
     // “another character's action” check must read the corrected sentence.
     if (ownershipAdjusted.length) mentioned = mentionedCharacterIds(state, cleaned.text);
+    // A shared fact must be about everyone it is attributed to. When the
+    // sentence names exactly one member, the extra ids are the model's slip
+    // (s07 audit: one band sentence declared for nono and lu).
+    if (mentioned.length === 1 && recipientIds.length > 1 && memberById.has(mentioned[0])) {
+      recipientIds = [mentioned[0]];
+    }
     // A settled fact may not give a character an identification band the
     // committed appearance says they do not have (s02/s05/s16 audit: the fact
     // asserted a ready band while the state said 身上没有红蓝识别带).
