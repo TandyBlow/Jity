@@ -484,7 +484,7 @@ describe('ProgressSyncClient', () => {
     expect((await client.pullLatest('w1')).snapshot?.payload).toEqual(snapshot(2, '后续离线'));
   });
 
-  it('rebases dependent offline saves after an explicit fork choice', async () => {
+  it('keeps the newest offline save after an explicit fork choice', async () => {
     const server = new FakeProgressServer();
     const deviceA = makeClient(server);
     const root = await deviceA.client.save('w1', snapshot(1, 'root'), { requestId: 'a1' });
@@ -505,21 +505,48 @@ describe('ProgressSyncClient', () => {
     const flushed = await deviceB.client.flush();
     expect(flushed.conflicts).toHaveLength(1);
     expect(flushed.conflicts[0].requestId).toBe('b1');
-    expect(flushed.failures.some((failure) => failure.code === 'dependency_missing')).toBe(true);
-    expect(flushed.remaining).toBe(2);
 
     const resolved = await deviceB.client.resolveQueuedConflict('b1', 'keep-local-fork');
     expect(resolved.status).toBe('local-fork');
-    const secondFlush = await deviceB.client.flush();
-    expect(secondFlush.uploaded).toHaveLength(1);
-    expect(secondFlush.uploaded[0].headSnapshotId).toBe(secondFlush.uploaded[0].snapshotId);
+    // The branch the player kept is the newest local save, not b1.
+    expect((await deviceB.client.read('w1', resolved.upload!.snapshotId)).payload).toEqual(snapshot(3, 'B2'));
     expect(await deviceB.client.pending()).toBe(0);
 
     const graph = await deviceB.client.graph('w1');
-    expect(graph.headSnapshotId).toBe(secondFlush.uploaded[0].snapshotId);
-    expect(graph.branches).toEqual([secondFlush.uploaded[0].snapshotId, advanced.upload.snapshotId].sort());
+    expect(graph.headSnapshotId).toBe(resolved.upload!.snapshotId);
+    expect(graph.branches).toEqual([resolved.upload!.snapshotId, advanced.upload.snapshotId].sort());
     expect((await deviceB.client.read('w1', advanced.upload.snapshotId)).payload).toEqual(snapshot(2, 'A2'));
     expect((await deviceB.client.pullLatest('w1')).snapshot?.payload).toEqual(snapshot(3, 'B2'));
+  });
+
+  it('keeps the newest local save when a queued chain conflicts', async () => {
+    const server = new FakeProgressServer();
+    const deviceA = makeClient(server);
+    const root = await deviceA.client.save('w1', snapshot(1, 'root'), { requestId: 'a1' });
+    if (root.status !== 'synced') throw new Error('root failed');
+
+    const deviceB = makeClient(server);
+    await deviceB.client.head('w1');
+    server.offline = true;
+    await deviceB.client.save('w1', snapshot(2, 'B1'), { requestId: 'b1' });
+    await deviceB.client.save('w1', snapshot(3, 'B2'), { requestId: 'b2' });
+    // The session writes each settled point; the store holds the newest one.
+    deviceB.localStore.values.set('w1', snapshot(3, 'B2'));
+    server.offline = false;
+    const advanced = await deviceA.client.save('w1', snapshot(2, 'A2'), { requestId: 'a2' });
+    if (advanced.status !== 'synced') throw new Error('advance failed');
+
+    const flushed = await deviceB.client.flush();
+    expect(flushed.conflicts).toHaveLength(1);
+    expect(flushed.conflicts[0].requestId).toBe('b1');
+    const resolved = await deviceB.client.resolveConflict(flushed.conflicts[0].conflict, 'keep-local-fork', { saveLocal: true });
+    expect(resolved.status).toBe('local-fork');
+    expect((await deviceB.client.read('w1', resolved.upload!.snapshotId)).payload).toEqual(snapshot(3, 'B2'));
+    expect(await deviceB.client.pending()).toBe(0);
+    expect(deviceB.localStore.values.get('w1')).toEqual(snapshot(3, 'B2'));
+    const second = await deviceB.client.flush();
+    expect(second.conflicts).toHaveLength(0);
+    expect((await deviceB.client.head('w1')).headSnapshotId).toBe(resolved.upload!.snapshotId);
   });
 
   it('retries a lost response idempotently instead of creating a second revision', async () => {
