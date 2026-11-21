@@ -39,7 +39,7 @@
 | R13 | 行动描述仅作本次分析；不建长期行动历史 | 实现中 | `local/transport.ts` 的 `actionTexts`、`persistence/` 快照、`history.ts` | transport、persistence 测试 | 原文只按工作态生命周期保存；调试归档与世界存档分开。G2/G4 |
 | R14 | 工作职责不等于模型数或调用数 | 实现中 | `game-model.ts` 的 options、`controller.ts` 的 `ModelTask`、`schedule.ts` | `architecture.md` 第 6 节；模型变体清单；G3 逐任务调用记录 `artifacts/goal/timing-runs/points-10-rerun.json` | 按质量/成本选择单/多模型；记录每任务贡献。G3/G6 |
 | R15 | 开局生成 | 已改写：静态载入/校验/封存，实现中 | `world-loader.ts`、`static-world-registration.ts`、`data/worlds/` | loader/registration 测试；摘要与计数；2026-11-10 用户澄清 | 静态世界供给与 held-out 决定；开局校验与页面。G1/G2/G4 |
-| R16 | 小世界完整可玩；≥20 输入；自动链、共同结算、恢复、历史、删叙事重生 | 未实现 | `world-local/page.tsx`、`frontend/scripts/product-acceptance/accept-world-local.mjs`、`turns-10.json` | 10 轮驱动已存在；没有 20 输入真实模型通过记录 | 20 输入、离线、服务器关闭、两设备分叉、用户签字。G8 |
+| R16 | 小世界完整可玩；≥20 输入；自动链、共同结算、恢复、历史、删叙事重生 | 未实现 | `world-local/page.tsx`、`frontend/scripts/product-acceptance/accept-world-local.mjs`、`turns-10.json` | 10 轮驱动已存在；没有 20 输入真实模型通过记录 | 20 输入、离线、服务器关闭、两设备分叉；用户签字已按 D-019 放弃。G8 |
 
 ## 3. R15 改写说明
 
@@ -64,7 +64,7 @@
 | G5 非叙事语义验收 | 技术自检不通过（2026-11-21 复核） | 16 例跨 run17/18/19 有结论、分类器硬违规 0，但叙事技术读评（16/16 case id）发现上游事实缺陷：s02/s05/s16 给路明非凭空识别带、s03 fact「紧闭的门」与 lane「门敞开」相反、s06 judgment 写电台交接成功而 fact/updates 无此变化、s07 同一 fact 双挂、s09 占位句。已修：占位句拒绝、识别带与外观矛盾拒绝、门与地点外观矛盾拒绝、叙事 prompt 物品归属；行动回声启发式已回退。未修：s06 judgment/fact 一致性。G5 change 已归档、tag 保留为历史；本行状态以复核为准，G5 重开 |
 | G6 叙事产品路径与质量 | 进行中 | 原样输出路径已冻结；12 点技术读评 7 硬/4 复述/1 干净；2026-11-21 的 16 例技术读评（16/16 case id）：hard 13、style 3、clean 0；主要模式为投影清单原句搬入、凭空短枪/人物对调、无依据移动、元语言；t5 地点冲突投影、物品归属 prompt、识别带与占位句事实已修；待真机复测、20+ 点读评、G6 后事实门决定 |
 | G7 进度同步与跨设备 | 进行中（小步） | 客户端/适配器与离线队列已有测试；`status().localRevision` 已从 store 元数据返回；页面 startup `restore()`、冲突分叉选择 UI 与两设备证据未做；单用户 Bearer + 本地/内网（D-013） |
-| G8 交付验收与证据 | 未开始 | 20 输入、manifest、用户签字 |
+| G8 交付验收与证据 | 未开始 | 20 输入、manifest、技术证据；D-019 取消用户签字 |
 
 ## 5. 开放任务
 
@@ -77,7 +77,7 @@
 - **G5**：技术自检不通过（2026-11-21 复核），用户抽检豁免。16 例有结论、分类器硬违规 0；16/16 技术读评发现上游事实缺陷：s02/s05/s16 凭空识别带（已加外观矛盾拒绝）、s09 占位句（已加检测）、s03 门状态相反（已加地点外观矛盾拒绝）、s06 judgment 与 fact 不一致（未修）、s06 物品 memberId/重复 judgment/状态字段事实（状态字段已拒；其余待核对）、s07 双挂（读取层已有改写/去重）。G5 change 已归档、tag `goal-g5-semantics-20261121` 保留为历史；按本行重开。计时问题仍在：judge 回合普遍 295 s、s04 首段>60；D-018 + 240 s 预算后 s01 探针 280.1 s 交还。
 - **G6**：进行中。原样输出路径保持；12 个 G3 样本技术读评 7 硬/4 复述/1 干净；2026-11-21 的 16 例技术读评（16/16）hard 13、style 3、clean 0（`artifacts/goal/narration/read-16-20261121.md`、`audit-16-raw-20261121.txt`、`audit-16-followup-raw-20261121.txt`）；已修 t5 地点冲突、物品归属 prompt、仅结算动作才算发生、占位句、识别带矛盾；未修：投影清单原句复述（系统性文风）、凭空短枪在叙事层仍需真机验证、s03/s06 上游。用户无法逐段读评（抽检豁免），阈值与事实门待实测。
 - **G7**：进行中（小步）。`progress-sync` 客户端/适配器、离线队列、CAS/父链已有单元测试；`status().localRevision` 已修；页面启动已接「本地优先、无本地时拉远端头并落盘」。剩余：冲突分叉展示与 `sync.choose`、重连 flush 的页面状态、两设备分叉证据（`artifacts/goal/sync/`）；单用户 Bearer + 本地/内网服务（D-013）。
-- **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；用户签字。
+- **G8**：扩 `accept-world-local.mjs` 与 turns 文件；20 输入（含用户本人 10 次独立输入）；不加 held-out 世界（D-011）；四类跨回合检查、输入依赖配对、评测器自检、泄漏/锚定、基座回归；产 manifest 与验收报告；D-019 取消用户签字与独立输入。
 
 ## 6. 证据索引
 
