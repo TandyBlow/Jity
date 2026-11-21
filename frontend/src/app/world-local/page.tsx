@@ -41,6 +41,13 @@ const NARRATION_MODELS = {
     url: '/models/Qwen3-1.7B-Q4_K_M.gguf', bytes: 1_107_409_472, contextSize: 4096,
     sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
   },
+  // Evaluation arm (D-007): the semantic 0.6B also writes the narration, in
+  // the same engine instance. One set of weights instead of two; quality must
+  // be measured against the 1.7B before it can become a default.
+  'semantic': {
+    url: '/models/Qwen3-0.6B-Q4_K_M.gguf', bytes: 396_705_472, contextSize: 12_288,
+    sha256: 'ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a',
+  },
 } as const;
 type NarrationModelKey = keyof typeof NARRATION_MODELS;
 const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b';
@@ -537,7 +544,7 @@ export default function WorldLocalPage() {
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
     const modelParam = q.get('narrationModel');
-    const model = modelParam === 'qwen3-1.7b' || modelParam === 'qwen25-1.5b-narr' ? modelParam : undefined;
+    const model = modelParam === 'qwen3-1.7b' || modelParam === 'qwen25-1.5b-narr' || modelParam === 'semantic' ? modelParam : undefined;
     const modeParam = q.get('narrationMode');
     const shapeParam = q.get('narrationShape');
     const offscreenParam = q.get('offscreenPolicy');
@@ -744,7 +751,11 @@ export default function WorldLocalPage() {
         // repair feedback; 8192 left a retry on the edge of the context.
         const semantic = resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
         semanticRef.current = semantic;
-        const narration = resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes);
+        // The 0.6B narration arm shares the semantic engine: one set of
+        // weights, at the cost of serialising narration against settlement.
+        const narration = narrationKey === 'semantic'
+          ? semantic
+          : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes);
         narrationRef.current = narration;
         const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
         // Arm identity is evidence: 09 records it next to every turn, including
