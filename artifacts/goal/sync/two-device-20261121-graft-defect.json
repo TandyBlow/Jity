@@ -1,0 +1,92 @@
+{
+  "kind": "jity-g7-two-device-fork",
+  "startedAt": "2026-11-21T13:28:38.159Z",
+  "base": "http://127.0.0.1:3177",
+  "api": "http://127.0.0.1:8000/local-progress",
+  "world": "world_dragon_raja_free_day",
+  "arm": "narrationModel=semantic&offscreenPolicy=skip",
+  "choice": "keep-local-fork",
+  "inputs": [
+    "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。",
+    "我沿着器材棚外侧往仓库方向走，留意有没有人跟着。"
+  ],
+  "steps": {
+    "A1": {
+      "boot": {
+        "label": "A1",
+        "readyMs": 29723,
+        "restored": false,
+        "text": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n2009-10-17 15:20 · 西侧服务巷\n本地世界已就绪。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n21:29:08\n进度同步\n仅本机保存\n立即同步",
+        "arm": {
+          "candidate": "auto",
+          "mode": null,
+          "shape": null,
+          "offscreenPolicy": "skip",
+          "narrationModel": "semantic",
+          "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "narrationBytes": 396705472,
+          "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+        }
+      },
+      "console": [
+        "[world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect",
+        "[world-local task] narration point_root_world_dragon_raja_free_day 28297ms fallback=false "
+      ],
+      "base": {
+        "worldId": "world_dragon_raja_free_day",
+        "headSnapshotId": "snap_0f860c7de60c086edfbf78fe2416e371e1db26a22ad275a69a41030388325e46",
+        "revision": 1,
+        "updatedAt": "2026-11-21T13:29:08.293Z"
+      },
+      "syncLine": "已同步"
+    },
+    "B1": {
+      "boot": {
+        "label": "B1",
+        "readyMs": 15520,
+        "restored": false,
+        "text": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n2009-10-17 15:20 · 西侧服务巷\n本地世界已就绪。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n得到至少一名在场者明确同意的协作，不替他人擅自承诺\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n把胸前护目镜戴好并确认镜片没有裂纹\n在进入交火区前拿到可用的护目镜与演习装备\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n21:29:24\n进度同步\n已同步\n立即同步",
+        "arm": {
+          "candidate": "auto",
+          "mode": null,
+          "shape": null,
+          "offscreenPolicy": "skip",
+          "narrationModel": "semantic",
+          "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "narrationBytes": 396705472,
+          "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
+        }
+      },
+      "console": [
+        "[world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect",
+        "[world-local] restored remote progress"
+      ]
+    }
+  },
+  "failures": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "G7 two-device fork http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-21T13:28:38.235412+00:00",
+    "supervisorPid": null,
+    "holderPid": 34436,
+    "token": "24dceb6a915fb79b1ae09b39684a760d"
+  },
+  "harness": {
+    "edgeVersion": "158.0.4370.33",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ]
+  },
+  "apiHealth": {
+    "status": "ok",
+    "storage": "D:\\others\\Jity\\artifacts\\goal\\sync\\progress-e2e.sqlite3",
+    "worlds": 0,
+    "snapshots": 0,
+    "maxPayloadBytes": 4194304,
+    "maxSnapshotsPerWorld": 5000
+  }
+}
