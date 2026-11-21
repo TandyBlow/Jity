@@ -27,7 +27,7 @@ const turnTimeoutMs = Number(arg('--turn-timeout-ms', '340000'));
 const readyTimeoutMs = Number(arg('--ready-timeout-ms', '240000'));
 const choice = has('--keep-remote') ? 'keep-remote' : 'keep-local-fork';
 const inputs = JSON.parse(arg('--inputs',
-  '["我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。","我沿着器材棚外侧往仓库方向走，留意有没有人跟着。","我先在门口站住，听里面的动静，再决定下一步。"]'));
+  '["我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。","我沿着器材棚外侧往仓库方向走，留意有没有人跟着。"]'));
 
 const evidence = {
   kind: 'jity-g7-two-device-fork',
@@ -58,6 +58,12 @@ const apiJson = async (path) => {
 };
 const head = () => apiJson(`/worlds/${world}/head`);
 const graph = () => apiJson(`/worlds/${world}/graph`);
+
+/** The page's own sync storage: the offline queue and the last known head. */
+const syncStorage = (page) => page.evaluate(() => ({
+  queue: localStorage.getItem('jity.progress-sync.queue.v1'),
+  heads: localStorage.getItem('jity.progress-sync.heads.v1'),
+})).catch(() => null);
 
 async function boot(context, label) {
   const page = await context.newPage();
@@ -178,19 +184,17 @@ try {
   const contextA = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const contextB = await browser.newContext({ viewport: { width: 1280, height: 900 } });
 
-  // A1: the base head from one real turn on device A.
+  // A1: the shared base is the root snapshot this boot uploads. Two real
+  // turns (one per device) then diverge from it.
   {
     const { page } = await boot(contextA, 'A1');
-    const beforeTurn = await head().catch((error) => ({ error: String(error) }));
-    evidence.steps.A1 = { ...evidence.steps.A1, headBeforeTurn: beforeTurn };
-    const turn = await playTurn(page, inputs[0], 'A1');
-    if (turn.timedOut) fail('A1', 'turn timed out');
-    if (/本轮停止/.test(turn.doneLine ?? '')) fail('A1', `the base turn stopped: ${turn.doneLine}`);
-    const uploaded = await waitForNewHead(beforeTurn.headSnapshotId ?? null, 120000).catch((error) => {
-      fail('A1', 'the base upload never reached the server', String(error));
+    const base = await waitForNewHead(null, 60000).catch((error) => {
+      fail('A1', 'the root upload never reached the server', String(error));
       return null;
     });
-    evidence.steps.A1.base = uploaded;
+    const syncLine = await page.evaluate(() => document.body.innerText).then((text) => text.split(String.fromCharCode(10))
+      .find((line) => /已同步|等待联网|离线/.test(line)) ?? null).catch(() => null);
+    evidence.steps.A1 = { ...evidence.steps.A1, base, syncLine };
     save();
     await page.close();
   }
@@ -200,14 +204,15 @@ try {
     const { page } = await boot(contextB, 'B1');
     const restoredLine = await page.evaluate(() => document.body.innerText.split(String.fromCharCode(10))
       .find((line) => /已行动：\d+/.test(line)) ?? null);
-    if (restoredLine == null) fail('B1', 'the remote head was not restored as history');
-    evidence.steps.B1 = { ...evidence.steps.B1, restoredLine };
+    evidence.steps.B1 = { ...evidence.steps.B1, restoredLine, pulled: (evidence.steps.B1.console ?? []).some((line) => /restored remote progress/.test(line)) };
+    if (!evidence.steps.B1.pulled) fail('B1', 'the remote head was not pulled');
     await contextB.setOffline(true);
-    const turn = await playTurn(page, inputs[1], 'B1');
+    const turn = await playTurn(page, inputs[0], 'B1');
     if (turn.timedOut) fail('B1', 'turn timed out');
     if (/本轮停止/.test(turn.doneLine ?? '')) fail('B1', `the offline turn stopped: ${turn.doneLine}`);
     if (!/等待联网|已存本地|离线/.test(turn.syncLine ?? '')) fail('B1', 'the offline save did not report a queued upload', turn.syncLine);
     evidence.steps.B1.offlineQueueReported = turn.syncLine;
+    evidence.steps.B1.storage = await syncStorage(page);
     save();
     await page.close();
   }
@@ -219,7 +224,7 @@ try {
     const beforeTurn = await head().catch((error) => ({ error: String(error) }));
     evidence.steps.A2 = { ...evidence.steps.A2, headBeforeTurn: beforeTurn };
     await contextA.setOffline(true);
-    const turn = await playTurn(page, inputs[2], 'A2');
+    const turn = await playTurn(page, inputs[1], 'A2');
     if (turn.timedOut) fail('A2', 'turn timed out');
     if (/本轮停止/.test(turn.doneLine ?? '')) fail('A2', `the offline turn stopped: ${turn.doneLine}`);
     if (!/等待联网|已存本地|离线/.test(turn.syncLine ?? '')) fail('A2', 'the offline save did not report a queued upload', turn.syncLine);
@@ -233,6 +238,7 @@ try {
     evidence.steps.A2 = {
       ...evidence.steps.A2,
       branch1Head: branch1,
+      storage: await syncStorage(page),
       syncLine: onlineText.split(String.fromCharCode(10)).find((line) => /已同步|等待联网|失败/.test(line)) ?? null,
     };
     save();
@@ -244,6 +250,7 @@ try {
   {
     await contextB.setOffline(false);
     const { page } = await boot(contextB, 'B2');
+    evidence.steps.B2 = { ...evidence.steps.B2, storageAtBoot: await syncStorage(page) };
     otherBranchId = branch1?.headSnapshotId ?? null;
     const conflictAt = Date.now();
     await page.waitForFunction(

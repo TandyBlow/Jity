@@ -385,12 +385,21 @@ export class ProgressSyncClient<P = unknown> {
           remaining.push(item);
           continue;
         }
-        // This body was never sent (sent=false), so replacing its stale CAS
-        // values with the predecessor's result cannot break idempotency.
-        request = this.rebaseRequest(request, previous);
-        item.request = request as UploadRequest;
-        item.previousRequestId = null;
-        item.sent = false;
+        if (previous.snapshotId !== previous.headSnapshotId) {
+          // The predecessor replayed as a no-op while the world moved on: its
+          // current head is another branch. Rebasing would graft this save
+          // onto work the device never followed, so keep the original CAS and
+          // let the server report the fork.
+          item.previousRequestId = null;
+          item.sent = false;
+        } else {
+          // This body was never sent (sent=false), so replacing its stale CAS
+          // values with the predecessor's result cannot break idempotency.
+          request = this.rebaseRequest(request, previous);
+          item.request = request as UploadRequest;
+          item.previousRequestId = null;
+          item.sent = false;
+        }
       }
       try {
         const result = await this.withRetry(() => this.postUpload(item.worldId, request));
@@ -421,6 +430,13 @@ export class ProgressSyncClient<P = unknown> {
       if (!item.previousRequestId) continue;
       const previous = resolved.get(item.previousRequestId);
       if (!previous) continue;
+      if (previous.snapshotId !== previous.headSnapshotId) {
+        // The next flush must send this save's own CAS, not a rebase onto a
+        // head the device never followed.
+        item.previousRequestId = null;
+        item.sent = false;
+        continue;
+      }
       item.request = this.rebaseRequest(item.request as UploadRequest<P>, previous) as UploadRequest;
       item.previousRequestId = null;
       item.sent = false;

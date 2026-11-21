@@ -549,6 +549,42 @@ describe('ProgressSyncClient', () => {
     expect((await deviceB.client.head('w1')).headSnapshotId).toBe(resolved.upload!.snapshotId);
   });
 
+  it('does not graft a queued save onto a branch it never followed', async () => {
+    const server = new FakeProgressServer();
+    const deviceA = makeClient(server);
+    const root = await deviceA.client.save('w1', snapshot(1, 'root'), { requestId: 'a1' });
+    if (root.status !== 'synced') throw new Error('root failed');
+
+    const deviceB = makeClient(server);
+    await deviceB.client.head('w1');
+    // The root save is applied but its response is lost; the client queues it
+    // as already sent.
+    server.loseNextUploadResponse = true;
+    const lost = await deviceB.client.save('w1', snapshot(1, 'root'), { requestId: 'b-root' });
+    expect(lost.status).toBe('queued');
+    server.offline = true;
+    const b1 = await deviceB.client.save('w1', snapshot(2, 'B1'), { requestId: 'b1' });
+    expect(b1.status).toBe('queued');
+    server.offline = false;
+
+    const advanced = await deviceA.client.save('w1', snapshot(2, 'A2'), { requestId: 'a2' });
+    if (advanced.status !== 'synced') throw new Error('advance failed');
+
+    const flushed = await deviceB.client.flush();
+    // The replayed root upload reports the moved head; B1 must not be rebased
+    // onto A's branch, it must conflict.
+    expect(flushed.conflicts).toHaveLength(1);
+    expect(await deviceB.client.pending()).toBe(1);
+    const graph = await deviceB.client.graph('w1');
+    expect(graph.branches).toEqual([advanced.upload.snapshotId]);
+
+    const resolved = await deviceB.client.resolveConflict(flushed.conflicts[0].conflict, 'keep-local-fork', { saveLocal: true });
+    expect(resolved.status).toBe('local-fork');
+    const after = await deviceB.client.graph('w1');
+    expect(new Set(after.branches)).toEqual(new Set([advanced.upload.snapshotId, resolved.upload!.snapshotId]));
+    expect(after.nodes.find((node) => node.snapshotId === resolved.upload!.snapshotId)!.parentSnapshotIds).toEqual([root.upload.snapshotId]);
+  });
+
   it('retries a lost response idempotently instead of creating a second revision', async () => {
     const server = new FakeProgressServer();
     const { client } = makeClient(server);
