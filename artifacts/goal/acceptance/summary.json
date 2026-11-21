@@ -1,12 +1,12 @@
 {
   "kind": "jity-goal-acceptance-summary",
-  "generatedAt": "2026-11-21T11:19:48.443Z",
+  "generatedAt": "2026-11-21T16:08:10.729Z",
   "thresholds": {
     "firstReadableMs": 60000,
     "turnMs": 300000
   },
   "sources": [
-    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
@@ -14,68 +14,60 @@
   ],
   "inputs": [
     {
-      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
-      "run": "2026-11-21T0659-2d12",
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+      "run": "2026-11-21T1547-3450",
       "id": "s01-act-move",
       "input": "我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。",
-      "firstReadableAtMs": 63564,
-      "acceptedMs": 81260,
-      "turnWaitMs": 298011,
-      "longestPointTextMs": 17696,
-      "problems": [
-        "accepted_over_60s"
-      ],
-      "firstReadablePass": false,
+      "firstReadableAtMs": 27148,
+      "acceptedMs": 34771,
+      "turnWaitMs": 273568,
+      "longestPointTextMs": 7623,
+      "problems": [],
+      "firstReadablePass": true,
       "turnCapPass": true,
-      "deadlineAbort": true
+      "deadlineAbort": false
     },
     {
-      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
-      "run": "2026-11-21T0659-2d12",
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+      "run": "2026-11-21T1547-3450",
       "id": "s02-act-observe",
       "input": "我停在原地，观察器材棚门口进出的人，记下他们身上的识别带颜色。",
-      "firstReadableAtMs": 154171,
-      "acceptedMs": 178319,
-      "turnWaitMs": 295580,
-      "longestPointTextMs": 24148,
-      "problems": [
-        "accepted_over_60s"
-      ],
-      "firstReadablePass": false,
+      "firstReadableAtMs": 19112,
+      "acceptedMs": 30435,
+      "turnWaitMs": 294621,
+      "longestPointTextMs": 11323,
+      "problems": [],
+      "firstReadablePass": true,
       "turnCapPass": true,
-      "deadlineAbort": true
+      "deadlineAbort": false
     },
     {
-      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
-      "run": "2026-11-21T0659-2d12",
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+      "run": "2026-11-21T1547-3450",
       "id": "s03-act-talk",
       "input": "我问器材棚门口的人，今天演习的红蓝两方各在哪些区域活动。",
-      "firstReadableAtMs": 73084,
-      "acceptedMs": 94474,
-      "turnWaitMs": 295813,
-      "longestPointTextMs": 21390,
-      "problems": [
-        "accepted_over_60s"
-      ],
-      "firstReadablePass": false,
+      "firstReadableAtMs": 17430,
+      "acceptedMs": 27542,
+      "turnWaitMs": 297808,
+      "longestPointTextMs": 10112,
+      "problems": [],
+      "firstReadablePass": true,
       "turnCapPass": true,
       "deadlineAbort": true
     },
     {
-      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
-      "run": "2026-11-21T0659-2d12",
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+      "run": "2026-11-21T1547-3450",
       "id": "s04-act-wait",
       "input": "我在墙边等一会儿，听远处的枪声间隔，估算时间过去了多久。",
-      "firstReadableAtMs": 112453,
-      "acceptedMs": 151671,
-      "turnWaitMs": 295917,
-      "longestPointTextMs": 39218,
-      "problems": [
-        "accepted_over_60s"
-      ],
-      "firstReadablePass": false,
+      "firstReadableAtMs": 16890,
+      "acceptedMs": 30658,
+      "turnWaitMs": 295775,
+      "longestPointTextMs": 13768,
+      "problems": [],
+      "firstReadablePass": true,
       "turnCapPass": true,
-      "deadlineAbort": true
+      "deadlineAbort": false
     },
     {
       "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
@@ -306,30 +298,9 @@
   ],
   "gates": {
     "inputs": 20,
-    "firstReadablePass": 16,
+    "firstReadablePass": 20,
     "turnCapPass": 20,
-    "deadlineStops": 12,
-    "failures": [
-      {
-        "id": "s01-act-move",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      },
-      {
-        "id": "s02-act-observe",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      },
-      {
-        "id": "s03-act-talk",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      },
-      {
-        "id": "s04-act-wait",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      }
-    ]
+    "deadlineStops": 9,
+    "failures": []
   }
 }

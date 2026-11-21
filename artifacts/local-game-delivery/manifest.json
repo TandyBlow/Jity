@@ -1,8 +1,8 @@
 {
   "kind": "jity-local-game-delivery",
-  "generatedAt": "2026-11-21T11:58:32.679Z",
+  "generatedAt": "2026-11-21T16:30:31.971Z",
   "code": {
-    "gitHead": "4e236c65f295d29cba7b85b7592ac0dcb0723df4",
+    "gitHead": "f54bf3cb6a525060288e771490bf5193e496e35c",
     "branch": "agent"
   },
   "world": {
@@ -46,42 +46,21 @@
   "acceptance": {
     "summary": "artifacts/goal/acceptance/summary.json",
     "evidence": [
-      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+      "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
       "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
       "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
       "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
       "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json"
     ],
     "inputs": 20,
-    "firstReadablePass": 16,
+    "firstReadablePass": 20,
     "turnCapPass": 20,
-    "deadlineStops": 12,
+    "deadlineStops": 9,
     "thresholds": {
       "firstReadableMs": 60000,
       "turnMs": 300000
     },
-    "failures": [
-      {
-        "id": "s01-act-move",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      },
-      {
-        "id": "s02-act-observe",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      },
-      {
-        "id": "s03-act-talk",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      },
-      {
-        "id": "s04-act-wait",
-        "firstReadablePass": false,
-        "turnCapPass": true
-      }
-    ],
+    "failures": [],
     "note": "D-019: the user abandoned the signature and the ten independent inputs; acceptance is technical evidence."
   },
   "reproduce": {
