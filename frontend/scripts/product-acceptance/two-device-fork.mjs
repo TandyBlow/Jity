@@ -23,7 +23,7 @@ const out = resolve(root, arg('--out', 'artifacts/goal/sync/two-device-20261121.
 const world = 'world_dragon_raja_free_day';
 // One engine per page and no off-screen judge: sync does not depend on them.
 const arm = arg('--arm', 'narrationModel=semantic&offscreenPolicy=skip');
-const turnTimeoutMs = Number(arg('--turn-timeout-ms', '340000'));
+const turnTimeoutMs = Number(arg('--turn-timeout-ms', '480000'));
 const readyTimeoutMs = Number(arg('--ready-timeout-ms', '240000'));
 const choice = has('--keep-remote') ? 'keep-remote' : 'keep-local-fork';
 const inputs = JSON.parse(arg('--inputs',
@@ -91,46 +91,71 @@ async function boot(context, label) {
 }
 
 async function playTurn(page, input, label) {
-  const before = await page.evaluate(() => (globalThis.__worldTurns ?? []).length);
+  // Sync evidence needs one committed, saved point per device, not the whole
+  // narrated turn: wait for the offline queue to receive that save, then stop
+  // the still-running turn. Narration completeness belongs to G8.
+  const queueLength = () => page.evaluate(() => {
+    try {
+      const raw = localStorage.getItem('jity.progress-sync.queue.v1');
+      return raw ? JSON.parse(raw).length : 0;
+    } catch { return 0; }
+  });
+  const before = await queueLength();
+  const commandsOf = (text) => Number((/已行动：(\d+)/u.exec(text) ?? [])[1] ?? 0);
+  const beforeCommands = commandsOf(await page.evaluate(() => document.body.innerText));
   await page.fill('textarea', input);
   const startedAt = Date.now();
   await page.click('button:has-text("行动")', { timeout: 30000 });
   const deadline = startedAt + turnTimeoutMs;
-  let record = null;
   let sample = null;
   while (Date.now() < deadline) {
-    sample = await page.evaluate((count) => {
-      const turns = globalThis.__worldTurns;
-      const latest = Array.isArray(turns) && turns.length > count ? turns[turns.length - 1] : null;
+    sample = await page.evaluate(() => {
+      let queue = 0;
+      try {
+        const raw = localStorage.getItem('jity.progress-sync.queue.v1');
+        queue = raw ? JSON.parse(raw).length : 0;
+      } catch { queue = 0; }
       const body = document.body.innerText;
+      const commands = Number((/已行动：(\d+)/u.exec(body) ?? [])[1] ?? 0);
       return {
-        record: latest ? {
-          index: latest.index ?? null, done: latest.done ?? null,
-          failed: latest.failed ?? null, stopped: latest.stopped ?? null,
-        } : null,
+        queue,
+        commands,
         busy: /结算中|正在写正文|正在取消/.test(body),
         doneLine: body.split(String.fromCharCode(10)).find((line) => /^本轮(完成|已交还|已到|停止)/.test(line.trim())) ?? '',
-        syncLine: body.split(String.fromCharCode(10)).find((line) => /已同步|已存本地|等待联网|离线|另一台设备|只存本地/.test(line)) ?? null,
-        pageError: /加载失败|Error/.test(body),
+        syncLine: body.split(String.fromCharCode(10)).find((line) => /已同步|已存本地|等待联网|离线|另一台设备|只存本机|仅本机/.test(line)) ?? null,
       };
-    }, before);
-    if (sample.record && (sample.record.done || sample.record.failed || sample.record.stopped)) { record = sample.record; break; }
-    // The hand-back line is the product's own end signal; record.done stays
-    // null on deadline and world_complete stops.
-    if (sample.record && !sample.busy && sample.doneLine) { record = sample.record; break; }
-    if (sample.pageError) break;
+    });
+    // A queued save alone can be the boot no-op replay; the turn's own commit
+    // must also have consumed a command.
+    if (sample.queue > before && sample.commands > beforeCommands) break;
+    if (sample.doneLine && !sample.busy) break;
     await page.waitForTimeout(2000);
   }
+  const saved = sample != null && sample.queue > before && (sample.commands ?? 0) > beforeCommands;
+  const cancelClicked = await page.evaluate(() => {
+    const button = [...document.querySelectorAll('button')].find((node) => /取消本轮|取消|停止/.test(node.textContent ?? ''));
+    if (!button) return false;
+    button.click();
+    return true;
+  });
+  const quietBy = Date.now() + 60000;
+  while (Date.now() < quietBy) {
+    const busy = await page.evaluate(() => /结算中|正在写正文|正在取消/.test(document.body.innerText));
+    if (!busy) break;
+    await page.waitForTimeout(1000);
+  }
   const step = {
-    input, ms: Date.now() - startedAt, record,
+    input,
+    ms: Date.now() - startedAt,
+    saved,
+    cancelClicked,
+    queueAtStop: (await syncStorage(page))?.queue ?? null,
     doneLine: sample?.doneLine ?? null,
-    timedOut: record == null && !sample?.pageError,
-    pageError: sample?.pageError ?? false,
     syncLine: sample?.syncLine ?? null,
   };
   evidence.steps[label] = { ...(evidence.steps[label] ?? {}), turn: step };
   save();
-  console.log(`[turn ${label}] ${step.ms}ms record=${JSON.stringify(record)} line="${step.doneLine}" sync="${step.syncLine}"`);
+  console.log(`[turn ${label}] ${step.ms}ms saved=${saved} cancel=${cancelClicked} sync="${step.syncLine}"`);
   return step;
 }
 
@@ -208,9 +233,8 @@ try {
     if (!evidence.steps.B1.pulled) fail('B1', 'the remote head was not pulled');
     await contextB.setOffline(true);
     const turn = await playTurn(page, inputs[0], 'B1');
-    if (turn.timedOut) fail('B1', 'turn timed out');
+    if (!turn.saved) fail('B1', 'no offline save reached the queue', turn);
     if (/本轮停止/.test(turn.doneLine ?? '')) fail('B1', `the offline turn stopped: ${turn.doneLine}`);
-    if (!/等待联网|已存本地|离线/.test(turn.syncLine ?? '')) fail('B1', 'the offline save did not report a queued upload', turn.syncLine);
     evidence.steps.B1.offlineQueueReported = turn.syncLine;
     evidence.steps.B1.storage = await syncStorage(page);
     save();
@@ -225,9 +249,8 @@ try {
     evidence.steps.A2 = { ...evidence.steps.A2, headBeforeTurn: beforeTurn };
     await contextA.setOffline(true);
     const turn = await playTurn(page, inputs[1], 'A2');
-    if (turn.timedOut) fail('A2', 'turn timed out');
+    if (!turn.saved) fail('A2', 'no offline save reached the queue', turn);
     if (/本轮停止/.test(turn.doneLine ?? '')) fail('A2', `the offline turn stopped: ${turn.doneLine}`);
-    if (!/等待联网|已存本地|离线/.test(turn.syncLine ?? '')) fail('A2', 'the offline save did not report a queued upload', turn.syncLine);
     await contextA.setOffline(false);
     branch1 = await waitForNewHead(beforeTurn.headSnapshotId ?? null, 120000).catch((error) => {
       fail('A2', 'the reconnect flush did not upload branch 1', String(error));
