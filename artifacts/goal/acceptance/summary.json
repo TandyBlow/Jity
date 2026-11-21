@@ -1,6 +1,6 @@
 {
   "kind": "jity-goal-acceptance-summary",
-  "generatedAt": "2026-11-21T10:33:20.345Z",
+  "generatedAt": "2026-11-21T10:59:31.473Z",
   "thresholds": {
     "firstReadableMs": 60000,
     "turnMs": 300000
@@ -8,7 +8,8 @@
   "sources": [
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
     "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
-    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json"
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json"
   ],
   "inputs": [
     {
@@ -174,13 +175,83 @@
       "firstReadablePass": true,
       "turnCapPass": true,
       "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "run": "2026-11-21T1032-a0ca",
+      "id": "s12-climb",
+      "input": "我沿钟楼楼梯上到二层平台，蹲在栏杆边观察庭院。",
+      "firstReadableAtMs": 16261,
+      "acceptedMs": 24356,
+      "turnWaitMs": 297701,
+      "longestPointTextMs": 8095,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "run": "2026-11-21T1032-a0ca",
+      "id": "s13-already-acted",
+      "input": "等这一轮结束后，我再往前走一步，看看刚才同行的人有没有跟上来。",
+      "firstReadableAtMs": 22738,
+      "acceptedMs": 30558,
+      "turnWaitMs": 296587,
+      "longestPointTextMs": 7820,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "run": "2026-11-21T1032-a0ca",
+      "id": "s14-auto-chain",
+      "input": "我朝钟楼门厅方向跑过去，想赶在下一波枪声前进去。",
+      "firstReadableAtMs": 1315,
+      "acceptedMs": 6226,
+      "turnWaitMs": 295648,
+      "longestPointTextMs": 8507,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "run": "2026-11-21T1032-a0ca",
+      "id": "s15-handback",
+      "input": "我站着不动，等这一轮结束，看看还有没有人行动。",
+      "firstReadableAtMs": 1703,
+      "acceptedMs": 11333,
+      "turnWaitMs": 297803,
+      "longestPointTextMs": 12722,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "run": "2026-11-21T1032-a0ca",
+      "id": "s16-time-check",
+      "input": "我再等一段时间，核对护目镜和识别带，记下演习还剩多久。",
+      "firstReadableAtMs": 19255,
+      "acceptedMs": 33715,
+      "turnWaitMs": 297711,
+      "longestPointTextMs": 14460,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
     }
   ],
   "gates": {
-    "inputs": 11,
-    "firstReadablePass": 7,
-    "turnCapPass": 11,
-    "deadlineStops": 6,
+    "inputs": 16,
+    "firstReadablePass": 12,
+    "turnCapPass": 16,
+    "deadlineStops": 10,
     "failures": [
       {
         "id": "s01-act-move",
