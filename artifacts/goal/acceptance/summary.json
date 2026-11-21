@@ -1,0 +1,207 @@
+{
+  "kind": "jity-goal-acceptance-summary",
+  "generatedAt": "2026-11-21T10:33:20.345Z",
+  "thresholds": {
+    "firstReadableMs": 60000,
+    "turnMs": 300000
+  },
+  "sources": [
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+    "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json"
+  ],
+  "inputs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+      "run": "2026-11-21T0659-2d12",
+      "id": "s01-act-move",
+      "input": "我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。",
+      "firstReadableAtMs": 63564,
+      "acceptedMs": 81260,
+      "turnWaitMs": 298011,
+      "longestPointTextMs": 17696,
+      "problems": [
+        "accepted_over_60s"
+      ],
+      "firstReadablePass": false,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+      "run": "2026-11-21T0659-2d12",
+      "id": "s02-act-observe",
+      "input": "我停在原地，观察器材棚门口进出的人，记下他们身上的识别带颜色。",
+      "firstReadableAtMs": 154171,
+      "acceptedMs": 178319,
+      "turnWaitMs": 295580,
+      "longestPointTextMs": 24148,
+      "problems": [
+        "accepted_over_60s"
+      ],
+      "firstReadablePass": false,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+      "run": "2026-11-21T0659-2d12",
+      "id": "s03-act-talk",
+      "input": "我问器材棚门口的人，今天演习的红蓝两方各在哪些区域活动。",
+      "firstReadableAtMs": 73084,
+      "acceptedMs": 94474,
+      "turnWaitMs": 295813,
+      "longestPointTextMs": 21390,
+      "problems": [
+        "accepted_over_60s"
+      ],
+      "firstReadablePass": false,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+      "run": "2026-11-21T0659-2d12",
+      "id": "s04-act-wait",
+      "input": "我在墙边等一会儿，听远处的枪声间隔，估算时间过去了多久。",
+      "firstReadableAtMs": 112453,
+      "acceptedMs": 151671,
+      "turnWaitMs": 295917,
+      "longestPointTextMs": 39218,
+      "problems": [
+        "accepted_over_60s"
+      ],
+      "firstReadablePass": false,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "run": "2026-11-21T0957-3c11",
+      "id": "s05-act-inventory",
+      "input": "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。",
+      "firstReadableAtMs": 18011,
+      "acceptedMs": 19853,
+      "turnWaitMs": 277065,
+      "longestPointTextMs": 3317,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "run": "2026-11-21T0957-3c11",
+      "id": "s06-legal-failure",
+      "input": "我把领用台上的红色电台递给阿豹，让他转交给裁判。",
+      "firstReadableAtMs": 18078,
+      "acceptedMs": 27440,
+      "turnWaitMs": 290620,
+      "longestPointTextMs": 9362,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "run": "2026-11-21T0957-3c11",
+      "id": "s07-partial",
+      "input": "我试着把脚边的器材箱推到门口，但箱子很沉，只挪动了一点。",
+      "firstReadableAtMs": 39666,
+      "acceptedMs": 52934,
+      "turnWaitMs": 295973,
+      "longestPointTextMs": 13268,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "run": "2026-11-21T0957-3c11",
+      "id": "s08-joint-move",
+      "input": "我跟门口的人说一起走，两人沿器材棚外侧快走到西回廊。",
+      "firstReadableAtMs": 34480,
+      "acceptedMs": 42791,
+      "turnWaitMs": 290388,
+      "longestPointTextMs": 8311,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+      "run": "2026-11-21T1018-07ae",
+      "id": "s09-confront",
+      "input": "我举起手示意不介入，慢慢从对峙的两人中间走过去。",
+      "firstReadableAtMs": 33987,
+      "acceptedMs": 42573,
+      "turnWaitMs": 286015,
+      "longestPointTextMs": 9747,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+      "run": "2026-11-21T1018-07ae",
+      "id": "s10-strike",
+      "input": "我突然抬手向挡路的人挥拳，想把他逼退。",
+      "firstReadableAtMs": 17355,
+      "acceptedMs": 21029,
+      "turnWaitMs": 297774,
+      "longestPointTextMs": 3675,
+      "problems": [],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": true
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+      "run": "2026-11-21T1018-07ae",
+      "id": "s11-task-ask",
+      "input": "我问诺诺现在红蓝局势，以及我两边都不帮算不算违规。",
+      "firstReadableAtMs": 19853,
+      "acceptedMs": 24874,
+      "turnWaitMs": 163500,
+      "longestPointTextMs": 5021,
+      "problems": [
+        "internal_note_in_prose"
+      ],
+      "firstReadablePass": true,
+      "turnCapPass": true,
+      "deadlineAbort": false
+    }
+  ],
+  "gates": {
+    "inputs": 11,
+    "firstReadablePass": 7,
+    "turnCapPass": 11,
+    "deadlineStops": 6,
+    "failures": [
+      {
+        "id": "s01-act-move",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      },
+      {
+        "id": "s02-act-observe",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      },
+      {
+        "id": "s03-act-talk",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      },
+      {
+        "id": "s04-act-wait",
+        "firstReadablePass": false,
+        "turnCapPass": true
+      }
+    ]
+  }
+}
