@@ -24,3 +24,10 @@
    - 缩短 position 提示（当前是最大的 prefill）。
 3. 即使三项都做，估算地板仍在 70–90 s：results 单独就要 30–60 s。**移动档 60 秒在当前 0.6B + 核显栈里很可能到不了**；再往下只能换更快的运行时或硬件，而不是改门槛。
 4. 下一步原型（需批准）：`mobileSchedule` 评估臂——合并 position+appearance，程序 handback，量真实交还时间与质量。
+
+
+## Prefill 占比（同一批证据的 generations）
+
+- 移动档每次语义调用的 `promptMs`（prefill）通常高于 `predictedMs`（解码）：例如 1738 tokens 的调用 prefill 12.6 s、解码 1.9 s；1116 tokens 的调用 prefill 9.0 s、解码 2.6 s。
+- 也就是说，省时间要省「输入」与「调用数」，不是省输出。合并 stage 能省一次调用的固定开销，但合并后的 prefill 仍按新增 tokens 增长；估算合并 position+appearance 净省 10–20 s。
+- 结论不变：移动档 60 s 的门槛与运行时强耦合——只有更快的运行时（WebLLM 等）或更快的硬件才可能；wllama + 0.6B + 核显的组合到不了。
