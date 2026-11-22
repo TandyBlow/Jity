@@ -289,7 +289,11 @@ export interface ScheduleView { world: WorldContext | null; control: ControlStat
   narrationOverlap?: boolean;
   /** G5 产品门：自动轮身份就绪屏障（DriverOptions.identityGate）。缺省
    * 关闭——B3 harness 的自动轮身份走自己的预分配队列，不受此门约束。 */
-  identityGate?: boolean }
+  identityGate?: boolean;
+  /** D-024 evaluation arm: close the round with a program handback instead of
+   * calling the continuation model. Default off; the page sets it only via the
+   * URL arm switch. */
+  forceHandback?: boolean }
 
 const STATE_COMPUTATION_TASKS: ModelTask[] = ['action', 'targets', 'reaction', 'results', 'updates', 'continuation'];
 
@@ -652,6 +656,20 @@ function continuationDecision(view: ScheduleView): Decision {
       request: {
         protocolVersion: 2, requestId: memory.requestId, ...bind,
         operation: 'conclude', advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!), conclusion: memory.continuation,
+      } as RequestMap['round_conclusion_conclude'],
+      scope: worldScope(view),
+    };
+  }
+  // D-024 arm: no continuation model call; the round hands back as soon as the
+  // player round's points have settled and narrated.
+  if (view.forceHandback) {
+    const bind = writeBind(view);
+    return {
+      kind: 'transport', operation: 'round_conclusion_conclude',
+      request: {
+        protocolVersion: 2, requestId: memory.requestId, ...bind,
+        operation: 'conclude', advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!),
+        conclusion: { kind: 'handback', closedBy: 'model', cancelReason: null },
       } as RequestMap['round_conclusion_conclude'],
       scope: worldScope(view),
     };

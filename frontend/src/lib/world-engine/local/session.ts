@@ -73,6 +73,9 @@ export interface LocalGameOptions {
   /** Stop the automatic chain at this wall-clock budget (default 240 s), so a
    * judge-policy turn hands back inside the 300 s cap. */
   turnBudgetMs?: number;
+  /** D-024 evaluation arm: force a program handback at the continuation
+   * boundary instead of calling the model (URL switch only). */
+  forceHandback?: boolean;
   /** Evidence sink for the exact commit_point request (see ControllerIo). */
   onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
   onEvent?: (event: LocalSessionEvent) => void;
@@ -189,7 +192,7 @@ export class LocalGameSession {
         const pointId = (event.request as { pointId?: Id }).pointId;
         if (pointId) productModel.onPointCommitted?.(pointId);
       },
-    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: options.splitPointUpdates ?? true, turnBudgetMs: options.turnBudgetMs ?? 240_000 });
+    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: options.splitPointUpdates ?? true, turnBudgetMs: options.turnBudgetMs ?? 240_000, forceHandback: options.forceHandback ?? false });
     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
   }
 

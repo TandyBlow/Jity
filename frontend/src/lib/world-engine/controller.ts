@@ -70,6 +70,9 @@ export interface DriverOptions {
    * continuation boundary, the round is cancelled visibly instead of starting
    * another automatic round the page deadline would cut anyway. */
   turnBudgetMs?: number;
+  /** D-024 evaluation arm: force a program handback at the continuation
+   * boundary instead of calling the model. Default off. */
+  forceHandback?: boolean;
 }
 
 export type DriverStatus =
@@ -129,6 +132,7 @@ export class ControllerDriver {
   private readonly identityGate: boolean;
   private readonly splitPointUpdates: boolean;
   private readonly turnBudgetMs: number | null;
+  private readonly forceHandback: boolean;
   private readonly narration: PointNarrationQueue | null;
   private narrationBootstrapped = false;
   private narrationDirty = false;
@@ -148,6 +152,7 @@ export class ControllerDriver {
     this.identityGate = options?.identityGate ?? false;
     this.splitPointUpdates = options?.splitPointUpdates ?? false;
     this.turnBudgetMs = options?.turnBudgetMs ?? null;
+    this.forceHandback = options?.forceHandback ?? false;
     this.narration = options?.narrationOverlap
       ? new PointNarrationQueue({
         transport: io.transport,
@@ -212,7 +217,7 @@ export class ControllerDriver {
   }
 
   private scheduleView(narrationBusy: boolean, command?: HarnessCommand) {
-    return { world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, ...(command ? { command } : {}), activeInput: this.state.activeInput, identityGate: this.identityGate, narrationBusy, narrationOverlap: this.narration != null };
+    return { world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, ...(command ? { command } : {}), activeInput: this.state.activeInput, identityGate: this.identityGate, forceHandback: this.forceHandback, narrationBusy, narrationOverlap: this.narration != null };
   }
 
   /** Refresh the controller's served head/control after the queue wrote a

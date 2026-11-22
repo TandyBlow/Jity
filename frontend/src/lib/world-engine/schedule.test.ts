@@ -675,8 +675,17 @@ describe('round conclusion', () => {
     const conclude = expectTransport(next(w, c, null, concluding), 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
     expect((conclude.request as unknown as { conclusion: unknown }).conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
   });
-  test('a continuation policy stop closes the round as a visible cancel', () => {
+  test('the D-024 arm forces a program handback without the model', () => {
     const { w, c } = assessing();
+    const state = workingState();
+    const m = memory({ workingState: { key: 'k', state }, roundChanges: { roundId: 'r1', points: [] } });
+    const decision = scheduleNext({ ...view(w, c, null, m), forceHandback: true });
+    const conclude = expectTransport(decision, 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
+    expect((conclude.request as unknown as { conclusion: unknown }).conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    // Same memory without the arm flag still asks the model.
+    expect(next(w, c, null, m)).toMatchObject({ kind: 'model', task: 'continuation' });
+  });
+  test('a continuation policy stop closes the round as a visible cancel', () => {    const { w, c } = assessing();
     const m = memory({ continuationStop: { reason: 'continuation_policy_abstract_task_goal' } });
     const cancel = expectTransport(next(w, c, null, m), 'round_conclusion_cancel') as Extract<Decision, { kind: 'transport' }>;
     expect(cancel.request).toMatchObject({ operation: 'cancel', cancelReason: 'continuation_policy_abstract_task_goal' });
