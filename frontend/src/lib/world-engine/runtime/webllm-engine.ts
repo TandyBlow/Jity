@@ -111,9 +111,13 @@ export class WebLlmInferenceEngine implements InferenceEngine {
       if (timer) clearTimeout(timer);
       if (signal) signal.removeEventListener('abort', onAbort);
     }
-    const completion: CompletionEvidence = { raw, finishReason: 'stop', firstTokenMs, wallMs: performance.now() - started };
+    // Qwen's template can prepend or embed <think> blocks even with thinking
+    // off. The eval arm strips them so codecs and the prose gate see model text
+    // only; the wllama path is untouched.
+    const cleaned = raw.replace(/<think>[\s\S]*?<\/think>/gu, '').trim();
+    const completion: CompletionEvidence = { raw: cleaned, finishReason: 'stop', firstTokenMs, wallMs: performance.now() - started };
     options.onCompletion?.(completion);
-    return raw;
+    return cleaned;
   }
 
   cancelActive(): number {
