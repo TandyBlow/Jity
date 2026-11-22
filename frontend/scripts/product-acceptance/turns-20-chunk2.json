@@ -7,7 +7,8 @@
   {
     "id": "s06-legal-failure",
     "input": "我把领用台上的红色电台递给阿豹，让他转交给裁判。",
-    "purpose": "合法失败：未知实体/越界行动"
+    "purpose": "合法失败：未知实体/越界行动",
+    "expect": "legal_failure"
   },
   {
     "id": "s07-partial",
