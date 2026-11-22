@@ -42,6 +42,12 @@ const NARRATION_MODELS = {
     url: '/models/Qwen3-1.7B-Q4_K_M.gguf', bytes: 1_107_409_472, contextSize: 4096,
     sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
   },
+  // D-020 evaluation arm: the 1.7B base with the narration LoRA (historical
+  // 199-row recipe, trained on the cluster 2026-11-22). Not a product default.
+  'qwen3-1.7b-narr-lora': {
+    url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_640, contextSize: 4096,
+    sha256: '9beece58454be73b02d5247bb88c63e23c3b758b19dcfb9d8d2bc4a150768d7c',
+  },
   // Evaluation arm (D-007): the semantic 0.6B also writes the narration, in
   // the same engine instance. One set of weights instead of two; quality must
   // be measured against the 1.7B before it can become a default.
@@ -545,7 +551,7 @@ export default function WorldLocalPage() {
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
     const modelParam = q.get('narrationModel');
-    const model = modelParam === 'qwen3-1.7b' || modelParam === 'qwen25-1.5b-narr' || modelParam === 'semantic' ? modelParam : undefined;
+    const model = modelParam && modelParam in NARRATION_MODELS ? modelParam as NarrationModelKey : undefined;
     const modeParam = q.get('narrationMode');
     const shapeParam = q.get('narrationShape');
     const offscreenParam = q.get('offscreenPolicy');

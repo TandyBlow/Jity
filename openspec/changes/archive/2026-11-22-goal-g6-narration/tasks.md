@@ -20,7 +20,7 @@
 
 - [ ] 4.1 事实门：未做新决定，D-004 原样输出继续生效（blocked on user）。
 - [x] 4.2 候选状态已核对：TRAINED/CONSTRAINED 都 `productDefault:false`，`auto` 落回单次 raw 1.7B instruct 写作；1.7B/Q4_K_M 是实际交付文件。历史微调候选 qwen25-1.5b-narr 两轮实测均劣于默认：公版续写 65.8 s vs 39.8 s 且回声未改善；产品格式（s05/s06、skip）出现钥匙串/门缝等世界外幻觉，默认 1.7B 与状态一致（`read-15b-tuned-20261122.md`、`read-product-tuned-vs-default-20261122.md`）。该候选不进入交付。
-- [ ] 4.3 微调前基线已完成（本地同栈 5 题 × 3 次）；微调作业 blocked：集群 Slurm 控制器主备 DOWN（`scontrol ping`），登录节点正常。
+- [x] 4.3 微调前基线完成；首次微调实验完成（集群 Qwen3-1.7B + 历史 199 行 LoRA）：公版 32.1 s vs 基座 39.8 s，但产品格式出现镜片细痕/红发转移等状态矛盾，判定不改善（`read-17b-lora-vs-base-20261122.md`）。集群流水线（训练/合并/转换/量化）已跑通；默认仍 raw 1.7B。
 
 ## Workflow follow-up
 
