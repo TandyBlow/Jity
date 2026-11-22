@@ -3,7 +3,7 @@
  * The product port only needs load/complete/dispose; WebLLM brings its own
  * WebGPU runtime and cache, so weights are not fetched through the wllama blob
  * path. Default runtime stays wllama; the page selects this one by URL arm. */
-import { CreateMLCEngine, type MLCEngine } from '@mlc-ai/web-llm';
+import { CreateMLCEngine, prebuiltAppConfig, type MLCEngine } from '@mlc-ai/web-llm';
 import { abortError, type CompleteOptions, type CompletionEvidence, type InferenceEngine } from './engine';
 
 const progressText = (report: { progress: number; text: string }): string =>
@@ -24,6 +24,9 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     if (options?.signal?.aborted) throw abortError();
     if (!this.loading) {
       this.loading = CreateMLCEngine(this.modelId, {
+        // The headless profile's Cache API quota is ~0 on this box; IndexedDB
+        // is the fallback that still lets the prototype measure 4B.
+        appConfig: { ...prebuiltAppConfig, cacheBackend: 'indexeddb' },
         initProgressCallback: (report) => { this.lastProgress = progressText(report); },
       }).then((engine) => {
         this.engine = engine;
