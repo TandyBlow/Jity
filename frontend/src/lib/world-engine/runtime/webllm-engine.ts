@@ -23,14 +23,19 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     if (this.engine) return;
     if (options?.signal?.aborted) throw abortError();
     if (!this.loading) {
+      console.info('[world-local] webllm load start', this.modelId);
       this.loading = CreateMLCEngine(this.modelId, {
         // The headless profile's Cache API quota is ~0 on this box; IndexedDB
         // is the fallback that still lets the prototype measure 4B.
         appConfig: { ...prebuiltAppConfig, cacheBackend: 'indexeddb' },
-        initProgressCallback: (report) => { this.lastProgress = progressText(report); },
+        initProgressCallback: (report) => { this.lastProgress = progressText(report); console.info('[world-local] webllm', this.lastProgress); },
       }).then((engine) => {
         this.engine = engine;
         (this.info as { modelId: string | null }).modelId = this.modelId;
+        console.info('[world-local] webllm loaded', this.modelId);
+      }).catch((error) => {
+        console.warn('[world-local] webllm load failed', String(error));
+        throw error;
       }).finally(() => { this.loading = null; });
     }
     await this.loading;
