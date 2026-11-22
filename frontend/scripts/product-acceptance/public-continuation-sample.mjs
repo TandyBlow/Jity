@@ -17,6 +17,7 @@ const arg = (name, fallback) => {
 const base = arg('--base', 'http://127.0.0.1:3177').replace(/\/$/, '');
 const modelUrl = arg('--model', '/models/Qwen3-1.7B-Q4_K_M.gguf');
 const samples = Number(arg('--samples', '3'));
+const mode = arg('--mode', 'single'); // single | draft-polish
 const out = resolve(root, arg('--out', 'artifacts/goal/narration/public-continuations-baseline-20261122.json'));
 const prompts = JSON.parse(readFileSync(resolve(here, 'narration-prompts-public.json'), 'utf8'));
 
@@ -50,34 +51,62 @@ try {
     });
     window.__evalWllama = instance;
     window.__evalLoadMs = Math.round(performance.now() - started);
-  }, { url: `${base}${modelUrl}` });
+  }, { url: modelUrl.startsWith('http') ? modelUrl : `${base}${modelUrl}` });
   evidence.loadMs = await page.evaluate(() => window.__evalLoadMs);
   console.log(`[load] ${evidence.loadMs}ms`);
 
   for (const prompt of prompts) {
     const entry = { id: prompt.id, source: prompt.source, outputs: [] };
     for (let index = 0; index < samples; index += 1) {
-      const result = await page.evaluate(async ({ system, user, seed }) => {
-        const started = performance.now();
-        const response = await window.__evalWllama.createChatCompletion({
-          messages: [
-            { role: 'system', content: system },
-            { role: 'user', content: user },
-          ],
-          max_tokens: 320,
-          temperature: 0.7,
-          top_p: 0.9,
-          seed,
-          cache_prompt: false,
-          chat_template_kwargs: { enable_thinking: false },
-        });
-        return {
-          wallMs: Math.round(performance.now() - started),
-          text: response.choices?.[0]?.message?.content ?? '',
-          finishReason: response.choices?.[0]?.finish_reason ?? null,
-          completionTokens: response.usage?.completion_tokens ?? null,
+      const result = await page.evaluate(async ({ system, user, seed, mode }) => {
+        const call = async (systemText, userText, maxTokens) => {
+          const started = performance.now();
+          const response = await window.__evalWllama.createChatCompletion({
+            messages: [
+              { role: 'system', content: systemText },
+              { role: 'user', content: userText },
+            ],
+            max_tokens: maxTokens,
+            temperature: 0.7,
+            top_p: 0.9,
+            seed,
+            cache_prompt: false,
+            chat_template_kwargs: { enable_thinking: false },
+          });
+          return {
+            wallMs: Math.round(performance.now() - started),
+            text: response.choices?.[0]?.message?.content ?? '',
+            finishReason: response.choices?.[0]?.finish_reason ?? null,
+            completionTokens: response.usage?.completion_tokens ?? null,
+          };
         };
-      }, { system: SYSTEM, user: `${prompt.prefix}\n\n${prompt.instruction}`, seed: 20261122 + index });
+        const totalStarted = performance.now();
+        if (mode !== 'draft-polish') {
+          const single = await call(system, user, 320);
+          return { ...single, wallMs: Math.round(performance.now() - totalStarted) };
+        }
+        // Two-stage composition on the same weights: draft, then polish against
+        // the prefix. Cheapest faithful test of the many-small-passes hypothesis.
+        const draft = await call(system, user, 320);
+        const polish = await call(
+          '你是中文小说编辑。只修正错别字、重复和与给定前缀事实矛盾的地方，保持情节、人称与长度；不要添加新情节，不要写说明。输出润色后的全文。',
+          `${user}
+
+【草稿】
+${draft.text}`,
+          320,
+        );
+        return {
+          wallMs: Math.round(performance.now() - totalStarted),
+          text: polish.text,
+          finishReason: polish.finishReason,
+          completionTokens: (draft.completionTokens ?? 0) + (polish.completionTokens ?? 0),
+          draft,
+          polish,
+        };
+      }, { system: SYSTEM, user: `${prompt.prefix}
+
+${prompt.instruction}`, seed: 20261122 + index, mode });
       entry.outputs.push(result);
       console.log(`[${prompt.id}] sample ${index + 1}: ${result.completionTokens} tok in ${(result.wallMs / 1000).toFixed(1)}s finish=${result.finishReason}`);
     }
