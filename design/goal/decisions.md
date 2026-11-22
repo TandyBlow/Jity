@@ -265,6 +265,7 @@
 - 候选 b 测量（2026-11-22，`goal-handback-auto`）：保留一轮自动链的第一轮完成时间 59.8–100.6 s，1/16 个回合 ≤60 s；玩家回合本身 31.4–57.7 s。结论：60 s 口径在当前栈内只有候选 a（无自动链，36.9–45.0 s）成立；候选 c 为 65–180 s；候选 b 不值得写评估臂。证据 `artifacts/goal/narration/handback-auto-chain-20261122.md`。
 - 20 输入套件（2026-11-22，`goal-handback-suite`，早交还臂）：15/20 个回合完成，交还 35.3–53.5 s、0 问题；chunk3b 的 s15/s16 与 chunk5 被宿主内存回收停止，未自行重启，change 保持 active。证据 `artifacts/goal/narration/read-handback-suite-20261122.md`。
 - 套件补跑（2026-11-23）：chunk3b 5 回合完成（s15 49.6 s、s16 **70.7 s**）；chunk5 2/4（g8-t1 结算失败、g8-t2 **330 s 超时**），其余被内存回收停止。结论修正：早交还臂不是普遍 ≤60 s，重输入回合会超线或失败。
+- 套件补完（2026-11-23，20/20）：firstReadable 20/20、turnCap 20/20、0 时限收尾、0 失败；交还 32.8–70.7 s，中位 44.9 s，18/20 ≤60 s（s16 70.7、g8-t4 62.8 超线）。汇总 `artifacts/goal/acceptance/run41-summary.json`。
 - 默认路径真实等待（2026-11-22，G8 summary 统计）：20 个输入里提交→再次可行动最小 163.5 s、中位 295.3 s、最大 297.8 s，0/20 ≤60 s、20/20 >120 s；同一批的首段可读 1.3–39.7 s（20/20 ≤60 s）。验收的 60 秒门只测了首段，真实等待是 2.7–5 分钟。证据 `artifacts/goal/narration/read-default-latency-20261122.md`。
 
 ## 已确认（2026-11-20）
