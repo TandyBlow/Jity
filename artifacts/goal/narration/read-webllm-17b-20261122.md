@@ -84,3 +84,10 @@
 - run79：旧 profile 残留写入租约，未加载模型即失败（基础设施问题）。
 - run80（全新 profile）：s05 33.8 秒但 `narration_failed`/`prose_not_identical`，正文尾部带出「The current Object has already been disposed」；s06 2.6 秒失败。4B 的 WebLLM 引擎在产品回合里不稳定（引擎被释放/内存压力）。
 - 结论：4B 可加载、可出字，但在本机的产品回合里不稳定；3B 稳定但质量不合格。
+
+
+## 定向微调准备（2026-11-23）
+
+- 已从所有语义证据抽取**真实叙事提示 111 条（84 条唯一）**，落 `.local/narr-train/prompts.jsonl`，覆盖复述/回声/编造/未知实体的失败样本。
+- 集群 SSH 当前不可达（WinError 10060），教师模型生成与 MLC 转换要等集群窗口；本地无同级教师模型。
+- 下一步（集群可达时）：教师生成目标正文/结算 → 开发门过滤 → LoRA 微调 3B/1.7B → 转 MLC → WebLLM 同题对照。
