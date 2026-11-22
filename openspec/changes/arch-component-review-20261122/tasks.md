@@ -9,8 +9,8 @@
 ## 2. 候选修复（未执行，待用户选范围）
 
 - [ ] 2.1 写放大：draft 直传 onPersist、只 clone 一次、IndexedDB 移出同步关键路径；先补 IndexedDB 测试。
-- [ ] 2.2 删除死端口 `action-execution/port.ts`（仅测试 import）或接线。
-- [ ] 2.3 architecture.md 纠偏：Python 两套语义（冻结 fixture + A2/A3 服务）与依赖图。
+- [x] 2.2 删除死模块 `action-execution/`（port/index/order 及其测试；全仓无外部 import）。
+- [x] 2.3 architecture.md 纠偏：Python 两套语义（冻结 fixture + A2/A3 服务）分别记录。
 - [ ] 2.4 持久化测试：fake-indexeddb 后端用例，覆盖 revision CAS、租约、冲突、恢复。
 - [ ] 2.5 可维护性拆分（可选）：controller point-updates、transport 协议域、schedule 分文件、session ProgressWriter、page hooks/组件。
 

@@ -23,10 +23,10 @@
 - `frontend/src/lib/world-engine/local/session.ts`：`LocalGameSession` 在 `ControllerDriver` 之上加持久进度、写入前 checkpoint、多标签租约与恢复。
 - `frontend/src/lib/world-engine/local/game-model.ts`：真实端侧模型端口；把一次任务输入变成经过 codec 校验的 JSON/text。
 
-Python v2 内核降为**开发期差分预言机、金标向量与迁移参考**：
+Python 侧有两套东西，都不是运行期权威：
 
-- `backend/app/world_app.py`、`backend/app/services/world/`、`backend/app/schemas/world/`。
-- 用途：生成 `artifacts/goal/kernel-diff.json` 的冻结向量；对拍 `buildInitialState`、`applyPoint`、`pointEntityDeltas`、`replayWorld`、canonical digest。
+- **冻结差分 fixture**：`frontend/scripts/parallel-kernel/build-kernel-fixtures.py` 读取冻结提交 `fc60a603` 里的 11 个纯内核模块（绝不 import 当前工作树的 backend），生成 `artifacts/goal/kernel-diff.json`；对拍 `buildInitialState`、`applyPoint`、`pointEntityDeltas`、`replayWorld`、canonical digest。
+- **可运行的 A2/A3 服务**：`backend/app/world_app.py`（含 persistent factory）、`backend/app/services/world/control.py`、`database/world_store.py`、`authority/`、`judgments/`、`progress/`、`successor/`、`world_facts.py`。这是开发期对拍与历史 API，语义已与冻结 fixture 分叉（租约 TTL、claim token、successor 版本字段），不作为产品运行期或验收权威。
 - TS 与 Python 不一致时按 bug 调查，不按「Python 说的算」直接改 TS。运行期玩家看到的状态只来自浏览器记录。
 
 ## 3. 静态 S0
