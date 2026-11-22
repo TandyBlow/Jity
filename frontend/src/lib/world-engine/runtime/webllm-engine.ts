@@ -64,7 +64,7 @@ export class WebLlmInferenceEngine implements InferenceEngine {
       // The typed overloads reject chat_template_kwargs; Qwen3's chat template
       // injects a thinking block unless it is switched off, and the product
       // codecs expect the bare JSON/prose the wllama path produces.
-      const create = this.engine.chat.completions.create as unknown as (
+      const create = this.engine.chat.completions.create.bind(this.engine.chat.completions) as unknown as (
         request: Record<string, unknown>,
       ) => Promise<AsyncIterable<{ choices?: { delta?: { content?: string } }[] }>>;
       const stream = await create({
