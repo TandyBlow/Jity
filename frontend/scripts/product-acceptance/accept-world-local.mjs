@@ -205,7 +205,7 @@ try {
   page.on('pageerror', (error) => noteFailure('page', `pageerror: ${error.message}`));
   page.on('response', (response) => {
     const url = response.url();
-    if (/\/models\/.*\.gguf/.test(url) || /api\/.*(progress|save|session)/.test(url)) {
+    if (/\/models\/.*\.(gguf|bin|json)/.test(url) || /api\/.*(progress|save|session)/.test(url)) {
       evidence.modelRequests.push({
         url,
         status: response.status(),

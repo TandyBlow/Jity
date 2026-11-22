@@ -224,6 +224,7 @@
 - 新候选（2026-11-22，用户追问「没有其他手段？」）：程序级合法性校验——结算事实里出现未登记实体/物品时判该点失败并带反馈重试，而不是只靠提示或换模型。它直接落实 R01「未知实体不能靠叙事变成事实」，不需要更大模型或微调；代价是给结算加运行期检查与重试（设计变更，待批准）。另可测检索式 few-shot（按行动类型取正确结算样例）。
 - 程序级校验首轮（2026-11-22，`goal-strict-entities`，run43）：`strictKnownEntities` 默认开启后 s06 结算门 1/3 命中（基线 4/5）；未命中样本写成不点名的自造完成（「电台被塞进腰间」）。点名未登记实体被压住，但零硬错未达成。证据 `artifacts/goal/narration/read-strict-entities-20261122.md`。
 - WebLLM 原型进度（2026-11-22，`goal-webllm-adapter`）：适配器完成、构建通过；4B 冒烟报浏览器缓存配额，1.7B 冒烟页面 900 秒未 ready；隔离探针显示 WebLLM 能初始化并拉取权重，但停在 HF 的 615 MB / 66%，27+ 分钟无进展。阻塞在模型分发（HF CDN 停滞），不是适配器代码；下一步做断点续传的本地下载与本地托管。证据 `artifacts/goal/narration/read-webllm-stall-20261122.md`。
+- WebLLM 链路打通（2026-11-22，run57）：1.7B 本地权重 + OPFS 缓存 5 秒加载完成（30/30、924 MB、WebGPU）；单回合 22.0 s（results 3.0 / position 5.0 / appearance 1.9 / narration 2.0–2.3），远快于 wllama 的 65–180 s。缺陷：正文夹空 `<think>` 标记、部分 JSON 解码 fallback（1.7B 能力）。4B 下载中，下一步量质量门。证据 `artifacts/goal/narration/read-webllm-17b-20261122.md`。
 
 ## D-023 设备范围：笔记本、4B 与移动端的取舍
 
