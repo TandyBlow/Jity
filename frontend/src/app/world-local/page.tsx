@@ -6,6 +6,7 @@
  * snapshot in IndexedDB. The server, if present, is never called. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WllamaInferenceEngine } from '@/lib/world-engine/runtime/wllama-engine';
+import { WebLlmInferenceEngine } from '@/lib/world-engine/runtime/webllm-engine';
 import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
@@ -29,6 +30,8 @@ const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
 // truncated fetch is rejected before wllama parses it; the full SHA-256 check
 // belongs to 09's host runner.
 const SEMANTIC_MODEL_BYTES = 396_705_472;
+/** D-022 runtime prototype: WebLLM's prebuilt Qwen3-4B MLC artifact. */
+const WEBLLM_MODEL = 'Qwen3-4B-q4f16_1-MLC';
 
 /** Narration model variants the internal arm switch may select. The default is
  * the shipped LoRA checkpoint; `qwen3-1.7b` is lane 02's prose-facts arm model.
@@ -311,6 +314,25 @@ async function loadEngine(
   }
 }
 
+/** D-022 prototype port around WebLLM. Same engine shape the page already
+ * consumes; no wllama worker, no blob fetch. */
+function resilientWebLlm(modelId: string, label: string): ProductEnginePort {
+  const engine = new WebLlmInferenceEngine(modelId);
+  let closed = false;
+  return {
+    get info() { return engine.info; },
+    load: async () => { if (!closed) await engine.load(); },
+    complete: (prompt, options) => engine.complete(prompt, options),
+    dispose: async () => { closed = true; await engine.dispose(); },
+    cancelActive: () => engine.cancelActive(),
+    runtime: () => ({
+      needsReload: false, workersCreated: 0, workersExited: 0, generations: 0,
+      loadCount: engine.info.modelId ? 1 : 0, modelId: engine.info.modelId, backend: 'webllm', gpuLayers: undefined,
+      lastLoadMs: null, lastLoadFetchMs: null, lastLoadCompileMs: null, lastLoadFromCache: null, lastGeneration: null,
+    }),
+  };
+}
+
 function engineCounters(label: string, engine: ProductEnginePort | null): WorldTurnRecord['engines'][number] | null {
   const runtime = engine?.runtime?.();
   if (!runtime) return null;
@@ -553,7 +575,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; runtime?: 'webllm' } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -568,6 +590,7 @@ export default function WorldLocalPage() {
     const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
     const settlementUnknownRule = q.get('settlementUnknownRule') === '1' ? true : undefined;
     const strictKnownEntities = q.get('strictKnownEntities') === '0' ? false : undefined;
+    const runtime = q.get('runtime') === 'webllm' ? 'webllm' as const : undefined;
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
     const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
     const offscreenPolicy = offscreenParam === 'skip' || offscreenParam === 'judge' ? offscreenParam : undefined;
@@ -582,6 +605,7 @@ export default function WorldLocalPage() {
       ...(schedHandback ? { schedHandback } : {}),
       ...(settlementUnknownRule ? { settlementUnknownRule } : {}),
       ...(strictKnownEntities === false ? { strictKnownEntities } : {}),
+      ...(runtime ? { runtime } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -803,13 +827,15 @@ export default function WorldLocalPage() {
         console.info('[world-local] gpu probe', JSON.stringify(gpu));
         // 12288 covers the settlement's measured prompt (7877 chars) plus the
         // repair feedback; 8192 left a retry on the edge of the context.
-        const semantic = resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
+        // D-022 runtime prototype: one WebLLM 4B engine serves both roles.
+        const webllm = arm.runtime === 'webllm' ? resilientWebLlm(WEBLLM_MODEL, 'webllm') : null;
+        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
         // weights, at the cost of serialising narration against settlement.
-        const narration = narrationKey === 'semantic'
+        const narration = webllm ?? (narrationKey === 'semantic'
           ? semantic
-          : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes);
+          : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes));
         narrationRef.current = narration;
         const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
         // Arm identity is evidence: 09 records it next to every turn, including
@@ -824,6 +850,8 @@ export default function WorldLocalPage() {
           schedHandback: arm.schedHandback ? 'player' : null,
           settlementUnknownRule: arm.settlementUnknownRule ?? null,
           strictKnownEntities: arm.strictKnownEntities ?? true,
+          runtime: arm.runtime === 'webllm' ? 'webllm' : 'wllama',
+          webllmModel: arm.runtime === 'webllm' ? WEBLLM_MODEL : null,
         };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,

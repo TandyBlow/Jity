@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@wllama/wllama": [
+        "./node_modules/@wllama/wllama/esm/index.d.ts"
       ]
     }
   },
