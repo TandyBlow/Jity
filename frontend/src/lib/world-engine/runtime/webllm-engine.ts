@@ -60,6 +60,16 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     const started = performance.now();
     let raw = '';
     let firstTokenMs: number | null = null;
+    // WebLLM can wedge mid-stream; bound the call so a hung generation becomes
+    // a visible error instead of a forever-pending turn.
+    const timeoutMs = options.timeoutMs ?? 150_000;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        try { this.engine?.interruptGenerate(); } catch { /* already gone */ }
+        reject(new Error('webllm_generation_timeout'));
+      }, timeoutMs);
+    });
     try {
       // Two prompt shapes, matching the wllama path: settlement calls send the
       // bare prompt (completions API, no chat template); narration sends a
@@ -92,9 +102,10 @@ export class WebLlmInferenceEngine implements InferenceEngine {
           ...(options.stop ? { stop: options.stop } : {}),
         });
       }
+      const consume = (async () => {
       for await (const chunk of stream) {
         if (signal?.aborted || this.abort?.signal.aborted) {
-          try { this.engine.interruptGenerate(); } catch { /* already done */ }
+          try { this.engine?.interruptGenerate(); } catch { /* already done */ }
           throw abortError();
         }
         const delta = chunk.choices?.[0]?.text ?? chunk.choices?.[0]?.delta?.content ?? '';
@@ -103,7 +114,10 @@ export class WebLlmInferenceEngine implements InferenceEngine {
         raw += delta;
         options.onProgress?.({ raw, elapsedMs: performance.now() - started });
       }
+      })();
+      await Promise.race([consume, timeout]);
     } finally {
+      if (timer) clearTimeout(timer);
       if (signal) signal.removeEventListener('abort', onAbort);
     }
     const completion: CompletionEvidence = { raw, finishReason: 'stop', firstTokenMs, wallMs: performance.now() - started };
