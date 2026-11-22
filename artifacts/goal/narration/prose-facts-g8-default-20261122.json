@@ -1,0 +1,227 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T10:36:47.886Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+      "runId": "2026-11-21T1547-3450",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s01-act-move",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "记下他们身上的识别带颜色"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非停下脚步，手指轻轻划过自己的识别带，颜色在昏黄的灯光下显得格外清晰",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "runId": "2026-11-21T0957-3c11",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非把红色电台递给阿豹，让他转交给裁判"
+            }
+          ]
+        },
+        {
+          "id": "s07-partial",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s08-joint-move",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+      "runId": "2026-11-21T1018-07ae",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s09-confront",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "慢慢从对峙的两人中间走过去"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠路明非的护目镜挂在胸前，镜片无裂纹，镜带松着",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s10-strike",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s11-task-ask",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "meta_note",
+              "quote": "识别带，心中明白规则牌的含义。这一回合已结算并写入正文；随后系统自动推进的回合没有完成，状态仍以已结"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "runId": "2026-11-21T1032-a0ca",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s12-climb",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s13-already-acted",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s14-auto-chain",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s15-handback",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s16-time-check",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json",
+      "runId": "2026-11-21T1059-1f04",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "g8-t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t2-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t4-joint-move",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 3,
+    "band_claim": 2,
+    "unknown_entity_claim": 1,
+    "meta_note": 1
+  }
+}
