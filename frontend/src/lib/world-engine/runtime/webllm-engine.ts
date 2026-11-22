@@ -61,12 +61,19 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     let raw = '';
     let firstTokenMs: number | null = null;
     try {
-      const stream = await this.engine.chat.completions.create({
+      // The typed overloads reject chat_template_kwargs; Qwen3's chat template
+      // injects a thinking block unless it is switched off, and the product
+      // codecs expect the bare JSON/prose the wllama path produces.
+      const create = this.engine.chat.completions.create as unknown as (
+        request: Record<string, unknown>,
+      ) => Promise<AsyncIterable<{ choices?: { delta?: { content?: string } }[] }>>;
+      const stream = await create({
         messages: [{ role: 'user', content: prompt }],
         stream: true,
         stream_options: { include_usage: true },
         max_tokens: options.maxTokens ?? 512,
         temperature: options.temperature ?? 0.2,
+        chat_template_kwargs: { enable_thinking: false },
         ...(options.stop ? { stop: options.stop } : {}),
       });
       for await (const chunk of stream) {
