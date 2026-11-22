@@ -1,0 +1,55 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T16:20:01.682Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run75-webllm-3b-clean.json",
+      "runId": "2026-11-22T1617-ffd2",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": null,
+        "strictKnownEntities": true,
+        "runtime": "webllm",
+        "webllmModel": "Qwen2.5-3B-Instruct-q4f16_1-MLC",
+        "webllmLocal": true,
+        "webllmCache": "cache"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非低头检查护目镜、识别带和胸袋里的弹匣，确认都在",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": null,
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 1,
+    "band_claim": 1
+  }
+}

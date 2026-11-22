@@ -55,3 +55,11 @@
 - s05：results 仍报 `model output is not JSON`（裸 completion 下 1.7B 不守 JSON）。
 - s06：`strictKnownEntities` 命中 `unknown entity 阿豹`（程序门生效）。
 - 结论：1.7B 的速度（22–44 秒/回合）不能抵消它的格式能力；质量路线要 4B，而 4B 在 2.2 GB 内存占用上被宿主保护挡住。
+
+
+## 3B + 约束解码 + think 剥离（run74/75）
+
+- s05 完整回合 45.0 秒、驱动 problems 为空；正文不再夹 `<think>`。
+- 但正文**复述序列化事实**（「屋里有路明非的护目镜…时间到了15:21…」），开发检查器报 `input_echo` + `band_claim`。
+- s06 仍由 `strictKnownEntities` 拦下（`results_unknown_entity:阿豹`），回合可见失败。
+- 结论：换运行时在 3B 上解决了速度与 JSON 格式，**没有解决质量**；4B 是唯一未测的质量希望，但受宿主内存限制。
