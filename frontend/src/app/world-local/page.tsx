@@ -30,8 +30,9 @@ const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
 // truncated fetch is rejected before wllama parses it; the full SHA-256 check
 // belongs to 09's host runner.
 const SEMANTIC_MODEL_BYTES = 396_705_472;
-/** D-022 runtime prototype: WebLLM's prebuilt Qwen3-4B MLC artifact. */
-const WEBLLM_MODEL = 'Qwen3-4B-q4f16_1-MLC';
+/** D-022 runtime prototype: WebLLM prebuilt MLC artifacts (allowlist). */
+const WEBLLM_MODELS = ['Qwen3-0.6B-q4f16_1-MLC', 'Qwen3-1.7B-q4f16_1-MLC', 'Qwen3-4B-q4f16_1-MLC', 'Qwen3-8B-q4f16_1-MLC'] as const;
+const WEBLLM_MODEL = WEBLLM_MODELS[2];
 
 /** Narration model variants the internal arm switch may select. The default is
  * the shipped LoRA checkpoint; `qwen3-1.7b` is lane 02's prose-facts arm model.
@@ -575,7 +576,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; runtime?: 'webllm' } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; runtime?: 'webllm'; webllmModel?: string } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -591,6 +592,8 @@ export default function WorldLocalPage() {
     const settlementUnknownRule = q.get('settlementUnknownRule') === '1' ? true : undefined;
     const strictKnownEntities = q.get('strictKnownEntities') === '0' ? false : undefined;
     const runtime = q.get('runtime') === 'webllm' ? 'webllm' as const : undefined;
+    const webllmParam = q.get('webllmModel');
+    const webllmModel = webllmParam && (WEBLLM_MODELS as readonly string[]).includes(webllmParam) ? webllmParam : undefined;
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
     const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
     const offscreenPolicy = offscreenParam === 'skip' || offscreenParam === 'judge' ? offscreenParam : undefined;
@@ -606,6 +609,7 @@ export default function WorldLocalPage() {
       ...(settlementUnknownRule ? { settlementUnknownRule } : {}),
       ...(strictKnownEntities === false ? { strictKnownEntities } : {}),
       ...(runtime ? { runtime } : {}),
+      ...(webllmModel ? { webllmModel } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -828,7 +832,8 @@ export default function WorldLocalPage() {
         // 12288 covers the settlement's measured prompt (7877 chars) plus the
         // repair feedback; 8192 left a retry on the edge of the context.
         // D-022 runtime prototype: one WebLLM 4B engine serves both roles.
-        const webllm = arm.runtime === 'webllm' ? resilientWebLlm(WEBLLM_MODEL, 'webllm') : null;
+        const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
+        const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm') : null;
         const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
@@ -851,7 +856,7 @@ export default function WorldLocalPage() {
           settlementUnknownRule: arm.settlementUnknownRule ?? null,
           strictKnownEntities: arm.strictKnownEntities ?? true,
           runtime: arm.runtime === 'webllm' ? 'webllm' : 'wllama',
-          webllmModel: arm.runtime === 'webllm' ? WEBLLM_MODEL : null,
+          webllmModel: arm.runtime === 'webllm' ? webllmModel : null,
         };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
