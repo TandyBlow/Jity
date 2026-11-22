@@ -61,9 +61,10 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     let raw = '';
     let firstTokenMs: number | null = null;
     try {
-      // The typed overloads reject chat_template_kwargs; Qwen3's chat template
-      // injects a thinking block unless it is switched off, and the product
-      // codecs expect the bare JSON/prose the wllama path produces.
+      // The typed overloads reject unknown fields; WebLLM's GenerationConfig
+      // carries enable_thinking at the top level. Qwen3's chat template injects
+      // a thinking block unless it is switched off, and the product codecs
+      // expect the bare JSON/prose the wllama path produces.
       const create = this.engine.chat.completions.create.bind(this.engine.chat.completions) as unknown as (
         request: Record<string, unknown>,
       ) => Promise<AsyncIterable<{ choices?: { delta?: { content?: string } }[] }>>;
@@ -73,7 +74,7 @@ export class WebLlmInferenceEngine implements InferenceEngine {
         stream_options: { include_usage: true },
         max_tokens: options.maxTokens ?? 512,
         temperature: options.temperature ?? 0.2,
-        chat_template_kwargs: { enable_thinking: false },
+        enable_thinking: false,
         ...(options.stop ? { stop: options.stop } : {}),
       });
       for await (const chunk of stream) {
