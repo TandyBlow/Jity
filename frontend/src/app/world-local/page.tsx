@@ -317,8 +317,8 @@ async function loadEngine(
 
 /** D-022 prototype port around WebLLM. Same engine shape the page already
  * consumes; no wllama worker, no blob fetch. */
-function resilientWebLlm(modelId: string, label: string): ProductEnginePort {
-  const engine = new WebLlmInferenceEngine(modelId);
+function resilientWebLlm(modelId: string, label: string, modelBase?: string): ProductEnginePort {
+  const engine = new WebLlmInferenceEngine(modelId, modelBase);
   let closed = false;
   return {
     get info() { return engine.info; },
@@ -576,7 +576,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; runtime?: 'webllm'; webllmModel?: string } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -594,6 +594,7 @@ export default function WorldLocalPage() {
     const runtime = q.get('runtime') === 'webllm' ? 'webllm' as const : undefined;
     const webllmParam = q.get('webllmModel');
     const webllmModel = webllmParam && (WEBLLM_MODELS as readonly string[]).includes(webllmParam) ? webllmParam : undefined;
+    const webllmLocal = q.get('webllmLocal') === '1' ? true : undefined;
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
     const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
     const offscreenPolicy = offscreenParam === 'skip' || offscreenParam === 'judge' ? offscreenParam : undefined;
@@ -610,6 +611,7 @@ export default function WorldLocalPage() {
       ...(strictKnownEntities === false ? { strictKnownEntities } : {}),
       ...(runtime ? { runtime } : {}),
       ...(webllmModel ? { webllmModel } : {}),
+      ...(webllmLocal ? { webllmLocal } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -833,7 +835,8 @@ export default function WorldLocalPage() {
         // repair feedback; 8192 left a retry on the edge of the context.
         // D-022 runtime prototype: one WebLLM 4B engine serves both roles.
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
-        const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm') : null;
+        const webllmBase = arm.webllmLocal ? `/models/webllm/${webllmModel}/` : undefined;
+        const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase) : null;
         const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
@@ -857,6 +860,7 @@ export default function WorldLocalPage() {
           strictKnownEntities: arm.strictKnownEntities ?? true,
           runtime: arm.runtime === 'webllm' ? 'webllm' : 'wllama',
           webllmModel: arm.runtime === 'webllm' ? webllmModel : null,
+          webllmLocal: arm.webllmLocal === true,
         };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,

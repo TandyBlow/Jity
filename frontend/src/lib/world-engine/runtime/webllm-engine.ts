@@ -17,17 +17,22 @@ export class WebLlmInferenceEngine implements InferenceEngine {
   /** Last load progress, for the page's status line and evidence. */
   lastProgress: string | null = null;
 
-  constructor(private readonly modelId: string) {}
+  constructor(private readonly modelId: string, private readonly modelBase?: string) {}
 
   async load(options?: { signal?: AbortSignal }): Promise<void> {
     if (this.engine) return;
     if (options?.signal?.aborted) throw abortError();
     if (!this.loading) {
       console.info('[world-local] webllm load start', this.modelId);
+      const record = prebuiltAppConfig.model_list.find((item) => item.model_id === this.modelId);
+      const modelList = this.modelBase && record
+        ? [{ ...record, model: this.modelBase }, ...prebuiltAppConfig.model_list.filter((item) => item.model_id !== this.modelId)]
+        : prebuiltAppConfig.model_list;
       this.loading = CreateMLCEngine(this.modelId, {
         // The headless profile's Cache API quota is ~0 on this box; IndexedDB
-        // is the fallback that still lets the prototype measure 4B.
-        appConfig: { ...prebuiltAppConfig, cacheBackend: 'indexeddb' },
+        // is the fallback that still lets the prototype measure 4B. With a
+        // local base the weights come from the page origin, not the HF CDN.
+        appConfig: { ...prebuiltAppConfig, cacheBackend: 'indexeddb', model_list: modelList },
         initProgressCallback: (report) => { this.lastProgress = progressText(report); console.info('[world-local] webllm', this.lastProgress); },
       }).then((engine) => {
         this.engine = engine;
