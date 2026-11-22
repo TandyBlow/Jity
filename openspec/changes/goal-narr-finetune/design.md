@@ -17,6 +17,10 @@
 
 训练用同一顺序：`apply_chat_template([{role:'user', content: chatml(prompt)}], add_generation_prompt=True, enable_thinking=False)`，只对教师目标计算 loss。渲染后确认模板尾部是空的 `<think></think>` 块（与浏览器一致），提示平均约 500 token。
 
+## 结算门收紧
+
+`assertKnownEntities` 原先只拒绝 `outcome === 'completed'` 的事实；run82 的答案省略了 outcome，交接被放行。改为：显式 `blocked` 放行；其余点名未登记实体的事实，只有正文含「不在场/没有/未能/没能/未被/没在/不在/无法/拒绝」时才放行。测试：`settlement.test.ts` 新增「缺省 outcome 被拒 / 显式 blocked 放行」两条断言。
+
 ## 训练
 
 - 基座：`Qwen/Qwen3-1.7B`（HF safetensors，本地 `.local/qwen3-1.7b-hf`）。

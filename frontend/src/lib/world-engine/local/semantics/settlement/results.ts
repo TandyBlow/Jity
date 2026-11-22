@@ -299,14 +299,16 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
     for (const match of member.actionText.matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)) {
       const name = match[1];
       if (!name || registry.has(name) || STOP_NAMES.test(name) || /[的了着过]/u.test(name)) continue;
-      // Only a COMPLETED fact that asserts the name is a false success. A
-      // blocked fact may legitimately mention the unknown name while saying it
-      // was not there (run81: «阿豹不在场，未能转交»).
+      // An explicit blocked fact may mention the unknown name while saying it
+      // was not there (run81: «阿豹不在场，未能转交»). Anything else that
+      // names the name — including a fact with no outcome field — asserts the
+      // contact and is a false success (run82 wrote the handoff as done with
+      // no outcome, so the old completed-only check let it through).
       const hit = answer.facts.find((fact) => {
         const text = String(fact.text ?? '');
         if (!text.includes(name)) return false;
-        if ((fact as { outcome?: string }).outcome !== 'completed') return false;
-        return !/不在场|没有|未能|未被|没在|不在/u.test(text);
+        if ((fact as { outcome?: string }).outcome === 'blocked') return false;
+        return !/不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(text);
       });
       if (hit) throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);
     }

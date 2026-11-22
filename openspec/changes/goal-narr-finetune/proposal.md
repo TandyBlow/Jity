@@ -8,6 +8,7 @@ D-022 的剩余路线只剩「按当前叙事投影构造数据的定向微调�
 
 - 用 84 条真实叙事提示（`artifacts/goal` 中的 111 条去重）构造 SFT 数据；教师目标按当前投影规则手写，覆盖正常行动、部分完成、合法失败（未知实体）三类。
 - 数据先过开发期检查器 `check-prose-facts.mjs`：84 回合 0 命中后才进入训练。
+- 收紧结算层未知实体门：`outcome` 缺省也按断言处理，只有显式 `blocked` 或带否定线索的事实才允许点名未登记实体（run82 的「递给阿豹」缺 outcome 曾被放过）。
 - 在本机对 Qwen3-1.7B 做 LoRA（peft、bf16、gradient checkpointing）；编码与浏览器路径一致：brief prompt 走 `chatml()` 包装，再走 Qwen3 模板（`enable_thinking=false`）。
 - 合并 LoRA → `convert_hf_to_gguf.py` → `llama-quantize Q4_K_M`，替换评估臂文件 `frontend/public/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf`，同步 `page.tsx` 的 bytes/sha256。
 - 评估：transformers 生成看留出提示；产品页 s05/s06 两回合跑 `accept-world-local.mjs`，记录检查器、人工读评与计时。默认模型不变（D-007）；是否替换默认由实测另行裁决。

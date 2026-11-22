@@ -6,6 +6,7 @@
 - [x] 2. 手写 84 条教师目标（`teacher-a.txt` / `teacher-b.txt`），排除 6/38/72，补 S1–S3 合法失败样本。
 - [x] 3. 构造检查器形状并跑 `check-prose-facts.mjs`：84 回合 0 命中（`.local/narr-train/teacher-check.json`）。
 - [x] 4. 生成 SFT 数据 `.local/narr-train/sft.jsonl`（84 行）。
+- [x] 4b. 收紧 `assertKnownEntities`（缺省 outcome 视为断言），补 `settlement.test.ts` 两条断言；99 测试通过。
 
 ## 训练与转换
 
