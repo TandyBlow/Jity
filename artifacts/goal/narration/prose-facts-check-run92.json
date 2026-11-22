@@ -1,0 +1,82 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T19:59:41.422Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run92-17b-lora-v3-10turn.json",
+      "runId": "2026-11-22T1951-3adb",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "f4c0e36612164d0a849104599703f59fbb9614ba5a32525097e8d31d80ae3b38",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t2-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t4-joint-move",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t5-wait-listen",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t6-mid-refresh",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "t7-move-foyer",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t8-climb-landing",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t9-ask-nono",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t10-hold-and-time",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}
