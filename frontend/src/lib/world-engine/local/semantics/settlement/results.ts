@@ -416,7 +416,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：只写“看懂了规则牌”会把走路从结果里丢掉；不要写“完成参赛选择/任务”。',
     '- 问话就写谁问了谁、对方答了什么或没答；不要写“骰点未获取，因此未能达成目标”。',
     '- 事实必须是这次冻结行动的结果；不要把示例、上一回合的事或别的成员的行动抄成本次事实。',
-    '- fact 带字段：actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
+    '- fact 带字段：text=这一句事实的完整原句（必填，不能为空）、actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
     '- failed/blocked 照实写，保留“没有/未/被阻止”；任务目标、骰点资格、判定理由都不是事实。',
     `本组：${groupId}`,
     '成员：',
