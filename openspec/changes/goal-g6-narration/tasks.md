@@ -20,7 +20,7 @@
 
 - [ ] 4.1 按 20+ 点硬错误率与用户读感，决定是否加事实门（新决定，不改 D-004）。
 - [ ] 4.2 核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5 真实状态；替换按 D-007 记录。
-- [ ] 4.3 微调前在 HPC 做 5 条公开中文续写前后对照（D-020：用户选择此路线；基线先行）。
+- [ ] 4.3 微调前基线已完成（本地同栈 5 题 × 3 次，`public-continuations-baseline-20261122.json`，读评 `read-public-baseline-20261122.md`）；待 HPC 微调后同题复跑。
 
 ## Workflow follow-up
 
