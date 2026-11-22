@@ -1,0 +1,73 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T08:28:20.737Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run32-temp-0.3.json",
+      "runId": "2026-11-22T0819-de64",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": 0.3
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run33-temp-0.7.json",
+      "runId": "2026-11-22T0823-6a07",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": 0.7
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 2
+  }
+}
