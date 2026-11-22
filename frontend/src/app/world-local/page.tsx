@@ -48,6 +48,12 @@ const NARRATION_MODELS = {
     url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_640, contextSize: 4096,
     sha256: '9beece58454be73b02d5247bb88c63e23c3b758b19dcfb9d8d2bc4a150768d7c',
   },
+  // Evaluation arm: a 1.5B checkpoint trained on the page narration format
+  // (page-v3, local build 2026-11-10). Not a product default.
+  'qwen15b-page-v3': {
+    url: '/models/qwen15b-page-v3-Q4_K_M.gguf', bytes: 986_048_064, contextSize: 3072,
+    sha256: 'a03bcfeaa4837d6754257a5f6e71cd24ac3ebce4bb26ee92fc2280d096c5632f',
+  },
   // Evaluation arm (D-007): the semantic 0.6B also writes the narration, in
   // the same engine instance. One set of weights instead of two; quality must
   // be measured against the 1.7B before it can become a default.
