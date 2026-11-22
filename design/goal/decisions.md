@@ -239,6 +239,7 @@
 - 定向微调准备（2026-11-23）：已抽取 111 条真实叙事提示（84 唯一）到 `.local/narr-train/prompts.jsonl`；集群 SSH 当前不可达（WinError 10060），教师生成与 MLC 转换等集群窗口。
 - 凭空细节门（2026-11-23，`goal-invented-check`）：检查器新增 `invented_detail`（窄词表 + 提示比对）；run77 的 trained 候选命中 6 条（夕阳/风声/汗/泥土/焦糊/气味），run75 不误报。该门用于定向微调的数据过滤。
 - 定向微调（2026-11-23，`goal-narr-finetune`）：集群不可达，改在本机 RTX 4060 训练 Qwen3-1.7B LoRA。数据 84 条真实提示（排除 6/38/72，补 3 条合成 blocked），教师目标手写并过检查器 0/84；三轮（v1 84 行、v2 108 行、v3 148 行过采样）。结果：v3 在 s05/s06 探针（run89，36.7/28.0 s）驱动与检查器 0、4.2 硬错 0；但五回合集（run90）出现未结算事件（「他看懂了规则牌」「伸手去摸规则」「他把规则牌看了一遍」）与重复句，4.3.4 不合格；temperature 0.2（run91）同失败模式。十输入集（run92）：有正文的 9 个回合里 6 个硬错（主角持诺诺的短枪、把「路明非中立」写成「她」、位置仍在服务巷却写到二层平台、把诺诺的规则阅读记到主角等），检查器 0 命中——现有开发门不足以替代人工读评；9/9 回合有重复句。基座同提示（run88）仍复述并写完成，v1–v3 明显优于基座但未达零硬错。默认不变（D-007）；评估臂 `qwen3-1.7b-narr-lora` 指向 v3（sha256 `f4c0e366…`）。证据 `artifacts/goal/narration/read-17b-lora-v2-20261123.md`、run85–90。
+- 开发期门扩展（2026-11-23，`goal-prose-attribution`）：`check-prose-facts.mjs` 新增 `place_claim`（主角被写到与已提交状态不符的登记地点）与 `item_owner_claim`（主角使用他人归属物品）；教师数据 84 条与 run89 干净回合 0 误报，run92 命中 t5/t8。张冠李戴与「规则阅读转移」仍无自动门，人工读评必需。
 - 4B 十输入部分（2026-11-23，run93）：WebLLM 4B 同臂跑到 t4 被宿主内存回收；t1/t2/t4 复述状态清单，t3 把未结算的林亦舟与脚踝伤写进正文（硬错），t4 `accepted_over_60s`；检查器 0 命中。4B 基座不改变未通过判定。
 - 结算门收紧（2026-11-23，同 change）：`assertKnownEntities` 把缺省 outcome 也视为断言，仅放行显式 blocked 或带否定线索的 fact；`settlement.test.ts` 99 passed；驱动 `legal_failure` 门改读叙事提示的结算段（raw 尝试含被拒/被丢 fact，不再作判据）。后果：0.6B 结算模型无法稳定产出 blocked fact，s06 约 2/5 中止、3/5 宽松轮丢 fact；4B WebLLM 能产出（run82），但本机回合受宿主内存限制。
 

@@ -1,6 +1,6 @@
 {
   "kind": "jity-prose-facts-check",
-  "at": "2026-11-22T19:59:41.422Z",
+  "at": "2026-11-22T20:19:21.584Z",
   "runs": [
     {
       "file": "D:/others/Jity/artifacts/goal/narration/run92-17b-lora-v3-10turn.json",
@@ -48,7 +48,13 @@
         {
           "id": "t5-wait-listen",
           "source": "model",
-          "flags": []
+          "flags": [
+            {
+              "kind": "item_owner_claim",
+              "quote": "路明非把枪口压向地面，听着枪声从哪个方向来，一边数着时间",
+              "item": "短枪"
+            }
+          ]
         },
         {
           "id": "t6-mid-refresh",
@@ -63,7 +69,13 @@
         {
           "id": "t8-climb-landing",
           "source": "model",
-          "flags": []
+          "flags": [
+            {
+              "kind": "place_claim",
+              "quote": "路明非沿着楼梯上到二层平台",
+              "committed": "西侧服务巷"
+            }
+          ]
         },
         {
           "id": "t9-ask-nono",
@@ -78,5 +90,8 @@
       ]
     }
   ],
-  "totals": {}
+  "totals": {
+    "item_owner_claim": 1,
+    "place_claim": 1
+  }
 }

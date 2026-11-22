@@ -91,6 +91,48 @@ function checkTurn(turn) {
     flags.push({ kind: 'invented_detail', quote: prose.slice(Math.max(0, at - 12), at + term.length + 12).slice(0, 60) });
   }
 
+  // Position claim: the prose moves the protagonist to a registered place other
+  // than the committed one. run92 t8 wrote 二层平台 while the state still said
+  // 西侧服务巷. Places inside one complex count as the same place, so a climb
+  // inside the tower is not flagged.
+  const committed = /路明非现在在([^，。；\n]+)/u.exec(prompt)?.[1]?.trim() ?? '';
+  const placeFamilies = [
+    ['钟楼', '钟楼门厅', '二层平台', '顶层旗台'],
+    ['西侧服务巷', '服务巷检修口'],
+    ['器材棚'],
+    ['西回廊'],
+    ['庭院'],
+    ['跨溪小桥'],
+    ['西侧器材区'],
+    ['医护附楼'],
+  ];
+  const moved = /(走进|走到|走上|上到|上了|进了|进入|跑到|赶到|穿过|站在|停在|爬)/u;
+  if (committed) {
+    const home = placeFamilies.find((names) => names.includes(committed)) ?? [committed];
+    for (const place of placeFamilies.flat()) {
+      if (home.includes(place)) continue;
+      const clause = clauses(prose).find((part) => part.includes('路明非') && part.includes(place) && moved.test(part));
+      if (clause) flags.push({ kind: 'place_claim', quote: clause.slice(0, 60), committed: committed.slice(0, 20) });
+    }
+  }
+
+  // Item owner claim: the protagonist handling an item the prompt attributes to
+  // someone else (run92 t5: 诺诺's 短枪 became 路明非's). Attribution is read at
+  // the prompt's clause level: the item's clause names the owner, and no clause
+  // gives the same item to the protagonist.
+  const promptClauses = prompt.split(/[。\n]/u);
+  for (const [owner, item, named] of [
+    ['诺诺', '短枪', /短枪|枪口/u], ['诺诺', '短讯机', /短讯机|短讯/u], ['芬格尔', '相机', /相机/u],
+    ['秦越', '器材笼钥匙', /器材笼钥匙|笼钥匙/u], ['林亦舟', '演习枪', /演习枪/u],
+  ]) {
+    const itemClauses = promptClauses.filter((part) => part.includes(item));
+    if (!itemClauses.length) continue;
+    if (!itemClauses.some((part) => part.includes(owner))) continue;
+    if (itemClauses.some((part) => part.includes('路明非') && !part.includes(owner))) continue;
+    const clause = clauses(prose).find((part) => part.includes('路明非') && named.test(part) && !part.includes(owner));
+    if (clause) flags.push({ kind: 'item_owner_claim', quote: clause.slice(0, 60), item });
+  }
+
   // Unknown-entity claim: a name the player introduced that the world does not
   // contain. The settlement may refuse the act (unknown entity) while the prose
   // still writes it; run40-e is the measured case. Dev gate only.
