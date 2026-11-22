@@ -1,0 +1,320 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T05:35:32.916Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run22-s02-20261121.json",
+      "runId": "2026-11-21T1506-8ff0",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非摸了摸胸前的识别带，确认自己没有被弹伤",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run23-s03-s04-20261121.json",
+      "runId": "2026-11-21T1512-1cf1",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run24-s05-s06-20261121.json",
+      "runId": "2026-11-21T1523-f580",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run26-tuned-arm-20261122.json",
+      "runId": "2026-11-22T0440-4b4d",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen25-1.5b-narr",
+        "narrationFile": "/models/qwen25-1.5b-narr-Q4_K_M.gguf",
+        "narrationBytes": 986048096,
+        "narrationSha256": "6ed2268db2e1277933094c8b3af3348c18d6c0689244679a393c2008a1af5a0b"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run27-default-skip-arm-20261122.json",
+      "runId": "2026-11-22T0446-4c6b",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+      "runId": "2026-11-21T1547-3450",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s01-act-move",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "记下他们身上的识别带颜色"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非停下脚步，手指轻轻划过自己的识别带，颜色在昏黄的灯光下显得格外清晰",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk2-20261121.json",
+      "runId": "2026-11-21T0957-3c11",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s07-partial",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s08-joint-move",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+      "runId": "2026-11-21T1032-a0ca",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s12-climb",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s13-already-acted",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s14-auto-chain",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s15-handback",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s16-time-check",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/g8-chunk5-20261121.json",
+      "runId": "2026-11-21T1059-1f04",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "g8-t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t2-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t4-joint-move",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "band_claim": 2,
+    "input_echo": 5
+  }
+}

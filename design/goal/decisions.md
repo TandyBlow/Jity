@@ -185,6 +185,14 @@
 - 影响：`goal-g6-narration` 的 4.3/4.2；`design/goal/ledger.md` G6；HPC runbook（`docs/hpc-runbook.md`，本地）。事实门维持 D-004 的现状。
 - 补充（2026-11-22）：集群登录节点可达但 Slurm 控制器不可达，GPU 作业暂不能提交；微调前基线改在产品同款 wllama WebGPU 本地跑（同一 GGUF、同一提示与采样参数），微调仍在 HPC，微调后在同一本地栈复跑，保证前后同栈。
 
+## D-021 G6 事实门：只做开发期检查
+
+- 状态：`signed`（2026-11-22，用户选择「只做开发期检查」）。
+- 决定：运行期保持 D-004 原样输出，不加运行时事实门。新增开发期检查器 `frontend/scripts/product-acceptance/check-prose-facts.mjs`：逐回合把正文与叙事提示里的已结算事实对照，报告识别带、门状态、输入回声、占位句与元注记；只出 JSON 报告，不改产品路径、不进回合时间。
+- 首轮结果（26 个真实回合：run22/23/24、run26/27、chunk1 复跑、chunk2、chunk3b、chunk5）：`band_claim` 2（都是 s02 给路明非加识别带）、`input_echo` 5（s05 复述「识别带和胸袋里的弹匣」等），其余类别 0。报告 `artifacts/goal/narration/prose-facts-check.json`。
+- 理由：用户不愿承担运行时门的时长与失败率代价；开发期检查能驱动模型/提示迭代，且保持交付路径不变。
+- 影响：G6 已归档未通过的状态不变；账本/验收报告记录本决定。
+
 ## 已确认（2026-11-20）
 本轮 8 个待确认项已全部有答案，记录在 D-004、D-006、D-010–D-013。当前没有 `pending-user` 项。
 
