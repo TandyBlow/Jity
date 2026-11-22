@@ -82,6 +82,15 @@ function checkTurn(turn) {
   const meta = prose.match(META_NOTE);
   if (meta) flags.push({ kind: 'meta_note', quote: prose.slice(Math.max(0, meta.index - 20), meta.index + 30).slice(0, 60) });
 
+  // Invented atmosphere: sensory words the prose adds that the settled facts
+  // never carried (run77's trained arm wrote 夕阳/汗/泥土/机械运转声). The word
+  // list is deliberately narrow: every hit must be absent from the prompt.
+  for (const term of ['夕阳', '暮色', '晨光', '月光', '星光', '风声', '气味', '汗', '泥土', '焦糊', '脚步声', '心跳', '寒意', '霉味', '血腥味']) {
+    if (prompt.includes(term) || !prose.includes(term)) continue;
+    const at = prose.indexOf(term);
+    flags.push({ kind: 'invented_detail', quote: prose.slice(Math.max(0, at - 12), at + term.length + 12).slice(0, 60) });
+  }
+
   // Unknown-entity claim: a name the player introduced that the world does not
   // contain. The settlement may refuse the act (unknown entity) while the prose
   // still writes it; run40-e is the measured case. Dev gate only.
