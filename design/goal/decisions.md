@@ -220,6 +220,7 @@
 - 质量基线（2026-11-22，`goal-quality-baseline`）：17 run / 42 回合，26 个回合至少命中一条开发门（echo 11、band 9、unknown_entity 11、meta 2）；s06 的 11 个合法失败回合全部命中 unknown_entity_claim。任何质量路线都用同一套门对照。证据 `artifacts/goal/narration/quality-baseline-20261122.md`。
 - 默认路径基线（2026-11-22，同批检查）：G8 的 20 输入里 5/20 个回合命中开发门（echo 3、band 2、unknown_entity 1、meta 1），s06 合法失败命中 unknown_entity_claim。证据 `artifacts/goal/narration/prose-facts-g8-default-20261122.json`。
 - 未知实体规则评估臂（2026-11-22，`goal-unknown-rule`）：results 提示显式写明未登记实体必须 not_achieved/blocked，3 次 s05/s06 中 1 次干净、2 次仍判成功（基线 1/5 干净）。单行提示不是修复；D-022 候选不变。证据 `artifacts/goal/narration/read-unknown-rule-20261122.md`。
+- 自修复原型（2026-11-22，`goal-repair-sample`）：把 s06 失败草稿连同原提示交回同一 1.7B、要求只改矛盾处；6/6 次输出保留被阻止的动作（2.5–7.9 s/次）。一遍自修复无效，D-022 剩余候选收缩为定向微调、换运行时、改门槛、收尾。证据 `artifacts/goal/narration/read-repair-sample-20261122.md`。
 
 ## D-023 设备范围：笔记本、4B 与移动端的取舍
 
