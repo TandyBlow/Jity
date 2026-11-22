@@ -24,7 +24,7 @@
 
 | 编号 | 能力 | 状态 | 代码路径@695e6bd4 | 证据 | 缺口 / 归属 |
 |---|---|---|---|---|---|
-| R01 | 开局固定地点、物品、人物；运行中只更新登记实体；允许在既有大任务下新增小任务 | 实现中 | `local/world-loader.ts`、`local/static-world-registration.ts`、`local/state.ts:83` | `world-loader.test.ts`、`state.test.ts`；`data/worlds/README.md`；摘要 `3f65452d…` / `6262d5fc…`；run39 场景门 `legal_failure_not_enforced` 命中；run40 复跑 5 次：4 次结算判成功、1 次结算 blocked 但叙事写成已发生（5/5 层间失败）；正文门 `unknown_entity_claim` 在 run37/40 的 3/3 个 s06 命中；`settlementUnknownRule` 评估臂 3 次仅 1 次干净 | 真实模型引用未知实体、非法新实体的正反例；未知实体不能靠叙事变成事实；反例目前失败（结算层，D-022）。G2/G5 |
+| R01 | 开局固定地点、物品、人物；运行中只更新登记实体；允许在既有大任务下新增小任务 | 实现中 | `local/world-loader.ts`、`local/static-world-registration.ts`、`local/state.ts:83` | `world-loader.test.ts`、`state.test.ts`；`data/worlds/README.md`；摘要 `3f65452d…` / `6262d5fc…`；run39 场景门 `legal_failure_not_enforced` 命中；run40 复跑 5 次：4 次结算判成功、1 次结算 blocked 但叙事写成已发生（5/5 层间失败）；正文门 `unknown_entity_claim` 在 run37/40 的 3/3 个 s06 命中；`settlementUnknownRule` 评估臂 3 次仅 1 次干净；`strictKnownEntities` 默认校验后 s06 结算门 1/3 命中（基线 4/5） | 真实模型引用未知实体、非法新实体的正反例；未知实体不能靠叙事变成事实；反例目前失败（结算层，D-022）。G2/G5 |
 | R02 | 地点嵌套、人物/物品容纳与相对位置；自然语言外貌、任务、个性、理智 | 实现中 | `local/state.ts`、`types.ts`、`world-loader.ts` | 静态世界 26 地点/14 人物/74 物品/73 任务；state 测试 | 嵌套移动、物品移动、地点外貌、相对位置的真实模型场景与页面展示。G2/G5/G6 |
 | R03 | 初始外貌与个性不改写；变化保留历史；位置结构化 | 实现中 | `local/state.ts` 的 initial/current、`pointEntityDeltas` | state 测试；静态世界 README | 真模型合法变化、替代引用、原文保留、纯解除分支。G5 |
 | R04 | 世界事实由 S₀＋Δ 构成；状态/摘要/检查点可重建 | 实现中 | `state.ts:83/906/952`、`canonical.ts`、`history.ts`、`persistence/` | `state.test.ts`、`history.test.ts`、`session-recovery.test.ts`；Python–TS 冻结差分（`kernel-diff.json`）；restore 接 `verifySessionSnapshot`（`session.ts`、corrupt-chain 测试） | 真实多轮页面回放证据；缓存与模型切换不能改变事实来源。G2 |
