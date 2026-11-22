@@ -19,7 +19,7 @@
 ## 4. G6 后决定
 
 - [ ] 4.1 事实门：未做新决定，D-004 原样输出继续生效（blocked on user）。
-- [x] 4.2 候选状态已核对：TRAINED/CONSTRAINED 都 `productDefault:false`，`auto` 落回单次 raw 1.7B instruct 写作；1.7B/Q4_K_M 是实际交付文件（manifest 记录 sha256/bytes）。
+- [x] 4.2 候选状态已核对：TRAINED/CONSTRAINED 都 `productDefault:false`，`auto` 落回单次 raw 1.7B instruct 写作；1.7B/Q4_K_M 是实际交付文件。历史微调候选 qwen25-1.5b-narr 已在同题同栈实测：5 题 × 3 次总 65.8 s（raw 1.7B 39.8 s），回声/凭空细节未改善（`read-15b-tuned-20261122.md`）。
 - [ ] 4.3 微调前基线已完成（本地同栈 5 题 × 3 次）；微调作业 blocked：集群 Slurm 控制器主备 DOWN（`scontrol ping`），登录节点正常。
 
 ## Workflow follow-up
