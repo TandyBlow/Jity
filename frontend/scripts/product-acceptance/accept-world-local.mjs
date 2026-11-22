@@ -1025,9 +1025,15 @@ try {
       // not a prose bug, so the check reads the results raws, not the prompt.
       if (turn.expect === 'legal_failure') {
         const calls = (entry.product?.submission ?? entry.submission)?.calls ?? [];
+        // A retried settlement keeps every attempt in `raw`, joined by "---".
+        // Only the last attempt of a non-fallback call was accepted; earlier
+        // rejected attempts must not be read as settled facts.
         const raws = calls
-          .filter((call) => call.task === 'results' && typeof call.raw === 'string')
-          .map((call) => { try { return JSON.parse(call.raw); } catch { return null; } })
+          .filter((call) => call.task === 'results' && call.fallback !== true && typeof call.raw === 'string')
+          .map((call) => {
+            const segments = call.raw.split('\n---\n');
+            try { return JSON.parse(segments[segments.length - 1]); } catch { return null; }
+          })
           .filter(Boolean);
         const completed = raws.flatMap((raw) => raw.facts ?? []).filter((fact) => fact.outcome === 'completed');
         const achieved = raws.flatMap((raw) => raw.judgments ?? []).filter((judgment) => judgment.label === 'achieved');
