@@ -170,21 +170,30 @@ function noteFailure(scope, message, detail = null) {
 const lease = acquireLease({ purpose: `09 acceptance ${intent} ${base}` });
 evidence.lease = lease.record;
 
+const cpuThrottle = Number(flag('--cpu-throttle', '1'));
+const gpuLite = has('--gpu-lite');
+const launchArgs = [
+  '--enable-unsafe-webgpu',
+  ...(gpuLite ? [] : ['--force_high_performance_gpu']),
+  '--ignore-gpu-blocklist',
+];
 const browser = await chromium.launch({
   headless: !has('--headed'),
   channel: 'msedge',
-  args: [
-    '--enable-unsafe-webgpu',
-    '--force_high_performance_gpu',
-    '--ignore-gpu-blocklist',
-  ],
+  args: launchArgs,
 });
-evidence.harness.launchArgs = ['--enable-unsafe-webgpu', '--force_high_performance_gpu', '--ignore-gpu-blocklist'];
+evidence.harness.launchArgs = launchArgs;
+evidence.harness.cpuThrottle = Number.isFinite(cpuThrottle) && cpuThrottle > 1 ? cpuThrottle : null;
+evidence.harness.gpuLite = gpuLite;
 
 try {
   evidence.harness.edgeVersion = browser.version();
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
+  if (evidence.harness.cpuThrottle) {
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: evidence.harness.cpuThrottle });
+  }
   evidence.environment.userAgent = await page.evaluate(() => navigator.userAgent).catch(() => null);
 
   page.on('console', (message) => {
