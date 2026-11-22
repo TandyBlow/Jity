@@ -1,0 +1,65 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T18:18:51.426Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run91-17b-lora-v3-t02.json",
+      "runId": "2026-11-22T1814-1e3e",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "f4c0e36612164d0a849104599703f59fbb9614ba5a32525097e8d31d80ae3b38",
+        "narrationTemperature": 0.2,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非停在原地，把人身上识别带颜色记下来",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": null,
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "band_claim": 1
+  }
+}
