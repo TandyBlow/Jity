@@ -74,7 +74,7 @@ export class WebLlmInferenceEngine implements InferenceEngine {
         stream_options: { include_usage: true },
         max_tokens: options.maxTokens ?? 512,
         temperature: options.temperature ?? 0.2,
-        enable_thinking: false,
+        extra_body: { enable_thinking: false },
         ...(options.stop ? { stop: options.stop } : {}),
       });
       for await (const chunk of stream) {
