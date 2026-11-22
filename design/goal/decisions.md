@@ -228,6 +228,7 @@
 - 4B 加载状态（2026-11-22，run59–61）：4B 已本地化；OPFS 后端在 768 MB 报 QuotaExceeded（页面实测配额 10 GB、usage 0，属后端问题）；Cache API 后端的验证被宿主内存回收停止，按规则未自行重启。1.7B 已证明运行时可用（22 s/回合），4B 还差最后一步加载验证。
 - 4B 打通（2026-11-22，run63）：独立探针与验收驱动（`--profile ../.local/edge-profile`）都能加载 4B（2.16 GB、WebGPU、缓存后 6 秒）；产品单回合在 results codec 报 `fact text must be non-empty`（28.6 s），属 4B 输出格式问题。s05/s06 数据在 run64。
 - 4B 稳定性（2026-11-22，run69–71）：run69 卡死 30 分钟后停止并加了 150 s 生成上限；run70 撞旧 profile 的残留写入租约；run71 被宿主内存回收杀掉（第二次），未自行重启。4B 可加载（run63），但连续产品回合在本机会触发内存保护；完整 s05/s06 数据待内存宽裕窗口。
+- 1.7B 修复后复跑（2026-11-22，run72）：固定 prompts 下 s05 仍 `model output is not JSON`，s06 由 `strictKnownEntities` 拦下（unknown entity 阿豹）。1.7B 的速度不足以抵消格式能力；质量路线要 4B，4B 受宿主内存限制。
 
 ## D-023 设备范围：笔记本、4B 与移动端的取舍
 
