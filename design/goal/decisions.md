@@ -214,6 +214,8 @@
   4. 再一轮数据/配方微调：仅当第一轮有改进但未达标时值得。
   5. 改硬门槛：把 G6 的 5/5 改成可量化的开发期门槛。属于「改目标/硬门槛」，必须用户拍板，Agent 不自改。
 
+- 根因补充（2026-11-22，`goal-legal-check`）：s06 合法失败的根因在结算层——`results` 模型把未知实体阿豹的交接判成 `achieved`/`completed`（run37/run39），叙事照抄。质量路线必须覆盖 G5 语义；开发期新增场景门 `legal_failure_not_enforced`（run39 命中）。证据 `artifacts/goal/narration/read-legal-check-20261122.md`。
+
 ## D-023 设备范围：笔记本、4B 与移动端的取舍
 
 - 状态：`pending-user`（2026-11-22）。

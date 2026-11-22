@@ -1008,6 +1008,23 @@ try {
       if (/^(…+|。|，|、|\s)$/.test(prose.trim())) entry.problems.push('placeholder_only_text');
       if (/(结算|回退|fallback|本拍|本组|模型未|无法确认|未产生)/.test(prose)) entry.problems.push('internal_note_in_prose');
       if (/^(上一|刚才|此前)/.test(prose.trim()) && /(结算|修正|回退)/.test(prose)) entry.problems.push('internal_note_in_prose');
+      // Dev gate: a turn declared as a legal-failure scenario must not settle a
+      // completed fact. The results model once judged an unknown-entity handoff
+      // as achieved and the narration then wrote it; that is a settlement bug,
+      // not a prose bug, so the check reads the results raws, not the prompt.
+      if (turn.expect === 'legal_failure') {
+        const calls = (entry.product?.submission ?? entry.submission)?.calls ?? [];
+        const raws = calls
+          .filter((call) => call.task === 'results' && typeof call.raw === 'string')
+          .map((call) => { try { return JSON.parse(call.raw); } catch { return null; } })
+          .filter(Boolean);
+        const completed = raws.flatMap((raw) => raw.facts ?? []).filter((fact) => fact.outcome === 'completed');
+        const achieved = raws.flatMap((raw) => raw.judgments ?? []).filter((judgment) => judgment.label === 'achieved');
+        if (completed.length || achieved.length) {
+          entry.problems.push('legal_failure_not_enforced');
+          entry.legalFailure = { completed: completed.map((fact) => fact.text), achieved: achieved.map((judgment) => judgment.reason) };
+        }
+      }
       if (entry.shownChars > 0 && entry.shownChars < 30) entry.problems.push('very_short_text');
       if (entry.text && turn.input && entry.text.includes(turn.input)) entry.problems.push('echoes_player_input');
       const beforeHistory = Number(entry.before?.historyCount ?? NaN);
