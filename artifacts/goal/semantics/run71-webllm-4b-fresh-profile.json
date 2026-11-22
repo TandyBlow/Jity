@@ -1,0 +1,861 @@
+{
+  "runId": "2026-11-22T1534-9e5f",
+  "outFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run71-webllm-4b-fresh-profile.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "99b3ad4d768689e01d8ab0ec79010799b2442383b4f31c44321cf42e45d9a6db",
+    "edgeVersion": "158.0.4370.33",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "profile": "../.local/edge-profile-4b",
+    "cpuThrottle": null,
+    "gpuLite": false
+  },
+  "status": "IN_PROGRESS",
+  "startedAt": "2026-11-22T15:34:40.591Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "scripts/product-acceptance/turns-semantics-s05-s06.json",
+  "integration": {
+    "head": null,
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": null,
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "d86474ca717b5daa848178b2b8542a4eced7321a",
+    "pageSha256": "ef50a93cc435cb7a566c2442138b638bc6e998557dec0e0f8079ddbe9f058bfe",
+    "turnEvidenceAvailable": true,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "ef50a93cc435cb7a566c2442138b638bc6e998557dec0e0f8079ddbe9f058bfe",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "bgra8unorm-storage",
+        "texture-formats-tier1",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "texture-formats-tier2",
+        "shader-f16"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"chromium-experimental-sampling-resource-table\"]}",
+      "[info] [world-local] webllm load start Qwen3-4B-q4f16_1-MLC",
+      "[info] [world-local] webllm 0% Start to fetch params",
+      "[info] [world-local] webllm 1% Fetching param cache[1/74]: 24MB fetched. 1% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 2% Fetching param cache[2/74]: 48MB fetched. 2% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 4% Fetching param cache[3/74]: 78MB fetched. 3% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 5% Fetching param cache[4/74]: 102MB fetched. 4% completed, 1 secs elapsed. It can take a while when we first visit this",
+      "[info] [world-local] webllm 6% Fetching param cache[5/74]: 133MB fetched. 6% completed, 1 secs elapsed. It can take a while when we first visit this",
+      "[info] [world-local] webllm 8% Fetching param cache[6/74]: 163MB fetched. 7% completed, 1 secs elapsed. It can take a while when we first visit this",
+      "[info] [world-local] webllm 9% Fetching param cache[7/74]: 187MB fetched. 8% completed, 2 secs elapsed. It can take a while when we first visit this",
+      "[info] [world-local] webllm 10% Fetching param cache[8/74]: 210MB fetched. 9% completed, 2 secs elapsed. It can take a while when we first visit thi",
+      "[info] [world-local] webllm 11% Fetching param cache[9/74]: 241MB fetched. 11% completed, 2 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 12% Fetching param cache[10/74]: 265MB fetched. 12% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 14% Fetching param cache[11/74]: 295MB fetched. 13% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 15% Fetching param cache[12/74]: 325MB fetched. 15% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 16% Fetching param cache[13/74]: 356MB fetched. 16% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 18% Fetching param cache[14/74]: 380MB fetched. 17% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 19% Fetching param cache[15/74]: 403MB fetched. 18% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 27% Fetching param cache[16/74]: 589MB fetched. 27% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 28% Fetching param cache[17/74]: 613MB fetched. 28% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 30% Fetching param cache[18/74]: 643MB fetched. 29% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 31% Fetching param cache[19/74]: 673MB fetched. 31% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 32% Fetching param cache[20/74]: 697MB fetched. 32% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 33% Fetching param cache[21/74]: 720MB fetched. 33% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 34% Fetching param cache[22/74]: 744MB fetched. 34% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 36% Fetching param cache[23/74]: 774MB fetched. 35% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 37% Fetching param cache[24/74]: 798MB fetched. 36% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 38% Fetching param cache[25/74]: 822MB fetched. 38% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 39% Fetching param cache[26/74]: 852MB fetched. 39% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 41% Fetching param cache[27/74]: 883MB fetched. 40% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 42% Fetching param cache[28/74]: 913MB fetched. 42% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 44% Fetching param cache[29/74]: 944MB fetched. 43% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 45% Fetching param cache[30/74]: 967MB fetched. 44% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 46% Fetching param cache[31/74]: 991MB fetched. 45% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 47% Fetching param cache[32/74]: 1015MB fetched. 46% completed, 6 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 48% Fetching param cache[33/74]: 1039MB fetched. 48% completed, 6 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 50% Fetching param cache[34/74]: 1069MB fetched. 49% completed, 6 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 51% Fetching param cache[35/74]: 1099MB fetched. 50% completed, 6 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 52% Fetching param cache[36/74]: 1130MB fetched. 52% completed, 6 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 54% Fetching param cache[37/74]: 1160MB fetched. 53% completed, 6 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 55% Fetching param cache[38/74]: 1184MB fetched. 54% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 56% Fetching param cache[39/74]: 1208MB fetched. 55% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 57% Fetching param cache[40/74]: 1231MB fetched. 57% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 58% Fetching param cache[41/74]: 1255MB fetched. 58% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 60% Fetching param cache[42/74]: 1286MB fetched. 59% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 61% Fetching param cache[43/74]: 1316MB fetched. 60% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 62% Fetching param cache[44/74]: 1346MB fetched. 62% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 64% Fetching param cache[45/74]: 1377MB fetched. 63% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 65% Fetching param cache[46/74]: 1400MB fetched. 64% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 66% Fetching param cache[47/74]: 1424MB fetched. 65% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 67% Fetching param cache[48/74]: 1448MB fetched. 67% completed, 7 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 68% Fetching param cache[49/74]: 1472MB fetched. 68% completed, 8 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 70% Fetching param cache[50/74]: 1502MB fetched. 69% completed, 8 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 71% Fetching param cache[51/74]: 1533MB fetched. 70% completed, 8 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 72% Fetching param cache[52/74]: 1563MB fetched. 72% completed, 8 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 74% Fetching param cache[53/74]: 1593MB fetched. 73% completed, 8 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 75% Fetching param cache[54/74]: 1617MB fetched. 74% completed, 9 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 76% Fetching param cache[55/74]: 1641MB fetched. 76% completed, 9 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 77% Fetching param cache[56/74]: 1665MB fetched. 77% completed, 9 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 79% Fetching param cache[57/74]: 1695MB fetched. 78% completed, 9 secs elapsed. It can take a while when we first visit ",
+      "[info] [world-local] webllm 80% Fetching param cache[58/74]: 1725MB fetched. 79% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 81% Fetching param cache[59/74]: 1756MB fetched. 81% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 82% Fetching param cache[60/74]: 1780MB fetched. 82% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 84% Fetching param cache[61/74]: 1810MB fetched. 83% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 85% Fetching param cache[62/74]: 1834MB fetched. 84% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 86% Fetching param cache[63/74]: 1857MB fetched. 86% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 87% Fetching param cache[64/74]: 1881MB fetched. 87% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 89% Fetching param cache[65/74]: 1912MB fetched. 88% completed, 10 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 90% Fetching param cache[66/74]: 1935MB fetched. 89% completed, 11 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 91% Fetching param cache[67/74]: 1966MB fetched. 91% completed, 11 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 92% Fetching param cache[68/74]: 1996MB fetched. 92% completed, 12 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 94% Fetching param cache[69/74]: 2020MB fetched. 93% completed, 12 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 95% Fetching param cache[70/74]: 2050MB fetched. 94% completed, 13 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 96% Fetching param cache[71/74]: 2074MB fetched. 96% completed, 13 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 97% Fetching param cache[72/74]: 2104MB fetched. 97% completed, 13 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 99% Fetching param cache[73/74]: 2135MB fetched. 98% completed, 13 secs elapsed. It can take a while when we first visit",
+      "[info] [world-local] webllm 100% Fetching param cache[74/74]: 2159MB fetched. 100% completed, 13 secs elapsed. It can take a while when we first vis",
+      "[info] [world-local] webllm 9% Loading model from cache[1/74]: 186MB loaded. 8% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 10% Loading model from cache[2/74]: 209MB loaded. 9% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 11% Loading model from cache[3/74]: 233MB loaded. 10% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 12% Loading model from cache[4/74]: 263MB loaded. 12% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 13% Loading model from cache[5/74]: 287MB loaded. 13% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 15% Loading model from cache[6/74]: 317MB loaded. 14% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 16% Loading model from cache[7/74]: 341MB loaded. 15% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 17% Loading model from cache[8/74]: 372MB loaded. 17% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 18% Loading model from cache[9/74]: 395MB loaded. 18% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 20% Loading model from cache[10/74]: 426MB loaded. 19% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 21% Loading model from cache[11/74]: 450MB loaded. 20% completed, 14 secs elapsed.",
+      "[info] [world-local] webllm 22% Loading model from cache[12/74]: 480MB loaded. 22% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 23% Loading model from cache[13/74]: 504MB loaded. 23% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 25% Loading model from cache[14/74]: 534MB loaded. 24% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 26% Loading model from cache[15/74]: 558MB loaded. 25% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 27% Loading model from cache[16/74]: 582MB loaded. 26% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 28% Loading model from cache[17/74]: 612MB loaded. 28% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 29% Loading model from cache[18/74]: 636MB loaded. 29% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 31% Loading model from cache[19/74]: 666MB loaded. 30% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 32% Loading model from cache[20/74]: 690MB loaded. 31% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 33% Loading model from cache[21/74]: 720MB loaded. 33% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 34% Loading model from cache[22/74]: 744MB loaded. 34% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 36% Loading model from cache[23/74]: 774MB loaded. 35% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 37% Loading model from cache[24/74]: 798MB loaded. 36% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 38% Loading model from cache[25/74]: 829MB loaded. 38% completed, 15 secs elapsed.",
+      "[info] [world-local] webllm 39% Loading model from cache[26/74]: 852MB loaded. 39% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 41% Loading model from cache[27/74]: 883MB loaded. 40% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 42% Loading model from cache[28/74]: 906MB loaded. 41% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 43% Loading model from cache[29/74]: 937MB loaded. 43% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 44% Loading model from cache[30/74]: 961MB loaded. 44% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 46% Loading model from cache[31/74]: 991MB loaded. 45% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 47% Loading model from cache[32/74]: 1015MB loaded. 46% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 48% Loading model from cache[33/74]: 1045MB loaded. 48% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 50% Loading model from cache[34/74]: 1076MB loaded. 49% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 51% Loading model from cache[35/74]: 1099MB loaded. 50% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 52% Loading model from cache[36/74]: 1130MB loaded. 52% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 53% Loading model from cache[37/74]: 1153MB loaded. 53% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 55% Loading model from cache[38/74]: 1184MB loaded. 54% completed, 16 secs elapsed.",
+      "[info] [world-local] webllm 56% Loading model from cache[39/74]: 1208MB loaded. 55% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 57% Loading model from cache[40/74]: 1238MB loaded. 57% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 58% Loading model from cache[41/74]: 1262MB loaded. 58% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 60% Loading model from cache[42/74]: 1292MB loaded. 59% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 61% Loading model from cache[43/74]: 1316MB loaded. 60% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 62% Loading model from cache[44/74]: 1346MB loaded. 62% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 63% Loading model from cache[45/74]: 1370MB loaded. 63% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 65% Loading model from cache[46/74]: 1400MB loaded. 64% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 66% Loading model from cache[47/74]: 1424MB loaded. 65% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 67% Loading model from cache[48/74]: 1455MB loaded. 67% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 68% Loading model from cache[49/74]: 1478MB loaded. 68% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 70% Loading model from cache[50/74]: 1509MB loaded. 69% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 71% Loading model from cache[51/74]: 1533MB loaded. 70% completed, 17 secs elapsed.",
+      "[info] [world-local] webllm 72% Loading model from cache[52/74]: 1563MB loaded. 72% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 73% Loading model from cache[53/74]: 1587MB loaded. 73% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 75% Loading model from cache[54/74]: 1617MB loaded. 74% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 76% Loading model from cache[55/74]: 1641MB loaded. 76% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 77% Loading model from cache[56/74]: 1671MB loaded. 77% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 79% Loading model from cache[57/74]: 1695MB loaded. 78% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 80% Loading model from cache[58/74]: 1725MB loaded. 79% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 81% Loading model from cache[59/74]: 1749MB loaded. 81% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 82% Loading model from cache[60/74]: 1780MB loaded. 82% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 84% Loading model from cache[61/74]: 1803MB loaded. 83% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 85% Loading model from cache[62/74]: 1834MB loaded. 84% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 86% Loading model from cache[63/74]: 1857MB loaded. 86% completed, 18 secs elapsed.",
+      "[info] [world-local] webllm 87% Loading model from cache[64/74]: 1888MB loaded. 87% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 89% Loading model from cache[65/74]: 1912MB loaded. 88% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 90% Loading model from cache[66/74]: 1942MB loaded. 89% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 91% Loading model from cache[67/74]: 1966MB loaded. 91% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 92% Loading model from cache[68/74]: 1996MB loaded. 92% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 94% Loading model from cache[69/74]: 2020MB loaded. 93% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 95% Loading model from cache[70/74]: 2050MB loaded. 94% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 96% Loading model from cache[71/74]: 2074MB loaded. 96% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 97% Loading model from cache[72/74]: 2098MB loaded. 97% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 99% Loading model from cache[73/74]: 2128MB loaded. 98% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 100% Loading model from cache[74/74]: 2159MB loaded. 100% completed, 19 secs elapsed.",
+      "[info] [world-local] webllm 100% Loading GPU shader modules[4/4]: 100% completed, 1 secs elapsed.",
+      "[info] [world-local] webllm 100% Finish loading on WebGPU - nvidia",
+      "[info] [world-local] webllm loaded Qwen3-4B-q4f16_1-MLC",
+      "[info] [world-local task] narration point_root_world_dragon_raja_free_day 40662ms fallback=false "
+    ]
+  },
+  "modelRequests": [
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/mlc-chat-config.json",
+      "status": 200,
+      "length": null,
+      "type": "fetch",
+      "at": "2026-11-22T15:34:42.161Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/tokenizer.json",
+      "status": 200,
+      "length": null,
+      "type": "fetch",
+      "at": "2026-11-22T15:34:45.907Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/tensor-cache.json",
+      "status": 200,
+      "length": null,
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.506Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_0.bin",
+      "status": 200,
+      "length": "194478080",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.517Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_18.bin",
+      "status": 200,
+      "length": "31872512",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.519Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_36.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.520Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_54.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.521Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_37.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.913Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_55.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.914Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_19.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:46.991Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_20.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:47.410Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_38.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:47.412Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_56.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:47.412Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_39.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:47.781Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_57.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:47.782Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_21.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:47.839Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_22.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:48.205Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_40.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:48.259Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_58.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:48.260Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_23.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:48.648Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_41.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:48.649Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_59.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:48.650Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_24.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:49.294Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_1.bin",
+      "status": 200,
+      "length": "24314880",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:49.296Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_60.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:49.433Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_42.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:49.434Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_2.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.099Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_43.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.345Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_61.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.346Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_25.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.346Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_3.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.684Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_26.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.798Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_62.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.934Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_44.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:50.941Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_4.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:51.249Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_27.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:51.404Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_45.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:51.483Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_63.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:51.484Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_5.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:51.704Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_28.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:51.809Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_46.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.131Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_64.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.133Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_6.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.311Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_29.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.442Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_47.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.574Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_65.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.574Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_7.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.685Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_30.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:52.811Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_48.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.052Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_66.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.053Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_8.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.137Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_31.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.311Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_49.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.459Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_67.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.461Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_9.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.488Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_32.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:53.654Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_68.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:54.369Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_50.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:54.370Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_10.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:54.370Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_33.bin",
+      "status": 200,
+      "length": "31887872",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:54.463Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_51.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.280Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_11.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.281Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_69.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.281Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_34.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.453Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_12.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.899Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_35.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.899Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_52.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.900Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_70.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:55.900Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_13.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:56.285Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_71.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:56.310Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_53.bin",
+      "status": 200,
+      "length": "31877632",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:56.311Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_72.bin",
+      "status": 200,
+      "length": "31872512",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:57.179Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_14.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:57.179Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_15.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:58.494Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_73.bin",
+      "status": 200,
+      "length": "31882752",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:58.581Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_16.bin",
+      "status": 200,
+      "length": "31872512",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:58.748Z"
+    },
+    {
+      "url": "http://127.0.0.1:3177/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/params_shard_17.bin",
+      "status": 200,
+      "length": "24903680",
+      "type": "fetch",
+      "at": "2026-11-22T15:34:59.105Z"
+    }
+  ],
+  "readyMs": 40573,
+  "readyText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n2009-10-17 15:20 · 西侧服务巷\n本地世界已就绪。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n23:35:23\n进度同步\n仅本机保存\n立即同步",
+  "turns": [],
+  "failures": [
+    {
+      "at": "2026-11-22T15:35:23.119Z",
+      "scope": "models",
+      "message": "the page requested no model file: it cannot have loaded a local model",
+      "detail": null
+    }
+  ],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-22T15:34:40.675004+00:00",
+    "supervisorPid": null,
+    "holderPid": 31484,
+    "token": "d8eba476ec07edefa3520540498d1fa6"
+  },
+  "freshReset": {
+    "localStorageKeys": 0,
+    "databases": [],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-22T15:35:23.120Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 11,
+    "markerChunks": [
+      {
+        "chunk": "/_next/static/chunks/app/world-local/page-3936e8f46e82ec56.js",
+        "markers": [
+          "__worldRestore",
+          "__worldSnapshot",
+          "__worldArm",
+          "__worldLive",
+          "__worldGenerations",
+          "affected_projection"
+        ]
+      }
+    ],
+    "globalsReady": true,
+    "globalsWaitMs": 3
+  },
+  "jsHeapAtReady": {
+    "usedJSHeapSize": 26665940,
+    "totalJSHeapSize": 34220992,
+    "jsHeapSizeLimit": 4395630592,
+    "label": "JS heap, not GPU VRAM"
+  },
+  "arm": {
+    "candidate": "auto",
+    "mode": null,
+    "shape": null,
+    "offscreenPolicy": "skip",
+    "narrationModel": "qwen3-1.7b",
+    "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+    "narrationBytes": 1107409472,
+    "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+    "narrationTemperature": null,
+    "narrationFewShot": null,
+    "schedHandback": "player",
+    "settlementUnknownRule": null,
+    "strictKnownEntities": true,
+    "runtime": "webllm",
+    "webllmModel": "Qwen3-4B-q4f16_1-MLC",
+    "webllmLocal": true,
+    "webllmCache": "cache"
+  },
+  "restored": false,
+  "models": {
+    "requests": 0,
+    "ok": 0,
+    "failed": []
+  }
+}

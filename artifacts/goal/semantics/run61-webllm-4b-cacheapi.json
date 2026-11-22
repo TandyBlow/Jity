@@ -1,0 +1,103 @@
+{
+  "runId": "2026-11-22T1446-fece",
+  "outFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run61-webllm-4b-cacheapi.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "3699ba6f610e05e71a0080f80fc82bbc6c32f55a53c220bd7c18ca3740b0b331",
+    "edgeVersion": "158.0.4370.33",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "cpuThrottle": null,
+    "gpuLite": false
+  },
+  "status": "IN_PROGRESS",
+  "startedAt": "2026-11-22T14:46:32.097Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "scripts/product-acceptance/turns-semantics-s02-only.json",
+  "integration": {
+    "head": null,
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": null,
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": null,
+    "pageSha256": null,
+    "turnEvidenceAvailable": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "bgra8unorm-storage",
+        "texture-formats-tier1",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "texture-formats-tier2",
+        "shader-f16"
+      ]
+    },
+    "ggmlConsole": []
+  },
+  "modelRequests": [],
+  "readyMs": null,
+  "readyText": null,
+  "turns": [],
+  "failures": [],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-22T14:46:32.176706+00:00",
+    "supervisorPid": null,
+    "holderPid": 53412,
+    "token": "a0d64bc7d21bc0b5109986f89208522d"
+  },
+  "freshReset": {
+    "localStorageKeys": 0,
+    "databases": [],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-22T14:46:33.524Z"
+}

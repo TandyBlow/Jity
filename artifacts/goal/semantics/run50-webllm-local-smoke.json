@@ -1,0 +1,451 @@
+{
+  "runId": "2026-11-22T1357-a211",
+  "outFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run50-webllm-local-smoke.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "b94042f8b62044bd57b2b2ce9067f63761cbf488c47fe39f02c998e625661905",
+    "edgeVersion": "158.0.4370.33",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "cpuThrottle": null,
+    "gpuLite": false
+  },
+  "status": "FAILED",
+  "startedAt": "2026-11-22T13:57:17.706Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "scripts/product-acceptance/turns-semantics-s02-only.json",
+  "integration": {
+    "head": null,
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": null,
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "e59ba34f30d0d439351f4cd79b6e2047bae26100",
+    "pageSha256": "6d3ab349caf73c1072c473a3fe5e0ec29616668282b11960270807170d41181f",
+    "turnEvidenceAvailable": true,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "6d3ab349caf73c1072c473a3fe5e0ec29616668282b11960270807170d41181f",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "texture-formats-tier1",
+        "bgra8unorm-storage",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "chromium-experimental-sampling-resource-table",
+        "core-features-and-limits",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "shader-f16",
+        "timestamp-query"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"core-features-and-limits\"]}",
+      "[info] [world-local] webllm load start Qwen3-1.7B-q4f16_1-MLC",
+      "[info] [world-local] webllm 0% Start to fetch params",
+      "[info] [world-local] webllm 3% Fetching param cache[1/30]: 28MB fetched. 2% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 6% Fetching param cache[2/30]: 55MB fetched. 5% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 9% Fetching param cache[3/30]: 82MB fetched. 8% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 12% Fetching param cache[4/30]: 109MB fetched. 11% completed, 2 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 15% Fetching param cache[5/30]: 136MB fetched. 14% completed, 2 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 18% Fetching param cache[6/30]: 163MB fetched. 17% completed, 2 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 20% Fetching param cache[7/30]: 190MB fetched. 20% completed, 2 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 23% Fetching param cache[8/30]: 217MB fetched. 23% completed, 3 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 26% Fetching param cache[9/30]: 244MB fetched. 26% completed, 3 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 29% Fetching param cache[10/30]: 271MB fetched. 29% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 32% Fetching param cache[11/30]: 298MB fetched. 32% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 35% Fetching param cache[12/30]: 325MB fetched. 35% completed, 3 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 38% Fetching param cache[13/30]: 352MB fetched. 38% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 41% Fetching param cache[14/30]: 379MB fetched. 40% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 44% Fetching param cache[15/30]: 406MB fetched. 43% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 47% Fetching param cache[16/30]: 433MB fetched. 46% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 50% Fetching param cache[17/30]: 460MB fetched. 49% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 53% Fetching param cache[18/30]: 487MB fetched. 52% completed, 4 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 56% Fetching param cache[19/30]: 514MB fetched. 55% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 59% Fetching param cache[20/30]: 541MB fetched. 58% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 61% Fetching param cache[21/30]: 568MB fetched. 61% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 64% Fetching param cache[22/30]: 595MB fetched. 64% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 67% Fetching param cache[23/30]: 615MB fetched. 66% completed, 5 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"texture-formats-tier1\",\"bgra8unorm-storage\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"core-features-and-limits\"]}",
+      "[info] [world-local] webllm load start Qwen3-1.7B-q4f16_1-MLC",
+      "[info] [world-local] webllm 0% Start to fetch params",
+      "[info] [world-local] webllm 3% Fetching param cache[1/30]: 28MB fetched. 2% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 6% Fetching param cache[2/30]: 55MB fetched. 5% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 9% Fetching param cache[3/30]: 82MB fetched. 8% completed, 1 secs elapsed. It can take a while when we first visit this ",
+      "[info] [world-local] webllm 12% Fetching param cache[4/30]: 109MB fetched. 11% completed, 1 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 15% Fetching param cache[5/30]: 136MB fetched. 14% completed, 1 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 18% Fetching param cache[6/30]: 163MB fetched. 17% completed, 1 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 20% Fetching param cache[7/30]: 190MB fetched. 20% completed, 1 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 23% Fetching param cache[8/30]: 217MB fetched. 23% completed, 1 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 26% Fetching param cache[9/30]: 244MB fetched. 26% completed, 1 secs elapsed. It can take a while when we first visit th",
+      "[info] [world-local] webllm 29% Fetching param cache[10/30]: 271MB fetched. 29% completed, 1 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 32% Fetching param cache[11/30]: 298MB fetched. 32% completed, 1 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 35% Fetching param cache[12/30]: 325MB fetched. 35% completed, 1 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 38% Fetching param cache[13/30]: 352MB fetched. 38% completed, 1 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 41% Fetching param cache[14/30]: 379MB fetched. 40% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 44% Fetching param cache[15/30]: 406MB fetched. 43% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 47% Fetching param cache[16/30]: 433MB fetched. 46% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 50% Fetching param cache[17/30]: 460MB fetched. 49% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 53% Fetching param cache[18/30]: 487MB fetched. 52% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 56% Fetching param cache[19/30]: 514MB fetched. 55% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 59% Fetching param cache[20/30]: 541MB fetched. 58% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 61% Fetching param cache[21/30]: 568MB fetched. 61% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 64% Fetching param cache[22/30]: 595MB fetched. 64% completed, 2 secs elapsed. It can take a while when we first visit t",
+      "[info] [world-local] webllm 67% Fetching param cache[23/30]: 615MB fetched. 66% completed, 2 secs elapsed. It can take a while when we first visit t"
+    ]
+  },
+  "modelRequests": [],
+  "readyMs": 900011,
+  "readyText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n— · —\n正在读取本地存档…取消加载\n正在加载本地模型，第一次会久一些（已等待 900s，上限 120s）。\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：—\n地点：—\n在附近\n没有别人\n当前任务\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n尚未写入存档\n保存位置\n这台设备的浏览器\n进度同步\n仅本机保存\n立即同步",
+  "turns": [
+    {
+      "turn": 1,
+      "id": "s02-act-observe",
+      "input": "我停在原地，观察器材棚门口进出的人，记下他们身上的识别带颜色。",
+      "purpose": "act/观察（NPC skip）",
+      "before": {
+        "sanity": "—",
+        "place": "—",
+        "nearby": "没有别人",
+        "tasks": [],
+        "historyCount": "0",
+        "storageChars": 0,
+        "header": "— · —",
+        "transportPoints": null
+      },
+      "timings": {
+        "waitMs": null,
+        "firstStageMs": null,
+        "firstTokenMs": null,
+        "firstReadableMs": null,
+        "firstVisibleDraftMs": null,
+        "doneMs": null
+      },
+      "stages": [],
+      "text": null,
+      "note": null,
+      "after": null,
+      "console": [],
+      "problems": [
+        "driver_error:TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled class=\"page_submit__Eo8dg page_su"
+      ],
+      "submitBlocked": {
+        "buttons": [
+          {
+            "text": "重新生成当前正文",
+            "disabled": true,
+            "visible": true
+          },
+          {
+            "text": "暂停",
+            "disabled": true,
+            "visible": true
+          },
+          {
+            "text": "重新开始",
+            "disabled": false,
+            "visible": true
+          },
+          {
+            "text": "取消加载",
+            "disabled": false,
+            "visible": true
+          },
+          {
+            "text": "行动",
+            "disabled": true,
+            "visible": true
+          },
+          {
+            "text": "立即同步",
+            "disabled": false,
+            "visible": true
+          }
+        ],
+        "statusLine": null
+      },
+      "displayedEqualsRaw": null,
+      "displayedSameLayout": null
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-11-22T14:12:19.507Z",
+      "scope": "ready",
+      "message": "page did not become ready in 900000 ms",
+      "detail": "TimeoutError: page.waitForFunction: Timeout 900000ms exceeded."
+    },
+    {
+      "at": "2026-11-22T14:12:19.517Z",
+      "scope": "models",
+      "message": "the page requested no model file: it cannot have loaded a local model",
+      "detail": null
+    },
+    {
+      "at": "2026-11-22T14:12:49.559Z",
+      "scope": "s02-act-observe",
+      "message": "TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled class=\"page_submit__Eo8dg page_submitBusy__HStkl\">行动</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying",
+      "detail": null
+    },
+    {
+      "at": "2026-11-22T14:16:49.667Z",
+      "scope": "reload",
+      "message": "page did not become ready after reload in 240000 ms",
+      "detail": "TimeoutError: page.waitForFunction: Timeout 240000ms exceeded."
+    },
+    {
+      "at": "2026-11-22T14:16:49.677Z",
+      "scope": "reload",
+      "message": "state changed across refresh/restore",
+      "detail": {
+        "ms": 240013,
+        "engineSegments": [],
+        "pageSaysRestored": false,
+        "entriesBefore": 0,
+        "entriesAfter": 0,
+        "entriesNow": {
+          "count": 0,
+          "inputs": []
+        },
+        "historyCountBefore": "0",
+        "historyCountAfter": "0",
+        "historyStable": true,
+        "committedBefore": null,
+        "stateBefore": {
+          "sanity": "—",
+          "place": "—",
+          "nearby": "没有别人",
+          "tasks": [],
+          "historyCount": "0",
+          "storageChars": 0,
+          "header": "— · —",
+          "transportPoints": null
+        },
+        "stateAfter": {
+          "sanity": "—",
+          "place": "—",
+          "nearby": "没有别人",
+          "tasks": [],
+          "historyCount": "0",
+          "storageChars": 0,
+          "header": "— · —",
+          "transportPoints": null
+        },
+        "stateRestored": false,
+        "reported": {
+          "stateRestored": false,
+          "entriesRestored": 0,
+          "entriesTotal": 0,
+          "committedEntries": 0,
+          "unfinishedEntries": 0,
+          "narrationSources": null,
+          "inputConsumptionRestored": true,
+          "commandsPlayed": [],
+          "headPointId": "point_root_world_dragon_raja_free_day",
+          "sanity": 43
+        },
+        "snapshotAfterReload": null,
+        "historyRestored": true,
+        "inputConsumptionRestored": true,
+        "entriesRestored": true,
+        "overallRestored": false,
+        "failure": "overall_not_restored"
+      }
+    }
+  ],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-22T13:57:17.783067+00:00",
+    "supervisorPid": null,
+    "holderPid": 17152,
+    "token": "f0f2a6c39f64683e473eda2e092c5cb4"
+  },
+  "freshReset": {
+    "localStorageKeys": 0,
+    "databases": [],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-22T14:16:49.681Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 11,
+    "markerChunks": [
+      {
+        "chunk": "/_next/static/chunks/app/world-local/page-64656ad8841cb34c.js",
+        "markers": [
+          "__worldRestore",
+          "__worldSnapshot",
+          "__worldArm",
+          "__worldLive",
+          "__worldGenerations",
+          "affected_projection"
+        ]
+      }
+    ],
+    "globalsReady": true,
+    "globalsWaitMs": 4
+  },
+  "jsHeapAtReady": {
+    "usedJSHeapSize": 19148859,
+    "totalJSHeapSize": 21107759,
+    "jsHeapSizeLimit": 4395630592,
+    "label": "JS heap, not GPU VRAM"
+  },
+  "arm": {
+    "candidate": "auto",
+    "mode": null,
+    "shape": null,
+    "offscreenPolicy": "skip",
+    "narrationModel": "qwen3-1.7b",
+    "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+    "narrationBytes": 1107409472,
+    "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+    "narrationTemperature": null,
+    "narrationFewShot": null,
+    "schedHandback": "player",
+    "settlementUnknownRule": null,
+    "strictKnownEntities": true,
+    "runtime": "webllm",
+    "webllmModel": "Qwen3-1.7B-q4f16_1-MLC",
+    "webllmLocal": true
+  },
+  "restored": false,
+  "models": {
+    "requests": 0,
+    "ok": 0,
+    "failed": []
+  },
+  "priorProseLeaks": [],
+  "reload": {
+    "startedAt": "2026-11-22T14:12:49.568Z",
+    "status": "timeout",
+    "bodyTail": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n— · —\n正在加载本地模型（Qwen3-0.6B + qwen3-1.7b）…取消加载\n正在加载本地模型，第一次会久一些（已等待 239s，上限 120s）。\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：—\n地点：—\n在附近\n没有别人\n当前任务\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n尚未写入存档\n保存位置\n这台设备的浏览器\n进度同步\n仅本机保存\n立即同步",
+    "readyMs": 240004
+  },
+  "refreshRestore": {
+    "ms": 240013,
+    "engineSegments": [],
+    "pageSaysRestored": false,
+    "entriesBefore": 0,
+    "entriesAfter": 0,
+    "entriesNow": {
+      "count": 0,
+      "inputs": []
+    },
+    "historyCountBefore": "0",
+    "historyCountAfter": "0",
+    "historyStable": true,
+    "committedBefore": null,
+    "stateBefore": {
+      "sanity": "—",
+      "place": "—",
+      "nearby": "没有别人",
+      "tasks": [],
+      "historyCount": "0",
+      "storageChars": 0,
+      "header": "— · —",
+      "transportPoints": null
+    },
+    "stateAfter": {
+      "sanity": "—",
+      "place": "—",
+      "nearby": "没有别人",
+      "tasks": [],
+      "historyCount": "0",
+      "storageChars": 0,
+      "header": "— · —",
+      "transportPoints": null
+    },
+    "stateRestored": false,
+    "reported": {
+      "stateRestored": false,
+      "entriesRestored": 0,
+      "entriesTotal": 0,
+      "committedEntries": 0,
+      "unfinishedEntries": 0,
+      "narrationSources": null,
+      "inputConsumptionRestored": true,
+      "commandsPlayed": [],
+      "headPointId": "point_root_world_dragon_raja_free_day",
+      "sanity": 43
+    },
+    "snapshotAfterReload": null,
+    "historyRestored": true,
+    "inputConsumptionRestored": true,
+    "entriesRestored": true,
+    "overallRestored": false,
+    "failure": "overall_not_restored"
+  },
+  "controls": {
+    "cancelButtonDuringTurn": false,
+    "cancelButton": true,
+    "resetButton": true,
+    "historyVisible": true
+  },
+  "network": {
+    "persistenceRequests": [],
+    "modelRequests": []
+  },
+  "turnFailures": [],
+  "finishedAt": "2026-11-22T14:16:49.681Z",
+  "submissions": [],
+  "summary": {
+    "turns": 1,
+    "turnsWithText": 0,
+    "turnsWithFallbackNote": 0,
+    "turnsOver60sAccepted": 1,
+    "draftsVisible": 0,
+    "turnsOver300s": 0,
+    "turnsWithEmptyText": 1,
+    "turnsEchoingInput": 0,
+    "turnsWithSubmissionLedger": 0,
+    "submissionCalls": [],
+    "distinctPlaces": [],
+    "distinctHistoryCounts": []
+  }
+}
