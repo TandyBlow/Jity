@@ -51,6 +51,9 @@ export interface GameModelOptions {
   /** Evaluation arm (D-022): state the unknown-target rule in the results
    * prompt. Default off; the page exposes it only through the URL query. */
   settlementUnknownRule?: boolean;
+  /** Deterministic guard for unregistered entities in settled facts (default
+   * on). The page can disable it with strictKnownEntities=0 for A/B runs. */
+  strictKnownEntities?: boolean;
   /** The player's character id. The point plan puts that character alone in
    * the round's first point so the player's own settlement can commit and be
    * narrated before the rest of the roster is judged (the 2026-11-11 turns
@@ -191,6 +194,7 @@ export class LocalGameModel implements WorldModelPort {
       // output budget; the engine context is 12,288 tokens.
       maxPromptChars: 11_900,
       unknownEntityRule: options.settlementUnknownRule ?? false,
+      strictKnownEntities: options.strictKnownEntities ?? true,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null

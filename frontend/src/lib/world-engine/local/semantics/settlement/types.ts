@@ -39,6 +39,9 @@ export interface SettlementOptions {
   /** Evaluation arm: state the unknown-target rule explicitly in the results
    * prompt (untargeted entity ⇒ not_achieved/blocked). Default off. */
   unknownEntityRule?: boolean;
+  /** Deterministic guard (default on): a results fact naming an unregistered
+   * entity fails validation and is retried; pass false to reproduce old runs. */
+  strictKnownEntities?: boolean;
   onTask?: (task: SettlementTask, key: string, detail: ModelTaskDetail) => void;
   /** Product default: a new task achievement must cite a settled result fact
    * (or a time basis). Unit fixtures may leave this off, but the page port

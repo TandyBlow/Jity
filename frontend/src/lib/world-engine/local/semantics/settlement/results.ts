@@ -186,6 +186,7 @@ export async function runResults(
   }
   const { groupId, members, workingState } = parsed;
   const prompt = buildResultsPrompt(groupId, members, workingState, options.unknownEntityRule ?? false);
+  const strictKnownEntities = options.strictKnownEntities !== false;
   let calls: ModelCallEvidence[] = [];
   // The last attempt drops a fact that has no visible result instead of failing
   // the point: old runs (95dc, 415c, d101, a178) answered only
@@ -209,12 +210,13 @@ export async function runResults(
       jsonSchema: RESULTS_SCHEMA,
       validate: (value) => {
         attempts += 1;
-        readResultsAnswer(value, members, workingState, { dropEmptyResults: lenient() });
+        const parsedAnswer = readResultsAnswer(value, members, workingState, { dropEmptyResults: lenient() });
+        if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState);
       },
       // A retry has to name the frozen members: the 3turn 9623 repair answered
       // nono only while the group was lu+nono, so «missing judgment for lu» alone
       // did not stop it from omitting the player again.
-      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条，每条 fact 的 memberIds 必须包含这句话写到的人；不要把某人的结果写在别人的 fact 里；不要给场景里的其他人写 judgment。`,
+      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条，每条 fact 的 memberIds 必须包含这句话写到的人；不要把某人的结果写在别人的 fact 里；不要给场景里的其他人写 judgment；事实里不得出现未登记的人名、物品或地点（动作里提到但世界清单里没有的名字），这种行动必须判 not_achieved 或 blocked。`,
     });
     calls = answer.calls;
     // The accepted answer settled under the same rule the last attempt used.
@@ -279,6 +281,27 @@ export async function runResults(
     };
     options.onTask?.('results', key, { ms: outcome.ms, fallback: true, error: message, raw: outcome.raw, promptChars: prompt.length });
     return outcome;
+  }
+}
+
+const STOP_NAMES = /^(他|她|它|自己|裁判|大家)/u;
+
+/** A fact may not name an entity the world does not register. The player can
+ * introduce a name in the action text ("递给阿豹"); the model once settled that
+ * handoff as achieved although no such character exists. Deterministic check,
+ * default on; pass strictKnownEntities:false to reproduce the old behaviour. */
+function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], state: WorldState): void {
+  const registry = new Set<string>();
+  for (const value of Object.values(state.initial.characters)) registry.add(String(value?.name ?? ''));
+  for (const value of Object.values(state.initial.items)) registry.add(String(value?.name ?? ''));
+  for (const value of Object.values(state.initial.locations)) registry.add(String(value?.name ?? ''));
+  for (const member of members) {
+    for (const match of member.actionText.matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)) {
+      const name = match[1];
+      if (!name || registry.has(name) || STOP_NAMES.test(name) || /[的了着过]/u.test(name)) continue;
+      const hit = answer.facts.find((fact) => String(fact.text ?? '').includes(name));
+      if (hit) throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);
+    }
   }
 }
 
