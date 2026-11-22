@@ -973,6 +973,9 @@ export default function WorldLocalPage() {
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
               else points[index] = { ...points[index], pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
               points.splice(0, points.length, ...inPointOrder(points));
+              // Evidence: the turn record carries the same per-point prose the
+              // article renders, so a driver can compare them verbatim.
+              if (record) record.points = points.map((part) => ({ ...part }));
               const joined = points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10));
               return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
             }));

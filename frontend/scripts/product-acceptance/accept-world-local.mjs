@@ -667,7 +667,7 @@ try {
           const clone = last ? last.cloneNode(true) : null;
           let text = '';
           if (clone) {
-            const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+            const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|这一回合已结算并写入正文|正文已按已结算|Aborted)/u;
             const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
             for (const node of [...clone.querySelectorAll('div,span,p')]) {
               const value = (node.textContent ?? '').trim();
@@ -776,7 +776,7 @@ try {
         const clone = last ? last.cloneNode(true) : null;
         let text = '';
         if (clone) {
-          const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+          const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|这一回合已结算并写入正文|正文已按已结算|Aborted)/u;
           const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
           for (const node of [...clone.querySelectorAll('div,span,p')]) {
             const value = (node.textContent ?? '').trim();
@@ -796,9 +796,27 @@ try {
           // Any 本轮… line is a hand-back signal, including the 295 s deadline.
           message: (document.body.innerText.split(String.fromCharCode(10))
             .find((line) => /^本轮(完成|已交还|已到|停止)/.test(line.trim())) ?? null),
+          // The product's own record of this turn, for the verbatim-display check.
+          recordText: (() => {
+            const turns = globalThis.__worldTurns;
+            const record = Array.isArray(turns) ? turns.at(-1) : null;
+            const points = Array.isArray(record?.points) ? record.points : [];
+            return points.length ? points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10)) : null;
+          })(),
         };
       }, beforeCount);
       entry.text = afterInfo.text || null;
+      // Point paragraphs render as blocks, so the DOM text has no literal
+      // blank line between them; whitespace-insensitive equality is the
+      // faithful "same characters" check. The strict flag stays recorded.
+      const normalizeProse = (value) => (value ?? '').replace(/\s+/gu, '');
+      entry.proseIdentity = {
+        articleText: entry.text,
+        recordText: afterInfo.recordText,
+        equal: afterInfo.recordText != null ? entry.text === afterInfo.recordText : null,
+        normalizedEqual: afterInfo.recordText != null ? normalizeProse(entry.text) === normalizeProse(afterInfo.recordText) : null,
+      };
+      if (entry.proseIdentity.normalizedEqual === false) entry.problems.push('prose_not_identical_to_record');
       // No visible prose means there is no first-readable time at all.
       entry.timings.firstReadableMs = null;
       if (!entry.text || entry.text.trim().length < 8) {

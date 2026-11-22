@@ -2,8 +2,8 @@
 
 ## 1. 产品路径
 
-- [ ] 1.1 断言页面显示正文逐字等于 `__worldTurns[i].text`（单元或 e2e）。
-- [ ] 1.2 确认运行期只判空，无检查/裁改/补写；`narration-quality`/gate 不在运行时路径。
+- [x] 1.1 页面正文与回合记录逐字一致（e2e）：页面把同一份逐点正文写进 `__worldTurns[i].points`，驱动比对去除 UI 注记与段落分隔后一致（`prose-identity-s02-20261122.json`，normalizedEqual=true）。
+- [x] 1.2 运行期边界测试：叙事运行路径（narration-generation/point-narration/game-model/session/page）不 import `narration-quality`/gate（`runtime-boundary.test.ts` 通过）。
 
 ## 2. 样本
 
