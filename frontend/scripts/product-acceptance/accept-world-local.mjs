@@ -177,18 +177,29 @@ const launchArgs = [
   ...(gpuLite ? [] : ['--force_high_performance_gpu']),
   '--ignore-gpu-blocklist',
 ];
-const browser = await chromium.launch({
-  headless: !has('--headed'),
-  channel: 'msedge',
-  args: launchArgs,
-});
+const profile = flag('--profile', '');
+// A persistent profile lifts the headless temp-profile storage cap (~1 GB on
+// this box); WebLLM needs it for the 2.2 GB 4B cache.
+const browser = profile
+  ? await chromium.launchPersistentContext(profile, {
+    headless: !has('--headed'),
+    channel: 'msedge',
+    args: launchArgs,
+    viewport: { width: 1280, height: 900 },
+  })
+  : await chromium.launch({
+    headless: !has('--headed'),
+    channel: 'msedge',
+    args: launchArgs,
+  });
 evidence.harness.launchArgs = launchArgs;
+evidence.harness.profile = profile || null;
 evidence.harness.cpuThrottle = Number.isFinite(cpuThrottle) && cpuThrottle > 1 ? cpuThrottle : null;
 evidence.harness.gpuLite = gpuLite;
 
 try {
-  evidence.harness.edgeVersion = browser.version();
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  evidence.harness.edgeVersion = profile ? (browser.browser()?.version() ?? null) : browser.version();
+  const context = profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
   if (evidence.harness.cpuThrottle) {
     const cdp = await context.newCDPSession(page);
