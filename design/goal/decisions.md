@@ -238,6 +238,7 @@
 - 测量（2026-11-22，`goal-latency-analysis`）：run27–34 的 16 个回合，第一点叙事完成 18.7–50.8 s（16/16 <60 s），整轮 64.9–180.7 s，尾部 40.9–156.1 s；run35 移动模拟 s05 第一点 150.2 s、s06 39.7 s。结论：笔记本档早交还上界在 60 s 内，值得做原型；移动档单靠早交还不达标，必须同时减少每点调用。证据 `artifacts/goal/narration/latency-analysis-20261122.md`。
 - 原型结果（2026-11-22，run37/38，开关 `schedHandback=player`，base 1.7B，skip）：5 个回合的整轮等待 36.9–45.0 s（同题默认调度 137.6/168.7 s）；交还后第二轮、第三轮提交均被接受；收尾状态 `cursor=order.length`、`conclusion={kind:'handback'}`、`advance=null`、`phase='complete'`；前端全量 1252 passed / 17 skipped。代价：自动链（R10）整体跳过；结论由程序强制但持久记录 `closedBy:'model'`；质量不变（s06 仍写被拒动作）。证据 `artifacts/goal/narration/read-handback-arm-20261122.md`。
 - 待用户决定（产品化）：a) 接受无自动链的调度；b) 有限自动链（限一轮或给自动链设时间预算）；c) 保持默认并接受 65–180 s 的回合。移动档仍需在此之后重测。
+- 候选 b 测量（2026-11-22，`goal-handback-auto`）：保留一轮自动链的第一轮完成时间 59.8–100.6 s，1/16 个回合 ≤60 s；玩家回合本身 31.4–57.7 s。结论：60 s 口径在当前栈内只有候选 a（无自动链，36.9–45.0 s）成立；候选 c 为 65–180 s；候选 b 不值得写评估臂。证据 `artifacts/goal/narration/handback-auto-chain-20261122.md`。
 
 ## 已确认（2026-11-20）
 本轮 8 个待确认项已全部有答案，记录在 D-004、D-006、D-010–D-013。当前没有 `pending-user` 项。
