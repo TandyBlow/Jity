@@ -1,0 +1,42 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T16:24:34.982Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run77-webllm-3b-trained.json",
+      "runId": "2026-11-22T1622-b211",
+      "arm": {
+        "candidate": "trained",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": null,
+        "strictKnownEntities": true,
+        "runtime": "webllm",
+        "webllmModel": "Qwen2.5-3B-Instruct-q4f16_1-MLC",
+        "webllmLocal": true,
+        "webllmCache": "cache"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": null,
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}
