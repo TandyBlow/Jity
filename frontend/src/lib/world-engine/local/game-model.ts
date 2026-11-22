@@ -20,6 +20,19 @@ import { requireSettlementValue } from './semantics/settlement';
 import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
+/** One worked example for the instruct brief (evaluation arm). Names and
+ * props belong to another scene; the instructions forbid copying them. */
+const NARRATION_EXAMPLE = [
+  '示例（另一场戏，只学写法；不要带进示例里的人名、物件和动作）：',
+  '阿青把门闩推上，又退回桌边，把散开的纸页按顺序叠好。窗缝里透进的光落在桌角，杯子里还剩半口水。老周在门口站了一会儿，没说话，把钥匙放回口袋，转身走了。',
+].join(String.fromCharCode(10));
+
+function withNarrationExample(prompt: string): string {
+  const marker = '正文：';
+  const index = prompt.lastIndexOf(marker);
+  return index < 0 ? `${prompt}${String.fromCharCode(10)}${NARRATION_EXAMPLE}` : `${prompt.slice(0, index)}${NARRATION_EXAMPLE}${String.fromCharCode(10)}${prompt.slice(index)}`;
+}
+
 export interface GameModelOptions {
   modelUrl?: string;
   contextSize?: number;
@@ -32,6 +45,9 @@ export interface GameModelOptions {
   /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
    * 'instruct' states the task for an instruction-tuned narration model. */
   narrationMode?: 'legacy' | 'instruct';
+  /** Evaluation arm: one worked example in the instruct brief. The shipped
+   * default has no example; the page exposes it only through the URL query. */
+  narrationFewShot?: boolean;
   /** The player's character id. The point plan puts that character alone in
    * the round's first point so the player's own settlement can commit and be
    * narrated before the rest of the roster is judged (the 2026-11-11 turns
@@ -517,9 +533,12 @@ export class LocalGameModel implements WorldModelPort {
 
 
     // In-model writer: one call with the settled state as its only material.
-    const brief = this.options.narrationMode === 'instruct'
+    const baseBrief = this.options.narrationMode === 'instruct'
       ? instructNarrationInput(before, delta, after, view, playerInput, resultsText)
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
+    const brief = this.options.narrationMode === 'instruct' && this.options.narrationFewShot
+      ? { ...baseBrief, prompt: withNarrationExample(baseBrief.prompt) }
+      : baseBrief;
     let raw = '';
     let error: string | undefined;
     try {

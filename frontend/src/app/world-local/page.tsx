@@ -552,7 +552,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -563,6 +563,7 @@ export default function WorldLocalPage() {
     const offscreenParam = q.get('offscreenPolicy');
     const tempParam = Number(q.get('narrationTemperature'));
     const temperature = Number.isFinite(tempParam) && tempParam > 0 && tempParam <= 1.5 ? tempParam : undefined;
+    const fewShot = q.get('narrationFewShot') === '1' ? true : undefined;
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
     const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
     const offscreenPolicy = offscreenParam === 'skip' || offscreenParam === 'judge' ? offscreenParam : undefined;
@@ -573,6 +574,7 @@ export default function WorldLocalPage() {
       ...(model ? { model } : {}),
       ...(offscreenPolicy ? { offscreenPolicy } : {}),
       ...(temperature !== undefined ? { temperature } : {}),
+      ...(fewShot ? { fewShot } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -811,6 +813,7 @@ export default function WorldLocalPage() {
           narrationModel: narrationKey, narrationFile: narrationSpec.url,
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
+          narrationFewShot: arm.fewShot ?? null,
         };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
@@ -830,6 +833,7 @@ export default function WorldLocalPage() {
           // room as the scene arm.
           narrationMaxTokens: candidate === 'constrained' ? 480 : 200,
           narrationTemperature: arm.temperature ?? 0.45,
+          ...(arm.fewShot ? { narrationFewShot: true } : {}),
           onTask: (task, key, detail) => {
             // stageMs/stages arrive on the updates task detail: printing them
             // here keeps the per-stage cost visible even when the turn times out
