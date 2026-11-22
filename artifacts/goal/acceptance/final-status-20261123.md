@@ -1,0 +1,84 @@
+# Jity Goal v12 终态核对（2026-11-23）
+
+按 `design/goal/goal.md` 第 1 节逐条核对。结论：技术线有证据，质量线与移动档未达终态；剩余路线需用户裁决（D-022/D-023/D-024）。
+
+## 1. 全程浏览器本地
+
+- 产品路径 `/world-local` 的推理、调度、状态计算与校验均在页面内；服务器只存取进度快照。
+- 离线 2/2、服务器关闭 2/2 有记录（`artifacts/goal/`）；请求日志只有静态资源与 `/local-progress`。
+- 证据：`frontend/src/lib/world-engine/local/*`、`artifacts/goal/acceptance/`、`artifacts/goal/sync/`。
+- 状态：**有证据**。
+
+## 2. 静态 S₀ 与单一 schema
+
+- `world-loader.ts` 严格加载、校验、封存；`stateDigest` 不一致拒绝开局；`WorldState`/`WorldInitialState` 单 schema。
+- 证据：`world-loader.test.ts`、`state.test.ts`、`artifacts/goal/kernel-diff.json`。
+- 状态：**有证据**。
+
+## 3. 状态权威唯一
+
+- TS 内核 apply/merge/commit/replay；Python v2 只作差分预言机；R01–R16 的代码路径在账本。
+- 状态：**有证据**。
+
+## 4. 叙事边界（D-004）
+
+- 运行期原样显示非空模型正文；开发门只在 `frontend/scripts/product-acceptance/`，不进产品路径。
+- 状态：**有证据**。
+
+## 5. 延迟终态
+
+| 口径 | 结果 | 证据 |
+|---|---|---|
+| 默认路径 20 输入：提交→再次可行动 | 163.5–297.8 s，**0/20 ≤60 s** | `read-default-latency-20261122.md` |
+| 默认路径首段可读 | 1.3–39.7 s，20/20 ≤60 s | 同上 |
+| 早交还臂 20 输入 | **18/20 ≤60 s**（32.8–70.7 s） | `run41-summary.json` |
+| 早交还臂十输入（LoRA 臂） | **10/10 ≤60 s**（30.3–53.4 s），t6 刷新恢复 | `run92-17b-lora-v3-10turn.json` |
+| 单点正文 | 6.4–13.8 s（G3 基线） | `timing-baseline.json` |
+| 移动模拟（0.6B+核显） | 264.9–298.5 s 整轮 | `read-mobile-sim-20261122.md` |
+
+- 状态：**早交还臂达标，默认路径与移动档不达标**；产品是否切早交还待 D-024。
+
+## 6. 质量终态
+
+- 验收回合零硬事实错误（4.2）：**未通过**。
+  - 默认 1.7B（run88）：复述整份状态、把被拒交接写成已发生；检查器 2/2 命中。
+  - 本地 LoRA v3（run89）：s05/s06 探针 4.2 硬错 0；但五回合集（run90/91）出现未结算事件；十输入集（run92）有正文的 9 回合里 **6 个硬错**（主角持诺诺的短枪、把「路明非中立」写成「她」、状态仍在服务巷却写到二层平台、把诺诺的规则阅读记到主角等），重复句 9/9；检查器 0 命中——开发门不足以替代人工读评。
+  - 4B 基座（run93 部分，t1–t4）：复述回归、t3 未结算人物、t4 超 60 s；被宿主内存回收。
+  - 结算层：收紧未知实体门后，0.6B 不能稳定产出 blocked fact（s06 约 2/5 中止、3/5 宽松轮丢 fact）；4B 能产出但本机连续回合受内存限制。
+- 四类跨回合检查（4.3）：状态一致与无捏造在多回合失败；文风/自然度因重复句不合格。
+- 状态：**未通过**。
+
+## 7. 设备两档
+
+- 笔记本档：RTX 4060 Laptop 8 GB + Edge，证据齐全。
+- 移动档：模拟条件（CPU 限速、核显）整轮 264.9–298.5 s；60 秒不可达；真机未验。
+- 状态：**移动档未验收**（D-023）。
+
+## 8. 同步
+
+- 单用户两设备从同一快照分叉、选择一支、另一支可恢复；服务器关闭仍可本地推进与保存。
+- 证据：`artifacts/goal/sync/two-device-20261121.json`。
+- 状态：**有证据**。
+
+## 9. 验收证据
+
+- R01–R16 有代码、运行与页面证据；≥20 次真实页面输入已记录；离线、服务器关闭、两设备分叉各有记录；移动模拟档独立记录。
+- R16 技术证据齐，但质量线未通过（账本 R16 行）。
+- 用户签字按 D-019 放弃。
+
+## 未达终态的原因与待裁决项
+
+1. **D-022 质量路线**：约束内已知手段全部实测且未通过——现成 1.7B、3B、4B、候选策略、温度、few-shot、历史配方 LoRA、本地定向微调 v1–v3、自修复原型。剩余只有：
+   - 更大模型（4B/8B）配更宽内存的机器，并把 LoRA/MLC 流水线迁过去；
+   - 换更强的语义结算模型（当前 0.6B 无法稳定产出 blocked fact）；
+   - 改门槛或收尾（均需用户拍板）。
+2. **D-023 移动档**：模拟条件下 60 秒不可达；用户已拒绝「题目做不对改题目」，需要工程或硬件路线，或由用户划定移动档范围。
+3. **D-024 延迟**：早交还臂已有 10/10 与 18/20 两组证据；是否把「再次可行动 ≤60 秒」作为默认产品契约待裁决。
+
+## 关键证据索引
+
+- 延迟：`artifacts/goal/narration/read-default-latency-20261122.md`、`artifacts/goal/acceptance/run41-summary.json`、`artifacts/goal/narration/read-handback-suite-20261122.md`。
+- 质量：`artifacts/goal/narration/read-17b-lora-v2-20261123.md`、`read-17b-lora-v3-10turn-20261123.md`、`read-4b-10turn-partial-20261123.md`、`read-webllm-17b-20261122.md`、`run88`–`run93` JSON。
+- 移动：`artifacts/goal/narration/read-mobile-sim-20261122.md`、`read-mobile-call-costs-20261122.md`。
+- 同步/离线：`artifacts/goal/sync/two-device-20261121.json`、`artifacts/goal/acceptance/`。
+- 账本/裁决：`design/goal/ledger.md`、`design/goal/decisions.md`、`design/goal/decision-brief-20261122.md`。
