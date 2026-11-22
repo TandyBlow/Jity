@@ -82,6 +82,20 @@ function checkTurn(turn) {
   const meta = prose.match(META_NOTE);
   if (meta) flags.push({ kind: 'meta_note', quote: prose.slice(Math.max(0, meta.index - 20), meta.index + 30).slice(0, 60) });
 
+  // Unknown-entity claim: a name the player introduced that the world does not
+  // contain. The settlement may refuse the act (unknown entity) while the prose
+  // still writes it; run40-e is the measured case. Dev gate only.
+  const introduced = [...input.matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)].map((match) => match[1]);
+  const unknown = [...new Set(introduced)]
+    .filter((name) => !knownNames.has(name) && !/^(他|她|它|自己|裁判|大家)/u.test(name) && !/[的了着过]/u.test(name));
+  for (const name of unknown) {
+    if (!prose.includes(name)) continue;
+    const clause = clauses(prose).find((part) => part.includes(name));
+    if (clause && !/没有|未能|未被|被拒|拒绝|无法/u.test(clause)) {
+      flags.push({ kind: 'unknown_entity_claim', quote: clause.slice(0, 60) });
+    }
+  }
+
   return flags;
 }
 

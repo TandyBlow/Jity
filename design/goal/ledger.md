@@ -24,7 +24,7 @@
 
 | 编号 | 能力 | 状态 | 代码路径@695e6bd4 | 证据 | 缺口 / 归属 |
 |---|---|---|---|---|---|
-| R01 | 开局固定地点、物品、人物；运行中只更新登记实体；允许在既有大任务下新增小任务 | 实现中 | `local/world-loader.ts`、`local/static-world-registration.ts`、`local/state.ts:83` | `world-loader.test.ts`、`state.test.ts`；`data/worlds/README.md`；摘要 `3f65452d…` / `6262d5fc…`；run39 场景门 `legal_failure_not_enforced` 命中；run40 复跑 5 次：4 次结算判成功、1 次结算 blocked 但叙事写成已发生（5/5 层间失败） | 真实模型引用未知实体、非法新实体的正反例；未知实体不能靠叙事变成事实；反例目前失败（结算层，D-022）。G2/G5 |
+| R01 | 开局固定地点、物品、人物；运行中只更新登记实体；允许在既有大任务下新增小任务 | 实现中 | `local/world-loader.ts`、`local/static-world-registration.ts`、`local/state.ts:83` | `world-loader.test.ts`、`state.test.ts`；`data/worlds/README.md`；摘要 `3f65452d…` / `6262d5fc…`；run39 场景门 `legal_failure_not_enforced` 命中；run40 复跑 5 次：4 次结算判成功、1 次结算 blocked 但叙事写成已发生（5/5 层间失败）；正文门 `unknown_entity_claim` 在 run37/40 的 3/3 个 s06 命中 | 真实模型引用未知实体、非法新实体的正反例；未知实体不能靠叙事变成事实；反例目前失败（结算层，D-022）。G2/G5 |
 | R02 | 地点嵌套、人物/物品容纳与相对位置；自然语言外貌、任务、个性、理智 | 实现中 | `local/state.ts`、`types.ts`、`world-loader.ts` | 静态世界 26 地点/14 人物/74 物品/73 任务；state 测试 | 嵌套移动、物品移动、地点外貌、相对位置的真实模型场景与页面展示。G2/G5/G6 |
 | R03 | 初始外貌与个性不改写；变化保留历史；位置结构化 | 实现中 | `local/state.ts` 的 initial/current、`pointEntityDeltas` | state 测试；静态世界 README | 真模型合法变化、替代引用、原文保留、纯解除分支。G5 |
 | R04 | 世界事实由 S₀＋Δ 构成；状态/摘要/检查点可重建 | 实现中 | `state.ts:83/906/952`、`canonical.ts`、`history.ts`、`persistence/` | `state.test.ts`、`history.test.ts`、`session-recovery.test.ts`；Python–TS 冻结差分（`kernel-diff.json`）；restore 接 `verifySessionSnapshot`（`session.ts`、corrupt-chain 测试） | 真实多轮页面回放证据；缓存与模型切换不能改变事实来源。G2 |
@@ -34,7 +34,7 @@
 | R08 | 已行动人物不重复行动；后续骰点仍影响攻击者结果 | 实现中 | `local/transport.ts` 的 `actedIds`/round、`turn-execution/` | transport、turn-execution、recovery 测试 | 真实模型组场景；恢复不重掷、不重采样。G2/G5 |
 | R09 | 位置→外貌→任务→新增小任务→个性→理智；任务与个性全人物覆盖 | 实现中 | `local/state.ts` 的阶段 apply、`turn-execution/`、`game-model.ts` | state 测试；旧六阶段 preview 只作参考 | 真模型候选按依赖逐阶段；任务扫描全人物；任务达成后个性扫描全人物；允许合法不变化。G5 |
 | R10 | 仅由大概率发生且与主角关联的后续行动触发自动推进 | 实现中 | `controller.ts`、`schedule.ts`、`local/session.ts` | controller 测试；旧固定 handback 只作对照；G3 计时运行 `artifacts/goal/timing-runs/points-10-rerun.json`；D-024 评估臂：无自动链 36.9–45.0 s（run37/38），保留一轮自动链 59.8–100.6 s（1/16 ≤60 s） | 真模型 continue/handback；G3 十点 0 次 continue：t1 结论请求 `request_malformed`，t2/t3 自动后续在 updates 停止（上下文/重复任务），归 G5；多轮不重复消费输入；预算暂停不伪装 handback；自动链与 60 s 口径的取舍待产品决定（D-024）。G5 |
-| R11 | 每点只读叙事；可省略/暗示/隐藏秘密；不虚构已结算事实 | 实现中；raw-output 边界已定 | `local/point-narration/`、`narration-input/`、`narration-generation/`、`narration-candidates/` | `design/parallel-handoff/01-quality.md:279`（2026-11-11 原样输出）、`02-narration.md`；旧 B3/叙事实验只作参考 | 产品路径正文逐字等于模型返回；20+ 点无硬事实错误；视角/秘密/选择。G6 |
+| R11 | 每点只读叙事；可省略/暗示/隐藏秘密；不虚构已结算事实 | 实现中；raw-output 边界已定 | `local/point-narration/`、`narration-input/`、`narration-generation/`、`narration-candidates/` | `design/parallel-handoff/01-quality.md:279`（2026-11-11 原样输出）、`02-narration.md`；旧 B3/叙事实验只作参考；`check-prose-facts.mjs` 新增 `unknown_entity_claim`（3/3 s06 命中） | 产品路径正文逐字等于模型返回；20+ 点无硬事实错误；视角/秘密/选择。G6 |
 | R12 | 不另维护人物知识状态；模型从当前世界判断认知 | 实现中 | 无独立知识库；叙事只读已提交状态 | `architecture.md` 第 6 节；local 目录无 knowledge store | 确认提示/模型无隐藏知识真值库；可见性投影规则。G6 |
 | R13 | 行动描述仅作本次分析；不建长期行动历史 | 实现中 | `local/transport.ts` 的 `actionTexts`、`persistence/` 快照、`history.ts` | transport、persistence 测试 | 原文只按工作态生命周期保存；调试归档与世界存档分开。G2/G4 |
 | R14 | 工作职责不等于模型数或调用数 | 实现中 | `game-model.ts` 的 options、`controller.ts` 的 `ModelTask`、`schedule.ts` | `architecture.md` 第 6 节；模型变体清单；G3 逐任务调用记录 `artifacts/goal/timing-runs/points-10-rerun.json` | 按质量/成本选择单/多模型；记录每任务贡献。G3/G6 |
