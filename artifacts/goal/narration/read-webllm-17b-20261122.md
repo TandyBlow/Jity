@@ -18,3 +18,11 @@
 - 两回合都在 11.8/12.6 秒内完成，但结算被 codec 拒绝：模型把 `label` 写成 `completed`（合法值是 achieved/partial/not_achieved/blocked/no_change）。这是 1.7B 的格式能力，不是运行时。
 - 正文里仍夹空的 `<think> </think>` 标记。
 - 结论不变：1.7B 证明运行时快，但结算格式需要 4B；4B 下载完成后直接测。
+
+
+## 4B 加载（run59–61）
+
+- 4B（2.2 GB、83 文件）已本地化到 `public/models/webllm/Qwen3-4B-q4f16_1-MLC/resolve/main/`。
+- OPFS 后端：在 768 MB 报 `QuotaExceededError`；但页面实测 `navigator.storage.estimate()` 的配额是 10 GB、usage 0——所以是 OPFS 后端自身的坑，不是真的没空间。
+- Cache API 后端的 4B 测试被宿主内存回收杀掉（系统 low memory），按回收规则未自行重启。
+- 当前结论：4B 的加载路径还差最后一步验证；1.7B 已证明运行时可用（22 s/回合）。等用户允许后再试 Cache API 或持久化 profile。

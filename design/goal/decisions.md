@@ -225,6 +225,7 @@
 - 程序级校验首轮（2026-11-22，`goal-strict-entities`，run43）：`strictKnownEntities` 默认开启后 s06 结算门 1/3 命中（基线 4/5）；未命中样本写成不点名的自造完成（「电台被塞进腰间」）。点名未登记实体被压住，但零硬错未达成。证据 `artifacts/goal/narration/read-strict-entities-20261122.md`。
 - WebLLM 原型进度（2026-11-22，`goal-webllm-adapter`）：适配器完成、构建通过；4B 冒烟报浏览器缓存配额，1.7B 冒烟页面 900 秒未 ready；隔离探针显示 WebLLM 能初始化并拉取权重，但停在 HF 的 615 MB / 66%，27+ 分钟无进展。阻塞在模型分发（HF CDN 停滞），不是适配器代码；下一步做断点续传的本地下载与本地托管。证据 `artifacts/goal/narration/read-webllm-stall-20261122.md`。
 - WebLLM 链路打通（2026-11-22，run57）：1.7B 本地权重 + OPFS 缓存 5 秒加载完成（30/30、924 MB、WebGPU）；单回合 22.0 s（results 3.0 / position 5.0 / appearance 1.9 / narration 2.0–2.3），远快于 wllama 的 65–180 s。缺陷：正文夹空 `<think>` 标记、部分 JSON 解码 fallback（1.7B 能力）。4B 下载中，下一步量质量门。证据 `artifacts/goal/narration/read-webllm-17b-20261122.md`。
+- 4B 加载状态（2026-11-22，run59–61）：4B 已本地化；OPFS 后端在 768 MB 报 QuotaExceeded（页面实测配额 10 GB、usage 0，属后端问题）；Cache API 后端的验证被宿主内存回收停止，按规则未自行重启。1.7B 已证明运行时可用（22 s/回合），4B 还差最后一步加载验证。
 
 ## D-023 设备范围：笔记本、4B 与移动端的取舍
 
