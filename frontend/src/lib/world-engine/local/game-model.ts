@@ -48,6 +48,9 @@ export interface GameModelOptions {
   /** Evaluation arm: one worked example in the instruct brief. The shipped
    * default has no example; the page exposes it only through the URL query. */
   narrationFewShot?: boolean;
+  /** Evaluation arm (D-022): state the unknown-target rule in the results
+   * prompt. Default off; the page exposes it only through the URL query. */
+  settlementUnknownRule?: boolean;
   /** The player's character id. The point plan puts that character alone in
    * the round's first point so the player's own settlement can commit and be
    * narrated before the rest of the roster is judged (the 2026-11-11 turns
@@ -187,6 +190,7 @@ export class LocalGameModel implements WorldModelPort {
       // 11,900 admits the measured position prompt (11,776) plus the small
       // output budget; the engine context is 12,288 tokens.
       maxPromptChars: 11_900,
+      unknownEntityRule: options.settlementUnknownRule ?? false,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null

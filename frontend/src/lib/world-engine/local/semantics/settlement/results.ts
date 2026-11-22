@@ -185,7 +185,7 @@ export async function runResults(
     return failure(key, parsed.error, started);
   }
   const { groupId, members, workingState } = parsed;
-  const prompt = buildResultsPrompt(groupId, members, workingState);
+  const prompt = buildResultsPrompt(groupId, members, workingState, options.unknownEntityRule ?? false);
   let calls: ModelCallEvidence[] = [];
   // The last attempt drops a fact that has no visible result instead of failing
   // the point: old runs (95dc, 415c, d101, a178) answered only
@@ -339,7 +339,7 @@ function parseResultsInput(input: Json): ResultsInput | { error: string } {
   return { groupId, members, workingState: world };
 }
 
-function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState): string {
+function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState, unknownEntityRule = false): string {
   const memberLines = members.map((member) => {
     const name = state.initial.characters[member.memberId]?.name ?? member.memberId;
     // The effects row is fully determined by the frozen admission: printing it
@@ -382,6 +382,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '规则：',
     '- 只能使用下面出现的人物、地点、物品；不得新增人物、地点、物品、往事、线索或任务。',
     '- 一个成员的行动可以成功、部分成功、失败或被制止；行动被接纳不等于目标达成。',
+    ...(unknownEntityRule ? ['- 目标或受事若是未登记实体（不在本世界的人物/物品/地点清单，或不在当前场景）：judgment 写 not_achieved，fact 的 outcome 写 blocked，写清“没有这个人/没有这件东西/不在场”；不得写 completed，也不得给它编造回应。'] : []),
     '- 骰点 准入=false 表示该目标这次没有被迫反应；已行动人物不会再次反应。不要写 effects：谁反应了由程序按冻结的准入值填写。',
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
