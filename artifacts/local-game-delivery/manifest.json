@@ -1,8 +1,8 @@
 {
   "kind": "jity-local-game-delivery",
-  "generatedAt": "2026-11-22T03:19:00.268Z",
+  "generatedAt": "2026-11-22T07:28:10.745Z",
   "code": {
-    "gitHead": "b9fad30fdc3cab9571ccb9ee1624430acb782629",
+    "gitHead": "4c0b6f05a04e41a6f006acba82ca10e307a8a675",
     "branch": "agent"
   },
   "world": {
