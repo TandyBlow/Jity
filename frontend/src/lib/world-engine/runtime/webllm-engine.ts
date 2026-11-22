@@ -26,7 +26,7 @@ export class WebLlmInferenceEngine implements InferenceEngine {
       console.info('[world-local] webllm load start', this.modelId);
       const record = prebuiltAppConfig.model_list.find((item) => item.model_id === this.modelId);
       const modelList = this.modelBase && record
-        ? [{ ...record, model: this.modelBase }, ...prebuiltAppConfig.model_list.filter((item) => item.model_id !== this.modelId)]
+        ? [{ ...record, model: this.modelBase, low_resource_required: true }, ...prebuiltAppConfig.model_list.filter((item) => item.model_id !== this.modelId)]
         : prebuiltAppConfig.model_list;
       this.loading = CreateMLCEngine(this.modelId, {
         // The headless profile's Cache API quota is ~0 on this box; IndexedDB
