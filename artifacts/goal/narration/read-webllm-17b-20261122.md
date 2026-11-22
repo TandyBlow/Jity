@@ -40,3 +40,11 @@
 - 结算解析与事实字段修正后，4B 能提交 s05：整轮 131.2 s，唯一问题是超 60 秒；正文里出现大段 `<think>` 推理文字（narration 的 chatml 提示走了 bare completion，模型把思考写进正文）。
 - s06：`strictKnownEntities` 校验命中 `results_unknown_entity:阿豹`，回合可见失败——程序门在 4B 上也生效。
 - 修正：narration 的 ChatML 提示改走 chat API + `extra_body.enable_thinking:false`；结算仍走 bare completion。重测在 run68。
+
+
+## 4B 稳定性（run69–71）
+
+- run69：4B 在开场叙事之后卡死 30 分钟，已停止；给适配器加了 150 秒生成上限。
+- run70：复用旧持久化 profile 时撞上残留的写入租约（「另一个标签页仍持有存档写入权」），页面未加载模型即失败。
+- run71：换全新 profile 重跑，被宿主内存回收杀掉（第二次 low memory），按规则未重启。
+- 结论：4B 的加载能力已证明（run63 + 探针），但在这台机器上连续跑产品回合会反复触发宿主内存保护；拿到完整 s05/s06 数据需要内存更宽裕的窗口。
