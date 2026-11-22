@@ -61,24 +61,43 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     let raw = '';
     let firstTokenMs: number | null = null;
     try {
-      // Match the wllama path: settlement calls send the bare prompt, not a
-      // chat turn, so no chat template (and no Qwen thinking block) is applied.
-      const create = this.engine.completions.create.bind(this.engine.completions) as unknown as (
-        request: Record<string, unknown>,
-      ) => Promise<AsyncIterable<{ choices?: { text?: string }[] }>>;
-      const stream = await create({
-        prompt,
-        stream: true,
-        max_tokens: options.maxTokens ?? 512,
-        temperature: options.temperature ?? 0.2,
-        ...(options.stop ? { stop: options.stop } : {}),
-      });
+      // Two prompt shapes, matching the wllama path: settlement calls send the
+      // bare prompt (completions API, no chat template); narration sends a
+      // ChatML-wrapped user turn (chat API with thinking off, so Qwen3 does
+      // not spend the output budget inside <think>).
+      type Chunk = { choices?: { text?: string; delta?: { content?: string } }[] };
+      const chatml = prompt.match(/^<\|im_start\|>user\n([\s\S]*?)<\|im_end\|>\n<\|im_start\|>assistant\n$/);
+      let stream: AsyncIterable<Chunk>;
+      if (chatml) {
+        const createChat = this.engine.chat.completions.create.bind(this.engine.chat.completions) as unknown as (
+          request: Record<string, unknown>,
+        ) => Promise<AsyncIterable<Chunk>>;
+        stream = await createChat({
+          messages: [{ role: 'user', content: chatml[1] }],
+          stream: true,
+          max_tokens: options.maxTokens ?? 512,
+          temperature: options.temperature ?? 0.2,
+          extra_body: { enable_thinking: false },
+          ...(options.stop ? { stop: options.stop } : {}),
+        });
+      } else {
+        const create = this.engine.completions.create.bind(this.engine.completions) as unknown as (
+          request: Record<string, unknown>,
+        ) => Promise<AsyncIterable<Chunk>>;
+        stream = await create({
+          prompt,
+          stream: true,
+          max_tokens: options.maxTokens ?? 512,
+          temperature: options.temperature ?? 0.2,
+          ...(options.stop ? { stop: options.stop } : {}),
+        });
+      }
       for await (const chunk of stream) {
         if (signal?.aborted || this.abort?.signal.aborted) {
           try { this.engine.interruptGenerate(); } catch { /* already done */ }
           throw abortError();
         }
-        const delta = chunk.choices?.[0]?.text ?? '';
+        const delta = chunk.choices?.[0]?.text ?? chunk.choices?.[0]?.delta?.content ?? '';
         if (!delta) continue;
         if (firstTokenMs == null) firstTokenMs = performance.now() - started;
         raw += delta;

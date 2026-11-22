@@ -33,3 +33,10 @@
 - 独立探针：4B 完整加载（74/74、2.2 GB、WebGPU）并生成「你好！」。
 - 验收驱动加 `--profile` 后，4B 在同一 profile 的缓存上 6 秒加载完成（2.16 GB）。
 - 产品单回合仍失败：`results` codec 报 `fact text must be non-empty`，28.6 秒结束——不是运行时问题，是 4B 的首轮输出格式/内容问题，下一步看 s05/s06 的原始输出再决定是否修提示。
+
+
+## 4B s05/s06（run66/67）
+
+- 结算解析与事实字段修正后，4B 能提交 s05：整轮 131.2 s，唯一问题是超 60 秒；正文里出现大段 `<think>` 推理文字（narration 的 chatml 提示走了 bare completion，模型把思考写进正文）。
+- s06：`strictKnownEntities` 校验命中 `results_unknown_entity:阿豹`，回合可见失败——程序门在 4B 上也生效。
+- 修正：narration 的 ChatML 提示改走 chat API + `extra_body.enable_thinking:false`；结算仍走 bare completion。重测在 run68。
