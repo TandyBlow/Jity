@@ -30,6 +30,7 @@
 | [`goal/decisions.md`](goal/decisions.md) | D-001–D-024 与已确认项 |
 | [`goal/ledger.md`](goal/ledger.md) | R01–R16 唯一状态账本 |
 | [`goal/acceptance.md`](goal/acceptance.md) | 验收协议 |
+| [`goal/decision-brief-20261122.md`](goal/decision-brief-20261122.md) | D-022/D-023/D-024 的决策简报 |
 
 ## Reference
 
