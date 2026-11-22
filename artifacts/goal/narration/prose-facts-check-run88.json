@@ -1,0 +1,60 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T17:55:16.105Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run88-17b-base-sameprompts.json",
+      "runId": "2026-11-22T1753-517e",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "invented_detail",
+              "quote": "空气中弥漫着机油和金属的气味。他摘下护目镜，镜片无裂"
+            },
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非把红色电台递给阿豹，电台在掌心微微发烫"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 1,
+    "invented_detail": 1,
+    "unknown_entity_claim": 1
+  }
+}

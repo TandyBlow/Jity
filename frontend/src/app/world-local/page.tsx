@@ -46,11 +46,11 @@ const NARRATION_MODELS = {
     url: '/models/Qwen3-1.7B-Q4_K_M.gguf', bytes: 1_107_409_472, contextSize: 4096,
     sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
   },
-  // D-020 evaluation arm: the 1.7B base with the narration LoRA (historical
-  // 199-row recipe, trained on the cluster 2026-11-22). Not a product default.
+  // D-022 evaluation arm: the 1.7B base with the narration LoRA trained on
+  // the current projection (84 prompts, 2026-11-23). Not a product default.
   'qwen3-1.7b-narr-lora': {
-    url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_640, contextSize: 4096,
-    sha256: '9beece58454be73b02d5247bb88c63e23c3b758b19dcfb9d8d2bc4a150768d7c',
+    url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
+    sha256: 'f4c0e36612164d0a849104599703f59fbb9614ba5a32525097e8d31d80ae3b38',
   },
   // Evaluation arm: a 1.5B checkpoint trained on the page narration format
   // (page-v3, local build 2026-11-10). Not a product default.

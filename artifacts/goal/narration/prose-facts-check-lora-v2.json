@@ -1,0 +1,77 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T17:50:18.741Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run85-17b-lora-v2.json",
+      "runId": "2026-11-22T1744-b1bc",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "3055000389afd2ff7a98acf5c71c2af475de91e2ad86e2e86a58aa26a79b6acc",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": null,
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run86-17b-lora-v2-unknownrule.json",
+      "runId": "2026-11-22T1747-b26d",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "3055000389afd2ff7a98acf5c71c2af475de91e2ad86e2e86a58aa26a79b6acc",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}

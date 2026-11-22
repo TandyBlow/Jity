@@ -1,0 +1,49 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T17:52:46.421Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run87-17b-lora-v2-final.json",
+      "runId": "2026-11-22T1750-edef",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "3055000389afd2ff7a98acf5c71c2af475de91e2ad86e2e86a58aa26a79b6acc",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非伸手去拿红色电台，想交给阿豹"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "unknown_entity_claim": 1
+  }
+}

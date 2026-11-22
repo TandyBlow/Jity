@@ -1024,22 +1024,23 @@ try {
       // as achieved and the narration then wrote it; that is a settlement bug,
       // not a prose bug, so the check reads the results raws, not the prompt.
       if (turn.expect === 'legal_failure') {
-        const calls = (entry.product?.submission ?? entry.submission)?.calls ?? [];
-        // A retried settlement keeps every attempt in `raw`, joined by "---".
-        // Only the last attempt of a non-fallback call was accepted; earlier
-        // rejected attempts must not be read as settled facts.
-        const raws = calls
-          .filter((call) => call.task === 'results' && call.fallback !== true && typeof call.raw === 'string')
-          .map((call) => {
-            const segments = call.raw.split('\n---\n');
-            try { return JSON.parse(segments[segments.length - 1]); } catch { return null; }
-          })
-          .filter(Boolean);
-        const completed = raws.flatMap((raw) => raw.facts ?? []).filter((fact) => fact.outcome === 'completed');
-        const achieved = raws.flatMap((raw) => raw.judgments ?? []).filter((judgment) => judgment.label === 'achieved');
-        if (completed.length || achieved.length) {
+        // Read what was actually handed to the narrator: the settled-fact
+        // block in the narration prompt. Raw settlement attempts may contain
+        // facts the parser rejected or dropped; those were never settled.
+        const promptText = entry.product?.narration?.prompt ?? '';
+        const marker = '这一回合的结算结果：';
+        const start = promptText.indexOf(marker);
+        const end = start >= 0 ? promptText.indexOf('时间到了', start) : -1;
+        const settled = start >= 0 ? promptText.slice(start + marker.length, end > start ? end : undefined) : '';
+        const clauses = settled.split(/[。；\n]/u);
+        const introduced = [...String(turn.input ?? '').matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)]
+          .map((match) => match[1])
+          .filter((name) => name && !/^(他|她|它|自己|裁判|大家)/u.test(name));
+        const claim = introduced.find((name) => clauses.some((clause) => clause.includes(name)
+          && !/不在场|没有|未能|没能|未被|无法|拒绝/u.test(clause)));
+        if (claim) {
           entry.problems.push('legal_failure_not_enforced');
-          entry.legalFailure = { completed: completed.map((fact) => fact.text), achieved: achieved.map((judgment) => judgment.reason) };
+          entry.legalFailure = { name: claim, settled: settled.slice(0, 120) };
         }
       }
       if (entry.shownChars > 0 && entry.shownChars < 30) entry.problems.push('very_short_text');

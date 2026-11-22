@@ -1,0 +1,42 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T18:08:20.270Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run89-17b-lora-v3.json",
+      "runId": "2026-11-22T1806-e6c8",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "f4c0e36612164d0a849104599703f59fbb9614ba5a32525097e8d31d80ae3b38",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}
