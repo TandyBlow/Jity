@@ -77,3 +77,10 @@
 - s05 整轮 **264.9 秒**（唯一问题是超 60 秒）；s06 125.4 秒后被结算门拦下。
 - 对比 wllama 的 268–298 秒：换运行时在核显上并没有质变，瓶颈仍是 iGPU 的 prefill。
 - 结论：移动档 60 秒用 WebLLM 3B 也到不了；D-023 的移动目标在当前硬件上仍不可达。
+
+
+## 4B 公平复跑（run79/80，修复后的栈）
+
+- run79：旧 profile 残留写入租约，未加载模型即失败（基础设施问题）。
+- run80（全新 profile）：s05 33.8 秒但 `narration_failed`/`prose_not_identical`，正文尾部带出「The current Object has already been disposed」；s06 2.6 秒失败。4B 的 WebLLM 引擎在产品回合里不稳定（引擎被释放/内存压力）。
+- 结论：4B 可加载、可出字，但在本机的产品回合里不稳定；3B 稳定但质量不合格。

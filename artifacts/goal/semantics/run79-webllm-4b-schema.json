@@ -1,0 +1,386 @@
+{
+  "runId": "2026-11-22T1634-0cd7",
+  "outFile": "D:\\others\\Jity\\artifacts\\goal\\semantics\\run79-webllm-4b-schema.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "99b3ad4d768689e01d8ab0ec79010799b2442383b4f31c44321cf42e45d9a6db",
+    "edgeVersion": "158.0.4370.33",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "profile": "../.local/edge-profile-4b",
+    "cpuThrottle": null,
+    "gpuLite": false
+  },
+  "status": "FAILED",
+  "startedAt": "2026-11-22T16:34:23.442Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "scripts/product-acceptance/turns-semantics-s05-s06.json",
+  "integration": {
+    "head": null,
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": null,
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "5780850375161a3dd08cf8e7cc096b165c599245",
+    "pageSha256": "9624e7769b74130de656a93b540751b8db4e4b92dfdc2ab009dd05f643497572",
+    "turnEvidenceAvailable": true,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "9624e7769b74130de656a93b540751b8db4e4b92dfdc2ab009dd05f643497572",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "bgra8unorm-storage",
+        "texture-formats-tier1",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "texture-formats-tier2",
+        "timestamp-query"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"texture-formats-tier1\",\"bgra8unorm-storage\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"chromium-experimental-sampling-resource-table\"]}",
+      "[info] [world-local submit-guard] {\"hasSession\":false,\"hasText\":true,\"busy\":false}",
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"texture-formats-tier1\",\"bgra8unorm-storage\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"core-features-and-limits\"]}"
+    ]
+  },
+  "modelRequests": [],
+  "readyMs": 39777,
+  "readyText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n— · —\n正在读取本地存档…\n等待输入…\n存档没有被改动。另一个标签页（或刚关闭的页面）还持有写入权。重试在这个标签页接管\n加载失败：另一个标签页（或刚刚关闭的页面）仍持有存档写入权。存档没有被改动，可以重试，或在这个标签页接管。\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：—\n地点：—\n在附近\n没有别人\n当前任务\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n尚未写入存档\n保存位置\n这台设备的浏览器\n进度同步\n仅本机保存\n立即同步",
+  "turns": [
+    {
+      "turn": 1,
+      "id": "s05-act-inventory",
+      "input": "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。",
+      "purpose": "act/清点物品",
+      "before": {
+        "sanity": "—",
+        "place": "—",
+        "nearby": "没有别人",
+        "tasks": [],
+        "historyCount": "0",
+        "storageChars": 0,
+        "header": "— · —",
+        "transportPoints": null
+      },
+      "timings": {
+        "waitMs": 25,
+        "firstStageMs": null,
+        "firstTokenMs": null,
+        "firstReadableMs": null,
+        "firstVisibleDraftMs": null,
+        "doneMs": 42
+      },
+      "stages": [],
+      "text": null,
+      "note": null,
+      "after": {
+        "sanity": "—",
+        "place": "—",
+        "nearby": "没有别人",
+        "tasks": [],
+        "historyCount": "0",
+        "storageChars": 0,
+        "header": "— · —",
+        "transportPoints": null
+      },
+      "console": [
+        "[info] [world-local submit-guard] {\"hasSession\":false,\"hasText\":true,\"busy\":false}"
+      ],
+      "problems": [
+        "page_error",
+        "no_readable_prose",
+        "empty_text",
+        "no_entry_added",
+        "error_visible",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "no_product_turn_evidence"
+      ],
+      "doneText": "",
+      "proseIdentity": {
+        "articleText": null,
+        "recordText": null,
+        "equal": null,
+        "normalizedEqual": null
+      },
+      "inputLine": null,
+      "message": null,
+      "jsHeap": {
+        "usedJSHeapSize": 14267632,
+        "totalJSHeapSize": 15640024,
+        "jsHeapSizeLimit": 4395630592,
+        "label": "JS heap, not GPU VRAM"
+      },
+      "engineCounters": [],
+      "warmTurn": false,
+      "product": null,
+      "submission": null,
+      "offscreenJudge": {
+        "basis": "none",
+        "actors": 0,
+        "modelJudged": null,
+        "programSkipped": null,
+        "fallbackJudged": null,
+        "modelSkips": 0,
+        "modelActs": 0,
+        "modelDecisionUnknown": 0,
+        "programSkips": 0,
+        "modelMs": null,
+        "programMs": null,
+        "deltaMs": null,
+        "modelCalls": 0,
+        "modelCallMs": 0,
+        "uniqueActors": 0,
+        "repairedActs": 0,
+        "rawKept": 0,
+        "rows": [],
+        "callRows": []
+      },
+      "narrationRejections": [],
+      "shownChars": 0,
+      "snapshotAfterTurn": null,
+      "actions": null,
+      "live": null,
+      "generations": [],
+      "textSource": "none",
+      "firstVisibleDraftMs": null,
+      "acceptedFirstReadableMs": null,
+      "modelId": null,
+      "historyDelta": 0,
+      "stageSequence": "",
+      "bodyGrowth": 0,
+      "displayedEqualsRaw": null,
+      "displayedSameLayout": null
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-11-22T16:35:04.999Z",
+      "scope": "ready",
+      "message": "page reported a load error",
+      "detail": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n— · —\n正在读取本地存档…\n等待输入…\n存档没有被改动。另一个标签页（或刚关闭的页面）还持有写入权。重试在这个标签页接管\n加载失败：另一个标签页（或刚刚关闭的页面）仍持有存档写入权。存档没有被改动，可以重试，或在这个标签页接管。\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：—\n地点：—\n在附近\n没有别人\n当前任务\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n尚未写入存档\n保存位置\n这台设备的浏览器\n进度同步\n仅本机保存\n立即同步"
+    },
+    {
+      "at": "2026-11-22T16:35:05.000Z",
+      "scope": "models",
+      "message": "the page requested no model file: it cannot have loaded a local model",
+      "detail": null
+    },
+    {
+      "at": "2026-11-22T16:35:45.386Z",
+      "scope": "controls",
+      "message": "no visible cancel/stop control while a turn was running",
+      "detail": null
+    }
+  ],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-22T16:34:23.512940+00:00",
+    "supervisorPid": null,
+    "holderPid": 48168,
+    "token": "94da25e7f972a5aa0d362f15f8504830"
+  },
+  "freshReset": {
+    "localStorageKeys": 2,
+    "databases": [
+      "jity-local-progress"
+    ],
+    "caches": [
+      "webllm/config",
+      "webllm/wasm",
+      "webllm/model"
+    ],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-22T16:35:45.387Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 11,
+    "markerChunks": [
+      {
+        "chunk": "/_next/static/chunks/app/world-local/page-d76526ea4a86cf23.js",
+        "markers": [
+          "__worldRestore",
+          "__worldSnapshot",
+          "__worldArm",
+          "__worldLive",
+          "__worldGenerations",
+          "affected_projection"
+        ]
+      }
+    ],
+    "globalsReady": true,
+    "globalsWaitMs": 3
+  },
+  "jsHeapAtReady": {
+    "usedJSHeapSize": 14086082,
+    "totalJSHeapSize": 16425526,
+    "jsHeapSizeLimit": 4395630592,
+    "label": "JS heap, not GPU VRAM"
+  },
+  "arm": {
+    "candidate": "auto",
+    "mode": null,
+    "shape": null,
+    "offscreenPolicy": "skip",
+    "narrationModel": "qwen3-1.7b",
+    "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+    "narrationBytes": 1107409472,
+    "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+    "narrationTemperature": null,
+    "narrationFewShot": null,
+    "schedHandback": "player",
+    "settlementUnknownRule": null,
+    "strictKnownEntities": true,
+    "runtime": "webllm",
+    "webllmModel": "Qwen3-4B-q4f16_1-MLC",
+    "webllmLocal": true,
+    "webllmCache": "cache"
+  },
+  "restored": false,
+  "models": {
+    "requests": 0,
+    "ok": 0,
+    "failed": []
+  },
+  "priorProseLeaks": [],
+  "reload": {
+    "startedAt": "2026-11-22T16:35:05.059Z",
+    "status": "ready",
+    "readyMs": 40265
+  },
+  "refreshRestore": {
+    "ms": 40280,
+    "engineSegments": [],
+    "pageSaysRestored": false,
+    "entriesBefore": 0,
+    "entriesAfter": 0,
+    "entriesNow": {
+      "count": 0,
+      "inputs": []
+    },
+    "historyCountBefore": "0",
+    "historyCountAfter": "0",
+    "historyStable": true,
+    "committedBefore": null,
+    "stateBefore": {
+      "sanity": "—",
+      "place": "—",
+      "nearby": "没有别人",
+      "tasks": [],
+      "historyCount": "0",
+      "storageChars": 0,
+      "header": "— · —",
+      "transportPoints": null
+    },
+    "stateAfter": {
+      "sanity": "—",
+      "place": "—",
+      "nearby": "没有别人",
+      "tasks": [],
+      "historyCount": "0",
+      "storageChars": 0,
+      "header": "— · —",
+      "transportPoints": null
+    },
+    "stateRestored": true,
+    "reported": null,
+    "snapshotAfterReload": null,
+    "historyRestored": true,
+    "inputConsumptionRestored": true,
+    "entriesRestored": true,
+    "overallRestored": true
+  },
+  "controls": {
+    "cancelButtonDuringTurn": false,
+    "cancelButton": false,
+    "resetButton": true,
+    "historyVisible": true
+  },
+  "network": {
+    "persistenceRequests": [],
+    "modelRequests": []
+  },
+  "turnFailures": [
+    {
+      "id": "s05-act-inventory",
+      "problems": [
+        "page_error",
+        "no_readable_prose",
+        "empty_text",
+        "no_entry_added",
+        "error_visible",
+        "no_streaming_stage_observed",
+        "no_readable_text_observed",
+        "no_product_turn_evidence"
+      ]
+    }
+  ],
+  "finishedAt": "2026-11-22T16:35:45.387Z",
+  "submissions": [],
+  "summary": {
+    "turns": 1,
+    "turnsWithText": 0,
+    "turnsWithFallbackNote": 0,
+    "turnsOver60sAccepted": 1,
+    "draftsVisible": 0,
+    "turnsOver300s": 0,
+    "turnsWithEmptyText": 1,
+    "turnsEchoingInput": 0,
+    "turnsWithSubmissionLedger": 0,
+    "submissionCalls": [],
+    "distinctPlaces": [
+      "—"
+    ],
+    "distinctHistoryCounts": [
+      "0"
+    ]
+  }
+}
