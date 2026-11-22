@@ -1,0 +1,39 @@
+{
+  "kind": "jity-prefill-probe",
+  "at": "2026-11-22T04:10:47.258Z",
+  "chars": 5790,
+  "configs": [
+    {
+      "n_batch": 512,
+      "n_ubatch": 128,
+      "loadMs": 2672,
+      "wallMs": 20230,
+      "promptTokens": 4789,
+      "completionTokens": 48
+    },
+    {
+      "n_batch": 1024,
+      "n_ubatch": 256,
+      "loadMs": 2097,
+      "wallMs": 19405,
+      "promptTokens": 4789,
+      "completionTokens": 48
+    },
+    {
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "loadMs": 2158,
+      "wallMs": 19953,
+      "promptTokens": 4789,
+      "completionTokens": 48
+    },
+    {
+      "n_batch": 512,
+      "n_ubatch": 512,
+      "loadMs": 2118,
+      "wallMs": 20050,
+      "promptTokens": 4789,
+      "completionTokens": 48
+    }
+  ]
+}
