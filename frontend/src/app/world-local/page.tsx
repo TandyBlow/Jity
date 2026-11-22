@@ -31,7 +31,7 @@ const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
 // belongs to 09's host runner.
 const SEMANTIC_MODEL_BYTES = 396_705_472;
 /** D-022 runtime prototype: WebLLM prebuilt MLC artifacts (allowlist). */
-const WEBLLM_MODELS = ['Qwen3-0.6B-q4f16_1-MLC', 'Qwen3-1.7B-q4f16_1-MLC', 'Qwen3-4B-q4f16_1-MLC', 'Qwen3-8B-q4f16_1-MLC'] as const;
+const WEBLLM_MODELS = ['Qwen3-0.6B-q4f16_1-MLC', 'Qwen3-1.7B-q4f16_1-MLC', 'Qwen3-4B-q4f16_1-MLC', 'Qwen3-8B-q4f16_1-MLC', 'Qwen2.5-3B-Instruct-q4f16_1-MLC'] as const;
 const WEBLLM_MODEL = WEBLLM_MODELS[2];
 
 /** Narration model variants the internal arm switch may select. The default is
