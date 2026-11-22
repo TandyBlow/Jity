@@ -18,9 +18,9 @@
 
 ## 4. G6 后决定
 
-- [ ] 4.1 按 20+ 点硬错误率与用户读感，决定是否加事实门（新决定，不改 D-004）。
-- [ ] 4.2 核对 beats/constrained/instruct/Qwen2.5-1.5B+LoRA/Qwen3-1.7B/Randeng-T5 真实状态；替换按 D-007 记录。
-- [ ] 4.3 微调前基线已完成（本地同栈 5 题 × 3 次，`public-continuations-baseline-20261122.json`，读评 `read-public-baseline-20261122.md`）；待 HPC 微调后同题复跑。
+- [ ] 4.1 事实门：未做新决定，D-004 原样输出继续生效（blocked on user）。
+- [x] 4.2 候选状态已核对：TRAINED/CONSTRAINED 都 `productDefault:false`，`auto` 落回单次 raw 1.7B instruct 写作；1.7B/Q4_K_M 是实际交付文件（manifest 记录 sha256/bytes）。
+- [ ] 4.3 微调前基线已完成（本地同栈 5 题 × 3 次）；微调作业 blocked：集群 Slurm 控制器主备 DOWN（`scontrol ping`），登录节点正常。
 
 ## Workflow follow-up
 
