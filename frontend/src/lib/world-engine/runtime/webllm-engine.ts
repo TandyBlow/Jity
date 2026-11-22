@@ -71,37 +71,28 @@ export class WebLlmInferenceEngine implements InferenceEngine {
       }, timeoutMs);
     });
     try {
-      // Two prompt shapes, matching the wllama path: settlement calls send the
-      // bare prompt (completions API, no chat template); narration sends a
-      // ChatML-wrapped user turn (chat API with thinking off, so Qwen3 does
-      // not spend the output budget inside <think>).
+      // One chat turn for both shapes, matching the wllama path's content:
+      // narration arrives ChatML-wrapped (unwrap it), settlement arrives as a
+      // plain instruction. jsonSchema becomes WebLLM's constrained decoder,
+      // which is what the wllama path uses to force valid JSON.
       type Chunk = { choices?: { text?: string; delta?: { content?: string } }[] };
       const chatml = prompt.match(/^<\|im_start\|>user\n([\s\S]*?)<\|im_end\|>\n<\|im_start\|>assistant\n$/);
-      let stream: AsyncIterable<Chunk>;
-      if (chatml) {
-        const createChat = this.engine.chat.completions.create.bind(this.engine.chat.completions) as unknown as (
-          request: Record<string, unknown>,
-        ) => Promise<AsyncIterable<Chunk>>;
-        stream = await createChat({
-          messages: [{ role: 'user', content: chatml[1] }],
-          stream: true,
-          max_tokens: options.maxTokens ?? 512,
-          temperature: options.temperature ?? 0.2,
-          extra_body: { enable_thinking: false },
-          ...(options.stop ? { stop: options.stop } : {}),
-        });
-      } else {
-        const create = this.engine.completions.create.bind(this.engine.completions) as unknown as (
-          request: Record<string, unknown>,
-        ) => Promise<AsyncIterable<Chunk>>;
-        stream = await create({
-          prompt,
-          stream: true,
-          max_tokens: options.maxTokens ?? 512,
-          temperature: options.temperature ?? 0.2,
-          ...(options.stop ? { stop: options.stop } : {}),
-        });
-      }
+      const userContent = chatml ? chatml[1] : prompt;
+      const responseFormat = options.jsonSchema
+        ? { type: 'json_object', schema: typeof options.jsonSchema === 'string' ? options.jsonSchema : JSON.stringify(options.jsonSchema) }
+        : undefined;
+      const createChat = this.engine.chat.completions.create.bind(this.engine.chat.completions) as unknown as (
+        request: Record<string, unknown>,
+      ) => Promise<AsyncIterable<Chunk>>;
+      const stream = await createChat({
+        messages: [{ role: 'user', content: userContent }],
+        stream: true,
+        max_tokens: options.maxTokens ?? 512,
+        temperature: options.temperature ?? 0.2,
+        extra_body: { enable_thinking: false },
+        ...(responseFormat ? { response_format: responseFormat } : {}),
+        ...(options.stop ? { stop: options.stop } : {}),
+      });
       const consume = (async () => {
       for await (const chunk of stream) {
         if (signal?.aborted || this.abort?.signal.aborted) {
