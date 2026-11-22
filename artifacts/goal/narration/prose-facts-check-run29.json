@@ -1,0 +1,46 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T07:48:36.976Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run29-page-v3-arm.json",
+      "runId": "2026-11-22T0742-ee0c",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen15b-page-v3",
+        "narrationFile": "/models/qwen15b-page-v3-Q4_K_M.gguf",
+        "narrationBytes": 986048064,
+        "narrationSha256": "a03bcfeaa4837d6754257a5f6e71cd24ac3ebce4bb26ee92fc2280d096c5632f"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非低头检查护目镜、识别带和胸袋里的弹匣，确认都在",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 1,
+    "band_claim": 1
+  }
+}

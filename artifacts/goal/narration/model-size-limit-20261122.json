@@ -1,0 +1,44 @@
+{
+  "kind": "jity-g6-model-size-limit",
+  "at": "2026-11-22T08:05:00.000Z",
+  "purpose": "Can a 4B narration model load in the product's wllama blob path on this box?",
+  "model": {
+    "file": ".local/models/Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "bytes": 2497281120,
+    "split": "llama-gguf-split --split --split-max-size 512M into 5 shards",
+    "shardBytes": [516676864, 504396384, 511041664, 511031360, 454135424]
+  },
+  "browser": "msedge headless, page /benchmark on 127.0.0.1:3177",
+  "probes": [
+    {
+      "name": "alone",
+      "results": [
+        { "shard": 5, "ok": true, "bytes": 454135424 },
+        { "shard": 4, "ok": true, "bytes": 511031360 }
+      ]
+    },
+    {
+      "name": "cumulative-order-1-2-3-4-5",
+      "results": [
+        { "shard": 1, "ok": true, "cumulativeBytes": 516676864 },
+        { "shard": 2, "ok": true, "cumulativeBytes": 1021073248 },
+        { "shard": 3, "ok": true, "cumulativeBytes": 1532114912 },
+        { "shard": 4, "ok": true, "cumulativeBytes": 2043146272 },
+        { "shard": 5, "ok": false, "error": "TypeError: Failed to fetch", "cumulativeBytes": 2043146272 }
+      ]
+    },
+    {
+      "name": "cumulative-order-5-1-2-3-4",
+      "results": [
+        { "shard": 5, "ok": true },
+        { "shard": 1, "ok": true },
+        { "shard": 2, "ok": true },
+        { "shard": 3, "ok": true },
+        { "shard": 4, "ok": false, "error": "TypeError: Failed to fetch", "cumulativeBytes": 2043146272 }
+      ]
+    }
+  ],
+  "finding": "The fifth blob fetch fails in any shard order once the page holds ~1.9 GiB (2043146272 bytes) of model Blobs. The limit is aggregate, not per-file and not storage quota (navigator.storage.estimate quota 10 GiB, usage 0).",
+  "productImpact": "The product loads semantic 0.6B (396705472 B) and narration in the same page. A 4B narration arm would need 2.89 GiB of Blobs, over the cap; even a 2B narration model plus semantics would sit at the cap. Under wllama 3.8.1 blob loading the practical narration ceiling is the current 1.5B/1.7B class.",
+  "conclusion": "4B route closed on this stack. Remaining routes: targeted fine-tune of a 1.5B/1.7B with data built from the current narration projection, or accept the recorded G6 failure."
+}

@@ -1,0 +1,18 @@
+{
+  "kind": "jity-g6-public-continuations",
+  "at": "2026-11-22T07:52:45.178Z",
+  "base": "http://127.0.0.1:3177",
+  "model": "http://127.0.0.1:3177/models/qwen3-4b-2507-Q4_K_M-00001-of-00005.gguf,http://127.0.0.1:3177/models/qwen3-4b-2507-Q4_K_M-00002-of-00005.gguf,http://127.0.0.1:3177/models/qwen3-4b-2507-Q4_K_M-00003-of-00005.gguf,http://127.0.0.1:3177/models/qwen3-4b-2507-Q4_K_M-00004-of-00005.gguf,http://127.0.0.1:3177/models/qwen3-4b-2507-Q4_K_M-00005-of-00005.gguf",
+  "samples": 3,
+  "prompts": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "G6 public continuation baseline http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-22T07:52:44.969726+00:00",
+    "supervisorPid": null,
+    "holderPid": 53532,
+    "token": "0591557e8851e15620461c05c80db3b6"
+  },
+  "error": "page.evaluate: TypeError: Failed to fetch"
+}
