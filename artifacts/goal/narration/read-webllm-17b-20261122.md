@@ -26,3 +26,10 @@
 - OPFS 后端：在 768 MB 报 `QuotaExceededError`；但页面实测 `navigator.storage.estimate()` 的配额是 10 GB、usage 0——所以是 OPFS 后端自身的坑，不是真的没空间。
 - Cache API 后端的 4B 测试被宿主内存回收杀掉（系统 low memory），按回收规则未自行重启。
 - 当前结论：4B 的加载路径还差最后一步验证；1.7B 已证明运行时可用（22 s/回合）。等用户允许后再试 Cache API 或持久化 profile。
+
+
+## 4B 打通（run63，持久化 profile）
+
+- 独立探针：4B 完整加载（74/74、2.2 GB、WebGPU）并生成「你好！」。
+- 验收驱动加 `--profile` 后，4B 在同一 profile 的缓存上 6 秒加载完成（2.16 GB）。
+- 产品单回合仍失败：`results` codec 报 `fact text must be non-empty`，28.6 秒结束——不是运行时问题，是 4B 的首轮输出格式/内容问题，下一步看 s05/s06 的原始输出再决定是否修提示。
