@@ -835,7 +835,7 @@ export default function WorldLocalPage() {
         // repair feedback; 8192 left a retry on the edge of the context.
         // D-022 runtime prototype: one WebLLM 4B engine serves both roles.
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
-        const webllmBase = arm.webllmLocal ? `/models/webllm/${webllmModel}/` : undefined;
+        const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase) : null;
         const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
         semanticRef.current = semantic;
