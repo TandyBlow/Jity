@@ -1,0 +1,690 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T10:23:58.691Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/run41-turns-20-chunk1.json",
+      "runId": "2026-11-22T1005-2e46",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s01-act-move",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "记下他们身上的识别带颜色"
+            }
+          ]
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "诺诺在巷口，红发用发圈束在脑后，红色识别带缠在左臂，右袖的红痕路明非摘下护目镜，镜片无裂纹，镜带松着，现挂在胸前",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非的红发用发圈束在脑后，左臂缠着红色识别带，枪口压向地面",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/run41-turns-20-chunk2.json",
+      "runId": "2026-11-22T1009-0dee",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非把红色电台塞进腰间，发烫的识别带贴着皮肤",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s07-partial",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s08-joint-move",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/run41-turns-20-chunk3.json",
+      "runId": "2026-11-22T1014-2ed1",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s09-confront",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "慢慢从对峙的两人中间走过去"
+            }
+          ]
+        },
+        {
+          "id": "s10-strike",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s11-task-ask",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s12-climb",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/acceptance/run41-turns-20-chunk3b.json",
+      "runId": "2026-11-22T1018-c6df",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s12-climb",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s13-already-acted",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s14-auto-chain",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非抬头看了眼钟楼门厅方向，红色识别带微微发烫",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run27-default-skip-arm-20261122.json",
+      "runId": "2026-11-22T0446-4c6b",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非把红色电台递给阿豹，让其转交给裁判"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run28-lora-arm-20261122-2026-11-22T0721-9e2c.json",
+      "runId": "2026-11-22T0721-9e2c",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408640,
+        "narrationSha256": "9beece58454be73b02d5247bb88c63e23c3b758b19dcfb9d8d2bc4a150768d7c"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "阿豹接过去，把电台转了两下，转到他手里"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run29-page-v3-arm.json",
+      "runId": "2026-11-22T0742-ee0c",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen15b-page-v3",
+        "narrationFile": "/models/qwen15b-page-v3-Q4_K_M.gguf",
+        "narrationBytes": 986048064,
+        "narrationSha256": "a03bcfeaa4837d6754257a5f6e71cd24ac3ebce4bb26ee92fc2280d096c5632f"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非低头检查护目镜、识别带和胸袋里的弹匣，确认都在",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "诺诺看着路明非把领用台上的红色电台递给阿豹，点了点头"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run30-trained-candidate.json",
+      "runId": "2026-11-22T0758-0bd3",
+      "arm": {
+        "candidate": "trained",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run31-constrained-candidate.json",
+      "runId": "2026-11-22T0802-5997",
+      "arm": {
+        "candidate": "constrained",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非将电台递予阿豹，诺诺站在巷口，红色识别带在她左臂闪烁"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run32-temp-0.3.json",
+      "runId": "2026-11-22T0819-de64",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": 0.3
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非将红色电台递到阿豹手中，枪口压向地面"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run33-temp-0.7.json",
+      "runId": "2026-11-22T0823-6a07",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": 0.7
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非把红色电台递给阿豹，但未"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run34-fewshot.json",
+      "runId": "2026-11-22T0838-91ff",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": true
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非将红色电台递过去，阿豹接住，枪口压向地面"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run35-mobile-sim-semantic.json",
+      "runId": "2026-11-22T0903-0499",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "semantic",
+        "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+        "narrationBytes": 396705472,
+        "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+        "narrationTemperature": null,
+        "narrationFewShot": null
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非低头检查护目镜、识别带和胸袋里的弹匣，确认都在",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非低头检查护目镜、识别带和胸袋里的弹匣，确认都在",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            },
+            {
+              "kind": "meta_note",
+              "quote": "台递给阿豹，并让其转交给裁判。这一回合的结算结果确认了这一动作。路明非现在位于西侧服务巷，巷口黄黑绳"
+            },
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色路明非将红色电台递给阿豹，并让其转交给裁判"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run36-igpu-unthrottled.json",
+      "runId": "2026-11-22T0919-3318",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "semantic",
+        "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+        "narrationBytes": 396705472,
+        "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+        "narrationTemperature": null,
+        "narrationFewShot": null
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "识别带和胸袋里的弹匣"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非低头检查护目镜、识别带和胸袋里的弹匣，确认都在",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "meta_note",
+              "quote": "电台递给阿豹，让他转交给裁判。这一回合的结算结果确认了这一行动，成功完成。时间已过15:23，过去1"
+            },
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非将领用台上的红色电台递给阿豹，让他转交给裁判"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run37-handback-arm.json",
+      "runId": "2026-11-22T0931-4490",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非把红色电台递过去，阿豹接住后转交给了裁判"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run38-handback-s02-s04.json",
+      "runId": "2026-11-22T0934-371a",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "记下他们身上的识别带颜色"
+            },
+            {
+              "kind": "band_claim",
+              "quote": "路明非停在原地，记下他们身上的识别带颜色",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/semantics/run39-legal-check.json",
+      "runId": "2026-11-22T0943-1778",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player"
+      },
+      "turns": [
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非把红色电台递给阿豹，转交给裁判"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 11,
+    "band_claim": 9,
+    "unknown_entity_claim": 11,
+    "meta_note": 2
+  }
+}

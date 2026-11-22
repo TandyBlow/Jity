@@ -217,6 +217,7 @@
 - 根因补充（2026-11-22，`goal-legal-check`）：s06 合法失败的根因在结算层——`results` 模型把未知实体阿豹的交接判成 `achieved`/`completed`（run37/run39），叙事照抄。质量路线必须覆盖 G5 语义；开发期新增场景门 `legal_failure_not_enforced`（run39 命中）。证据 `artifacts/goal/narration/read-legal-check-20261122.md`。
 - 频率测量（2026-11-22，`goal-legal-rate`）：s06 复跑 5 次，结算层误判 4/5；剩下 1 次结算判 blocked 但叙事仍把被拒动作写成已发生——5/5 在某一层失败。质量路线必须同时覆盖 G5 结算与 G6 叙事；开发期还缺一条「被拒动作写成已发生」的正文门。证据 `artifacts/goal/narration/legal-failure-rate-20261122.md`。
 - 开发期正文门（2026-11-22，`goal-refused-gate`）：检查器新增 `unknown_entity_claim`；run37/run40 的 3 个 s06 全部命中（含结算判 blocked 的 run40-e），s05 无误报。质量路线现在有结算门与正文门两条自动证据。证据 `artifacts/goal/narration/read-refused-gate-20261122.md`。
+- 质量基线（2026-11-22，`goal-quality-baseline`）：17 run / 42 回合，26 个回合至少命中一条开发门（echo 11、band 9、unknown_entity 11、meta 2）；s06 的 11 个合法失败回合全部命中 unknown_entity_claim。任何质量路线都用同一套门对照。证据 `artifacts/goal/narration/quality-baseline-20261122.md`。
 
 ## D-023 设备范围：笔记本、4B 与移动端的取舍
 
