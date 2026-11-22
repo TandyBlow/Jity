@@ -1,0 +1,52 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-22T20:14:48.019Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run93-webllm-4b-10turn.json",
+      "runId": "2026-11-22T2002-338e",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b",
+        "narrationFile": "/models/Qwen3-1.7B-Q4_K_M.gguf",
+        "narrationBytes": 1107409472,
+        "narrationSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "webllm",
+        "webllmModel": "Qwen3-4B-q4f16_1-MLC",
+        "webllmLocal": true,
+        "webllmCache": "cache"
+      },
+      "turns": [
+        {
+          "id": "t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t2-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t4-joint-move",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}
