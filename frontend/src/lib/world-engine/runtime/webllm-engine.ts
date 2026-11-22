@@ -61,20 +61,16 @@ export class WebLlmInferenceEngine implements InferenceEngine {
     let raw = '';
     let firstTokenMs: number | null = null;
     try {
-      // The typed overloads reject unknown fields; WebLLM's GenerationConfig
-      // carries enable_thinking at the top level. Qwen3's chat template injects
-      // a thinking block unless it is switched off, and the product codecs
-      // expect the bare JSON/prose the wllama path produces.
-      const create = this.engine.chat.completions.create.bind(this.engine.chat.completions) as unknown as (
+      // Match the wllama path: settlement calls send the bare prompt, not a
+      // chat turn, so no chat template (and no Qwen thinking block) is applied.
+      const create = this.engine.completions.create.bind(this.engine.completions) as unknown as (
         request: Record<string, unknown>,
-      ) => Promise<AsyncIterable<{ choices?: { delta?: { content?: string } }[] }>>;
+      ) => Promise<AsyncIterable<{ choices?: { text?: string }[] }>>;
       const stream = await create({
-        messages: [{ role: 'user', content: prompt }],
+        prompt,
         stream: true,
-        stream_options: { include_usage: true },
         max_tokens: options.maxTokens ?? 512,
         temperature: options.temperature ?? 0.2,
-        extra_body: { enable_thinking: false },
         ...(options.stop ? { stop: options.stop } : {}),
       });
       for await (const chunk of stream) {
@@ -82,7 +78,7 @@ export class WebLlmInferenceEngine implements InferenceEngine {
           try { this.engine.interruptGenerate(); } catch { /* already done */ }
           throw abortError();
         }
-        const delta = chunk.choices?.[0]?.delta?.content ?? '';
+        const delta = chunk.choices?.[0]?.text ?? '';
         if (!delta) continue;
         if (firstTokenMs == null) firstTokenMs = performance.now() - started;
         raw += delta;
