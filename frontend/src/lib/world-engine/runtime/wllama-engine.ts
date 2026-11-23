@@ -45,6 +45,9 @@ export interface WllamaEngineOptions {
    * directBlob browser path supports more than one file in wllama 3.8.1. */
   modelUrls?: string[];
   contextSize?: number;
+  /** KV cache element types; q8_0 halves KV memory at the same context. */
+  cacheTypeK?: 'f32' | 'f16' | 'q8_0' | 'q5_1' | 'q5_0' | 'q4_1' | 'q4_0';
+  cacheTypeV?: 'f32' | 'f16' | 'q8_0' | 'q5_1' | 'q5_0' | 'q4_1' | 'q4_0';
   numThreads?: number;
   /** 0 keeps CPU-only; default offloads every layer to WebGPU when the
    * browser exposes it. */
@@ -382,6 +385,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
       const params = {
         n_ctx: this.contextSize,
         n_gpu_layers: this.gpuLayers,
+        ...(this.options.cacheTypeK ? { cache_type_k: this.options.cacheTypeK } : {}),
+        ...(this.options.cacheTypeV ? { cache_type_v: this.options.cacheTypeV } : {}),
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
       };

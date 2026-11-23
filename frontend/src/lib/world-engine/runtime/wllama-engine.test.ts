@@ -147,6 +147,14 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(evidence[0]!.compileMs).toBeGreaterThanOrEqual(0);
   });
 
+  test('forwards KV cache types when configured', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/tales-0.6b.gguf', contextSize: 2048, cacheTypeK: 'q8_0', cacheTypeV: 'q8_0', nGpuLayers: 0, directBlob: false },
+      async () => fake.instance);
+    await engine.load();
+    expect(fake.calls.loads[0]?.params).toMatchObject({ cache_type_k: 'q8_0', cache_type_v: 'q8_0' });
+  });
+
   test('load without any model url is a configuration error and creates no instance', async () => {
     let factories = 0;
     const fake = fakeWllama();
