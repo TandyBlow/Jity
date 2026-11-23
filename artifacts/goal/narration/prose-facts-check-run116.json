@@ -1,0 +1,68 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T14:22:17.063Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run116-17b-lora-v11-5turn.json",
+      "runId": "2026-11-23T1417-81a5",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "f6b01bc113055eeb8abc29dcbdae584b4ed22d5361788a6293ccbb94061c3ea0",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非没有回头，诺诺的红色识别带在胸前发烫，她迅速把故障短讯机塞进腰间，目光紧锁着路明非，语气中带着一丝警惕",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "band_claim": 1
+  }
+}
