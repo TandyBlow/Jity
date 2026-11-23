@@ -1,0 +1,117 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T03:51:03.388Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run97-17b-lora-v4-10turn.json",
+      "runId": "2026-11-23T0342-429d",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "d217ee25c2c08c38a78f273c172c370368bb883e7d3ce1a3913ee80df5a04b5f",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t2-move-shed",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "item_owner_claim",
+              "quote": "路明非想回答，巷里却没有别的声音，他把枪口收回胸前，没有给出明确的答复",
+              "item": "短枪"
+            }
+          ]
+        },
+        {
+          "id": "t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t4-joint-move",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t5-wait-listen",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t6-mid-refresh",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "t7-move-foyer",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "invented_detail",
+              "quote": "则牌，没有回头。楼上传来脚步声，诺诺没有做出回应。路明"
+            }
+          ]
+        },
+        {
+          "id": "t8-climb-landing",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "place_claim",
+              "quote": "路明非没有挪动，沿着楼梯上到二层平台",
+              "committed": "西侧服务巷"
+            }
+          ]
+        },
+        {
+          "id": "t9-ask-nono",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "诺诺的红色识别带在路明非面前微微发烫，她迅速把短讯机贴近胸口，低声说：‘路明非，我……我确实愿意帮你",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "t10-hold-and-time",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非的护目镜和识别带都没动",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "item_owner_claim": 1,
+    "invented_detail": 1,
+    "place_claim": 1,
+    "band_claim": 2
+  }
+}
