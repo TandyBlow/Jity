@@ -97,7 +97,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' | 'unsupported_action' | 'unknown_entity_no_name' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' | 'unsupported_action' | 'unknown_entity_no_name' | 'unknown_entity_named' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -211,7 +211,7 @@ export async function runResults(
       validate: (value) => {
         attempts += 1;
         const parsedAnswer = readResultsAnswer(value, members, workingState, { dropEmptyResults: lenient() });
-        if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState);
+        if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState, lenient());
       },
       // A retry has to name the frozen members: the 3turn 9623 repair answered
       // nono only while the group was lu+nono, so «missing judgment for lu» alone
@@ -224,7 +224,7 @@ export async function runResults(
     // The validate pass may have rewritten an unknown-entity fact from the
     // model's own blocked judgment; re-apply it to the accepted parse so the
     // committed facts (and the narration prompt) carry the blocked sentence.
-    if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState);
+    if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState, true);
     const value = normalizeResults(parsedAnswer, members);
     const evidence = makeEvidence(key, answer.calls, false, undefined, {
       groupId,
@@ -294,7 +294,7 @@ const STOP_NAMES = /^(他|她|它|自己|裁判|大家)/u;
  * introduce a name in the action text ("递给阿豹"); the model once settled that
  * handoff as achieved although no such character exists. Deterministic check,
  * default on; pass strictKnownEntities:false to reproduce the old behaviour. */
-function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], state: WorldState): void {
+function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], state: WorldState, dropIfUnresolved = false): void {
   const registry = new Set<string>();
   for (const value of Object.values(state.initial.characters)) registry.add(String(value?.name ?? ''));
   for (const value of Object.values(state.initial.items)) registry.add(String(value?.name ?? ''));
@@ -330,6 +330,13 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
           rewrite.text = String(blocked.reason).trim();
           rewrite.outcome = 'blocked';
           rewrite.unknownEntityRewrite = true;
+          continue;
+        }
+        if (dropIfUnresolved) {
+          // Repairs exhausted: settle without the false success (run125 s06).
+          const at = answer.facts.indexOf(hit);
+          if (at >= 0) answer.facts.splice(at, 1);
+          (answer.droppedFacts ??= []).push({ memberIds: [actorId], original: String(hit.text ?? ''), reason: 'unknown_entity_named' });
           continue;
         }
         throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);

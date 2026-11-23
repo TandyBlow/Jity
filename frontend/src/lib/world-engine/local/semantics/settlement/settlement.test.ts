@@ -138,7 +138,7 @@ describe('common-group results', () => {
     expect(isExampleFactText('甲把工具推给乙。')).toBe(false);
   });
 
-  it('rejects an unknown-name success fact even when the outcome field is omitted', async () => {
+  it('drops an unknown-name success fact after the repairs', async () => {
     const answer = (fact: Record<string, unknown>) => JSON.stringify({
       judgments: [
         { memberId: 'a', label: 'achieved', reason: '甲完成了递交。', effects: [] },
@@ -155,10 +155,15 @@ describe('common-group results', () => {
       workingState: world(),
     } as unknown as Json;
 
-    const rejected = await createSettlementHandlers({ engine: new ScriptedEngine([answer({ text: '甲把工具递给阿豹。', memberIds: ['a'] })]) })
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer({ text: '甲把工具递给阿豹。', memberIds: ['a'] })]) })
       .results('g1', input);
-    expect(rejected.fallback).toBe(true);
-    expect(String(rejected.error)).toContain('results_unknown_entity');
+    expect(outcome.fallback).toBe(false);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string; original: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('阿豹'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unknown_entity_named')).toBe(true);
 
     const allowed = await createSettlementHandlers({ engine: new ScriptedEngine([answer({ text: '阿豹不在场，甲没能把工具递出去。', memberIds: ['a'], outcome: 'blocked' })]) })
       .results('g1', input);

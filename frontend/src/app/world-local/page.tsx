@@ -50,7 +50,7 @@ const NARRATION_MODELS = {
   // the v11 hand-written set (328 rows, 2026-11-23). Not a product default.
   'qwen3-1.7b-narr-lora': {
     url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
-    sha256: 'f6b01bc113055eeb8abc29dcbdae584b4ed22d5361788a6293ccbb94061c3ea0',
+    sha256: '82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a',
   },
   // Evaluation arm: a 1.5B checkpoint trained on the page narration format
   // (page-v3, local build 2026-11-10). Not a product default.
