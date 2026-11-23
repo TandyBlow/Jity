@@ -57,6 +57,8 @@ export interface GameModelOptions {
   settlementUnknownRule?: boolean;
   /** Evaluation arm (mobile): compact results-prompt scene list. */
   compactSettlement?: boolean;
+  /** Evaluation arm: worked blocked example for unknown targets (results prompt). */
+  settlementUnknownExample?: boolean;
   /** Deterministic guard for unregistered entities in settled facts (default
    * on). The page can disable it with strictKnownEntities=0 for A/B runs. */
   strictKnownEntities?: boolean;
@@ -202,6 +204,7 @@ export class LocalGameModel implements WorldModelPort {
       unknownEntityRule: options.settlementUnknownRule ?? false,
       strictKnownEntities: options.strictKnownEntities ?? true,
       compactPrompts: options.compactSettlement ?? false,
+      unknownEntityExample: options.settlementUnknownExample ?? false,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null

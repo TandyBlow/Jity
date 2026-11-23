@@ -576,7 +576,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs' } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs' } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -592,6 +592,7 @@ export default function WorldLocalPage() {
     const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
     const settlementUnknownRule = q.get('settlementUnknownRule') === '1' ? true : undefined;
     const compactSettlement = q.get('compactSettlement') === '1' ? true : undefined;
+    const settlementUnknownExample = q.get('settlementUnknownExample') === '1' ? true : undefined;
     const strictKnownEntities = q.get('strictKnownEntities') === '0' ? false : undefined;
     const runtime = q.get('runtime') === 'webllm' ? 'webllm' as const : undefined;
     const webllmParam = q.get('webllmModel');
@@ -614,6 +615,7 @@ export default function WorldLocalPage() {
       ...(schedHandback ? { schedHandback } : {}),
       ...(settlementUnknownRule ? { settlementUnknownRule } : {}),
       ...(compactSettlement ? { compactSettlement } : {}),
+      ...(settlementUnknownExample ? { settlementUnknownExample } : {}),
       ...(strictKnownEntities === false ? { strictKnownEntities } : {}),
       ...(runtime ? { runtime } : {}),
       ...(webllmModel ? { webllmModel } : {}),
@@ -866,6 +868,7 @@ export default function WorldLocalPage() {
           schedHandback: arm.schedHandback ? 'player' : null,
           settlementUnknownRule: arm.settlementUnknownRule ?? null,
           compactSettlement: arm.compactSettlement ?? null,
+          settlementUnknownExample: arm.settlementUnknownExample ?? null,
           strictKnownEntities: arm.strictKnownEntities ?? true,
           runtime: arm.runtime === 'webllm' ? 'webllm' : 'wllama',
           webllmModel: arm.runtime === 'webllm' ? webllmModel : null,
@@ -894,6 +897,7 @@ export default function WorldLocalPage() {
           ...(arm.projection ? { narrationProjection: arm.projection } : {}),
           ...(arm.settlementUnknownRule ? { settlementUnknownRule: true } : {}),
           ...(arm.compactSettlement ? { compactSettlement: true } : {}),
+          ...(arm.settlementUnknownExample ? { settlementUnknownExample: true } : {}),
           ...(arm.strictKnownEntities === false ? { strictKnownEntities: false } : {}),
           onTask: (task, key, detail) => {
             // stageMs/stages arrive on the updates task detail: printing them
