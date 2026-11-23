@@ -190,7 +190,7 @@ function legacyDelta(time: TimeAdvance | null, delta: Record<Id, EntityDelta>, b
 /** Instruct-model narration brief. A small instruct model copies long rule
  * lists and bullet dumps back out, so the brief is one short paragraph of
  * facts and two sentences of task. Nothing here invents state. */
-export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene'): { prompt: string; brief: string } {
+export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene', compact = false): { prompt: string; brief: string } {
   const name = after.initial.characters[view]?.name ?? view;
   const room = roomOf(after, view);
   const sentences: string[] = [];
@@ -226,9 +226,9 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
     const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
     sentences.push(`${name}${from ? `从${from}` : ''}走到了${locationName(after, own.positionSet.containerId)}。`);
   }
-  const appearance = after.initial.locations[room]?.initialAppearance;
+  const appearance = compact ? '' : after.initial.locations[room]?.initialAppearance;
   sentences.push(`${name}现在在${locationName(after, room)}${appearance ? `，${squash(appearance).slice(0, 160)}` : ''}。`);
-  const props = sameRoomItems(after, view).slice(0, 3);
+  const props = compact ? [] : sameRoomItems(after, view).slice(0, 3);
   for (const id of props) {
     const item = after.initial.items[id];
     if (!item) continue;
@@ -239,7 +239,7 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   for (const id of others.slice(0, 3)) {
     const other = after.initial.characters[id];
     const current = after.characters[id];
-    const looks = [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 70);
+    const looks = compact ? '' : [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 70);
     const where = current.position.slotId ? locationName(after, room) : locationName(after, current.position.containerId);
     sentences.push(`${other.name}也在${where}${looks ? `，${looks}` : ''}。`);
   }

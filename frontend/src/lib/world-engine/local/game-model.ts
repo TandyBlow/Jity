@@ -48,6 +48,10 @@ export interface GameModelOptions {
   /** Evaluation arm: one worked example in the instruct brief. The shipped
    * default has no example; the page exposes it only through the URL query. */
   narrationFewShot?: boolean;
+  /** Evaluation arm (D-022): drop the location look, room items and other
+   * characters' appearance from the brief. Same instructions, less material for
+   * the writer to recite or move between characters. */
+  narrationProjection?: 'full' | 'compact';
   /** Evaluation arm (D-022): state the unknown-target rule in the results
    * prompt. Default off; the page exposes it only through the URL query. */
   settlementUnknownRule?: boolean;
@@ -542,7 +546,7 @@ export class LocalGameModel implements WorldModelPort {
 
     // In-model writer: one call with the settled state as its only material.
     const baseBrief = this.options.narrationMode === 'instruct'
-      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText)
+      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact')
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
     const brief = this.options.narrationMode === 'instruct' && this.options.narrationFewShot
       ? { ...baseBrief, prompt: withNarrationExample(baseBrief.prompt) }

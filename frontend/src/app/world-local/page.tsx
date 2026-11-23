@@ -576,7 +576,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs' } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs' } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -588,6 +588,7 @@ export default function WorldLocalPage() {
     const tempParam = Number(q.get('narrationTemperature'));
     const temperature = Number.isFinite(tempParam) && tempParam > 0 && tempParam <= 1.5 ? tempParam : undefined;
     const fewShot = q.get('narrationFewShot') === '1' ? true : undefined;
+    const projection = q.get('narrationProjection') === 'compact' ? 'compact' as const : undefined;
     const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
     const settlementUnknownRule = q.get('settlementUnknownRule') === '1' ? true : undefined;
     const strictKnownEntities = q.get('strictKnownEntities') === '0' ? false : undefined;
@@ -608,6 +609,7 @@ export default function WorldLocalPage() {
       ...(offscreenPolicy ? { offscreenPolicy } : {}),
       ...(temperature !== undefined ? { temperature } : {}),
       ...(fewShot ? { fewShot } : {}),
+      ...(projection ? { projection } : {}),
       ...(schedHandback ? { schedHandback } : {}),
       ...(settlementUnknownRule ? { settlementUnknownRule } : {}),
       ...(strictKnownEntities === false ? { strictKnownEntities } : {}),
@@ -858,6 +860,7 @@ export default function WorldLocalPage() {
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
           narrationFewShot: arm.fewShot ?? null,
+          narrationProjection: arm.projection ?? null,
           schedHandback: arm.schedHandback ? 'player' : null,
           settlementUnknownRule: arm.settlementUnknownRule ?? null,
           strictKnownEntities: arm.strictKnownEntities ?? true,
@@ -885,6 +888,7 @@ export default function WorldLocalPage() {
           narrationMaxTokens: candidate === 'constrained' ? 480 : 200,
           narrationTemperature: arm.temperature ?? 0.45,
           ...(arm.fewShot ? { narrationFewShot: true } : {}),
+          ...(arm.projection ? { narrationProjection: arm.projection } : {}),
           ...(arm.settlementUnknownRule ? { settlementUnknownRule: true } : {}),
           ...(arm.strictKnownEntities === false ? { strictKnownEntities: false } : {}),
           onTask: (task, key, detail) => {
