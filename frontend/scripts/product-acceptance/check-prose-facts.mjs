@@ -69,7 +69,8 @@ function checkTurn(turn) {
       if (/没有|未|无|不带/u.test(part.slice(Math.max(0, at - 8), at))) return false;
       // "记下别人的识别带颜色" is not a claim he wears one.
       const between = part.slice(part.indexOf(name), at);
-      if (/[一-龥]{2,4}的$/u.test(between) && between !== `${name}的`) return false;
+      const owner = between.match(/([一-龥]{2,4})的(?:红色|蓝色)?$/u);
+      if (owner && owner[1] !== name) return false;
       return true;
     });
     if (hit) flags.push({ kind: 'band_claim', quote: hit.slice(0, 60), promptLine: info.line.slice(0, 80) });

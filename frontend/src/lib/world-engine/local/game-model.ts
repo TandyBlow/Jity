@@ -163,6 +163,8 @@ export class LocalGameModel implements WorldModelPort {
   private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
   private readonly seenFactTexts = new Set<string>();
   private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
+  /** Planned actors per point; the action line follows this, not the delta. */
+  private readonly plannedActors = new Map<Id, Id[]>();
   private recentEvents: string[] = [];
   private readonly narrationRunner: NarrationRunner | null;
   /** Last accepted prose (model or candidate). Only real prose is fed back as
@@ -252,12 +254,14 @@ export class LocalGameModel implements WorldModelPort {
     this.pointFacts.clear();
     this.seenFactTexts.clear();
     this.narrationSnapshots.clear();
+    this.plannedActors.clear();
   }
 
   /** The controller committed this point. Freeze the settlement material that
    * belongs to it before a later point overwrites the live caches. */
   onPointCommitted(pointId: Id): void {
-    const resultsText = (this.pointResults.get(pointId) ?? []).join('；') || this.lastResultsText;
+    // No cross-point results fallback.
+    const resultsText = (this.pointResults.get(pointId) ?? []).join('；');
     const facts = this.pointFacts.get(pointId) ?? [];
     this.narrationSnapshots.set(pointId, {
       resultsText,
@@ -315,17 +319,22 @@ export class LocalGameModel implements WorldModelPort {
       timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order };
     const protagonist = this.protagonistId;
     if (round?.trigger !== 'player' || protagonist === null || order.length < 2 || !order.includes(protagonist)) {
+      this.plannedActors.set(single.pointId, [...order]);
       return [single];
     }
     const rest = order.filter((actor) => actor !== protagonist);
-    if (rest.length === 0) return [single];
-    return [
-      { ...single, actorIds: [protagonist] },
-      { pointId: `point_${roundId}_2`, kind: 'instant',
-        // An instant point must carry a zero duration; the round's time already
-        // advanced with the first point.
-        timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: rest },
-    ];
+    if (rest.length === 0) {
+      this.plannedActors.set(single.pointId, [...order]);
+      return [single];
+    }
+    const player = { ...single, actorIds: [protagonist] };
+    const instant = { pointId: `point_${roundId}_2`, kind: 'instant',
+      // An instant point must carry a zero duration; the round's time already
+      // advanced with the first point.
+      timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: rest };
+    this.plannedActors.set(player.pointId, [protagonist]);
+    this.plannedActors.set(instant.pointId, [...rest]);
+    return [player, instant];
   }
 
   private async action(key: Id, input: Json): Promise<Generated> {
@@ -539,7 +548,10 @@ export class LocalGameModel implements WorldModelPort {
     // Material for THIS point, frozen at its commit. A later point's live
     // caches must not reach an older point's prose.
     const snapshot = this.narrationSnapshots.get(pointId);
-    const playerInput = snapshot?.playerInput ?? this.lastPlayerInput;
+    // Action line only for the player's point.
+    const actors = this.plannedActors.get(pointId);
+    const inPoint = actors && after.protagonistId ? actors.includes(after.protagonistId) : true;
+    const playerInput = inPoint ? (snapshot?.playerInput ?? this.lastPlayerInput) : '';
     const resultsText = snapshot?.resultsText ?? '';
     const settledFacts = snapshot?.facts ?? [];
 
