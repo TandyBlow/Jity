@@ -768,6 +768,7 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
       positionScope: scope,
     };
     if (read.rejected.length) detail.rejectedPositionEntries = read.rejected;
+    if (read.relativeDropped.length) detail.droppedRelativeRefs = read.relativeDropped;
     return { changes, detail, fallback: false, calls: answer.calls };
   } catch (error) {
     return stageFailure({ scannedEntityIds: scanned, positionScope: scope }, error);
@@ -1468,11 +1469,24 @@ function missingMoves(state: WorldState, results: Record<Id, string>,
 interface PositionRead {
   changes: Record<Id, Partial<EntityDelta>>;
   rejected: { entityId: string; reason: string }[];
+  relativeDropped: { entityId: string; target: string }[];
 }
 
 /** Reject a single bad position entry instead of discarding the whole stage.
  * The 21c3 trace invented lane/slot_waist: the model's other valid entries
  * (here a real lane move) must survive, and the invalid one stays in evidence. */
+function roomOf(state: WorldState, id: Id): Id | null {
+  const seen = new Set<Id>();
+  let node: Id | null = id;
+  while (node != null && !state.locations[node]) {
+    if (seen.has(node)) return null;
+    seen.add(node);
+    const entity: { position?: { containerId?: Id } } | undefined = state.characters[node] ?? state.items[node];
+    node = entity?.position?.containerId ?? null;
+  }
+  return node;
+}
+
 function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id>): PositionRead {
   const rows = asRecord(value).changes;
   if (!Array.isArray(rows)) throw new Error('changes must be an array');
@@ -1481,6 +1495,7 @@ function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id
   const seen = new Set<Id>();
   const changes: Record<Id, Partial<EntityDelta>> = {};
   const rejected: PositionRead['rejected'] = [];
+  const relativeDropped: PositionRead['relativeDropped'] = [];
   for (const raw of rows) {
     try {
       if (!isRecord(raw)) throw new Error('change must be an object');
@@ -1511,6 +1526,14 @@ function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id
         if (!known.has(position.relativeTo.entityId)) throw new Error(`unknown relative target ${rawRelativeId}${relativeId !== rawRelativeId ? ` (${relativeId})` : ''}`);
         if (position.relativeTo.entityId === entityId) throw new Error(`entity ${entityId} cannot be relative to itself`);
         if (!RELATIONS.includes(position.relativeTo.relation)) throw new Error(`invalid relation ${position.relativeTo.relation}`);
+        // A relation outside the new container's location trips the kernel;
+        // keep the position, drop the decorative relation (run127 g8-t4).
+        const targetRoom = roomOf(state, position.relativeTo.entityId);
+        const containerRoom = roomOf(state, position.containerId);
+        if (targetRoom != null && containerRoom != null && targetRoom !== containerRoom) {
+          relativeDropped.push({ entityId, target: position.relativeTo.entityId });
+          position.relativeTo = null;
+        }
       }
       changes[entityId] = { positionSet: position };
     } catch (error) {
@@ -1521,7 +1544,7 @@ function readPositionChanges(value: unknown, state: WorldState, onlyIds?: Set<Id
       rejected.push({ entityId: isRecord(raw) ? asString(raw.entityId) : '?', reason: errorText(error) });
     }
   }
-  return { changes, rejected };
+  return { changes, rejected, relativeDropped };
 }
 
 function sampleContainerId(state: WorldState): Id {
