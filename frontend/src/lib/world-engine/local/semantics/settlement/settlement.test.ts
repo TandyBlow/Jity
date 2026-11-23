@@ -191,6 +191,22 @@ describe('common-group results', () => {
     expect(rewritten?.outcome).toBe('blocked');
   });
 
+  it('does not treat a verb complement after 跟 as an unknown name', async () => {
+    const answer = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲等了一会儿。', effects: [] }],
+      facts: [{ text: '甲等了一会儿，没有动。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '甲看看同行的人有没有跟上来。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(outcome.fallback).toBe(false);
+    const detail = outcome.evidence.detail as { facts?: { text: string }[] };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('等了一会儿'))).toBe(true);
+  });
+
   it('drops a success fact that drops the unknown name', async () => {
     const answer = JSON.stringify({
       judgments: [

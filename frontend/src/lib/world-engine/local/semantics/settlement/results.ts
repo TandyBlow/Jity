@@ -302,7 +302,7 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
   for (const member of members) {
     for (const match of member.actionText.matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)) {
       const name = match[1];
-      if (!name || registry.has(name) || registry.has(name.slice(0, 2)) || STOP_NAMES.test(name) || /[的了着过]/u.test(name)) continue;
+      if (!name || registry.has(name) || registry.has(name.slice(0, 2)) || STOP_NAMES.test(name) || /[的了着过来去上下出进回起看听]/u.test(name)) continue;
       // An explicit blocked fact may mention the unknown name while saying it
       // was not there (run81: «阿豹不在场，未能转交»). Anything else that
       // names the name — including a fact with no outcome field — asserts the
