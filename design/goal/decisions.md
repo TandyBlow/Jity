@@ -251,6 +251,7 @@
 - 用户裁决（2026-11-22）：「到不了就想办法，什么叫做题目做不对就把题目改了？」——移动档不改门槛，必须想办法达到 60 秒；不采用「另立移动门槛」的选项。待办变成工程路线：减少每回合调用数/缩短提示/换运行时，并需真机验证。
 - 调用成本（2026-11-22，run35/36 分析）：移动档三大成本是 position（59–78 s）、results（31–62 s）、continuation（27–32 s），合计 120–170 s；六阶段里 appearance 另占 14–21 s。合并 position+appearance、程序 handback 跳过 continuation 后，估算地板仍在 70–90 s——60 秒在当前 0.6B + 核显栈里很可能到不了，再往下只能换更快的运行时/硬件。证据 `artifacts/goal/narration/read-mobile-call-costs-20261122.md`。下一步原型 `mobileSchedule`（合并更新+程序交还）待批准。
 - Prefill 占比（2026-11-22，同批证据）：移动档语义调用的 prefill 普遍高于解码（1738 tokens：prefill 12.6 s vs 解码 1.9 s）。省时要省输入与调用数；合并 position+appearance 估净省 10–20 s。移动 60 s 与运行时强耦合：wllama + 0.6B + 核显到不了，需更快的运行时或硬件。
+- 移动 WebLLM 复测（2026-11-23，run95）：同一 0.6B 移动配置换 WebLLM 运行时，s05 225.1 s、s06 170.1 s，均超 60 s；换运行时没有改变 iGPU 预填瓶颈。两种运行时（wllama 210.5 s / WebLLM 225.1 s）都在 170–225 s，60 秒需更小模型/场景或更快硬件。证据 `artifacts/goal/narration/run95-mobile-webllm-06b.json`。
 - 当前代码移动复测（2026-11-23，run94）：0.6B + 核显 + 4× CPU 限速，早交还臂 + skip，s05 交还 210.5 s；两个参与组的 results/position/appearance 合计 112.3 s、叙事 62.1 s；s06 结算 3 次后中止（36.1 s）。位置/外貌合并只在该组有计划外貌变化时生效。60 秒仍差约 3.5 倍。证据 `artifacts/goal/narration/run94-mobile-current.json`。
 - 影响：决定前不改验收协议与默认模型。
 - 更新（2026-11-22，用户澄清）：移动端要在产品范围内；验收不在真机上做，而是在当前环境模拟移动端性能条件（用户此前口径）。因此移动端不是「缩小版笔记本档」，而是独立配置 + 独立门槛：  1. 移动档配置：单引擎 0.6B（语义与叙事共用一套权重，页面臂 `narrationModel=semantic` 已存在），权重从约 1.5 GiB 降到约 0.4 GiB；配合 `offscreenPolicy=skip` 与更小上下文（12,288 → 8,192）降低 KV cache 与串行调用。
