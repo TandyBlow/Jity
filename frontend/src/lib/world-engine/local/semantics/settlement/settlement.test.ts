@@ -191,7 +191,7 @@ describe('common-group results', () => {
     expect(rewritten?.outcome).toBe('blocked');
   });
 
-  it('rejects a success fact that drops the unknown name', async () => {
+  it('drops a success fact that drops the unknown name', async () => {
     const answer = JSON.stringify({
       judgments: [
         { memberId: 'a', label: 'achieved', reason: '甲完成了递交。', effects: [] },
@@ -210,9 +210,14 @@ describe('common-group results', () => {
       ],
       workingState: world(),
     } as unknown as Json;
-    const rejected = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
-    expect(rejected.fallback).toBe(true);
-    expect(String(rejected.error)).toContain('results_unknown_entity');
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(outcome.fallback).toBe(false);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string; original: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('递出了工具'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unknown_entity_no_name')).toBe(true);
   });
 
   it('uses the blocked judgment when the fact drops the unknown name', async () => {

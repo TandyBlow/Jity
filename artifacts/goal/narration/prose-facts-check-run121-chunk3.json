@@ -1,0 +1,55 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T15:23:16.403Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run121-20turn-chunk3.json",
+      "runId": "2026-11-23T1508-fc6b",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "f6b01bc113055eeb8abc29dcbdae584b4ed22d5361788a6293ccbb94061c3ea0",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s09-confront",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s10-strike",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s11-task-ask",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s12-climb",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}

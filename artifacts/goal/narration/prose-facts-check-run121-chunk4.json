@@ -1,0 +1,69 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T15:23:16.560Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run121-20turn-chunk4.json",
+      "runId": "2026-11-23T1511-aea5",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "f6b01bc113055eeb8abc29dcbdae584b4ed22d5361788a6293ccbb94061c3ea0",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s13-already-acted",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "s14-auto-chain",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "想赶在下一波枪声前进去"
+            }
+          ]
+        },
+        {
+          "id": "s15-handback",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "item_owner_claim",
+              "quote": "路明非在巷里放好故障短讯机",
+              "item": "短讯机"
+            }
+          ]
+        },
+        {
+          "id": "s16-time-check",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 1,
+    "item_owner_claim": 1
+  }
+}

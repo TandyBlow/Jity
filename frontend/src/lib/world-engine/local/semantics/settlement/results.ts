@@ -97,7 +97,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' | 'unsupported_action' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' | 'unsupported_action' | 'unknown_entity_no_name' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -355,7 +355,11 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
           rewrite.unknownEntityRewrite = true;
           continue;
         }
-        throw new Error(`results_unknown_entity:${name}:${String(dropped.text).slice(0, 30)}`);
+        // Weak evidence: drop the fact, don't abort the point (run121 s13).
+        const at = answer.facts.indexOf(dropped);
+        if (at >= 0) answer.facts.splice(at, 1);
+        (answer.droppedFacts ??= []).push({ memberIds: [member.memberId], original: String(dropped.text ?? ''), reason: 'unknown_entity_no_name' });
+        continue;
       }
     }
   }
