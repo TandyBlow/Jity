@@ -66,7 +66,11 @@ function checkTurn(turn) {
       if (!pattern.test(part)) return false;
       // "他肩上没有阵营识别带" is the correct sentence, not a claim.
       const at = part.indexOf('识别带');
-      return !/没有|未|无|不带/u.test(part.slice(Math.max(0, at - 8), at));
+      if (/没有|未|无|不带/u.test(part.slice(Math.max(0, at - 8), at))) return false;
+      // "记下别人的识别带颜色" is not a claim he wears one.
+      const between = part.slice(part.indexOf(name), at);
+      if (/[一-龥]{2,4}的$/u.test(between) && between !== `${name}的`) return false;
+      return true;
     });
     if (hit) flags.push({ kind: 'band_claim', quote: hit.slice(0, 60), promptLine: info.line.slice(0, 80) });
   }

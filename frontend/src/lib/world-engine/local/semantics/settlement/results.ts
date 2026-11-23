@@ -334,6 +334,29 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
         }
         throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);
       }
+      // A retry can drop the unknown name and claim success (run113 s06).
+      const dropped = answer.facts.find((fact) => {
+        const owner = String((fact as { actorId?: unknown }).actorId ?? (Array.isArray(fact.memberIds) ? fact.memberIds[0] : '') ?? '');
+        if (owner !== member.memberId) return false;
+        const text = String(fact.text ?? '');
+        if (text.includes(name)) return false;
+        if (/不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(text)) return false;
+        // Parsing derives blocked from the judgment; the text is the claim.
+        return true;
+      });
+      if (dropped) {
+        const blocked = answer.judgments.find((judgment) => judgment.memberId === member.memberId
+          && (judgment.label === 'blocked' || judgment.label === 'not_achieved')
+          && /不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(String(judgment.reason ?? '')));
+        if (blocked) {
+          const rewrite = dropped as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
+          rewrite.text = String(blocked.reason).trim();
+          rewrite.outcome = 'blocked';
+          rewrite.unknownEntityRewrite = true;
+          continue;
+        }
+        throw new Error(`results_unknown_entity:${name}:${String(dropped.text).slice(0, 30)}`);
+      }
     }
   }
 }

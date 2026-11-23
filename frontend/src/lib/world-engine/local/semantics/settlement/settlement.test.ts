@@ -191,6 +191,56 @@ describe('common-group results', () => {
     expect(rewritten?.outcome).toBe('blocked');
   });
 
+  it('rejects a success fact that drops the unknown name', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲完成了递交。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲递出了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const rejected = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(rejected.fallback).toBe(true);
+    expect(String(rejected.error)).toContain('results_unknown_entity');
+  });
+
+  it('uses the blocked judgment when the fact drops the unknown name', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'blocked', reason: '阿豹不在场，甲未能把工具交出去。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲递出了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(String(outcome.error ?? '')).not.toContain('results_unknown_entity');
+    const detail = outcome.evidence.detail as { facts?: { text: string; outcome?: string }[] };
+    const rewritten = (detail.facts ?? []).find((fact) => String(fact.text).includes('阿豹不在场'));
+    expect(rewritten?.outcome).toBe('blocked');
+  });
+
   it('attributes shared facts to every member and keeps member facts separate', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [

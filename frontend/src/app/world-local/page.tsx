@@ -47,10 +47,10 @@ const NARRATION_MODELS = {
     sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
   },
   // D-022 evaluation arm: the 1.7B base with the narration LoRA trained on
-  // the current projection (84 prompts, 2026-11-23). Not a product default.
+  // the v11 hand-written set (328 rows, 2026-11-23). Not a product default.
   'qwen3-1.7b-narr-lora': {
     url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
-    sha256: 'f32fada0bb11a09adc1052bc50bf4f37f4dd9709dc69f73811c2d3b78a0bf000',
+    sha256: 'f6b01bc113055eeb8abc29dcbdae584b4ed22d5361788a6293ccbb94061c3ea0',
   },
   // Evaluation arm: a 1.5B checkpoint trained on the page narration format
   // (page-v3, local build 2026-11-10). Not a product default.
@@ -87,6 +87,8 @@ interface WorldTurnRecord {
   points?: Array<{ pointId: string; text: string; source?: 'model' | 'program' | 'mixed' | 'draft' }>;
   /** Per-point narration provenance in this turn (player point first). */
   narrations?: Array<{ pointId: string; source: 'model' | 'program' | 'mixed' | 'draft'; atMs: number }>;
+  /** Per-point prompt/text pairs; evidence only. */
+  pointPrompts?: Array<{ pointId: string; prompt: string; text: string }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
    * exists); narrationStartedAtMs is the first narration progress callback. */
@@ -967,6 +969,7 @@ export default function WorldLocalPage() {
                 text: debug.text,
                 prompt: debug.prompt,
               };
+              (liveRecord.pointPrompts ??= []).push({ pointId: debug.pointId, prompt: debug.prompt, text: debug.text });
             }
           },
           // Candidate provenance (grade, per-sentence sources, attempts) is kept

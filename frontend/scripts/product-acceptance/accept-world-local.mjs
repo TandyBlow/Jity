@@ -878,6 +878,7 @@ try {
           // firstTextAtMs / completedAtMs keyed by pointId. This is the
           // overlap evidence; narrationStarts above is the older field.
           pointNarration: record.pointNarration ?? null,
+          pointPrompts: Array.isArray(record.pointPrompts) ? record.pointPrompts : null,
           actions: Array.isArray(record.actions) ? record.actions : null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
