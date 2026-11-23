@@ -198,7 +198,7 @@ export async function runResults(
   const lenient = () => attempts >= 3;
   try {
     const answer = await callJson(engine, prompt, {
-      maxTokens: options.maxTokens?.results ?? 420,
+      maxTokens: options.maxTokens?.results ?? 640,
       temperature: options.temperature ?? 0,
       timeoutMs: options.timeoutMs,
       maxPromptChars: options.maxPromptChars,
