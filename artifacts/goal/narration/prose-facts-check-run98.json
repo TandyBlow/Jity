@@ -1,0 +1,103 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T04:11:06.881Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run98-17b-lora-v5-10turn.json",
+      "runId": "2026-11-23T0403-f3f5",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "b4b143c759967498d29578451f1f7e210686cfe0d320f278f7122a6299829fc4",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t2-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t4-joint-move",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非想跟诺诺说一起走，贴着廊柱停住"
+            }
+          ]
+        },
+        {
+          "id": "t5-wait-listen",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t6-mid-refresh",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "t7-move-foyer",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t8-climb-landing",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "诺诺抬起头，红色识别带在栏杆边微微发烫，她看着路明非，语气里带着一丝警惕",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            },
+            {
+              "kind": "place_claim",
+              "quote": "路明非沿着楼梯上到二层平台",
+              "committed": "西侧服务巷"
+            }
+          ]
+        },
+        {
+          "id": "t9-ask-nono",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t10-hold-and-time",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "unknown_entity_claim": 1,
+    "band_claim": 1,
+    "place_claim": 1
+  }
+}

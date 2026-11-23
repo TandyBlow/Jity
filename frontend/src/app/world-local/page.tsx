@@ -50,7 +50,7 @@ const NARRATION_MODELS = {
   // the current projection (84 prompts, 2026-11-23). Not a product default.
   'qwen3-1.7b-narr-lora': {
     url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
-    sha256: 'f4c0e36612164d0a849104599703f59fbb9614ba5a32525097e8d31d80ae3b38',
+    sha256: 'b4b143c759967498d29578451f1f7e210686cfe0d320f278f7122a6299829fc4',
   },
   // Evaluation arm: a 1.5B checkpoint trained on the page narration format
   // (page-v3, local build 2026-11-10). Not a product default.
