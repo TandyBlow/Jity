@@ -326,8 +326,17 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
           && (judgment.label === 'blocked' || judgment.label === 'not_achieved')
           && /不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(String(judgment.reason ?? '')));
         if (blocked) {
+          const reason = String(blocked.reason ?? '').trim();
+          // A generic placeholder reason is not a fact (run125 s14).
+          const generic = reason.replace(/没有这个人|没有这件东西|不在场|[\/。！？；，、\s]/gu, '') === '';
+          if (generic) {
+            const at = answer.facts.indexOf(hit);
+            if (at >= 0) answer.facts.splice(at, 1);
+            (answer.droppedFacts ??= []).push({ memberIds: [actorId], original: String(hit.text ?? ''), reason: 'unknown_entity_named' });
+            continue;
+          }
           const rewrite = hit as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
-          rewrite.text = String(blocked.reason).trim();
+          rewrite.text = reason;
           rewrite.outcome = 'blocked';
           rewrite.unknownEntityRewrite = true;
           continue;
@@ -356,11 +365,16 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
           && (judgment.label === 'blocked' || judgment.label === 'not_achieved')
           && /不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(String(judgment.reason ?? '')));
         if (blocked) {
-          const rewrite = dropped as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
-          rewrite.text = String(blocked.reason).trim();
-          rewrite.outcome = 'blocked';
-          rewrite.unknownEntityRewrite = true;
-          continue;
+          const reason = String(blocked.reason ?? '').trim();
+          // A generic placeholder reason is not a fact (run125 s14).
+          const generic = reason.replace(/没有这个人|没有这件东西|不在场|[\/。！？；，、\s]/gu, '') === '';
+          if (!generic) {
+            const rewrite = dropped as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
+            rewrite.text = reason;
+            rewrite.outcome = 'blocked';
+            rewrite.unknownEntityRewrite = true;
+            continue;
+          }
         }
         // Weak evidence: drop the fact, don't abort the point (run121 s13).
         const at = answer.facts.indexOf(dropped);

@@ -231,6 +231,31 @@ describe('common-group results', () => {
     expect((detail.facts ?? []).some((fact) => String(fact.text).includes('等了一会儿'))).toBe(true);
   });
 
+  it('drops an unknown-entity fact when the blocked reason is generic', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'blocked', reason: '没有这个人/没有这件东西/不在场', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [{ text: '甲把工具递给阿豹。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('没有这个人'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unknown_entity_named')).toBe(true);
+  });
+
   it('drops a success fact that drops the unknown name', async () => {
     const answer = JSON.stringify({
       judgments: [
