@@ -97,7 +97,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' | 'unsupported_action' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -708,6 +708,16 @@ function readResultsAnswer(
     }
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
+    }
+    // Don't settle a rules reading the action never implied (run113/114).
+    if (cleaned.text.includes('规则') && !/没有|未|无|不在/u.test(cleaned.text)) {
+      const owners = recipientsFor(rawFact);
+      const supported = owners.some((id) => String(memberById.get(id)?.actionText ?? '').includes('规则'));
+      if (owners.length && !supported) {
+        droppedFacts.push({ memberIds: owners, original, reason: 'unsupported_action' });
+        for (const id of owners) coveredByDrop.add(id);
+        continue;
+      }
     }
     // Structured fields: actor is the executor, target the recipient, outcome
     // the direction. An old answer without them is still accepted (derived),

@@ -241,6 +241,35 @@ describe('common-group results', () => {
     expect(rewritten?.outcome).toBe('blocked');
   });
 
+  it('drops a rules-reading fact the action never implied', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲记下了识别带颜色。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲记下了识别带颜色。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '甲看懂了规则牌。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲停下观察，记下识别带颜色。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string; original: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('规则'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unsupported_action')).toBe(true);
+  });
+
   it('attributes shared facts to every member and keeps member facts separate', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [
