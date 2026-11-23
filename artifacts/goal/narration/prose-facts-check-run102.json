@@ -1,0 +1,105 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T07:26:18.722Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run102-17b-lora-v7-10turn.json",
+      "runId": "2026-11-23T0717-0b13",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "ef038731da54a93128fcaf5f3c6d251bb16190bef3eb9ea7084912158d8d7840",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t2-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t3-talk-lin",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t4-joint-move",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t5-wait-listen",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "item_owner_claim",
+              "quote": "路明非把枪口按在胸前，数着时间，想弄清楚枪声是从哪个方向来的",
+              "item": "短枪"
+            }
+          ]
+        },
+        {
+          "id": "t6-mid-refresh",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "t7-move-foyer",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "t8-climb-landing",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "place_claim",
+              "quote": "路明非沿着楼梯上到二层平台，看懂了规则牌",
+              "committed": "西侧服务巷"
+            }
+          ]
+        },
+        {
+          "id": "t9-ask-nono",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "band_claim",
+              "quote": "路明非问起红蓝两方各占哪些地方，路明非一边问，一边想，西侧服务巷里，诺诺的红色识别带在路明非面前微微发烫",
+              "promptLine": "镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前。屋里有路明非的演习背心，背心前襟完好，没有演习弹痕；胸袋能放一只弹匣，肩上没有阵营识别带。屋里有赛"
+            }
+          ]
+        },
+        {
+          "id": "t10-hold-and-time",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "item_owner_claim": 1,
+    "place_claim": 1,
+    "band_claim": 1
+  }
+}
