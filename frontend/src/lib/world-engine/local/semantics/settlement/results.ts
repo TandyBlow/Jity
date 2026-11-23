@@ -185,7 +185,7 @@ export async function runResults(
     return failure(key, parsed.error, started);
   }
   const { groupId, members, workingState } = parsed;
-  const prompt = buildResultsPrompt(groupId, members, workingState, options.unknownEntityRule ?? false);
+  const prompt = buildResultsPrompt(groupId, members, workingState, options.unknownEntityRule ?? false, options.compactPrompts ?? false);
   const strictKnownEntities = options.strictKnownEntities !== false;
   let calls: ModelCallEvidence[] = [];
   // The last attempt drops a fact that has no visible result instead of failing
@@ -372,7 +372,7 @@ function parseResultsInput(input: Json): ResultsInput | { error: string } {
   return { groupId, members, workingState: world };
 }
 
-function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState, unknownEntityRule = false): string {
+function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState, unknownEntityRule = false, compact = false): string {
   const memberLines = members.map((member) => {
     const name = state.initial.characters[member.memberId]?.name ?? member.memberId;
     // The effects row is fully determined by the frozen admission: printing it
@@ -388,10 +388,23 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;
   });
   const sceneIds = new Set<Id>([...members.map((member) => member.memberId)]);
-  for (const member of members) {
-    for (const id of visibleCharacters(state, member.memberId)) sceneIds.add(id);
-    for (const id of sameRoomItems(state, member.memberId)) sceneIds.add(id);
-    for (const roll of member.rolls) sceneIds.add(roll.targetId);
+  if (compact) {
+    for (const member of members) {
+      const text = member.actionText;
+      for (const [id, character] of Object.entries(state.initial.characters)) {
+        if (character.name && text.includes(String(character.name))) sceneIds.add(id);
+      }
+      for (const [id, item] of Object.entries(state.initial.items)) {
+        if (item.name && text.includes(String(item.name))) sceneIds.add(id);
+      }
+      for (const roll of member.rolls) sceneIds.add(roll.targetId);
+    }
+  } else {
+    for (const member of members) {
+      for (const id of visibleCharacters(state, member.memberId)) sceneIds.add(id);
+      for (const id of sameRoomItems(state, member.memberId)) sceneIds.add(id);
+      for (const roll of member.rolls) sceneIds.add(roll.targetId);
+    }
   }
   const scene = [...sceneIds].filter((id) => state.characters[id] || state.items[id])
     .map((id) => state.characters[id] ? describeResultCharacter(state, id) : describeItem(state, id));

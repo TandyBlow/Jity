@@ -39,7 +39,7 @@
 | R13 | 行动描述仅作本次分析；不建长期行动历史 | 实现中 | `local/transport.ts` 的 `actionTexts`、`persistence/` 快照、`history.ts` | transport、persistence 测试 | 原文只按工作态生命周期保存；调试归档与世界存档分开。G2/G4 |
 | R14 | 工作职责不等于模型数或调用数 | 实现中 | `game-model.ts` 的 options、`controller.ts` 的 `ModelTask`、`schedule.ts`、`runtime/webllm-engine.ts` | `architecture.md` 第 6 节；模型变体清单；G3 逐任务调用记录 `artifacts/goal/timing-runs/points-10-rerun.json`；WebLLM 评估：3B 40–50 s/回合、格式通过、质量未过；4B 可加载但本机连续跑受内存限制；移动模拟 264.9 s | 按质量/成本选择单/多模型；记录每任务贡献；运行时替换不改善叙事质量（3B 三种候选均不合格）。G3/G6 |
 | R15 | 开局生成 | 已改写：静态载入/校验/封存，实现中 | `world-loader.ts`、`static-world-registration.ts`、`data/worlds/` | loader/registration 测试；摘要与计数；2026-11-10 用户澄清 | 静态世界供给与 held-out 决定；开局校验与页面。G1/G2/G4 |
-| R16 | 小世界完整可玩；≥20 输入；自动链、共同结算、恢复、历史、删叙事重生 | 技术证据齐（质量线未通过） | `world-local/page.tsx`、`frontend/scripts/product-acceptance/accept-world-local.mjs`、`turns-20*.json` | `artifacts/goal/acceptance/summary.json`（20 输入：首段 20/20、回合 20/20、0 失败，9 个 295 s 时限收尾）；离线 2/2；服务器关闭 2/2；两设备分叉 `artifacts/goal/sync/two-device-20261121.json`；移动模拟 run35/36 仅作测量；2026-11-23 run94 当前代码复测 210.5 s（早交还臂），60 秒仍不可达 | G5/G6 质量线未过（结算把未知实体判成 completed；叙事硬事实错误）；移动档未验收；D-024 早交还仅为评估臂（默认 64.9–180.7 s，评估臂 36.9–45.0 s）。G8 |
+| R16 | 小世界完整可玩；≥20 输入；自动链、共同结算、恢复、历史、删叙事重生 | 技术证据齐（质量线未通过） | `world-local/page.tsx`、`frontend/scripts/product-acceptance/accept-world-local.mjs`、`turns-20*.json` | `artifacts/goal/acceptance/summary.json`（20 输入：首段 20/20、回合 20/20、0 失败，9 个 295 s 时限收尾）；离线 2/2；服务器关闭 2/2；两设备分叉 `artifacts/goal/sync/two-device-20261121.json`；移动模拟 run35/36 仅作测量；2026-11-23 run94 当前代码复测 210.5 s（早交还臂），60 秒仍不可达；run103 只压 results 清单 189.1 s，run104 压容器目录反升到 229.9 s（已回退） | G5/G6 质量线未过（结算把未知实体判成 completed；叙事硬事实错误）；移动档未验收；D-024 早交还仅为评估臂（默认 64.9–180.7 s，评估臂 36.9–45.0 s）。G8 |
 
 ## 3. R15 改写说明
 

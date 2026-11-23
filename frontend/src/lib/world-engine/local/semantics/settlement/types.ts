@@ -39,6 +39,9 @@ export interface SettlementOptions {
   /** Evaluation arm: state the unknown-target rule explicitly in the results
    * prompt (untargeted entity ⇒ not_achieved/blocked). Default off. */
   unknownEntityRule?: boolean;
+  /** Evaluation arm: list only the actors/items named by the action in the
+   * results prompt instead of the whole visible scene (mobile prefill cut). */
+  compactPrompts?: boolean;
   /** Deterministic guard (default on): a results fact naming an unregistered
    * entity fails validation and is retried; pass false to reproduce old runs. */
   strictKnownEntities?: boolean;
