@@ -221,6 +221,10 @@ export async function runResults(
     calls = answer.calls;
     // The accepted answer settled under the same rule the last attempt used.
     const parsedAnswer = readResultsAnswer(answer.value, members, workingState, { dropEmptyResults: lenient() });
+    // The validate pass may have rewritten an unknown-entity fact from the
+    // model's own blocked judgment; re-apply it to the accepted parse so the
+    // committed facts (and the narration prompt) carry the blocked sentence.
+    if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState);
     const value = normalizeResults(parsedAnswer, members);
     const evidence = makeEvidence(key, answer.calls, false, undefined, {
       groupId,
@@ -307,10 +311,29 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
       const hit = answer.facts.find((fact) => {
         const text = String(fact.text ?? '');
         if (!text.includes(name)) return false;
-        if ((fact as { outcome?: string }).outcome === 'blocked') return false;
+        // A fact without an explicit negative cue asserts the contact even if
+        // its outcome field says blocked (normalize derives that from the
+        // judgment); the text is what the narrator reads.
         return !/不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(text);
       });
-      if (hit) throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);
+      if (hit) {
+        // The 0.6B can state the failure in its judgment while its fact still
+        // asserts completion (run107: «阿豹不在场，未能…» in judgment,
+        // «递给阿豹» completed in facts). Use the model's own blocked words as
+        // the fact and mark it blocked; any other completed fact still fails.
+        const actorId = String((hit as { actorId?: unknown }).actorId ?? (Array.isArray(hit.memberIds) ? hit.memberIds[0] : '') ?? '');
+        const blocked = answer.judgments.find((judgment) => judgment.memberId === actorId
+          && (judgment.label === 'blocked' || judgment.label === 'not_achieved')
+          && /不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(String(judgment.reason ?? '')));
+        if (blocked) {
+          const rewrite = hit as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
+          rewrite.text = String(blocked.reason).trim();
+          rewrite.outcome = 'blocked';
+          rewrite.unknownEntityRewrite = true;
+          continue;
+        }
+        throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);
+      }
     }
   }
 }

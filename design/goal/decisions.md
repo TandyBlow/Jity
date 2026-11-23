@@ -297,6 +297,8 @@
 
 - 结算示例臂（2026-11-23，run107）：judgment 出现「阿豹不在场，未能…」的 blocked 理由，fact 仍写 completed，三次被 `results_unknown_entity` 拒绝；提示示例无效。s06 的 5/5 阻塞只剩结算层：程序级 blocked fact、手写结算数据微调 0.6B、换更强语义模型，或接受不通过。
 
+- 判词搬移（2026-11-23，`goal-settlement-rewrite`，run108–110）：fact 点名未登记实体且无否定词时，若该成员 judgment 为 blocked/not_achieved 且理由含否定线索，用判词当 fact、outcome 改 blocked；否则仍拒绝。单测 100 passed。三次五回合均 5/5 完成（s06 结算不再中止），但叙事仍有「主角也看规则牌」的填充（s03/s05、s03/s04/s06、s02），0.2 温度下结算出现占位符/坏事实；5/5 质量仍未达成。
+
 ## D-027 叙事训练数据手写（2026-11-23，用户裁决）
 
 - 状态：`signed`（2026-11-23）。

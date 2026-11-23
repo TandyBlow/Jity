@@ -1,0 +1,60 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T10:33:09.285Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run110-17b-lora-v8-rewrite-t02-compact-5turn.json",
+      "runId": "2026-11-23T1028-28fa",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "01db72c9c74b2014cb6f1060f94d4b96dcc8cc70c0acf6287f155c1a005bca22",
+        "narrationTemperature": 0.2,
+        "narrationFewShot": null,
+        "narrationProjection": "compact",
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s02-act-observe",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s03-act-talk",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s04-act-wait",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s05-act-inventory",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s06-legal-failure",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}
