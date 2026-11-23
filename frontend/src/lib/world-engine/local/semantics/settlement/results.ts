@@ -720,6 +720,17 @@ function readResultsAnswer(
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
     }
+    // Strip a fault the registered item state never had (run114-122).
+    if (/故障|损坏|还坏着/u.test(cleaned.text)) {
+      const names = Object.values(state.initial.items).map((item) => String(item?.name ?? '')).filter(Boolean);
+      const named = names.filter((name) => cleaned.text.includes(name));
+      const supported = JSON.stringify(state.items).includes('故障') || JSON.stringify(state.items).includes('损坏');
+      if (named.length && !supported) {
+        const before = cleaned.text;
+        cleaned.text = cleaned.text.replace(/故障的?|损坏的?|还坏着/gu, '');
+        if (cleaned.text !== before) cleaned.removed.push('故障');
+      }
+    }
     // Don't settle a rules reading the action never implied (run113/114).
     if (cleaned.text.includes('规则') && !/没有|未|无|不在/u.test(cleaned.text)) {
       const owners = recipientsFor(rawFact);

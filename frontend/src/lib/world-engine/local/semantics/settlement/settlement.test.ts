@@ -196,6 +196,25 @@ describe('common-group results', () => {
     expect(rewritten?.outcome).toBe('blocked');
   });
 
+  it('strips a fault adjective the state never had', async () => {
+    const answer = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲收好工具。', effects: [] }],
+      facts: [{ text: '甲把故障工具收进背包。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '甲把工具收好。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      sanitizedFacts?: { removed: string[] }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('故障'))).toBe(false);
+    expect((detail.sanitizedFacts ?? []).some((fact) => (fact.removed ?? []).includes('故障'))).toBe(true);
+  });
+
   it('does not treat a verb complement after 跟 as an unknown name', async () => {
     const answer = JSON.stringify({
       judgments: [{ memberId: 'a', label: 'achieved', reason: '甲等了一会儿。', effects: [] }],
