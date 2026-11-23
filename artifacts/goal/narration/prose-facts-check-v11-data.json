@@ -1,0 +1,104 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T11:29:49.038Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/.local/narr-train/v11-evidence.json",
+      "runId": "v11-check",
+      "arm": "training-data",
+      "turns": [
+        {
+          "id": "TlaneK#1",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TlaneK#2",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TshedK#1",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TshedK#2",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TarcadeK#1",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TarcadeK#2",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TlaneL#1",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TlaneL#2",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TshedL#1",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TshedL#2",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TarcadeL#1",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TarcadeL#2",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TlaneJ#3",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TlaneJ#4",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TshedJ#3",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TshedJ#4",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TarcadeJ#3",
+          "source": null,
+          "flags": []
+        },
+        {
+          "id": "TarcadeJ#4",
+          "source": null,
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}

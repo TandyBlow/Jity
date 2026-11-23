@@ -142,7 +142,7 @@ function checkTurn(turn) {
   for (const name of unknown) {
     if (!prose.includes(name)) continue;
     const clause = clauses(prose).find((part) => part.includes(name));
-    if (clause && !/没有|未能|未被|被拒|拒绝|无法/u.test(clause)) {
+    if (clause && !/没有|没找到|没见到|未能|未被|被拒|拒绝|无法/u.test(clause)) {
       flags.push({ kind: 'unknown_entity_claim', quote: clause.slice(0, 60) });
     }
   }
