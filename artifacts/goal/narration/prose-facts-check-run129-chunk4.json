@@ -1,0 +1,62 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T17:08:00.266Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run129-20turn-chunk4.json",
+      "runId": "2026-11-23T1702-c5e3",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "s13-already-acted",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s14-auto-chain",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "想赶在下一波枪声前进去"
+            }
+          ]
+        },
+        {
+          "id": "s15-handback",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "s16-time-check",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "input_echo": 1
+  }
+}

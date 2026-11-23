@@ -1,0 +1,45 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-23T17:08:00.374Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration/run129-20turn-chunk5.json",
+      "runId": "2026-11-23T1705-877d",
+      "arm": {
+        "candidate": "auto",
+        "mode": null,
+        "shape": null,
+        "offscreenPolicy": "skip",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": "player",
+        "settlementUnknownRule": true,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb"
+      },
+      "turns": [
+        {
+          "id": "g8-t1-look-lane",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "g8-t2-move-shed",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "totals": {}
+}
