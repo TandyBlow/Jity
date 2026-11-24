@@ -1,0 +1,4 @@
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"pair-scorer-int8","threads":4,"loadMs":440.81499993801117,"pairs":80,"p50":3.825000047683716,"p95":5.724999904632568,"min":2.5800000429153442,"stats":{"targets/held":{"correct":18,"total":22},"position/held":{"correct":7,"total":7},"targets/seen":{"correct":8,"total":9},"position/seen":{"correct":10,"total":13}}}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"pair-scorer-int8","threads":1,"loadMs":476.4450000524521,"pairs":80,"p50":6.519999980926514,"p95":8.669999957084656,"min":5.125,"stats":{"targets/held":{"correct":18,"total":22},"position/held":{"correct":7,"total":7},"targets/seen":{"correct":8,"total":9},"position/seen":{"correct":10,"total":13}}}

@@ -360,6 +360,8 @@
 
 - 微型模型联合实验（2026-11-24，`goal-micro-joint`）：批次切分（v1–v4 训练、v5 测试，15/任务），40 epoch。T2（打乱）natural 46/60（targets 13、position 10、intent 12、judgment 11）；T1（固定顺序）43/60；T3（打乱 + 32 截断训练）44/60。32 token 下 T2 准确率 45/60（position 截断 9、手写压缩输入 10），int8 延迟 7.83 ms（1 线程）/4.57 ms（4 线程），fp32 5.34 ms（4 线程）；16 token 时 targets 11、position 6、judgment 10；8 token 崩。结论：32–64 token 在本批测试上达到自然输入水平（样本内；fp32 单线程 10.87 ms 未达 10 ms）；训练截断不如自然训练；压缩输入能补回 position 的 1 行；训练打乱 +3 行（单种子）。分类头固定实体/地点词表，跨世界泛化未验证；准确率与延迟的精度/环境未统一。证据 `artifacts/goal/micro-joint/conclusion-20261124.md`。
 
+- 微型模型泛化实验（2026-11-24，`goal-micro-generalize`）：候选打分（MiniRBT 句对，[CLS] 文本 [SEP] 候选 [SEP]）去掉固定词表；训练 329 对（每行 2 个硬负例）。浏览器内同输入同精度：seen position 10/13、targets 8/9；held（未见过的名字）position 7/7、targets 18/22；p50 3.83 ms（4 线程）/6.52 ms（1 线程），pair 输入中位 29 token。结论：未见过的地名/角色可打分，固定词表限制解除；硬负例是必要条件（无硬负例时误报到 5/8 行）。限制：held position 7 行、seen targets 9 行；只测词面匹配，未测纯描述型指代。证据 `artifacts/goal/micro-generalize/conclusion-20261124.md`。
+
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
 - 状态：`signed`（2026-11-24）。

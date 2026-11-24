@@ -1,0 +1,63 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>pair scorer probe</title></head>
+<body>
+<script type="importmap">{"imports":{"onnxruntime-web/wasm":"/probe/ort.wasm.bundle.min.mjs","onnxruntime-web/webgpu":"/probe/ort.webgpu.bundle.min.mjs"}}</script>
+<script type="module">
+const EP = new URLSearchParams(location.search).get('ep') || 'wasm';
+const ort = await import(EP === 'webgpu' ? 'onnxruntime-web/webgpu' : 'onnxruntime-web/wasm');
+ort.env.wasm.wasmPaths = '/probe/';
+const threads = Number(new URLSearchParams(location.search).get('threads') || 4);
+ort.env.wasm.numThreads = threads;
+let result;
+try {
+  const name = new URLSearchParams(location.search).get('model') || 'pair-scorer-int8';
+  const dataName = new URLSearchParams(location.search).get('data') || 'pairs-test';
+  const data = await (await fetch(`/probe/models/${dataName}.json`)).json();
+  const t0 = performance.now();
+  const session = await ort.InferenceSession.create(`/probe/models/${name}.onnx`, { executionProviders: [EP] });
+  const loadMs = performance.now() - t0;
+  const runPair = async (p) => {
+    const ids = BigInt64Array.from(p.ids, (v) => BigInt(v));
+    const mask = BigInt64Array.from(p.ids, () => 1n);
+    const out = await session.run({ input_ids: new ort.Tensor('int64', ids, [1, p.ids.length]),
+      attention_mask: new ort.Tensor('int64', mask, [1, p.ids.length]) });
+    return out.score.data[0];
+  };
+  for (let i = 0; i < 5; i++) await runPair(data.pairs[0]);
+  const times = [], scores = [];
+  for (const p of data.pairs) {
+    const s = performance.now();
+    scores.push(await runPair(p));
+    times.push(performance.now() - s);
+  }
+  const rows = {};
+  for (const [key, r] of Object.entries(data.rows)) {
+    rows[key] = { task: r.task, split: r.split, label: r.label, pairs: [] };
+  }
+  data.pairs.forEach((p, i) => {
+    rows[p.row].pairs.push({ candidate: p.candidate, score: scores[i] });
+  });
+  const stats = {};
+  for (const [key, r] of Object.entries(rows)) {
+    let pred;
+    if (r.task === 'position') {
+      pred = new Set([r.pairs.reduce((a, b) => (a.score > b.score ? a : b)).candidate]);
+    } else {
+      pred = new Set(r.pairs.filter((p) => p.score > 0).map((p) => p.candidate));
+    }
+    const truth = new Set(Array.isArray(r.label) ? r.label : [r.label]);
+    const ok = pred.size === truth.size && [...pred].every((x) => truth.has(x));
+    stats[`${r.task}/${r.split}`] ??= { correct: 0, total: 0 };
+    stats[`${r.task}/${r.split}`].total += 1;
+    stats[`${r.task}/${r.split}`].correct += ok ? 1 : 0;
+  }
+  times.sort((a, b) => a - b);
+  result = { ok: true, model: name, threads, loadMs, pairs: data.pairs.length,
+    p50: times[Math.floor(times.length * 0.5)], p95: times[Math.floor(times.length * 0.95)], min: times[0],
+    stats };
+} catch (error) {
+  result = { ok: false, error: String(error && (error.stack || error.message) || error) };
+}
+window.__probeResult = result;
+</script>
+</body></html>
