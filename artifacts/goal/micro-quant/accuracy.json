@@ -1,0 +1,15 @@
+{
+ "fp32": {
+  "targets": "12/14",
+  "position": "3/14",
+  "intent": "11/15",
+  "judgment": "7/14"
+ },
+ "int8": {
+  "targets": "12/14",
+  "position": "3/14",
+  "intent": "11/15",
+  "judgment": "7/14"
+ },
+ "agreement": "55/57"
+}
