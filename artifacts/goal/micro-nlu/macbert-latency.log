@@ -1,0 +1,2 @@
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"macbert-targets","loadMs":2402.5,"tokens":512,"p50":2439.399999976158,"p95":2528.100000023842,"min":2345.8000000715256}
