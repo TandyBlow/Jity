@@ -51,6 +51,21 @@
 - 完整回合等待 **268 s** vs 对照 245–254 s：没有改善。results 不再是关键路径，瓶颈在 action（81 s）、updates（55 s）与叙事。
 - 微型 results 的 judgments 来自 5 类头、facts 来自动作模板；回合 COMPLETED、无页面问题；fact 语义正确性尚未人工复核。
 
+## A/B 分任务对比（2026-11-25，同一输入）
+
+| 任务 | 基线（LLM） | micro 臂 |
+|---|---|---|
+| results | 15 次 / 78.0 s | 15 次 / 13.4 s（13 微型 + 2 LLM） |
+| targets | 26 次 / 42.9 s | 17 次 / 8.1 s（规则/校验） |
+| action | 41 次 / 112.1 s | 38 次 / 114.3 s |
+| updates | **42 次 / 66.3 s** | **36 次 / 176.2 s** |
+| continuation | 3 次 / 18.0 s | 1 次 / 8.1 s |
+| reaction | 2 次 / 4.8 s | 2 次 / 5.4 s |
+
+- results 与 targets 合计省约 100 s；updates 反而多 110 s，净值被吃回去（完整回合 268 s vs 245–254 s）。
+- updates 的 issue 数为 0，但两臂的 0 ms 程序跳过数量不同：基线 42 次里大量 0 ms，micro 臂 36 次里程序跳过更少——微型 results 的模板 facts 改变了 updates 阶段判定「受影响实体」的范围，触发更多模型调用（均值 1.6 s → 4.9 s/次）。
+- 结论：results 头本身成立，但 facts 必须按 updates 期望的结构/措辞生成，否则下游会用更多 LLM 调用把收益吃掉。下一步先对齐 facts 契约（actorId/targetId/outcome/措辞），再重跑 A/B。
+
 ## 未完成
 
 - 模型打分路径的真实回合验证：需要规则弃权的输入（缺席名字或双在场代词）。
