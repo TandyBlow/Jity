@@ -2,7 +2,7 @@
  * existing model-task schemas: results = Record<Id, string>, updates =
  * UpdatesCall (split stage) or UpdatesCall[] (one merged call), continuation =
  * Conclusion. Evidence is additive and never becomes a world fact. */
-import type { Id, Json } from '../../../types';
+import type { Id, Json, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import type { InferenceEngine } from '../../../runtime/engine';
 
@@ -48,6 +48,9 @@ export interface SettlementOptions {
    * entity fails validation and is retried; pass false to reproduce old runs. */
   strictKnownEntities?: boolean;
   onTask?: (task: SettlementTask, key: string, detail: ModelTaskDetail) => void;
+  /** Experimental micro workflow: a task head answers results before the LLM.
+   * Returning null or failing validation falls back to the LLM call. */
+  microResults?: MicroResultsFn;
   /** Product default: a new task achievement must cite a settled result fact
    * (or a time basis). Unit fixtures may leave this off, but the page port
    * never does. */
@@ -80,7 +83,25 @@ export interface ModelTaskDetail {
   stages?: string[];
   /** Affected projection for this updates group (which owners/rows were judged). */
   scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
+  /** Who produced the accepted value: the LLM, a micro model, or a program rule. */
+  source?: 'model' | 'micro' | 'program' | 'fallback';
 }
+
+/** Micro results port: the page's task head answers per member; a null answer
+ * falls back to the LLM. The returned value goes through the same validators
+ * as a model answer (`readResultsAnswer` / known-entity / normalize). */
+export interface MicroResultsRequest {
+  groupId: Id;
+  members: Array<{ memberId: Id; actionText: string; rolls: Array<{ result: number; eligible: boolean; admitted: boolean }> }>;
+  state: WorldState;
+}
+
+export interface MicroResultsAnswer {
+  judgments: Array<{ memberId: Id; label: string; reason: string }>;
+  facts: Array<{ text: string; memberIds: Id[]; actorId?: Id; outcome?: string }>;
+}
+
+export type MicroResultsFn = (request: MicroResultsRequest) => Promise<MicroResultsAnswer | null> | MicroResultsAnswer | null;
 
 export interface ModelCallEvidence {
   prompt: string;

@@ -9,7 +9,8 @@
 - [x] 4c. 校验感知采集：每调用记录 raw/value/issues；一轮 133 调用 99 有效 / 34 无效；位置槽位校验抓出 `lu@lane/slot_body` 类无效标签；`training.jsonl`/`training-report.json`。
 - [x] 5a. 补采两轮（s05/s06），合并 376 条记录、205 条短输入；模板探针：facts 约一半可模板化，action 句 0/50 可模板。
 - [x] 5b. 训练 results 5 类（跨回合 57–68%）、act/skip（单类，无意义）、movement 二分类（52 条全对，11 正例）；int8 各 10.55 MB；浏览器 p50 9.7–15.2 ms，加载 1037 ms。
-- [ ] 6. 集成 `?micro=1` 路由并统计比例/耗时；完整回合 A/B。
+- [x] 6a. results 微型路径接入 `?micro=1`：A/B 同输入 results 13.4 s vs 78.0 s（14/15 次微型，1 次回退）；完整回合 268 s vs 245–254 s，未改善（瓶颈在 action/updates/叙事）。
+- [ ] 6b. action 与 updates 的微型路径（act/skip 缺 skip 数据；移动头已训）；再跑完整回合 A/B 与状态正确性。
 - [ ] 3. results/updates/continuation 微型路径（规则产出 + 现有校验 + LLM 回退原因）。
 - [ ] 4. 统计：每任务 rules/micro/LLM 次数与耗时；首载 vs 回合耗时。
 - [ ] 5. 真实 20 输入对照（开/关）：回合耗时、结算错误、检查器、叙事质量。

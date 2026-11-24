@@ -187,6 +187,40 @@ export async function runResults(
   const { groupId, members, workingState } = parsed;
   const prompt = buildResultsPrompt(groupId, members, workingState, options.unknownEntityRule ?? false, options.compactPrompts ?? false, options.unknownEntityExample ?? false);
   const strictKnownEntities = options.strictKnownEntities !== false;
+  if (options.microResults) {
+    try {
+      const micro = await options.microResults({
+        groupId,
+        members: members.map((member) => ({
+          memberId: member.memberId,
+          actionText: member.actionText,
+          rolls: member.rolls.map((roll) => ({ result: roll.result, eligible: roll.eligible, admitted: roll.admitted })),
+        })),
+        state: workingState,
+      });
+      if (micro) {
+        const parsedAnswer = readResultsAnswer(micro as unknown as Json, members, workingState, { dropEmptyResults: true });
+        if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState, true);
+        const value = normalizeResults(parsedAnswer, members);
+        const ms = Math.round(performance.now() - started);
+        const evidence = makeEvidence(key, [], false, undefined, {
+          groupId,
+          memberIds: members.map((member) => member.memberId),
+          factCount: parsedAnswer.facts.length,
+          labels: parsedAnswer.judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
+          source: 'micro',
+        });
+        options.onTask?.('results', key, { ms, fallback: false, raw: '', promptChars: 0, source: 'micro' });
+        return { value, raw: '', ms, fallback: false, evidence };
+      }
+    } catch (error) {
+      // A rejected micro answer is evidence, not a failure: the LLM runs next.
+      options.onTask?.('results', key, {
+        ms: Math.round(performance.now() - started), fallback: false, raw: '',
+        promptChars: 0, source: 'micro', error: errorText(error),
+      });
+    }
+  }
   let calls: ModelCallEvidence[] = [];
   // The last attempt drops a fact that has no visible result instead of failing
   // the point: old runs (95dc, 415c, d101, a178) answered only

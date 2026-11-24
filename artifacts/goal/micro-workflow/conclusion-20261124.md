@@ -45,6 +45,12 @@
 - results 头（共享 MiniRBT + 5 类）跨回合：57%（one+two→three）、68%（three+two→one）、68%（one+three→two）；混淆集中在 achieved↔partial、not_achieved→no_change。act/skip 头在单类数据上无意义（100% 平凡）。movement 头在 52 条上 tp/fp/fn/tn 全对，但只有 11 个正例，不作泛化结论。
 - 浏览器（ORT-WASM 1 线程，int8）：两个模型加载 1037 ms；p50 act 15.2 ms、result 9.7 ms、move 14.7 ms；模型各 10.55 MB；短输入中位 52/54 token。
 
+## results 微型路径 A/B（2026-11-25）
+
+- 同一输入（「我把水壶递给诺诺。」）在 `?micro=1` 下：results 15 次调用共 **13.4 s**——14 次走微型头（空 raw、7–200 ms/次），1 次低置信回退 LLM（6.1 s）。LLM 对照同输入为 15 次 / **78.0 s**；results 阶段省约 65 s（−83%）。
+- 完整回合等待 **268 s** vs 对照 245–254 s：没有改善。results 不再是关键路径，瓶颈在 action（81 s）、updates（55 s）与叙事。
+- 微型 results 的 judgments 来自 5 类头、facts 来自动作模板；回合 COMPLETED、无页面问题；fact 语义正确性尚未人工复核。
+
 ## 未完成
 
 - 模型打分路径的真实回合验证：需要规则弃权的输入（缺席名字或双在场代词）。

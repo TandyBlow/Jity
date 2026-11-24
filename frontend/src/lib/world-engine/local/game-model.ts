@@ -75,6 +75,9 @@ export interface GameModelOptions {
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
   microTargets?: import('./semantics/actions').MicroTargetsFn;
+  /** Experimental micro workflow: a results head answers before the LLM; a
+   * rejected or low-confidence answer falls back to the existing path. */
+  microResults?: import('./semantics/settlement/types').MicroResultsFn;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -199,6 +202,7 @@ export class LocalGameModel implements WorldModelPort {
     // continuation judgement. A policy stop is a visible stop; there is no
     // product-side "one action per round" switch and no fabricated handback.
     this.settlement = createSettlementModelPort(semanticEngine, {
+      microResults: this.options.microResults,
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
       // The appearance stage measures 7877 chars on the shipped world; a retry

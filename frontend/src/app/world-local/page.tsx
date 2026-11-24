@@ -10,6 +10,7 @@ import { WebLlmInferenceEngine } from '@/lib/world-engine/runtime/webllm-engine'
 import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
+import { createMicroResults } from '@/lib/world-engine/local/micro/results';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -96,6 +97,7 @@ interface WorldTurnRecord {
   semanticCalls?: Array<{
     task: string; key: string; ms: number; fallback: boolean; raw: string | null;
     value: unknown; issues: string[]; error: string | null; promptChars: number | null;
+    source: string | null;
   }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
@@ -903,7 +905,15 @@ export default function WorldLocalPage() {
           ? createMicroTargets({
             onStats: (record) => {
               const store = window as unknown as { __microStats?: unknown[] };
-              (store.__microStats ??= []).push(record);
+              (store.__microStats ??= []).push({ port: 'targets', ...record });
+            },
+          })
+          : undefined;
+        const microResults = microEnabled
+          ? createMicroResults({
+            onStats: (record) => {
+              const store = window as unknown as { __microStats?: unknown[] };
+              (store.__microStats ??= []).push({ port: 'results', ...record });
             },
           })
           : undefined;
@@ -929,6 +939,7 @@ export default function WorldLocalPage() {
           : engine);
         const model = new LocalGameModel(recordEngine(semantic), {
           ...(microTargets ? { microTargets } : {}),
+          ...(microResults ? { microResults } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of
           // a player round holds only that character so its settlement can
@@ -973,6 +984,7 @@ export default function WorldLocalPage() {
                 raw: detail.raw ?? null, value: detail.value ?? null,
                 issues: (detail.issues ?? []).map((issue) => issue.code),
                 error: detail.error ?? null, promptChars: detail.promptChars ?? null,
+                source: detail.source ?? null,
               });
             }
             if (task === 'action' || task === 'targets' || task === 'reaction') {
