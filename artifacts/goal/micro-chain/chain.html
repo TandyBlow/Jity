@@ -1,0 +1,89 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>micro chain probe</title></head>
+<body>
+<script type="importmap">{"imports":{"onnxruntime-web/wasm":"/probe/ort.wasm.bundle.min.mjs","onnxruntime-web/webgpu":"/probe/ort.webgpu.bundle.min.mjs"}}</script>
+<script type="module">
+const EP = new URLSearchParams(location.search).get('ep') || 'wasm';
+const ort = await import(EP === 'webgpu' ? 'onnxruntime-web/webgpu' : 'onnxruntime-web/wasm');
+ort.env.wasm.wasmPaths = '/probe/';
+const threads = Number(new URLSearchParams(location.search).get('threads') || 4);
+ort.env.wasm.numThreads = threads;
+const JUDGMENTS = ['achieved', 'partial', 'not_achieved', 'blocked', 'no_change'];
+let result;
+try {
+  const t0 = performance.now();
+  const heads = await ort.InferenceSession.create('/probe/models/joint-t2-int8.onnx', { executionProviders: [EP] });
+  const pairs = await ort.InferenceSession.create('/probe/models/pair-scorer-int8.onnx', { executionProviders: [EP] });
+  const loadMs = performance.now() - t0;
+  const turns = await (await fetch('/probe/models/chain-data.json')).json();
+  const run = async (session, ids, name) => {
+    const data = BigInt64Array.from(ids, (v) => BigInt(v));
+    const mask = BigInt64Array.from(ids, () => 1n);
+    const t = performance.now();
+    const out = await session.run({ input_ids: new ort.Tensor('int64', data, [1, ids.length]),
+      attention_mask: new ort.Tensor('int64', mask, [1, ids.length]) });
+    return { out, ms: performance.now() - t };
+  };
+  const pairScore = async (p) => {
+    const r = await run(pairs, p.ids);
+    return { score: r.out.score.data[0], ms: r.ms };
+  };
+  for (let i = 0; i < 5; i++) await run(heads, turns[0].intent_ids);
+  const rows = [];
+  let calls = 0, totalMs = 0;
+  for (const turn of turns) {
+    const rec = { id: turn.id, stages: {}, calls: 0, ms: 0 };
+    let r = await run(heads, turn.intent_ids);
+    calls++; rec.calls++; rec.ms += r.ms;
+    const intent = r.out.intent.data[0] > r.out.intent.data[1] ? 'act' : 'skip';
+    rec.stages.intent = intent === turn.expect.intent;
+    if (intent === 'skip') { rec.intent = intent; rows.push(rec); continue; }
+    const targetScores = [];
+    for (const p of turn.target_pairs) {
+      const s = await pairScore(p);
+      targetScores.push({ candidate: p.candidate, score: s.score });
+      calls++; rec.calls++; rec.ms += s.ms;
+    }
+    const predTargets = targetScores.filter((t) => t.score > 0).map((t) => t.candidate);
+    rec.stages.targets = predTargets.length === turn.expect.targets.length &&
+      predTargets.every((n) => turn.expect.targets.includes(n));
+    const posScores = [];
+    for (const p of turn.pos_pairs) {
+      const s = await pairScore(p);
+      posScores.push({ candidate: p.candidate, score: s.score });
+      calls++; rec.calls++; rec.ms += s.ms;
+    }
+    const predPos = posScores.reduce((a, b) => (a.score > b.score ? a : b)).candidate;
+    rec.stages.position = predPos === turn.expect.position;
+    const key = predTargets.length ? predTargets.join('、') : '无';
+    const ids = turn.judgment_variants[key] || turn.judgment_variants['无'];
+    r = await run(heads, ids);
+    calls++; rec.calls++; rec.ms += r.ms;
+    let best = 0;
+    for (let i = 1; i < r.out.judgment.data.length; i++) if (r.out.judgment.data[i] > r.out.judgment.data[best]) best = i;
+    rec.stages.judgment = JUDGMENTS[best] === turn.expect.judgment;
+    rec.judgment = JUDGMENTS[best];
+    rec.targets = predTargets;
+    rec.position = predPos;
+    totalMs += rec.ms;
+    rows.push(rec);
+  }
+  const act = rows.filter((r) => r.intent !== 'skip');
+  const stage = (name, list) => `${list.filter((r) => r.stages[name]).length}/${list.length}`;
+  const prop = {};
+  for (const r of act) {
+    const k = r.stages.targets ? 'targets_ok' : 'targets_bad';
+    prop[k] ??= { correct: 0, total: 0 };
+    prop[k].total += 1;
+    prop[k].correct += r.stages.judgment ? 1 : 0;
+  }
+  const e2e = rows.filter((r) => Object.values(r.stages).every(Boolean)).length;
+  result = { ok: true, threads, loadMs, turns: rows.length, e2e: `${e2e}/${rows.length}`,
+    stages: { intent: stage('intent', rows), targets: stage('targets', act), position: stage('position', act), judgment: stage('judgment', act) },
+    propagation: prop, calls, totalMs, rows };
+} catch (error) {
+  result = { ok: false, error: String(error && (error.stack || error.message) || error) };
+}
+window.__probeResult = result;
+</script>
+</body></html>

@@ -362,6 +362,8 @@
 
 - 微型模型泛化实验（2026-11-24，`goal-micro-generalize`）：候选打分（MiniRBT 句对，[CLS] 文本 [SEP] 候选 [SEP]）去掉固定词表；训练 329 对（每行 2 个硬负例）。浏览器内同输入同精度：seen position 10/13、targets 8/9；held（未见过的名字）position 7/7、targets 18/22；p50 3.83 ms（4 线程）/6.52 ms（1 线程），pair 输入中位 29 token。结论：未见过的地名/角色可打分，固定词表限制解除；硬负例是必要条件（无硬负例时误报到 5/8 行）。限制：held position 7 行、seen targets 9 行；只测词面匹配，未测纯描述型指代。证据 `artifacts/goal/micro-generalize/conclusion-20261124.md`。
 
+- 微型模型协同链（2026-11-24，`goal-micro-chain`）：12 回合（8 act / 4 skip），intent → targets → position → judgment 在浏览器里串行。端到端 7/12；intent 10/12、targets 5/8、position 8/8、judgment 7/8；46 次调用，173.4 ms（4 线程）/292.8 ms（1 线程），每回合 p50 18.5 ms。targets 错时 judgment 3/3、targets 对时 4/5，8 个 act 回合内未见错误传播。position 必须喂结算事实，按行动文本喂掉到 3/8。限制：12 回合手写、单种子。证据 `artifacts/goal/micro-chain/conclusion-20261124.md`。
+
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
 - 状态：`signed`（2026-11-24）。
