@@ -1,86 +1,109 @@
 {
- "three+two->one": {
+ "one+three+two->four": {
+  "act": [
+   41,
+   41
+  ],
+  "result": [
+   35,
+   51
+  ],
+  "test": 92,
+  "confusion": {
+   "not_achieved->partial": 6,
+   "partial->partial": 23,
+   "partial->not_achieved": 2,
+   "achieved->achieved": 3,
+   "no_change->no_change": 3,
+   "blocked->partial": 4,
+   "partial->blocked": 2,
+   "blocked->blocked": 6,
+   "partial->achieved": 1,
+   "achieved->blocked": 1
+  }
+ },
+ "four+three+two->one": {
   "act": [
    17,
    17
   ],
   "result": [
-   19,
+   20,
    28
   ],
   "test": 45,
   "confusion": {
-   "partial->partial": 14,
+   "partial->partial": 13,
    "achieved->achieved": 3,
-   "no_change->not_achieved": 1,
+   "no_change->achieved": 1,
    "no_change->no_change": 2,
-   "blocked->partial": 2,
+   "partial->blocked": 1,
+   "blocked->blocked": 2,
    "blocked->no_change": 1,
    "not_achieved->no_change": 4,
    "achieved->partial": 1
   }
  },
- "one+two->three": {
+ "four+one+two->three": {
   "act": [
    47,
    47
   ],
   "result": [
-   41,
+   48,
    72
   ],
   "test": 119,
   "confusion": {
-   "achieved->partial": 10,
-   "partial->achieved": 6,
-   "partial->partial": 24,
+   "achieved->partial": 8,
+   "partial->partial": 28,
    "no_change->partial": 2,
-   "achieved->achieved": 8,
+   "achieved->achieved": 9,
    "no_change->no_change": 3,
-   "partial->blocked": 3,
-   "blocked->blocked": 4,
+   "partial->blocked": 4,
+   "blocked->blocked": 5,
    "no_change->not_achieved": 4,
-   "not_achieved->not_achieved": 2,
+   "not_achieved->not_achieved": 3,
+   "partial->achieved": 1,
    "not_achieved->achieved": 2,
    "achieved->no_change": 1,
    "not_achieved->no_change": 1,
-   "not_achieved->partial": 1,
-   "blocked->achieved": 1
+   "achieved->blocked": 1
   }
  },
- "one+three->two": {
+ "four+one+three->two": {
   "act": [
    19,
    19
   ],
   "result": [
-   15,
+   17,
    22
   ],
   "test": 41,
   "confusion": {
-   "partial->partial": 6,
-   "achieved->achieved": 5,
-   "achieved->partial": 1,
+   "partial->partial": 9,
+   "achieved->achieved": 4,
+   "achieved->partial": 2,
    "no_change->no_change": 1,
    "blocked->achieved": 1,
-   "partial->achieved": 5,
-   "blocked->blocked": 3
+   "blocked->blocked": 3,
+   "partial->achieved": 2
   }
  },
  "model": {
   "path": "D:\\others\\Jity\\.local\\micro-heads\\task-heads.onnx",
   "bytes": 41241249,
-  "input_tokens_median": 52,
+  "input_tokens_median": 64,
   "input_tokens_max": 141,
-  "train_rows": 205,
+  "train_rows": 297,
   "label_counts": {
-   "result/partial": 58,
-   "result/achieved": 29,
-   "act/act": 83,
-   "result/no_change": 13,
-   "result/blocked": 12,
-   "result/not_achieved": 10
+   "result/not_achieved": 16,
+   "act/act": 124,
+   "result/partial": 86,
+   "result/achieved": 33,
+   "result/no_change": 16,
+   "result/blocked": 22
   }
  },
  "int8": {
