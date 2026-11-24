@@ -38,6 +38,13 @@
 - results 标签：partial 11、achieved 9、no_change 1（21 条 judgment）；action 40 条 act、0 skip（本轮偏斜）；facts 12 条、appearances 0。
 - 结论：训练前必须按引擎校验过滤；当前有效样本量小（results 21、action 41、updates 有效位置有限），需要更多回合与人工复核。
 
+## 专用头训练与浏览器测量（2026-11-24）
+
+- 采集扩到三轮（含 s05 清点、s06 缺席递交）：376 条语义记录；短输入 205 条——results 122（partial 58、achieved 29、no_change 13、blocked 12、not_achieved 10）、act 83（**全部 act，没有 skip**）、movement 52（11 正 / 41 负，25 次 updates 因槽位无效被丢弃）。
+- 模板探针（`template-probe.json`）：results 的 51 条 facts 中 24 条与成员行动的字符相似度 ≥0.6（47%），31 条 ≥0.2（61%）；action 文本与待办的任务块相似度 ≥0.4 的为 **0/50**——facts 约一半可模板化，action 句仍需生成。
+- results 头（共享 MiniRBT + 5 类）跨回合：57%（one+two→three）、68%（three+two→one）、68%（one+three→two）；混淆集中在 achieved↔partial、not_achieved→no_change。act/skip 头在单类数据上无意义（100% 平凡）。movement 头在 52 条上 tp/fp/fn/tn 全对，但只有 11 个正例，不作泛化结论。
+- 浏览器（ORT-WASM 1 线程，int8）：两个模型加载 1037 ms；p50 act 15.2 ms、result 9.7 ms、move 14.7 ms；模型各 10.55 MB；短输入中位 52/54 token。
+
 ## 未完成
 
 - 模型打分路径的真实回合验证：需要规则弃权的输入（缺席名字或双在场代词）。

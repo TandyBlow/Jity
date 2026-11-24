@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path('D:/others/Jity')
 PUB = ROOT / 'artifacts/goal/micro-workflow'
-EVIDENCE = PUB / 'evidence-record-one.json'
+EVIDENCES = sorted(PUB.glob('evidence-record-*.json'))
 
 
 def task_of(prompt: str) -> str:
@@ -27,14 +27,18 @@ def task_of(prompt: str) -> str:
 
 
 def main():
-    data = json.loads(EVIDENCE.read_text(encoding='utf8'))
-    log = data['turns'][0]['product'].get('semanticLog') or []
     rows, counts = [], {}
-    for index, item in enumerate(log):
-        task = task_of(item['prompt'])
-        counts[task] = counts.get(task, 0) + 1
-        rows.append({'id': f'rec-{index:03d}', 'task': task, 'prompt': item['prompt'],
-                     'raw': item['raw'], 'ms': round(item.get('ms', 0), 1)})
+    index = 0
+    for path in EVIDENCES:
+        data = json.loads(path.read_text(encoding='utf8'))
+        run = path.stem.replace('evidence-record-', '')
+        for turn in data.get('turns') or []:
+            for item in (turn.get('product') or {}).get('semanticLog') or []:
+                task = task_of(item['prompt'])
+                counts[task] = counts.get(task, 0) + 1
+                rows.append({'id': f'{run}-{index:03d}', 'run': run, 'task': task, 'prompt': item['prompt'],
+                             'raw': item['raw'], 'ms': round(item.get('ms', 0), 1)})
+                index += 1
     (PUB / 'records.jsonl').write_text(
         ''.join(json.dumps(row, ensure_ascii=False) + '\n' for row in rows), encoding='utf8')
     print('records', len(rows), counts)

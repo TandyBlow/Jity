@@ -1,0 +1,90 @@
+{
+ "three+two->one": {
+  "act": [
+   17,
+   17
+  ],
+  "result": [
+   19,
+   28
+  ],
+  "test": 45,
+  "confusion": {
+   "partial->partial": 14,
+   "achieved->achieved": 3,
+   "no_change->not_achieved": 1,
+   "no_change->no_change": 2,
+   "blocked->partial": 2,
+   "blocked->no_change": 1,
+   "not_achieved->no_change": 4,
+   "achieved->partial": 1
+  }
+ },
+ "one+two->three": {
+  "act": [
+   47,
+   47
+  ],
+  "result": [
+   41,
+   72
+  ],
+  "test": 119,
+  "confusion": {
+   "achieved->partial": 10,
+   "partial->achieved": 6,
+   "partial->partial": 24,
+   "no_change->partial": 2,
+   "achieved->achieved": 8,
+   "no_change->no_change": 3,
+   "partial->blocked": 3,
+   "blocked->blocked": 4,
+   "no_change->not_achieved": 4,
+   "not_achieved->not_achieved": 2,
+   "not_achieved->achieved": 2,
+   "achieved->no_change": 1,
+   "not_achieved->no_change": 1,
+   "not_achieved->partial": 1,
+   "blocked->achieved": 1
+  }
+ },
+ "one+three->two": {
+  "act": [
+   19,
+   19
+  ],
+  "result": [
+   15,
+   22
+  ],
+  "test": 41,
+  "confusion": {
+   "partial->partial": 6,
+   "achieved->achieved": 5,
+   "achieved->partial": 1,
+   "no_change->no_change": 1,
+   "blocked->achieved": 1,
+   "partial->achieved": 5,
+   "blocked->blocked": 3
+  }
+ },
+ "model": {
+  "path": "D:\\others\\Jity\\.local\\micro-heads\\task-heads.onnx",
+  "bytes": 41241249,
+  "input_tokens_median": 52,
+  "input_tokens_max": 141,
+  "train_rows": 205,
+  "label_counts": {
+   "result/partial": 58,
+   "result/achieved": 29,
+   "act/act": 83,
+   "result/no_change": 13,
+   "result/blocked": 12,
+   "result/not_achieved": 10
+  }
+ },
+ "int8": {
+  "path": "D:\\others\\Jity\\.local\\micro-heads\\task-heads-int8.onnx",
+  "bytes": 10552059
+ }
+}

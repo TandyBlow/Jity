@@ -1,0 +1,31 @@
+{
+ "three+two->one": {
+  "tp": 1,
+  "fp": 0,
+  "fn": 0,
+  "tn": 3
+ },
+ "one+two->three": {
+  "tp": 8,
+  "fp": 0,
+  "fn": 0,
+  "tn": 30
+ },
+ "one+three->two": {
+  "tp": 2,
+  "fp": 0,
+  "fn": 0,
+  "tn": 8
+ },
+ "model": {
+  "bytes": 41235900,
+  "int8_bytes": 10549906,
+  "input_tokens_median": 54,
+  "input_tokens_max": 84,
+  "rows": 52,
+  "labels": {
+   "0": 41,
+   "1": 11
+  }
+ }
+}
