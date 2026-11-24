@@ -190,18 +190,33 @@ function legacyDelta(time: TimeAdvance | null, delta: Record<Id, EntityDelta>, b
 /** Instruct-model narration brief. A small instruct model copies long rule
  * lists and bullet dumps back out, so the brief is one short paragraph of
  * facts and two sentences of task. Nothing here invents state. */
-export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene'): { prompt: string; brief: string } {
+export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene', compact = false): { prompt: string; brief: string } {
   const name = after.initial.characters[view]?.name ?? view;
   const room = roomOf(after, view);
   const sentences: string[] = [];
   const declared = actionText.trim().replace(/^我/u, name);
-  if (declared) sentences.push(`玩家这回合让${name}做的事：${declared}。`);
+  // A player sentence may name a place the settlement never moved to (t5:
+  // “在西回廊等” while the committed state stayed in 器材棚). Feeding both the
+  // original place and the settled place made the writer follow the sentence.
+  // Drop the action clauses that claim another place unless the point actually
+  // moved there, and drop the result sentence that repeats the view's claim.
+  const settledPlace = locationName(after, room);
+  const movedTo = delta.entityDeltas?.[view]?.positionSet;
+  const elsewhere = Object.values(after.initial.locations)
+    .map((location) => String(location.name ?? ''))
+    .filter((place) => place && declared.includes(place) && place !== settledPlace
+      && (!movedTo || locationName(after, movedTo.containerId) !== place));
+  const namesElsewhere = (text: string) => elsewhere.some((place) => text.includes(place));
+  const declaredSafe = declared.split(/(?<=[，,；;。！？!?])/u)
+    .filter((clause) => !namesElsewhere(clause)).join('').trim();
+  if (declaredSafe) sentences.push(`玩家这回合让${name}做的事：${declaredSafe}。`);
   // Judgment clauses («…的骰点资格为false», «…未被掀开袖口，未获得任何效果») are
   // settlement mechanics, not scene facts; feeding them to the writer made it
   // dramatize dice (d101) and print judgments (page runs 2026-11-10). Keep only
   // clauses that describe what changed.
   const settled = squash(resultsText).split(/[；;]/u).map((part) => part.trim())
     .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
+    .filter((part) => !(part.includes(name) && namesElsewhere(part)))
     .join('；');
   if (settled) sentences.push(`这一回合的结算结果：${settled.slice(0, 120)}。`);
   const time = after.time.dateTime.slice(11, 16);
@@ -211,9 +226,9 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
     const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
     sentences.push(`${name}${from ? `从${from}` : ''}走到了${locationName(after, own.positionSet.containerId)}。`);
   }
-  const appearance = after.initial.locations[room]?.initialAppearance;
+  const appearance = compact ? '' : after.initial.locations[room]?.initialAppearance;
   sentences.push(`${name}现在在${locationName(after, room)}${appearance ? `，${squash(appearance).slice(0, 160)}` : ''}。`);
-  const props = sameRoomItems(after, view).slice(0, 3);
+  const props = compact ? [] : sameRoomItems(after, view).slice(0, 3);
   for (const id of props) {
     const item = after.initial.items[id];
     if (!item) continue;
@@ -224,7 +239,7 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   for (const id of others.slice(0, 3)) {
     const other = after.initial.characters[id];
     const current = after.characters[id];
-    const looks = [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 70);
+    const looks = compact ? '' : [other.initialAppearance, ...activeText(current.appearanceChanges)].map(squash).filter(Boolean).join('，').slice(0, 70);
     const where = current.position.slotId ? locationName(after, room) : locationName(after, current.position.containerId);
     sentences.push(`${other.name}也在${where}${looks ? `，${looks}` : ''}。`);
   }
@@ -249,7 +264,7 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
     ].join(String.fromCharCode(10))
     : [
       `你是中文小说作者。下面是这一回合已经结算的事实，请写成 ${name} 视角的小说正文，按这一回合的内容决定长短。`,
-      '要求：只写事实里明确出现的动作、位置、外观和结果；不要复述这份清单；不要写时间、地点、人物之类的标题；不要用 Markdown；不要新增人物、地点、物品、事件、数字、伤情、往事或心理活动；事实里没有直接引用的原话时不要写对白；短句，分 2 到 3 段。',
+      '要求：只写事实里明确出现的动作、位置、外观和结果；不要复述这份清单；行动原文只是玩家的意图，只有结算结果里实际发生的动作才算发生，不要把没有结算的动作写成已完成；不要写时间、地点、人物之类的标题；不要用 Markdown；不要新增人物、地点、物品、事件、数字、伤情、往事或心理活动；每个人物的伤势、衣物和物品只属于本人，不要用“他/她”把一个人的特征或物品挪到另一个人身上，主角只拿自己持有的物品；事实里没有直接引用的原话时不要写对白；短句，分 2 到 3 段。',
       '事实：',
       brief,
       '正文：',

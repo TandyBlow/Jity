@@ -62,6 +62,17 @@ export interface DriverOptions {
    * settlement. The product session enables it; direct controller callers
    * keep the historical serial behaviour unless they opt in. */
   narrationOverlap?: boolean;
+  /** D-018 product split: positions/appearances run per group; tasks,
+   * subtasks, personality and sanity run once per point and stage through the
+   * time-scan unit. Scenario drivers keep the historical merged batch. */
+  splitPointUpdates?: boolean;
+  /** Wall-clock budget for one player turn. When it runs out at the
+   * continuation boundary, the round is cancelled visibly instead of starting
+   * another automatic round the page deadline would cut anyway. */
+  turnBudgetMs?: number;
+  /** D-024 evaluation arm: force a program handback at the continuation
+   * boundary instead of calling the model. Default off. */
+  forceHandback?: boolean;
 }
 
 export type DriverStatus =
@@ -119,6 +130,9 @@ export class ControllerDriver {
   private readonly retryLimit: number;
   private readonly identityAliases: Record<string, string>;
   private readonly identityGate: boolean;
+  private readonly splitPointUpdates: boolean;
+  private readonly turnBudgetMs: number | null;
+  private readonly forceHandback: boolean;
   private readonly narration: PointNarrationQueue | null;
   private narrationBootstrapped = false;
   private narrationDirty = false;
@@ -136,6 +150,9 @@ export class ControllerDriver {
     this.retryLimit = options?.retryLimit ?? 3;
     this.identityAliases = options?.identityAliases ?? {};
     this.identityGate = options?.identityGate ?? false;
+    this.splitPointUpdates = options?.splitPointUpdates ?? false;
+    this.turnBudgetMs = options?.turnBudgetMs ?? null;
+    this.forceHandback = options?.forceHandback ?? false;
     this.narration = options?.narrationOverlap
       ? new PointNarrationQueue({
         transport: io.transport,
@@ -200,7 +217,7 @@ export class ControllerDriver {
   }
 
   private scheduleView(narrationBusy: boolean, command?: HarnessCommand) {
-    return { world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, ...(command ? { command } : {}), activeInput: this.state.activeInput, identityGate: this.identityGate, narrationBusy, narrationOverlap: this.narration != null };
+    return { world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, ...(command ? { command } : {}), activeInput: this.state.activeInput, identityGate: this.identityGate, forceHandback: this.forceHandback, narrationBusy, narrationOverlap: this.narration != null };
   }
 
   /** Refresh the controller's served head/control after the queue wrote a
@@ -393,6 +410,7 @@ export class ControllerDriver {
     this.memory.allocPlan = structuredClone(allocPlan);
     for (const key of clearSlotKeys) delete this.memory.ids[key];
     this.memory.playerInput = { text, order: [...order] };
+    this.memory.turnStartedAt = Date.now();
   }
 
   private nextRequestId(): Id {
@@ -441,6 +459,14 @@ export class ControllerDriver {
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
+    // The page's 295 s deadline is the backstop; a spent turn budget stops the
+    // chain at the continuation boundary with a visible cancel reason instead
+    // of starting an automatic round the deadline would abort mid-call.
+    if (this.turnBudgetMs != null && this.state.control.phase === 'assess_continuation'
+      && this.memory.continuation == null && this.memory.continuationStop == null
+      && this.memory.turnStartedAt != null && Date.now() - this.memory.turnStartedAt >= this.turnBudgetMs) {
+      this.memory.continuationStop = { reason: 'turn_budget' };
+    }
     const decision = scheduleNext(this.scheduleView(this.narrationBusy, command && command.kind !== 'player_input' ? command : undefined));
     switch (decision.kind) {
       case 'await_command': {
@@ -494,6 +520,12 @@ export class ControllerDriver {
           this.memory.lastModel = null;
           this.nextRequestId();
           return undefined;
+        }
+        if (!outcome.ok) {
+          // Name the operation behind a terminal stop; the reason alone cannot
+          // tell a malformed conclude from a malformed successor prep.
+          const reason = outcome.terminal && 'reason' in outcome.terminal ? outcome.terminal.reason : null;
+          console.info('[world-local transport]', JSON.stringify({ operation: decision.operation, reason }));
         }
         return outcome.terminal ? this.settleNarration(outcome.terminal) : undefined;
       }
@@ -616,6 +648,12 @@ export class ControllerDriver {
           continue;
         }
         if (!(error instanceof WorldApiError)) throw error;
+        // Refusal details name the offending field; the terminal reason alone
+        // says only "request_malformed".
+        console.info('[world-local transport error]', JSON.stringify({
+          operation, code: error.response.error.code, details: error.response.error.details ?? null,
+          message: error.message ?? null,
+        }));
         const reaction = errorReaction(error.response);
         this.adoptState(error.response);
         if (reaction.followup === 'retry_same_request') {
@@ -1008,6 +1046,16 @@ export class ControllerDriver {
         this.retireFinishedSources(); // a final not-admitted roll can finish the source too
         break;
       }
+      case 'checkpoint_begin_point':
+        if (this.splitPointUpdates) {
+          // D-018: the point's scene stages run per group; the rest stages run
+          // once after the last group is staged.
+          this.memory.updatesStages = ['position', 'appearance'];
+          this.memory.updatesCalls = [];
+          this.memory.updatesApplied = 0;
+          this.memory.pointRestPending = false;
+        }
+        break;
       case 'checkpoint_stage_unit':
         this.memory.restoredUnit = null;
         this.memory.staged.push({ groupId: req.groupId as Id, actorIds: (req.candidates as { actorIds: Id[] }).actorIds, candidates: req.candidates as never, results: req.results as Record<Id, string> });
@@ -1017,6 +1065,17 @@ export class ControllerDriver {
         this.memory.updatesPendingRefs = []; // 未决引用已随结算批次成为状态事实
         this.memory.groupActions = []; // 本组冻结行动已随暂存批次结算
         this.memory.commitPayload = null;
+        if (this.splitPointUpdates) {
+          const plan = this.memory.plan?.[this.memory.planIndex];
+          const visited = new Set(this.state.work?.working.visitedIds ?? []);
+          const lastPlanPoint = this.memory.plan != null && this.memory.planIndex === this.memory.plan.length - 1;
+          if (plan && lastPlanPoint && plan.actorIds.every((actor) => visited.has(actor))) {
+            this.memory.updatesStages = ['tasks', 'subtasks', 'personality', 'sanity'];
+            this.memory.pointRestPending = true;
+            this.memory.updatesCalls = [];
+            this.memory.updatesApplied = 0;
+          }
+        }
         break;
       case 'checkpoint_stage_time_scan':
         // The scan candidate joins later previews' settlement lists, but a
@@ -1028,6 +1087,8 @@ export class ControllerDriver {
         this.memory.updatesPendingRefs = []; // 未决引用已随结算批次成为状态事实
         this.memory.groupActions = []; // 本组冻结行动已随暂存批次结算
         this.memory.commitPayload = null;
+        this.memory.pointRestPending = false;
+        if (this.splitPointUpdates) this.memory.updatesStages = [];
         break;
       case 'checkpoint_record_skip': {
         // 该槽位已处理（显式跳过）：即使后续重试/回放，也不再重新询问行动。

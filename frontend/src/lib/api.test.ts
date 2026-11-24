@@ -3,14 +3,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   activateTimelineNode,
   createSession,
-  fetchCampaignProgress,
   generateBackground,
   generateFromNovel,
   generateScene,
   getCampaign,
   getMemoryTrace,
   listSlots,
-  previewActionCheck,
 } from "./api";
 
 /**
@@ -66,14 +64,14 @@ describe("error handling", () => {
 });
 
 describe("createSession", () => {
-  it("defaults to the campaign entry point when no campaign is supplied", async () => {
+  it("sends only the model for a free-play session", async () => {
     const calls = stubFetch({ body: JSON.stringify({ session_id: "s" }) });
 
     await createSession("deepseek-v4-flash");
 
     expect(calls[0].url).toBe(`${BASE}/sessions`);
     expect(calls[0].init.method).toBe("POST");
-    expect(jsonBody(calls[0].init)).toEqual({ model: "deepseek-v4-flash", campaign_filename: "default_campaign.json" });
+    expect(jsonBody(calls[0].init)).toEqual({ model: "deepseek-v4-flash" });
   });
 
   it("defaults arc and session index to 0 when a campaign is given", async () => {
@@ -129,50 +127,6 @@ describe("generateScene", () => {
       slot_name: "slot",
       timeline_node_id: 7,
     });
-  });
-
-  it("sends only the die face and option identity separately from the raw action", async () => {
-    const calls = stubFetch({ body: JSON.stringify({ output: {} }) });
-    const action = "尝试推开铁门。";
-
-    await generateScene({
-      sessionId: "s1",
-      playerAction: action,
-      timelineNodeId: 7,
-      actionCheck: { roll: 20, option_index: 0 },
-      optionIndex: 0,
-    });
-
-    expect(jsonBody(calls[0].init)).toEqual({
-      player_action: action,
-      timeline_node_id: 7,
-      action_check: { roll: 20, option_index: 0 },
-      option_index: 0,
-    });
-  });
-
-  it("preserves an unchecked option identity even when two options have the same text", async () => {
-    const calls = stubFetch({ body: JSON.stringify({ output: {} }) });
-    await generateScene({ sessionId: "s1", playerAction: "继续观察", timelineNodeId: 7, optionIndex: 0 });
-    expect(jsonBody(calls[0].init)).toEqual({ player_action: "继续观察", timeline_node_id: 7, option_index: 0 });
-  });
-});
-
-describe("previewActionCheck", () => {
-  it("previews a custom action against the current turn before rolling", async () => {
-    const preview = { check: { requires_check: true, target: 16 }, option_index: null };
-    const calls = stubFetch({ body: JSON.stringify(preview) });
-
-    await expect(previewActionCheck({ sessionId: "s1", playerAction: "潜入办公室", timelineNodeId: 7 })).resolves.toEqual(preview);
-    expect(calls[0].url).toBe(`${BASE}/sessions/s1/check`);
-    expect(calls[0].init.method).toBe("POST");
-    expect(jsonBody(calls[0].init)).toEqual({ player_action: "潜入办公室", timeline_node_id: 7 });
-  });
-
-  it("preserves a conflict status so callers refresh instead of using a stale rule", async () => {
-    stubFetch({ ok: false, status: 409, body: JSON.stringify({ detail: "当前回合已变化" }) });
-    await expect(previewActionCheck({ sessionId: "s1", playerAction: "推门", timelineNodeId: 7 }))
-      .rejects.toMatchObject({ status: 409, message: "当前回合已变化" });
   });
 });
 
@@ -281,26 +235,5 @@ describe("getMemoryTrace", () => {
     stubFetch({ ok: false, status: 404, body: JSON.stringify({ detail: "Session not found" }) });
 
     await expect(getMemoryTrace("nope")).rejects.toThrow("Session not found");
-  });
-});
-
-describe("fetchCampaignProgress", () => {
-  it("accepts the persisted whole-campaign budget", async () => {
-    stubFetch({ body: JSON.stringify({ turns_total: 7, max_turns_per_campaign: 50 }) });
-    await expect(fetchCampaignProgress("s1")).resolves.toMatchObject({
-      turns_total: 7, max_turns_per_campaign: 50,
-    });
-  });
-
-  it.each([
-    {},
-    { turns_total: 7 },
-    { turns_total: 7, max_turns_per_campaign: 0 },
-    { turns_total: 7, max_turns_per_campaign: "50" },
-    { turns_total: -1, max_turns_per_campaign: 50 },
-    { turns_total: 1.5, max_turns_per_campaign: 50 },
-  ])("ignores incomplete or invalid progress: %j", async (payload) => {
-    stubFetch({ body: JSON.stringify(payload) });
-    await expect(fetchCampaignProgress("s1")).resolves.toBeNull();
   });
 });

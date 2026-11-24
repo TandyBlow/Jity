@@ -13,18 +13,6 @@ class CampaignStoreMixin:
                 (relations_json, campaign_id, slot_name),
             )
 
-    def update_recap_fields(self, campaign_id: str, recap_compressed: str, recap_full: str, slot_name: str = "default") -> None:
-        """Update only the recap columns, leaving progress counters untouched.
-
-        Used on the deferred turn path, where recap storage must not advance
-        turn_in_session or revealed_anchors ahead of the node commit.
-        """
-        with self.connect() as db:
-            db.execute(
-                "UPDATE campaign_progress SET recap_compressed = ?, recap_full = ?, updated_at = CURRENT_TIMESTAMP WHERE campaign_id = ? AND slot_name = ?",
-                (recap_compressed, recap_full, campaign_id, slot_name),
-            )
-
     def read_campaign_progress(self, campaign_id: str, slot_name: str = "default", conn: Any = None) -> dict[str, Any] | None:
         # conn: read on a caller-owned connection (commit-turn single-connection
         # flow keeps even reads inside its transaction for a consistent snapshot).
@@ -45,13 +33,13 @@ class CampaignStoreMixin:
             ).fetchone()
             return dict(row) if row else None
 
-    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default", head_turn_id: int | None = None, turns_total: int = 0) -> None:
+    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default", head_turn_id: int | None = None) -> None:
         with self.connect() as db:
             db.execute(
                 """
                 INSERT INTO campaign_progress
-                  (campaign_id, slot_name, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full, head_turn_id, turns_total)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  (campaign_id, slot_name, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full, head_turn_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(campaign_id, slot_name) DO UPDATE SET
                   arc_index = excluded.arc_index,
                   session_index = excluded.session_index,
@@ -62,7 +50,6 @@ class CampaignStoreMixin:
                   recap_compressed = excluded.recap_compressed,
                   recap_full = excluded.recap_full,
                   head_turn_id = COALESCE(excluded.head_turn_id, campaign_progress.head_turn_id),
-                  turns_total = excluded.turns_total,
                   updated_at = CURRENT_TIMESTAMP
                 """,
                 (
@@ -77,6 +64,5 @@ class CampaignStoreMixin:
                     recap_compressed,
                     recap_full,
                     head_turn_id,
-                    turns_total,
                 ),
             )

@@ -97,7 +97,7 @@ interface ResultsAnswer {
   dropped?: { memberId: Id; label: string; reason: 'not_a_group_member' }[];
   /** Facts dropped because they explain another character's action for a
    * member whose own action provably did not happen (all rolls denied). */
-  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' }[];
+  droppedFacts?: { memberIds: Id[]; original: string; reason: 'explains_another_character' | 'inactive_no_result' | 'duplicates_another_member' | 'no_result_text' | 'contradicts_appearance' | 'unsupported_action' | 'unknown_entity_no_name' | 'unknown_entity_named' }[];
   /** Members whose judgement row the model omitted and which had no declared
    * roll target; they are recorded as no_change and must be visible in evidence. */
   implicitJudgments?: Id[];
@@ -185,7 +185,8 @@ export async function runResults(
     return failure(key, parsed.error, started);
   }
   const { groupId, members, workingState } = parsed;
-  const prompt = buildResultsPrompt(groupId, members, workingState);
+  const prompt = buildResultsPrompt(groupId, members, workingState, options.unknownEntityRule ?? false, options.compactPrompts ?? false, options.unknownEntityExample ?? false);
+  const strictKnownEntities = options.strictKnownEntities !== false;
   let calls: ModelCallEvidence[] = [];
   // The last attempt drops a fact that has no visible result instead of failing
   // the point: old runs (95dc, 415c, d101, a178) answered only
@@ -197,7 +198,7 @@ export async function runResults(
   const lenient = () => attempts >= 3;
   try {
     const answer = await callJson(engine, prompt, {
-      maxTokens: options.maxTokens?.results ?? 420,
+      maxTokens: options.maxTokens?.results ?? 640,
       temperature: options.temperature ?? 0,
       timeoutMs: options.timeoutMs,
       maxPromptChars: options.maxPromptChars,
@@ -209,16 +210,21 @@ export async function runResults(
       jsonSchema: RESULTS_SCHEMA,
       validate: (value) => {
         attempts += 1;
-        readResultsAnswer(value, members, workingState, { dropEmptyResults: lenient() });
+        const parsedAnswer = readResultsAnswer(value, members, workingState, { dropEmptyResults: lenient() });
+        if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState, lenient());
       },
       // A retry has to name the frozen members: the 3turn 9623 repair answered
       // nono only while the group was lu+nono, so «missing judgment for lu» alone
       // did not stop it from omitting the player again.
-      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条；不要给场景里的其他人写 judgment。`,
+      feedback: `本组只有 ${members.map((member) => `${workingState.initial.characters[member.memberId]?.name ?? member.memberId}(${member.memberId})`).join('、')}；judgments 必须每人一条，且 memberId 只能是这些 id；facts 每人至少一条，每条 fact 的 memberIds 必须包含这句话写到的人；不要把某人的结果写在别人的 fact 里；不要给场景里的其他人写 judgment；事实里不得出现未登记的人名、物品或地点（动作里提到但世界清单里没有的名字），这种行动必须判 not_achieved 或 blocked。`,
     });
     calls = answer.calls;
     // The accepted answer settled under the same rule the last attempt used.
     const parsedAnswer = readResultsAnswer(answer.value, members, workingState, { dropEmptyResults: lenient() });
+    // The validate pass may have rewritten an unknown-entity fact from the
+    // model's own blocked judgment; re-apply it to the accepted parse so the
+    // committed facts (and the narration prompt) carry the blocked sentence.
+    if (strictKnownEntities) assertKnownEntities(parsedAnswer, members, workingState, true);
     const value = normalizeResults(parsedAnswer, members);
     const evidence = makeEvidence(key, answer.calls, false, undefined, {
       groupId,
@@ -282,6 +288,104 @@ export async function runResults(
   }
 }
 
+const STOP_NAMES = /^(他|她|它|自己|裁判|大家)/u;
+
+/** A fact may not name an entity the world does not register. The player can
+ * introduce a name in the action text ("递给阿豹"); the model once settled that
+ * handoff as achieved although no such character exists. Deterministic check,
+ * default on; pass strictKnownEntities:false to reproduce the old behaviour. */
+function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], state: WorldState, dropIfUnresolved = false): void {
+  const registry = new Set<string>();
+  for (const value of Object.values(state.initial.characters)) registry.add(String(value?.name ?? ''));
+  for (const value of Object.values(state.initial.items)) registry.add(String(value?.name ?? ''));
+  for (const value of Object.values(state.initial.locations)) registry.add(String(value?.name ?? ''));
+  for (const member of members) {
+    for (const match of member.actionText.matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)) {
+      const name = match[1];
+      if (!name || registry.has(name) || registry.has(name.slice(0, 2)) || STOP_NAMES.test(name) || /[的了着过来去上下出进回起看听]/u.test(name)) continue;
+      // An explicit blocked fact may mention the unknown name while saying it
+      // was not there (run81: «阿豹不在场，未能转交»). Anything else that
+      // names the name — including a fact with no outcome field — asserts the
+      // contact and is a false success (run82 wrote the handoff as done with
+      // no outcome, so the old completed-only check let it through).
+      const hit = answer.facts.find((fact) => {
+        const text = String(fact.text ?? '');
+        if (!text.includes(name)) return false;
+        // A fact without an explicit negative cue asserts the contact even if
+        // its outcome field says blocked (normalize derives that from the
+        // judgment); the text is what the narrator reads.
+        return !/不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(text);
+      });
+      if (hit) {
+        // The 0.6B can state the failure in its judgment while its fact still
+        // asserts completion (run107: «阿豹不在场，未能…» in judgment,
+        // «递给阿豹» completed in facts). Use the model's own blocked words as
+        // the fact and mark it blocked; any other completed fact still fails.
+        const actorId = String((hit as { actorId?: unknown }).actorId ?? (Array.isArray(hit.memberIds) ? hit.memberIds[0] : '') ?? '');
+        const blocked = answer.judgments.find((judgment) => judgment.memberId === actorId
+          && (judgment.label === 'blocked' || judgment.label === 'not_achieved')
+          && /不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(String(judgment.reason ?? '')));
+        if (blocked) {
+          const reason = String(blocked.reason ?? '').trim();
+          // A generic placeholder reason is not a fact (run125 s14).
+          const generic = reason.replace(/没有这个人|没有这件东西|不在场|[\/。！？；，、\s]/gu, '') === '';
+          if (generic) {
+            const at = answer.facts.indexOf(hit);
+            if (at >= 0) answer.facts.splice(at, 1);
+            (answer.droppedFacts ??= []).push({ memberIds: [actorId], original: String(hit.text ?? ''), reason: 'unknown_entity_named' });
+            continue;
+          }
+          const rewrite = hit as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
+          rewrite.text = reason;
+          rewrite.outcome = 'blocked';
+          rewrite.unknownEntityRewrite = true;
+          continue;
+        }
+        if (dropIfUnresolved) {
+          // Repairs exhausted: settle without the false success (run125 s06).
+          const at = answer.facts.indexOf(hit);
+          if (at >= 0) answer.facts.splice(at, 1);
+          (answer.droppedFacts ??= []).push({ memberIds: [actorId], original: String(hit.text ?? ''), reason: 'unknown_entity_named' });
+          continue;
+        }
+        throw new Error(`results_unknown_entity:${name}:${String(hit.text).slice(0, 30)}`);
+      }
+      // A retry can drop the unknown name and claim success (run113 s06).
+      const dropped = answer.facts.find((fact) => {
+        const owner = String((fact as { actorId?: unknown }).actorId ?? (Array.isArray(fact.memberIds) ? fact.memberIds[0] : '') ?? '');
+        if (owner !== member.memberId) return false;
+        const text = String(fact.text ?? '');
+        if (text.includes(name)) return false;
+        if (/不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(text)) return false;
+        // Parsing derives blocked from the judgment; the text is the claim.
+        return true;
+      });
+      if (dropped) {
+        const blocked = answer.judgments.find((judgment) => judgment.memberId === member.memberId
+          && (judgment.label === 'blocked' || judgment.label === 'not_achieved')
+          && /不在场|没有|未能|没能|未被|没在|不在|无法|拒绝/u.test(String(judgment.reason ?? '')));
+        if (blocked) {
+          const reason = String(blocked.reason ?? '').trim();
+          // A generic placeholder reason is not a fact (run125 s14).
+          const generic = reason.replace(/没有这个人|没有这件东西|不在场|[\/。！？；，、\s]/gu, '') === '';
+          if (!generic) {
+            const rewrite = dropped as unknown as { text: string; outcome?: string; unknownEntityRewrite?: boolean };
+            rewrite.text = reason;
+            rewrite.outcome = 'blocked';
+            rewrite.unknownEntityRewrite = true;
+            continue;
+          }
+        }
+        // Weak evidence: drop the fact, don't abort the point (run121 s13).
+        const at = answer.facts.indexOf(dropped);
+        if (at >= 0) answer.facts.splice(at, 1);
+        (answer.droppedFacts ??= []).push({ memberIds: [member.memberId], original: String(dropped.text ?? ''), reason: 'unknown_entity_no_name' });
+        continue;
+      }
+    }
+  }
+}
+
 function parseResultsInput(input: Json): ResultsInput | { error: string } {
   const data = asRecord(input);
   const state = data.workingState;
@@ -339,7 +443,7 @@ function parseResultsInput(input: Json): ResultsInput | { error: string } {
   return { groupId, members, workingState: world };
 }
 
-function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState): string {
+function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldState, unknownEntityRule = false, compact = false, unknownExample = false): string {
   const memberLines = members.map((member) => {
     const name = state.initial.characters[member.memberId]?.name ?? member.memberId;
     // The effects row is fully determined by the frozen admission: printing it
@@ -355,10 +459,23 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;
   });
   const sceneIds = new Set<Id>([...members.map((member) => member.memberId)]);
-  for (const member of members) {
-    for (const id of visibleCharacters(state, member.memberId)) sceneIds.add(id);
-    for (const id of sameRoomItems(state, member.memberId)) sceneIds.add(id);
-    for (const roll of member.rolls) sceneIds.add(roll.targetId);
+  if (compact) {
+    for (const member of members) {
+      const text = member.actionText;
+      for (const [id, character] of Object.entries(state.initial.characters)) {
+        if (character.name && text.includes(String(character.name))) sceneIds.add(id);
+      }
+      for (const [id, item] of Object.entries(state.initial.items)) {
+        if (item.name && text.includes(String(item.name))) sceneIds.add(id);
+      }
+      for (const roll of member.rolls) sceneIds.add(roll.targetId);
+    }
+  } else {
+    for (const member of members) {
+      for (const id of visibleCharacters(state, member.memberId)) sceneIds.add(id);
+      for (const id of sameRoomItems(state, member.memberId)) sceneIds.add(id);
+      for (const roll of member.rolls) sceneIds.add(roll.targetId);
+    }
   }
   const scene = [...sceneIds].filter((id) => state.characters[id] || state.items[id])
     .map((id) => state.characters[id] ? describeResultCharacter(state, id) : describeItem(state, id));
@@ -382,6 +499,8 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '规则：',
     '- 只能使用下面出现的人物、地点、物品；不得新增人物、地点、物品、往事、线索或任务。',
     '- 一个成员的行动可以成功、部分成功、失败或被制止；行动被接纳不等于目标达成。',
+    ...(unknownEntityRule ? ['- 目标或受事若是未登记实体（不在本世界的人物/物品/地点清单，或不在当前场景）：judgment 写 not_achieved，fact 的 outcome 写 blocked，写清“没有这个人/没有这件东西/不在场”；不得写 completed，也不得给它编造回应。'] : []),
+    ...(unknownExample ? ['- 例（照格式，不要照抄名字）：“把钥匙递给某甲”而名单里没有某甲 → judgment: not_achieved；fact: {"text":"某甲不在场，未能把钥匙交出去","memberIds":["<本组成员id>"],"actorId":"<本组成员id>","outcome":"blocked"}。'] : []),
     '- 骰点 准入=false 表示该目标这次没有被迫反应；已行动人物不会再次反应。不要写 effects：谁反应了由程序按冻结的准入值填写。',
     '- memberId、targetId 用括号里的 id 或人物全名；不要照抄“成员id/目标id”这类格式占位符。',
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
@@ -392,7 +511,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：只写“看懂了规则牌”会把走路从结果里丢掉；不要写“完成参赛选择/任务”。',
     '- 问话就写谁问了谁、对方答了什么或没答；不要写“骰点未获取，因此未能达成目标”。',
     '- 事实必须是这次冻结行动的结果；不要把示例、上一回合的事或别的成员的行动抄成本次事实。',
-    '- fact 带字段：actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
+    '- fact 带字段：text=这一句事实的完整原句（必填，不能为空）、memberIds=这句话写到的人（必填，数组，只能本组成员）、actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
     '- failed/blocked 照实写，保留“没有/未/被阻止”；任务目标、骰点资格、判定理由都不是事实。',
     `本组：${groupId}`,
     '成员：',
@@ -615,6 +734,27 @@ function readResultsAnswer(
     for (const number of cleaned.text.match(/\d+/g) ?? []) {
       if (!knownNumbers.has(number)) throw new Error(`unverified number in fact: ${number}`);
     }
+    // Strip a fault the registered item state never had (run114-122).
+    if (/故障|损坏|还坏着/u.test(cleaned.text)) {
+      const names = Object.values(state.initial.items).map((item) => String(item?.name ?? '')).filter(Boolean);
+      const named = names.filter((name) => cleaned.text.includes(name));
+      const supported = JSON.stringify(state.items).includes('故障') || JSON.stringify(state.items).includes('损坏');
+      if (named.length && !supported) {
+        const before = cleaned.text;
+        cleaned.text = cleaned.text.replace(/故障的?|损坏的?|还坏着/gu, '');
+        if (cleaned.text !== before) cleaned.removed.push('故障');
+      }
+    }
+    // Don't settle a rules reading the action never implied (run113/114).
+    if (cleaned.text.includes('规则') && !/没有|未|无|不在/u.test(cleaned.text)) {
+      const owners = recipientsFor(rawFact);
+      const supported = owners.some((id) => String(memberById.get(id)?.actionText ?? '').includes('规则'));
+      if (owners.length && !supported) {
+        droppedFacts.push({ memberIds: owners, original, reason: 'unsupported_action' });
+        for (const id of owners) coveredByDrop.add(id);
+        continue;
+      }
+    }
     // Structured fields: actor is the executor, target the recipient, outcome
     // the direction. An old answer without them is still accepted (derived),
     // but a field the model did write must be right.
@@ -642,13 +782,12 @@ function readResultsAnswer(
     }
     const rawRecipients = Array.isArray(rawFact.memberIds) ? rawFact.memberIds.map(asString).filter(Boolean) : [];
     if (!rawRecipients.length) throw new Error('fact must name at least one member');
-    const recipientIds = rawRecipients.map((raw) => {
+    let recipientIds = rawRecipients.map((raw) => {
       const id = resolveCharacterId(state, raw);
       if (!id) throw new Error(referenceError(state, raw, 'character', members[0]?.memberId));
       if (!memberById.has(id)) throw new Error(`fact names non-member ${raw}${id !== raw ? ` (${id})` : ''}; facts 的 memberIds 只能填本组成员 ${members.map((row) => row.memberId).join(',')}`);
       return id;
-    });
-    if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
+    });    if (new Set(recipientIds).size !== recipientIds.length) throw new Error('fact repeats a member');
     // The fact must be this group's own action result. 736a's reaction group
     // answered with 路明非未被掀开袖口，未看到规则牌… — the judgement's
     // explanation of 路明非, who the other group already settled as walking in
@@ -732,6 +871,43 @@ function readResultsAnswer(
     // An ownership swap can remove the only mention of the wrong owner; the
     // “another character's action” check must read the corrected sentence.
     if (ownershipAdjusted.length) mentioned = mentionedCharacterIds(state, cleaned.text);
+    // A shared fact must be about everyone it is attributed to. When the
+    // sentence names exactly one member, the extra ids are the model's slip
+    // (s07 audit: one band sentence declared for nono and lu).
+    if (mentioned.length === 1 && recipientIds.length > 1 && memberById.has(mentioned[0])) {
+      recipientIds = [mentioned[0]];
+    }
+    // A settled fact may not give a character an identification band the
+    // committed appearance says they do not have (s02/s05/s16 audit: the fact
+    // asserted a ready band while the state said 身上没有红蓝识别带).
+    if (mentioned.length <= 1 && /识别带/u.test(cleaned.text) && !/没有[^。；]*识别带/u.test(cleaned.text)) {
+      const contradicted = recipientIds.filter((id) => /没有[^。；]*识别带/u.test(effectiveAppearance(state, id)));
+      if (contradicted.length) {
+        if (!options.dropEmptyResults) {
+          const names = contradicted.map((id) => state.initial.characters[id]?.name ?? id).join('、');
+          throw new Error(`fact gives ${names} an identification band, but the committed appearance says none: ${original}。只写已结算的物件和状态。`);
+        }
+        droppedFacts.push({ memberIds: recipientIds, original, reason: 'contradicts_appearance' });
+        for (const id of recipientIds) coveredByDrop.add(id);
+        continue;
+      }
+    }
+    // A closed door may not contradict a location whose committed appearance
+    // says the door is open (s03 audit: the fact said 紧闭的门 while the lane
+    // was 器材棚门敞开).
+    if (mentioned.length <= 1 && /门/u.test(cleaned.text) && /(紧闭|关着|关着门|锁着)/u.test(cleaned.text)
+      && !/没有|不/u.test(cleaned.text)) {
+      const rooms = new Set(recipientIds.map((id) => state.characters[id]?.position.containerId).filter((room): room is Id => Boolean(room)));
+      const openRoom = [...rooms].some((room) => /门[^。；]{0,4}(敞开|开着|打开)/u.test(effectiveLocationAppearance(state, room)));
+      if (openRoom) {
+        if (!options.dropEmptyResults) {
+          throw new Error(`fact closes a door the committed location says is open: ${original}。只写已结算的物件和状态。`);
+        }
+        droppedFacts.push({ memberIds: recipientIds, original, reason: 'contradicts_appearance' });
+        for (const id of recipientIds) coveredByDrop.add(id);
+        continue;
+      }
+    }
     if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))) {
       // When the recipients provably did nothing, the fact is the judgement's
       // explanation of somebody else's action: drop it instead of spending a
@@ -740,9 +916,16 @@ function readResultsAnswer(
         droppedFacts.push({ memberIds: recipientIds, original, reason: 'explains_another_character' });
         continue;
       }
-      const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
-      const inGroup = mentioned.some((id) => memberById.has(id));
-      throw new Error(`fact names only ${names}, who ${inGroup ? 'belong to another group of this turn' : `${names.length > 1 ? 'are' : 'is'} not in this group`}; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+      // On the final attempt the sentence names exactly one member: that member
+      // is its subject and the declared memberIds are the slip. Reattribute it
+      // instead of aborting the point over an id that the text already states.
+      if (options.dropEmptyResults && mentioned.length === 1 && memberById.has(mentioned[0])) {
+        recipientIds = [mentioned[0]];
+      } else {
+        const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
+        const inGroup = mentioned.some((id) => memberById.has(id));
+        throw new Error(`fact names only ${names}, who ${inGroup ? 'belong to another group of this turn' : `${names.length > 1 ? 'are' : 'is'} not in this group`}; 只写本组成员自己的行动结果（${actionHint}），不要写其他人物的行动或判定理由。`);
+      }
     }
     // A mechanics clause can take the subject with it. If the remaining result
     // is a continuation (“且未被允许反应”), prefix the recipient's display name
@@ -942,12 +1125,35 @@ function readResultsAnswer(
   };
 }
 
+/** Effective appearance (initial + active changes) for the band/ownership check. */
+function effectiveAppearance(state: WorldState, id: Id): string {
+  const initial = state.initial.characters[id]?.initialAppearance ?? '';
+  const changes = (state.characters[id]?.appearanceChanges ?? [])
+    .filter((change) => change.active)
+    .map((change) => String(change.text ?? ''));
+  return [initial, ...changes].filter(Boolean).join('；');
+}
+
+function effectiveLocationAppearance(state: WorldState, id: Id): string {
+  const initial = state.initial.locations[id]?.initialAppearance ?? '';
+  const changes = (state.locations[id]?.appearanceChanges ?? [])
+    .filter((change) => change.active)
+    .map((change) => String(change.text ?? ''));
+  return [initial, ...changes].filter(Boolean).join('；');
+}
+
 /** The results prompt writes its example fact as «<name>做了什么/看到什么».
  * A model that copies it has written no result; keeping it would settle the
  * template as the world's fact. */
 export function isExampleFactText(text: string): boolean {
   const compact = text.replace(/\s+/gu, '');
   if (/做了什么\/看到什么|做了什么\/看到了什么|做了什么\/听见了什么/u.test(compact)) return true;
+  // The results prompt's fact placeholder is copied verbatim by the small
+  // model (s09 audit: 〈这一步实际做了什么、谁回应了什么〉 settled as a fact).
+  if (/〈[^〉]*(?:做了什么|谁回应)[^〉]*〉/u.test(compact)) return true;
+  // A state row is not a result (s06 audit: 唐骁（id=tang）在中央庭院的
+  // 位置为中央庭院；精神为38。).
+  if (/[（(]id=|位置为|精神为|精神值|任务状态|待办=/u.test(text)) return true;
   // The worked examples that sat in the rules block until 2026-11-11. A 0.6B
   // repeats a concrete example sentence as if it were this point's result, so
   // a prompt that still carries one (older build, cached page) must not let it

@@ -19,7 +19,6 @@ from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
 from app.services.prompt_builder import PromptBuilder
 from app.services.scenario_generator import ScenarioGenerator
-from tests.test_turn_commit_consistency import ENDING_STORY, auxiliary_text_response
 
 
 CAMPAIGNS = Path(__file__).resolve().parents[1] / "data" / "campaigns"
@@ -65,7 +64,6 @@ def runtime(tmp_path, monkeypatch):
 
     llm = MagicMock()
     llm.generate = AsyncMock()
-    llm.generate_text = AsyncMock(side_effect=auxiliary_text_response)
     llm.settings = SimpleNamespace(deepseek_api_key="test")
     llm.generate_json = AsyncMock(return_value={
         "options": list(OPENING_OPTIONS),
@@ -74,8 +72,11 @@ def runtime(tmp_path, monkeypatch):
     retriever = SimpleNamespace(retrieve_async=AsyncMock(return_value=[]))
     generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, MagicMock(), "test",
                                   campaign_manager_provider=lambda sid, slot: managers[sid])
-    from app import dependencies
-    monkeypatch.setattr(dependencies, "embedding_client", None)
+    memory = MagicMock()
+    memory.assemble_context_async = AsyncMock(side_effect=lambda *args, **kw: kw["campaign_context"])
+    memory.export_state.return_value = {}
+    memory.maintain = AsyncMock()
+    monkeypatch.setattr(generator, "_get_memory_controller", lambda *args: memory)
     monkeypatch.setattr(ExaminerAgent, "examine", AsyncMock(return_value=ActionRuling(
         permissibility=ActionPermissibility.PERMISSIBLE)))
     monkeypatch.setattr(DirectorAgent, "direct", AsyncMock(return_value=DirectorInstruction(
@@ -218,35 +219,33 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     )
     runtime.states.save_state(sid, session["game_name"], "test", state)
     await manager.advance_session()
-    runtime.llm.generate.return_value = (StoryOutput(
-        narration="你循着上一幕的线索抵达芝加哥火车站，芬格尔仍坐在旁边。",
-        current_location="芝加哥火车站候车大厅",
-        options=["询问芬格尔"],
-    ), 1)
-    result = await runtime.generator.generate(
-        sid, GenerateRequest(player_action="循着上一幕的线索赶往车站")
-    )
-    assert result.source == "llm"
+    result = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
+    assert result.source == "scripted"
     assert result.state["turn"] == 31
     assert result.state["health"] == 67
     assert result.state["current_location"] == "芝加哥火车站候车大厅"
     assert any(i["name"] == "纪念物" for i in result.state["items"])
     assert result.state["npcs"] == []
     assert all("旧卧室" not in event and "婶婶" not in event for event in result.state["recent_events"])
-    memory = runtime.states.get_session_payload(sid)["state"]["_memory_controller"]
-    assert "上一幕短期记忆" not in str(memory)
+    assert "_memory_controller" not in runtime.states.get_session_payload(sid)["state"]
 
+    runtime.llm.generate.return_value = (StoryOutput(
+        narration="你在芝加哥火车站睁开眼，芬格尔仍坐在旁边。",
+        current_location="芝加哥火车站候车大厅",
+        options=["询问芬格尔"],
+    ), 1)
+    continued = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
+    assert continued.source == "llm"
     prompt = runtime.llm.generate.call_args.args[0]
     first_opening = manager.campaign.arcs[0].sessions[0].opening_scene
     next_opening = manager.campaign.arcs[0].sessions[1].opening_scene
     assert next_opening in prompt
-    assert "循着上一幕的线索赶往车站" in prompt
     assert first_opening not in prompt
     assert "婶婶" not in prompt
     assert "堂弟" not in prompt
     assert "旧卧室" not in prompt
     director_context = DirectorAgent.direct.call_args.kwargs["narrative_context"]
-    assert "本幕开场前提（必须与玩家刚才的转场行动融合" in director_context
+    assert "当前幕固定开场（最高优先级" in director_context
     assert "芝加哥火车站候车大厅" in director_context
     assert next_opening in director_context
 
@@ -254,7 +253,7 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     active_slot = runtime.db.get_session(sid)["active_slot_name"]
     reloaded.load(CAMPAIGNS / FILES[1], campaign_id=sid, slot_name=active_slot)
     runtime.managers[sid] = reloaded
-    assert reloaded.progress.turn_in_session == 1
+    assert reloaded.progress.turn_in_session == 2
     payload = runtime.states.get_session_payload(sid)
     assert await runtime.generator._handle_opening_scene(
         sid, GenerateRequest(player_action="观察"), payload, payload["state"], "test", reloaded, 1
@@ -291,114 +290,6 @@ async def test_continue_after_next_opening_cannot_be_blocked_by_examiner(runtime
     blocked.assert_not_awaited()
 
 
-@pytest.mark.asyncio
-async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime):
-    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
-        session = (await client.post("/sessions", json={
-            "campaign_filename": "default_campaign.json",
-            "arc_index": 2,
-            "session_index": 1,
-        })).json()
-    sid = session["session_id"]
-    await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
-    runtime.llm.generate.return_value = (StoryOutput(
-        narration="你正准备继承封印。",
-        health_delta=-100,
-        current_location="钟楼地下封印室",
-        items_gained=[{"name": "错误路线奖励", "status": "owned"}],
-        memory_updates={
-            "world_facts_upserted": [{"name": "错误好结局事实"}],
-        },
-        options=["继续"],
-    ), 1)
-
-    result = await runtime.generator.generate(
-        sid,
-        GenerateRequest(player_action="继承封印"),
-    )
-
-    assert result.state["health"] == 0
-    assert result.output.game_over is True
-    assert result.output.game_over_reason == "空座位"
-    assert result.output.narration == ENDING_STORY
-    assert "镜像人格夺取玩家身份" in runtime.llm.generate_text.call_args.args[0]
-    assert result.output.options == []
-    assert not any(item["name"] == "错误路线奖励" for item in result.state["items"])
-    assert not any(fact["name"] == "错误好结局事实" for fact in result.state["world_facts"])
-    manager = runtime.managers[sid]
-    row = runtime.db.read_campaign_progress(
-        manager.progress.campaign_id,
-        manager.slot_name,
-    )
-    assert row["fsm_state"] == "campaign_end"
-    assert "anchor-seal-truth" in json.loads(row["revealed_anchors"])
-
-
-@pytest.mark.asyncio
-async def test_labelled_final_choice_ends_campaign(runtime):
-    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
-        session = (await client.post("/sessions", json={
-            "campaign_filename": "default_campaign.json",
-            "arc_index": 2,
-            "session_index": 1,
-        })).json()
-    sid = session["session_id"]
-    await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
-    manager = runtime.managers[sid]
-    manager.progress.revealed_anchors = ["anchor-seal-truth", "anchor-impostor-truth"]
-    runtime.llm.generate.return_value = (StoryOutput(
-        narration="你与同伴开始关闭封印。",
-        current_location="钟楼地下封印室",
-        options=["继续完成仪式"],
-    ), 1)
-
-    result = await runtime.generator.generate(
-        sid,
-        GenerateRequest(
-            player_action="我作出最终决定：共同关闭封印。保护同伴，承担这一选择的后果。"
-        ),
-    )
-
-    assert result.output.game_over is True
-    assert result.output.game_over_reason == "破晓共犯"
-    assert result.output.options == []
-    row = runtime.db.read_campaign_progress(manager.progress.campaign_id, manager.slot_name)
-    assert row["fsm_state"] == "campaign_end"
-
-
-@pytest.mark.asyncio
-async def test_final_session_hard_limit_waits_for_a_real_ending_choice(runtime):
-    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
-        session = (await client.post("/sessions", json={
-            "campaign_filename": "default_campaign.json",
-            "arc_index": 2,
-            "session_index": 1,
-        })).json()
-    sid = session["session_id"]
-    await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
-    manager = runtime.managers[sid]
-    manager.progress.turn_in_session = manager.resolve_max_turns() - 1
-    runtime.llm.generate.return_value = (StoryOutput(
-        narration="你仍在最终选择前调查祭坛。",
-        current_location="钟楼地下封印室",
-        options=["继续调查"],
-    ), 1)
-
-    result = await runtime.generator.generate(sid, GenerateRequest(player_action="观察祭坛"))
-
-    assert result.output.game_over is False
-    assert result.output.options == ["继续调查"]
-    assert result.output.game_over_reason == ""
-    assert manager.progress.arc_index == 2
-    assert manager.progress.session_index == 1
-    assert manager.progress.turn_in_session == manager.resolve_max_turns()
-    assert str(manager.fsm.state) != "campaign_end"
-    row = runtime.db.read_campaign_progress(manager.progress.campaign_id, manager.slot_name)
-    assert row["arc_index"] == 2
-    assert row["session_index"] == 1
-    assert row["fsm_state"] != "campaign_end"
-
-
 def test_explicit_empty_starting_state_clears_free_play_memory(runtime):
     from app.services.game_state.defaults import default_state
     campaign = SimpleNamespace(starting_state={"sanity": 0, "npcs": [], "items": [], "recent_events": [],
@@ -415,8 +306,8 @@ def test_explicit_empty_starting_state_clears_free_play_memory(runtime):
 
 
 @pytest.mark.asyncio
-async def test_omitted_campaign_creates_default_campaign(runtime):
+async def test_free_play_keeps_original_defaults(runtime):
     async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
         session = (await client.post("/sessions", json={})).json()
-    assert session["campaign_filename"] == "default_campaign.json"
-    assert session["state"]["current_location"] == "卡塞尔学院大门前"
+    assert session["campaign_filename"] is None
+    assert session["state"]["current_location"] == "卡塞尔学院报到处大厅"

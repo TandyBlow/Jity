@@ -25,12 +25,15 @@ describe('failed-turn recovery', () => {
     let narrationCalls = 0;
     let failNarration = 0;
     const model: WorldModelPort = {
-      async generate(task: ModelTask): Promise<Json> {
+      async generate(task: ModelTask, _key: string, input: Json): Promise<Json> {
         if (task === 'pointPlan') return [{ pointId: 'p_0', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order }];
         if (task === 'action') return { kind: 'act', text: '我沿着巷子走。' };
         if (task === 'targets') return { targets: [] };
         if (task === 'results') return {};
-        if (task === 'updates') return [];
+        if (task === 'updates') {
+          const stage = (input as { stage?: string }).stage;
+          return stage ? { stage, changes: {} } : [];
+        }
         if (task === 'continuation') return { kind: 'handback', closedBy: 'model', cancelReason: null };
         if (task === 'narration') {
           narrationCalls += 1;
@@ -69,4 +72,5 @@ describe('failed-turn recovery', () => {
     expect(third).not.toEqual({ kind: 'stop', reason: 'turn_in_progress' });
     expect(narrationCalls).toBeGreaterThan(0);
   }, 60000);
+
 });

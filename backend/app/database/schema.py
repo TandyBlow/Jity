@@ -173,9 +173,6 @@ _COLUMN_MIGRATIONS = [
     ("session_messages", "turn_node_id", "INTEGER"),
     ("campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'"),
     ("campaign_progress", "head_turn_id", "INTEGER"),
-    # Whole-campaign turn counter across sessions; capped by
-    # max_turns_per_campaign (default 50). Session advance does not reset it.
-    ("campaign_progress", "turns_total", "INTEGER NOT NULL DEFAULT 0"),
     # commit-turn: audit entry + server-recomputed roll record per submission.
     ("model_outputs", "audit_json", "TEXT NOT NULL DEFAULT '{}'"),
     # commit-turn pending-task ledger: stateful claims (v3.4).

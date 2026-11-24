@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { getCampaign, getSessionProgress } from "@/lib/api";
 import { activeGoalsFromState, chooseGoalAwareOption } from "@/lib/game/autoPlay";
-import { rollCheck, seededRoll, toActionCheckSubmission, toCheckSpec } from "@/lib/game/checks";
-import type { ActionCheckPreview, ActionCheckSubmission, GameState, StoryOutput } from "@/types";
+import { formatActionWithCheckResult, resolveOptionCheck, rollCheck, seededRoll } from "@/lib/game/checks";
+import type { GameState, StoryOutput } from "@/types";
 
 type AutoPlayConfig = {
   enabled: boolean;
@@ -20,17 +20,14 @@ export type AutoPlayAnchor = { id: string; name: string; isNew: boolean };
 
 export function useBrowserAutoPlay(input: {
   sessionId: string;
-  activeTurnId: number | null;
   selectedCampaign: string;
   state: GameState | null;
   output: StoryOutput;
   isLoading: boolean;
   pendingGenerate: string | null;
   error: string;
-  handleGenerate: (action?: string, overrideSessionId?: string, actionCheck?: ActionCheckSubmission, optionIndex?: number) => Promise<void>;
-  handlePrepareCheck: (action: string, optionIndex?: number) => Promise<ActionCheckPreview | null>;
+  handleGenerate: (action?: string, overrideSessionId?: string) => Promise<void>;
 }) {
-  const { handlePrepareCheck, handleGenerate } = input;
   const config = useMemo(readConfig, []);
   const [paused, setPaused] = useState(config.paused);
   const [selectedAction, setSelectedAction] = useState("");
@@ -40,20 +37,15 @@ export function useBrowserAutoPlay(input: {
     config.enabled ? "running" : "idle",
   );
   const recentActions = useRef<string[]>([]);
-  const lastScheduledTurn = useRef<string | null>(null);
+  const lastScheduledTurn = useRef<number | null>(null);
   const scheduledTimer = useRef<number | null>(null);
   const submittedAction = useRef("");
-  const submittedCheck = useRef<ActionCheckSubmission | undefined>(undefined);
-  const submittedOption = useRef<number | undefined>(undefined);
-  const submissionReady = useRef(false);
-  const pendingChoice = useRef<{ turnKey: string; action: string; reason: string } | null>(null);
   const retryAttempts = useRef(0);
   const previousAnchorIds = useRef<string[]>([]);
   const anchorNames = useRef<Record<string, string>>({});
   const goals = useMemo(() => activeGoalsFromState(input.state), [input.state]);
   const currentTurn = input.state?.turn ?? 0;
-  const turnKey = `${input.sessionId}:${input.activeTurnId ?? "opening"}`;
-  const retryTurn = useRef(turnKey);
+  const retryTurn = useRef(currentTurn);
   const isTargetSession = !config.sessionId || config.sessionId === input.sessionId;
   const query = new URLSearchParams({
     autoplay: "1",
@@ -115,26 +107,8 @@ export function useBrowserAutoPlay(input: {
     setStatus("running");
     if (!input.sessionId || input.isLoading || input.pendingGenerate) return;
 
-    async function submitAction() {
-      const action = submittedAction.current;
-      if (!submissionReady.current) {
-        const preview = await handlePrepareCheck(action, submittedOption.current);
-        if (!preview) {
-          lastScheduledTurn.current = null;
-          return;
-        }
-        const check = preview.check ? toCheckSpec(preview.check) : null;
-        submittedOption.current = preview.option_index ?? undefined;
-        const roll = check ? rollCheck(check, seededRoll(config.seed + currentTurn * 7919)) : null;
-        submittedCheck.current = roll ? toActionCheckSubmission(roll.roll, preview.option_index) : undefined;
-        submissionReady.current = true;
-        if (roll) setSelectionReason(`${check?.name} ${roll.degree}`);
-      }
-      await handleGenerate(action, undefined, submittedCheck.current, submittedOption.current);
-    }
-
-    if (retryTurn.current !== turnKey) {
-      retryTurn.current = turnKey;
+    if (retryTurn.current !== currentTurn) {
+      retryTurn.current = currentTurn;
       retryAttempts.current = 0;
     }
     if (input.error) {
@@ -148,49 +122,51 @@ export function useBrowserAutoPlay(input: {
         scheduledTimer.current = null;
         retryAttempts.current += 1;
         lastScheduledTurn.current = null;
-        void submitAction();
+        input.handleGenerate(submittedAction.current || selectedAction);
       }, retryDelay);
       return () => {
         if (scheduledTimer.current !== null) window.clearTimeout(scheduledTimer.current);
         scheduledTimer.current = null;
       };
     }
-    if (!input.output.options.length || lastScheduledTurn.current === turnKey || scheduledTimer.current !== null) return;
+    if (!input.output.options.length || lastScheduledTurn.current === currentTurn || scheduledTimer.current !== null) return;
 
-    if (pendingChoice.current?.turnKey !== turnKey) {
-      pendingChoice.current = {
-        turnKey,
-        ...chooseGoalAwareOption(input.output.options, goals, recentActions.current, config.seed + currentTurn * 104729),
-      };
-    }
-    const choice = pendingChoice.current;
+    const choice = chooseGoalAwareOption(
+      input.output.options,
+      goals,
+      recentActions.current,
+      config.seed + currentTurn * 104729,
+    );
     // Auto-play drives no dice UI, so a check is rolled headlessly with a seeded
-    // d20 and submitted separately from the unchanged player action.
+    // d20 and reported in the action text exactly like the manual path does.
     // The chosen index is resolved against the raw options because
     // chooseGoalAwareOption numbers the list after dropping blank entries.
     const optionIndex = input.output.options.findIndex((option) => option.trim() === choice.action);
-    const action = optionIndex < 0 ? choice.action : input.output.options[optionIndex];
+    const check = optionIndex < 0 ? null : resolveOptionCheck(input.output, optionIndex);
+    const roll = check
+      ? rollCheck(check, seededRoll(config.seed + currentTurn * 7919))
+      : null;
+    const action = check && roll
+      ? formatActionWithCheckResult(choice.action, check, roll)
+      : choice.action;
 
     setSelectedAction(choice.action);
-    setSelectionReason(choice.reason);
+    setSelectionReason(roll ? `${choice.reason} | ${check?.name} ${roll.degree}` : choice.reason);
+    recentActions.current = [...recentActions.current, choice.action].slice(-12);
     submittedAction.current = action;
-    submittedOption.current = optionIndex < 0 ? undefined : optionIndex;
-    submittedCheck.current = undefined;
-    submissionReady.current = false;
 
     scheduledTimer.current = window.setTimeout(() => {
       scheduledTimer.current = null;
-      lastScheduledTurn.current = turnKey;
-      recentActions.current = [...recentActions.current, choice.action].slice(-12);
-      void submitAction();
+      lastScheduledTurn.current = currentTurn;
+      input.handleGenerate(action);
     }, config.delayMs);
     return () => {
       if (scheduledTimer.current !== null) window.clearTimeout(scheduledTimer.current);
       scheduledTimer.current = null;
     };
   }, [
-    config, currentTurn, turnKey, goals, input.error, handleGenerate, handlePrepareCheck, input.isLoading,
-    input.output.game_over, input.output.options, input.output.option_checks, input.pendingGenerate, input.sessionId,
+    config, currentTurn, goals, input.error, input.handleGenerate, input.isLoading,
+    input.output.game_over, input.output.options, input.pendingGenerate, input.sessionId,
     isTargetSession, paused, selectedAction,
   ]);
 

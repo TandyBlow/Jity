@@ -7,7 +7,6 @@ from pathlib import Path
 import httpx
 
 from app.config import Settings
-from app.services.prompt_recorder import PromptRecorder
 
 
 class BackgroundGenerationError(RuntimeError):
@@ -17,7 +16,6 @@ class BackgroundGenerationError(RuntimeError):
 class BackgroundGenerator:
     def __init__(self, settings: Settings):
         self.settings = settings
-        self.prompt_recorder = PromptRecorder(settings)
 
     async def generate(self, scene_prompt: str, location: str = "") -> tuple[str, bool]:
         if not self.settings.image_api_key:
@@ -54,15 +52,6 @@ class BackgroundGenerator:
                 "n": 1,
             }
         headers = {"Authorization": f"Bearer {self.settings.image_api_key}"}
-
-        await self.prompt_recorder.record(
-            purpose="background_image",
-            api_type="images.generations",
-            model=self.settings.image_model,
-            service_url=endpoint,
-            request=payload,
-            context={"location": location} if location else None,
-        )
 
         try:
             async with httpx.AsyncClient(timeout=180) as client:

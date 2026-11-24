@@ -520,8 +520,12 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
       break;
     }
     checkTaskMonotonicity(before, after, point.id, report.errors);
-    if (after.time.instantOrdinal < before.time.instantOrdinal) {
-      report.errors.push(issue('time_invalid', `time moved backwards: ${before.time.instantOrdinal} -> ${after.time.instantOrdinal}`, point.id));
+    // elapsed advances reset instantOrdinal to 0 on purpose; the clock moved
+    // forward. Compare the clock first, the ordinal only within one dateTime.
+    const movedBackwards = after.time.dateTime < before.time.dateTime
+      || (after.time.dateTime === before.time.dateTime && after.time.instantOrdinal < before.time.instantOrdinal);
+    if (movedBackwards) {
+      report.errors.push(issue('time_invalid', `time moved backwards: ${before.time.dateTime}#${before.time.instantOrdinal} -> ${after.time.dateTime}#${after.time.instantOrdinal}`, point.id));
     }
     const digest = await stateDigest(after);
     const stored = stateEntries[point.id];

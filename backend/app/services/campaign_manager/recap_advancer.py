@@ -36,44 +36,15 @@ class RecapAdvancerFacade:
 
     # ── Session advancement ──────────────────────────────────────────
 
-    def advance_turn(self, *, persist: bool = True) -> int:
-        return self._advancer.advance_turn(self.progress, self.fsm, self.slot_name, persist=persist)
+    def advance_turn(self) -> int:
+        return self._advancer.advance_turn(self.progress, self.fsm, self.slot_name)
 
-    def begin_closing(self) -> None:
-        """Wait durably for a successful player-selected transition action."""
-        self.fsm.begin_closing()
-
-    def is_closing_pending(self) -> bool:
-        return str(getattr(self.fsm, "state", "")) == "active/session_closing"
-
-    async def advance_session(
-        self,
-        pending_messages: list[dict[str, str]] | None = None,
-        *,
-        persist: bool = True,
-    ) -> str:
-        recap = await self._advancer.advance_session(
-            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages,
-            persist=persist,
+    async def advance_session(self, pending_messages: list[dict[str, str]] | None = None) -> str:
+        return await self._advancer.advance_session(
+            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages
         )
-        if not persist and self._advancer.relation_decay_pending:
-            # Decay lands on the overlay and travels with the node snapshot;
-            # a direct DB write here would diverge from the last node.
-            self._advancer.relation_decay_pending = False
-            self.apply_npc_relation_decay()
-        return recap
 
-    async def advance_arc(
-        self,
-        pending_messages: list[dict[str, str]] | None = None,
-        *,
-        persist: bool = True,
-    ) -> str:
-        recap = await self._advancer.advance_arc(
-            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages,
-            persist=persist,
+    async def advance_arc(self, pending_messages: list[dict[str, str]] | None = None) -> str:
+        return await self._advancer.advance_arc(
+            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages
         )
-        if not persist and self._advancer.relation_decay_pending:
-            self._advancer.relation_decay_pending = False
-            self.apply_npc_relation_decay()
-        return recap

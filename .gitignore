@@ -34,6 +34,8 @@ node_modules/
 frontend/node_modules/
 .next/
 frontend/.next/
+# Isolated dev output so a production build cannot corrupt the running dev server.
+frontend/.next-dev/
 out/
 frontend/tsconfig.tsbuildinfo
 npm-debug.log*

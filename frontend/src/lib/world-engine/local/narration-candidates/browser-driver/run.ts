@@ -88,8 +88,8 @@ export async function prepare(config: PrepareConfig): Promise<ScenarioSummary[]>
   let productInputError: string | null = null;
   if (config.productInput) {
     try {
-      const module = await import(/* @vite-ignore */ config.productInput.moduleUrl) as Record<string, unknown>;
-      const build = (module.buildNarrationInput ?? module.projectNarrationInput) as
+      const loaded = await import(/* @vite-ignore */ config.productInput.moduleUrl) as Record<string, unknown>;
+      const build = (loaded.buildNarrationInput ?? loaded.projectNarrationInput) as
         ((args: unknown, options?: unknown) => Record<string, unknown>) | undefined;
       if (typeof build !== 'function') throw new Error('buildNarrationInput_missing');
       const format = config.productInput.format ?? 'result-v2';

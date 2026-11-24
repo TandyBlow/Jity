@@ -78,13 +78,6 @@ class SummaryGenerationMixin:
                 prompt=prompt,
                 max_tokens=1000,
                 temperature=0.3,
-                purpose="memory_nsb_summary",
-                context={
-                    "level": level,
-                    "turn_start": turn_start,
-                    "turn_end": turn_end,
-                    "episode_id": episode_id,
-                },
             )
         except Exception:
             logger.warning("NSB level-%d summarization failed", level, exc_info=True)

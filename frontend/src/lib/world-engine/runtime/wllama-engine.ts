@@ -45,6 +45,9 @@ export interface WllamaEngineOptions {
    * directBlob browser path supports more than one file in wllama 3.8.1. */
   modelUrls?: string[];
   contextSize?: number;
+  /** KV cache element types; q8_0 halves KV memory at the same context. */
+  cacheTypeK?: 'f32' | 'f16' | 'q8_0' | 'q5_1' | 'q5_0' | 'q4_1' | 'q4_0';
+  cacheTypeV?: 'f32' | 'f16' | 'q8_0' | 'q5_1' | 'q5_0' | 'q4_1' | 'q4_0';
   numThreads?: number;
   /** 0 keeps CPU-only; default offloads every layer to WebGPU when the
    * browser exposes it. */
@@ -69,6 +72,8 @@ export interface WllamaEngineOptions {
    * the GGUF parser. The SHA-256 check belongs to the queue/host runner; this
    * is the cheap size check the page can do itself. */
   expectedBytes?: number | number[];
+  /** Evidence-only hook: the exact prompt handed to the model. */
+  onPrompt?: (prompt: string) => void;
   /** Observability hook for load and generation evidence. Own structure:
    * the shared CompletionEvidence fields stay unchanged and extra timing is
    * additive. Observer exceptions never change the call result. */
@@ -382,6 +387,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
       const params = {
         n_ctx: this.contextSize,
         n_gpu_layers: this.gpuLayers,
+        ...(this.options.cacheTypeK ? { cache_type_k: this.options.cacheTypeK } : {}),
+        ...(this.options.cacheTypeV ? { cache_type_v: this.options.cacheTypeV } : {}),
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
       };
@@ -519,6 +526,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
   }
 
   private async generate(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
+    this.options.onPrompt?.(messages.map((message) => message.content).join(String.fromCharCode(10)));
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
     if (options?.signal?.aborted || this.disposed) throw abortError();

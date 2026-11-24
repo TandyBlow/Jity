@@ -1,17 +1,14 @@
-"""Hook 3 — execute the campaign agent pipeline."""
+"""Hook 3 — execute the generation step (multi-agent pipeline or legacy call)."""
 
+import asyncio
 import logging
 
 from app.schemas.agent_io import DirectorInstruction
 from app.services.agents.director import DirectorAgent
 from app.services.agents.examiner import ExaminerAgent, is_passive_continuation_action
-from app.services.action_checks import is_check_transition
 from app.services.llm_client import LLMOutputParseError, LLMRequestError
 from app.services.scenario_generator.errors import ScenarioGenerationError
-from app.services.campaign_endings import ending_instruction
 from app.schemas import StoryOutput
-from app.exceptions import CampaignRequiredError
-from app.services.scenario_generator.check_guidance import apply_check_to_ruling, check_instruction, ending_player_action
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +16,16 @@ logger = logging.getLogger(__name__)
 class AgentPipelineMixin:
     async def _execute_llm_or_scripted(
         self, session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
-        state=None, campaign_manager=None, closing_turn=False,
+        state=None, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
-        """Execute the campaign pipeline: Examiner → Director → Narrator."""
+        """Execute the multi-agent pipeline: Examiner → Director → Narrator.
+
+        Falls back to the legacy single-call path when no campaign is loaded
+        or when agents are not available.
+        """
+        # Legacy path: no campaign → single LLM call (unchanged behavior)
         if campaign_manager is None or not campaign_manager.is_loaded():
-            raise CampaignRequiredError("请先创建战役会话，当前会话不支持继续生成。")
+            return await self._execute_single_llm(request, prompt, model, meta)
 
         state = state or {}
 
@@ -32,24 +34,16 @@ class AgentPipelineMixin:
 
         # Stage 1: Examiner — action feasibility + rule identification
         from app.schemas.agent_io import ActionRuling
-        is_transition_turn = is_check_transition(campaign_manager)
-        if is_passive_continuation_action(request.player_action) or is_transition_turn:
+        if is_passive_continuation_action(request.player_action):
             ruling = ActionRuling()
-        elif getattr(request, "_action_ruling", None) is not None:
-            ruling = request._action_ruling
         else:
             ruling = await ExaminerAgent().examine(
                 player_action=request.player_action,
                 game_state=state,
             )
 
-        result = getattr(request, "_resolved_action_check", None)
-        ruling = apply_check_to_ruling(
-            ruling, result, resolved=getattr(request, "_action_ruling", None) is not None,
-        )
-
         # If Examiner says blocked → return diegetic rejection
-        if ruling.permissibility.value == "blocked" and ruling.rejection_reason and not closing_turn:
+        if ruling.permissibility.value == "blocked" and ruling.rejection_reason:
             rejection_output = StoryOutput(
                 narration=ruling.rejection_reason,
                 dialogue=[],
@@ -63,11 +57,6 @@ class AgentPipelineMixin:
             ).replace_em_dashes()
             return rejection_output, 0, "examiner_blocked"
 
-        if closing_turn and ruling.permissibility.value == "blocked":
-            # Explain the failed action while still writing the backend's
-            # selected conclusion; do not claim the action succeeded.
-            prompt = f"[行动未能完成] {ruling.rejection_reason}\n\n" + prompt
-
         # Stage 2: Director — narrative direction, anchor triggers, redirection
         direction = await self._run_director_stage(
             session_id, request, ruling, state, turn, campaign_manager
@@ -75,13 +64,6 @@ class AgentPipelineMixin:
 
         # Inject director instruction into prompt meta / campaign_context
         augmented_prompt = self._inject_direction(prompt, direction, ruling)
-        if result is not None:
-            # Keep the result after all story instructions, even if a Director
-            # response accidentally repeats a pending-roll instruction.
-            instruction = check_instruction(result)
-            augmented_prompt += "\n\n" + instruction
-            if isinstance(getattr(meta, "sections", None), dict):
-                meta.sections["action_check"] = instruction
 
         # Stage 3: Narrator — the actual story generation (single LLM call)
         return await self._run_narrator_stage(
@@ -111,15 +93,10 @@ class AgentPipelineMixin:
             f"{msg.get('role', 'unknown')}: {msg.get('content', '')[:800]}"
             for msg in current_messages
         )
-        is_transition_turn = is_check_transition(campaign_manager)
-        opening_label = (
-            "本幕开场前提（必须与玩家刚才的转场行动融合，不能覆盖或忽略该行动）：\n"
-            if is_transition_turn else
-            "当前幕固定开场（最高优先级，必须从这里继续，不能回到上一幕）：\n"
-        )
         narrative_parts = [
             f"当前地点：{state.get('current_location', '未知')}",
-            opening_label + current_opening,
+            "当前幕固定开场（最高优先级，必须从这里继续，不能回到上一幕）：\n"
+            + current_opening,
         ]
         if current_history:
             narrative_parts.append("当前幕最近记录：\n" + current_history)
@@ -131,7 +108,7 @@ class AgentPipelineMixin:
         anchor_progress = f"{len(campaign_manager.progress.revealed_anchors)}/{sum(len(s.anchor_events) for a in campaign_manager.campaign.arcs for s in a.sessions)}" if campaign_manager.progress else "0/0"
         candidates = self._describe_anchor_candidates(campaign_manager, state, turn)
         deviation = "偏差：连续3+回合无锚点触发" if campaign_manager.detect_deviation(state, turn) else "正常"
-        item_states = self._format_score_item_states(campaign_manager, session_id, state)
+        item_states = self._format_score_item_states(campaign_manager)
 
         try:
             return await director.direct(
@@ -142,7 +119,6 @@ class AgentPipelineMixin:
                 candidate_anchors=candidates,
                 deviation_status=deviation,
                 item_states=item_states,
-                context={"session_id": session_id, "turn": turn},
             )
         except Exception:
             logger.warning("Director failed, using fallback direction", exc_info=True)
@@ -153,19 +129,10 @@ class AgentPipelineMixin:
         retrieved_for_storage, _csi, state, turn, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
         """Stage 3: Narrator — the actual story generation (single LLM call)."""
-        ending = self._select_campaign_ending(campaign_manager, state, ending_player_action(request))
-        if ending is not None:
-            # Keep the final-story contract after the Director block and the
-            # normal-turn JSON example, even when campaign context was trimmed.
-            augmented_prompt += "\n\n" + ending_instruction(ending)
         meta.final_prompt = augmented_prompt
         try:
             output, latency_ms = await self.llm_client.generate(
-                augmented_prompt,
-                model,
-                temperature=meta.temperature,
-                purpose="story_narrator",
-                context={"session_id": session_id, "turn": turn},
+                augmented_prompt, model, temperature=meta.temperature
             )
             output.replace_em_dashes()
             source = "llm"
@@ -184,4 +151,30 @@ class AgentPipelineMixin:
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
+        # Persistent per-session memory: feed the turn, then maintain in background
+        memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
+        memory_ctrl.on_turn_generated(
+            request.player_action, output.narration, turn,
+            memory_updates=output.memory_updates,
+        )
+        task = asyncio.create_task(memory_ctrl.maintain(session_id, turn))
+        self._memory_tasks.add(task)
+        task.add_done_callback(self._log_memory_task_done)
+
         return output, latency_ms, source
+
+    async def _execute_single_llm(
+        self, request, prompt, model, meta
+    ) -> tuple[StoryOutput, int, str]:
+        """Fallback: single LLM call (original behavior, no multi-agent pipeline)."""
+        meta.final_prompt = prompt
+        try:
+            output, latency_ms = await self.llm_client.generate(
+                prompt, model, temperature=meta.temperature
+            )
+            output.replace_em_dashes()
+            return output, latency_ms, "llm"
+        except LLMRequestError:
+            raise
+        except LLMOutputParseError:
+            raise

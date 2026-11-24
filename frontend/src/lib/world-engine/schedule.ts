@@ -237,6 +237,13 @@ export interface ControllerMemory {
    * ruling). Reset once the group's ladder is consumed (stage/commit) —
    * the dangling stop keeps its refs in the terminal reason. */
   updatesPendingRefs: string[];
+  /** Product split (D-018): after the last group of a point is staged, one
+   * point-level tasks/subtasks/personality/sanity batch runs and stages
+   * through the time-scan unit. Optional so scenario memories stay valid. */
+  pointRestPending?: boolean;
+  /** Wall-clock start of the current player turn (Date.now), set by
+   * preparePlayerInput; the controller uses it for the turn budget. */
+  turnStartedAt?: number;
   /** Set when the program-owned round-identity sink (controller ①b) throws or
    * is missing on a confirmed continue with no pre-seeded allocation — visible
    * for diagnostics; the driver continues scheduling (the next discover will
@@ -282,7 +289,11 @@ export interface ScheduleView { world: WorldContext | null; control: ControlStat
   narrationOverlap?: boolean;
   /** G5 产品门：自动轮身份就绪屏障（DriverOptions.identityGate）。缺省
    * 关闭——B3 harness 的自动轮身份走自己的预分配队列，不受此门约束。 */
-  identityGate?: boolean }
+  identityGate?: boolean;
+  /** D-024 evaluation arm: close the round with a program handback instead of
+   * calling the continuation model. Default off; the page sets it only via the
+   * URL arm switch. */
+  forceHandback?: boolean }
 
 const STATE_COMPUTATION_TASKS: ModelTask[] = ['action', 'targets', 'reaction', 'results', 'updates', 'continuation'];
 
@@ -649,6 +660,20 @@ function continuationDecision(view: ScheduleView): Decision {
       scope: worldScope(view),
     };
   }
+  // D-024 arm: no continuation model call; the round hands back as soon as the
+  // player round's points have settled and narrated.
+  if (view.forceHandback) {
+    const bind = writeBind(view);
+    return {
+      kind: 'transport', operation: 'round_conclusion_conclude',
+      request: {
+        protocolVersion: 2, requestId: memory.requestId, ...bind,
+        operation: 'conclude', advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!),
+        conclusion: { kind: 'handback', closedBy: 'model', cancelReason: null },
+      } as RequestMap['round_conclusion_conclude'],
+      scope: worldScope(view),
+    };
+  }
   // 缺少判断依据时明确停止：没有当前世界或没有本轮变化就不得调用模型，
   // 更不能把模型输出写成结论（H2 的补读另做）。
   const state = view.work ? freshState(memory, view.work) : memory.workingState?.state ?? null;
@@ -840,7 +865,11 @@ function selectActorDecision(view: ScheduleView): Decision {
   // Time scan: required for empty/actionless points (T03) AND for actor
   // points whose every judged actor skipped — nothing settled means the
   // point still owes its time-scan candidates before sealing.
-  if (planned && !work!.timeScanComplete && memory.staged.length === 0) {
+  // D-018: with the product split, a point that did settle groups runs one
+  // point-level tasks/subtasks/personality/sanity batch here instead; the
+  // scene stages already ran per group.
+  const pointRest = Boolean(planned) && memory.pointRestPending === true;
+  if (planned && !work!.timeScanComplete && (memory.staged.length === 0 || pointRest)) {
     const single = memory.updatesStages.length === 0;
     const calls: UpdatesCall[] | null = single
       ? (memory.lastModel?.task === 'updates' ? memory.lastModel.output as unknown as UpdatesCall[] : null)
@@ -861,6 +890,14 @@ function selectActorDecision(view: ScheduleView): Decision {
     const blocked = modelBlocked(view, 'updates');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
+    if (pointRest) {
+      // One updates pass over every group's settled results; the six-stage
+      // order holds because all scene stages already ran group by group.
+      const results = Object.assign({}, ...memory.staged.map((unit) => unit.results));
+      return updatesModelCall(view, `point_rest:${work!.pointId}`, {
+        groupId: work!.pointId, mode: 'group', results, workingState: asJson(memory.workingState!.state),
+      });
+    }
     return updatesModelCall(view, `time_scan:${work!.pointId}`, { mode: 'time_scan', workingState: asJson(memory.workingState!.state) });
   }
   // Successor time generation and sealing both need the latest staged state.

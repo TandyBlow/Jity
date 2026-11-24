@@ -16,8 +16,6 @@ class StructuredGenerationMixin:
         model: str | None = None,
         max_tokens: int = 1000,
         temperature: float = 0.3,
-        purpose: str = "text_generation",
-        context: dict | None = None,
     ) -> str:
         """Generate free-text response. No JSON parsing — caller handles the text.
 
@@ -26,17 +24,13 @@ class StructuredGenerationMixin:
         model = model or self.settings.llm_model
         started = time.perf_counter()
         try:
-            return await self._request_completion(
+            response = await self.client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=temperature,
                 max_tokens=max_tokens,
-                _json_object=False,
-                purpose=purpose,
-                context=context,
             )
-        except LLMOutputParseError:
-            raise
+            return response.choices[0].message.content or ""
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
@@ -52,8 +46,6 @@ class StructuredGenerationMixin:
         model: str | None = None,
         max_tokens: int = 50000,
         temperature: float = 0.35,
-        purpose: str = "structured_generation",
-        context: dict | None = None,
     ) -> dict:
         """Generate and parse JSON output with repair fallback.
 
@@ -73,11 +65,7 @@ class StructuredGenerationMixin:
                 temperature=temperature,
                 max_tokens=max_tokens,
                 _json_object=True,
-                purpose=purpose,
-                context=context,
             )
-        except LLMOutputParseError:
-            raise
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(

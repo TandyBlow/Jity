@@ -20,6 +20,19 @@ import { requireSettlementValue } from './semantics/settlement';
 import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
 
+/** One worked example for the instruct brief (evaluation arm). Names and
+ * props belong to another scene; the instructions forbid copying them. */
+const NARRATION_EXAMPLE = [
+  '示例（另一场戏，只学写法；不要带进示例里的人名、物件和动作）：',
+  '阿青把门闩推上，又退回桌边，把散开的纸页按顺序叠好。窗缝里透进的光落在桌角，杯子里还剩半口水。老周在门口站了一会儿，没说话，把钥匙放回口袋，转身走了。',
+].join(String.fromCharCode(10));
+
+function withNarrationExample(prompt: string): string {
+  const marker = '正文：';
+  const index = prompt.lastIndexOf(marker);
+  return index < 0 ? `${prompt}${String.fromCharCode(10)}${NARRATION_EXAMPLE}` : `${prompt.slice(0, index)}${NARRATION_EXAMPLE}${String.fromCharCode(10)}${prompt.slice(index)}`;
+}
+
 export interface GameModelOptions {
   modelUrl?: string;
   contextSize?: number;
@@ -32,11 +45,32 @@ export interface GameModelOptions {
   /** 'legacy' continues the yuyan-prose format for the 0.5B checkpoint;
    * 'instruct' states the task for an instruction-tuned narration model. */
   narrationMode?: 'legacy' | 'instruct';
+  /** Evaluation arm: one worked example in the instruct brief. The shipped
+   * default has no example; the page exposes it only through the URL query. */
+  narrationFewShot?: boolean;
+  /** Evaluation arm (D-022): drop the location look, room items and other
+   * characters' appearance from the brief. Same instructions, less material for
+   * the writer to recite or move between characters. */
+  narrationProjection?: 'full' | 'compact';
+  /** Evaluation arm (D-022): state the unknown-target rule in the results
+   * prompt. Default off; the page exposes it only through the URL query. */
+  settlementUnknownRule?: boolean;
+  /** Evaluation arm (mobile): compact results-prompt scene list. */
+  compactSettlement?: boolean;
+  /** Evaluation arm: worked blocked example for unknown targets (results prompt). */
+  settlementUnknownExample?: boolean;
+  /** Deterministic guard for unregistered entities in settled facts (default
+   * on). The page can disable it with strictKnownEntities=0 for A/B runs. */
+  strictKnownEntities?: boolean;
   /** The player's character id. The point plan puts that character alone in
    * the round's first point so the player's own settlement can commit and be
    * narrated before the rest of the roster is judged (the 2026-11-11 turns
    * spent 280 s settling one point that held every actor). */
   protagonistId?: Id;
+  /** Evaluation arm: off-screen actors are judged per actor ('judge') or
+   * skipped by the action lane's program rule ('skip'). The page exposes it
+   * only through the URL query; the shipped default stays 'judge'. */
+  offscreenPolicy?: 'skip' | 'judge';
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -129,6 +163,8 @@ export class LocalGameModel implements WorldModelPort {
   private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
   private readonly seenFactTexts = new Set<string>();
   private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
+  /** Planned actors per point; the action line follows this, not the delta. */
+  private readonly plannedActors = new Map<Id, Id[]>();
   private recentEvents: string[] = [];
   private readonly narrationRunner: NarrationRunner | null;
   /** Last accepted prose (model or candidate). Only real prose is fed back as
@@ -164,7 +200,13 @@ export class LocalGameModel implements WorldModelPort {
       // The appearance stage measures 7877 chars on the shipped world; a retry
       // with feedback is ~7970. The guard must leave room for the repair while
       // still refusing a runaway prompt (lane 04's measured numbers).
-      maxPromptChars: 11_000,
+      // 11,900 admits the measured position prompt (11,776) plus the small
+      // output budget; the engine context is 12,288 tokens.
+      maxPromptChars: 11_900,
+      unknownEntityRule: options.settlementUnknownRule ?? false,
+      strictKnownEntities: options.strictKnownEntities ?? true,
+      compactPrompts: options.compactSettlement ?? false,
+      unknownEntityExample: options.settlementUnknownExample ?? false,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
       ? null
@@ -186,6 +228,7 @@ export class LocalGameModel implements WorldModelPort {
       });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       recentEvents: () => this.recentEvents,
+      offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
         ms: call.elapsedMs, fallback: !call.decoded, error: call.error, raw: call.raw, promptChars: call.promptChars,
       }),
@@ -211,12 +254,14 @@ export class LocalGameModel implements WorldModelPort {
     this.pointFacts.clear();
     this.seenFactTexts.clear();
     this.narrationSnapshots.clear();
+    this.plannedActors.clear();
   }
 
   /** The controller committed this point. Freeze the settlement material that
    * belongs to it before a later point overwrites the live caches. */
   onPointCommitted(pointId: Id): void {
-    const resultsText = (this.pointResults.get(pointId) ?? []).join('；') || this.lastResultsText;
+    // No cross-point results fallback.
+    const resultsText = (this.pointResults.get(pointId) ?? []).join('；');
     const facts = this.pointFacts.get(pointId) ?? [];
     this.narrationSnapshots.set(pointId, {
       resultsText,
@@ -274,17 +319,22 @@ export class LocalGameModel implements WorldModelPort {
       timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: order };
     const protagonist = this.protagonistId;
     if (round?.trigger !== 'player' || protagonist === null || order.length < 2 || !order.includes(protagonist)) {
+      this.plannedActors.set(single.pointId, [...order]);
       return [single];
     }
     const rest = order.filter((actor) => actor !== protagonist);
-    if (rest.length === 0) return [single];
-    return [
-      { ...single, actorIds: [protagonist] },
-      { pointId: `point_${roundId}_2`, kind: 'instant',
-        // An instant point must carry a zero duration; the round's time already
-        // advanced with the first point.
-        timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: rest },
-    ];
+    if (rest.length === 0) {
+      this.plannedActors.set(single.pointId, [...order]);
+      return [single];
+    }
+    const player = { ...single, actorIds: [protagonist] };
+    const instant = { pointId: `point_${roundId}_2`, kind: 'instant',
+      // An instant point must carry a zero duration; the round's time already
+      // advanced with the first point.
+      timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: rest };
+    this.plannedActors.set(player.pointId, [protagonist]);
+    this.plannedActors.set(instant.pointId, [...rest]);
+    return [player, instant];
   }
 
   private async action(key: Id, input: Json): Promise<Generated> {
@@ -498,7 +548,10 @@ export class LocalGameModel implements WorldModelPort {
     // Material for THIS point, frozen at its commit. A later point's live
     // caches must not reach an older point's prose.
     const snapshot = this.narrationSnapshots.get(pointId);
-    const playerInput = snapshot?.playerInput ?? this.lastPlayerInput;
+    // Action line only for the player's point.
+    const actors = this.plannedActors.get(pointId);
+    const inPoint = actors && after.protagonistId ? actors.includes(after.protagonistId) : true;
+    const playerInput = inPoint ? (snapshot?.playerInput ?? this.lastPlayerInput) : '';
     const resultsText = snapshot?.resultsText ?? '';
     const settledFacts = snapshot?.facts ?? [];
 
@@ -510,9 +563,12 @@ export class LocalGameModel implements WorldModelPort {
 
 
     // In-model writer: one call with the settled state as its only material.
-    const brief = this.options.narrationMode === 'instruct'
-      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText)
+    const baseBrief = this.options.narrationMode === 'instruct'
+      ? instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact')
       : { prompt: legacyNarrationInput(before, delta, after, view), brief: legacyNarrationInput(before, delta, after, view) };
+    const brief = this.options.narrationMode === 'instruct' && this.options.narrationFewShot
+      ? { ...baseBrief, prompt: withNarrationExample(baseBrief.prompt) }
+      : baseBrief;
     let raw = '';
     let error: string | undefined;
     try {
@@ -1208,7 +1264,7 @@ interface Beat {
   text: string;
 }
 
-interface BeatResult extends Beat {}
+type BeatResult = Beat;
 
 function beatPrompt(name: string, beat: Beat): string {
   return [

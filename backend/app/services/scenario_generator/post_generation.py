@@ -1,5 +1,6 @@
 """Hooks 4 & 5 — post-generation processing and record/finalize."""
 
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,15 +19,34 @@ class PostGenerationMixin:
         return next_state
 
     def _process_npc_relations_delta(self, output, state, campaign_manager) -> None:
-        """Apply NPC affinity deltas from LLM output to the in-memory overlay.
-
-        The overlay rides the progress snapshot into the node commit; a
-        direct DB write here would persist increments that a failed commit
-        would then re-apply on retry.
-        """
+        """Apply NPC affinity deltas from LLM output to campaign_progress."""
         try:
-            campaign_manager.apply_npc_relation_delta(
-                output.npc_relations_delta, state.get("turn", 0)
+            progress = campaign_manager.progress
+            row = self.db.read_campaign_progress(progress.campaign_id, campaign_manager.slot_name)
+            existing_json = row.get("npc_relations", "[]") if row else "[]"
+            relations = json.loads(existing_json) if isinstance(existing_json, str) else existing_json
+            relations_by_name = {r["name"]: r for r in relations}
+            for delta in output.npc_relations_delta:
+                name = delta.get("name", "")
+                sentiment = delta.get("sentiment", "neutral")
+                if not name:
+                    continue
+                if name not in relations_by_name:
+                    relations_by_name[name] = {
+                        "name": name, "affinity": 0,
+                        "last_interaction_turn": state.get("turn", 0), "note": ""
+                    }
+                entry = relations_by_name[name]
+                if sentiment == "positive":
+                    entry["affinity"] = min(entry.get("affinity", 0) + 1, 10)
+                elif sentiment == "negative":
+                    entry["affinity"] = max(entry.get("affinity", 0) - 1, -10)
+                entry["last_interaction_turn"] = state.get("turn", 0)
+                entry["note"] = delta.get("note", "") or entry.get("note", "")
+            self.db.update_npc_relations(
+                progress.campaign_id,
+                json.dumps(list(relations_by_name.values()), ensure_ascii=False),
+                campaign_manager.slot_name,
             )
         except Exception:
             logger.warning(
@@ -55,22 +75,10 @@ class PostGenerationMixin:
             **metrics,
         )
 
-        # Unified advance — no duplication; all deferred to the node commit.
-        # An ending turn still counts toward the whole-campaign budget
-        # (turn_in_session + turns_total); only the session/arc advance is
-        # skipped, since end_campaign closes the campaign instead.
-        if source == "examiner_blocked":
-            # A rejected action is feedback, not a story beat. It stays in the
-            # timeline but cannot consume campaign pacing or cross a boundary.
-            pass
-        elif output.game_over and campaign_manager is not None and campaign_manager.is_loaded():
-            campaign_manager.commit_pending_anchors(persist=False)
-            campaign_manager.advance_turn(persist=False)
-            campaign_manager.end_campaign(persist=False)
-        else:
-            await self._advance_campaign(campaign_manager, [
-                {"role": "user", "content": request.player_action},
-                {"role": "assistant", "content": output.model_dump_json()},
-            ])
+        # Unified advance — no duplication
+        await self._advance_campaign(campaign_manager, [
+            {"role": "user", "content": request.player_action},
+            {"role": "assistant", "content": output.model_dump_json()},
+        ])
 
         return output_id, metrics

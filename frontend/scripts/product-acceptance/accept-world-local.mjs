@@ -114,6 +114,7 @@ const evidence = {
     launchArgs: null,
     coopCoepShim: has('--header-shim'),
     saveServiceBlocked: has('--block-api'),
+    offline: has('--offline'),
     candidateInjection: false,
     storageReset: fresh,
     note: '--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence',
@@ -169,21 +170,41 @@ function noteFailure(scope, message, detail = null) {
 const lease = acquireLease({ purpose: `09 acceptance ${intent} ${base}` });
 evidence.lease = lease.record;
 
-const browser = await chromium.launch({
-  headless: !has('--headed'),
-  channel: 'msedge',
-  args: [
-    '--enable-unsafe-webgpu',
-    '--force_high_performance_gpu',
-    '--ignore-gpu-blocklist',
-  ],
-});
-evidence.harness.launchArgs = ['--enable-unsafe-webgpu', '--force_high_performance_gpu', '--ignore-gpu-blocklist'];
+const cpuThrottle = Number(flag('--cpu-throttle', '1'));
+const gpuLite = has('--gpu-lite');
+const launchArgs = [
+  '--enable-unsafe-webgpu',
+  ...(gpuLite ? [] : ['--force_high_performance_gpu']),
+  '--ignore-gpu-blocklist',
+];
+const profile = flag('--profile', '');
+// A persistent profile lifts the headless temp-profile storage cap (~1 GB on
+// this box); WebLLM needs it for the 2.2 GB 4B cache.
+const browser = profile
+  ? await chromium.launchPersistentContext(profile, {
+    headless: !has('--headed'),
+    channel: 'msedge',
+    args: launchArgs,
+    viewport: { width: 1280, height: 900 },
+  })
+  : await chromium.launch({
+    headless: !has('--headed'),
+    channel: 'msedge',
+    args: launchArgs,
+  });
+evidence.harness.launchArgs = launchArgs;
+evidence.harness.profile = profile || null;
+evidence.harness.cpuThrottle = Number.isFinite(cpuThrottle) && cpuThrottle > 1 ? cpuThrottle : null;
+evidence.harness.gpuLite = gpuLite;
 
 try {
-  evidence.harness.edgeVersion = browser.version();
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  evidence.harness.edgeVersion = profile ? (browser.browser()?.version() ?? null) : browser.version();
+  const context = profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
+  if (evidence.harness.cpuThrottle) {
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: evidence.harness.cpuThrottle });
+  }
   evidence.environment.userAgent = await page.evaluate(() => navigator.userAgent).catch(() => null);
 
   page.on('console', (message) => {
@@ -195,7 +216,7 @@ try {
   page.on('pageerror', (error) => noteFailure('page', `pageerror: ${error.message}`));
   page.on('response', (response) => {
     const url = response.url();
-    if (/\/models\/.*\.gguf/.test(url) || /api\/.*(progress|save|session)/.test(url)) {
+    if (/\/models\/.*\.(gguf|bin|json)/.test(url) || /api\/.*(progress|save|session)/.test(url)) {
       evidence.modelRequests.push({
         url,
         status: response.status(),
@@ -514,6 +535,13 @@ try {
     };
   });
 
+  if (!preflightOnly && has('--offline')) {
+    // The page and both models have loaded; every turn now runs with no
+    // network. The reload check below switches the network back on because it
+    // needs the server for a fresh page.
+    await page.context().setOffline(true);
+    console.info('[acceptance] network offline for the turns');
+  }
   if (preflightOnly) {
     evidence.status = 'PREFLIGHT';
     evidence.finishedAt = new Date().toISOString();
@@ -659,7 +687,7 @@ try {
           const clone = last ? last.cloneNode(true) : null;
           let text = '';
           if (clone) {
-            const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+            const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|这一回合已结算并写入正文|正文已按已结算|Aborted)/u;
             const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
             for (const node of [...clone.querySelectorAll('div,span,p')]) {
               const value = (node.textContent ?? '').trim();
@@ -731,11 +759,11 @@ try {
         if (!sample.busy && sample.count > beforeCount && (sample.text || sample.done)) break;
         // A submit can be refused synchronously (e.g. progress_conflict): the
         // page shows 本轮停止 and no narration will ever stream. Waiting out the
-        // full turn budget would misreport a 300 s timeout. The line must belong
-        // to this turn: a previous turn's stop/note is still on screen while the
-        // new submit starts (2026-11-20: turn 5 ended in 145 ms on turn 4's note).
+        // full turn budget would misreport a 300 s timeout. The line must be new
+        // since this submit start; a previous turn's identical line is stale.
         const newEntry = sample.count > beforeCount;
-        if (newEntry && sample.done && /本轮停止/.test(sample.doneText ?? '')) break;
+        const stopLine = sample.doneText ?? '';
+        if (stopLine && /本轮停止/.test(stopLine) && (newEntry || !beforeBody.includes(stopLine))) break;
         // A recoverable settlement failure is a stopped turn too: the page keeps
         // the history and asks for a retry, so waiting 330 s would misreport it
         // as a timeout and as empty prose.
@@ -768,7 +796,7 @@ try {
         const clone = last ? last.cloneNode(true) : null;
         let text = '';
         if (clone) {
-          const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|正文已按已结算)/u;
+          const labels = /^(你：|模型正文（原样显示|旧存档：|来源未记录|本轮已取消|本回合没有完成|这一回合已结算并写入正文|正文已按已结算|Aborted)/u;
           const badge = /^[A-Za-z_]+:(模型|程序|草稿|model|program|draft)([A-Za-z_]+:(模型|程序|草稿|model|program|draft))*$/u;
           for (const node of [...clone.querySelectorAll('div,span,p')]) {
             const value = (node.textContent ?? '').trim();
@@ -788,9 +816,27 @@ try {
           // Any 本轮… line is a hand-back signal, including the 295 s deadline.
           message: (document.body.innerText.split(String.fromCharCode(10))
             .find((line) => /^本轮(完成|已交还|已到|停止)/.test(line.trim())) ?? null),
+          // The product's own record of this turn, for the verbatim-display check.
+          recordText: (() => {
+            const turns = globalThis.__worldTurns;
+            const record = Array.isArray(turns) ? turns.at(-1) : null;
+            const points = Array.isArray(record?.points) ? record.points : [];
+            return points.length ? points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10)) : null;
+          })(),
         };
       }, beforeCount);
       entry.text = afterInfo.text || null;
+      // Point paragraphs render as blocks, so the DOM text has no literal
+      // blank line between them; whitespace-insensitive equality is the
+      // faithful "same characters" check. The strict flag stays recorded.
+      const normalizeProse = (value) => (value ?? '').replace(/\s+/gu, '');
+      entry.proseIdentity = {
+        articleText: entry.text,
+        recordText: afterInfo.recordText,
+        equal: afterInfo.recordText != null ? entry.text === afterInfo.recordText : null,
+        normalizedEqual: afterInfo.recordText != null ? normalizeProse(entry.text) === normalizeProse(afterInfo.recordText) : null,
+      };
+      if (entry.proseIdentity.normalizedEqual === false) entry.problems.push('prose_not_identical_to_record');
       // No visible prose means there is no first-readable time at all.
       entry.timings.firstReadableMs = null;
       if (!entry.text || entry.text.trim().length < 8) {
@@ -832,6 +878,8 @@ try {
           // firstTextAtMs / completedAtMs keyed by pointId. This is the
           // overlap evidence; narrationStarts above is the older field.
           pointNarration: record.pointNarration ?? null,
+          pointPrompts: Array.isArray(record.pointPrompts) ? record.pointPrompts : null,
+          semanticPrompts: Array.isArray(record.semanticPrompts) ? record.semanticPrompts : null,
           actions: Array.isArray(record.actions) ? record.actions : null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
@@ -973,6 +1021,30 @@ try {
       if (/^(…+|。|，|、|\s)$/.test(prose.trim())) entry.problems.push('placeholder_only_text');
       if (/(结算|回退|fallback|本拍|本组|模型未|无法确认|未产生)/.test(prose)) entry.problems.push('internal_note_in_prose');
       if (/^(上一|刚才|此前)/.test(prose.trim()) && /(结算|修正|回退)/.test(prose)) entry.problems.push('internal_note_in_prose');
+      // Dev gate: a turn declared as a legal-failure scenario must not settle a
+      // completed fact. The results model once judged an unknown-entity handoff
+      // as achieved and the narration then wrote it; that is a settlement bug,
+      // not a prose bug, so the check reads the results raws, not the prompt.
+      if (turn.expect === 'legal_failure') {
+        // Read what was actually handed to the narrator: the settled-fact
+        // block in the narration prompt. Raw settlement attempts may contain
+        // facts the parser rejected or dropped; those were never settled.
+        const promptText = entry.product?.narration?.prompt ?? '';
+        const marker = '这一回合的结算结果：';
+        const start = promptText.indexOf(marker);
+        const end = start >= 0 ? promptText.indexOf('时间到了', start) : -1;
+        const settled = start >= 0 ? promptText.slice(start + marker.length, end > start ? end : undefined) : '';
+        const clauses = settled.split(/[。；\n]/u);
+        const introduced = [...String(turn.input ?? '').matchAll(/(?:给|向|让|跟)([一-龥]{2,3})/gu)]
+          .map((match) => match[1])
+          .filter((name) => name && !/^(他|她|它|自己|裁判|大家)/u.test(name));
+        const claim = introduced.find((name) => clauses.some((clause) => clause.includes(name)
+          && !/不在场|没有|未能|没能|未被|无法|拒绝/u.test(clause)));
+        if (claim) {
+          entry.problems.push('legal_failure_not_enforced');
+          entry.legalFailure = { name: claim, settled: settled.slice(0, 120) };
+        }
+      }
       if (entry.shownChars > 0 && entry.shownChars < 30) entry.problems.push('very_short_text');
       if (entry.text && turn.input && entry.text.includes(turn.input)) entry.problems.push('echoes_player_input');
       const beforeHistory = Number(entry.before?.historyCount ?? NaN);
@@ -1040,7 +1112,9 @@ try {
       null,
       { timeout: 60_000 },
     ).catch(() => undefined);
-    if (entry.problems.includes('page_error') || entry.problems.includes('turn_timeout')) break;
+    // A turn timeout is a case conclusion, not a reason to discard the rest of
+    // the suite. Only a dead page stops the run.
+    if (entry.problems.includes('page_error')) break;
   }
 
   // Two mechanical checks over the whole run, so every later run carries its own
@@ -1116,6 +1190,7 @@ try {
   const stateBeforeReload = await snapshot();
   evidence.reload = { startedAt: new Date().toISOString(), status: 'reloading' };
   save();
+  if (has('--offline')) await page.context().setOffline(false);
   await page.reload({ waitUntil: 'domcontentloaded' });
   const reloadStarted = Date.now();
   const reloadTimeoutMs = Math.min(readyTimeoutMs, 240000);

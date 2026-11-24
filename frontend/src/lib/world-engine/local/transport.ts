@@ -172,8 +172,11 @@ function consume(status: Working['intentStatus']): Working['intentStatus'] {
 function stageWorking(working: Working, unitId: Id, actors: Id[], order: Id[]): Working {
   const overlap = actors.filter((actor) => working.actedIds.includes(actor));
   if (overlap.length) refuse('request_malformed', `actors ${overlap.sort().join(',')} already acted in this round`);
-  const visited = uniqSorted([...working.visitedIds, ...actors]);
-  const acted = uniqSorted([...working.actedIds, ...actors]);
+  // A group may admit a target that has no slot in a later automatic round's
+  // frozen order; only scheduled slots may enter acted/visited.
+  const scheduled = actors.filter((actor) => order.includes(actor));
+  const visited = uniqSorted([...working.visitedIds, ...scheduled]);
+  const acted = uniqSorted([...working.actedIds, ...scheduled]);
   return { cursor: handledPrefix(visited, order), actedIds: acted, visitedIds: visited,
     settledUnitIds: [...working.settledUnitIds, unitId], intentStatus: consume(working.intentStatus) };
 }
@@ -478,7 +481,14 @@ function handleDiscoverGroup(record: PersistedRecord, request: RequestMap['check
   checkNotPaused(record);
   if (work.sealed || work.pendingGroup) refuse('phase_invalid', 'group discovery needs an open work without a pending group');
   if (!record.round || request.initiatorId !== record.round.order[work.working.cursor]) {
-    refuse('request_malformed', 'group initiator is not the next frozen character slot');
+    refuse('request_malformed', 'group initiator is not the next frozen character slot', {
+      initiatorId: request.initiatorId,
+      cursor: work.working.cursor,
+      expected: record.round?.order[work.working.cursor] ?? null,
+      order: record.round?.order ?? [],
+      visited: work.working.visitedIds,
+      acted: work.working.actedIds,
+    });
   }
   work.pendingGroup = { groupId: request.groupId, sourceId: request.initiatorId, memberIds: [request.initiatorId],
     targetIds: request.targetIds ?? [], targetIdsBySource: { [request.initiatorId]: request.targetIds ?? null },
@@ -758,7 +768,20 @@ function handleCancel(record: PersistedRecord, request: RequestMap['round_conclu
   checkLease(record, request);
   checkExpected(record, request);
   checkChain(record, request.advanceId, request.roundId);
-  checkHeadReady(record);
+  // A failed narration is terminal: the round can be closed, and a later
+  // regenerate retries the text. A pending/missing head still blocks cancel,
+  // except at the hard turn deadline: 300 s wins over an unfinished line, the
+  // claim is abandoned and the player can regenerate the text.
+  const headStatus = headEntry(record).status;
+  if (headStatus !== 'ready' && headStatus !== 'failed') {
+    const deadline = request.cancelReason === 'turn_deadline' && headStatus === 'pending';
+    if (!deadline) refuse('narration_blocked', 'the head narration is not ready');
+    const entry = headEntry(record);
+    entry.claim = null;
+    entry.status = 'failed';
+    entry.text = null;
+    entry.generation += 1;
+  }
   const abandoned: Id[] = [];
   if (record.work?.pendingGroup) abandoned.push(record.work.pendingGroup.groupId);
   record.work = null;
@@ -869,12 +892,15 @@ export class LocalWorldTransport implements WorldTransport {
       data = await this.handleWrite(draft, operation as WriteOperation, request as never, scope);
     } catch (error) {
       if (error instanceof Refusal) {
+        // The response carries the code, not the handler's specific reason.
+        console.info('[world-local refusal]', JSON.stringify({ operation, code: error.code, detail: error.message, details: error.details }));
         throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, error.code, error.details));
       }
       if (error instanceof KernelViolation) {
-        const code: ErrorCode = error.kind === 'id_unresolved' || error.kind === 'prefix_binding' ? 'version_mismatch'
-          : error.kind === 'position_invalid' ? 'request_malformed' : 'request_malformed';
-        throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, code));
+        const code: ErrorCode = error.kind === 'id_unresolved' || error.kind === 'prefix_binding' ? 'version_mismatch' : 'request_malformed';
+        const details = { kind: error.kind, detail: error.message };
+        console.info('[world-local kernel]', JSON.stringify({ operation, code, ...details }));
+        throw new WorldApiError(await asErrorResponse(this.record, operation, requestId, code, details));
       }
       throw error;
     }

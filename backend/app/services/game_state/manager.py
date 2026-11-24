@@ -9,6 +9,7 @@ from app.database import Database
 from app.schemas import StoryOutput
 
 from app.services.game_state.defaults import (
+    MAX_ITEMS,
     MAX_NPCS,
     MAX_QUESTS,
     MAX_WORLD_FACTS,
@@ -65,14 +66,7 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
 
     def apply_output(self, state: dict[str, Any], action: str, output: StoryOutput) -> dict[str, Any]:
         next_state = self._ensure_state_shape(state)
-        sanity_before = next_state.get("sanity", 80)
-        sanity_after_action = sanity_before + output.sanity_delta
-        # Crossing zero is irreversible within this timeline. Passive recovery
-        # and a later model-proposed heal cannot erase a bloodline collapse.
-        next_state["sanity"] = (
-            0 if sanity_before <= 0 or sanity_after_action <= 0
-            else self._clamp(sanity_after_action + SANITY_RECOVERY_PER_TURN)
-        )
+        next_state["sanity"] = self._clamp(next_state.get("sanity", 80) + output.sanity_delta + SANITY_RECOVERY_PER_TURN)
         next_state["health"] = self._clamp(next_state.get("health", 100) + output.health_delta)
         next_state["turn"] = int(next_state.get("turn", 0)) + 1
 
@@ -229,7 +223,6 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
     def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
         """Remove server-only state before returning a response to the client."""
         state.pop("_memory_controller", None)
-        state.pop("_campaign_session_index", None)
         state.pop("_memory_pending_tasks", None)
         return state
 
@@ -237,10 +230,10 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
     def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
         """Apply defensive caps to prevent 270-turn state bloat.
 
-        Caps: 15 NPCs, 10 quests, 15 world_facts.
-        Inventory is authoritative and must not silently drop acquired items.
+        Caps: 20 items, 15 NPCs, 10 quests, 15 world_facts.
         Excess entries are trimmed from the end (FIFO — oldest first kept).
         """
+        state["items"] = state.get("items", [])[:MAX_ITEMS]
         state["npcs"] = state.get("npcs", [])[:MAX_NPCS]
         state["quests"] = state.get("quests", [])[:MAX_QUESTS]
         state["world_facts"] = state.get("world_facts", [])[:MAX_WORLD_FACTS]

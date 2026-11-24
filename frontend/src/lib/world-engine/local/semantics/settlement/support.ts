@@ -65,7 +65,29 @@ export function parseJsonValue(raw: string): unknown {
     close = ']';
   }
   if (start < 0) throw new Error('model output is not JSON');
-  const end = text.lastIndexOf(close);
+  // The first BALANCED object, not the last closing brace: a model that keeps
+  // talking after its JSON (WebLLM 4B does) would otherwise make the slice
+  // include prose and fail the parse.
+  const open = close === '}' ? '{' : '[';
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  let end = -1;
+  for (let index = start; index < text.length; index += 1) {
+    const char = text[index];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+    if (char === '"') { inString = true; continue; }
+    if (char === open) depth += 1;
+    else if (char === close) {
+      depth -= 1;
+      if (depth === 0) { end = index; break; }
+    }
+  }
   if (end <= start) throw new Error('model output is incomplete JSON');
   return JSON.parse(text.slice(start, end + 1)) as unknown;
 }

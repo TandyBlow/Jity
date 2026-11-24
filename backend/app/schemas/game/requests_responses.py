@@ -2,10 +2,8 @@
 
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field, PrivateAttr, model_validator
+from pydantic import BaseModel, Field
 
-from app.schemas.agent_io.examiner import ActionRuling
-from app.schemas.game.action_checks import ActionCheckResult, ActionCheckSubmission
 from app.schemas.game.story_output import StoryOutput
 
 
@@ -14,7 +12,7 @@ from app.schemas.game.story_output import StoryOutput
 class CreateSessionRequest(BaseModel):
     game_name: str = "卡塞尔入学档案"
     model: Optional[str] = None
-    campaign_filename: str = Field(default="default_campaign.json", min_length=1, pattern=r"^[\w.-]+\.json$")
+    campaign_filename: Optional[str] = None
     arc_index: int = 0
     session_index: int = 0
     slot_name: Optional[str] = None
@@ -27,18 +25,6 @@ class GenerateRequest(BaseModel):
     constraints: str = ""
     slot_name: str = ""
     timeline_node_id: Optional[int] = None
-    option_index: int | None = Field(default=None, strict=True, ge=0)
-    action_check: ActionCheckSubmission | None = None
-    _resolved_action_check: ActionCheckResult | None = PrivateAttr(default=None)
-    _action_ruling: ActionRuling | None = PrivateAttr(default=None)
-
-    @model_validator(mode="after")
-    def _check_option_identity(self) -> "GenerateRequest":
-        if (self.option_index is not None and self.action_check is not None
-                and self.action_check.option_index is not None
-                and self.option_index != self.action_check.option_index):
-            raise ValueError("行动选项与判定选项不一致，请重新选择。")
-        return self
 
 
 # ── Response models ──
@@ -88,7 +74,4 @@ class GenerateResponse(BaseModel):
     # so the live panel reports it without reimplementing the merge order.
     memory: dict[str, Any] = Field(default_factory=dict)
     declared: dict[str, Any] = Field(default_factory=dict)
-    caps: dict[str, int | None] = Field(default_factory=dict)
-    # Whole-campaign progress summary (turns_total / cap / arc / goal) for the
-    # console's progress strip. None outside a campaign session.
-    campaign_progress: Optional[dict[str, Any]] = None
+    caps: dict[str, int] = Field(default_factory=dict)

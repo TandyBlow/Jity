@@ -2,10 +2,11 @@
 
 /** Browser-only playable loop. No HTTP game API: the page loads the static
  * world, creates the local transport/controller, runs the two GGUF engines
- * (semantic 0.6B + narration 0.5B) and stores the committed snapshot in
- * localStorage. The server, if present, is never called. */
+ * (semantic Qwen3-0.6B + narration Qwen3-1.7B) and stores the committed
+ * snapshot in IndexedDB. The server, if present, is never called. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WllamaInferenceEngine } from '@/lib/world-engine/runtime/wllama-engine';
+import { WebLlmInferenceEngine } from '@/lib/world-engine/runtime/webllm-engine';
 import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
@@ -13,7 +14,9 @@ import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore 
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
 import type { GenerationEvidence, ModelLoadEvidence } from '@/lib/world-engine/local/runtime-diagnostics/types';
 import { createProductSync, type ProductSync } from '@/lib/world-engine/local/progress-sync/product';
+import type { ProgressConflictError } from '@/lib/world-engine/local/progress-sync/types';
 import { restoredEntries, type RestoredTurn } from '@/lib/world-engine/local/history';
+import { HistoryPanel, NarrationView, ProgressStatus, historyEntriesFromPoints, type HistoryEntry, type NarrationState, type SaveStatus, type SyncState } from '@/components/world-local';
 import { locationName, roomOf, visibleCharacters } from '@/lib/world-engine/local/prompt';
 import { loadStaticWorld, StaticWorldError } from '@/lib/world-engine/local/world-loader';
 import { stateDigest } from '@/lib/world-engine/local/state';
@@ -27,6 +30,9 @@ const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
 // truncated fetch is rejected before wllama parses it; the full SHA-256 check
 // belongs to 09's host runner.
 const SEMANTIC_MODEL_BYTES = 396_705_472;
+/** D-022 runtime prototype: WebLLM prebuilt MLC artifacts (allowlist). */
+const WEBLLM_MODELS = ['Qwen3-0.6B-q4f16_1-MLC', 'Qwen3-1.7B-q4f16_1-MLC', 'Qwen3-4B-q4f16_1-MLC', 'Qwen3-8B-q4f16_1-MLC', 'Qwen2.5-3B-Instruct-q4f16_1-MLC'] as const;
+const WEBLLM_MODEL = WEBLLM_MODELS[2];
 
 /** Narration model variants the internal arm switch may select. The default is
  * the shipped LoRA checkpoint; `qwen3-1.7b` is lane 02's prose-facts arm model.
@@ -40,9 +46,28 @@ const NARRATION_MODELS = {
     url: '/models/Qwen3-1.7B-Q4_K_M.gguf', bytes: 1_107_409_472, contextSize: 4096,
     sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
   },
+  // D-028 product default (user decision 2026-11-24): the v13 hand-written
+  // LoRA. The base entry below stays available as an evaluation arm.
+  'qwen3-1.7b-narr-lora': {
+    url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
+    sha256: '82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a',
+  },
+  // Evaluation arm: a 1.5B checkpoint trained on the page narration format
+  // (page-v3, local build 2026-11-10). Not a product default.
+  'qwen15b-page-v3': {
+    url: '/models/qwen15b-page-v3-Q4_K_M.gguf', bytes: 986_048_064, contextSize: 3072,
+    sha256: 'a03bcfeaa4837d6754257a5f6e71cd24ac3ebce4bb26ee92fc2280d096c5632f',
+  },
+  // Evaluation arm (D-007): the semantic 0.6B also writes the narration, in
+  // the same engine instance. One set of weights instead of two; quality must
+  // be measured against the 1.7B before it can become a default.
+  'semantic': {
+    url: '/models/Qwen3-0.6B-Q4_K_M.gguf', bytes: 396_705_472, contextSize: 12_288,
+    sha256: 'ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a',
+  },
 } as const;
 type NarrationModelKey = keyof typeof NARRATION_MODELS;
-const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b';
+const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b-narr-lora';
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
 /** Per-turn evidence record, mirrored on window.__worldTurns so an automated
@@ -62,6 +87,10 @@ interface WorldTurnRecord {
   points?: Array<{ pointId: string; text: string; source?: 'model' | 'program' | 'mixed' | 'draft' }>;
   /** Per-point narration provenance in this turn (player point first). */
   narrations?: Array<{ pointId: string; source: 'model' | 'program' | 'mixed' | 'draft'; atMs: number }>;
+  /** Per-point prompt/text pairs; evidence only. */
+  pointPrompts?: Array<{ pointId: string; prompt: string; text: string }>;
+  /** Semantic-call prompts for this turn; evidence only. */
+  semanticPrompts?: Array<{ at: number; prompt: string }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
    * exists); narrationStartedAtMs is the first narration progress callback. */
@@ -236,6 +265,8 @@ async function loadEngine(
   /** Hand the constructed engine out before the load starts, so the stop
    * button can reach a cold load that has no `current` engine yet. */
   onEngine?: (engine: WllamaInferenceEngine) => void,
+  cacheTypes = false,
+  onPrompt?: (prompt: string) => void,
 ): Promise<WllamaInferenceEngine> {
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
@@ -274,7 +305,8 @@ async function loadEngine(
       at: Date.now(),
     });
   };
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
+  const cache = cacheTypes ? { cacheTypeK: 'q8_0' as const, cacheTypeV: 'q8_0' as const } : {};
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     // A user cancel or dispose is not a GPU failure: retrying on CPU would
@@ -283,11 +315,30 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
   }
+}
+
+/** D-022 prototype port around WebLLM. Same engine shape the page already
+ * consumes; no wllama worker, no blob fetch. */
+function resilientWebLlm(modelId: string, label: string, modelBase?: string, cacheBackend?: 'cache' | 'indexeddb' | 'opfs'): ProductEnginePort {
+  const engine = new WebLlmInferenceEngine(modelId, modelBase, cacheBackend);
+  let closed = false;
+  return {
+    get info() { return engine.info; },
+    load: async () => { if (!closed) await engine.load(); },
+    complete: (prompt, options) => engine.complete(prompt, options),
+    dispose: async () => { closed = true; await engine.dispose(); },
+    cancelActive: () => engine.cancelActive(),
+    runtime: () => ({
+      needsReload: false, workersCreated: 0, workersExited: 0, generations: 0,
+      loadCount: engine.info.modelId ? 1 : 0, modelId: engine.info.modelId, backend: 'webllm', gpuLayers: undefined,
+      lastLoadMs: null, lastLoadFetchMs: null, lastLoadCompileMs: null, lastLoadFromCache: null, lastGeneration: null,
+    }),
+  };
 }
 
 function engineCounters(label: string, engine: ProductEnginePort | null): WorldTurnRecord['engines'][number] | null {
@@ -356,7 +407,7 @@ async function probeGpu(): Promise<Record<string, unknown>> {
   return out;
 }
 
-function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number): ProductEnginePort {
+function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, cacheTypes = false, onPrompt?: (prompt: string) => void): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
@@ -372,7 +423,7 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
       loading = loadEngine(url, contextSize, expectedBytes, label, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
-      }).then((engine) => {
+      }, cacheTypes, onPrompt).then((engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); throw new DOMException('engine closed', 'AbortError'); }
         current = engine;
         loadingEngine = null;
@@ -458,6 +509,7 @@ async function openWithLease(
   alive: () => boolean,
   narrationSourceOf: () => Record<string, { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }> | undefined,
   onCommit: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void,
+  forceHandback = false,
   attempts = 20,
   // The writer lease lives 30 s and a page that is being reloaded may not have
   // released it yet (its flush can still be running). Wait past that TTL before
@@ -473,7 +525,7 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit },
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(forceHandback ? { forceHandback } : {}) },
       );
       if (opened.created) await opened.session.start();
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
@@ -531,21 +583,51 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs' } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
     const modelParam = q.get('narrationModel');
-    const model = modelParam === 'qwen3-1.7b' || modelParam === 'qwen25-1.5b-narr' ? modelParam : undefined;
+    const model = modelParam && modelParam in NARRATION_MODELS ? modelParam as NarrationModelKey : undefined;
     const modeParam = q.get('narrationMode');
     const shapeParam = q.get('narrationShape');
+    const offscreenParam = q.get('offscreenPolicy');
+    const tempParam = Number(q.get('narrationTemperature'));
+    const temperature = Number.isFinite(tempParam) && tempParam > 0 && tempParam <= 1.5 ? tempParam : undefined;
+    const fewShot = q.get('narrationFewShot') === '1' ? true : undefined;
+    const projection = q.get('narrationProjection') === 'compact' ? 'compact' as const : undefined;
+    const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
+    const settlementUnknownRule = q.get('settlementUnknownRule') === '1' ? true : undefined;
+    const compactSettlement = q.get('compactSettlement') === '1' ? true : undefined;
+    const settlementUnknownExample = q.get('settlementUnknownExample') === '1' ? true : undefined;
+    const strictKnownEntities = q.get('strictKnownEntities') === '0' ? false : undefined;
+    const runtime = q.get('runtime') === 'webllm' ? 'webllm' as const : undefined;
+    const webllmParam = q.get('webllmModel');
+    const webllmModel = webllmParam && (WEBLLM_MODELS as readonly string[]).includes(webllmParam) ? webllmParam : undefined;
+    const webllmLocal = q.get('webllmLocal') === '1' ? true : undefined;
+    const cacheParam = q.get('webllmCache');
+    const webllmCache = cacheParam === 'cache' || cacheParam === 'indexeddb' || cacheParam === 'opfs' ? cacheParam : undefined;
     const mode = modeParam === 'beats' || modeParam === 'scene' ? modeParam : undefined;
     const shape = shapeParam === 'serialized' || shapeParam === 'prose-facts' ? shapeParam : undefined;
+    const offscreenPolicy = offscreenParam === 'skip' || offscreenParam === 'judge' ? offscreenParam : undefined;
     return {
       ...(candidate ? { candidate } : {}),
       ...(mode ? { mode } : {}),
       ...(shape ? { shape } : {}),
       ...(model ? { model } : {}),
+      ...(offscreenPolicy ? { offscreenPolicy } : {}),
+      ...(temperature !== undefined ? { temperature } : {}),
+      ...(fewShot ? { fewShot } : {}),
+      ...(projection ? { projection } : {}),
+      ...(schedHandback ? { schedHandback } : {}),
+      ...(settlementUnknownRule ? { settlementUnknownRule } : {}),
+      ...(compactSettlement ? { compactSettlement } : {}),
+      ...(settlementUnknownExample ? { settlementUnknownExample } : {}),
+      ...(strictKnownEntities === false ? { strictKnownEntities } : {}),
+      ...(runtime ? { runtime } : {}),
+      ...(webllmModel ? { webllmModel } : {}),
+      ...(webllmLocal ? { webllmLocal } : {}),
+      ...(webllmCache ? { webllmCache } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -587,7 +669,45 @@ export default function WorldLocalPage() {
   /** A live lease held by another tab (or by a reload that has not released
    * yet). The save is valid; it must never be archived or deleted for this. */
   const [leaseBlocked, setLeaseBlocked] = useState(false);
+  const [isolationWarning, setIsolationWarning] = useState<string | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>({ state: 'idle' });
+  const [syncState, setSyncState] = useState<SyncState | null>(null);
+  /** A 409 fork: both copies stay stored until the player chooses (G7). */
+  const [syncConflict, setSyncConflict] = useState<ProgressConflictError<LocalGameSnapshot> | null>(null);
+  // Node 22 exposes a global `navigator` without `onLine`, so reading it in the
+  // initializer made SSR render the offline banner and the client the normal
+  // panel. Start from the hydration-safe default and read the real value after
+  // mount.
+  const [online, setOnline] = useState(true);
   const leaseWorldRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    setOnline(navigator.onLine);
+    const up = () => {
+      setOnline(true);
+      // Reconnect flush (G7): queued offline saves upload; a 409 opens the
+      // fork panel instead of being lost.
+      void syncRef.current?.flush().then((result) => {
+        if (result.conflictList.length) setSyncConflict(result.conflictList[0]);
+      }).catch(() => undefined);
+    };
+    const down = () => setOnline(false);
+    window.addEventListener('online', up);
+    window.addEventListener('offline', down);
+    return () => { window.removeEventListener('online', up); window.removeEventListener('offline', down); };
+  }, []);
+
+  // Isolation is a product requirement, not an optimization: without the
+  // COOP/COEP headers the wasm runtime drops to one thread. Keep the warning
+  // persistent instead of a one-shot toast.
+  useEffect(() => {
+    const isolated = globalThis.crossOriginIsolated === true;
+    (window as unknown as { __worldIsolation?: unknown }).__worldIsolation = { crossOriginIsolated: isolated, at: Date.now() };
+    setIsolationWarning(isolated ? null : '页面未启用跨源隔离（COOP/COEP）：本地模型只能单线程运行，会明显变慢。请确认通过站点地址打开，且文档响应带 Cross-Origin-Opener-Policy 与 Cross-Origin-Embedder-Policy。');
+  }, []);
 
   /** Fallback only: when the platform has no IndexedDB the session runs in
    * memory and the page keeps a best-effort localStorage copy so a refresh is
@@ -601,12 +721,18 @@ export default function WorldLocalPage() {
       // sync layer can never bump the revision behind the session's back.
       void sync.push(snapshot).then((result) => {
         const outcome = result.outcome;
+        if (outcome?.status === 'conflict') setSyncConflict(outcome.conflict);
         setSyncLabel(outcome?.status === 'synced' ? '已同步'
           : outcome?.status === 'queued' ? '已存本地，等待联网同步'
           : outcome?.status === 'conflict' ? '另一台设备也保存了：需要你选择保留哪份'
           : outcome?.status === 'local-only' ? '只存本地'
           : result.note ?? null);
-      }).catch((e) => { console.warn('[world-local] sync save failed', e); });
+        setSyncState(outcome?.status === 'synced' ? 'synced'
+          : outcome?.status === 'queued' ? 'offline'
+          : outcome?.status === 'conflict' ? 'conflict'
+          : outcome?.status === 'local-only' ? 'local-only'
+          : 'failed');
+      }).catch((e) => { console.warn('[world-local] sync save failed', e); setSyncState('failed'); });
       return;
     }
     if (storeRef.current?.durable) return;
@@ -636,17 +762,51 @@ export default function WorldLocalPage() {
       () => structuredClone(sessionRef.current?.snapshot ?? session.snapshot);
     const context = await session.transport.execute('get_context', {}, { worldId: session.worldId });
     setHistory(session.commandsPlayed);
+    // Read-only history view: committed points and their narration status.
+    const points = Object.values(snapshot.transport.points).map((point) => ({
+      pointId: point.id, sequence: point.sequence, kind: point.kind,
+      stateDigest: snapshot.transport.pointStates[point.id]?.stateDigest ?? null,
+      advanceId: point.advanceId ?? null,
+    }));
+    const narrationStatusById = Object.fromEntries(
+      Object.entries(snapshot.transport.narrations).map(([id, entry]) => [id, entry.status]),
+    );
+    setHistoryEntries(historyEntriesFromPoints(points, { narrationStatusById }));
+    setPaused(Boolean(snapshot.transport.control.paused));
     // A conflict-blocked session can leave flushPersistence waiting on its own
     // drain; the page must still paint. Bounded wait, then the snapshot save is
     // best effort.
+    setSaveStatus({ state: 'saving' });
     await Promise.race([
-      session.flushPersistence().catch(() => undefined),
+      session.flushPersistence().then(
+        () => setSaveStatus({ state: 'saved', savedAtLabel: new Date().toLocaleTimeString() }),
+        (error) => setSaveStatus({ state: 'failed', error: error instanceof Error ? error.message : String(error) }),
+      ),
       new Promise<void>((resolve) => setTimeout(resolve, 8_000)),
     ]);
     save(session.snapshot);
     setPhase((current) => current === 'streaming' ? 'ready' : current);
     return context;
   }, [save]);
+
+  /** G7: the player resolves a fork. keep-remote replaces the local store and
+   * reloads (the open session is stale); keep-local-fork uploads the local
+   * branch and leaves the remote branch readable. */
+  const chooseSync = useCallback(async (choice: 'keep-remote' | 'keep-local-fork') => {
+    const sync = syncRef.current;
+    const conflict = syncConflict;
+    if (!sync || !conflict) return;
+    try {
+      await sync.choose(choice, conflict);
+      setSyncConflict(null);
+      setSyncState(choice === 'keep-remote' ? 'synced' : 'local-only');
+      if (choice === 'keep-remote') { window.location.reload(); return; }
+      setMessage('已保留本地分支并上传；另一支仍可从远端恢复。');
+      await refresh();
+    } catch (error) {
+      setMessage(`冲突选择失败：${error instanceof Error ? error.message : String(error)}`);
+    }
+  }, [syncConflict, refresh]);
 
   useEffect(() => {
     let alive = true;
@@ -689,17 +849,41 @@ export default function WorldLocalPage() {
         console.info('[world-local] gpu probe', JSON.stringify(gpu));
         // 12288 covers the settlement's measured prompt (7877 chars) plus the
         // repair feedback; 8192 left a retry on the edge of the context.
-        const semantic = resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES);
+        // D-022 runtime prototype: one WebLLM 4B engine serves both roles.
+        const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
+        const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
+        const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
+        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true, (prompt) => {
+          const rec = turnRecordRef.current;
+          if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
+        });
         semanticRef.current = semantic;
-        const narration = resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes);
+        // The 0.6B narration arm shares the semantic engine: one set of
+        // weights, at the cost of serialising narration against settlement.
+        const narration = webllm ?? (narrationKey === 'semantic'
+          ? semantic
+          : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes));
         narrationRef.current = narration;
         const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
         // Arm identity is evidence: 09 records it next to every turn, including
         // the exact narration file and its hash so no run can silently swap weights.
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
+          offscreenPolicy: arm.offscreenPolicy ?? 'judge',
           narrationModel: narrationKey, narrationFile: narrationSpec.url,
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
+          narrationTemperature: arm.temperature ?? null,
+          narrationFewShot: arm.fewShot ?? null,
+          narrationProjection: arm.projection ?? null,
+          schedHandback: arm.schedHandback ? 'player' : null,
+          settlementUnknownRule: arm.settlementUnknownRule ?? null,
+          compactSettlement: arm.compactSettlement ?? null,
+          settlementUnknownExample: arm.settlementUnknownExample ?? null,
+          strictKnownEntities: arm.strictKnownEntities ?? true,
+          runtime: arm.runtime === 'webllm' ? 'webllm' : 'wllama',
+          webllmModel: arm.runtime === 'webllm' ? webllmModel : null,
+          webllmLocal: arm.webllmLocal === true,
+          webllmCache: arm.webllmCache ?? 'indexeddb',
         };
         const model = new LocalGameModel(semantic, {
           narrationEngine: narration,
@@ -707,6 +891,7 @@ export default function WorldLocalPage() {
           // a player round holds only that character so its settlement can
           // commit and be narrated before the rest of the roster is judged.
           protagonistId: world.state.protagonistId,
+          ...(arm.offscreenPolicy ? { offscreenPolicy: arm.offscreenPolicy } : {}),
           narrationMode: 'instruct',
           narrationCandidate: (candidate ?? 'builtin') as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin',
           ...(arm.mode ? { trainedMode: arm.mode } : {}),
@@ -717,7 +902,13 @@ export default function WorldLocalPage() {
           // (8978 run); the beat prompt asks 2-6 sentences, so give it the same
           // room as the scene arm.
           narrationMaxTokens: candidate === 'constrained' ? 480 : 200,
-          narrationTemperature: 0.45,
+          narrationTemperature: arm.temperature ?? 0.45,
+          ...(arm.fewShot ? { narrationFewShot: true } : {}),
+          ...(arm.projection ? { narrationProjection: arm.projection } : {}),
+          ...(arm.settlementUnknownRule ? { settlementUnknownRule: true } : {}),
+          ...(arm.compactSettlement ? { compactSettlement: true } : {}),
+          ...(arm.settlementUnknownExample ? { settlementUnknownExample: true } : {}),
+          ...(arm.strictKnownEntities === false ? { strictKnownEntities: false } : {}),
           onTask: (task, key, detail) => {
             // stageMs/stages arrive on the updates task detail: printing them
             // here keeps the per-stage cost visible even when the turn times out
@@ -786,6 +977,7 @@ export default function WorldLocalPage() {
                 text: debug.text,
                 prompt: debug.prompt,
               };
+              (liveRecord.pointPrompts ??= []).push({ pointId: debug.pointId, prompt: debug.prompt, text: debug.text });
             }
           },
           // Candidate provenance (grade, per-sentence sources, attempts) is kept
@@ -877,6 +1069,9 @@ export default function WorldLocalPage() {
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
               else points[index] = { ...points[index], pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
               points.splice(0, points.length, ...inPointOrder(points));
+              // Evidence: the turn record carries the same per-point prose the
+              // article renders, so a driver can compare them verbatim.
+              if (record) record.points = points.map((part) => ({ ...part }));
               const joined = points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10));
               return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
             }));
@@ -890,9 +1085,13 @@ export default function WorldLocalPage() {
         storeRef.current = store;
         const syncBase = process.env.NEXT_PUBLIC_LOCAL_PROGRESS_URL ?? 'http://127.0.0.1:8000/local-progress';
         if (store.durable) {
-          const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase });
+          // writeLocal lets restore() persist a remote head before any session
+          // owns the store; the page itself only pushes (skipLocal), so the
+          // session stays the sole writer once open.
+          const sync = createProductSync<LocalGameSnapshot>({ store, worldId: world.worldId, baseUrl: syncBase, writeLocal: true });
           syncRef.current = sync;
           void sync.flush().then((outcome) => {
+            if (outcome.conflictList.length) setSyncConflict(outcome.conflictList[0]);
             if (outcome.remaining > 0) setSyncLabel(`还有 ${outcome.remaining} 段进度等待同步`);
           }).catch(() => undefined);
         }
@@ -905,10 +1104,29 @@ export default function WorldLocalPage() {
         if (migration.status !== 'absent' && migration.status !== 'migrated') {
           console.warn('[world-local] legacy migration', migration.status, migration.backupKey ?? '');
         }
+        // G7: local save first; only when none exists is the remote head pulled,
+        // and only as an opaque snapshot. A conflict keeps both copies for the
+        // player to choose; an unavailable service leaves local play untouched.
+        if (store.durable && syncRef.current) {
+          const localRecord = await store.load(world.worldId).catch(() => null);
+          if (!localRecord) {
+            try {
+              const pulled = await syncRef.current.restore();
+              if (pulled.source === 'remote' && pulled.snapshot) {
+                console.info('[world-local] restored remote progress');
+                setSyncState('synced');
+              } else if (pulled.conflict) {
+                setSyncState('conflict');
+              }
+            } catch (restoreError) {
+              console.warn('[world-local] remote progress restore failed', restoreError);
+            }
+          }
+        }
         let session: LocalGameSession;
         let restored = false;
         try {
-          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent);
+          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent, arm.schedHandback ?? false);
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           // A save can carry an advance left open by a failed turn. The next
           // submit would be refused as turn_in_progress (2603 run: ready, then
@@ -1137,6 +1355,15 @@ export default function WorldLocalPage() {
     turnDeadlineRef.current = setTimeout(() => {
       deadlineHitRef.current = true;
       console.info('[world-local] 295 s turn deadline: stopping automatic follow-up work');
+      setMessage('本轮已到 295 秒时限：已停止后续自动推进；已结算的状态和已写出的正文都保留。');
+      setStage('');
+      // A cancel alone waits for the in-flight model call (up to its own
+      // timeout). Abort the engines first so the round closes inside 300 s.
+      modelRef.current?.abortTurn();
+      for (const engine of [semanticRef.current, narrationRef.current]) {
+        const typed = engine as unknown as { cancelActive?: () => number } | null;
+        try { typed?.cancelActive?.(); } catch { /* best effort */ }
+      }
       void session.cancel('turn_deadline').catch((error) => console.warn('[world-local] deadline cancel failed', error));
     }, 295_000);
     save(session.snapshot);
@@ -1344,6 +1571,11 @@ export default function WorldLocalPage() {
       // that no longer exists while the harness waits for done.
       setStage('');
       setBusy(false);
+      // The streaming phase is only cleared by a successful refresh; a turn
+      // that ended on the deadline or a failed cancel kept painting
+      // “正在写正文…” forever, so the player and the acceptance driver never
+      // saw the turn end. Every submission exit leaves the computing phases.
+      setPhase((current) => (current === 'streaming' || current === 'thinking' ? 'ready' : current));
       console.info('[world-local submit-finally]', JSON.stringify({ turn: turnRecordRef.current?.index ?? null }));
       // A turn stopped by the deadline or by a failure never reaches refresh(),
       // so the "已行动" counter kept the previous value even though the command
@@ -1396,6 +1628,10 @@ export default function WorldLocalPage() {
       const status = await session.cancel('player_cancelled');
       console.info('[world-local] cancel status', status);
       await refresh();
+      // A cancelled turn with no prose is a placeholder, not a paragraph.
+      setEntries((list) => list.filter((entry) => entry.text.trim()
+        || (entry.points ?? []).some((part) => part.text.trim())
+        || entry.failed || entry.restored));
       setMessage('本轮已取消。可以重新输入行动。');
     } catch (e) {
       // The one refusal that is not an error: the head point's prose was still
@@ -1434,6 +1670,33 @@ export default function WorldLocalPage() {
     }
   }, [refresh]);
 
+  /** Pause keeps the frozen work and dice; resume continues the same round. */
+  const togglePause = useCallback(async () => {
+    const session = sessionRef.current;
+    if (!session) return;
+    try {
+      const status = paused ? await session.resume() : await session.pause();
+      setPaused(Boolean(session.snapshot.transport.control.paused));
+      setMessage(status.kind === 'stop' ? `本轮停止：${status.reason}` : paused ? '已继续。' : '已暂停；冻结的行动与骰点会保留。');
+    } catch (e) {
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+    }
+  }, [paused]);
+
+  /** Delete and regenerate one committed point's narration from the committed
+   * record only; a later refresh rebuilds the reading column from the snapshot. */
+  const regenerateNarration = useCallback(async (pointId?: string) => {
+    const session = sessionRef.current;
+    if (!session) return;
+    try {
+      await session.regenerateNarration(pointId);
+      await refresh();
+      setEntries(restoredEntries(session.snapshot));
+    } catch (e) {
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : String(e));
+    }
+  }, [refresh]);
+
   const reset = useCallback(async () => {
     if (!confirm('清除本地存档并重新开始？')) return;
     const session = sessionRef.current;
@@ -1448,6 +1711,22 @@ export default function WorldLocalPage() {
     window.location.reload();
   }, []);
 
+  const lastEntry = entries[entries.length - 1] ?? null;
+  const narrationState: NarrationState = lastEntry
+    ? {
+        phase: lastEntry.failed || lastEntry.cancelled || lastEntry.unfinished
+          ? 'failed'
+          : lastEntry.text.trim() && (lastEntry.acceptedMs != null || lastEntry.restored)
+            ? 'accepted'
+            : lastEntry.text.trim() ? 'streaming' : phase === 'thinking' || phase === 'streaming' ? 'streaming' : 'idle',
+        text: lastEntry.text,
+        pointId: sessionRef.current?.snapshot.transport.headPointId ?? null,
+        elapsedMs: lastEntry.acceptedMs ?? lastEntry.draftMs ?? null,
+        failureReason: lastEntry.failed || lastEntry.cancelled || lastEntry.unfinished ? lastEntry.note : null,
+        previousText: entries[entries.length - 2]?.text ?? null,
+      }
+    : { phase: 'idle', text: '', pointId: null };
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -1455,11 +1734,21 @@ export default function WorldLocalPage() {
           <h1 className={styles.title}>龙族 · 自由一日</h1>
           <div className={styles.subtitle}>全部在浏览器本地运行 · 服务器只负责存档</div>
         </div>
-        <button onClick={reset} className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新开始'}</button>
+        <div className={styles.headerActions}>
+          <button onClick={() => void regenerateNarration()} disabled={busy || phase === 'loading'}
+            className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新生成当前正文'}</button>
+          <button onClick={() => void togglePause()} disabled={!view || phase === 'loading'}
+            className={`${styles.ghostButton} ${styles.headerButton}`}>{paused ? '继续' : '暂停'}</button>
+          <button onClick={reset} className={`${styles.ghostButton} ${styles.headerButton}`}>{'重新开始'}</button>
+        </div>
       </header>
 
       <section className={styles.layout}>
         <div>
+          {(busy || lastEntry?.failed) && (
+            <NarrationView state={narrationState} onRegenerate={() => void regenerateNarration()}
+              regenerateDisabledReason={busy || phase === 'loading' ? '结算或加载中，稍后再试' : null} />
+          )}
           <div className={styles.card}>
             <div className={styles.statusRow}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
@@ -1523,6 +1812,7 @@ export default function WorldLocalPage() {
           </div>}
           {durable === false && <div className={styles.notice}>这个浏览器没有可用的本地数据库，本局进度只保存在内存里，刷新会丢。</div>}
           {warning && <div className={`${styles.notice} ${styles.noticeWrap}`}>{warning}</div>}
+          {isolationWarning && <div className={`${styles.notice} ${styles.noticeError} ${styles.noticeWrap}`}>{isolationWarning}</div>}
           {error && <div className={`${styles.notice} ${styles.noticeError} ${styles.noticeWrap}`}>{error}</div>}
 
           <div className={styles.composer}>
@@ -1552,9 +1842,58 @@ export default function WorldLocalPage() {
             </ul>
           </div>
           <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
+            <HistoryPanel
+              entries={historyEntries}
+              headPointId={sessionRef.current?.snapshot.transport.headPointId ?? null}
+              selectedPointId={selectedPointId}
+              onSelect={(pointId) => setSelectedPointId(pointId)}
+              onRegenerate={(pointId) => void regenerateNarration(pointId)}
+              regenerateDisabledReason={busy || phase === 'loading' ? '结算或加载中，稍后再试' : null}
+            />
+            {selectedPointId && (() => {
+              const record = sessionRef.current?.snapshot.transport;
+              const narration = record?.narrations[selectedPointId];
+              const point = record?.points[selectedPointId];
+              return (
+                <div className={styles.sideMutedSpaced}>
+                  选中点 {point?.sequence ?? '—'} · 正文状态 {narration?.status ?? 'missing'}
+                  {narration?.status === 'ready' && narration.text ? `：${narration.text.slice(0, 120)}…` : ''}
+                  {' '}（只读，不改当前进度）
+                </div>
+              );
+            })()}
+          </div>
+          <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
             <div className={styles.sideTitle}>本地存档</div>
-            <div className={styles.sideMuted}>每次完整结算后写入浏览器 localStorage；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
+            <div className={styles.sideMuted}>每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。</div>
             <div className={styles.sideMutedSpaced}>已行动：{history.length} 次</div>
+          </div>
+          <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>
+            <ProgressStatus
+              online={online}
+              save={{
+                state: saveStatus.state,
+                savedAtLabel: saveStatus.savedAtLabel ?? null,
+                detail: durable === false ? '浏览器没有 IndexedDB：进度只保存在内存里，刷新会丢失。' : null,
+                error: saveStatus.error ?? null,
+                onRetry: saveStatus.state === 'failed' ? () => void refresh() : undefined,
+              }}
+              sync={syncRef.current ? {
+                state: syncState ?? 'local-only',
+                onSync: () => void syncRef.current?.flush().then((result) => {
+                  if (result.conflictList.length) setSyncConflict(result.conflictList[0]);
+                  setSyncState(result.conflicts > 0 ? 'conflict' : result.offline || result.remaining > 0 ? 'offline' : 'synced');
+                }),
+              } : null}
+            />
+            {syncConflict && (
+              <div className={styles.sideMutedSpaced}>
+                <div>另一台设备也保存了：远端与本地已分叉，请选择保留哪一支。</div>
+                <div>远端 {syncConflict.remote.headSnapshotId ?? '—'} · 分支 {syncConflict.branches.join('、') || '—'}</div>
+                <button className={styles.ghostButton} onClick={() => void chooseSync('keep-remote')}>保留远端</button>{' '}
+                <button className={styles.ghostButton} onClick={() => void chooseSync('keep-local-fork')}>保留本地并分叉</button>
+              </div>
+            )}
           </div>
         </aside>
       </section>
