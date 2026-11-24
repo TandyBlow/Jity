@@ -78,6 +78,12 @@ interface BatchMemory {
   tasksStageSeen: boolean;
   tasksFailed: boolean;
   baselineMaxSequence: number;
+  /** Merged position answer's appearance half, kept for the next split call. */
+  pendingAppearance?: {
+    changes: Record<Id, Partial<EntityDelta>>;
+    lenientDrops: { entityId: string; op: string; droppedText: string }[];
+    ids: Id[];
+  };
 }
 
 interface OperationRow {
@@ -356,7 +362,15 @@ export class UpdatesRunner {
       shared: {},
     };
     if (stage) {
+      // The controller splits the stages, so the merged position answer's
+      // appearance half must survive one call boundary in the batch memory;
+      // otherwise the appearance stage re-asks a question already answered.
+      if (stage === 'appearance' && batch.pendingAppearance) {
+        ctx.shared = { pendingAppearance: batch.pendingAppearance };
+        batch.pendingAppearance = undefined;
+      }
       const outcome = await this.runStage(stage, ctx);
+      if (stage === 'position') batch.pendingAppearance = ctx.shared?.pendingAppearance;
       const changes = this.guardStage(stage, ctx.state, outcome, splitPersonalityOwners);
       if (outcome.error) {
         // A failed stage cannot be replaced by an empty delta: that would

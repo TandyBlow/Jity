@@ -1633,6 +1633,26 @@ describe('six-stage updates', () => {
     expect(legacy.prompts.filter((prompt) => prompt.includes('外貌结算器'))).toHaveLength(1);
   });
 
+  it('carries the merged appearance half across split stage calls', async () => {
+    // The controller splits the six stages into separate updates calls; the
+    // merged position answer's appearance half used to die with that call and
+    // the appearance stage re-asked a question already answered.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ positions: [], appearances: [{ entityId: 'a', op: 'add', recordIds: [], text: '衣袖湿了一片。' }] }),
+    ]);
+    const handlers = createSettlementHandlers({ engine });
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲站在房间里。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const position = await handlers.updates('g1#position', input);
+    expect((position.value as UpdatesCall).changes).toEqual({});
+    const appearance = await handlers.updates('g1#appearance', { ...(input as Record<string, unknown>), stage: 'appearance' } as unknown as Json);
+    expect((appearance.value as UpdatesCall).changes.a?.appearanceChanges?.[0]?.text).toBe('衣袖湿了一片。');
+    expect(engine.prompts).toHaveLength(1);
+    expect(engine.prompts[0]).toContain('第二部分：外貌');
+  });
+
   it('accepts a movement-head answer that the fact already supports, with no LLM call', async () => {
     const engine = new ScriptedEngine([]);
     const input = {
