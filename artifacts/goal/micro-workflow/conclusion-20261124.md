@@ -65,6 +65,7 @@
 - results 与 targets 合计省约 100 s；updates 反而多 110 s，净值被吃回去（完整回合 268 s vs 245–254 s）。
 - updates 的 issue 数为 0，但两臂的 0 ms 程序跳过数量不同：基线 42 次里大量 0 ms，micro 臂 36 次里程序跳过更少——微型 results 的模板 facts 改变了 updates 阶段判定「受影响实体」的范围，触发更多模型调用（均值 1.6 s → 4.9 s/次）。
 - 结论：results 头本身成立，但 facts 必须按 updates 期望的结构/措辞生成，否则下游会用更多 LLM 调用把收益吃掉。下一步先对齐 facts 契约（actorId/targetId/outcome/措辞），再重跑 A/B。
+- **对照口径警告**：两臂都是 fresh 开局、骰点随机，不是受控实验。results 阶段的替换（15 次里 13 次走微型头）是确定的；updates 的 +110 s 可能来自骰点/场景方差，不能直接归因于模板 facts。下一次 A/B 需要固定骰点或回放同一回合。
 
 ## 未完成
 
