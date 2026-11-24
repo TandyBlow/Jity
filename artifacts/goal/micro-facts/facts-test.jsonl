@@ -1,0 +1,24 @@
+{"id": 1, "tag": "direct", "action": "路明非把护目镜递给林亦舟。", "present": ["林亦舟"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无，林亦舟接过", "expect": {"targets": ["林亦舟"], "destination": "庭院", "negated": false}}
+{"id": 2, "tag": "direct", "action": "路明非把钥匙扔给诺诺。", "present": ["诺诺"], "current": "西回廊", "candidates": ["西回廊", "庭院"], "dice": "无，她接住", "expect": {"targets": ["诺诺"], "destination": "西回廊", "negated": false}}
+{"id": 3, "tag": "direct", "action": "路明非问秦越要弹匣。", "present": ["秦越"], "current": "庭院", "candidates": ["庭院", "医护附楼"], "dice": "无，没有回应", "expect": {"targets": ["秦越"], "destination": "庭院", "negated": false}}
+{"id": 4, "tag": "direct", "action": "路明非把短讯机递给诺诺。", "present": ["诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无，她接住", "expect": {"targets": ["诺诺"], "destination": "庭院", "negated": false}}
+{"id": 5, "tag": "direct", "action": "路明非把水递给秦越和诺诺。", "present": ["秦越", "诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["秦越", "诺诺"], "destination": "庭院", "negated": false}}
+{"id": 6, "tag": "direct", "action": "路明非把护目镜递给芬格尔。", "present": ["芬格尔"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["芬格尔"], "destination": "庭院", "negated": false}}
+{"id": 7, "tag": "negation", "action": "路明非没有把水递给秦越。", "present": ["秦越"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
+{"id": 8, "tag": "negation", "action": "路明非谁也没给。", "present": ["诺诺"], "current": "西回廊", "candidates": ["西回廊", "庭院"], "dice": "无", "expect": {"targets": [], "destination": "西回廊", "negated": true}}
+{"id": 9, "tag": "negation", "action": "路明非没找到林亦舟。", "present": ["林亦舟"], "current": "庭院", "candidates": ["庭院", "钟楼"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
+{"id": 10, "tag": "negation", "action": "路明非没有走进钟楼门厅。", "present": [], "current": "庭院", "candidates": ["庭院", "钟楼门厅"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
+{"id": 11, "tag": "negation", "action": "路明非没有把钥匙交给诺诺。", "present": ["诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
+{"id": 12, "tag": "negation", "action": "路明非没理芬格尔。", "present": ["芬格尔"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
+{"id": 13, "tag": "pronoun", "action": "路明非把水递给他。", "present": ["诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["诺诺"], "destination": "庭院", "negated": false}}
+{"id": 14, "tag": "pronoun", "action": "路明非把水递给她。", "present": ["诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["诺诺"], "destination": "庭院", "negated": false}}
+{"id": 15, "tag": "ellipsis", "action": "路明非把弹药递给在场的两个人。", "present": ["秦越", "诺诺"], "current": "庭院", "candidates": ["庭院", "器材棚"], "dice": "无", "expect": {"targets": ["秦越", "诺诺"], "destination": "庭院", "negated": false}}
+{"id": 16, "tag": "ellipsis", "action": "路明非把水递给第二个人。", "present": ["诺诺", "秦越"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["秦越"], "destination": "庭院", "negated": false}}
+{"id": 17, "tag": "ellipsis", "action": "路明非把钥匙交给在场的人。", "present": ["芬格尔"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["芬格尔"], "destination": "庭院", "negated": false}}
+{"id": 18, "tag": "ellipsis", "action": "路明非把电台递给他们。", "present": ["诺诺", "芬格尔"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["诺诺", "芬格尔"], "destination": "庭院", "negated": false}}
+{"id": 19, "tag": "movement", "action": "路明非走进钟楼门厅。", "present": [], "current": "庭院", "candidates": ["庭院", "钟楼门厅"], "dice": "无", "expect": {"targets": [], "destination": "钟楼门厅", "negated": false}}
+{"id": 20, "tag": "movement", "action": "路明非从庭院进西回廊。", "present": [], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": [], "destination": "西回廊", "negated": false}}
+{"id": 21, "tag": "movement", "action": "路明非回到器材棚。", "present": [], "current": "西侧服务巷", "candidates": ["西侧服务巷", "器材棚"], "dice": "无", "expect": {"targets": [], "destination": "器材棚", "negated": false}}
+{"id": 22, "tag": "movement", "action": "路明非离开器材棚，去了庭院。", "present": [], "current": "器材棚", "candidates": ["器材棚", "庭院"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": false}}
+{"id": 23, "tag": "movement", "action": "路明非在庭院里没有动。", "present": [], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
+{"id": 24, "tag": "movement", "action": "路明非走进医护附楼，没有停留。", "present": [], "current": "庭院", "candidates": ["庭院", "医护附楼"], "dice": "无", "expect": {"targets": [], "destination": "医护附楼", "negated": false}}

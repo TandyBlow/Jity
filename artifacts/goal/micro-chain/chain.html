@@ -47,13 +47,7 @@ try {
     const predTargets = targetScores.filter((t) => t.score > 0).map((t) => t.candidate);
     rec.stages.targets = predTargets.length === turn.expect.targets.length &&
       predTargets.every((n) => turn.expect.targets.includes(n));
-    const posScores = [];
-    for (const p of turn.pos_pairs) {
-      const s = await pairScore(p);
-      posScores.push({ candidate: p.candidate, score: s.score });
-      calls++; rec.calls++; rec.ms += s.ms;
-    }
-    const predPos = posScores.reduce((a, b) => (a.score > b.score ? a : b)).candidate;
+    const predPos = turn.rules_position;
     rec.stages.position = predPos === turn.expect.position;
     const key = predTargets.length ? predTargets.join('、') : '无';
     const ids = turn.judgment_variants[key] || turn.judgment_variants['无'];

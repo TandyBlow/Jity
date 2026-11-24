@@ -364,6 +364,8 @@
 
 - 微型模型协同链（2026-11-24，`goal-micro-chain`）：12 回合（8 act / 4 skip），intent → targets → position → judgment 在浏览器里串行。端到端 7/12；intent 10/12、targets 5/8、position 8/8、judgment 7/8；46 次调用，170.1 ms（4 线程）/279.0 ms（1 线程），每回合 p50 17.2 ms；上一版漏计 skip 分支，已修。targets 错时 judgment 3/3、targets 对时 4/5，但骰点文本已含结果词，不能证明无传播；targets 逐字匹配基线 8/8 强于模型 5/8。position 输入是人工结算事实，按行动文本喂掉到 3/8；位置不依赖前面模型的输出。端到端 act 4/8、skip 3/4。限制：12 回合手写、单种子。证据 `artifacts/goal/micro-chain/conclusion-20261124.md`。
 
+- 微型模型事实提取（2026-11-24，`goal-micro-facts`）：24 条手写事实测试集（direct/negation/pronoun/ellipsis/movement）。规则基线（字符串匹配 + 否定/代词/省略/移动/阻断结算）targets 24/24、destination 24/24、negated 24/24；模型组合（pair-scorer + position 打分）targets 16/24、destination 15/24，否定字段无。判定条件（模型在否定/省略集比基线高 ≥2 行）不成立，记录证伪；规则与测试集同源，需独立构造再比。链改用规则结算的 position（动作 + 骰点，不再读手写事实）：端到端 6/12、position 8/8、targets 4/8、judgment 7/8、30 次调用、113.1 ms（4 线程）/174.1 ms（1 线程）。证据 `artifacts/goal/micro-facts/conclusion-20261124.md`、`artifacts/goal/micro-chain/conclusion-20261124.md`。
+
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
 - 状态：`signed`（2026-11-24）。

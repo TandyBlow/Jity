@@ -1,0 +1,65 @@
+{
+ "field": {
+  "rules": {
+   "targets": "24/24",
+   "destination": "24/24",
+   "negated": "24/24"
+  },
+  "model": {
+   "targets": "16/24",
+   "destination": "15/24"
+  }
+ },
+ "by_tag": {
+  "direct": {
+   "rules": {
+    "targets": "6/6",
+    "destination": "6/6"
+   },
+   "model": {
+    "targets": "6/6",
+    "destination": "2/6"
+   }
+  },
+  "ellipsis": {
+   "rules": {
+    "targets": "4/4",
+    "destination": "4/4"
+   },
+   "model": {
+    "targets": "1/4",
+    "destination": "2/4"
+   }
+  },
+  "movement": {
+   "rules": {
+    "targets": "6/6",
+    "destination": "6/6"
+   },
+   "model": {
+    "targets": "6/6",
+    "destination": "6/6"
+   }
+  },
+  "negation": {
+   "rules": {
+    "targets": "6/6",
+    "destination": "6/6"
+   },
+   "model": {
+    "targets": "1/6",
+    "destination": "3/6"
+   }
+  },
+  "pronoun": {
+   "rules": {
+    "targets": "2/2",
+    "destination": "2/2"
+   },
+   "model": {
+    "targets": "2/2",
+    "destination": "2/2"
+   }
+  }
+ }
+}
