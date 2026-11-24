@@ -29,15 +29,17 @@
 
 ## 判定
 
-- 32 token 是可部署长度：int8 延迟 4.57–7.83 ms，准确率与自然输入相同（targets/intent/judgment），position 截断掉 1 行、压缩输入补回。
+- 在这批 15/任务样本上，32 token 达到与自然输入相同的准确率（targets/intent/judgment），position 截断掉 1 行、压缩输入补回；这是样本内结论，不是泛化结论。
 - 16 token 开始掉点（targets 11、position 6、judgment 10）；8 token 崩（targets 0、position 1）。
 - 300 次串行在 32 token、int8 四线程下约 1.37 s；共享编码是 1 次编码 + N 个头。
-- 「≤10 ms」在 32 token 下四组配置均成立（int8 1t/4t 7.83/4.57，fp32 1t/4t 10.87/5.34，fp32 单线程贴线）。
+- 「≤10 ms」在 32 token 下三组配置成立（int8 1t/4t 7.83/4.57、fp32 4t 5.34）；fp32 单线程 10.87 ms 未达。
 
 ## 限制
 
 - 15/任务、单种子、单机单浏览器；压缩只覆盖 position。
 - 切分是批次（模板/场景）切分，不是实体留出：实体留出会把 qin/lin 等标签从训练里移除，变成零样本问题。
+- 准确率在 FP32 ONNX + Python CPU 上测，延迟在浏览器 WASM + 合成截断输入上测；输入内容、精度、运行环境未完全统一（下一步做浏览器内同输入评估）。
+- 分类头是固定实体/地点词表（targets 5、position 11）；新战役的新名字需要改头，候选打分是下一步。
 - 无真机；无 static/QAT；无多模型协同。
 
 ## 复现
