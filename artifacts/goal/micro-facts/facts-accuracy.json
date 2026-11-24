@@ -1,16 +1,26 @@
 {
  "field": {
   "rules": {
-   "targets": "24/24",
-   "destination": "24/24",
-   "negated": "24/24"
+   "targets": "27/29",
+   "destination": "27/29",
+   "negated": "27/29"
   },
   "model": {
-   "targets": "16/24",
-   "destination": "15/24"
+   "targets": "20/29",
+   "destination": "16/29"
   }
  },
  "by_tag": {
+  "adversarial": {
+   "rules": {
+    "targets": "3/5",
+    "destination": "3/5"
+   },
+   "model": {
+    "targets": "4/5",
+    "destination": "1/5"
+   }
+  },
   "direct": {
    "rules": {
     "targets": "6/6",

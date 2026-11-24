@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Tokenize the 12 chain turns for the in-browser pipeline."""
 import json
-import sys
 from pathlib import Path
 
 from transformers import BertTokenizer
@@ -11,8 +10,6 @@ SNAP = ROOT / 'artifacts/benchmark/minirbt-h256-snapshot'
 PROBE = ROOT / '.local/probe-transformers/models'
 MAXLEN = 128
 NAMES = {'lu': '路明非', 'nono': '诺诺', 'fingel': '芬格尔', 'lin': '林亦舟', 'qin': '秦越'}
-sys.path.insert(0, str(ROOT / 'artifacts/goal/micro-facts'))
-from rules import settle  # noqa: E402
 
 
 def main():
@@ -38,9 +35,9 @@ def main():
         for sub in subsets:
             key = '、'.join(sub) if sub else '无'
             variants[key] = enc(f"行动：{t['action']}\n目标：{key}\n骰点：{t['dice']}")
-        facts = settle(t['action'], t['dice'], t['present'], t['current'], t['candidates'])
         out.append({'id': t['id'], 'intent_ids': intent_ids, 'target_pairs': target_pairs,
-                    'pos_pairs': pos_pairs, 'rules_position': facts['destination'],
+                    'pos_pairs': pos_pairs, 'action': t['action'], 'present': t['present'],
+                    'current': t['current'], 'candidates': t['candidates'], 'dice': t['dice'],
                     'judgment_variants': variants,
                     'expect': {'intent': npc['intent'],
                                'targets': [NAMES[c] for c in t['expect']['targets']],

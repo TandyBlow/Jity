@@ -9,6 +9,29 @@ ort.env.wasm.wasmPaths = '/probe/';
 const threads = Number(new URLSearchParams(location.search).get('threads') || 4);
 ort.env.wasm.numThreads = threads;
 const JUDGMENTS = ['achieved', 'partial', 'not_achieved', 'blocked', 'no_change'];
+const NEG = ['没有', '没', '未', '谁也没'];
+const TRANSFER = ['递给', '交给', '给', '问', '找到', '理'];
+const BLOCK = ['拦', '挡住', '被顶住', '没能', '没进', '没推开', '没有推开'];
+const settle = (action, dice, present, current, candidates) => {
+  const negated = NEG.some((k) => action.includes(k)) && !action.includes('没有停留');
+  let targets = present.filter((n) => action.includes(n));
+  if (targets.length === 0) {
+    if (action.includes('他们') || action.includes('两个人') || action.includes('在场的')) targets = [...present];
+    else if (action.includes('第二个人') && present.length >= 2) targets = [present[1]];
+    else if ((action.includes('他') || action.includes('她')) && present.length === 1) targets = [...present];
+  }
+  if (negated && TRANSFER.some((k) => action.includes(k))) targets = [];
+  let place = null;
+  for (const c of candidates) if (action.includes(c)) place = c;
+  if (action.includes('离开') && action.includes('去')) {
+    const after = action.split('去')[1];
+    for (const c of candidates) if (after.includes(c)) place = c;
+  }
+  if (BLOCK.some((k) => dice.includes(k))) place = current;
+  else if (negated && place) place = current;
+  if (action.includes('没有动')) place = current;
+  return { targets, destination: place || current, negated };
+};
 let result;
 try {
   const t0 = performance.now();
@@ -47,7 +70,11 @@ try {
     const predTargets = targetScores.filter((t) => t.score > 0).map((t) => t.candidate);
     rec.stages.targets = predTargets.length === turn.expect.targets.length &&
       predTargets.every((n) => turn.expect.targets.includes(n));
-    const predPos = turn.rules_position;
+    const tSettle = performance.now();
+    const settled = settle(turn.action, turn.dice, turn.present, turn.current, turn.candidates);
+    const predPos = settled.destination;
+    rec.settleMs = performance.now() - tSettle;
+    rec.ms += rec.settleMs;
     rec.stages.position = predPos === turn.expect.position;
     const key = predTargets.length ? predTargets.join('、') : '无';
     const ids = turn.judgment_variants[key] || turn.judgment_variants['无'];

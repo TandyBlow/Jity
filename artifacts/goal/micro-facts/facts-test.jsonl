@@ -22,3 +22,8 @@
 {"id": 22, "tag": "movement", "action": "路明非离开器材棚，去了庭院。", "present": [], "current": "器材棚", "candidates": ["器材棚", "庭院"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": false}}
 {"id": 23, "tag": "movement", "action": "路明非在庭院里没有动。", "present": [], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": true}}
 {"id": 24, "tag": "movement", "action": "路明非走进医护附楼，没有停留。", "present": [], "current": "庭院", "candidates": ["庭院", "医护附楼"], "dice": "无", "expect": {"targets": [], "destination": "医护附楼", "negated": false}}
+{"id": 25, "tag": "adversarial", "action": "我没给诺诺水，但给了秦越。", "present": ["诺诺", "秦越"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["秦越"], "destination": "庭院", "negated": false}}
+{"id": 26, "tag": "adversarial", "action": "我没有犹豫，把钥匙递给诺诺。", "present": ["诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["诺诺"], "destination": "庭院", "negated": false}}
+{"id": 27, "tag": "adversarial", "action": "我在西回廊问诺诺庭院在哪里。", "present": ["诺诺"], "current": "西回廊", "candidates": ["西回廊", "庭院"], "dice": "无", "expect": {"targets": ["诺诺"], "destination": "西回廊", "negated": false}}
+{"id": 28, "tag": "adversarial", "action": "我看了一眼钟楼，继续留在原地。", "present": [], "current": "庭院", "candidates": ["庭院", "钟楼"], "dice": "无", "expect": {"targets": [], "destination": "庭院", "negated": false}}
+{"id": 29, "tag": "adversarial", "action": "我不是不愿意帮助他。", "present": ["诺诺"], "current": "庭院", "candidates": ["庭院", "西回廊"], "dice": "无", "expect": {"targets": ["诺诺"], "destination": "庭院", "negated": false}}
