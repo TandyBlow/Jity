@@ -138,6 +138,12 @@
   color: var(--wl-button-ink);
 }
 
+.headerActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .headerButton {
   padding: 6px 10px;
 }

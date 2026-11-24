@@ -7,6 +7,7 @@ import { buildInitialState } from '../../state';
 import { projectStage, unwrapIdBrackets } from './support';
 import type { RoundProgressEvidence } from './support';
 import { createContinuationPolicy, createSettlementHandlers, continuationPolicy } from './index';
+import { isExampleFactText } from './results';
 
 class ScriptedEngine implements InferenceEngine {
   readonly info = { backend: 'scripted', modelId: 'scripted' };
@@ -131,6 +132,214 @@ const continueJudgment = (text = '乙继续向前走。') => JSON.stringify({
 });
 
 describe('common-group results', () => {
+  it('treats the results fact placeholder as no result', () => {
+    expect(isExampleFactText('〈这一步实际做了什么、谁回应了什么〉')).toBe(true);
+    expect(isExampleFactText('唐骁（id=tang）在中央庭院的位置为中央庭院；精神为38。')).toBe(true);
+    expect(isExampleFactText('甲把工具推给乙。')).toBe(false);
+  });
+
+  it('drops an unknown-name success fact after the repairs', async () => {
+    const answer = (fact: Record<string, unknown>) => JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲完成了递交。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [fact],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer({ text: '甲把工具递给阿豹。', memberIds: ['a'] })]) })
+      .results('g1', input);
+    expect(outcome.fallback).toBe(false);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string; original: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('阿豹'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unknown_entity_named')).toBe(true);
+
+    const allowed = await createSettlementHandlers({ engine: new ScriptedEngine([answer({ text: '阿豹不在场，甲没能把工具递出去。', memberIds: ['a'], outcome: 'blocked' })]) })
+      .results('g1', input);
+    expect(String(allowed.error ?? '')).not.toContain('results_unknown_entity');
+  });
+
+  it('uses the model blocked judgment for an unknown-name fact instead of failing', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'blocked', reason: '阿豹不在场，甲未能把工具交出去。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲把工具递给阿豹。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(String(outcome.error ?? '')).not.toContain('results_unknown_entity');
+    const detail = outcome.evidence.detail as { facts?: { text: string; outcome?: string }[] };
+    const rewritten = (detail.facts ?? []).find((fact) => String(fact.text).includes('阿豹不在场'));
+    expect(rewritten?.outcome).toBe('blocked');
+  });
+
+  it('strips a fault adjective the state never had', async () => {
+    const answer = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲收好工具。', effects: [] }],
+      facts: [{ text: '甲把故障工具收进背包。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '甲把工具收好。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      sanitizedFacts?: { removed: string[] }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('故障'))).toBe(false);
+    expect((detail.sanitizedFacts ?? []).some((fact) => (fact.removed ?? []).includes('故障'))).toBe(true);
+  });
+
+  it('does not treat a verb complement after 跟 as an unknown name', async () => {
+    const answer = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'achieved', reason: '甲等了一会儿。', effects: [] }],
+      facts: [{ text: '甲等了一会儿，没有动。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '甲看看同行的人有没有跟上来。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(outcome.fallback).toBe(false);
+    const detail = outcome.evidence.detail as { facts?: { text: string }[] };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('等了一会儿'))).toBe(true);
+  });
+
+  it('drops an unknown-entity fact when the blocked reason is generic', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'blocked', reason: '没有这个人/没有这件东西/不在场', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [{ text: '甲把工具递给阿豹。', memberIds: ['a'], actorId: 'a', outcome: 'completed' }],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('没有这个人'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unknown_entity_named')).toBe(true);
+  });
+
+  it('drops a success fact that drops the unknown name', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲完成了递交。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲递出了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(outcome.fallback).toBe(false);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string; original: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('递出了工具'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unknown_entity_no_name')).toBe(true);
+  });
+
+  it('uses the blocked judgment when the fact drops the unknown name', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'blocked', reason: '阿豹不在场，甲未能把工具交出去。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲递出了工具。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给阿豹。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    expect(String(outcome.error ?? '')).not.toContain('results_unknown_entity');
+    const detail = outcome.evidence.detail as { facts?: { text: string; outcome?: string }[] };
+    const rewritten = (detail.facts ?? []).find((fact) => String(fact.text).includes('阿豹不在场'));
+    expect(rewritten?.outcome).toBe('blocked');
+  });
+
+  it('drops a rules-reading fact the action never implied', async () => {
+    const answer = JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲记下了识别带颜色。', effects: [] },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。', effects: [] },
+      ],
+      facts: [
+        { text: '甲记下了识别带颜色。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '甲看懂了规则牌。', memberIds: ['a'], actorId: 'a', outcome: 'completed' },
+        { text: '乙留在房间。', memberIds: ['b'], actorId: 'b', outcome: 'unaffected' },
+      ],
+    });
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲停下观察，记下识别带颜色。', rollRefs: [] },
+        { memberId: 'b', actionText: '乙在旁边看着。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine: new ScriptedEngine([answer]) }).results('g1', input);
+    const detail = outcome.evidence.detail as {
+      facts?: { text: string }[];
+      droppedFacts?: { reason: string; original: string }[];
+    };
+    expect((detail.facts ?? []).some((fact) => String(fact.text).includes('规则'))).toBe(false);
+    expect((detail.droppedFacts ?? []).some((fact) => fact.reason === 'unsupported_action')).toBe(true);
+  });
+
   it('attributes shared facts to every member and keeps member facts separate', async () => {
     const engine = new ScriptedEngine([JSON.stringify({
       judgments: [
@@ -154,6 +363,84 @@ describe('common-group results', () => {
       { memberId: 'a', factCount: 1 },
       { memberId: 'b', factCount: 2 },
     ]);
+  });
+
+  it('reattributes a final-attempt fact to the member its sentence names', async () => {
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推了工具。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙站在原处。', effects: [] },
+      ],
+      facts: [{ text: '乙站在原地没有动。', memberIds: ['a'] }],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { memberIds: string[]; text: string }[]; missingFactMembers: string[] };
+    expect(detail.facts).toHaveLength(1);
+    expect(detail.facts[0]).toMatchObject({ memberIds: ['b'], text: '乙站在原地没有动。' });
+    expect(detail.missingFactMembers).toEqual(['a']);
+  });
+
+  it('narrows a shared fact to the single member its sentence names', async () => {
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '甲推了工具。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '乙站着没动。', effects: [] },
+      ],
+      facts: [
+        { text: '甲把工具推向乙。', memberIds: ['a'] },
+        { text: '乙站在原地没有动。', memberIds: ['a', 'b'] },
+      ],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { memberIds: string[]; text: string }[] };
+    const shared = detail.facts.find((fact) => fact.text.includes('站在原地'));
+    expect(shared?.memberIds).toEqual(['b']);
+  });
+
+  it('drops a fact that puts a band on a character whose appearance says none', async () => {
+    const state = world();
+    state.initial.characters.a.initialAppearance = '右手还空着，身上没有红蓝识别带。';
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '推到了门边。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '接住了。', effects: [] },
+      ],
+      facts: [
+        { text: '甲的红色识别带微微发烫。', memberIds: ['a'] },
+        { text: '乙伸手接住工具。', memberIds: ['b'] },
+      ],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput(state));
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { text: string }[]; droppedFacts: { reason: string }[] };
+    expect(detail.facts.some((fact) => fact.text.includes('识别带'))).toBe(false);
+    expect(detail.droppedFacts.some((row) => row.reason === 'contradicts_appearance')).toBe(true);
+  });
+
+  it('drops a fact that closes a door the location says is open', async () => {
+    const state = world();
+    state.initial.locations.room.initialAppearance = '房间的门敞开着，通向走廊。';
+    const answer = {
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '推到了门边。', effects: [{ targetId: 'b', reacted: true }] },
+        { memberId: 'b', label: 'achieved', reason: '接住了。', effects: [] },
+      ],
+      facts: [
+        { text: '甲看了一眼紧闭的门。', memberIds: ['a'] },
+        { text: '乙伸手接住工具。', memberIds: ['b'] },
+      ],
+    };
+    const engine = new ScriptedEngine([JSON.stringify(answer), JSON.stringify(answer), JSON.stringify(answer)]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput(state));
+    expect(outcome.value).not.toBeNull();
+    const detail = outcome.evidence.detail as { facts: { text: string }[]; droppedFacts: { reason: string }[] };
+    expect(detail.facts.some((fact) => fact.text.includes('紧闭'))).toBe(false);
+    expect(detail.droppedFacts.some((row) => row.reason === 'contradicts_appearance')).toBe(true);
   });
 
   it('keeps the structured result fields of a committed fact', async () => {
@@ -681,7 +968,7 @@ describe('common-group results', () => {
     const prompt = engine.prompts[0];
     expect(prompt).toContain('没有变化的人物不要写');
     expect(prompt).not.toContain('"unchanged":[');
-    expect(prompt).toContain('"achieved":[{"characterId":"<人物id>"');
+    expect(prompt).toContain('"achieved":[{"characterId":"a"');
     // The model asserted one change and said nothing about the other owner; the
     // reader must apply unchanged instead of failing coverage, and record it.
     const detail = outcome.evidence.detail as {
@@ -1122,6 +1409,25 @@ describe('six-stage updates', () => {
     // Every scanned character is listed as a row; the answer no longer prints a
     // copyable roster skeleton, so the ids appear as rows rather than as quotes.
     for (const id of ['a', 'b', 'c', 'off']) expect(personalityPrompt).toContain(`id=${id}`);
+  });
+
+  it('keeps an unchanged sanity when the same batch changed that personality', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ unchanged: ['b'], achieved: [{ characterId: 'a', achieved: ['a1'] }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ scanned: ['a', 'b', 'c', 'off'], changes: [
+        { entityId: 'a', op: 'add', recordIds: [], text: '更愿意相信同伴' },
+      ] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 60 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine }).updates('g1', updatesInput());
+    expect(outcome.value).not.toBeNull();
+    const calls = outcome.value as UpdatesCall[];
+    // 60 is a's current sanity; the pair rule still needs the value present.
+    expect(calls[5].changes.a?.sanitySet).toBe(60);
+    expect(Object.keys(calls[4].changes)).toEqual(['a']);
   });
 
   it('accepts a changes-only personality answer and keeps everyone else', async () => {

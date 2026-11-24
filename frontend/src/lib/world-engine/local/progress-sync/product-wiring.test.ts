@@ -166,6 +166,17 @@ describe('product wiring survives a reload only with browser storage', () => {
     expect(fetches).toBe(beforeFetches);
   });
 
+  it('reports the local revision from the durable store', async () => {
+    const store = {
+      async load() { return { snapshot: { turn: 3 }, metadata: { revision: 7 } }; },
+      async save() { return {}; },
+    };
+    const sync = createProductSync<{ turn: number }>({ store, worldId: 'w1', baseUrl: null, storage: memoryStorage() });
+    const status = await sync.status();
+    expect(status.localRevision).toBe(7);
+    expect(status.relation).toBe('local-only');
+  });
+
   it('restore still reaches the remote when there is no local save', async () => {
     const store = typedStore();
     let fetches = 0;

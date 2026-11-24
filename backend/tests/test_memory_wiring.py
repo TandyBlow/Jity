@@ -129,51 +129,6 @@ class TestPromptWiring:
         assert prompt == "PROMPT"
         assert token_count == 0
 
-    @pytest.mark.asyncio
-    async def test_soft_limit_injects_strict_options_and_completion_goal(self):
-        memory_ctrl = MagicMock()
-        memory_ctrl.assemble_context.side_effect = (
-            lambda state, turn, *, campaign_context, player_action: campaign_context
-        )
-        gen = self._make_gen(memory_ctrl)
-        gen._select_campaign_ending = MagicMock(return_value=None)
-
-        anchor = SimpleNamespace(
-            id="truth", name="揭示冒充者身份", description="确认谁取走了玩家档案",
-        )
-        session = SimpleNamespace(
-            name="档案室之谜",
-            completion_anchors=["truth"],
-            anchor_events=[anchor],
-        )
-        cm = MagicMock()
-        cm.is_loaded.return_value = True
-        cm.inject_context.return_value = "战役上下文"
-        cm.is_closing_pending.return_value = False
-        cm.should_begin_closing_after_next_turn.return_value = False
-        cm.is_soft_limit_reached.return_value = True
-        cm.campaign = SimpleNamespace(
-            arcs=[SimpleNamespace(goal="查明档案异常", sessions=[session])],
-        )
-        cm.progress = SimpleNamespace(
-            arc_index=0,
-            session_index=0,
-            turn_in_session=4,
-            turns_total=4,
-            revealed_anchors=[],
-        )
-        cm.truncate_prompt_sections.return_value = ("FINAL PROMPT", 12, None)
-
-        request = SimpleNamespace(player_action="继续调查", style="horror", constraints="")
-        await gen._build_prompt(request, {"turn": 4}, "sess-1", cm)
-
-        prompt_input = gen.prompt_builder.build_sections.call_args[0][0]
-        context = prompt_input.campaign_context
-        assert "进入主线收束期" in context
-        assert "所有选项都必须直接推进" in context
-        assert "揭示冒充者身份" in context
-        assert "确认谁取走了玩家档案" in context
-
 
 class TestNarratorStageMemory:
     def _make_generator(self) -> ScenarioGenerator:
@@ -183,7 +138,7 @@ class TestNarratorStageMemory:
         )
 
     @pytest.mark.asyncio
-    async def test_narrator_stage_leaves_memory_for_final_commit(self):
+    async def test_narrator_stage_feeds_memory_and_schedules_maintain(self):
         gen = self._make_generator()
         output = StoryOutput(narration="你推开了档案室的门。")
         gen.llm_client.generate = AsyncMock(return_value=(output, 123))
@@ -199,8 +154,11 @@ class TestNarratorStageMemory:
 
         assert source == "llm"
         assert latency_ms == 123
-        memory_ctrl.on_turn_generated.assert_not_called()
-        memory_ctrl.maintain.assert_not_awaited()
+        memory_ctrl.on_turn_generated.assert_called_once_with(
+            "捡起通行卡", "你推开了档案室的门。", 5, memory_updates=output.memory_updates,
+        )
+        await asyncio.gather(*gen._memory_tasks)
+        memory_ctrl.maintain.assert_awaited_once()
         assert gen._memory_tasks == set()
 
     @pytest.mark.asyncio
@@ -239,8 +197,8 @@ class TestMoomPool:
         rec = mc._narrative_pool[0]
         assert rec.memory_id == "ep_L1_1"
         assert rec.content == "巷战摘要"
-        assert rec.created_round == 10
-        mc._persist_episode.assert_not_called()  # branch snapshot is the persistence boundary
+        assert rec.created_round == 5  # forget_step rounds ≈ turn // 2
+        mc._persist_episode.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_pruned_episodes_sync_back_to_nsb(self):
@@ -254,7 +212,7 @@ class TestMoomPool:
         mc.nsb.should_summarize_level1 = MagicMock(return_value=False)
         mc.nsb.should_extract = MagicMock(return_value=False)
 
-        await mc.maintain("sess-1", turn=200)
+        await mc.maintain("sess-1", turn=8)  # round 4: unreinforced score < threshold
 
         assert mc._narrative_pool == []
         assert mc.nsb._level1 == []  # pruned pool record removed from retrieval context
@@ -274,7 +232,7 @@ class TestMoomPool:
         mc.nsb.should_summarize_level1 = MagicMock(return_value=False)
         mc.nsb.should_extract = MagicMock(return_value=False)
 
-        await mc.maintain("sess-1", turn=200)
+        await mc.maintain("sess-1", turn=8)
 
         assert mc._narrative_pool == []
         assert mc.nsb._level1 == []

@@ -35,7 +35,7 @@ export function buildStatusDeltaHints(output: StoryOutput) {
       message: output.sanity_delta < 0 ? "龙文、异常信息或精神压力造成了影响。" : "你暂时稳住了精神压力。",
     },
     {
-      label: "血条",
+      label: "体力",
       delta: output.health_delta,
       kind: output.health_delta < 0 ? "loss" : "gain",
       message: output.health_delta < 0 ? "这次行动带来了身体损耗。" : "身体状态有所恢复。",
@@ -45,17 +45,6 @@ export function buildStatusDeltaHints(output: StoryOutput) {
 
 export function formatDelta(delta: number) {
   return `${delta > 0 ? "+" : ""}${delta}`;
-}
-
-export function formatEndingTitle(reason: string) {
-  // Older saves stored "name: epilogue" and exposed the internal budget label.
-  // The narration now contains the complete ending; the card only needs its name.
-  const title = reason.split(/[：:]/, 1)[0].replace(/^回合预算耗尽[·・]\s*/, "").trim();
-  const legacyTitles: Record<string, string> = {
-    未完成的调查: "未竟的追寻",
-    失败的调查: "无声的终章",
-  };
-  return legacyTitles[title] ?? (title || "故事落幕");
 }
 
 export function formatSlotTime(lastPlayed: string) {

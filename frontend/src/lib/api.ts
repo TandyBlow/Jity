@@ -1,9 +1,6 @@
 import type {
-  ActionCheckPreview,
-  ActionCheckSubmission,
   CampaignDetailResponse,
   CampaignListResponse,
-  CampaignProgressSummary,
   CampaignSchema,
   GameState,
   GenerateResponse,
@@ -18,13 +15,6 @@ import type {
 } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-
-export class APIError extends Error {
-  constructor(message: string, readonly status: number) {
-    super(message);
-    this.name = "APIError";
-  }
-}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -44,7 +34,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       // Keep the raw response text when the error body is not JSON.
     }
-    throw new APIError(message, response.status);
+    throw new Error(message);
   }
 
   return response.json() as Promise<T>;
@@ -59,7 +49,7 @@ export function createSession(
     slotName?: string;
   },
 ): Promise<SessionResponse> {
-  const body: Record<string, unknown> = { model, campaign_filename: options?.campaignFilename || "default_campaign.json" };
+  const body: Record<string, unknown> = { model };
   if (options?.campaignFilename) {
     body.campaign_filename = options.campaignFilename;
     body.arc_index = options.arcIndex ?? 0;
@@ -78,22 +68,6 @@ export function getSession(sessionId: string): Promise<SessionResponse> {
   return request<SessionResponse>(`/sessions/${sessionId}`);
 }
 
-export function previewActionCheck(params: {
-  sessionId: string;
-  playerAction: string;
-  timelineNodeId: number | null;
-  optionIndex?: number;
-}): Promise<ActionCheckPreview> {
-  return request<ActionCheckPreview>(`/sessions/${params.sessionId}/check`, {
-    method: "POST",
-    body: JSON.stringify({
-      player_action: params.playerAction,
-      timeline_node_id: params.timelineNodeId,
-      option_index: params.optionIndex,
-    }),
-  });
-}
-
 export function generateScene(params: {
   sessionId: string;
   playerAction: string;
@@ -102,8 +76,6 @@ export function generateScene(params: {
   constraints?: string;
   slotName?: string;
   timelineNodeId?: number | null;
-  actionCheck?: ActionCheckSubmission;
-  optionIndex?: number;
 }): Promise<GenerateResponse> {
   return request<GenerateResponse>(`/sessions/${params.sessionId}/generate`, {
     method: "POST",
@@ -114,35 +86,12 @@ export function generateScene(params: {
       constraints: params.constraints,
       slot_name: params.slotName,
       timeline_node_id: params.timelineNodeId,
-      action_check: params.actionCheck,
-      option_index: params.optionIndex,
     }),
   });
 }
 
 export function getTimeline(sessionId: string): Promise<TimelineResponse> {
   return request<TimelineResponse>(`/sessions/${sessionId}/timeline`);
-}
-
-/** Whole-campaign progress for the console strip; null outside a campaign. */
-export function hasCampaignTurnBudget(
-  progress: Partial<CampaignProgressSummary> | null | undefined,
-): progress is CampaignProgressSummary {
-  return !!progress
-    && typeof progress.turns_total === "number"
-    && Number.isInteger(progress.turns_total)
-    && progress.turns_total >= 0
-    && typeof progress.max_turns_per_campaign === "number"
-    && Number.isInteger(progress.max_turns_per_campaign)
-    && progress.max_turns_per_campaign > 0
-    && progress.max_turns_per_campaign <= 50;
-}
-
-export async function fetchCampaignProgress(
-  sessionId: string,
-): Promise<CampaignProgressSummary | null> {
-  const data = await request<Partial<CampaignProgressSummary>>(`/sessions/${sessionId}/progress`);
-  return hasCampaignTurnBudget(data) ? data : null;
 }
 
 export function getTimelineNode(sessionId: string, nodeId: number): Promise<TimelineNodeDetail> {
@@ -231,10 +180,6 @@ export function createSlot(slotName: string, sessionId: string, sourceSlotName?:
 
 export function loadSlot(slotId: number): Promise<{ status: string; slot: SaveSlot; session: SessionResponse }> {
   return request(`/campaigns/slots/${slotId}/load`, { method: "POST" });
-}
-
-export function deleteSlot(slotId: number): Promise<{ status: string; slot_id: number; slot_name: string }> {
-  return request(`/campaigns/slots/${slotId}`, { method: "DELETE" });
 }
 
 // ── Campaign Generation API ──

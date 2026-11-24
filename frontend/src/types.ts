@@ -9,8 +9,6 @@ export type ItemMemory = {
   description?: string;
   location?: string;
   notes?: string;
-  aliases?: string[];
-  transition?: "" | "recovered" | "repaired";
 };
 
 export type NPCMemory = {
@@ -70,25 +68,6 @@ export type StoryOptionCheck = {
   stakes?: string;
 };
 
-/** The server owns the check rule and computes the outcome from this die face. */
-export type ActionCheckSubmission = {
-  roll: number;
-  option_index?: number;
-};
-
-export type ActionCheckPreview = {
-  check: StoryOptionCheck | null;
-  option_index: number | null;
-};
-
-export type ActionCheckResult = {
-  check: StoryOptionCheck;
-  roll: number;
-  option_index: number | null;
-  outcome: "critical" | "success" | "failure" | "fumble";
-  degree: string;
-};
-
 /**
  * Shape of one entry in the legacy delta lists. The server merges these into
  * state before `memory_updates` does, so a name may appear in both.
@@ -103,7 +82,6 @@ export type StoryOutput = {
   health_delta: number;
   options: string[];
   option_checks?: Array<StoryOptionCheck | null>;
-  action_check?: ActionCheckResult | null;
   game_over: boolean;
   game_over_reason: string;
   current_location: string;
@@ -147,19 +125,6 @@ export type SessionResponse = {
   active_turn_id?: number | null;
 };
 
-/** Whole-campaign progress the backend reports per turn (turns_total / cap / chapter / goal). */
-export type CampaignProgressSummary = {
-  turns_total: number;
-  max_turns_per_campaign: number;
-  arc_index: number;
-  arc_name: string;
-  arc_goal: string;
-  session_index: number;
-  session_name: string;
-  current_goal: string;
-  campaign_title: string;
-};
-
 export type GenerateResponse = {
   session_id: string;
   state: GameState;
@@ -173,8 +138,7 @@ export type GenerateResponse = {
   /** This turn's declaration folded and checked against the state it produced. */
   memory: MemoryTraceEntry;
   declared: DeclaredMemory;
-  caps: Record<MemoryCategory, number | null>;
-  campaign_progress: CampaignProgressSummary | null;
+  caps: Record<MemoryCategory, number>;
 };
 
 /**
@@ -243,7 +207,7 @@ export type TimelineNodeDetail = {
   campaign_progress: Record<string, unknown>;
   context: TurnContext;
   /** Category limits, so a full category can be told apart from a quiet one. */
-  caps: Record<MemoryCategory, number | null>;
+  caps: Record<MemoryCategory, number>;
   /**
    * The turn's declaration in merge order, exactly as the server folds it.
    * Server-derived for the same reason `memory` is.
@@ -277,7 +241,7 @@ export type MemoryTraceNode = MemoryTraceEntry & {
 
 export type MemoryTraceResponse = {
   session_id: string;
-  caps: Record<MemoryCategory, number | null>;
+  caps: Record<MemoryCategory, number>;
   nodes: MemoryTraceNode[];
 };
 

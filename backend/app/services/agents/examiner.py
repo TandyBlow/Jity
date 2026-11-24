@@ -9,14 +9,11 @@ import re
 from typing import Any
 
 from app.schemas.agent_io import ActionPermissibility, ActionRuling, TriggeredRule
-from app.services.memory.score_tracker import ScoreTracker
 
 _PASSIVE_CONTINUATION_RE = re.compile(
     r"^\s*(?:继续|继续剧情|继续故事|接着|接着讲|接着说)[。.!！?？…]*\s*$"
 )
-# ``初始`` is the legacy entry_state item status; saves written before the
-# writer switched to "owned" still carry it and must stay usable.
-_OWNED = {"owned", "active", "equipped", "持有", "获得", "已装备", "初始"}
+_OWNED = {"owned", "active", "equipped", "持有", "获得", "已装备"}
 _PRESENT = {"present", "following", "在场", "同行"}
 _COMBAT = re.compile(r"攻击|射击|开枪|挥刀|刺向|格斗|战斗|反击")
 _SKILLS = {
@@ -32,15 +29,8 @@ _SKILLS = {
 _SAN = re.compile(r"SAN\s*检定|理智检定|血统稳定(?:值)?检定|(?:直视|遭遇|目睹|看见).*(?:神话生物|古神|龙王)|释放言灵|发动言灵|使用言灵", re.I)
 _PHYSICAL = re.compile(r"攻击|射击|开枪|格斗|战斗|反击|攀爬|攀登|游泳|跳跃|奔跑|冲刺")
 # A noun is bounded by the next action verb; searching for an item is not use.
-# Bare ``用`` must also be a standalone verb.  Matching every occurrence used
-# to read the last character of 利用/备用/采用 as an inventory action (for
-# example, ``寻找备用通道`` became ``使用物品：通道``).  Chinese has no word
-# boundary token in ``re``, so accept the sentence/phrase positions in which a
-# player can actually start a bare-use action.  ``使用`` remains an explicit,
-# unambiguous verb of its own.
-_BARE_USE = r"(?:^|(?<=[，。！？；、\s我先再并便就要想改可会能后着接刻上出]))用(?!力|心|全力|全身|尽)"
 _ITEM_USE = re.compile(
-    rf"(?P<verb>使用|{_BARE_USE}|拿出|掏出|举起|装备|喝下|服用)\s*[\"“「]?"
+    r"(?:使用|用(?!力|心)|拿出|掏出|举起|装备|喝下|服用)\s*[\"“「]?"
     r"(?P<name>[^，。！？；、\s\"”」]{1,24}?)"
     r"[\"”」]?(?=来|进行|打开|开启|开门|解锁|撬|照|攻击|射击|检查|治疗|包扎|与|和|向|对|，|。|！|？|；|$)"
 )
@@ -49,32 +39,8 @@ _NPC_INTERACTION = re.compile(
     r"(?:交谈|对话|谈话|交流|询问|问话|搭话|求助|说话)"
 )
 _DIRECT_NPC = re.compile(r"(?:^|，)\s*(?:我)?(?:询问|问话|说服)\s*[\"“「]?(?P<name>[^，。！？；\s\"”」]{1,16}?)[\"”」]?(?=关于|有关|是否|，|。|！|？|；|$)")
-# Completing the verb list here is load-bearing: a missing verb means the
-# location prerequisite silently never fires (a false release, not a reject).
-_LOCATION = re.compile(
-    r"(?:^|，|；)\s*(?:我)?在(?P<name>[^，。！？；]{1,20}?)(?:里|内)?"
-    r"(?:调查|搜索|搜查|观察|聆听|潜行|潜入|躲藏|睡觉|等待|埋伏|休息|战斗|攻击|攀爬|游泳|使用|打开|与|和)"
-)
+_LOCATION = re.compile(r"(?:^|，|；)\s*(?:我)?在(?P<name>[^，。！？；]{1,20}?)(?:里|内)?(?:调查|搜索|搜查|休息|使用|打开|与|和)")
 _GENERIC_TARGETS = {"他", "她", "它", "他们", "她们", "对方", "敌人", "怪物", "NPC", "npc", "所有人"}
-# Talking about an action is not performing it: "攻击是下策" discusses.
-_TALK_CONTINUATIONS = ("是", "并不是", "不是", "并非", "与否", "之类")
-
-
-def _talk_not_action(text: str, end: int) -> bool:
-    return text[end:end + 3].startswith(_TALK_CONTINUATIONS)
-
-
-def _fires(pattern: re.Pattern, text: str, masked: list[tuple[int, int]] = ()) -> bool:
-    """Match as an action: outside item-name spans, and not meta-commentary.
-
-    Item names are spans, not verbs — "治疗药水" must not trigger 急救 even
-    though the capture may also have swallowed trailing verbs.
-    """
-    return any(
-        not _talk_not_action(text, m.end())
-        and not any(s <= m.start() < e for s, e in masked)
-        for m in pattern.finditer(text)
-    )
 
 
 def is_passive_continuation_action(player_action: str) -> bool:
@@ -103,68 +69,6 @@ def _resolve_name(name: str) -> str:
     return name
 
 
-def _resolve_item(name: str, entries: list[dict]) -> tuple[dict | None, bool, int]:
-    """Resolve identities/aliases and return the source-text span to mask.
-
-    Exact identities win. Only then consider explicit aliases or the longest
-    known prefix (the action regex may have captured a trailing verb).
-    Shared aliases never choose an arbitrary inventory entry.
-    """
-    normalize = ScoreTracker.normalize_name
-    key = normalize(name)
-    valid = [entry for entry in entries if isinstance(entry, dict) and entry.get("name")]
-    candidates = [(entry, normalize(entry["name"])) for entry in valid]
-    exact = [(entry, token) for entry, token in candidates if token == key]
-    aliases = [(entry, normalize(alias)) for entry in valid for alias in entry.get("aliases", []) if normalize(alias)]
-    matches = exact or [(entry, token) for entry, token in aliases if token == key]
-    if not matches:
-        prefixes = [(entry, token) for entry, token in candidates + aliases if token and key.startswith(token)]
-        longest = max((len(token) for _, token in prefixes), default=0)
-        prefixes = [(entry, token) for entry, token in prefixes if len(token) == longest]
-        identities = [(entry, token) for entry, token in prefixes if normalize(entry["name"]) == token]
-        matches = identities or prefixes
-    unique = {normalize(entry["name"]): (entry, token) for entry, token in matches}
-    if len(unique) != 1:
-        return None, len(unique) > 1, 0
-    entry, token = next(iter(unique.values()))
-    # Normalization can change width/spacing; mask only the matched source span.
-    length = next((i for i in range(1, len(name) + 1) if normalize(name[:i]) == token), len(name))
-    return entry, False, length
-
-
-def _same_scene(left: str, right: str) -> bool:
-    """Treat named subareas of the same encounter as mutually reachable."""
-    if not left or not right:
-        return True
-    if left in right or right in left:
-        return True
-    shared = {token for token in re.split(r"[的中内外上下前后入口核心王座仪式场]+", left) if len(token) >= 2}
-    return any(token in right for token in shared)
-
-
-# Abilities and effort references are never inventory items ("使用言灵…",
-# "使用全力攻击") — they are skipped as items and their spans never mask
-# rule scanning, or the SAN trigger inside them would be hidden.
-_ABILITY_PREFIXES = ("言灵", "全力", "力气")
-_ABILITY_NOUNS = {"技能", "双手", "手", "拳头"}
-# Body parts and their transient conditions are available through the scene,
-# not through the inventory ledger.  Let the narrator decide whether they can
-# achieve the requested effect instead of rejecting them as missing objects.
-_EMBODIED_PREFIXES = (
-    "掌心", "手掌", "手指", "指间", "指尖", "左手", "右手", "双手",
-    "拳头", "眼睛", "目光", "肩膀", "身体", "血液", "伤口", "擦伤",
-)
-
-
-def _is_ability(name: str) -> bool:
-    return name.startswith(_ABILITY_PREFIXES) or name in _ABILITY_NOUNS
-
-
-def _is_non_inventory_reference(name: str) -> bool:
-    """Return references that ``用`` can govern without claiming an item."""
-    return name.startswith(_EMBODIED_PREFIXES) or name.startswith(("的是", "什么", "哪一种", "哪一类"))
-
-
 class ExaminerAgent:
     """Python rules over the existing item/NPC/location/sanity/health state."""
 
@@ -177,27 +81,22 @@ class ExaminerAgent:
         if is_passive_continuation_action(player_action):
             return ActionRuling()
         action = _active_clauses(player_action)
-        items = game_state.get("items", [])
+        items = _entities(game_state, "items")
         npcs = _entities(game_state, "npcs")
         location = game_state.get("current_location", "")
         failures: list[str] = []
         rules: list[TriggeredRule] = []
 
-        item_spans = []
         for match in _ITEM_USE.finditer(action):
-            raw = match["name"]
-            name = _resolve_name(raw)
-            if _is_ability(name) or _is_non_inventory_reference(name):
+            name = _resolve_name(match["name"])
+            # Abilities and body parts are not inventory items.
+            if name.startswith("言灵") or name in {"技能", "双手", "手", "拳头", "力气", "全力"}:
                 continue
-            item, ambiguous, length = _resolve_item(name, items)
-            if ambiguous:
-                failures.append(f"“{name}”对应多个物品，请使用明确的物品名称。")
-            elif item is None or item.get("status", "owned") not in _OWNED:
+            item = items.get(name)
+            if item is None or item.get("status", "owned") not in _OWNED:
                 failures.append(f"你目前没有可用的“{name}”，无法使用它。")
             else:
-                rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{item['name']}"))
-                base = match.start("name") + (len(raw) - len(name))
-                item_spans.append((base, base + length))
+                rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{name}"))
 
         targets = {m["name"] for pattern in (_NPC_INTERACTION, _DIRECT_NPC) for m in pattern.finditer(action)}
         # Known NPCs can also be the target of a longer sentence.
@@ -210,17 +109,16 @@ class ExaminerAgent:
             for name in targets
         }
         for name in sorted(targets):
-            npc = npcs.get(name)
-            if npc is None and any(name.startswith(g) for g in _GENERIC_TARGETS):
-                # Compound generic references ("他们所有人") are not entities.
+            if name in _GENERIC_TARGETS:
                 continue
+            npc = npcs.get(name)
             if npc is None:
                 failures.append(f"当前记录中没有“{name}”，无法确认与其直接互动。")
                 continue
             status = npc.get("status", "present")
             npc_location = npc.get("current_location", "")
             if status not in _PRESENT or (
-                status not in {"following", "同行"} and not _same_scene(npc_location, location)
+                status not in {"following", "同行"} and npc_location and location and npc_location != location
             ):
                 failures.append(f"“{name}”目前不在场，无法与其直接互动。")
 
@@ -229,26 +127,25 @@ class ExaminerAgent:
             approaching = re.search(
                 r"(?:前往|走到|去|到达)" + re.escape(required), action[:match.start()]
             )
-            if (location and required != location and not approaching
-                    and not _same_scene(required, location)):
+            if location and required != location and not approaching:
                 failures.append(f"你当前位于“{location}”，需要先到达“{required}”才能在那里行动。")
 
-        combat = _fires(_COMBAT, action, item_spans)
-        sanity = _fires(_SAN, action, item_spans)
-        if (combat or _fires(_PHYSICAL, action, item_spans)) and game_state.get("health", 100) <= 0:
+        combat = bool(_COMBAT.search(action))
+        sanity = bool(_SAN.search(action))
+        if (combat or _PHYSICAL.search(action)) and game_state.get("health", 100) <= 0:
             failures.append("你的体力已经耗尽，无法执行这项体力行动。")
         if sanity and game_state.get("sanity", 80) <= 0:
             failures.append("你的血统稳定值已经耗尽，无法主动进行这项高风险行动。")
         if sanity:
             rules.append(TriggeredRule(
                 rule_type="sanity_check", rule_name="SAN／血统稳定检定",
-                rule_details="需要进行通用 d20 血统稳定检定；目标由行动难度决定，未收到已校验结果前不得视为成功。",
+                rule_details="需要进行血统稳定检定（1d100 ≤ 当前SAN值）；本地检查尚未掷骰，不得视为自动成功。",
             ))
         for skill, pattern in _SKILLS.items():
-            if _fires(re.compile(pattern), action, item_spans):
+            if re.search(pattern, action):
                 rules.append(TriggeredRule(
                     rule_type="skill_check", rule_name=f"技能检定：{skill}",
-                    rule_details="需要进行通用 d20 技能检定；目标由行动难度决定，未收到已校验结果前不得编造成功。",
+                    rule_details="需依据角色技能值进行检定；没有技能值或检定结果时，不得编造成功结果。",
                 ))
         if combat:
             rules.append(TriggeredRule(

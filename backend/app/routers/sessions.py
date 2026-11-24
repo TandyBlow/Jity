@@ -62,9 +62,6 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 @router.post("", response_model=SessionResponse)
 def create_session(request: CreateSessionRequest) -> SessionResponse:
-    campaign_path = settings.campaigns_dir / request.campaign_filename
-    if not campaign_path.is_file():
-        raise HTTPException(status_code=404, detail=f"Campaign file not found: {request.campaign_filename}")
     payload = state_manager.create_session(request.game_name, request.model or settings.llm_model)
     session_id = payload["session_id"]
 
@@ -163,12 +160,6 @@ def get_session_progress(session_id: str) -> dict[str, object]:
         )
         progress_data["arc_index"] = row.get("arc_index", 0)
         progress_data["session_index"] = row.get("session_index", 0)
-        progress_data["turns_total"] = row.get("turns_total", 0)
-
-    # Whole-campaign cap and chapter/goal labels for the console strip.
-    manager = campaign_manager_cache.get_or_load(session_id, slot_name or "default", session_row)
-    if manager is not None and manager.is_loaded():
-        progress_data.update(manager.campaign_view(state))
 
     return progress_data
 
@@ -310,8 +301,8 @@ def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     return {
         "context": _turn_context(row.get("model_output_id")),
         "caps": CAPS,
-        # Validated, committed declarations in merge order. Item validation or
-        # a server-selected ending may have replaced the original LLM fields.
+        # The declaration as the model wrote it, in merge order, so the client
+        # never has to know that legacy fields fold in ahead of memory_updates.
         "declared": state_manager.declared_updates((output or {}).get("memory_updates") or {}, output or {}),
         # Folded server-side so the client never re-derives the merge order.
         "memory": state_manager.memory_trace_entry(output, state),
@@ -339,16 +330,6 @@ def activate_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     slot_name = str(progress.get("slot_name") or "default")
     campaign_manager_cache.invalidate(session_id, slot_name)
     knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
-
-    if not progress:
-        # The node predates its campaign (e.g. the root created before a
-        # campaign was attached). Without an initial snapshot the previous
-        # branch's progress would leak into the new branch, so reset to the
-        # campaign's initial state instead.
-        session_row = db.get_session(session_id)
-        manager = campaign_manager_cache.get_or_load(session_id, slot_name, session_row)
-        if manager is not None and manager.is_loaded():
-            manager.reset_to_initial()
 
     state = dict(snapshot["state"])
     state_manager.sanitize_state(state)

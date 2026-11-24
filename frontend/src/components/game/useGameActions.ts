@@ -2,15 +2,19 @@
 
 import { useCallback, useRef } from "react";
 
-import { APIError, createSession, createSlot, deleteSlot, generateScene, getSession, loadSlot, previewActionCheck } from "@/lib/api";
+import { createSession, createSlot, generateScene, loadSlot } from "@/lib/api";
 import {
+  DEFAULT_CONSTRAINTS,
+  DEFAULT_STORY_STYLE,
   CAMPAIGN_CONSTRAINTS,
   CAMPAIGN_STORY_STYLE,
   ENTRY_ACTION,
+  INITIAL_ACTION,
   SLOT_DEFAULT,
+  initialOutput,
   loadingOutput,
 } from "@/lib/game/initialOutput";
-import type { ActionCheckPreview, ActionCheckSubmission, GenerateResponse } from "@/types";
+import type { GenerateResponse } from "@/types";
 
 const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
 
@@ -25,52 +29,16 @@ export function useGameActions(core: GameSessionCore) {
   const generating = useRef(false);
   const {
     sessionId, setSessionId, setState, activeTurnId, setActiveTurnId, model, setModel,
-    action, setAction, setOutput, setTurnReport, setCampaignProgress, setOutputSource,
-    setChunks, setError,
+    action, setAction, setOutput, setTurnReport, setOutputSource, setChunks, setError,
     selectedSlot, setSelectedSlot, setSelectedSlotId,
-    selectedCampaign, setSelectedCampaign, gameOver,
+    selectedCampaign, setSelectedCampaign,
     refreshSlots, restoreLastOutput,
     setIsLoading, setPendingGenerate,
   } = core;
 
-  const refreshAfterConflict = useCallback(async (sid: string) => {
-    try {
-      const latest = await getSession(sid);
-      setState(latest.state);
-      setActiveTurnId(latest.active_turn_id ?? null);
-      setModel(latest.model);
-      setChunks([]);
-      await refreshSlots(sid, "");
-      await restoreLastOutput(sid, latest.campaign_filename, latest.active_turn_id);
-      setError("");
-    } catch (refreshError) {
-      setError(`状态已变化，但刷新失败：${refreshError instanceof Error ? refreshError.message : String(refreshError)}。请重试或重新加载存档。`);
-    }
-  }, [refreshSlots, restoreLastOutput, setState, setActiveTurnId, setModel, setChunks, setError]);
-
-  const handlePrepareCheck = useCallback(async (nextAction: string, optionIndex?: number): Promise<ActionCheckPreview | null> => {
-    if (!sessionId || !nextAction.trim() || generating.current || gameOver) return null;
-    generating.current = true;
-    setIsLoading(true);
-    setError("");
-    try {
-      return await previewActionCheck({ sessionId, playerAction: nextAction, timelineNodeId: activeTurnId, optionIndex });
-    } catch (err) {
-      if (err instanceof APIError && err.status === 409) {
-        await refreshAfterConflict(sessionId);
-      } else {
-        setError(err instanceof Error ? err.message : "行动判定检查失败");
-      }
-      return null;
-    } finally {
-      generating.current = false;
-      setIsLoading(false);
-    }
-  }, [sessionId, activeTurnId, gameOver, setIsLoading, setError, refreshAfterConflict]);
-
-  const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string, actionCheck?: ActionCheckSubmission, optionIndex?: number) => {
+  const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string) => {
     const sid = overrideSessionId ?? sessionId;
-    if (!sid || !nextAction.trim() || generating.current || gameOver) return;
+    if (!sid || !nextAction.trim() || generating.current) return;
     generating.current = true;
     setIsLoading(true);
     setError("");
@@ -79,16 +47,13 @@ export function useGameActions(core: GameSessionCore) {
         sessionId: sid,
         playerAction: nextAction,
         model,
-        style: CAMPAIGN_STORY_STYLE,
-        constraints: CAMPAIGN_CONSTRAINTS,
+        style: selectedCampaign ? CAMPAIGN_STORY_STYLE : DEFAULT_STORY_STYLE,
+        constraints: selectedCampaign ? CAMPAIGN_CONSTRAINTS : DEFAULT_CONSTRAINTS,
         slotName: selectedSlot,
         timelineNodeId: activeTurnId,
-        actionCheck,
-        optionIndex,
       });
       setOutput(response.output);
       setTurnReport({ memory: response.memory, declared: response.declared, caps: response.caps });
-      setCampaignProgress(response.campaign_progress ?? null);
       setOutputSource(response.source);
       setState(response.state);
       setActiveTurnId(response.timeline_node_id);
@@ -96,58 +61,57 @@ export function useGameActions(core: GameSessionCore) {
       setModel(response.used_model);
       setAction("");
     } catch (err) {
-      if (err instanceof APIError && err.status === 409) {
-        await refreshAfterConflict(sid);
-        return;
-      }
       setError(err instanceof Error ? err.message : "生成失败");
     } finally {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, activeTurnId, gameOver, setIsLoading, setError, setOutput, setTurnReport, setCampaignProgress, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction, refreshAfterConflict]);
+  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, setIsLoading, setError, setOutput, setTurnReport, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
     setError("");
     setOutput(loadingOutput);
     setTurnReport(null);
-    setCampaignProgress(null);
     setAction("");
     setPendingGenerate(null);
     try {
-      const campaignOpts = { campaignFilename: selectedCampaign || "default_campaign.json", arcIndex: 0, sessionIndex: 0 };
+      const campaignOpts = selectedCampaign
+        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0 }
+        : undefined;
       const session = await createSession(model, campaignOpts);
       rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
-      setSelectedCampaign(session.campaign_filename || campaignOpts.campaignFilename);
-      setOutput(loadingOutput);
+      setTurnReport(null);
+      setOutput(campaignOpts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
-      setAction("");
+      setAction(campaignOpts ? "" : INITIAL_ACTION);
       setSelectedSlot(SLOT_DEFAULT);
       setSelectedSlotId("");
       await refreshSlots(session.session_id, SLOT_DEFAULT);
-      setPendingGenerate(ENTRY_ACTION);
+      if (campaignOpts) {
+        setPendingGenerate(ENTRY_ACTION);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
       setIsLoading(false);
     }
-  }, [model, selectedCampaign, setSelectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport, setCampaignProgress]);
+  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport]);
 
   const handleCampaignChange = useCallback(async (value: string) => {
-    if (!value) return;
     setIsLoading(true);
     setError("");
     setOutput(loadingOutput);
     setTurnReport(null);
-    setCampaignProgress(null);
     setAction("");
     setPendingGenerate(null);
-    const opts = { campaignFilename: value, arcIndex: 0, sessionIndex: 0 };
+    const opts = value
+      ? { campaignFilename: value, arcIndex: 0, sessionIndex: 0 }
+      : undefined;
     try {
       const session = await createSession(model, opts);
       setSelectedCampaign(value);
@@ -155,20 +119,21 @@ export function useGameActions(core: GameSessionCore) {
       setSessionId(session.session_id);
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
-      setOutput(loadingOutput);
+      setTurnReport(null);
+      setOutput(opts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
-      setAction("");
+      setAction(opts ? "" : INITIAL_ACTION);
       setSelectedSlot(SLOT_DEFAULT);
       setSelectedSlotId("");
       refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
-      setPendingGenerate(ENTRY_ACTION);
+      if (opts) setPendingGenerate(ENTRY_ACTION);
     } catch (err: Error | unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setIsLoading(false);
     }
-  }, [model, setIsLoading, setSelectedCampaign, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport, setCampaignProgress]);
+  }, [model, setIsLoading, setSelectedCampaign, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport]);
 
   const handleSlotChange = useCallback(async (slotId: number) => {
     if (!slotId) return;
@@ -176,7 +141,6 @@ export function useGameActions(core: GameSessionCore) {
     setError("");
     setOutput(loadingOutput);
     setTurnReport(null);
-    setCampaignProgress(null);
     setAction("");
     setPendingGenerate(null);
     try {
@@ -196,7 +160,7 @@ export function useGameActions(core: GameSessionCore) {
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setActiveTurnId, setModel, setChunks, restoreLastOutput, refreshSlots, setTurnReport, setCampaignProgress]);
+  }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setActiveTurnId, setModel, setChunks, restoreLastOutput, refreshSlots, setTurnReport]);
 
   /** Error message on failure, null when the slot was created. */
   const handleCreateSlot = useCallback(async (name: string): Promise<string | null> => {
@@ -210,21 +174,7 @@ export function useGameActions(core: GameSessionCore) {
     }
   }, [sessionId, selectedSlot, refreshSlots]);
 
-  const handleDeleteSlot = useCallback(async (slotId: number): Promise<string | null> => {
-    try {
-      await deleteSlot(slotId);
-      try {
-        await refreshSlots(sessionId, selectedSlot);
-      } catch (err) {
-        return `存档已删除，但列表刷新失败：${err instanceof Error ? err.message : String(err)}。请重新打开页面核对。`;
-      }
-      return null;
-    } catch (err: unknown) {
-      return err instanceof Error ? err.message : String(err);
-    }
-  }, [sessionId, selectedSlot, refreshSlots]);
-
   return {
-    handleGenerate, handlePrepareCheck, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot, handleDeleteSlot,
+    handleGenerate, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot,
   };
 }

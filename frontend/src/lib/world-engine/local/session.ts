@@ -67,6 +67,15 @@ export interface LocalGameOptions {
   /** Run a committed point's narration while the next point settles
    * (default true in the product session). */
   narrationOverlap?: boolean;
+  /** D-018: scene stages per group, the rest of the six stages once per point
+   * (default true; false keeps the merged per-group batch for comparison). */
+  splitPointUpdates?: boolean;
+  /** Stop the automatic chain at this wall-clock budget (default 240 s), so a
+   * judge-policy turn hands back inside the 300 s cap. */
+  turnBudgetMs?: number;
+  /** D-024 evaluation arm: force a program handback at the continuation
+   * boundary instead of calling the model (URL switch only). */
+  forceHandback?: boolean;
   /** Evidence sink for the exact commit_point request (see ControllerIo). */
   onCommit?: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void;
   onEvent?: (event: LocalSessionEvent) => void;
@@ -183,7 +192,7 @@ export class LocalGameSession {
         const pointId = (event.request as { pointId?: Id }).pointId;
         if (pointId) productModel.onPointCommitted?.(pointId);
       },
-    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true });
+    }, seed, state ?? { world: null }, { narrationOverlap: options.narrationOverlap ?? true, splitPointUpdates: options.splitPointUpdates ?? true, turnBudgetMs: options.turnBudgetMs ?? 240_000, forceHandback: options.forceHandback ?? false });
     if (this.storage && options.leaseHeartbeat !== false) this.startHeartbeat();
   }
 
@@ -232,7 +241,8 @@ export class LocalGameSession {
     // S0 + Δ and the head digest is checked before any state is applied.
     const invariant = await verifySessionSnapshot(snapshot);
     if (!invariant.ok) {
-      throw new Error(`local_restore_invariant:${invariant.errors.map((issue) => issue.code).join(',')}`);
+      const detail = invariant.errors.map((issue) => `${issue.code}@${issue.pointId ?? '-'}:${issue.detail}`).join(' | ');
+      throw new Error(`local_restore_invariant:${invariant.errors.map((issue) => issue.code).join(',')}:${detail}`);
     }
     let session: LocalGameSession | null = null;
     let memory: ControllerMemory | null = null;
@@ -334,6 +344,33 @@ export class LocalGameSession {
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
     if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];
     return snapshot;
+  }
+
+  /** Delete and regenerate one committed point's narration. The claim wipes
+   * the old text first (by protocol); the queue retry is what re-enqueues a
+   * non-head point, which no other path ever does. */
+  async regenerateNarration(pointId: Id = this.transport.snapshot().headPointId): Promise<DriverStatus> {
+    const record = this.transport.snapshot();
+    const entry = record.narrations[pointId];
+    if (!entry) throw new Error('narration_point_not_committed');
+    const head = pointId === record.headPointId;
+    const memory = this.driver.getMemory();
+    if (head && (!memory.leaseToken || !record.lease)) throw new Error('narration_claim_without_lease');
+    const binding = head
+      ? { mode: 'head' as const, leaseToken: memory.leaseToken!, fenceEpoch: record.lease!.fenceEpoch }
+      : { mode: 'history' as const };
+    const base = randomId('regen');
+    const claimed = await this.transport.execute('narration_claim', {
+      protocolVersion: 2, requestId: `${base}_claim`, worldId: this.worldId, pointId, ...binding, currentClaim: null,
+    }, { worldId: this.worldId, pointId });
+    const summary = claimed.data;
+    if (!('claimToken' in summary) || !summary.claimToken) throw new Error('narration_claim_replayed_without_token');
+    await this.transport.execute('narration_delete', {
+      protocolVersion: 2, requestId: `${base}_delete`, ...binding,
+      claimToken: summary.claimToken, generation: summary.generation, issuedAtEpochMilli: summary.issuedAtEpochMilli,
+    }, { worldId: this.worldId, pointId });
+    this.driver.retryNarration(pointId);
+    return this.start();
   }
 
   async start(): Promise<DriverStatus> {

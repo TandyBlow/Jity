@@ -31,8 +31,7 @@ class EntryStateMixin:
             # campaign recap.
             result["npcs"] = []
             result["recent_events"] = []
-            # Keep branch-owned long-term evidence and unfinished summary input.
-            # Scene-local lists above reset; a chapter change is not forgetting.
+            result.pop("_memory_controller", None)
             result["_scene_prompt"] = ""
         if initialize:
             # The free-play defaults describe a specific academy scene. A new
@@ -84,7 +83,7 @@ class EntryStateMixin:
                     for item_name in entry["items"]:
                         if not any(i.get("name") == item_name for i in result.get("items", [])):
                             result.setdefault("items", []).append(
-                                {"name": item_name, "status": "owned"}
+                                {"name": item_name, "status": "初始"}
                             )
                 if entry.get("quests"):
                     for quest_name in entry["quests"]:

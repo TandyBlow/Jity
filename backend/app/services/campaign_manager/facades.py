@@ -19,56 +19,23 @@ class AnchorFacade:
             revealed_anchors=self.progress.revealed_anchors,
         )
 
-    def commit_pending_anchors(self, *, persist: bool = True) -> list[str]:
+    def commit_pending_anchors(self) -> list[str]:
         def _mark(anchor_id: str, turn: int) -> None:
-            self.mark_anchor_triggered(anchor_id, turn, persist=persist)
+            self.mark_anchor_triggered(anchor_id, turn)
 
         return self._anchors.commit_pending_anchors(self.progress, mark_fn=_mark)
-
-    def stage_forced_completion_anchor(self) -> AnchorEvent | None:
-        """Stage the next missing core anchor for the hard-convergence turn.
-
-        This deliberately ignores ordinary location/item trigger filters: at
-        the hard threshold the narrator must bring the required event into
-        the current scene instead of waiting for the player to wander into it.
-        The staged anchor is committed only after the story turn succeeds.
-        """
-        if self.campaign is None or self.progress is None:
-            return None
-        try:
-            session = self.campaign.arcs[self.progress.arc_index].sessions[
-                self.progress.session_index
-            ]
-        except (AttributeError, IndexError, TypeError):
-            return None
-        revealed = set(self.progress.revealed_anchors or [])
-        required = list(session.completion_anchors or [])
-        by_id = {anchor.id: anchor for anchor in session.anchor_events}
-        # Replace any ordinary candidate staged during context assembly.  In
-        # convergence mode only a required core anchor may consume the turn.
-        self._anchors.pending_anchor_triggers = []
-        for anchor_id in required:
-            if anchor_id in revealed or anchor_id not in by_id:
-                continue
-            anchor = by_id[anchor_id]
-            self._anchors.pending_anchor_triggers = [
-                (anchor.id, self.progress.turn_in_session)
-            ]
-            return anchor
-        return None
 
     @property
     def pending_anchor_triggers(self) -> list[tuple[str, int]]:
         """Read-only view of this turn's pending triggers (commit-turn §4)."""
         return self._anchors.pending_anchor_triggers
 
-    def mark_anchor_triggered(self, anchor_id: str, turn: int, *, persist: bool = True) -> None:
+    def mark_anchor_triggered(self, anchor_id: str, turn: int) -> None:
         if self.progress is not None:
             if anchor_id not in self.progress.revealed_anchors:
                 self.progress.revealed_anchors.append(anchor_id)
         self._anchors.record_cooldown(anchor_id, turn)
-        if persist:
-            self._persist_progress()
+        self._persist_progress()
 
     def detect_deviation(self, state: dict[str, Any], turn: int) -> bool:
         if self.campaign is None or self.progress is None:

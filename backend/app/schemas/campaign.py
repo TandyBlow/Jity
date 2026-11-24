@@ -29,14 +29,7 @@ class SessionSchema(BaseModel):
     """A single session within an arc."""
     name: str
     opening_scene: str = ""
-    # Story completion gates.  ``soft`` focuses the available choices,
-    # ``hard`` starts deterministic convergence on missing core anchors, and
-    # ``max`` is the reserved end of the session's local budget.
-    min_turns_per_session: int | None = None
-    soft_turns_per_session: int | None = None
-    hard_turns_per_session: int | None = None
     max_turns_per_session: int | None = None
-    completion_anchors: list[str] = Field(default_factory=list)
     anchor_events: list[AnchorEvent] = Field(default_factory=list)
     entry_state: dict[str, Any] | None = None
 
@@ -48,19 +41,6 @@ class ArcSchema(BaseModel):
     sessions: list[SessionSchema] = Field(default_factory=list)
 
 
-class EndingRoute(BaseModel):
-    """A campaign-specific ending the GM may resolve in the final session."""
-    id: str
-    name: str
-    category: Literal["true", "good", "normal", "dark", "bad"] = "normal"
-    requirements: list[str] = Field(default_factory=list)
-    required_items: list[str] = Field(default_factory=list)
-    required_anchors: list[str] = Field(default_factory=list)
-    trigger_phrases: list[str] = Field(default_factory=list)
-    resolution: str
-    epilogue: str = ""
-
-
 class CampaignSchema(BaseModel):
     """Top-level campaign definition matching campaign.json format."""
     version: int = 1
@@ -70,15 +50,12 @@ class CampaignSchema(BaseModel):
     constraints: str = ""
     starting_state: dict[str, Any] = Field(default_factory=dict)
     max_turns_per_session: int | None = None
-    # Whole-campaign execution budget; the ending must be presented within it.
-    max_turns_per_campaign: int | None = None
     # v4 additions
     difficulty: Literal["easy", "normal", "hard", "insane"] = "normal"
     difficulty_settings: dict[str, Any] | None = None
     description: str = ""
     tags: list[str] = Field(default_factory=list)
     estimated_duration: int = 0
-    ending_routes: list[EndingRoute] = Field(default_factory=list)
 
 
 class CampaignProgress(BaseModel):
@@ -87,8 +64,6 @@ class CampaignProgress(BaseModel):
     arc_index: int = 0
     session_index: int = 0
     turn_in_session: int = 0
-    # Whole-campaign counter; session/arc advancement does not reset it.
-    turns_total: int = 0
     revealed_anchors: list[str] = Field(default_factory=list)
     completed_arcs: list[int] = Field(default_factory=list)
 

@@ -36,6 +36,17 @@ export interface SettlementOptions {
   /** Test/embedded allocator for the automatic round identity. The default
    * uses a timestamp plus a local counter. */
   nextRoundId?: () => Id;
+  /** Evaluation arm: state the unknown-target rule explicitly in the results
+   * prompt (untargeted entity ⇒ not_achieved/blocked). Default off. */
+  unknownEntityRule?: boolean;
+  /** Evaluation arm: list only the actors/items named by the action in the
+   * results prompt instead of the whole visible scene (mobile prefill cut). */
+  compactPrompts?: boolean;
+  /** Evaluation arm: a worked blocked example for an unknown target. */
+  unknownEntityExample?: boolean;
+  /** Deterministic guard (default on): a results fact naming an unregistered
+   * entity fails validation and is retried; pass false to reproduce old runs. */
+  strictKnownEntities?: boolean;
   onTask?: (task: SettlementTask, key: string, detail: ModelTaskDetail) => void;
   /** Product default: a new task achievement must cite a settled result fact
    * (or a time basis). Unit fixtures may leave this off, but the page port

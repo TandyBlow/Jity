@@ -28,27 +28,17 @@ class OpeningSceneMixin:
 
         # A chapter starts on the campaign-local clock, even when the global
         # game turn is already positive. Apply its scene without resetting stats.
-        # ``turns_total`` distinguishes a real boundary from starting a new
-        # timeline directly at a later chapter.
-        is_session_transition = int(
-            getattr(campaign_manager.progress, "turns_total", 0)
-        ) > 0
-        merged_state = self.state_manager.merge_entry_state(
+        is_session_transition = int(state.get("turn", 0)) > 0
+        state = self.state_manager.merge_entry_state(
             state, campaign_manager.campaign,
             campaign_manager.progress.arc_index, campaign_manager.progress.session_index,
             reset_scene_context=is_session_transition,
         )
-        state.clear()
-        state.update(merged_state)
         if is_session_transition:
-            # Reload the preserved branch snapshot after resetting scene lists.
-            # Past evidence remains available alongside the campaign recap.
+            # The controller contains raw turns, summaries and persona sketches
+            # from the previous scene.  The campaign recap is the deliberate
+            # cross-session continuity channel; start a fresh short-term cache.
             self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
-            # Do not replace the player's transition choice with a scripted
-            # opening.  The normal Director/Narrator path receives both the
-            # authored opening premise and the chosen action, so it can bridge
-            # the two chapters causally in one turn.
-            return None
 
         # Asked for before anything is written, so a failure below leaves the turn
         # uncommitted and the retry lands back on the turn-0 guard.
@@ -66,11 +56,7 @@ class OpeningSceneMixin:
             option_checks=opening_options.option_checks,
             current_location=state.get("current_location", ""),
         ).replace_em_dashes()
-        controller = self._get_memory_controller(session_id, state, campaign_manager)
-        controller.score_tracker.validate_output(output, int(state.get("turn", 0)) + 1)
         state = self.state_manager.apply_output(state, request.player_action, output)
-        state["items"] = controller.score_tracker.reconcile_inventory(state.get("items", []))
-        self._feed_memory(session_id, state, output, request.player_action, campaign_manager)
 
         metrics = campaign_manager.record_turn(output, session["state"], latency_ms=0)
         output_id = self.db.add_model_output(
@@ -87,36 +73,26 @@ class OpeningSceneMixin:
             {"role": "assistant", "content": output.model_dump_json()},
         ])
         progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
-        try:
-            timeline_node_id = self.db.commit_story_turn(
-                session_id=session_id,
-                expected_parent_id=parent_turn_id,
-                player_action=request.player_action,
-                output=output.model_dump(),
-                state=state,
-                campaign_progress=progress_snapshot,
-                model=model,
-                source="scripted",
-                model_output_id=output_id,
-                campaign_session_index=_csi,
-                campaign_arc_index=action_arc_index,
-            )
-        except Exception:
-            # Same contract as the main path: advancement was in-memory
-            # only, so a failed opening commit must not leak it into the
-            # retry.
-            campaign_manager.reload_runtime_state()
-            raise
-        campaign_manager.flush_deferred_effects()
-        self._schedule_memory(session_id, timeline_node_id, state, campaign_manager)
+        timeline_node_id = self.db.commit_story_turn(
+            session_id=session_id,
+            expected_parent_id=parent_turn_id,
+            player_action=request.player_action,
+            output=output.model_dump(),
+            state=state,
+            campaign_progress=progress_snapshot,
+            model=model,
+            source="scripted",
+            model_output_id=output_id,
+            campaign_session_index=_csi,
+            campaign_arc_index=action_arc_index,
+        )
 
         serialized = output.model_dump()
         return GenerateResponse(
             memory=self.state_manager.memory_trace_entry(serialized, state),
             declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
             caps=STATE_CAPS,
-            campaign_progress=campaign_manager.campaign_view(state) or None,
-            session_id=session_id, state=self.state_manager.sanitize_state(dict(state)), output=output,
+            session_id=session_id, state=state, output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",
             timeline_node_id=timeline_node_id,

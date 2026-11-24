@@ -1,0 +1,23 @@
+[
+  {
+    "id": "s05-act-inventory",
+    "input": "我低头检查护目镜、识别带和胸袋里的弹匣，确认都在。",
+    "purpose": "act/清点物品"
+  },
+  {
+    "id": "s06-legal-failure",
+    "input": "我把领用台上的红色电台递给阿豹，让他转交给裁判。",
+    "purpose": "合法失败：未知实体/越界行动",
+    "expect": "legal_failure"
+  },
+  {
+    "id": "s07-partial",
+    "input": "我试着把脚边的器材箱推到门口，但箱子很沉，只挪动了一点。",
+    "purpose": "部分成功"
+  },
+  {
+    "id": "s08-joint-move",
+    "input": "我跟门口的人说一起走，两人沿器材棚外侧快走到西回廊。",
+    "purpose": "共同组：与 NPC 同行"
+  }
+]

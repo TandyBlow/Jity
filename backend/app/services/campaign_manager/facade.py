@@ -13,7 +13,6 @@ All public method signatures are preserved so callers (ScenarioGenerator,
 routes, tests) remain unchanged.
 """
 
-import json
 import logging
 from pathlib import Path
 
@@ -70,10 +69,6 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             db, self._anchors, self._recap, health_monitor
         )
         self._strategy: ContextStrategy = SimpleTruncationStrategy()  # public for tests
-        # In-memory NPC relations overlay for the deferred turn path: relation
-        # increments and boundary decay land here first, travel inside the
-        # progress snapshot, and are persisted by the node commit only.
-        self._pending_npc_relations: list[dict] | None = None
 
     # ── Properties (preserve old API) ────────────────────────────────
 
@@ -123,28 +118,6 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             campaign_path, campaign_id, start_arc_index, start_session_index, slot_name
         )
 
-    def end_campaign(self, *, persist: bool = True) -> None:
-        """Move the active campaign to its terminal FSM state and persist it.
-
-        ``persist=False`` defers the write to the turn's commit_story_turn
-        transaction, same as the other advancement paths.
-        """
-        if self.progress is None:
-            return
-        self.fsm.end_campaign()
-        if persist:
-            self._persistence.save(
-                campaign_id=self.progress.campaign_id,
-                slot_name=self.slot_name,
-                arc_index=self.progress.arc_index,
-                session_index=self.progress.session_index,
-                turn_in_session=self.progress.turn_in_session,
-                fsm_state=str(self.fsm.state),
-                revealed_anchors=self.progress.revealed_anchors,
-                completed_arcs=self.progress.completed_arcs,
-                turns_total=self.progress.turns_total,
-            )
-
     def is_loaded(self) -> bool:
         return self._loader.is_loaded()
 
@@ -165,190 +138,10 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             fsm_state=str(self.fsm.state) if self.fsm.state else "idle",
             revealed_anchors=self.progress.revealed_anchors,
             completed_arcs=self.progress.completed_arcs,
-            turns_total=getattr(self.progress, "turns_total", 0),
         )
-
-    def resolve_max_turns_per_campaign(self) -> int:
-        return self._advancer.resolve_max_turns_per_campaign(self.campaign)
 
     def _persist_progress(self) -> None:
         self.save_progress()
 
     def load_progress(self, campaign_id: str) -> CampaignProgress | None:
         return self._loader.load_progress(campaign_id)
-
-    def progress_snapshot(self) -> dict:
-        """Full campaign_progress row dict for the current in-memory progress.
-
-        The advancing fields (arc/session/turn/anchors/arcs-done/fsm) come
-        from memory, which on the deferred path is ahead of the database
-        until commit_story_turn writes them. Recap and npc_relations are
-        memory-less: preserve whatever storage holds so the snapshot upsert
-        cannot wipe them.
-        """
-        if self.progress is None:
-            return {}
-        row = self.db.read_campaign_progress(
-            self.progress.campaign_id, self.slot_name
-        ) or {}
-        recap_compressed, recap_full = self._persistence._current_recap_fields(
-            self.progress.campaign_id, self.slot_name
-        )
-        pending_recap = self._advancer.pending_recap
-        if pending_recap:
-            # Deferred recap rides the snapshot; storage still holds the
-            # previous recap, so append to that for the cumulative channel.
-            recap_compressed = pending_recap
-            recap_full = (recap_full + "\n\n" + pending_recap).strip() if recap_full else pending_recap
-        if self._pending_npc_relations is not None:
-            npc_relations = json.dumps(self._pending_npc_relations, ensure_ascii=False)
-        else:
-            npc_relations = row.get("npc_relations", "[]") or "[]"
-        return {
-            "campaign_id": self.progress.campaign_id,
-            "slot_name": self.slot_name,
-            "arc_index": self.progress.arc_index,
-            "session_index": self.progress.session_index,
-            "turn_in_session": self.progress.turn_in_session,
-            "fsm_state": str(self.fsm.state) if self.fsm.state else "idle",
-            "revealed_anchors": json.dumps(
-                self.progress.revealed_anchors, ensure_ascii=False
-            ),
-            "completed_arcs": json.dumps(
-                self.progress.completed_arcs, ensure_ascii=False
-            ),
-            "recap_compressed": recap_compressed,
-            "recap_full": recap_full,
-            "npc_relations": npc_relations,
-            "turns_total": getattr(self.progress, "turns_total", 0),
-        }
-
-    # ── Deferred NPC relations overlay ───────────────────────────────
-
-    def _relations_overlay(self) -> list[dict]:
-        """Current relations, lazily seeded from storage on first touch."""
-        if self._pending_npc_relations is None:
-            row = self.db.read_campaign_progress(
-                self.progress.campaign_id, self.slot_name
-            ) or {}
-            raw = row.get("npc_relations", "[]") or "[]"
-            try:
-                self._pending_npc_relations = json.loads(raw)
-            except (json.JSONDecodeError, TypeError):
-                self._pending_npc_relations = []
-        return self._pending_npc_relations
-
-    def apply_npc_relation_delta(self, deltas: list[dict], current_turn: int) -> None:
-        """Apply LLM-reported affinity deltas to the in-memory overlay."""
-        relations = self._relations_overlay()
-        by_name = {r["name"]: r for r in relations if isinstance(r, dict)}
-        for delta in deltas or []:
-            name = delta.get("name", "")
-            if not name:
-                continue
-            entry = by_name.setdefault(name, {
-                "name": name, "affinity": 0,
-                "last_interaction_turn": current_turn, "note": "",
-            })
-            sentiment = delta.get("sentiment", "neutral")
-            if sentiment == "positive":
-                entry["affinity"] = min(entry.get("affinity", 0) + 1, 10)
-            elif sentiment == "negative":
-                entry["affinity"] = max(entry.get("affinity", 0) - 1, -10)
-            entry["last_interaction_turn"] = current_turn
-            entry["note"] = delta.get("note", "") or entry.get("note", "")
-        self._pending_npc_relations = list(by_name.values())
-
-    def apply_npc_relation_decay(self) -> None:
-        """Session-boundary decay (+1/-1 toward zero) on the overlay."""
-        relations = self._relations_overlay()
-        for entry in relations:
-            affinity = entry.get("affinity", 0)
-            if affinity > 0:
-                entry["affinity"] = max(affinity - 1, 0)
-            elif affinity < 0:
-                entry["affinity"] = min(affinity + 1, 0)
-        self._pending_npc_relations = relations
-
-    def clear_runtime_overlays(self) -> None:
-        """Drop deferred recap/decay/relations state after a commit or failure.
-
-        After a successful commit the node's progress upsert has already
-        persisted everything; after a failure the overlays are discarded so
-        a retry cannot double-apply.
-        """
-        self._advancer.pending_recap = None
-        self._advancer.relation_decay_pending = False
-        self._pending_npc_relations = None
-
-    def campaign_view(self, state: dict | None = None) -> dict:
-        """Frontend-facing progress summary for the current campaign state."""
-        if self.progress is None or self.campaign is None:
-            return {}
-        arc_name = arc_goal = session_name = ""
-        try:
-            arc = self.campaign.arcs[self.progress.arc_index]
-            arc_name = arc.name
-            arc_goal = arc.goal or ""
-            session_name = arc.sessions[self.progress.session_index].name
-        except (IndexError, AttributeError):
-            pass
-        player_status = (state or {}).get("player_status") or {}
-        return {
-            "turns_total": getattr(self.progress, "turns_total", 0),
-            "max_turns_per_campaign": self.resolve_max_turns_per_campaign(),
-            "arc_index": self.progress.arc_index,
-            "arc_name": arc_name,
-            "arc_goal": arc_goal,
-            "session_index": self.progress.session_index,
-            "session_name": session_name,
-            "current_goal": player_status.get("current_goal", ""),
-            "campaign_title": self.campaign.title,
-        }
-
-    def reload_runtime_state(self) -> None:
-        """Discard in-memory advancement and re-derive progress + FSM from storage.
-
-        Called after a failed turn commit so a retried request cannot double-
-        advance on stale in-memory counters, and so deferred recap/relation
-        overlays from the failed attempt are dropped.
-        """
-        self.clear_runtime_overlays()
-        self._anchors.reset_runtime_state()
-        if self.progress is None:
-            return
-        progress = self._loader.load_progress(self.progress.campaign_id)
-        if progress is not None:
-            self._loader.progress = progress
-        self._loader._sync_fsm_from_progress()
-
-    def flush_deferred_effects(self) -> None:
-        """Clear deferred state after the node commit succeeded.
-
-        Everything deferred (recap text, relation decay, relation increments)
-        rode the progress snapshot into the node's transaction, so there is
-        nothing left to write — only in-memory state to drop.
-        """
-        self.clear_runtime_overlays()
-
-    def reset_to_initial(self) -> None:
-        """Reset progress, FSM, recap and relations to the campaign's initial state.
-
-        Used when a node without a progress snapshot (e.g. the pre-campaign
-        root) is activated: the initial snapshot that node lacks is applied
-        here instead of keeping whichever progress the previous branch had.
-        """
-        if self.progress is None:
-            return
-        from app.schemas.campaign import CampaignProgress
-
-        self._loader.progress = CampaignProgress(campaign_id=self.progress.campaign_id)
-        self.clear_runtime_overlays()
-        self._anchors.reset_runtime_state()
-        self._loader._init_fsm()
-        self.db.update_recap_fields(
-            self.progress.campaign_id, "", "", slot_name=self.slot_name
-        )
-        self.db.update_npc_relations(
-            self.progress.campaign_id, "[]", slot_name=self.slot_name
-        )

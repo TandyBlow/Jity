@@ -8,6 +8,7 @@ from app.config import get_settings
 from app.routers import backgrounds, campaigns, generate, meta, sessions, slots
 from app.world_app import install_world_routes
 from app.routers.local_progress import router as local_progress_router
+from app.services.local_progress import settings as local_progress_settings
 
 settings = get_settings()
 
@@ -21,6 +22,9 @@ allowed_origins = {
     "http://localhost:3100",
     "http://127.0.0.1:3100",
 }
+# The product page calls the progress service from its own origin; the
+# service's allowed origins stay configurable (LOCAL_PROGRESS_CORS_ORIGINS).
+allowed_origins |= set(local_progress_settings.cors_origins())
 app.add_middleware(
     CORSMiddleware,
     allow_origins=sorted(allowed_origins),

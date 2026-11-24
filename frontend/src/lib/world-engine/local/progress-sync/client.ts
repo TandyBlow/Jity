@@ -385,12 +385,21 @@ export class ProgressSyncClient<P = unknown> {
           remaining.push(item);
           continue;
         }
-        // This body was never sent (sent=false), so replacing its stale CAS
-        // values with the predecessor's result cannot break idempotency.
-        request = this.rebaseRequest(request, previous);
-        item.request = request as UploadRequest;
-        item.previousRequestId = null;
-        item.sent = false;
+        if (previous.snapshotId !== previous.headSnapshotId) {
+          // The predecessor replayed as a no-op while the world moved on: its
+          // current head is another branch. Rebasing would graft this save
+          // onto work the device never followed, so keep the original CAS and
+          // let the server report the fork.
+          item.previousRequestId = null;
+          item.sent = false;
+        } else {
+          // This body was never sent (sent=false), so replacing its stale CAS
+          // values with the predecessor's result cannot break idempotency.
+          request = this.rebaseRequest(request, previous);
+          item.request = request as UploadRequest;
+          item.previousRequestId = null;
+          item.sent = false;
+        }
       }
       try {
         const result = await this.withRetry(() => this.postUpload(item.worldId, request));
@@ -421,6 +430,13 @@ export class ProgressSyncClient<P = unknown> {
       if (!item.previousRequestId) continue;
       const previous = resolved.get(item.previousRequestId);
       if (!previous) continue;
+      if (previous.snapshotId !== previous.headSnapshotId) {
+        // The next flush must send this save's own CAS, not a rebase onto a
+        // head the device never followed.
+        item.previousRequestId = null;
+        item.sent = false;
+        continue;
+      }
       item.request = this.rebaseRequest(item.request as UploadRequest<P>, previous) as UploadRequest;
       item.previousRequestId = null;
       item.sent = false;
@@ -472,8 +488,9 @@ export class ProgressSyncClient<P = unknown> {
   /**
    * Explicit conflict resolution.
    * - keep-remote: pull the active remote branch into the local store.
-   * - keep-local-fork: store the local payload as a fork of its old base, then
-   *   select it. The rejected remote branch remains stored and readable.
+   * - keep-local-fork: store the device's newest save as a fork of its old
+   *   base, then select it. The rejected remote branch remains stored and
+   *   readable.
    */
   async resolveConflict(
     conflict: ProgressConflictErrorType<P>,
@@ -482,6 +499,8 @@ export class ProgressSyncClient<P = unknown> {
   ): Promise<ResolveResult<P>> {
     if (choice === 'keep-remote') {
       const pulled = await this.pullLatest(conflict.worldId, { saveLocal: options.saveLocal });
+      // The queued offline saves lost the choice; they must not reopen it.
+      await this.clearWorldQueue(conflict.worldId);
       return {
         status: 'remote',
         head: pulled.head,
@@ -498,6 +517,12 @@ export class ProgressSyncClient<P = unknown> {
         0,
       );
     }
+    // A turn queues several saves; the first one to conflict is not the
+    // branch the player kept. The durable store holds the newest save.
+    const local = options.saveLocal === false || !this.localStore
+      ? null
+      : await this.localStore.load(conflict.worldId).catch(() => null);
+    const payload = (local ?? request.payload) as P;
     const current = await this.head(conflict.worldId);
     const baseParents = request.parentSnapshotIds.length
       ? [...request.parentSnapshotIds]
@@ -506,14 +531,15 @@ export class ProgressSyncClient<P = unknown> {
         : [];
 
     if (!baseParents.length && current.headSnapshotId === null) {
-      const upload = await this.uploadCAS(conflict.worldId, request.payload, {
+      const upload = await this.uploadCAS(conflict.worldId, payload, {
         expectedHead: null,
         expectedRevision: current.revision,
         parentSnapshotIds: [],
         activate: true,
         requestId: this.childRequestId(request.requestId, 'fork'),
       });
-      const pulled = await this.pullLatest(conflict.worldId, { saveLocal: options.saveLocal });
+      const pulled = await this.pullLatest(conflict.worldId, { saveLocal: local == null && options.saveLocal === true });
+      if (local != null) await this.clearWorldQueue(conflict.worldId);
       return {
         status: 'local-fork',
         head: pulled.head,
@@ -523,7 +549,7 @@ export class ProgressSyncClient<P = unknown> {
       };
     }
 
-    const fork = await this.uploadCAS(conflict.worldId, request.payload, {
+    const fork = await this.uploadCAS(conflict.worldId, payload, {
       expectedHead: current.headSnapshotId,
       expectedRevision: current.revision,
       parentSnapshotIds: baseParents,
@@ -535,7 +561,10 @@ export class ProgressSyncClient<P = unknown> {
       expectedRevision: fork.revision,
       requestId: this.childRequestId(request.requestId, 'select'),
     });
-    const pulled = await this.pullLatest(conflict.worldId, { saveLocal: options.saveLocal });
+    // The local payload is already the newest durable save; pulling it back
+    // would rewrite the store under the open session for nothing.
+    const pulled = await this.pullLatest(conflict.worldId, { saveLocal: local == null && options.saveLocal === true });
+    if (local != null) await this.clearWorldQueue(conflict.worldId);
     return {
       status: 'local-fork',
       head: pulled.head,
@@ -543,6 +572,13 @@ export class ProgressSyncClient<P = unknown> {
       localSaved: pulled.localSaved,
       upload: fork,
     };
+  }
+
+  /** Drop every queued upload for a world after the player's explicit choice. */
+  private async clearWorldQueue(worldId: WorldId): Promise<void> {
+    const items = await this.loadQueue();
+    const next = items.filter((item) => item.worldId !== worldId);
+    if (next.length !== items.length) await this.persistQueue(next);
   }
 
   // -- internals -----------------------------------------------------------

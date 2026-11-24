@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { getTimelineNode, listSlots } from "@/lib/api";
-import { ENTRY_ACTION, SLOT_DEFAULT, loadingOutput } from "@/lib/game/initialOutput";
+import { ENTRY_ACTION, SLOT_DEFAULT, initialOutput, loadingOutput } from "@/lib/game/initialOutput";
 import { buildStatusDeltaHints } from "@/lib/game/format";
 import { useGameActions } from "@/components/game/useGameActions";
 import { useGameEffects } from "@/components/game/useGameEffects";
@@ -11,7 +11,6 @@ import { useSceneBackground } from "@/components/game/useSceneBackground";
 import { useBrowserAutoPlay } from "@/components/game/useBrowserAutoPlay";
 import type {
   CampaignListItem,
-  CampaignProgressSummary,
   GameState,
   GenerateResponse,
   RetrievedChunk,
@@ -33,7 +32,6 @@ export type GameSessionCore = {
   setAction: (action: string) => void;
   setOutput: (output: StoryOutput) => void;
   setTurnReport: (report: TurnReport | null) => void;
-  setCampaignProgress: (progress: CampaignProgressSummary | null) => void;
   setOutputSource: (source: GenerateResponse["source"]) => void;
   setChunks: (chunks: RetrievedChunk[]) => void;
   setIsLoading: (isLoading: boolean) => void;
@@ -44,7 +42,6 @@ export type GameSessionCore = {
   selectedCampaign: string;
   setSelectedCampaign: (campaign: string) => void;
   pendingGenerate: string | null;
-  gameOver: boolean;
   setPendingGenerate: (action: string | null) => void;
   refreshSlots: (sessionId?: string, preferredSlotName?: string) => Promise<void>;
   restoreLastOutput: (sessionId: string, campaignFilename?: string | null, activeTurnId?: number | null) => Promise<void>;
@@ -57,7 +54,6 @@ export function useGameSession() {
   const [activeTurnId, setActiveTurnId] = useState<number | null>(null);
   const [output, setOutput] = useState<StoryOutput>(loadingOutput);
   const [turnReport, setTurnReport] = useState<TurnReport | null>(null);
-  const [campaignProgress, setCampaignProgress] = useState<CampaignProgressSummary | null>(null);
   const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
   const [action, setAction] = useState("");
@@ -67,7 +63,7 @@ export function useGameSession() {
   const [selectedSlot, setSelectedSlot] = useState<string>(SLOT_DEFAULT);
   const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
-  const [selectedCampaign, setSelectedCampaign] = useState("default_campaign.json");
+  const [selectedCampaign, setSelectedCampaign] = useState("");
   const [pendingGenerate, setPendingGenerate] = useState<string | null>(null);
 
   const statusDeltaHints = useMemo(() => buildStatusDeltaHints(output), [output]);
@@ -95,7 +91,6 @@ export function useGameSession() {
   }
 
   async function restoreLastOutput(nextSessionId: string, campaignFilename?: string | null, nextActiveTurnId?: number | null) {
-    setCampaignProgress(null);
     setSelectedCampaign(campaignFilename ?? "");
     setAction("");
     if (nextActiveTurnId) {
@@ -113,8 +108,9 @@ export function useGameSession() {
       setOutput(loadingOutput);
       setPendingGenerate(ENTRY_ACTION);
     } else {
-      setOutput(loadingOutput);
-      setError("该历史会话未关联战役，请新建战役。");
+      setOutput(initialOutput);
+      setOutputSource("scripted");
+      setAction(initialOutput.options[0] ?? "");
     }
   }
 
@@ -130,7 +126,6 @@ export function useGameSession() {
     setAction: (next: string) => setAction(next),
     setOutput: (next: StoryOutput) => setOutput(next),
     setTurnReport: (next: TurnReport | null) => setTurnReport(next),
-    setCampaignProgress: (next: CampaignProgressSummary | null) => setCampaignProgress(next),
     setOutputSource: (next: GenerateResponse["source"]) => setOutputSource(next),
     setChunks: (next: RetrievedChunk[]) => setChunks(next),
     setIsLoading: (next: boolean) => setIsLoading(next),
@@ -141,7 +136,6 @@ export function useGameSession() {
     selectedCampaign,
     setSelectedCampaign: (next: string) => setSelectedCampaign(next),
     pendingGenerate,
-    gameOver: output.game_over,
     setPendingGenerate: (next: string | null) => setPendingGenerate(next),
     refreshSlots,
     restoreLastOutput,
@@ -151,16 +145,15 @@ export function useGameSession() {
 
   useGameEffects(core, { setSlots, setCampaigns, handleGenerate: actions.handleGenerate });
   const autoPlay = useBrowserAutoPlay({
-    sessionId, activeTurnId, selectedCampaign, state, output, isLoading, pendingGenerate, error,
+    sessionId, selectedCampaign, state, output, isLoading, pendingGenerate, error,
     handleGenerate: actions.handleGenerate,
-    handlePrepareCheck: actions.handlePrepareCheck,
   });
   const sceneBackground = useSceneBackground(output, state);
 
   return {
     ...core, ...actions,
     ...sceneBackground,
-    state, output, turnReport, campaignProgress, outputSource, chunks, isLoading, error,
+    state, output, turnReport, outputSource, chunks, isLoading, error,
     statusDeltaHints, slots, selectedSlotId, campaigns, activeTurnId, autoPlay,
   };
 }

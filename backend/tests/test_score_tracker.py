@@ -89,8 +89,8 @@ class TestScoreTracker:
         st.propose_transition("A", ItemState.ACTIVE, 0)
         st.propose_transition("B", ItemState.LOST, 1)
         states = st.get_all_states()
-        assert states["a"] == "active"
-        assert states["b"] == "lost"
+        assert states["A"] == "active"
+        assert states["B"] == "lost"
 
 
 # ── NSB ──────────────────────────────────────────────────────

@@ -13,8 +13,6 @@ class CampaignSessionAdvancer:
     """Orchestrates campaign-local turn increments and session/arc boundaries."""
 
     DEFAULT_MAX_TURNS = 30
-    # Whole-campaign execution budget: the ending must be presented within it.
-    DEFAULT_MAX_TURNS_PER_CAMPAIGN = 50
 
     def __init__(
         self,
@@ -23,178 +21,31 @@ class CampaignSessionAdvancer:
     ) -> None:
         self.persistence = persistence
         self.recap = recap_generator
-        # Deferred-turn state: the recap text and the relation-decay marker
-        # ride the progress snapshot into the node commit instead of writing
-        # early. Cleared on commit (flush) and on failure (reload).
-        self.pending_recap: str | None = None
-        self.relation_decay_pending = False
 
     def advance_turn(
         self,
         progress: Any,
         fsm: Any,
         slot_name: str,
-        *,
-        persist: bool = True,
     ) -> int:
-        """Increment turn_in_session and persist. Returns new turn count.
-
-        ``persist=False`` defers the write: the turn path persists progress
-        inside the commit_story_turn transaction instead, so a failed node
-        commit cannot leave progress advanced without a node.
-        """
+        """Increment turn_in_session and persist. Returns new turn count."""
         if progress is None:
             return 0
         progress.turn_in_session += 1
-        # Whole-campaign counter: incremented here, never reset by
-        # session/arc advancement, restored with the progress snapshot.
-        progress.turns_total = getattr(progress, "turns_total", 0) + 1
-        if persist:
-            self.persistence.save(
-                campaign_id=progress.campaign_id,
-                slot_name=slot_name,
-                arc_index=progress.arc_index,
-                session_index=progress.session_index,
-                turn_in_session=progress.turn_in_session,
-                fsm_state=str(fsm.state) if fsm.state else "idle",
-                revealed_anchors=progress.revealed_anchors,
-                completed_arcs=progress.completed_arcs,
-                turns_total=progress.turns_total,
-            )
+        self.persistence.save(
+            campaign_id=progress.campaign_id,
+            slot_name=slot_name,
+            arc_index=progress.arc_index,
+            session_index=progress.session_index,
+            turn_in_session=progress.turn_in_session,
+            fsm_state=str(fsm.state) if fsm.state else "idle",
+            revealed_anchors=progress.revealed_anchors,
+            completed_arcs=progress.completed_arcs,
+        )
         return progress.turn_in_session
 
-    def resolve_max_turns_per_campaign(self, campaign: Any) -> int:
-        """Whole-campaign budget with precedence chain, clamped to [1, 50].
-
-        50 is a hard ceiling, not a default: a campaign file or option_config
-        asking for 100 still gets 50 so the ending always stays in reach.
-        """
-        configured: int | None = None
-        if campaign is not None:
-            campaign_cap = getattr(campaign, "max_turns_per_campaign", None)
-            if campaign_cap is not None:
-                configured = int(campaign_cap)
-        if configured is None:
-            import json
-            from pathlib import Path
-
-            try:
-                config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
-                if config_path.exists():
-                    config = json.loads(config_path.read_text(encoding="utf-8"))
-                    configured = int(config.get("max_turns_per_campaign", self.DEFAULT_MAX_TURNS_PER_CAMPAIGN))
-            except Exception:
-                logger.debug("option_config.json load failed", exc_info=True)
-        if configured is None:
-            configured = self.DEFAULT_MAX_TURNS_PER_CAMPAIGN
-        return max(1, min(configured, self.DEFAULT_MAX_TURNS_PER_CAMPAIGN))
-
-    def _sessions_remaining(self, campaign: Any, progress: Any) -> int:
-        """Sessions from the current position to the campaign end, inclusive."""
-        try:
-            total = sum(len(arc.sessions) for arc in campaign.arcs[progress.arc_index:])
-            return max(total - progress.session_index, 1)
-        except (IndexError, AttributeError, TypeError):
-            return 1
-
     def resolve_max_turns(self, campaign: Any, progress: Any) -> int:
-        """Resolve the current session's turn cap.
-
-        Precedence chain (per-session → campaign → config → 30), clamped by
-        the whole-campaign allocation: the session may only use an equal
-        share of the remaining budget, so later chapters keep their turns
-        and the sum never exceeds the campaign cap.
-        """
-        resolved = self._resolve_configured_session_max(campaign, progress)
-        if campaign is None or progress is None:
-            return resolved
-
-        cap = self.resolve_max_turns_per_campaign(campaign)
-        # Allocate at the session's start, not again after each turn. The
-        # local counter lets snapshots reconstruct that allocation on reload.
-        session_start = max(
-            getattr(progress, "turns_total", 0) - progress.turn_in_session, 0
-        )
-        remaining_budget = max(cap - session_start, 1)
-        allocation = max(remaining_budget // self._sessions_remaining(campaign, progress), 1)
-        return max(1, min(resolved, allocation))
-
-    def should_begin_closing_after_next_turn(self, campaign: Any, progress: Any) -> bool:
-        """Whether the next committed turn should present session closure.
-
-        A session may close only after its authored completion anchors have
-        happened and its minimum length has elapsed.  Reaching ``hard_turns``
-        starts forced convergence elsewhere; it never bypasses this gate.
-        The player's following successful transition action is what actually
-        advances the session.
-        """
-        if campaign is None or progress is None:
-            return False
-        next_turn = progress.turn_in_session + 1
-        try:
-            session = campaign.arcs[progress.arc_index].sessions[progress.session_index]
-        except (AttributeError, IndexError, TypeError):
-            return False
-        required = list(getattr(session, "completion_anchors", []) or [])
-        if not required:
-            # Backward-compatible fallback for campaigns that have not
-            # authored completion anchors yet.
-            return next_turn >= self.resolve_max_turns(campaign, progress)
-        minimum = getattr(session, "min_turns_per_session", None)
-        hard_turns = self.resolve_hard_turns(campaign, progress)
-        minimum = max(1, int(minimum)) if minimum is not None else hard_turns
-        minimum = min(minimum, self.resolve_max_turns(campaign, progress))
-        if next_turn < minimum:
-            return False
-        revealed = set(getattr(progress, "revealed_anchors", []) or [])
-        return all(anchor_id in revealed for anchor_id in required)
-
-    def resolve_hard_turns(self, campaign: Any, progress: Any) -> int:
-        """Turn that starts forced story convergence for the current session.
-
-        The configured threshold may be earlier, but never later than the
-        point that still leaves one turn per core anchor plus closure and
-        transition/final-choice turns inside the local allocation.
-        """
-        maximum = self.resolve_max_turns(campaign, progress)
-        try:
-            arc = campaign.arcs[progress.arc_index]
-            session = arc.sessions[progress.session_index]
-            required_count = len(getattr(session, "completion_anchors", []) or [])
-            configured = getattr(session, "hard_turns_per_session", None)
-        except (AttributeError, IndexError, TypeError):
-            required_count = 0
-            configured = None
-
-        # One turn per missing core anchor, then one closure/choice turn and
-        # one transition/ending turn.  ``+1`` because the hard turn itself is
-        # the first convergence turn.
-        latest_safe = max(1, maximum - (required_count + 2) + 1)
-        if configured is None:
-            return latest_safe
-        return max(1, min(int(configured), latest_safe, maximum))
-
-    def is_hard_limit_reached(self, campaign: Any, progress: Any) -> bool:
-        """Return true when only deterministic main-story progress is valid."""
-        if campaign is None or progress is None:
-            return False
-        return progress.turn_in_session + 1 >= self.resolve_hard_turns(campaign, progress)
-
-    def is_soft_limit_reached(self, campaign: Any, progress: Any) -> bool:
-        """Return true when a session needs decisive forward pressure."""
-        if campaign is None or progress is None:
-            return False
-        try:
-            session = campaign.arcs[progress.arc_index].sessions[progress.session_index]
-        except (AttributeError, IndexError, TypeError):
-            return False
-        soft = getattr(session, "soft_turns_per_session", None)
-        if soft is None:
-            return False
-        return progress.turn_in_session + 1 >= max(1, int(soft))
-
-    def _resolve_configured_session_max(self, campaign: Any, progress: Any) -> int:
-        """Configured per-session cap before the allocation clamp."""
+        """Resolve max_turns_per_session with precedence chain."""
         # 1. Per-session override in campaign.json
         if campaign and progress:
             try:
@@ -202,15 +53,15 @@ class CampaignSessionAdvancer:
                 session = arc.sessions[progress.session_index]
                 session_max = getattr(session, "max_turns_per_session", None)
                 if session_max is not None:
-                    return max(1, int(session_max))
-            except (IndexError, AttributeError, TypeError, ValueError):
+                    return session_max
+            except (IndexError, AttributeError):
                 pass
 
         # 2. Campaign-level default
         if campaign:
             campaign_max = getattr(campaign, "max_turns_per_session", None)
             if campaign_max is not None:
-                return max(1, int(campaign_max))
+                return campaign_max
 
         # 3. option_config.json global default
         import json
@@ -220,7 +71,7 @@ class CampaignSessionAdvancer:
             config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
             if config_path.exists():
                 config = json.loads(config_path.read_text(encoding="utf-8"))
-                return max(1, int(config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)))
+                return config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)
         except Exception:
             logger.debug("option_config.json load failed", exc_info=True)
 
@@ -234,21 +85,28 @@ class CampaignSessionAdvancer:
         fsm: Any,
         slot_name: str,
         pending_messages: list[dict[str, str]] | None = None,
-        *,
-        persist: bool = True,
     ) -> str:
-        """Advance to next campaign session. Returns recap text.
-
-        On the deferred path the recap text is held on ``pending_recap`` and
-        reaches the database through the node commit's progress upsert — a
-        failed commit leaves no recap behind and a retry cannot append twice.
-        Only the eager (persist=True) mode writes it immediately.
-        """
+        """Advance to next campaign session. Returns recap text."""
         if progress is None or campaign is None:
             return ""
 
-        # Dispatch before generating the recap: an arc boundary is also a
-        # session boundary and should produce one recap and one decay.
+        recap = ""
+        try:
+            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
+        except Exception:
+            logger.warning("Recap generation failed in advance_session, using structural fallback", exc_info=True)
+            recap = self.recap.build_structural_recap(campaign, progress)
+        if recap:
+            self.recap.store_recap(
+                self.persistence,
+                progress.campaign_id, slot_name, progress,
+                str(fsm.state) if fsm.state else "idle",
+                recap,
+            )
+
+        self.persistence.decay_npc_relations(progress.campaign_id, slot_name)
+
+        # Check if this is the last session in the arc
         try:
             arc = campaign.arcs[progress.arc_index]
             is_last_session = progress.session_index + 1 >= len(arc.sessions)
@@ -256,29 +114,23 @@ class CampaignSessionAdvancer:
             is_last_session = True
 
         if is_last_session:
-            return await self.advance_arc(campaign, progress, fsm, slot_name, pending_messages, persist=persist)
-
-        recap = await self._prepare_boundary_recap(
-            campaign, progress, fsm, slot_name, pending_messages, persist=persist
-        )
+            return await self.advance_arc(campaign, progress, fsm, slot_name, pending_messages)
 
         # Normal session advance
         fsm.end_session()
         fsm.resume_session()
         progress.session_index += 1
         progress.turn_in_session = 0
-        if persist:
-            self.persistence.save(
-                campaign_id=progress.campaign_id,
-                slot_name=slot_name,
-                arc_index=progress.arc_index,
-                session_index=progress.session_index,
-                turn_in_session=0,
-                fsm_state=str(fsm.state) if fsm.state else "idle",
-                revealed_anchors=progress.revealed_anchors,
-                completed_arcs=progress.completed_arcs,
-                turns_total=progress.turns_total,
-            )
+        self.persistence.save(
+            campaign_id=progress.campaign_id,
+            slot_name=slot_name,
+            arc_index=progress.arc_index,
+            session_index=progress.session_index,
+            turn_in_session=0,
+            fsm_state=str(fsm.state) if fsm.state else "idle",
+            revealed_anchors=progress.revealed_anchors,
+            completed_arcs=progress.completed_arcs,
+        )
         return recap
 
     async def advance_arc(
@@ -288,20 +140,24 @@ class CampaignSessionAdvancer:
         fsm: Any,
         slot_name: str,
         pending_messages: list[dict[str, str]] | None = None,
-        *,
-        persist: bool = True,
     ) -> str:
-        """Advance to next arc. Returns recap text.
-
-        Same recap contract as advance_session: deferred mode holds the text
-        for the node commit instead of writing early.
-        """
+        """Advance to next arc. Returns recap text."""
         if progress is None or campaign is None:
             return ""
 
-        recap = await self._prepare_boundary_recap(
-            campaign, progress, fsm, slot_name, pending_messages, persist=persist
-        )
+        recap = ""
+        try:
+            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
+        except Exception:
+            logger.warning("Recap generation failed in advance_arc, using structural fallback", exc_info=True)
+            recap = self.recap.build_structural_recap(campaign, progress)
+        if recap:
+            self.recap.store_recap(
+                self.persistence,
+                progress.campaign_id, slot_name, progress,
+                str(fsm.state) if fsm.state else "idle",
+                recap,
+            )
 
         # Arc boundary
         fsm.end_session()
@@ -312,44 +168,14 @@ class CampaignSessionAdvancer:
         progress.session_index = 0
         progress.turn_in_session = 0
         progress.completed_arcs.append(progress.arc_index - 1)
-        if persist:
-            self.persistence.save(
-                campaign_id=progress.campaign_id,
-                slot_name=slot_name,
-                arc_index=progress.arc_index,
-                session_index=0,
-                turn_in_session=0,
-                fsm_state=str(fsm.state) if fsm.state else "idle",
-                revealed_anchors=progress.revealed_anchors,
-                completed_arcs=progress.completed_arcs,
-                turns_total=progress.turns_total,
-            )
-        return recap
-
-    async def _prepare_boundary_recap(
-        self, campaign: Any, progress: Any, fsm: Any, slot_name: str,
-        pending_messages: list[dict[str, str]] | None, *, persist: bool,
-    ) -> str:
-        """Prepare the shared session/arc effects before advancing position."""
-        recap = ""
-        try:
-            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
-        except Exception:
-            logger.warning("Recap generation failed at campaign boundary", exc_info=True)
-        if not recap:
-            logger.warning("Using structural fallback recap at campaign boundary")
-            recap = self.recap.build_structural_recap(campaign, progress)
-
-        if persist:
-            if recap:
-                self.recap.store_recap(
-                    self.persistence,
-                    progress.campaign_id, slot_name, progress,
-                    str(fsm.state) if fsm.state else "idle",
-                    recap,
-                )
-            self.persistence.decay_npc_relations(progress.campaign_id, slot_name)
-        else:
-            self.pending_recap = recap
-            self.relation_decay_pending = True
+        self.persistence.save(
+            campaign_id=progress.campaign_id,
+            slot_name=slot_name,
+            arc_index=progress.arc_index,
+            session_index=0,
+            turn_in_session=0,
+            fsm_state=str(fsm.state) if fsm.state else "idle",
+            revealed_anchors=progress.revealed_anchors,
+            completed_arcs=progress.completed_arcs,
+        )
         return recap

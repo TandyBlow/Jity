@@ -19,7 +19,6 @@ from app.services.llm_client.errors import (
 from app.services.llm_client.output_normalizer import StoryOutputNormalizer
 from app.services.llm_client.repair import JSONRepairMixin
 from app.services.llm_client.structured import StructuredGenerationMixin
-from app.services.prompt_recorder import PromptRecorder
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,6 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
         self._client: AsyncOpenAI | None = None
-        self.prompt_recorder = PromptRecorder(settings)
 
     @property
     def client(self) -> AsyncOpenAI:
@@ -46,8 +44,6 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
         prompt: str,
         model: str | None = None,
         temperature: float | None = None,
-        purpose: str = "story_narrator",
-        context: dict | None = None,
     ) -> tuple[StoryOutput, int]:
         if not self.settings.deepseek_api_key:
             raise MissingAPIKeyError(
@@ -65,11 +61,7 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
                 # 0.35 只有在调用方未传值时兜底；传值必须生效（2026-10-11
                 # 修复前形参是死参数，meta.temperature 一律被 0.35 覆盖）。
                 temperature=0.35 if temperature is None else temperature,
-                purpose=purpose,
-                context=context,
             )
-        except LLMOutputParseError:
-            raise
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
@@ -86,7 +78,7 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
             return self._parse_story_output(raw_text), latency_ms
         except (json.JSONDecodeError, ValidationError, TypeError) as first_exc:
             return await self._regenerate_or_raise(
-                raw_text, first_exc, started, model_name, context
+                raw_text, first_exc, started, model_name
             )
 
     async def _regenerate_or_raise(
@@ -95,7 +87,6 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
         first_exc: Exception,
         started: float,
         model_name: str,
-        context: dict | None = None,
     ) -> tuple[StoryOutput, int]:
         """Repair pipeline: local json_repair, then LLM repair with temperature=0."""
         # Second attempt: json_repair library (local, no API call)
@@ -120,8 +111,6 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
                 ],
                 model=model_name,
                 temperature=0,
-                purpose="story_json_repair",
-                context=context,
             )
             return self._parse_story_output(repaired_text), int(
                 (time.perf_counter() - started) * 1000
@@ -141,8 +130,6 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
         temperature: float,
         _json_object: bool = True,
         max_tokens: int = 50000,
-        purpose: str = "chat_completion",
-        context: dict | None = None,
     ) -> str:
         kwargs = {
             "model": model,
@@ -152,27 +139,5 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
         }
         if _json_object:
             kwargs["response_format"] = {"type": "json_object"}
-        # Small auxiliary budgets are for the JSON/text answer, not hidden
-        # reasoning. New DeepSeek Flash/Pro defaults may spend that entire
-        # budget thinking and leave an empty or truncated answer.
-        if max_tokens <= 2000 and model in {"deepseek-v4-flash", "deepseek-flash", "deepseek-v4-pro"}:
-            kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
-        await self.prompt_recorder.record(
-            purpose=purpose,
-            api_type="chat.completions",
-            model=model,
-            service_url=self.settings.llm_base_url.rstrip("/"),
-            request=kwargs,
-            context=context,
-        )
         response = await self.client.chat.completions.create(**kwargs)
-        choice = response.choices[0]
-        content = choice.message.content or ""
-        if getattr(choice, "finish_reason", None) == "length":
-            # json_repair can turn a cut-off object into valid JSON. Never let
-            # that consume the complete source buffer or commit partial state.
-            raise LLMOutputParseError(
-                "模型输出达到 token 上限而被截断，请重试；未接受不完整结果。",
-                raw_output=content, cleaned_output=content, latency_ms=0,
-            )
-        return content
+        return response.choices[0].message.content or ""
