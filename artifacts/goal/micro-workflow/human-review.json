@@ -1,0 +1,107 @@
+{
+ "reviewedAt": "2026-11-25",
+ "reviewer": "assistant spot check (user sign-off pending)",
+ "method": "Read the short input and decide whether the label is supported by the text; results facts are the model's own accepted output, so a result label can only be judged plausible, not cross-checked against an independent state diff.",
+ "shortInputs": [
+  {
+   "index": 2,
+   "task": "act",
+   "label": "act",
+   "verdict": "unverifiable",
+   "note": "Character sheet + pending tasks; the act/skip decision depends on the round's action text, which the short input omits."
+  },
+  {
+   "index": 9,
+   "task": "results",
+   "label": "achieved",
+   "verdict": "plausible",
+   "note": "Negotiation action with no roll; achieved is consistent with the accepted fact but not independently checkable here."
+  },
+  {
+   "index": 62,
+   "task": "act",
+   "label": "act",
+   "verdict": "unverifiable",
+   "note": "Same shape as index 2."
+  },
+  {
+   "index": 80,
+   "task": "results",
+   "label": "blocked",
+   "verdict": "plausible",
+   "note": "Stopping a lock clasp can fail; blocked is consistent."
+  },
+  {
+   "index": 101,
+   "task": "results",
+   "label": "no_change",
+   "verdict": "plausible",
+   "note": "Explaining an injury changes nothing observable."
+  },
+  {
+   "index": 115,
+   "task": "results",
+   "label": "partial",
+   "verdict": "doubtful",
+   "note": "Stop a bench? partial is hard to justify from this text alone."
+  },
+  {
+   "index": 133,
+   "task": "results",
+   "label": "partial",
+   "verdict": "doubtful",
+   "note": "Roll 9 with admitted=false; a non-admitted action labelled partial is suspicious."
+  },
+  {
+   "index": 143,
+   "task": "results",
+   "label": "not_achieved",
+   "verdict": "plausible",
+   "note": "Checking whether gloves are needed need not achieve anything."
+  }
+ ],
+ "movementInputs": [
+  {
+   "index": 0,
+   "label": 0,
+   "verdict": "confirmed",
+   "note": "Fact has no movement of the strap."
+  },
+  {
+   "index": 2,
+   "label": 0,
+   "verdict": "confirmed",
+   "note": "Dropped gun; fact has no pickup."
+  },
+  {
+   "index": 15,
+   "label": 1,
+   "verdict": "plausible",
+   "note": "She inspected the east-arcade curtain; moving to it is consistent."
+  },
+  {
+   "index": 20,
+   "label": 1,
+   "verdict": "confirmed",
+   "note": "Fact places him on the bell-tower platform; current slot is window."
+  },
+  {
+   "index": 28,
+   "label": 0,
+   "verdict": "confirmed",
+   "note": "Her spear did not move while she inspected."
+  },
+  {
+   "index": 35,
+   "label": 0,
+   "verdict": "confirmed",
+   "note": "Radio stays at the waist."
+  }
+ ],
+ "summary": {
+  "movement_confirmable": "5/6 confirmed, 1 plausible",
+  "results_plausible": "3/5",
+  "results_doubtful": "2/5",
+  "act_negative_class": "none"
+ }
+}

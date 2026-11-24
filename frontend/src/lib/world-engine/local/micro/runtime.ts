@@ -73,6 +73,19 @@ export function createMicroRuntime(options: MicroRuntimeOptions = {}): MicroRunt
   };
 }
 
+/** Logits of a single-text classifier head (first model output). */
+export async function scoreSingle(session: MicroSession, ids: number[]): Promise<number[]> {
+  const ort = await getOrt();
+  const data = BigInt64Array.from(ids, (value) => BigInt(value));
+  const mask = BigInt64Array.from(ids, () => 1n);
+  const out = await session.run({
+    input_ids: new ort.Tensor('int64', data, [1, ids.length]),
+    attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
+  });
+  const first = Object.values(out)[0];
+  return Array.from((first?.data ?? []) as Float32Array);
+}
+
 export async function scorePair(session: MicroSession, ids: number[]): Promise<number> {
   const ort = await getOrt();
   const data = BigInt64Array.from(ids, (value) => BigInt(value));

@@ -33,6 +33,7 @@ interface UpdatesInput {
 
 interface StageContext {
   engine: InferenceEngine;
+  groupId: Id | null;
   state: WorldState;
   results: Record<Id, string>;
   mode: 'group' | 'time_scan';
@@ -66,6 +67,8 @@ interface StageOutcome {
   error?: string;
   fallback: boolean;
   calls: ModelCallEvidence[];
+  /** Device inference time for a micro answer (zero LLM calls otherwise). */
+  microMs?: number;
 }
 
 interface BatchMemory {
@@ -339,6 +342,7 @@ export class UpdatesRunner {
       : new Set<Id>();
     const ctx: StageContext = {
       engine: this.engine,
+      groupId: parsed.groupId,
       state: parsed.workingState,
       results: parsed.results,
       mode: parsed.mode,
@@ -509,7 +513,8 @@ export class UpdatesRunner {
     const calls = outcomes.flatMap((outcome) => outcome.calls);
     const errors = outcomes.map((outcome) => outcome.error).filter((item): item is string => Boolean(item));
     const fallback = outcomes.some((outcome) => outcome.fallback);
-    const ms = joinedMs(calls);
+    const microMs = outcomes.reduce((sum, outcome) => sum + (outcome.microMs ?? 0), 0);
+    const ms = joinedMs(calls) + microMs;
     const evidence: SettlementEvidence = {
       task: 'updates',
       key,
@@ -538,7 +543,7 @@ export class UpdatesRunner {
     const stageMs: Record<string, number> = {};
     outcomes.forEach((outcome, index) => {
       const stage = Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage;
-      const stageTime = joinedMs(outcome.calls);
+      const stageTime = joinedMs(outcome.calls) + (outcome.microMs ?? 0);
       if (stageTime) stageMs[stage] = Math.round(stageTime);
     });
     this.options.onTask?.('updates', key, {
@@ -689,6 +694,57 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
   if (!scanned.length) {
     return { changes: {}, detail: { scannedEntityIds: [], positionScope: scope, skipped: 'no_affected_position' }, fallback: false, calls: [] };
   }
+  let microNote: string | null = null;
+  if (ctx.options.microUpdates) {
+    const microStarted = performance.now();
+    try {
+      const micro = await ctx.options.microUpdates({
+        groupId: ctx.groupId,
+        results: ctx.results,
+        state: ctx.state,
+        scanned,
+        appearance: appearanceIds,
+      });
+      if (micro) {
+        const read = readPositionChanges({ changes: micro.positions }, ctx.state, new Set(scanned));
+        const raises = read.rejected.length > 0
+          || missingMoves(ctx.state, ctx.results, read.changes).length > 0;
+        if (!raises) {
+          projectStage(ctx.state, 'position', read.changes);
+          let pendingAppearance: { changes: Record<Id, Partial<EntityDelta>>; lenientDrops: { entityId: string; op: string; droppedText: string }[]; ids: Id[] } | null = null;
+          if (Array.isArray(micro.appearances) && appearanceIds.length) {
+            const lenientDrops: { entityId: string; op: string; droppedText: string }[] = [];
+            const appearance = readDescriptionOperations(
+              { operations: micro.appearances }, ctx.state, 'appearance',
+              ctx.allocator, false, new Set(appearanceIds), [], [], lenientDrops,
+            );
+            pendingAppearance = { changes: appearance, lenientDrops, ids: appearanceIds };
+            if (ctx.shared) ctx.shared.pendingAppearance = pendingAppearance;
+          }
+          const microMs = performance.now() - microStarted;
+          return {
+            changes: read.changes,
+            detail: {
+              scannedEntityIds: scanned,
+              changedEntityIds: Object.keys(read.changes).sort(),
+              source: 'micro',
+              microMs: Math.round(microMs),
+              ...(pendingAppearance ? { appearancesFromMicro: true } : {}),
+            },
+            fallback: false,
+            calls: [],
+            microMs,
+          };
+        }
+        microNote = 'micro_position_rejected';
+      } else {
+        microNote = 'micro_abstained';
+      }
+    } catch (error) {
+      // A rejected micro answer is evidence; the LLM path answers next.
+      microNote = `micro_error:${errorText(error)}`;
+    }
+  }
   const prompt = appearanceIds.length
     ? buildScenePrompt(ctx.state, ctx.results, scanned, appearanceIds)
     : buildPositionPrompt(ctx.state, ctx.results, scanned);
@@ -760,6 +816,7 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
     }
     const detail: Record<string, unknown> = {
       scannedEntityIds: scanned,
+      ...(microNote ? { microAbstain: microNote } : {}),
       ...(merged ? { mergedWithAppearance: appearanceIds } : {}),
       ...(slotDrops.length ? { slotDropped: slotDrops } : {}),
       ...(stillMissing.length ? { missingMoves: stillMissing.map((row) => ({ factId: row.factId, entityId: row.entityId, locationId: row.locationId })) } : {}),
@@ -1430,7 +1487,7 @@ function containerCatalog(state: WorldState): string[] {
  * a movement word in the fact text, and the actor's answer must move them. */
 const MOVE_WORDS = ['走进', '走入', '走到', '走向', '进入', '来到', '回到', '退回', '退到', '跑到', '冲向', '赶到', '爬上', '走下', '钻出', '穿过'] as const;
 
-function destinationOfFact(state: WorldState, text: string): { locationId: Id; name: string; at: number } | null {
+export function destinationOfFact(state: WorldState, text: string): { locationId: Id; name: string; at: number } | null {
   if (!MOVE_WORDS.some((word) => text.includes(word))) return null;
   let best: { locationId: Id; name: string; at: number } | null = null;
   for (const [locationId, location] of Object.entries(state.initial.locations)) {

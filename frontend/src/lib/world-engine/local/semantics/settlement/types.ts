@@ -51,6 +51,9 @@ export interface SettlementOptions {
   /** Experimental micro workflow: a task head answers results before the LLM.
    * Returning null or failing validation falls back to the LLM call. */
   microResults?: MicroResultsFn;
+  /** Experimental micro workflow: the movement head answers the position half
+   * of the merged scene stage; a null or rejected answer falls back. */
+  microUpdates?: MicroUpdatesFn;
   /** Product default: a new task achievement must cite a settled result fact
    * (or a time basis). Unit fixtures may leave this off, but the page port
    * never does. */
@@ -102,6 +105,28 @@ export interface MicroResultsAnswer {
 }
 
 export type MicroResultsFn = (request: MicroResultsRequest) => Promise<MicroResultsAnswer | null> | MicroResultsAnswer | null;
+
+/** Micro updates port: one movement verdict per scanned entity. Positions are
+ * the only half a head can source; appearances stay with the LLM unless the
+ * answer supplies them. The returned positions go through `readPositionChanges`
+ * and the missing-move check, then the kernel's `projectStage`. */
+export interface MicroUpdatesRequest {
+  groupId: Id | null;
+  results: Record<Id, string>;
+  state: WorldState;
+  /** Projection's affected movable entities, already validated. */
+  scanned: Id[];
+  /** Projection's affected appearance entities (informational). */
+  appearance: Id[];
+}
+
+export interface MicroUpdatesAnswer {
+  positions: Array<{ entityId: Id; containerId: Id; slotId?: Id | null }>;
+  /** Omitted means the appearance half was not answered here. */
+  appearances?: Array<{ entityId: Id; op: string; recordIds: Id[]; text: string | null }>;
+}
+
+export type MicroUpdatesFn = (request: MicroUpdatesRequest) => Promise<MicroUpdatesAnswer | null> | MicroUpdatesAnswer | null;
 
 export interface ModelCallEvidence {
   prompt: string;

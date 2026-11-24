@@ -1633,6 +1633,85 @@ describe('six-stage updates', () => {
     expect(legacy.prompts.filter((prompt) => prompt.includes('外貌结算器'))).toHaveLength(1);
   });
 
+  it('accepts a movement-head answer that the fact already supports, with no LLM call', async () => {
+    const engine = new ScriptedEngine([]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲走进远处。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const seen: { scanned: string[]; appearance: string[] }[] = [];
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: {
+        microUpdates: (request) => {
+          seen.push({ scanned: request.scanned, appearance: request.appearance });
+          return { positions: [{ entityId: 'a', containerId: 'far' }] };
+        },
+      },
+    }).updates('g1#position', input);
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.positionSet?.containerId).toBe('far');
+    expect(engine.prompts).toEqual([]);
+    expect(seen).toHaveLength(1);
+    expect(seen[0].scanned).toContain('a');
+    const stageDetail = (outcome.evidence.detail as { stageDetail?: { source?: string; microMs?: number } }).stageDetail;
+    expect(stageDetail?.source).toBe('micro');
+    expect(stageDetail?.microMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it('rejects a no-move micro answer when a fact walks, and falls back to the LLM', async () => {
+    // A head false negative with a fact behind it must not silently keep the
+    // old room: the missing-move check sends the stage to the LLM.
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲走进远处。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: { microUpdates: () => ({ positions: [] }) },
+    }).updates('g1#position', input);
+    expect((outcome.value as UpdatesCall).changes).toEqual({});
+    expect(engine.prompts.length).toBeGreaterThan(0);
+    const stageDetail = (outcome.evidence.detail as { stageDetail?: { microAbstain?: string } }).stageDetail;
+    expect(stageDetail?.microAbstain).toBe('micro_position_rejected');
+  });
+
+  it('rejects a micro position that leaves a fact-backed walk unmoved', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲走进远处。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: { microUpdates: () => ({ positions: [{ entityId: 'b', containerId: 'far' }] }) },
+    }).updates('g1#position', input);
+    expect(engine.prompts.length).toBeGreaterThan(0);
+    const stageDetail = (outcome.evidence.detail as { stageDetail?: { microAbstain?: string } }).stageDetail;
+    expect(stageDetail?.microAbstain).toBe('micro_position_rejected');
+  });
+
+  it('reuses the micro appearance half instead of asking the appearance stage', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ achieved: [], subtasks: [] }),
+      JSON.stringify({ subtasks: [] }),
+    ]);
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: {
+        microUpdates: () => ({
+          positions: [],
+          appearances: [{ entityId: 'a', op: 'add', recordIds: [], text: '外套湿了一片。' }],
+        }),
+      },
+    }).updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    const appearance = calls.find((call) => call.stage === 'appearance')!;
+    expect(appearance.changes.a?.appearanceChanges?.[0]?.text).toBe('外套湿了一片。');
+    expect(engine.prompts.filter((prompt) => prompt.includes('外貌结算器'))).toHaveLength(0);
+  });
+
   it('does not ask the tasks stage on a time-scan point whose goals are not about the clock', async () => {
     // The time-scan tasks prompt printed no task id (the fact shortlist is empty
     // without facts), so the stage could only answer "nothing changed" and still

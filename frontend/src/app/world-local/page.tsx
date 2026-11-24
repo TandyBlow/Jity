@@ -11,6 +11,7 @@ import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
 import { createMicroResults } from '@/lib/world-engine/local/micro/results';
+import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -917,6 +918,14 @@ export default function WorldLocalPage() {
             },
           })
           : undefined;
+        const microUpdates = microEnabled
+          ? createMicroUpdates({
+            onStats: (record) => {
+              const store = window as unknown as { __microStats?: unknown[] };
+              (store.__microStats ??= []).push({ port: 'updates', ...record });
+            },
+          })
+          : undefined;
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
         // training; the narration engine is not wrapped.
         const recordParam = new URLSearchParams(window.location.search).get('record') === '1';
@@ -940,6 +949,7 @@ export default function WorldLocalPage() {
         const model = new LocalGameModel(recordEngine(semantic), {
           ...(microTargets ? { microTargets } : {}),
           ...(microResults ? { microResults } : {}),
+          ...(microUpdates ? { microUpdates } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of
           // a player round holds only that character so its settlement can
