@@ -520,6 +520,7 @@ async function openWithLease(
   onCommit: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void,
   forceHandback = false,
   attempts = 20,
+  roll?: () => number,
   // The writer lease lives 30 s and a page that is being reloaded may not have
   // released it yet (its flush can still be running). Wait past that TTL before
   // telling the player another tab owns the save.
@@ -534,7 +535,7 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(forceHandback ? { forceHandback } : {}) },
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
       );
       if (opened.created) await opened.session.start();
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
@@ -552,10 +553,28 @@ async function openWithLease(
   throw lastError;
 }
 
+/** ?seed=N replaces the dice source so an A/B pair sees the same rolls. */
+function seededD20(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return (((t ^ (t >>> 14)) >>> 0) % 20) + 1;
+  };
+}
+
 export default function WorldLocalPage() {
   // Frozen at mount: the start flow may clean the URL before the model effect.
   const [microParam] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('micro') === '1');
+  const [rollSeed] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const raw = new URLSearchParams(window.location.search).get('seed');
+    return raw && /^\d+$/.test(raw) ? Number(raw) : null;
+  });
+  const [seededRoll] = useState(() => (rollSeed != null ? seededD20(rollSeed) : undefined));
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
   const [entries, setEntries] = useState<TurnEntry[]>([]);
@@ -1202,7 +1221,7 @@ export default function WorldLocalPage() {
         let session: LocalGameSession;
         let restored = false;
         try {
-          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent, arm.schedHandback ?? false);
+          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent, arm.schedHandback ?? false, 20, seededRoll);
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           // A save can carry an advance left open by a failed turn. The next
           // submit would be refused as turn_in_progress (2603 run: ready, then
@@ -1262,7 +1281,7 @@ export default function WorldLocalPage() {
           if (!archived) throw openError;
           await store.delete(world.worldId, { force: true });
           setWarning('旧存档无法恢复，已保留原始副本并开始新的一局。');
-          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store, onCommit: recordCommitEvent });
+          session = await LocalGameSession.create(world.template, model, { worldId: world.worldId, storage: store, onCommit: recordCommitEvent, ...(seededRoll ? { roll: seededRoll } : {}) });
           await session.start();
         }
         sessionRef.current = session;
