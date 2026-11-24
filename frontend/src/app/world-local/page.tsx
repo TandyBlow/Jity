@@ -902,7 +902,27 @@ export default function WorldLocalPage() {
             },
           })
           : undefined;
-        const model = new LocalGameModel(semantic, {
+        // ?record=1 captures every semantic (prompt, raw) pair for task-model
+        // training; the narration engine is not wrapped.
+        const recordParam = new URLSearchParams(window.location.search).get('record') === '1';
+        const recordEngine = <T extends object>(engine: T): T => (recordParam
+          ? new Proxy(engine, {
+            get(target, prop, receiver) {
+              if (prop === 'complete') {
+                return async (prompt: string, opts: unknown) => {
+                  const started = performance.now();
+                  const raw = await (target as unknown as { complete: (p: string, o: unknown) => Promise<string> }).complete(prompt, opts);
+                  const store = window as unknown as { __semanticLog?: unknown[] };
+                  (store.__semanticLog ??= []).push({ prompt, raw, ms: performance.now() - started });
+                  return raw;
+                };
+              }
+              const value = Reflect.get(target, prop, receiver);
+              return typeof value === 'function' ? value.bind(target) : value;
+            },
+          })
+          : engine);
+        const model = new LocalGameModel(recordEngine(semantic), {
           ...(microTargets ? { microTargets } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of

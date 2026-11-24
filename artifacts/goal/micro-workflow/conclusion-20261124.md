@@ -25,6 +25,11 @@
 - results 14 次 97.8 s；action 29 次 81.4 s；updates 26 次 55.1 s；targets 11 次 6 ms。
 - 结论：targets 微型化对回合耗时没有影响；下一步先做 results/updates 的微型路径，再拆 action；reaction 含在 action 调用内，随后拆。
 
+## 真实语义输入/输出采集（2026-11-24）
+
+- `?record=1` 包裹语义引擎，记录每次 `complete(prompt) → raw`；一轮默认 LLM 路径回合得到 79 对：results 21、updates 18、action 24、targets 11、reaction 1、continuation 4；回合 251.5 s。
+- 任务拆分与训练计划见 `task-decomposition.md`；数据在 `records.jsonl`（银标，需更多回合与人工复核）。
+
 ## 未完成
 
 - 模型打分路径的真实回合验证：需要规则弃权的输入（缺席名字或双在场代词）。
