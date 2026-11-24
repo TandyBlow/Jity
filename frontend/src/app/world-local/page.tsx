@@ -89,6 +89,8 @@ interface WorldTurnRecord {
   narrations?: Array<{ pointId: string; source: 'model' | 'program' | 'mixed' | 'draft'; atMs: number }>;
   /** Per-point prompt/text pairs; evidence only. */
   pointPrompts?: Array<{ pointId: string; prompt: string; text: string }>;
+  /** Semantic-call prompts for this turn; evidence only. */
+  semanticPrompts?: Array<{ at: number; prompt: string }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
    * exists); narrationStartedAtMs is the first narration progress callback. */
@@ -264,6 +266,7 @@ async function loadEngine(
    * button can reach a cold load that has no `current` engine yet. */
   onEngine?: (engine: WllamaInferenceEngine) => void,
   cacheTypes = false,
+  onPrompt?: (prompt: string) => void,
 ): Promise<WllamaInferenceEngine> {
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
@@ -303,7 +306,7 @@ async function loadEngine(
     });
   };
   const cache = cacheTypes ? { cacheTypeK: 'q8_0' as const, cacheTypeV: 'q8_0' as const } : {};
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     // A user cancel or dispose is not a GPU failure: retrying on CPU would
@@ -312,7 +315,7 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}) });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
@@ -404,7 +407,7 @@ async function probeGpu(): Promise<Record<string, unknown>> {
   return out;
 }
 
-function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, cacheTypes = false): ProductEnginePort {
+function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, cacheTypes = false, onPrompt?: (prompt: string) => void): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
@@ -420,7 +423,7 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
       loading = loadEngine(url, contextSize, expectedBytes, label, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
-      }, cacheTypes).then((engine) => {
+      }, cacheTypes, onPrompt).then((engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); throw new DOMException('engine closed', 'AbortError'); }
         current = engine;
         loadingEngine = null;
@@ -850,7 +853,10 @@ export default function WorldLocalPage() {
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
         const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
-        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true);
+        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true, (prompt) => {
+          const rec = turnRecordRef.current;
+          if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
+        });
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
         // weights, at the cost of serialising narration against settlement.

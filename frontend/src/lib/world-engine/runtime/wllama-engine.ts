@@ -72,6 +72,8 @@ export interface WllamaEngineOptions {
    * the GGUF parser. The SHA-256 check belongs to the queue/host runner; this
    * is the cheap size check the page can do itself. */
   expectedBytes?: number | number[];
+  /** Evidence-only hook: the exact prompt handed to the model. */
+  onPrompt?: (prompt: string) => void;
   /** Observability hook for load and generation evidence. Own structure:
    * the shared CompletionEvidence fields stay unchanged and extra timing is
    * additive. Observer exceptions never change the call result. */
@@ -524,6 +526,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
   }
 
   private async generate(messages: ChatMessage[], options?: CompleteOptions): Promise<string> {
+    this.options.onPrompt?.(messages.map((message) => message.content).join(String.fromCharCode(10)));
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
     if (options?.signal?.aborted || this.disposed) throw abortError();
