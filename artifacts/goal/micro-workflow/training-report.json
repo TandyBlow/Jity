@@ -1,0 +1,69 @@
+{
+ "calls": 133,
+ "valid": 99,
+ "invalid": 34,
+ "by_task": {
+  "action": 41,
+  "targets": 26,
+  "reaction": 2,
+  "results": 15,
+  "updates": 42,
+  "narration": 4,
+  "continuation": 3
+ },
+ "invalid_codes": {
+  "protagonist_command": 1,
+  "anaphora_present": 1,
+  "action_is_task_goal": 12,
+  "absent_character_in_action": 2,
+  "repair_requested": 15,
+  "no_visible_candidates": 8,
+  "empty_targets": 12,
+  "target_unknown": 5,
+  "repair_failed": 1,
+  "target_self": 3,
+  "absent_item_in_action": 2
+ },
+ "positions_invalid": [
+  {
+   "entityId": "lu",
+   "containerId": "lane",
+   "slotId": "slot_body",
+   "relativeTo": null
+  },
+  {
+   "entityId": "caesar",
+   "containerId": "red_rally",
+   "slotId": "slot_waist",
+   "relativeTo": null
+  },
+  {
+   "entityId": "shen",
+   "containerId": "rest",
+   "slotId": "slot_right_hand",
+   "relativeTo": null
+  },
+  {
+   "entityId": "shen",
+   "containerId": "rest",
+   "slotId": "right_hand",
+   "relativeTo": null
+  },
+  {
+   "entityId": "lu",
+   "containerId": "lane",
+   "slotId": "slot_body",
+   "relativeTo": null
+  }
+ ],
+ "results_labels": {
+  "partial": 11,
+  "achieved": 9,
+  "no_change": 1
+ },
+ "action_kinds": {
+  "act": 40
+ },
+ "facts": 12,
+ "appearances": 0
+}

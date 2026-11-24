@@ -30,6 +30,14 @@
 - `?record=1` 包裹语义引擎，记录每次 `complete(prompt) → raw`；一轮默认 LLM 路径回合得到 79 对：results 21、updates 18、action 24、targets 11、reaction 1、continuation 4；回合 251.5 s。
 - 任务拆分与训练计划见 `task-decomposition.md`；数据在 `records.jsonl`（银标，需更多回合与人工复核）。
 
+## 校验后的训练样本（2026-11-24）
+
+- `?record=1` + 每调用 `semanticCalls`：133 次语义调用，**99 有效 / 34 无效**。
+- 无效原因：`repair_requested` 15、`action_is_task_goal` 12、`empty_targets` 12、`no_visible_candidates` 8、`target_unknown` 5、缺席人物/物品 4、`target_self` 3、`repair_failed` 1。
+- updates 的无效位置例：`lu@lane/slot_body`、`caesar@red_rally/slot_waist`——模型把实体自己的槽位当成容器槽位；这类原始输出不能当标签。
+- results 标签：partial 11、achieved 9、no_change 1（21 条 judgment）；action 40 条 act、0 skip（本轮偏斜）；facts 12 条、appearances 0。
+- 结论：训练前必须按引擎校验过滤；当前有效样本量小（results 21、action 41、updates 有效位置有限），需要更多回合与人工复核。
+
 ## 未完成
 
 - 模型打分路径的真实回合验证：需要规则弃权的输入（缺席名字或双在场代词）。

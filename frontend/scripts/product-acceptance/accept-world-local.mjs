@@ -884,6 +884,7 @@ try {
           microStats: globalThis.__microStats ?? null,
           microEnabled: globalThis.__microEnabled ?? null,
           semanticLog: globalThis.__semanticLog ?? null,
+          semanticCalls: Array.isArray(record.semanticCalls) ? record.semanticCalls : null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
           narration: record.narration ?? null,

@@ -92,6 +92,11 @@ interface WorldTurnRecord {
   pointPrompts?: Array<{ pointId: string; prompt: string; text: string }>;
   /** Semantic-call prompts for this turn; evidence only. */
   semanticPrompts?: Array<{ at: number; prompt: string }>;
+  /** Raw answer, validated value and issue codes per semantic call. */
+  semanticCalls?: Array<{
+    task: string; key: string; ms: number; fallback: boolean; raw: string | null;
+    value: unknown; issues: string[]; error: string | null; promptChars: number | null;
+  }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
    * exists); narrationStartedAtMs is the first narration progress callback. */
@@ -959,6 +964,17 @@ export default function WorldLocalPage() {
               ? ` scope=${scope.mode ?? '?'} affected=${scope.affectedCharacters ?? '?'}/${(scope.affectedCharacters ?? 0) + (scope.unaffectedCharacters ?? 0)} taskIds=${scope.affectedTaskIds?.length ?? 0} rows=${scope.taskRows ?? '?'}`
               : '';
             console.info(`[world-local task] ${task} ${key} ${Math.round(detail.ms)}ms fallback=${detail.fallback} ${detail.error ?? ''}${stageNote}${scopeNote}`);
+            {
+              // Raw answer, validated value and issue codes per semantic call:
+              // training labels need the engine's verdict, not just the raw text.
+              const live = turnRecordRef.current;
+              if (live) (live.semanticCalls ??= []).push({
+                task, key, ms: Math.round(detail.ms), fallback: detail.fallback,
+                raw: detail.raw ?? null, value: detail.value ?? null,
+                issues: (detail.issues ?? []).map((issue) => issue.code),
+                error: detail.error ?? null, promptChars: detail.promptChars ?? null,
+              });
+            }
             if (task === 'action' || task === 'targets' || task === 'reaction') {
               const live = turnRecordRef.current;
               if (live) (live.actions ??= []).push({
