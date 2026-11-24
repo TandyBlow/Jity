@@ -17,6 +17,7 @@
     "prebuild": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.3.2",
     "@mlc-ai/web-llm": "^0.2.89",
     "@wllama/wllama": "^3.8.1",
     "lucide-react": "^0.468.0",
