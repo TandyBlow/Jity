@@ -1,0 +1,209 @@
+{
+ "rows": {
+  "seen": {
+   "total": 9,
+   "baseline": 9,
+   "model": 8,
+   "diffs": [
+    {
+     "row": 249,
+     "truth": [],
+     "baseline": [],
+     "model": [
+      "芬格尔"
+     ],
+     "action": "路明非把铜哨放在桌上，谁也没给。"
+    }
+   ]
+  },
+  "held": {
+   "total": 22,
+   "baseline": 21,
+   "model": 18,
+   "diffs": [
+    {
+     "row": 4,
+     "truth": [
+      "林亦舟"
+     ],
+     "baseline": [
+      "林亦舟"
+     ],
+     "model": [],
+     "action": "路明非让林亦舟把演习枪放下。"
+    },
+    {
+     "row": 9,
+     "truth": [
+      "林亦舟"
+     ],
+     "baseline": [
+      "林亦舟"
+     ],
+     "model": [
+      "林亦舟",
+      "芬格尔"
+     ],
+     "action": "路明非拦住正往门口走的林亦舟。"
+    },
+    {
+     "row": 134,
+     "truth": [
+      "林亦舟",
+      "芬格尔"
+     ],
+     "baseline": [
+      "林亦舟",
+      "芬格尔"
+     ],
+     "model": [
+      "芬格尔"
+     ],
+     "action": "路明非让林亦舟和芬格尔先撤。"
+    },
+    {
+     "row": 187,
+     "truth": [
+      "秦越",
+      "诺诺"
+     ],
+     "baseline": [],
+     "model": [
+      "诺诺"
+     ],
+     "action": "路明非把水递给两个人。"
+    }
+   ]
+  }
+ },
+ "turns": [
+  {
+   "id": 1,
+   "truth": [
+    "林亦舟"
+   ],
+   "baseline": [
+    "林亦舟"
+   ],
+   "model": [
+    "林亦舟"
+   ]
+  },
+  {
+   "id": 2,
+   "truth": [],
+   "baseline": [],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 3,
+   "truth": [
+    "秦越"
+   ],
+   "baseline": [
+    "秦越"
+   ],
+   "model": [
+    "秦越"
+   ]
+  },
+  {
+   "id": 4,
+   "truth": [],
+   "baseline": [],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 5,
+   "truth": [
+    "诺诺"
+   ],
+   "baseline": [
+    "诺诺"
+   ],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 6,
+   "truth": [
+    "诺诺"
+   ],
+   "baseline": [
+    "诺诺"
+   ],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 7,
+   "truth": [
+    "秦越"
+   ],
+   "baseline": [
+    "秦越"
+   ],
+   "model": [
+    "秦越"
+   ]
+  },
+  {
+   "id": 8,
+   "truth": [],
+   "baseline": [],
+   "model": [
+    "芬格尔"
+   ]
+  },
+  {
+   "id": 9,
+   "truth": [
+    "诺诺"
+   ],
+   "baseline": [
+    "诺诺"
+   ],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 10,
+   "truth": [
+    "诺诺"
+   ],
+   "baseline": [
+    "诺诺"
+   ],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 11,
+   "truth": [],
+   "baseline": [],
+   "model": [
+    "诺诺"
+   ]
+  },
+  {
+   "id": 12,
+   "truth": [
+    "秦越"
+   ],
+   "baseline": [
+    "秦越"
+   ],
+   "model": [
+    "秦越"
+   ]
+  }
+ ]
+}

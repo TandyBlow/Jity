@@ -37,7 +37,7 @@ try {
     calls++; rec.calls++; rec.ms += r.ms;
     const intent = r.out.intent.data[0] > r.out.intent.data[1] ? 'act' : 'skip';
     rec.stages.intent = intent === turn.expect.intent;
-    if (intent === 'skip') { rec.intent = intent; rows.push(rec); continue; }
+    if (intent === 'skip') { rec.intent = intent; totalMs += rec.ms; rows.push(rec); continue; }
     const targetScores = [];
     for (const p of turn.target_pairs) {
       const s = await pairScore(p);
