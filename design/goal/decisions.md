@@ -356,7 +356,7 @@
 
 - 微型模型重设计实验（2026-11-24，`goal-micro-models-redesign`）：300 条手标（四任务各 75，含换名/缺席/否定/指代/未见物品/干扰/多行为对抗子集）。阶梯：CNN/GRU（18–31K）反超 0.26–0.52M 哈希 MLP——targets 13/14、position 11/14（CNN）、intent 12/15、judgment 13/14。共享编码（MiniRBT 10M + 四头，31 tokens）浏览器实测：WASM 单线程 9.54 ms、四线程 5.00 ms、WebGPU 14.79 ms；一次编码 + N 个 0.1 ms 头，300 任务约 35–40 ms。可换头顺序 judgment≈targets>intent>position；60 秒门槛有余地，质量受标注量限制（15 测试/任务）；真机无设备未测。证据 `artifacts/goal/micro-redesign/conclusion-20261124.md`。
 
-- 微型模型量化对照（2026-11-24，`goal-micro-quant`）：同一 MiniRBT 共享编码 + 四头，fp32 vs 动态 int8，ORT-WASM（i7-13700H，headless Edge）：32 token 1 线程 10.0/7.2 ms、128 token 38.7/27.0 ms、512 token 206.1/154.5 ms；4 线程 4.5/4.6、13.9/12.3、61.9/48.3 ms。量化收益 1.3–1.45×，线程收益 1.5–3.3×。holdout fp32 与 int8 精确匹配相同（targets 12/14、position 3/14、intent 11/15、judgment 7/14），决策一致 55/57；绝对质量受 8 epoch/243 行限制。更正：D-030 的「编码器类 196 ms–2.4 s/次」只适用于 fp32、512 token、单线程；短输入 + int8 为 7–10 ms（32 token）、27 ms（128 token、1 线程）。证据 `artifacts/goal/micro-quant/conclusion-20261124.md`。
+- 微型模型量化对照（2026-11-24，`goal-micro-quant`）：同一 MiniRBT 共享编码 + 四头，fp32 vs 动态 int8，ORT-WASM（i7-13700H，headless Edge）：32 token 1 线程 10.0/7.2 ms、128 token 38.7/27.0 ms、512 token 206.1/154.5 ms；4 线程 4.5/4.6、13.9/12.3、61.9/48.3 ms。量化收益 1.3–1.45×，线程收益 1.5–3.3×。holdout fp32 与 int8 精确匹配相同（targets 12/14、position 3/14、intent 11/15、judgment 7/14），决策一致 55/57；质量成因未分离（训练轮数/容量/分布/输入信息量），int8/fp32 相同仅表示本轮未见总体下降。复核更正：32 token 下 int8 单/四线程 7.17/4.58 ms、fp32 四线程 4.45 ms 均 ≤10 ms（fp32 单线程 10.03 ms 贴线）；D-030 的「编码器类 196 ms–2.4 s/次」只适用于 fp32、512 token、单线程；短输入 + int8 为 7–10 ms（32 token）、27 ms（128 token、1 线程）。证据 `artifacts/goal/micro-quant/conclusion-20261124.md`。
 
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
