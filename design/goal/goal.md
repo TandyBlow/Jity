@@ -1,6 +1,6 @@
 # Jity Goal v12：浏览器本地完整可玩（最终目标）
 
-状态：closed（未通过，2026-11-23 用户裁决，见 D-026）。日期：2026-11-22。基线：`agent@7329ce21`。
+状态：closed（2026-11-24 用户重判：v13 为默认，笔记本档按 20 输入通过；移动档 D-023 未决，见 D-028）。日期：2026-11-22。基线：`agent@7329ce21`。
 
 本文只写最终目标：做完是什么样。执行路线、能力状态与历史证据不在本文——能力看 [`ledger.md`](ledger.md)，裁决看 [`decisions.md`](decisions.md)，架构事实看 [`architecture.md`](architecture.md)，验收协议看 [`acceptance.md`](acceptance.md)。冲突时以 `decisions.md` 为准。
 

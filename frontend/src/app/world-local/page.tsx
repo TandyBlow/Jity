@@ -46,8 +46,8 @@ const NARRATION_MODELS = {
     url: '/models/Qwen3-1.7B-Q4_K_M.gguf', bytes: 1_107_409_472, contextSize: 4096,
     sha256: 'b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897',
   },
-  // D-022 evaluation arm: the 1.7B base with the narration LoRA trained on
-  // the v11 hand-written set (328 rows, 2026-11-23). Not a product default.
+  // D-028 product default (user decision 2026-11-24): the v13 hand-written
+  // LoRA. The base entry below stays available as an evaluation arm.
   'qwen3-1.7b-narr-lora': {
     url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
     sha256: '82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a',
@@ -67,7 +67,7 @@ const NARRATION_MODELS = {
   },
 } as const;
 type NarrationModelKey = keyof typeof NARRATION_MODELS;
-const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b';
+const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b-narr-lora';
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 
 /** Per-turn evidence record, mirrored on window.__worldTurns so an automated
