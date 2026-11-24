@@ -1,0 +1,2 @@
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"minirbt-targets","loadMs":531.7999999523163,"tokens":512,"p50":196.39999997615814,"p95":200.69999992847443,"min":191.5}
