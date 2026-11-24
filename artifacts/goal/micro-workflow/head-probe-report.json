@@ -1,0 +1,13 @@
+{
+ "probedAt": "2026-11-25",
+ "page": "/micro-head-probe",
+ "runtime": "ORT-WASM int8, 1 thread, headless Edge",
+ "loadMs": 999,
+ "summary": {
+  "act": { "n": 4, "ms_p50": 15.4, "ms_p95": 15.5 },
+  "result": { "n": 8, "ms_p50": 10.4, "ms_p95": 49.4 },
+  "move": { "n": 6, "ms_p50": 14.7, "ms_p95": 14.8 }
+ },
+ "accuracy": { "act": "4/4 (single class)", "result": "7/8", "move": "6/6" },
+ "note": "Summary captured from the page's __probeResult; per-row output was printed to the session and not persisted."
+}
