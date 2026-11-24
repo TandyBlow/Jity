@@ -10,8 +10,10 @@
 - [x] 5a. 补采两轮（s05/s06），合并 376 条记录、205 条短输入；模板探针：facts 约一半可模板化，action 句 0/50 可模板。
 - [x] 5b. 训练 results 5 类（跨回合 57–68%）、act/skip（单类，无意义）、movement 二分类（52 条全对，11 正例）；int8 各 10.55 MB；浏览器 p50 9.7–15.2 ms，加载 1037 ms。
 - [x] 6a. results 微型路径接入 `?micro=1`：A/B 同输入 results 13.4 s vs 78.0 s（14/15 次微型，1 次回退）；完整回合 268 s vs 245–254 s，未改善（瓶颈在 action/updates/叙事）。
-- [ ] 6b. action 与 updates 的微型路径（act/skip 缺 skip 数据；移动头已训）；再跑完整回合 A/B 与状态正确性。
+- [x] 6b. updates 位置阶段接入移动头（`microUpdates`）：只接受「实体自己的事实点名已登记目的地」的移动，缺目的地/被拒/事实点名未覆盖时回退；分阶段调用时外貌半边跨调用复用；settlement 111 条测试通过。
+- [x] 5c. 定向补采（quiet-skip / appearance-change 两轮）与人工抽查：五轮 559 条记录中模型 skip 0 次、外貌操作 0 次；skip 由程序规则产生（零调用），外貌头无正例可训；`human-review.json` 记录 6 条移动、8 条 results 的语义结论（results 标签只能判「可信/存疑」，不能独立复核）。
+- [ ] 6c. 受控 A/B（`?seed=N` 固定骰点）与状态正确率；统计各任务 LLM 调用减少量、完整回合耗时。
 - [ ] 3. results/updates/continuation 微型路径（规则产出 + 现有校验 + LLM 回退原因）。
-- [ ] 4. 统计：每任务 rules/micro/LLM 次数与耗时；首载 vs 回合耗时。
+- [ ] 4. 统计：每任务 rules/micro/LLM 次数与耗时；首载 vs 回合耗时（`source` 已写入 semanticCalls，随受控 A/B 汇总）。
 - [ ] 5. 真实 20 输入对照（开/关）：回合耗时、结算错误、检查器、叙事质量。
 - [ ] 6. action/reaction 拆分：规则解析 + 专用头 + LLM 回退；开放式文本仍用 LLM。

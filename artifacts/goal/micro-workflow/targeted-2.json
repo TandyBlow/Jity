@@ -1,0 +1,12 @@
+[
+  {
+    "id": "quiet-skip",
+    "input": "我蹲在墙角，把护目镜擦干净，不出声。",
+    "purpose": "induce NPC skips and a small appearance change"
+  },
+  {
+    "id": "appearance-change",
+    "input": "我把外套脱下来，检查肩膀上的血迹。",
+    "purpose": "induce an appearance update"
+  }
+]
