@@ -1,0 +1,15 @@
+{"task": "position", "input": "事实：进钟楼西门。\n当前：西回廊\n候选：西回廊、钟楼", "label": "钟楼"}
+{"task": "position", "input": "事实：在门厅等人。\n当前：庭院\n候选：庭院、钟楼门厅", "label": "钟楼门厅"}
+{"task": "position", "input": "事实：从二层平台下到门厅。\n当前：二层平台\n候选：二层平台、钟楼门厅", "label": "钟楼门厅"}
+{"task": "position", "input": "事实：在旗台上没动。\n当前：顶层旗台\n候选：顶层旗台、二层平台", "label": "顶层旗台"}
+{"task": "position", "input": "事实：回器材棚放钥匙。\n当前：西侧服务巷\n候选：西侧服务巷、器材棚", "label": "器材棚"}
+{"task": "position", "input": "事实：沿服务巷走到巷口。\n当前：器材棚\n候选：器材棚、西侧服务巷", "label": "西侧服务巷"}
+{"task": "position", "input": "事实：从庭院进西回廊。\n当前：庭院\n候选：庭院、西回廊", "label": "西回廊"}
+{"task": "position", "input": "事实：下地下通道又返回。\n当前：西侧服务巷\n候选：西侧服务巷、地下通道", "label": "西侧服务巷"}
+{"task": "position", "input": "事实：把诺诺背到庭院石阶。\n当前：西回廊\n候选：西回廊、庭院", "label": "庭院"}
+{"task": "position", "input": "事实：躲器材棚后墙。\n当前：西侧服务巷\n候选：西侧服务巷、器材棚", "label": "器材棚"}
+{"task": "position", "input": "事实：出钟楼西门进西回廊。\n当前：钟楼\n候选：钟楼、西回廊", "label": "西回廊"}
+{"task": "position", "input": "事实：跨过小桥停在桥中间。\n当前：庭院\n候选：庭院、跨溪小桥", "label": "跨溪小桥"}
+{"task": "position", "input": "事实：进医护附楼没停留。\n当前：庭院\n候选：庭院、医护附楼", "label": "医护附楼"}
+{"task": "position", "input": "事实：离开器材棚去庭院。\n当前：器材棚\n候选：器材棚、庭院", "label": "庭院"}
+{"task": "position", "input": "事实：在巷口停下看庭院。\n当前：西侧服务巷\n候选：西侧服务巷、庭院", "label": "西侧服务巷"}

@@ -1,0 +1,40 @@
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":1,"loadMs":571.8049999475479,"tokens":8,"p50":4.110000014305115,"p95":6.300000071525574,"min":3.759999990463257}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":4,"loadMs":658.210000038147,"tokens":8,"p50":2.8899999856948853,"p95":4.085000038146973,"min":1.9250000715255737}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":1,"loadMs":656.2300000190735,"tokens":16,"p50":6.259999990463257,"p95":7.439999938011169,"min":5.689999938011169}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":4,"loadMs":755.0499999523163,"tokens":16,"p50":3.4049999713897705,"p95":5.294999957084656,"min":2.365000009536743}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":1,"loadMs":699.7949999570847,"tokens":32,"p50":10.870000004768372,"p95":12.34500002861023,"min":9.914999961853027}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":4,"loadMs":599.0700000524521,"tokens":32,"p50":5.335000038146973,"p95":8.235000014305115,"min":3.8200000524520874}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":1,"loadMs":586.5900000333786,"tokens":64,"p50":20.644999980926514,"p95":22.884999990463257,"min":19.014999985694885}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":4,"loadMs":649.3099999427795,"tokens":64,"p50":8.330000042915344,"p95":12.089999914169312,"min":6.855000019073486}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":1,"loadMs":600.9500000476837,"tokens":128,"p50":42.62000000476837,"p95":45.0550000667572,"min":40.894999980926514}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2","ep":"wasm","threads":4,"loadMs":716.8349999189377,"tokens":128,"p50":14.40499997138977,"p95":20.585000038146973,"min":13.09500002861023}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":1,"loadMs":488.8550000190735,"tokens":8,"p50":2.7750000953674316,"p95":4.335000038146973,"min":2.4450000524520874}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":4,"loadMs":467.8600000143051,"tokens":8,"p50":2.430000066757202,"p95":3.4399999380111694,"min":1.46999990940094}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":1,"loadMs":485.52499997615814,"tokens":16,"p50":4.325000047683716,"p95":5.754999995231628,"min":4.075000047683716}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":4,"loadMs":456.27499997615814,"tokens":16,"p50":2.9199999570846558,"p95":3.965000033378601,"min":2.1799999475479126}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":1,"loadMs":452.6449999809265,"tokens":32,"p50":7.834999918937683,"p95":9.06499993801117,"min":7.284999966621399}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":4,"loadMs":500.9850000143051,"tokens":32,"p50":4.570000052452087,"p95":5.065000057220459,"min":3.3300000429153442}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":1,"loadMs":443.8700000047684,"tokens":64,"p50":14.5,"p95":15.930000066757202,"min":12.889999985694885}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":4,"loadMs":487.97499990463257,"tokens":64,"p50":7.340000033378601,"p95":8.465000033378601,"min":5.745000004768372}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":1,"loadMs":454.4299999475479,"tokens":128,"p50":30.304999947547913,"p95":32.764999985694885,"min":26.605000019073486}
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"joint-t2-int8","ep":"wasm","threads":4,"loadMs":532.6050000190735,"tokens":128,"p50":12.134999990463257,"p95":15.914999961853027,"min":10.225000023841858}

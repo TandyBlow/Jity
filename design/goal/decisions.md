@@ -358,6 +358,8 @@
 
 - 微型模型量化对照（2026-11-24，`goal-micro-quant`）：同一 MiniRBT 共享编码 + 四头，fp32 vs 动态 int8，ORT-WASM（i7-13700H，headless Edge）：32 token 1 线程 10.0/7.2 ms、128 token 38.7/27.0 ms、512 token 206.1/154.5 ms；4 线程 4.5/4.6、13.9/12.3、61.9/48.3 ms。量化收益 1.3–1.45×，线程收益 1.5–3.3×。holdout fp32 与 int8 精确匹配相同（targets 12/14、position 3/14、intent 11/15、judgment 7/14），决策一致 55/57；质量成因未分离（训练轮数/容量/分布/输入信息量），int8/fp32 相同仅表示本轮未见总体下降。复核更正：32 token 下 int8 单/四线程 7.17/4.58 ms、fp32 四线程 4.45 ms 均 ≤10 ms（fp32 单线程 10.03 ms 贴线）；D-030 的「编码器类 196 ms–2.4 s/次」只适用于 fp32、512 token、单线程；短输入 + int8 为 7–10 ms（32 token）、27 ms（128 token、1 线程）。证据 `artifacts/goal/micro-quant/conclusion-20261124.md`。
 
+- 微型模型联合实验（2026-11-24，`goal-micro-joint`）：批次切分（v1–v4 训练、v5 测试，15/任务），40 epoch。T2（打乱）natural 46/60（targets 13、position 10、intent 12、judgment 11）；T1（固定顺序）43/60；T3（打乱 + 32 截断训练）44/60。32 token 下 T2 准确率 45/60（position 截断 9、手写压缩输入 10），int8 延迟 7.83 ms（1 线程）/4.57 ms（4 线程），fp32 5.34 ms（4 线程）；16 token 时 targets 11、position 6、judgment 10；8 token 崩。结论：32–64 token 是可部署区间；训练截断不如自然训练；压缩输入能补回 position 的 1 行；训练打乱 +3 行（单种子）。证据 `artifacts/goal/micro-joint/conclusion-20261124.md`。
+
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
 - 状态：`signed`（2026-11-24）。
