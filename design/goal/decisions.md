@@ -263,7 +263,7 @@
 - 用户裁决（2026-11-24）：移动档维持与笔记本同一口径的 60 秒硬门，不另立门槛。按手机模拟条件（CPU 限速、核显、单模型预算）实测 189–229 秒（run94/103/104）与 WebLLM 170–225 秒（run95），移动档判定**不通过**。
 - 交付终态：笔记本档按 v13 默认通过（D-028）；移动档按 60 秒同口径不通过。此为本轮交付的最终裁决。
 
-- 内核/调度探针（2026-11-24，`goal-mobile-kernel-schedule`）：升级 wllama 4.0.0（libllama b12637）对比 3.8.1（b11364），核显 WebGPU prefill 23.10 s vs 18.55 s（0.80×），Intel gen-12lp 无 Flash Attention——内核升级未达 ≥2×；position+appearance 合并（f55b43e1）与程序交还（forceHandback）已是当前产品，移动实测地板 s02–s06 为 166.5–233.4 s（run131/133），70–90 s 估算被证伪。组合路径无法达到 60 秒；移动档判定不变。证据 `artifacts/goal/narration/read-mobile-kernel-probe-20261124.md`、`read-mobile-schedule-probe-20261124.md`。
+- 内核/调度探针（2026-11-24，`goal-mobile-kernel-schedule`）：升级 wllama 4.0.0（libllama b12637）对比 3.8.1（b11364），核显 WebGPU prefill 23.10 s vs 18.55 s（0.80×），Intel gen-12lp 无 Flash Attention——内核升级未达 ≥2×；position+appearance 合并（f55b43e1）与程序交还（forceHandback）已是当前产品，移动 20 输入实测 137.1–272.1 s（run133–137，20/20 全部超 60 秒；五回合子集 166.1–232.6 s），70–90 s 估算被证伪。组合路径无法达到 60 秒；移动档判定不变。证据 `artifacts/goal/narration/read-mobile-kernel-probe-20261124.md`、`read-mobile-schedule-probe-20261124.md`。
 - 用户裁决（2026-11-23，第二次）：**继续移动工程攻关**；接受当前 210–225 秒，继续压缩提示与调用数。60 秒门槛不变。
 - 移动提示压缩（2026-11-23，run103/104）：只压 results 场景清单时 s05 189.1 s（基线 210.5），s06 27.4 s 中止；再压位置/外貌的容器目录会让模型把被裁掉的容器当目的地、触发重试，s05 反升到 229.9 s，已回退。60 秒仍需约 3 倍；当前 0.6B + 核显的工程上限在 190–230 s。用户裁决继续工程攻关；该杠杆已到实际上限。
 - 当前代码移动复测（2026-11-23，run94）：0.6B + 核显 + 4× CPU 限速，早交还臂 + skip，s05 交还 210.5 s；两个参与组的 results/position/appearance 合计 112.3 s、叙事 62.1 s；s06 结算 3 次后中止（36.1 s）。位置/外貌合并只在该组有计划外貌变化时生效。60 秒仍差约 3.5 倍。证据 `artifacts/goal/narration/run94-mobile-current.json`。
