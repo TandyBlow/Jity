@@ -1,0 +1,141 @@
+{
+ "overall": {
+  "rules": {
+   "targets": 269,
+   "destination": 263,
+   "negated": 262,
+   "negated_total": 300,
+   "rows_common": 235,
+   "rows_all": 227,
+   "n": 300
+  },
+  "model": {
+   "targets": 223,
+   "destination": 208,
+   "negated": 0,
+   "negated_total": 0,
+   "rows_common": 153,
+   "rows_all": 0,
+   "n": 300
+  },
+  "hybrid": {
+   "targets": 280,
+   "destination": 263,
+   "negated": 262,
+   "negated_total": 300,
+   "rows_common": 246,
+   "rows_all": 225,
+   "n": 300
+  }
+ },
+ "by_tag": {
+  "unknown_person": {
+   "n": 166,
+   "rules": {
+    "targets": 147,
+    "destination": 150,
+    "rows_common": 134
+   },
+   "model": {
+    "targets": 113,
+    "destination": 122,
+    "rows_common": 80
+   },
+   "hybrid": {
+    "targets": 154,
+    "destination": 150,
+    "rows_common": 141
+   }
+  },
+  "unknown_place": {
+   "n": 76,
+   "rules": {
+    "targets": 76,
+    "destination": 58,
+    "rows_common": 58
+   },
+   "model": {
+    "targets": 72,
+    "destination": 53,
+    "rows_common": 51
+   },
+   "hybrid": {
+    "targets": 76,
+    "destination": 58,
+    "rows_common": 58
+   }
+  },
+  "multi_turn": {
+   "n": 62,
+   "rules": {
+    "targets": 55,
+    "destination": 51,
+    "rows_common": 45
+   },
+   "model": {
+    "targets": 35,
+    "destination": 39,
+    "rows_common": 21
+   },
+   "hybrid": {
+    "targets": 59,
+    "destination": 51,
+    "rows_common": 49
+   }
+  },
+  "compound": {
+   "n": 52,
+   "rules": {
+    "targets": 48,
+    "destination": 44,
+    "rows_common": 40
+   },
+   "model": {
+    "targets": 43,
+    "destination": 36,
+    "rows_common": 28
+   },
+   "hybrid": {
+    "targets": 52,
+    "destination": 44,
+    "rows_common": 44
+   }
+  },
+  "implicit": {
+   "n": 50,
+   "rules": {
+    "targets": 48,
+    "destination": 49,
+    "rows_common": 47
+   },
+   "model": {
+    "targets": 49,
+    "destination": 37,
+    "rows_common": 37
+   },
+   "hybrid": {
+    "targets": 50,
+    "destination": 49,
+    "rows_common": 49
+   }
+  },
+  "context": {
+   "n": 50,
+   "rules": {
+    "targets": 38,
+    "destination": 50,
+    "rows_common": 38
+   },
+   "model": {
+    "targets": 17,
+    "destination": 36,
+    "rows_common": 12
+   },
+   "hybrid": {
+    "targets": 40,
+    "destination": 50,
+    "rows_common": 40
+   }
+  }
+ }
+}
