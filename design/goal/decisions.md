@@ -348,6 +348,8 @@
 - 澄清：用户从未禁止模型替换，且一直鼓励换模型；D-007 的约束仅是「替换需实测决策、不静默换权重」。此前执行 agent 把「模型替换需批准」误述为禁止，作废该表述。
 - 范围：移动档可试更小模型或换运行时；笔记本档默认已按 D-028 为 v13。任何替换仍须实测与记录。
 
+- 运行时探针（2026-11-24，transformers.js 4.3.2 + Qwen2.5-0.5B ONNX q4f16，Edge WebGPU）：短提示（178 字符）可跑（load 14.0 s、prefill 1.65 s、30 tokens 5.2 s）；产品形状的长提示（2,400+ tokens）在 ORT WebGPU buffer 下载处失败（MapAsyncStatus 3）。该运行时路线在本机对产品提示不可用；q4 变体未测。证据 `artifacts/goal/narration/read-runtime-probe-20261124.md`。
+
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
 - 状态：`signed`（2026-11-24）。
