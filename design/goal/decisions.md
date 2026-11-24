@@ -354,6 +354,8 @@
 
 - micro-NLU 实验（2026-11-24，`goal-micro-nlu-collaboration`）：浏览器 ORT-WASM 单线程、targets 任务阶梯——0.52M 哈希头 p50 0.10 ms（CV 32/41）、10.4M MiniRBT 196.4 ms（CV 30/41）、102M MacBERT 2,439 ms（加载 2.4 s）、0.6B 基线 2.37 s 桌面 / 7.73 s 移动。结论：微秒级推理对微型哈希头成立（300 次约 30 ms），对需要读 512-token prompt 的编码器不成立（196 ms–2.4 s/次）；可换头的是 targets/position/判定归因/act-skip，action/reaction/fact 正文与 narration 仍是生成任务；银标（lu/nono、全 act）太窄，质量对比无法区分规模；混合流水线（头 + 少量文本生成）有条件可能但未验证。真机无设备未测。证据 `artifacts/goal/micro-nlu/conclusion-20261124.md`。
 
+- 微型模型重设计实验（2026-11-24，`goal-micro-models-redesign`）：300 条手标（四任务各 75，含换名/缺席/否定/指代/未见物品/干扰/多行为对抗子集）。阶梯：CNN/GRU（18–31K）反超 0.26–0.52M 哈希 MLP——targets 13/14、position 11/14（CNN）、intent 12/15、judgment 13/14。共享编码（MiniRBT 10M + 四头，31 tokens）浏览器实测：WASM 单线程 9.54 ms、四线程 5.00 ms、WebGPU 14.79 ms；一次编码 + N 个 0.1 ms 头，300 任务约 35–40 ms。可换头顺序 judgment≈targets>intent>position；60 秒门槛有余地，质量受标注量限制（15 测试/任务）；真机无设备未测。证据 `artifacts/goal/micro-redesign/conclusion-20261124.md`。
+
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
 - 状态：`signed`（2026-11-24）。
