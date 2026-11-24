@@ -156,6 +156,8 @@ export interface MicroTargetsRequest {
 
 export interface MicroTargetsResult {
   targets: string[];
+  /** rules = program match; model = the int8 pair scorer. */
+  source?: 'rules' | 'model';
 }
 
 export type MicroTargetsFn = (request: MicroTargetsRequest) => Promise<MicroTargetsResult | null> | MicroTargetsResult | null;

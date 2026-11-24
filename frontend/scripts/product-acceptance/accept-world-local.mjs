@@ -881,6 +881,8 @@ try {
           pointPrompts: Array.isArray(record.pointPrompts) ? record.pointPrompts : null,
           semanticPrompts: Array.isArray(record.semanticPrompts) ? record.semanticPrompts : null,
           actions: Array.isArray(record.actions) ? record.actions : null,
+          microStats: globalThis.__microStats ?? null,
+          microEnabled: globalThis.__microEnabled ?? null,
           cancelled: record.cancelled ?? false, source: record.source ?? null, modelId: record.modelId ?? null,
           engines: Array.isArray(record.engines) ? record.engines : null,
           narration: record.narration ?? null,

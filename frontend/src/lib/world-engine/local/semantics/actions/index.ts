@@ -301,8 +301,12 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
           };
           const checked = checkTargets(value, scene, call.state, call.actionText, checkOptions);
           if (!checked.issues.some((item) => item.severity === 'error')) {
-            issues.push({ code: 'micro_targets', severity: 'info', message: '微型目标由规则与打分器给出' });
-            return evidence('targets', key, asJson(checked.value), 'micro', started,
+            const rules = out.source === 'rules';
+            issues.push({
+              code: 'micro_targets', severity: 'info',
+              message: rules ? '规则命中目标' : '微型打分器命中目标',
+            });
+            return evidence('targets', key, asJson(checked.value), rules ? 'program' : 'micro', started,
               [...issues, ...checked.issues], [], '');
           }
           issues.push({

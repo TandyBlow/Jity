@@ -9,6 +9,7 @@ import { WllamaInferenceEngine } from '@/lib/world-engine/runtime/wllama-engine'
 import { WebLlmInferenceEngine } from '@/lib/world-engine/runtime/webllm-engine';
 import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
+import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -544,6 +545,9 @@ async function openWithLease(
 }
 
 export default function WorldLocalPage() {
+  // Frozen at mount: the start flow may clean the URL before the model effect.
+  const [microParam] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('micro') === '1');
   const [phase, setPhase] = useState<Phase>('loading');
   const [message, setMessage] = useState('正在载入本地世界与模型…');
   const [entries, setEntries] = useState<TurnEntry[]>([]);
@@ -885,7 +889,21 @@ export default function WorldLocalPage() {
           webllmLocal: arm.webllmLocal === true,
           webllmCache: arm.webllmCache ?? 'indexeddb',
         };
+        // Experimental micro workflow: rules + int8 scorer for targets, behind
+        // ?micro=1. The LLM path stays the default; stats land on window for
+        // the acceptance driver.
+        const microEnabled = microParam;
+        (window as unknown as { __microEnabled?: boolean }).__microEnabled = microEnabled;
+        const microTargets = microEnabled
+          ? createMicroTargets({
+            onStats: (record) => {
+              const store = window as unknown as { __microStats?: unknown[] };
+              (store.__microStats ??= []).push(record);
+            },
+          })
+          : undefined;
         const model = new LocalGameModel(semantic, {
+          ...(microTargets ? { microTargets } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of
           // a player round holds only that character so its settlement can
