@@ -62,6 +62,34 @@ describe('prompts do not offer a copyable fake id', () => {
   });
 });
 
+describe('micro targets port', () => {
+  it('accepts a micro port result without calling the model', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const handlers = createActionHandlers({
+      engine, options: { microTargets: () => ({ targets: ['ally'] }) },
+    });
+    const result = await handlers.targets('hero', targetsInput(state, 'hero', '我把水壶递给阿宁。'));
+    expect(result.source).toBe('micro');
+    expect(result.value).toEqual({ targets: [{ targetId: 'ally' }] });
+    expect(result.attempts).toBe(0);
+    expect(engine.prompts.length).toBe(0);
+    codecAccepts(result);
+  });
+
+  it('falls back to the model when the port abstains', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine(['{"targets":[{"targetId":"ally"}]}']);
+    const handlers = createActionHandlers({
+      engine, options: { microTargets: () => null },
+    });
+    const result = await handlers.targets('hero', targetsInput(state, 'hero', '我把水壶递给阿宁。'));
+    expect(result.source).toBe('model');
+    expect(codes(result)).toContain('micro_abstained');
+    expect(engine.prompts.length).toBe(1);
+  });
+});
+
 describe('scene derivation', () => {
   it('separates present, nested-location, absent and carried entities', () => {
     const state = buildTestWorld();

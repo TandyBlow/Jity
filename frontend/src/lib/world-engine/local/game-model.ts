@@ -71,6 +71,10 @@ export interface GameModelOptions {
    * skipped by the action lane's program rule ('skip'). The page exposes it
    * only through the URL query; the shipped default stays 'judge'. */
   offscreenPolicy?: 'skip' | 'judge';
+  /** Experimental micro workflow: a rules+scorer targets port. When it returns
+   * null or a rejected proposal, the existing LLM path runs and the reason is
+   * recorded on the task evidence. Default off (undefined = LLM only). */
+  microTargets?: import('./semantics/actions').MicroTargetsFn;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -109,7 +113,7 @@ export interface GameModelOptions {
   onNarrationEvidence?: (record: Record<string, unknown>) => void;
   onTask?: (task: ModelTask, key: string, detail: {
     ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number;
-    source?: 'program' | 'model' | 'fallback';
+    source?: 'program' | 'model' | 'fallback' | 'micro';
     issues?: { code: string; severity: string; message: string; detail?: string }[];
     calls?: HandlerResult['calls'];
     value?: Json;
@@ -227,6 +231,7 @@ export class LocalGameModel implements WorldModelPort {
         minChars: 20,
       });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
+      microTargets: this.options.microTargets,
       recentEvents: () => this.recentEvents,
       offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {

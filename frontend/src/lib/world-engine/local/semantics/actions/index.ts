@@ -40,7 +40,8 @@ import type {
 
 export type {
   ActionCallEvidence, ActionCallInput, ActionHandlerOptions, ActionHandlers, ActionIssue, ActionIssueCode,
-  ActionTask, HandlerResult, ReactionCallInput, TargetsCallInput,
+  ActionTask, HandlerResult, MicroTargetsFn, MicroTargetsRequest, MicroTargetsResult, ReactionCallInput,
+  TargetsCallInput,
 } from './types';
 export type { ActionScene, NameEntry, SceneCharacter, SceneItem, SceneTask } from './scene';
 export { buildScene, findMentions, nameTable, positionLabel, roomChain, sceneMentions } from './scene';
@@ -285,6 +286,38 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       issues.push({ code: 'no_visible_candidates', severity: 'info', message: '本地点没有其他角色，行动不可能牵连到场人物' });
       issues.push({ code: 'empty_targets', severity: 'info', message: '没有需要立即反应的在场人物' });
       return evidence('targets', key, { targets: [] }, 'program', started, issues, [], '');
+    }
+
+    const micro = options.microTargets;
+    if (micro) {
+      try {
+        const out = await micro({
+          state: call.state, sourceId: call.sourceId,
+          actionText: call.actionText, maxTargets: checkOptions.maxTargets,
+        });
+        if (out) {
+          const value: TargetsValue = {
+            targets: out.targets.slice(0, checkOptions.maxTargets).map((id) => ({ targetId: id })),
+          };
+          const checked = checkTargets(value, scene, call.state, call.actionText, checkOptions);
+          if (!checked.issues.some((item) => item.severity === 'error')) {
+            issues.push({ code: 'micro_targets', severity: 'info', message: '微型目标由规则与打分器给出' });
+            return evidence('targets', key, asJson(checked.value), 'micro', started,
+              [...issues, ...checked.issues], [], '');
+          }
+          issues.push({
+            code: 'micro_rejected', severity: 'warn',
+            message: `微型目标被校验拒绝：${describeFailure(checked.issues)}`,
+          });
+        } else {
+          issues.push({ code: 'micro_abstained', severity: 'info', message: '微型目标无结果，回退 LLM' });
+        }
+      } catch (caught) {
+        issues.push({
+          code: 'micro_failed', severity: 'warn',
+          message: `微型目标失败：${caught instanceof Error ? caught.message : String(caught)}`,
+        });
+      }
     }
 
     const generated = await generate<TargetsValue>({

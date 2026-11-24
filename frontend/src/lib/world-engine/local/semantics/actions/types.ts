@@ -14,7 +14,7 @@
  *              protagonist reaction floor)
  *   fallback — the model was asked but no answer passed the checks
  */
-import type { Id, Json } from '../../../types';
+import type { Id, Json, WorldState } from '../../../types';
 
 export type ActionTask = 'action' | 'targets' | 'reaction';
 
@@ -49,6 +49,11 @@ export type ActionIssueCode =
   | 'absent_character_named'
   | 'anaphora_present'
   | 'empty_targets'
+  // micro targets port
+  | 'micro_targets'
+  | 'micro_rejected'
+  | 'micro_abstained'
+  | 'micro_failed'
   // reaction value
   | 'reaction_too_long'
   | 'reaction_echoes_source'
@@ -93,7 +98,7 @@ export interface HandlerResult {
   key: string;
   /** Codec-valid value: {kind:'act'|'skip'} | {targets:[...]} | reaction text. */
   value: Json;
-  source: 'model' | 'program' | 'fallback';
+  source: 'model' | 'program' | 'fallback' | 'micro';
   fallback: boolean;
   elapsedMs: number;
   /** Model calls actually made, including the failed repair attempt. */
@@ -136,7 +141,24 @@ export interface ActionHandlerOptions {
   capturePrompts?: boolean;
   onCall?: (call: ActionCallEvidence) => void;
   now?: () => number;
+  /** Micro targets port: rules plus a small scorer propose target ids from the
+   * declared call input. Returning null means "abstain, ask the LLM"; a
+   * rejected proposal is recorded and also falls back. */
+  microTargets?: MicroTargetsFn;
 }
+
+export interface MicroTargetsRequest {
+  state: WorldState;
+  sourceId: Id;
+  actionText: string | null;
+  maxTargets: number;
+}
+
+export interface MicroTargetsResult {
+  targets: string[];
+}
+
+export type MicroTargetsFn = (request: MicroTargetsRequest) => Promise<MicroTargetsResult | null> | MicroTargetsResult | null;
 
 export interface ActionHandlers {
   action(key: string, input: Json): Promise<HandlerResult>;
