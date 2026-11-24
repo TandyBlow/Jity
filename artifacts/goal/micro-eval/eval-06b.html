@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>0.6B fact eval</title></head>
+<body>
+<script type="module">
+const params = new URLSearchParams(location.search);
+const start = Number(params.get('start') || 0);
+const size = Number(params.get('size') || 50);
+let result;
+try {
+  const mod = await import('/wllama/index.min.js');
+  const w = new mod.Wllama({ default: '/wasm/wllama.wasm' }, { logger: { ...console, debug: () => undefined } });
+  const t0 = performance.now();
+  await w.loadModelFromUrl('/models/Qwen3-0.6B-Q4_K_M.gguf', { n_ctx: 2048, n_gpu_layers: 0 });
+  const loadMs = performance.now() - t0;
+  const rows = await (await fetch('/probe/models/eval-rows.json')).json();
+  const part = rows.slice(start, start + size);
+  const out = [];
+  for (const r of part) {
+    const prompt = `你是中文跑团游戏的事实提取器。只输出 JSON：{"targets": ["人名"], "destination": "地点", "negated": false}。targets 只列行动真正作用到的人物；destination 必须是候选之一；negated 表示行动整体是否没有发生。/no_think\n行动：${r.action}\n在场：${r.present.join('、') || '无'}\n当前：${r.current}\n候选：${r.candidates.join('、')}\n骰点：${r.dice}`;
+    const t = performance.now();
+    let text = '';
+    try {
+      const res = await w.createChatCompletion({ messages: [{ role: 'user', content: prompt }], max_tokens: 128, temperature: 0, cache_prompt: true, stream: false });
+      const ch = res.choices?.[0];
+      text = [ch?.message?.content, ch?.message?.reasoning_content, ch?.text].filter(Boolean).join('\n');
+    } catch (e) { text = ''; }
+    const ms = performance.now() - t;
+    let pred = null;
+    const a = text.indexOf('{'), b = text.lastIndexOf('}');
+    if (a >= 0 && b > a) { try { pred = JSON.parse(text.slice(a, b + 1)); } catch (e) { pred = null; } }
+    out.push({ id: r.id, pred, text: text.slice(0, 160), ms });
+  }
+  result = { ok: true, start, size, loadMs, rows: out };
+} catch (error) {
+  result = { ok: false, error: String(error && (error.stack || error.message) || error) };
+}
+window.__probeResult = result;
+</script>
+</body></html>

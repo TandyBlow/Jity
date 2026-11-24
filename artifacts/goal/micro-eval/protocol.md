@@ -7,7 +7,8 @@
 ## 冻结
 
 - `artifacts/goal/micro-facts/rules.py` sha256 `c746a9727779de2da42afd3255f2aacbc947b5ece4417b9858395d763e88a91c`
-- `pair-scorer-int8.onnx` sha256 `c9d1b0c55d215709943c9cac45aaab3202d0231fc1cdc20a5a4406869f3d966d`
+- `pair-scorer-int8.onnx` sha256 `c9d1b0c55d215709943c9cac45aaab3202d0231fc1cdc20a5a4406869f3d966d`（评测实际加载这一个）
+- `pair-scorer.onnx` fp32 sha256 `aa5393c327fe7c3d5c8f751865e763042ef969c16549d46296b5ca766034451b`（仅对照）
 - `t2-int8.onnx` sha256 `e00c2daa081dbcb5f1a4be425b79090d2a01f999972b9c2fbdec16c90124be6f`
 - 评测脚本与阈值冻结；评测期间不改规则、不改模型、不改测试集。
 
@@ -41,8 +42,9 @@
 ## 实际执行（2026-11-24）
 
 - 300 条由执行 Agent 自写（作者与规则同一人）；独立性未满足，结论只作方向。
-- 已跑三臂：纯规则、10M、规则+模型；结果见 `conclusion-20261124.md` 与 `results-20261124.json`。
-- 0.6B 与云端未跑。
+- 已跑四臂：纯规则、10M（int8）、规则+模型、0.6B（Qwen3-0.6B-Q4_K_M，提示词要求 JSON，max_tokens 128，/no_think；p50 1998 ms）。
+- 数据弱点：context 部分只有 1 个在场人物；multi_turn 直接出现姓名——复杂语言考察偏弱。
+- 云端未跑。
 
 ## 待办
 

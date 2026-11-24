@@ -1,0 +1,56 @@
+{
+ "overall": {
+  "n": 300,
+  "parsed": 299,
+  "targets": 145,
+  "destination": 233,
+  "negated": 278,
+  "all": 103,
+  "ms_p50": 1997.8375000357628,
+  "ms_p95": 2517.9400000572205
+ },
+ "by_tag": {
+  "unknown_person": {
+   "n": 166,
+   "targets": 108,
+   "destination": 134,
+   "negated": 158,
+   "all": 74
+  },
+  "unknown_place": {
+   "n": 75,
+   "targets": 16,
+   "destination": 42,
+   "negated": 65,
+   "all": 8
+  },
+  "multi_turn": {
+   "n": 62,
+   "targets": 53,
+   "destination": 42,
+   "negated": 56,
+   "all": 30
+  },
+  "compound": {
+   "n": 52,
+   "targets": 26,
+   "destination": 37,
+   "negated": 50,
+   "all": 16
+  },
+  "implicit": {
+   "n": 50,
+   "targets": 28,
+   "destination": 50,
+   "negated": 50,
+   "all": 28
+  },
+  "context": {
+   "n": 50,
+   "targets": 15,
+   "destination": 50,
+   "negated": 49,
+   "all": 15
+  }
+ }
+}

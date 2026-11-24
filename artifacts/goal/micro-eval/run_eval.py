@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT / 'artifacts/goal/micro-facts'))
 from rules import settle  # noqa: E402
 
 tok = BertTokenizer(vocab_file=str(SNAP / 'vocab.txt'))
-sess = ort.InferenceSession(str(ROOT / '.local/micro-generalize/pair-scorer.onnx'), providers=['CPUExecutionProvider'])
+sess = ort.InferenceSession(str(ROOT / '.local/micro-generalize/pair-scorer-int8.onnx'), providers=['CPUExecutionProvider'])
 TAGS = ['unknown_person', 'unknown_place', 'multi_turn', 'compound', 'implicit', 'context']
 
 

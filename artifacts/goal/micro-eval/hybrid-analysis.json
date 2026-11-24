@@ -1,0 +1,90 @@
+{
+ "rules_empty_expected_empty": 66,
+ "rules_empty_expected_empty_model_added": 6,
+ "rules_empty_expected_nonempty": 30,
+ "rules_empty_expected_nonempty_model_right": 17,
+ "all_flips": {
+  "rules_right_hybrid_wrong": [
+   {
+    "id": "u06",
+    "action": "路明非没有把干粮给阿豹。",
+    "rules": [],
+    "hybrid": [
+     "阿豹"
+    ],
+    "want": []
+   },
+   {
+    "id": "u07",
+    "action": "路明非没找到沈砚。",
+    "rules": [],
+    "hybrid": [
+     "沈砚"
+    ],
+    "want": []
+   },
+   {
+    "id": "u26",
+    "action": "路明非没有把钥匙交给老周。",
+    "rules": [],
+    "hybrid": [
+     "老周"
+    ],
+    "want": []
+   },
+   {
+    "id": "u38",
+    "action": "路明非没把地图给白露，自己看了起来。",
+    "rules": [],
+    "hybrid": [
+     "白露"
+    ],
+    "want": []
+   },
+   {
+    "id": "x09",
+    "action": "路明非没有把钥匙给她。",
+    "rules": [],
+    "hybrid": [
+     "诺诺"
+    ],
+    "want": []
+   }
+  ],
+  "rules_wrong_hybrid_right": [
+   {
+    "id": "x26",
+    "action": "路明非把水递给第一个人。",
+    "rules": [],
+    "hybrid": [
+     "诺诺"
+    ],
+    "want": [
+     "诺诺"
+    ]
+   },
+   {
+    "id": "x30",
+    "action": "路明非把地图交给第一个人。",
+    "rules": [],
+    "hybrid": [
+     "沈砚"
+    ],
+    "want": [
+     "沈砚"
+    ]
+   },
+   {
+    "id": "x48",
+    "action": "路明非把水递给剩下的人。",
+    "rules": [],
+    "hybrid": [
+     "阿豹"
+    ],
+    "want": [
+     "阿豹"
+    ]
+   }
+  ]
+ }
+}

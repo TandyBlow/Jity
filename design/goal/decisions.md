@@ -366,7 +366,7 @@
 
 - 微型模型事实提取（2026-11-24，`goal-micro-facts`）：24 条手写事实测试集（direct/negation/pronoun/ellipsis/movement）。规则基线（字符串匹配 + 否定/代词/省略/移动/阻断结算）在 29 条（24 + 5 反例）上 targets 27/29、destination 27/29、negated 27/29；模型组合 targets 20/29、destination 16/29，否定字段无。反例子集：规则 targets 3/5、模型 4/5——互补性出现但只有 5 条；规则缺陷是否定词一刀切、问句地名当移动、看/望当移动。判定条件（模型在否定/省略集比基线高 ≥2 行）仍不成立。链改用浏览器内 JS 规则结算 position（动作 + 骰点，不再读手写事实）：端到端 6/12、act 3/8、position 8/8、targets 4/8、judgment 7/8、30 次调用、107.8 ms（4 线程）/178.5 ms（1 线程），结算 ≤0.155 ms。研究目标不设为模型击败规则；协议见 `artifacts/goal/micro-eval/protocol.md`（冻结规则与模型，五方案对比）。
 
-- 微型模型 300 条评测（2026-11-24，`goal-micro-eval`）：300 条自写数据（作者与规则同一人，独立性未满足），三臂结果——规则 targets 269/300、destination 263/300、negated 262/300；10M 模型 223/208、无否定字段；规则+模型 280/263/262，targets+dest 行级 235/153/246。混合在 context（38→40）、multi_turn（55→59）、compound（48→52）、implicit（48→50）上补点；规则仍是主干，模型作为回退。0.6B 与云端未跑。证据 `artifacts/goal/micro-eval/conclusion-20261124.md`。证据 `artifacts/goal/micro-facts/conclusion-20261124.md`、`artifacts/goal/micro-chain/conclusion-20261124.md`。
+- 微型模型 300 条评测（2026-11-24，`goal-micro-eval`）：300 条自写数据（作者与规则同一人，独立性未满足）。三字段全对：规则 227/300、10M 模型 —（218/207，无否定）、规则+10M 225/300、cue 门控混合 229/300、0.6B 103/300（145/233/278，p50 1998 ms）、规则+10M+0.6B 否定 230/300。混合的回退在 66 个空标签行误加 6 行、在 30 个非空行补对 17 行，净 -2；cue 门控修复。0.6B 单次约 2 s，只把三字段从 225 提到 230（门控版反而 229→222，噪声级）。复现口径：评测改用 int8（fp32 对照 223/208/153）。数据弱点：context 单在场、multi_turn 直呼姓名。云端未跑。证据 `artifacts/goal/micro-eval/conclusion-20261124.md`。证据 `artifacts/goal/micro-facts/conclusion-20261124.md`、`artifacts/goal/micro-chain/conclusion-20261124.md`。
 
 ## D-028 v13 发货默认与交付重判（2026-11-24，用户裁决）
 
