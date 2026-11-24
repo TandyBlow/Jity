@@ -42,6 +42,19 @@ function entityText(request: MicroUpdatesRequest, entityId: Id, facts: string): 
   return `实体：${name}；当前：${container}/${slot}；本组结果：${facts}`;
 }
 
+/** Structured `去向=entity:container[/slot]` hints from the micro results
+ * facts. This is the channel that lets one micro model's output feed another
+ * without re-parsing prose. */
+export function readDestinations(texts: string[]): Map<string, { containerId: string; slotId: string | null }> {
+  const map = new Map<string, { containerId: string; slotId: string | null }>();
+  for (const text of texts) {
+    for (const match of text.matchAll(/去向=([^:；\s]+):([^/\s；]+)(?:\/([^\s；]+))?/gu)) {
+      map.set(match[1], { containerId: match[2], slotId: match[3] ?? null });
+    }
+  }
+  return map;
+}
+
 export function createMicroUpdates(options: MicroUpdatesOptions = {}): MicroUpdatesFn {
   let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
@@ -82,8 +95,14 @@ export function createMicroUpdates(options: MicroUpdatesOptions = {}): MicroUpda
       stats('micro');
       return { positions: [] };
     }
-    const positions: { entityId: Id; containerId: Id; slotId: null }[] = [];
+    const positions: { entityId: Id; containerId: Id; slotId: Id | null }[] = [];
+    const hints = readDestinations(Object.values(request.results));
     for (const entityId of moved) {
+      const hint = hints.get(entityId);
+      if (hint) {
+        positions.push({ entityId, containerId: hint.containerId, slotId: hint.slotId });
+        continue;
+      }
       const own = resultFacts(request.results).find((fact) => fact.memberId === entityId);
       const destination = own ? destinationOfFact(request.state, own.text) : null;
       const name = request.state.initial.characters[entityId]?.name ?? '';

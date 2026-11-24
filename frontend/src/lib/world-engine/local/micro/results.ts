@@ -1,6 +1,6 @@
 /** Micro results: per-member head labels plus templated facts. A low-confidence
  * member makes the whole call abstain; the LLM then answers as before. */
-import type { MicroResultsFn } from '../semantics/settlement/types';
+import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlement/types';
 import { createBertTokenizer, type BertTokenizer } from './tokenizer';
 import { createMicroRuntime } from './runtime';
 
@@ -11,6 +11,32 @@ const PHRASE: Record<string, string> = {
 const OUTCOME: Record<string, string> = {
   achieved: 'completed', partial: 'completed', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
 };
+
+/** A structured movement hint from the action text: `entity:container`.
+ * The updates port reads it instead of guessing a destination from prose. */
+export function destinationHint(action: string, state: MicroResultsRequest['state'], memberId: string): string | null {
+  const byName = (name: string) => {
+    const trimmed = name.trim();
+    for (const group of [state.initial.characters, state.initial.items, state.initial.locations]) {
+      for (const [id, entity] of Object.entries(group) as Array<[string, { name?: string }]>) {
+        if (entity.name === trimmed) return id;
+      }
+    }
+    return null;
+  };
+  const transfer = /把(.+?)(?:递给|交给|塞给|递到)(.+?)(?:[。；，,！？]|$)/u.exec(action);
+  if (transfer) {
+    const item = byName(transfer[1]);
+    const person = byName(transfer[2]);
+    if (item && person && state.initial.items[item]) return `${item}:${person}`;
+  }
+  const walk = /(?:走进|走入|走到|走向|进入|来到|回到|退回|退到|跑到|冲向|赶到|爬上|走下)([^。；，,！？]+)/u.exec(action);
+  if (walk) {
+    const location = byName(walk[1]);
+    if (location && state.initial.locations[location]) return `${memberId}:${location}`;
+  }
+  return null;
+}
 
 export interface MicroResultsOptions {
   vocabUrl?: string;
@@ -67,7 +93,11 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const label = RESULT[best];
       judgments.push({ memberId: member.memberId, label, reason: PHRASE[label] });
       const normalized = member.actionText.replace(/我(?!们)/gu, name);
-      facts.push({ text: `${normalized}（${PHRASE[label]}）`, memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label] });
+      const hint = destinationHint(normalized, request.state, member.memberId);
+      facts.push({
+        text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}`,
+        memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
+      });
     }
     options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
     return { judgments, facts };
