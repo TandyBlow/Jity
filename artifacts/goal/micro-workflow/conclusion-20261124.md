@@ -13,6 +13,18 @@
 - targets 11 次调用：6 次进入微型规则（动作证据 issue 含 `micro_targets`），其中 1 次给出非空目标（tomiyama → shen），其余规则判空；无缺席名字/双代词场景，**模型打分路径未触发**；无 LLM 回退。
 - `window.__microStats/__microEnabled` 未被验收驱动捕获（评估时为空）；规则路径由动作证据的 issue 码证明。
 
+## 任务级浏览器打分器探针（2026-11-24）
+
+- 页面 `/micro-probe`，10 例：direct 3、pronoun 2、absent 1、empty 1、negation 2、compound 1；int8/ORT，模型加载 653 ms，单次 3–50 ms（首条含预热）。
+- 原始打分器 **5/10**：direct-1/2、absent-1、empty-1、pronoun-2 正确；失败——direct-3（点头，秦越 -1.0 未过阈）、pronoun-1（「他」+双在场，两人都正分）、negation-1（否定句仍给诺诺 6.96）、negation-2（多出芬格尔）、compound-1（多出芬格尔）。
+- 结论：int8 打分器目前不能当「提议者」；在否定/代词/复合上过报。产品 v1 改为「规则提议 + 打分器校验 + 弃权回 LLM」：规则给出目标后用打分器确认（阈值 0），不确认就回退；否定/缺席/多代词规则直接弃权给 LLM。模型仍是参与者，但不是最终决定者。
+- 提高模型角色的前提：用产品口径的第一人称动作、否定与复合样本重训，并做「不确定即弃权」的阈值校准。
+
+## 单回合任务耗时分布（2026-11-24，micro=1）
+
+- results 14 次 97.8 s；action 29 次 81.4 s；updates 26 次 55.1 s；targets 11 次 6 ms。
+- 结论：targets 微型化对回合耗时没有影响；下一步先做 results/updates 的微型路径，再拆 action；reaction 含在 action 调用内，随后拆。
+
 ## 未完成
 
 - 模型打分路径的真实回合验证：需要规则弃权的输入（缺席名字或双在场代词）。

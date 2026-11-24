@@ -12,7 +12,7 @@ export interface MicroTargetsOptions {
   threads?: number;
   threshold?: number;
   onStats?: (record: {
-    source: 'rules' | 'model';
+    source: 'rules' | 'model' | 'abstain';
     buildMs: number;
     tokenizeMs: number;
     inferMs: number;
@@ -28,6 +28,8 @@ export function resolveRuleTargets(
   scene: { visible: Array<{ id: Id; name: string }>; absent: Array<{ name: string }> },
   maxTargets: number,
 ): Id[] | null {
+  // Negation changes who was actually touched; rules cannot tell, so abstain.
+  if (/没有|没|未|谁也没/u.test(actionText)) return null;
   const named = scene.visible.filter((character) => actionText.includes(character.name));
   if (named.length) return named.slice(0, maxTargets).map((character) => character.id);
   if (scene.absent.some((character) => actionText.includes(character.name))) return null;
@@ -68,29 +70,45 @@ export function createMicroTargets(options: MicroTargetsOptions = {}): MicroTarg
     const buildMs = performance.now() - buildStart;
     const actionText = request.actionText ?? '';
     const rule = resolveRuleTargets(actionText, scene, request.maxTargets);
-    if (rule !== null) {
-      options.onStats?.({ source: 'rules', buildMs, tokenizeMs: 0, inferMs: 0, loadMs: 0, calls: 0 });
-      return { targets: rule, source: 'rules' };
+    // Rule abstention (negation, absent name, ambiguous pronoun) goes to the
+    // LLM: the 2026-11-24 probe showed the raw scorer over-fires exactly there.
+    if (rule === null) {
+      options.onStats?.({ source: 'abstain', buildMs, tokenizeMs: 0, inferMs: 0, loadMs: 0, calls: 0 });
+      return null;
     }
-    if (!actionText) return null;
+    if (!rule.length) {
+      options.onStats?.({ source: 'rules', buildMs, tokenizeMs: 0, inferMs: 0, loadMs: 0, calls: 0 });
+      return { targets: [], source: 'rules' };
+    }
+    // Rules propose, the scorer verifies. A rule target the scorer does not
+    // confirm is not trusted; the LLM decides instead.
+    const names = new Map(scene.visible.map((character) => [character.id, character.name]));
     const loadBefore = runtime.stats().loadMs;
     const { tok, session } = await ensure();
     const loadMs = runtime.stats().loadMs - loadBefore;
+    const actorName = typeof scene.actorName === 'string' ? scene.actorName : '';
+    const normalized = actorName ? actionText.replace(/我(?!们)/gu, actorName) : actionText;
+    const pairText = `行动：${normalized}\n在场：${scene.visible.map((character) => character.name).join('、')}`;
     let tokenizeMs = 0;
     let inferMs = 0;
-    const scored: Array<{ id: Id; score: number }> = [];
-    for (const character of scene.visible) {
+    let minScore = Number.POSITIVE_INFINITY;
+    for (const id of rule) {
+      const name = names.get(id);
+      if (!name) continue;
       const tokenStart = performance.now();
-      const { ids } = tok.encodePair(actionText, character.name);
+      const { ids } = tok.encodePair(pairText, name);
       tokenizeMs += performance.now() - tokenStart;
       const inferStart = performance.now();
       const score = await scorePair(session, ids);
       inferMs += performance.now() - inferStart;
-      scored.push({ id: character.id, score });
+      minScore = Math.min(minScore, score);
     }
     const threshold = options.threshold ?? 0;
-    const targets = scored.filter((item) => item.score > threshold).map((item) => item.id).slice(0, request.maxTargets);
-    options.onStats?.({ source: 'model', buildMs, tokenizeMs, inferMs, loadMs, calls: scene.visible.length });
-    return { targets, source: 'model' };
+    if (minScore > threshold) {
+      options.onStats?.({ source: 'rules', buildMs, tokenizeMs, inferMs, loadMs, calls: rule.length });
+      return { targets: rule, source: 'rules' };
+    }
+    options.onStats?.({ source: 'abstain', buildMs, tokenizeMs, inferMs, loadMs, calls: rule.length });
+    return null;
   };
 }
