@@ -1,0 +1,12 @@
+{
+ "merged_scene_calls": 55,
+ "invalid_llm_rows": 39,
+ "micro_accepted": 0,
+ "micro_abstained": {
+  "no_destination": 55
+ },
+ "llm_scene_calls_saved": 0,
+ "appearance_calls_saved_by_reuse": 55,
+ "agreement": {},
+ "model": "movement-head-int8.onnx"
+}
