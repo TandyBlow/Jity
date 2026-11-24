@@ -1,0 +1,60 @@
+{"task": "targets", "input": "行动：路明非把护目镜递给林亦舟。\n在场：林亦舟", "label": ["lin"]}
+{"task": "targets", "input": "行动：诺诺把短讯机按在路明非耳边。\n在场：路明非", "label": ["lu"]}
+{"task": "targets", "input": "行动：芬格尔把相机镜头对准秦越。\n在场：秦越", "label": ["qin"]}
+{"task": "targets", "input": "行动：路明非把钥匙扔给诺诺。\n在场：诺诺", "label": ["nono"]}
+{"task": "targets", "input": "行动：路明非问秦越要弹匣。\n在场：秦越", "label": ["qin"]}
+{"task": "targets", "input": "行动：路明非拍了拍林亦舟的肩。\n在场：林亦舟", "label": ["lin"]}
+{"task": "targets", "input": "行动：路明非示意芬格尔别出声。\n在场：芬格尔", "label": ["fingel"]}
+{"task": "targets", "input": "行动：路明非把伤员交给诺诺和芬格尔。\n在场：诺诺、芬格尔", "label": ["nono", "fingel"]}
+{"task": "targets", "input": "行动：路明非朝钟楼方向喊了一声。\n在场：诺诺", "label": []}
+{"task": "targets", "input": "行动：路明非把铜哨放在桌上，谁也没给。\n在场：芬格尔", "label": []}
+{"task": "targets", "input": "行动：路明非拉住秦越的胳膊。\n在场：秦越", "label": ["qin"]}
+{"task": "targets", "input": "行动：路明非把门锁上，把诺诺关在外面。\n在场：诺诺", "label": ["nono"]}
+{"task": "targets", "input": "行动：路明非对着林亦舟和诺诺点头。\n在场：林亦舟、诺诺", "label": ["lin", "nono"]}
+{"task": "targets", "input": "行动：路明非把水递给阿豹（他不在）。\n在场：芬格尔", "label": []}
+{"task": "targets", "input": "行动：路明非问芬格尔和诺诺要不要一起走。\n在场：芬格尔、诺诺", "label": ["fingel", "nono"]}
+{"task": "position", "input": "事实：路明非走进西回廊尽头的钟楼西门。\n当前：西回廊\n候选：西回廊、钟楼", "label": "钟楼"}
+{"task": "position", "input": "事实：路明非在门厅里等了一会儿。\n当前：庭院\n候选：庭院、钟楼门厅", "label": "钟楼门厅"}
+{"task": "position", "input": "事实：路明非从二层平台下到门厅。\n当前：二层平台\n候选：二层平台、钟楼门厅", "label": "钟楼门厅"}
+{"task": "position", "input": "事实：路明非在旗台上没有动。\n当前：顶层旗台\n候选：顶层旗台、二层平台", "label": "顶层旗台"}
+{"task": "position", "input": "事实：路明非回到器材棚，把钥匙放回腰环。\n当前：西侧服务巷\n候选：西侧服务巷、器材棚", "label": "器材棚"}
+{"task": "position", "input": "事实：路明非沿着服务巷走到巷口。\n当前：器材棚\n候选：器材棚、西侧服务巷", "label": "西侧服务巷"}
+{"task": "position", "input": "事实：路明非从庭院进西回廊。\n当前：庭院\n候选：庭院、西回廊", "label": "西回廊"}
+{"task": "position", "input": "事实：路明非下到地下通道，又原路返回。\n当前：西侧服务巷\n候选：西侧服务巷、地下通道", "label": "西侧服务巷"}
+{"task": "position", "input": "事实：路明非把诺诺背到庭院石阶边。\n当前：西回廊\n候选：西回廊、庭院", "label": "庭院"}
+{"task": "position", "input": "事实：路明非躲在器材棚后墙。\n当前：西侧服务巷\n候选：西侧服务巷、器材棚", "label": "器材棚"}
+{"task": "position", "input": "事实：路明非从钟楼西门出来，进了西回廊。\n当前：钟楼\n候选：钟楼、西回廊", "label": "西回廊"}
+{"task": "position", "input": "事实：路明非跨过小桥，停在桥中间。\n当前：庭院\n候选：庭院、跨溪小桥", "label": "跨溪小桥"}
+{"task": "position", "input": "事实：路明非走进医护附楼，没有停留。\n当前：庭院\n候选：庭院、医护附楼", "label": "医护附楼"}
+{"task": "position", "input": "事实：路明非离开器材棚，去了庭院。\n当前：器材棚\n候选：器材棚、庭院", "label": "庭院"}
+{"task": "position", "input": "事实：路明非在巷口停下，看着庭院。\n当前：西侧服务巷\n候选：西侧服务巷、庭院", "label": "西侧服务巷"}
+{"task": "intent", "input": "角色：诺诺\n任务：等短讯机\n现场：短讯机震动", "label": "act"}
+{"task": "intent", "input": "角色：芬格尔\n任务：拍下裁判\n现场：裁判在门厅", "label": "act"}
+{"task": "intent", "input": "角色：林亦舟\n任务：无\n现场：路明非和诺诺走过", "label": "skip"}
+{"task": "intent", "input": "角色：秦越\n任务：看守器材笼\n现场：演习结束，有人来还装备", "label": "act"}
+{"task": "intent", "input": "角色：诺诺\n任务：无\n现场：巷里没人", "label": "skip"}
+{"task": "intent", "input": "角色：芬格尔\n任务：找相机\n现场：相机在笼子里，笼子锁着", "label": "act"}
+{"task": "intent", "input": "角色：林亦舟\n任务：守住西回廊\n现场：芬格尔靠近", "label": "act"}
+{"task": "intent", "input": "角色：秦越\n任务：登记装备\n现场：芬格尔来借", "label": "act"}
+{"task": "intent", "input": "角色：诺诺\n任务：把电台送到裁判处\n现场：裁判不在", "label": "skip"}
+{"task": "intent", "input": "角色：芬格尔\n任务：无\n现场：演习哨响", "label": "skip"}
+{"task": "intent", "input": "角色：林亦舟\n任务：无\n现场：脚踝疼，想坐下", "label": "act"}
+{"task": "intent", "input": "角色：秦越\n任务：无\n现场：器材笼被打开", "label": "act"}
+{"task": "intent", "input": "角色：诺诺\n任务：等信号\n现场：信号没来", "label": "skip"}
+{"task": "intent", "input": "角色：芬格尔\n任务：拍照\n现场：光线好", "label": "act"}
+{"task": "intent", "input": "角色：林亦舟\n任务：守住门厅\n现场：有人上楼", "label": "act"}
+{"task": "judgment", "input": "行动：路明非把护目镜递给林亦舟\n目标：林亦舟\n骰点：无，林亦舟接过", "label": "achieved"}
+{"task": "judgment", "input": "行动：路明非把箱子挪到一半\n目标：箱子\n骰点：result 9，admitted=true，被卡住", "label": "partial"}
+{"task": "judgment", "input": "行动：路明非推门\n目标：门\n骰点：result 3，admitted=false", "label": "not_achieved"}
+{"task": "judgment", "input": "行动：路明非把电台递给阿豹\n目标：阿豹\n骰点：无，阿豹不在场", "label": "blocked"}
+{"task": "judgment", "input": "行动：路明非看赛区图\n目标：赛区图\n骰点：无", "label": "no_change"}
+{"task": "judgment", "input": "行动：路明非把钥匙扔给诺诺\n目标：诺诺\n骰点：无，她接住", "label": "achieved"}
+{"task": "judgment", "input": "行动：路明非问诺诺\n目标：诺诺\n骰点：无，没有回应", "label": "not_achieved"}
+{"task": "judgment", "input": "行动：路明非推门\n目标：门\n骰点：无，门被顶住", "label": "blocked"}
+{"task": "judgment", "input": "行动：路明非把弹匣递给秦越\n目标：秦越\n骰点：无，秦越接过", "label": "achieved"}
+{"task": "judgment", "input": "行动：路明非把诺诺扶到一半\n目标：诺诺\n骰点：result 7，admitted=true", "label": "partial"}
+{"task": "judgment", "input": "行动：路明非追上芬格尔\n目标：芬格尔\n骰点：result 4，admitted=false，被绊住", "label": "not_achieved"}
+{"task": "judgment", "input": "行动：路明非进器材棚\n目标：器材棚门\n骰点：无，芬格尔拦在门口", "label": "blocked"}
+{"task": "judgment", "input": "行动：路明非把水递给秦越\n目标：秦越\n骰点：无，秦越接过", "label": "achieved"}
+{"task": "judgment", "input": "行动：路明非等人\n目标：无\n骰点：无，时间推进", "label": "no_change"}
+{"task": "judgment", "input": "行动：路明非锁上门\n目标：门\n骰点：无，钥匙在自己手里", "label": "achieved"}
