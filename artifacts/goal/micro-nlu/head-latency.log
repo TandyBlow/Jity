@@ -1,0 +1,2 @@
+PAGE error Failed to load resource: the server responded with a status of 404 (Not Found)
+{"gpuLite":false,"throttle":1,"ok":true,"model":"targets-head","loadMs":241.29999995231628,"grams":1292,"p50":0.09999990463256836,"p95":0.20000004768371582,"min":0}
