@@ -90,7 +90,10 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         : [{ id: 'sa1', text: member.actionText, destination: member.structured?.destination ?? null }];
       const labels: string[] = [];
       for (const subAction of subActions) {
-        const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${rollText}`;
+        const prior = labels.length
+          ? `前序：${labels.map((label, index) => `sa${index + 1}=${label}`).join('、')}；`
+          : '';
+        const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;
         const ids = tok.encode(input, 64);
         const data = BigInt64Array.from(ids, (value) => BigInt(value));
         const mask = BigInt64Array.from(ids, () => 1n);
@@ -110,7 +113,13 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         }
         const label = RESULT[best];
         labels.push(label);
-        const normalized = subAction.text.replace(/我(?!们)/gu, name);
+        let normalized = subAction.text.replace(/我(?!们)/gu, name);
+        // A fact may not name a character outside the group; the action text can.
+        for (const [id, character] of Object.entries(request.state.initial.characters)) {
+          if (id === member.memberId || !character.name) continue;
+          if (request.members.some((row) => row.memberId === id)) continue;
+          normalized = normalized.split(character.name).join('对方');
+        }
         // Only an achieved sub-action may assert its destination. A partial,
         // failed or blocked sub-action must not move anything; updates reads
         // this hint as a settled state change.

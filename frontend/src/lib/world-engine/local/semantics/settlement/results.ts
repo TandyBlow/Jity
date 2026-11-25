@@ -550,7 +550,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     const place = (d: { containerId: string; slotId?: string | null } | null) => (d ? `${d.containerId}${d.slotId ? `/${d.slotId}` : ''}` : '无');
     const subActions = s?.subActions?.length
       ? `
-  子动作：${s.subActions.map((action) => `${action.id} 类别=${action.category} 物品=${action.itemIds.join(',') || '无'} 去向=${place(action.destination)}`).join('；')}`
+  子动作：${s.subActions.map((action) => `${action.id} 类别=${action.category} 物品=${action.itemIds.join(',') || '无'} 去向=${place(action.destination)} 依赖=${action.dependsOn.join(',') || '无'}`).join('；')}`
       : '';
     const structure = s
       ? `
@@ -607,7 +607,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- reason 一句话，20 字以内；facts 每人一句，短句即可。',
-    '- facts 每个成员至少一条自己的行动结果（共同的可以归多人）；有多个子动作时按实际发生的子动作分别写 fact，失败或受阻的子动作写清没有生效；memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
+    '- facts 每个成员至少一条自己的行动结果（共同的可以归多人）；有多个子动作时按实际发生的子动作分别写 fact，失败或受阻的子动作写清没有生效；前序子动作失败或受阻时，依赖它的后续子动作写清未执行，不得按计划写成成功；memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
     '- 不写“任务完成/任务达成/目标达成/成功完成/奖励”这类结论；failed/blocked 照实写，保留“没有/未/被阻止”。',
     '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：只写“看懂了规则牌”会把走路从结果里丢掉；不要写“完成参赛选择/任务”。',
     '- 问话就写谁问了谁、对方答了什么或没答；不要写“骰点未获取，因此未能达成目标”。',
@@ -656,6 +656,7 @@ function mentionedCharacterIds(state: WorldState, text: string): Id[] {
 /** Read the answer into ids. A unique full name resolves to its id; an unknown
  * or placeholder reference is a named error so the retry prompt can fix it, and
  * is never defaulted to some entity. */
+
 function readResultsAnswer(
   value: unknown,
   members: GroupMember[],

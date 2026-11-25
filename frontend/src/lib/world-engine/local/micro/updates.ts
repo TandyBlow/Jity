@@ -81,12 +81,25 @@ export function createMicroUpdates(options: MicroUpdatesOptions = {}): MicroUpda
       entities: request.scanned.length, ms: Math.round(performance.now() - started),
       loadMs: Math.round(runtime.stats().loadMs), source, moved, ...(reason ? { reason } : {}),
     });
+    const hints = readDestinations(Object.values(request.results));
     if (!moved.length) {
+      // A missed move must not erase an explicit structured destination.
+      if (hints.size) {
+        const positions: { entityId: Id; containerId: Id; slotId: Id | null }[] = [];
+        for (const [entityId, hint] of hints) {
+          if (!request.scanned.includes(entityId)) {
+            stats('abstain', `hint_outside_scene:${entityId}`);
+            return null;
+          }
+          positions.push({ entityId, containerId: hint.containerId, slotId: hint.slotId });
+        }
+        stats('micro');
+        return { positions };
+      }
       stats('micro');
       return { positions: [] };
     }
     const positions: { entityId: Id; containerId: Id; slotId: Id | null }[] = [];
-    const hints = readDestinations(Object.values(request.results));
     for (const entityId of moved) {
       const hint = hints.get(entityId);
       if (hint) {
