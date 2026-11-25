@@ -1,0 +1,41 @@
+{
+ "act_skip": {
+  "rows": 80,
+  "labels": {
+   "act": 40,
+   "skip": 40
+  },
+  "cv_accuracy": 0.812,
+  "cv_confusion": {
+   "0->0": 28,
+   "0->1": 12,
+   "1->1": 37,
+   "1->0": 3
+  },
+  "input_tokens_median": 274,
+  "input_tokens_max": 370,
+  "pt_bytes": 41426030,
+  "bytes": 41235906,
+  "int8_bytes": 10549929
+ },
+ "appearance": {
+  "rows": 40,
+  "labels": {
+   "1": 20,
+   "0": 20
+  },
+  "cv_accuracy": 0.925,
+  "cv_confusion": {
+   "1->1": 19,
+   "0->1": 2,
+   "0->0": 18,
+   "1->0": 1
+  },
+  "input_tokens_median": 88,
+  "input_tokens_max": 117,
+  "pt_bytes": 41426248,
+  "bytes": 41235906,
+  "int8_bytes": 10549929
+ },
+ "labels": "authored by the reviewer; not model outputs"
+}

@@ -17,3 +17,4 @@
 - [ ] 4. 统计：每任务 rules/micro/LLM 次数与耗时；首载 vs 回合耗时（`source` 已写入 semanticCalls，随受控 A/B 汇总）。
 - [ ] 5. 真实 20 输入对照（开/关）：回合耗时、结算错误、检查器、叙事质量。
 - [ ] 6. action/reaction 拆分：规则解析 + 专用头 + LLM 回退；开放式文本仍用 LLM。
+- [x] 5d. 人工标签试点头（HPC 278935）：act-skip 80 条 CV 0.812、appearance 40 条 CV 0.925；int8 各 10,549,929 B；浏览器 p50 41.2/17.4 ms；skip 无产品调用点、外貌语料 0/1,382，未接入产品。

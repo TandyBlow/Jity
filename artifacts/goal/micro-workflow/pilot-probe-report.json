@@ -1,0 +1,11 @@
+{
+ "probedAt": "2026-11-25",
+ "page": "/micro-pilot-probe",
+ "runtime": "ORT-WASM int8, 1 thread, headless Edge",
+ "loadMs": 764,
+ "summary": {
+  "act": { "n": 10, "ms_p50": 41.2, "ms_p95": 74.1, "ok": 10 },
+  "appearance": { "n": 10, "ms_p50": 17.4, "ms_p95": 22.8, "ok": 10 }
+ },
+ "note": "10 act/skip + 10 appearance hand-authored samples, encoded at 192 tokens; the probe rows are training rows, so ok is not a generalization metric (see pilot-training-report.json for 5-fold CV)."
+}
