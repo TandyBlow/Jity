@@ -598,7 +598,7 @@ export class UpdatesRunner {
       error: evidence.error,
       raw: evidence.raw,
       promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
-      ...(microMs ? { source: calls.length ? 'model' as const : 'micro' as const } : {}),
+      source: calls.length ? 'model' as const : (microMs ? 'micro' as const : 'program' as const),
       stageMs,
       stages: outcomes.map((outcome, index) => (Array.isArray(value) ? SETTLEMENT_STAGES[index] : value.stage)),
       // The affected projection is evidence the page can print while the turn
