@@ -24,6 +24,7 @@ import { factPhrases, type CommittedNarration, type NarrationFact } from './comm
 export type ViolationKind =
   | 'actor_swap' | 'direction_reversed' | 'wrong_number'
   | 'task_claimed_without_fact' | 'movement_without_fact' | 'state_claim_without_fact'
+  | 'presence_contradiction' | 'item_ownership_contradiction'
   | 'wrong_time' | 'added_event' | 'empty_narration' | 'wrong_person';
 
 export interface AlignmentViolation { kind: ViolationKind; sentence: string; detail: string }
@@ -357,6 +358,12 @@ export interface AlignmentOptions {
   /** Event verbs licensed by the committed player action for this point. A
    * player who declared “推开走廊的门” may be narrated doing it. */
   allowedEvents?: string[];
+  /** Characters committed in the protagonist's room; the prose may not claim
+   * one of them is absent. */
+  presentNames?: string[];
+  /** Items carried by a character in the committed state; the prose may not
+   * put an item into a different character's own pocket. */
+  itemOwners?: { item: string; owner: string }[];
   /** 是否把「未述时间」算作失败。默认 false：现有 renderCommittedNarration
    * 根本不写时间，把它并进事实错误会掩盖「模板缺时间」这个独立发现。
    * 三个臂都按同一口径判事实，时间覆盖由 harness 单独统计。 */
@@ -410,6 +417,38 @@ export function alignNarration(packet: CommittedNarration, text: string, options
           detail: `${wrong.amount} ${wrong.unit} vs expected ${options.time.amount} ${options.time.unit}` });
         continue;
       }
+    }
+
+    // 1b. Presence: a character committed in the room cannot be narrated as
+    // absent. The single-action transfer turn wrote «巷里却没有诺诺» while
+    // Nono was standing in the lane.
+    const absent = (options.presentNames ?? []).find((name) =>
+      new RegExp(`${escape(name)}[^。！？]{0,3}(不在|不见了|没了踪影|已经离开)|(?:没有|不见|找不到)[^。！？]{0,3}${escape(name)}`, 'u').test(sentence));
+    if (absent) {
+      violations.push({ kind: 'presence_contradiction', sentence, detail: `${absent} is present in the committed scene` });
+      continue;
+    }
+
+    // 1c. Item ownership: «X 把护目镜收进自己的胸袋» is false when the
+    // committed item belongs to somebody else.
+    let itemOwnerConflict: { item: string; subject: string; owner: string } | null = null;
+    for (const entry of options.itemOwners ?? []) {
+      if (!sentence.includes(entry.item)) continue;
+      const clause = sentence.split(/[，,；;]/).find((part) => part.includes(entry.item)
+        && /(?:收进|放进|塞进|揣进|装进)[^。！？]{0,4}(?:自己|怀里|胸袋|口袋)/u.test(part));
+      if (!clause) continue;
+      const verbAt = /(?:收进|放进|塞进|揣进|装进)/u.exec(clause)?.index ?? clause.length;
+      const beforeVerb = clause.slice(0, verbAt);
+      const clauseStart = sentence.indexOf(clause);
+      const subject = [...names].filter((name) => beforeVerb.includes(name)).pop()
+        ?? [...names].filter((name) => sentence.slice(0, clauseStart).includes(name)).pop();
+      if (subject && subject !== entry.owner) itemOwnerConflict = { item: entry.item, subject, owner: entry.owner };
+      if (itemOwnerConflict) break;
+    }
+    if (itemOwnerConflict) {
+      violations.push({ kind: 'item_ownership_contradiction', sentence,
+        detail: `${itemOwnerConflict.subject} claims ${itemOwnerConflict.item}, committed to ${itemOwnerConflict.owner}` });
+      continue;
     }
 
     // 2. Actor swap: the payload belongs to a fact whose actor is NOT named,

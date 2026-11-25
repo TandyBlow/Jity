@@ -31,6 +31,22 @@ function reads() {
   return { before, after };
 }
 
+test('rejects an absent claim for a character committed in the room', () => {
+  const { before, after } = reads();
+  const packet = projectCommittedNarration(after, before);
+  const result = alignNarration(packet, '走廊里却没有林川。', { presentNames: ['林川', '周宁'] });
+  expect(result.violations.map((violation) => violation.kind)).toContain('presence_contradiction');
+});
+
+test("rejects putting another character's item into one's own pocket", () => {
+  const { before, after } = reads();
+  const packet = projectCommittedNarration(after, before);
+  const result = alignNarration(packet, '林川把护目镜收进自己的胸袋。', {
+    roster: ['林川', '周宁'], itemOwners: [{ item: '护目镜', owner: '周宁' }],
+  });
+  expect(result.violations.map((violation) => violation.kind)).toContain('item_ownership_contradiction');
+});
+
 describe('saved facts, template baseline and bounded polish', () => {
   test('templates attribute movement, unchanged actors and numbers to the saved records', () => {
     const { before, after } = reads();

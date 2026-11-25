@@ -74,12 +74,27 @@ function softmax(values: number[]): number[] {
   return exps.map((value) => value / sum);
 }
 
-/** Explicit outcome wording from the results lane is deterministic evidence. */
-export function outcomeGate(factText: string): 'yes' | 'partial' | 'no' | null {
+/** Explicit outcome wording is deterministic evidence, but «达到目的» is NOT
+ * task completion: an action can succeed while only one condition is met. */
+export function outcomeGate(factText: string): 'partial' | 'no' | null {
   if (/（没有成功）|（被阻止）|（没有变化）|没有成功|被阻止/u.test(factText)) return 'no';
   if (/（只完成一部分）|只完成一部分/u.test(factText)) return 'partial';
-  if (/（达到目的）|达到目的/u.test(factText)) return 'yes';
   return null;
+}
+
+/** How many of the decomposed goal conditions the fact names. A `yes` from the
+ * pair model is downgraded to partial unless every named condition is covered. */
+export function conditionCoverage(conditions: TaskConditions, factText: string): { matched: number; total: number; missing: string[] } {
+  const checks: Array<[string, boolean]> = [
+    ...(conditions.time ? [[`时间=${conditions.time}`, factText.includes(conditions.time)] as [string, boolean]] : []),
+    ...(conditions.location ? [[`地点=${conditions.location}`, factText.includes(conditions.location)] as [string, boolean]] : []),
+    ...(conditions.item ? [[`物品=${conditions.item}`, factText.includes(conditions.item)] as [string, boolean]] : []),
+    ...(conditions.target ? [[`对象=${conditions.target}`, factText.includes(conditions.target)] as [string, boolean]] : []),
+    ...(conditions.confirmation ? [[`确认=${conditions.confirmation}`, CONFIRM.some((word) => factText.includes(word))] as [string, boolean]] : []),
+    ...(conditions.action ? [[`动作=${conditions.action}`, ACTION.some((word) => factText.includes(word))] as [string, boolean]] : []),
+  ];
+  const missing = checks.filter(([, hit]) => !hit).map(([label]) => label);
+  return { matched: checks.length - missing.length, total: checks.length, missing };
 }
 
 export function createMicroTaskVerifier(options: MicroTaskProgressOptions = {}): MicroTaskVerifierFn {
@@ -146,10 +161,23 @@ export function createMicroTaskVerifier(options: MicroTaskProgressOptions = {}):
         return abstain(started, runtime, options, request.supports.length, 'low_relevance');
       }
       const gate = outcomeGate(support.factText);
+      const conditions = decomposeTask(support.goal, request.state, support.ownerName);
+      const coverage = conditionCoverage(conditions, support.factText);
       const probabilities = score.satisfaction;
       const best = probabilities.indexOf(Math.max(...probabilities));
-      const label = gate ?? SAT[best];
-      const confidence = gate ? 1 : probabilities[best];
+      let label = gate ?? SAT[best];
+      let confidence = gate ? 1 : probabilities[best];
+      // An action success is not a task completion: require the conditions the
+      // goal actually names. Missing conditions cap the verdict at partial;
+      // a fact matching none of them is a no.
+      if (coverage.total > 0 && coverage.matched < coverage.total && label === 'yes') {
+        label = 'partial';
+        confidence = Math.min(confidence, 0.7);
+      }
+      if (coverage.total > 0 && coverage.matched === 0 && label !== 'no') {
+        label = 'no';
+        confidence = Math.min(confidence, 0.7);
+      }
       const minimum = label === 'yes' ? threshold.yes : threshold.satisfaction;
       if (confidence < minimum) {
         return abstain(started, runtime, options, request.supports.length, 'low_confidence');
@@ -159,7 +187,7 @@ export function createMicroTaskVerifier(options: MicroTaskProgressOptions = {}):
         taskId: support.taskId,
         satisfied: label,
         confidence,
-        reason: gate ? `结果词命中：${gate}` : `任务/事实对匹配：${label}`,
+        reason: `条件 ${coverage.matched}/${coverage.total}${coverage.missing.length ? `，缺 ${coverage.missing.join('、')}` : ''}`,
       });
     }
     options.onStats?.({

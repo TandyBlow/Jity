@@ -402,3 +402,10 @@
 - 决定：任务进展由"条件分解 + 事实/条件匹配 + 达成/部分/未达成"多步判断；但 pilot 的 satisfaction 留出只有 9/15，不能直接替换 LLM 核验器。`microTaskVerifier` 只在 `?taskVerifier=micro` 下启用，低置信/低相关一律回退；`micro=1` 默认仍是 LLM 核验器。子任务先做重复过滤（父任务/现有任务同文拒绝），开放式生成保留 LLM。
 - 证据：`task-match-data.jsonl`（80 对，20 任务）、`task-match-report.json`、`task-match-llm-arm.json`；真实回合 tasks 阶段两次空 `achieved`，核验器没有输入；`settlement.test.ts` 的 `subtask_duplicates_existing` 测试。 
 - 影响：不通过降低语义校验换性能；下一个阻塞是任务阶段不提出达成候选，而不是核验器耗时。
+
+## D-035 单动作转移与叙事一致性先于新模型（2026-11-25，用户指令）
+
+- 状态：`signed`（2026-11-25）。
+- 决定：先修「行动成功但状态不变」和「正文与已提交状态矛盾」两条独立故障，不换模型统一处理。状态侧用结构化 `去向=` 进入 projection 与 programScene；叙事侧用在场/物品归属守卫，失败时用已结算事实草稿重写一次，仍失败才回落程序草稿。任务核验移除「达到目的→任务完成」的直接映射，改为逐项条件覆盖；覆盖不足时 yes 降为 partial，零覆盖判 no。
+- 证据：`evidence-transfer-single9.json`（goggles_lu→nono、source=model、problems=0）、`evidence-multi-turn-micro2.json`、`projection.test.ts`、`results.test.ts`、`committed-narration.test.ts`、`task-progress.test.ts`。
+- 影响：不通过放宽校验或提前结束事件换性能；仍待多回合台账泄漏、空移动与 program 回落。

@@ -72,3 +72,7 @@
 - [ ] 15r. 任务达成候选提出头（高精度）+ 更多独立标签；子任务必要性/重复性头；在 tasks 阶段稳定提出候选后再替换核验器。
 - [x] 15s. 连续三回合（micro=1，seed 11）：88.4/118.0/122.8 s、0 失败、4/8/12 点、微型 136/153/143 编码；发现单动作护目镜转移未生效且正文与 nearby 矛盾，需 probe。
 - [ ] 15t. 单动作转移一致性 probe：action structure / targets / results facts / `去向=` 链路；修复后复跑三回合。
+- [x] 15u. 单动作转移根因：projection 读取 `去向=`；programScene 事实自带去向即覆盖；results programTransferAllowed + 在场守卫；单测 4 条；transfer-single9 状态/正文一致。
+- [x] 15v. 叙事状态守卫：presence/item ownership 两类 violation；candidate + instruct 路径检查；instruct 矛盾时用事实草稿重写一次；零时长/台账标记清理。
+- [x] 15w. 任务核验条件化：`outcomeGate` 不再把「达到目的」直接判 yes；`conditionCoverage` 缺失条件时 yes→partial、0 覆盖→no；单测覆盖。
+- [ ] 15x. 剩余叙事问题：多回合台账泄漏、空移动、ambiguous「放下」；program_text_not_model 回退回合。

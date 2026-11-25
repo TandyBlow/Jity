@@ -1,0 +1,3 @@
+[
+  {"id": "transfer-single", "input": "我把护目镜递给诺诺。", "purpose": "single-action transfer regression"}
+]

@@ -53,7 +53,9 @@ function programScenePositions(state: WorldState, results: Record<Id, string>, s
   }
   for (const fact of facts) {
     if (!MOVEMENT_WORDS.some((word) => fact.text.includes(word))) continue;
-    if (hints.has(fact.memberId)) continue;
+    // A structured destination on the fact covers it; the entity may be an
+    // item (transfer), not the fact's member.
+    if (hints.has(fact.memberId) || readDestinations([fact.text]).size > 0) continue;
     if (FAILURE_WORDS.some((word) => fact.text.includes(word))) continue;
     const destination = destinationOfFact(state, fact.text);
     const current = state.characters[fact.memberId]?.position;

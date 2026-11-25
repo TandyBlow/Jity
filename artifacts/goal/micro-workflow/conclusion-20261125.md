@@ -295,3 +295,11 @@
 - 「我把护目镜递给诺诺。」→「我走进庭院。」→「我观察庭院里唐骁的位置。」三回合全部 COMPLETED、0 失败；回合 88.4 / 118.0 / 122.8 s；点 4 / 8 / 12；微型编码 136 / 153 / 143 次，端口累计 4.96 / 4.47 / 4.26 s；JS heap 146 / 109 / 147 MB。桌面 60 s 仍未达到，三回合都靠 LLM updates 主导。
 - **状态不一致（需要定向排查）**：第一回合输入「我把护目镜递给诺诺。」，状态里 `goggles_lu` 仍在 `lu`，没有转给诺诺；同回合正文写「巷里却没有诺诺」，但 `after.nearby=诺诺`、诺诺就在西侧服务巷。相同转移在复合输入「我把护目镜递给诺诺，然后走进庭院。」的微型臂此前成功（护目镜→诺诺）。这说明单动作转移的 target/item 结构或 results 判定存在方差，不是 continuation 的问题；下一轮用固定输入回放 probe 结构、targets、results 与 facts。
 - 第二回合路明非到达庭院（yard），第三回合仍能在庭院观察唐骁；位置推进本身一致。三回合的自动链都在 `continuation_policy_no_progress` 结束。
+
+## 单动作转移与叙事一致性修复（2026-11-25）
+
+- 根因链（`evidence-multi-turn-micro.json` → 修复后 `evidence-transfer-single9.json`）：action structure 正确（assist、target=nono、item=goggles_lu、destination=goggles_lu:nono），targets 正确（nono）；results 事实也正确（`去向=goggles_lu:nono`）。失败在 updates：projection 只按事实**文本**扫实体，两个「护目镜」同名歧义导致 `goggles_lu` 不在 `affectedMovable`；`programScenePositions` 又因为「递给」是移动词而该事实没有 **member** 的 `去向` 直接弃权；localPosition 只问路明非，返回 `{"changes":[]}`，物品不动。
+- 修复：projection 读取 `去向=`，把物品和容器加入 affected entities；`programScenePositions` 把「事实自己的去向」视为已覆盖；micro results 新增 `programTransferAllowed`（物品在行动者手上 + 目标同房间 + 转移动词 + 无阻止词）直接判 achieved 并写去向，`factContradictsPresence` 阻止「在场人物被说成不在」。
+- 叙事一致性：`alignNarration` 新增 `presence_contradiction`（在场人物被写缺席）和 `item_ownership_contradiction`（把别人的物品收进自己口袋）；candidate 路径和 instruct 路径都跑同一检查。instruct 路径首次矛盾时用**已结算事实草稿**重写一次；成功则保留模型正文，失败才回落程序草稿。`factualNarration` 不再输出 `去向=`/`涉及=` 标记，零时长不再写「0秒」。
+- 验证：`transfer-single9` 状态 `goggles_lu→nono`、正文「路明非向诺诺递了护目镜…」、source=model、problems=0；`evidence-multi-turn-micro2.json` 三回合护目镜都在诺诺，未再出现「没有诺诺/收进胸袋」。单测：projection 包含去向物品、settlement programScene 应用物品去向、results 转移/在场守卫、alignment 两类矛盾、task 条件覆盖。
+- 仍存在：多回合后两回合正文夹带结果台账（「凯撒：查看红方短讯机。（只完成一部分）」）和「从中央庭院走到中央庭院」空移动；「放下护目镜」在状态为诺诺持有时仍有歧义；重写失败的回合会回落程序草稿，驱动报 `program_text_not_model`（`evidence-transfer-single7/8`）。

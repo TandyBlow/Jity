@@ -1,6 +1,8 @@
 /** Micro results: per-member head labels plus templated facts. A low-confidence
  * member makes the whole call abstain; the LLM then answers as before. */
 import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlement/types';
+import type { WorldState } from '../../types';
+import { roomOf } from '../prompt';
 import { createBertTokenizer, type BertTokenizer } from './tokenizer';
 import { createMicroRuntime } from './runtime';
 
@@ -27,6 +29,41 @@ export function programMoveAllowed(input: {
 const OUTCOME: Record<string, string> = {
   achieved: 'completed', partial: 'partial', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
 };
+
+const TRANSFER = ['递给', '交给', '塞给', '递到', '送给', '递上'];
+
+/** A transfer is program-confirmed only when the item is in the actor's hands,
+ * the target is in the same room, the text names a transfer verb, and nothing
+ * obstructs it. This prevents the results head from inventing an absent target
+ * (the single-action goggles turn did exactly that). */
+export function programTransferAllowed(input: {
+  text: string;
+  category: string;
+  destination: { entityId: string; containerId: string } | null | undefined;
+  memberId: string;
+  state: WorldState;
+}): boolean {
+  if (input.category !== 'assist' || !input.destination) return false;
+  const item = input.state.items[input.destination.entityId];
+  const target = input.state.initial.characters[input.destination.containerId];
+  if (!item || !target) return false;
+  if (item.position.containerId !== input.memberId) return false;
+  if (roomOf(input.state, input.destination.containerId) !== roomOf(input.state, input.memberId)) return false;
+  if (!TRANSFER.some((word) => input.text.includes(word))) return false;
+  if (OBSTRUCTION.some((word) => input.text.includes(word))) return false;
+  return true;
+}
+
+/** A fact may not claim a visible character is absent. If it does, the micro
+ * answer abstains and the LLM results lane decides from the full scene. */
+export function factContradictsPresence(text: string, visibleNames: readonly string[]): boolean {
+  return visibleNames.some((name) => {
+    const at = text.indexOf(name);
+    if (at < 0) return false;
+    const around = text.slice(Math.max(0, at - 4), at) + text.slice(at + name.length, at + name.length + 4);
+    return /没有|不在|不见|却不在/u.test(around);
+  });
+}
 
 /** A structured movement hint from the action text: `entity:container`.
  * The updates port reads it instead of guessing a destination from prose. */
@@ -106,6 +143,10 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         ? member.structured.subActions
         : [{ id: 'sa1', text: member.actionText, category: member.structured?.category ?? 'other', destination: member.structured?.destination ?? null, order: 1, dependsOn: [] as string[] }];
       const labels: string[] = [];
+      const visibleNames = Object.entries(request.state.characters)
+        .filter(([id]) => id !== member.memberId && roomOf(request.state, id) === roomOf(request.state, member.memberId))
+        .map(([, row]) => request.state.initial.characters[row.id]?.name ?? row.id)
+        .filter(Boolean);
       for (const subAction of subActions) {
         const priorBlocked = (subAction.dependsOn ?? []).some((id) => {
           const index = Number(id.replace('sa', '')) - 1;
@@ -123,13 +164,17 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           currentContainer: current?.containerId ?? null,
           isLocation: Boolean(destination?.containerId && request.state.initial.locations[destination.containerId]),
         });
+        const programTransfer = !priorBlocked && programTransferAllowed({
+          text: subAction.text, category: subAction.category, destination,
+          memberId: member.memberId, state: request.state,
+        });
         const prior = labels.length
           ? `前序：${labels.map((label, index) => `sa${index + 1}=${label}`).join('、')}；`
           : '';
         let label: string;
         if (priorBlocked) {
           label = 'blocked';
-        } else if (programMove) {
+        } else if (programMove || programTransfer) {
           label = 'achieved';
         } else {
           const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;
@@ -155,6 +200,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         }
         labels.push(label);
         let normalized = subAction.text.replace(/我(?!们)/gu, name);
+        if (factContradictsPresence(normalized, visibleNames)) return null;
         // A fact may not name a character outside the group; the action text can.
         // The id is kept in a structured marker so the outsider is not lost.
         const outsiderIds: string[] = [];

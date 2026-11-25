@@ -168,6 +168,7 @@ interface PointNarrationSnapshot {
 const FATAL_ALIGNMENT = new Set([
   'added_event', 'actor_swap', 'direction_reversed', 'wrong_number',
   'movement_without_fact', 'task_claimed_without_fact', 'state_claim_without_fact',
+  'presence_contradiction', 'item_ownership_contradiction',
 ]);
 
 
@@ -635,7 +636,51 @@ export class LocalGameModel implements WorldModelPort {
         throw caught;
       }
     }
-    const text = protocolText(raw);
+    let text = protocolText(raw);
+    let consistency = this.stateConsistencyViolations(before, delta, after, view, playerInput, text);
+    if (consistency.length) {
+      // One repair call with the explicit contradiction. A program draft is
+      // only the last resort; the product path prefers model prose.
+      const draftForRepair = factualNarration(before, delta, after, view, playerInput, resultsText);
+      const repair = `你是中文小说作者。把下面这段已经结算的事实改写成 2 到 3 句第三人称正文；不得改变事实，不得新增人物、动作、物品或去向，不得写与事实相反的在场或缺席。
+事实：${draftForRepair}
+正文：`;
+      try {
+        const repaired = await this.narrationEngine.complete(
+          this.options.narrationMode === 'instruct' ? chatml(repair) : repair,
+          {
+            maxTokens: this.options.narrationMaxTokens ?? 240,
+            temperature: this.options.narrationTemperature ?? 0.45,
+            timeoutMs: this.options.narrationTimeoutMs ?? 150_000,
+            ...(this.options.narrationMode === 'instruct' ? { stop: ['<|im_end|>'] } : {}),
+          },
+        );
+        const repairedText = protocolText(repaired);
+        const repairedViolations = this.stateConsistencyViolations(before, delta, after, view, playerInput, repairedText);
+        if (repairedText.trim() && !repairedViolations.length) {
+          raw = repaired;
+          text = repairedText;
+          consistency = [];
+        }
+      } catch {
+        // The repair is best-effort; the draft stays the last resort below.
+      }
+    }
+    if (consistency.length) {
+      const draft = factualNarration(before, delta, after, view, playerInput, resultsText);
+      this.options.onNarrationEvidence?.({ pointId, stateConsistencyRejected: consistency, replacedWith: 'draft' });
+      this.options.onNarrationDebug?.({ pointId, raw, text: draft, rawAttempts: [raw], prompt: brief.prompt, violations: consistency.map((row) => row.kind) });
+      this.options.onTask?.('narration', key, {
+        ms: performance.now() - started, fallback: true, error: 'state_consistency_violation', raw: draft,
+        promptChars: brief.prompt.length, source: 'fallback',
+      });
+      this.options.onNarrationComplete?.({
+        pointId, raw: draft,
+        completion: { raw: draft, finishReason: 'stop', firstTokenMs: null, wallMs: performance.now() - started },
+        fallback: true, source: 'program', segments: [],
+      });
+      return { value: draft as unknown as Json, raw: draft, ms: performance.now() - started, fallback: true, error: 'state_consistency_violation' };
+    }
     const empty = text.trim().length === 0;
     this.options.onNarrationDebug?.({ pointId, raw, text, rawAttempts: [raw], prompt: brief.prompt });
     this.options.onTask?.('narration', key, {
@@ -669,6 +714,11 @@ export class LocalGameModel implements WorldModelPort {
       locations: Object.values(after.initial.locations).map((entity) => entity.name),
       time: delta.timeAdvance?.duration ?? null,
       knownPositions: visibleCharacters(after, view).filter((id) => id !== view).map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
+      presentNames: visibleCharacters(after, view).filter((id) => id !== view).map((id) => after.initial.characters[id]?.name ?? id),
+      itemOwners: Object.entries(after.items).flatMap(([id, row]) => {
+        const owner = after.initial.characters[row.position.containerId]?.name;
+        return owner ? [{ item: after.initial.items[id]?.name ?? id, owner }] : [];
+      }),
       allowedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
     };
     const sceneNamesList = sceneNames(after, view);
@@ -877,6 +927,34 @@ export class LocalGameModel implements WorldModelPort {
     if (grounding.count === 0 && [...text].length > 40) return '';
     return text;
   }
+  /** State-consistency violations for a finished narration text. This is the
+   * same aligned check as gateBeat, exposed for routes that bypass it. */
+  private stateConsistencyViolations(
+    before: WorldState | null,
+    delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> },
+    after: WorldState,
+    view: Id,
+    playerInput: string,
+    text: string,
+  ) {
+    const packet = alignmentPacket(before, delta, after);
+    const alignment = alignNarration(packet, text, {
+      roster: Object.values(after.initial.characters).map((entity) => entity.name),
+      locations: Object.values(after.initial.locations).map((entity) => entity.name),
+      time: delta.timeAdvance?.duration ?? null,
+      knownPositions: visibleCharacters(after, view).filter((id) => id !== view)
+        .map((id) => ({ name: after.initial.characters[id]?.name ?? id, location: locationName(after, roomOf(after, id)) })),
+      presentNames: visibleCharacters(after, view).filter((id) => id !== view)
+        .map((id) => after.initial.characters[id]?.name ?? id),
+      itemOwners: Object.entries(after.items).flatMap(([id, row]) => {
+        const owner = after.initial.characters[row.position.containerId]?.name;
+        return owner ? [{ item: after.initial.items[id]?.name ?? id, owner }] : [];
+      }),
+      allowedEvents: EVENT_VERBS.filter((verb) => playerInput.includes(verb)),
+    });
+    return alignment.violations.filter((violation) => FATAL_ALIGNMENT.has(violation.kind));
+  }
+
   /** Run the configured candidate for this point. The candidate's text is used
    * exactly as returned; only an empty answer falls through. */
   private async adoptNarrationCandidate(
@@ -899,6 +977,16 @@ export class LocalGameModel implements WorldModelPort {
       settledFacts,
     }, (state) => this.options.onNarrationProgress?.({ pointId, raw: state.text, elapsedMs: state.elapsedMs }));
     if (result.kind !== 'adopted') {
+      return null;
+    }
+    // The candidate route bypasses gateBeat; run the same state-consistency
+    // check here. A contradiction rejects this candidate and lets the beat
+    // writer produce a grounded text.
+    if (this.stateConsistencyViolations(before, delta, after, after.protagonistId, playerInput, result.text).length) {
+      this.options.onNarrationEvidence?.({
+        pointId, candidateId: result.candidateId, route: result.route,
+        stateConsistencyRejected: true,
+      });
       return null;
     }
     this.options.onTask?.('narration', pointId, {
@@ -998,7 +1086,7 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
   const out: string[] = [];
   const name = after.initial.characters[view]?.name ?? view;
   const time = delta.timeAdvance;
-  if (time) out.push(`时间过去了约${time.duration.amount}${timeUnit(time.duration.unit)}。`);
+  if (time && time.duration.amount > 0) out.push(`时间过去了约${time.duration.amount}${timeUnit(time.duration.unit)}。`);
   const change = delta.entityDeltas?.[view];
   const room = roomOf(after, view);
   const place = locationName(after, room);
@@ -1016,7 +1104,11 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
     out.push(declared.startsWith(name) ? endSentence(declared) : `${name}${declared}。`);
   }
   const actionGrams = bigramsOf(declared);
-  for (const settled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
+  for (const rawSettled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
+    // Structured markers are evidence, not prose.
+    if (/^(?:去向|涉及)=/u.test(rawSettled)) continue;
+    const settled = rawSettled.replace(/；?去向=[^；。]*/gu, '').replace(/；?涉及=[^；。]*/gu, '').trim();
+    if (!settled) continue;
     if (/完成了刚才的动作|行动发生了，但没有产生新的结果|本组结算未能确认|未能确认新的结果|向.+移动/u.test(settled)) continue;
     const sentence = endSentence(settled.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name));
     if (out.includes(sentence)) continue;

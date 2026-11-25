@@ -12,6 +12,7 @@
 import type { EntityDelta, Id, WorldState } from '../../../types';
 import type { SettlementStage } from './support';
 import { activeRecords, allTasks, resultFacts } from './support';
+import { readDestinations } from './fact-destinations';
 
 export interface UnaffectedRow {
   id: Id;
@@ -112,6 +113,15 @@ export function projectPoint(
     if (GLOBAL_WORDS.some((word) => fact.text.includes(word))) global = true;
     for (const id of names.keys()) {
       if (mentions(fact.text, id, names)) factEntities.add(id);
+    }
+  }
+  // A structured `去向=` is an explicit affected entity even when the prose
+  // name is ambiguous (two goggles): include the item and its container so the
+  // position projection scans it instead of asking only the actor.
+  for (const [entityId, destination] of readDestinations(facts.map((fact) => fact.text))) {
+    if (state.items[entityId] || state.characters[entityId]) factEntities.add(entityId);
+    if (state.items[destination.containerId] || state.characters[destination.containerId]) {
+      factEntities.add(destination.containerId);
     }
   }
   for (const id of factEntities) {
