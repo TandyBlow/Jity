@@ -1,0 +1,650 @@
+{
+ "summary": {
+  "rows": 80,
+  "llm_parse": 63,
+  "model_correct": 73,
+  "llm_correct": 40
+ },
+ "rows": [
+  {
+   "task_id": "task_lu_goggles",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.999,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_goggles",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.996,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_goggles",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_choice",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_choice",
+   "label": "partial",
+   "llm": null,
+   "model": "partial",
+   "model_confidence": 0.993,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_choice",
+   "label": "no",
+   "llm": null,
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_kit",
+   "label": "yes",
+   "llm": "yes",
+   "model": "no",
+   "model_confidence": 0.546,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_kit",
+   "label": "partial",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.96,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_kit",
+   "label": "no",
+   "llm": "yes",
+   "model": "no",
+   "model_confidence": 0.987,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_rules",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.999,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_rules",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.994,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_rules",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_nono_battery",
+   "label": "yes",
+   "llm": "yes",
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_nono_battery",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_nono_battery",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_nono_wounded",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_nono_wounded",
+   "label": "partial",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_nono_wounded",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.923,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_caesar_win",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_caesar_win",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.943,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_caesar_win",
+   "label": "no",
+   "llm": "yes",
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_caesar_contact",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_caesar_contact",
+   "label": "partial",
+   "llm": "no",
+   "model": "yes",
+   "model_confidence": 0.701,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_caesar_contact",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.986,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tang_ammo",
+   "label": "yes",
+   "llm": "yes",
+   "model": "no",
+   "model_confidence": 0.945,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tang_ammo",
+   "label": "partial",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.978,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tang_ammo",
+   "label": "no",
+   "llm": "yes",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tang_report",
+   "label": "yes",
+   "llm": "yes",
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tang_report",
+   "label": "partial",
+   "llm": "yes",
+   "model": "partial",
+   "model_confidence": 0.996,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tang_report",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lin_leave",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lin_leave",
+   "label": "partial",
+   "llm": "yes",
+   "model": "partial",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lin_leave",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lin_call",
+   "label": "yes",
+   "llm": "yes",
+   "model": "yes",
+   "model_confidence": 0.999,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lin_call",
+   "label": "partial",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.993,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lin_call",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_su_report",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_su_report",
+   "label": "partial",
+   "llm": "yes",
+   "model": "partial",
+   "model_confidence": 0.996,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_su_report",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_qin_stretcher",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.999,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_qin_stretcher",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_qin_stretcher",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_doctor_treat",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_doctor_treat",
+   "label": "partial",
+   "llm": "yes",
+   "model": "partial",
+   "model_confidence": 0.993,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_doctor_treat",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_zhou_rope",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_zhou_rope",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.993,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_zhou_rope",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_shen_symptom",
+   "label": "yes",
+   "llm": "yes",
+   "model": "yes",
+   "model_confidence": 0.991,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_shen_symptom",
+   "label": "partial",
+   "llm": "yes",
+   "model": "partial",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_shen_symptom",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tomiyama_shen",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tomiyama_shen",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.989,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_tomiyama_shen",
+   "label": "no",
+   "llm": null,
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_manstein_clock",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_manstein_clock",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.992,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_manstein_clock",
+   "label": "no",
+   "llm": "yes",
+   "model": "no",
+   "model_confidence": 0.99,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_fingel_camera",
+   "label": "yes",
+   "llm": null,
+   "model": "yes",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_fingel_camera",
+   "label": "partial",
+   "llm": "no",
+   "model": "partial",
+   "model_confidence": 0.992,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_fingel_camera",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 1
+  },
+  {
+   "task_id": "task_lu_goggles",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_lu_choice",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_lu_kit",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_lu_rules",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_nono_battery",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.994,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_nono_wounded",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_caesar_win",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_caesar_contact",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.892,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_tang_ammo",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_tang_report",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.998,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_lin_leave",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_lin_call",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.974,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_su_report",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_qin_stretcher",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_doctor_treat",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.995,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_zhou_rope",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_shen_symptom",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_tomiyama_shen",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_manstein_clock",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.996,
+   "relevance": 0
+  },
+  {
+   "task_id": "task_fingel_camera",
+   "label": "no",
+   "llm": "no",
+   "model": "no",
+   "model_confidence": 0.997,
+   "relevance": 0
+  }
+ ]
+}

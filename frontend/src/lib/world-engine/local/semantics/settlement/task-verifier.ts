@@ -62,9 +62,31 @@ export async function verifyTaskAchievements(
   ctx: VerifierContext,
   supports: TaskSupport[],
 ): Promise<VerifierResult> {
+  const started = performance.now();
   const facts = resultFacts(ctx.results);
   const byFact = new Map(facts.map((fact) => [fact.id, fact]));
   const index = taskIndex(ctx.state);
+  if (ctx.options.microTaskVerifier && supports.length) {
+    try {
+      const micro = await ctx.options.microTaskVerifier({
+        supports: supports.map((support) => ({
+          characterId: support.characterId,
+          taskId: support.taskId,
+          goal: index.get(support.taskId)?.task.goal ?? support.taskId,
+          ownerName: ctx.state.initial.characters[support.characterId]?.name ?? support.characterId,
+          factText: support.basis === 'time'
+            ? `当前世界时间是 ${ctx.state.time.dateTime}`
+            : (byFact.get(support.basis)?.text ?? support.basis),
+        })),
+        state: ctx.state,
+      });
+      if (micro && micro.length === supports.length) {
+        return { judgments: micro, raw: '', ms: performance.now() - started, calls: [] };
+      }
+    } catch {
+      // A micro verifier failure is an abstain; the LLM verifier runs below.
+    }
+  }
   const lines = supports.map((support) => {
     const row = index.get(support.taskId);
     const goal = row?.task.goal ?? support.taskId;

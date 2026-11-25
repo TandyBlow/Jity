@@ -1,0 +1,29 @@
+{
+ "rows": 80,
+ "train": 60,
+ "test": 20,
+ "held_tasks": [
+  "task_caesar_contact",
+  "task_lin_call",
+  "task_lu_kit",
+  "task_nono_wounded",
+  "task_tang_ammo"
+ ],
+ "relevance_confusion": {
+  "1->1": 14,
+  "1->0": 1,
+  "0->0": 4,
+  "0->1": 1
+ },
+ "satisfaction_confusion": {
+  "yes->no": 2,
+  "partial->no": 4,
+  "no->no": 5,
+  "yes->yes": 3,
+  "partial->yes": 1
+ },
+ "input_tokens_median": 42,
+ "input_tokens_max": 65,
+ "bytes": 41238429,
+ "int8_bytes": 10551953
+}

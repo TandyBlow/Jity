@@ -2311,6 +2311,7 @@ function readSubtaskProposals(
   const realByKey = new Map([...keys].map(([id, key]) => [key, id]));
   const used = new Set<Id>([...allKnownTaskIds(state), ...allEntityIds(state)]);
   const usedGoals = new Set<string>();
+  const existingGoals = new Set(allTasks(state).map(({ task }) => normalizeChangeText(task.goal)));
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('subtask must be an object');
@@ -2323,6 +2324,13 @@ function readSubtaskProposals(
     if (!parent) throw new Error(referenceError(state, parentTaskId, 'task', allTasks(state)[0]?.task.id));
     const goal = asString(raw.goal);
     if (!goal) throw new Error(`subtask for ${parentTaskId} has an empty goal`);
+    // A subtask that restates its parent or any existing task is not a new
+    // goal; it only repeats the ledger and would make the next round look busy.
+    const normalizedGoal = normalizeChangeText(goal);
+    if (normalizedGoal === normalizeChangeText(parent.task.goal) || existingGoals.has(normalizedGoal)) {
+      options.rejections?.push({ parentTaskId, goal, reason: 'subtask_duplicates_existing' });
+      continue;
+    }
     // A new goal has to come from this point: the 0.6B invented one unrelated
     // subtask ("红方确认可溪小桥的通行权") under t1 in all four probe cases,
     // including the point where nothing happened at all.

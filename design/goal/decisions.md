@@ -395,3 +395,10 @@
 - 数据与边界：`continuation-data.jsonl` 432 行/84 场景/14 人物，标签由规则生成（多正例）；留出人物 caesar/lin/qin/tomiyama。四头留出混淆 novelty 102/107、unfinished 107/107、necessity 102/107、intervene 107/107（正例仅 3 条）；决策层与规则臂 24/24 场景同角色。该结果只说明模型复现规则标签，不作为语义泛化或优于 LLM 的证据。
 - 证据：真实录音 39 次 continuation 调用固定输入回放，micro 与录制 LLM 接受的 character set 一致 39/39；但录制 LLM 38/39 继续，回放不证明质量。四臂完整回合（同输入、seed 11）：LLM-only 257.7 s / 104 接受调用（本轮未到 continuation，turn_budget；上一轮同输入 261.0 s / 2 个自动点）；micro 无 continuation 150.8 s / 119 / 4 次 36.3 s / 3 个自动点；micro 直接规则 153.6 s / 119 / 4 次 0.0 s / 3 个自动点；micro 四头 99.2 s / 109 / 3 次 0.7 s / 2 个自动点。规则 vs 四头 seed 11 为 153.6→99.2 s（少一个自动点），seed 17 为 95.7→91.5 s（状态相同、只差 4.2 s）；两 seed 合计 −29.3 s 但差异来自 seed 11 的额外自动点，直接规则 vs 四头尚无稳定差异。四头相对 LLM continuation 两 seed 分别省 51.6/62.2 s；直接规则在 seed 17 省 58.0 s，在 seed 11 因 updates/narration 轨迹更慢反而 +2.8 s。每次玩家操作四头臂：task calls 52、共享编码器 137（推理规模以此计）、头输出 488（不是推理次数）、候选评分 137；接受任务来源 program 37 / micro 29 / model 33，10 次 model attempt 单列，未标注 0。
 - 影响：`?micro=1&microContinuation=0` 保留上一版微型工作流作对照，`microContinuation=rule` 直接执行规则作四头对照；默认 LLM 路径不变。下一步：独立评价者填 50 行盲评；按分歧修规则/数据；reaction 微型工作流已接入（触发分类 + 意图候选 + judge 三头 + 合理性门，真实威胁回合 source=micro），专用反应头与多威胁回合 A/B 仍待做；扩大输入与 seed。
+
+## D-034 tasks/subtasks 微型工作流先做核验，不先替换任务阶段（2026-11-25，用户指令）
+
+- 状态：`signed`（2026-11-25）。
+- 决定：任务进展由"条件分解 + 事实/条件匹配 + 达成/部分/未达成"多步判断；但 pilot 的 satisfaction 留出只有 9/15，不能直接替换 LLM 核验器。`microTaskVerifier` 只在 `?taskVerifier=micro` 下启用，低置信/低相关一律回退；`micro=1` 默认仍是 LLM 核验器。子任务先做重复过滤（父任务/现有任务同文拒绝），开放式生成保留 LLM。
+- 证据：`task-match-data.jsonl`（80 对，20 任务）、`task-match-report.json`、`task-match-llm-arm.json`；真实回合 tasks 阶段两次空 `achieved`，核验器没有输入；`settlement.test.ts` 的 `subtask_duplicates_existing` 测试。 
+- 影响：不通过降低语义校验换性能；下一个阻塞是任务阶段不提出达成候选，而不是核验器耗时。

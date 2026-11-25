@@ -279,3 +279,12 @@
 
 - 44 次接受 updates 调用的 stage 时间：tasks 3 次 22.3 s、position 14 次 20.1 s、subtasks 3 次 15.1 s、appearance 3 次 7.2 s。位置阶段已被局部小提示和程序场景压过一轮，但仍是调用次数最多的；tasks/subtasks 只有 6 次调用却占 37.4 s，是下一个高耗时目标。
 - 这两个阶段是质量敏感的"任务是否达成/是否需要新增子任务"判断，不能直接用现有 results 头替代；需要先补真实正例与反例，再训练专用头并保留 LLM 回退。
+
+## tasks/subtasks 微型工作流（2026-11-25，pilot）
+
+- 条件分解：`micro/task-progress.ts` 把任务目标拆成时间/地点/物品/对象/确认/动作六类条件（`decomposeTask`），并把结果词的 `（达到目的）/（只完成一部分）/（没有成功）` 作为确定性结果门。
+- pair 模型：MiniRBT 句对编码 + `relevance` + `satisfaction`（yes/partial/no），数据 `task-match-data.jsonl` 80 对（20 个任务 × 正/部分/否 + 20 条无关事实），作者手写，非规则生成。留出 5 个任务 20 行：relevance 18/20，satisfaction 9/15（yes 3/5、partial 1/5、no 5/5）；全量 73/80 是样本内数字。Qwen3-0.6B 逐对核验 63/80 可解析、其中 40 正确。模型只有 60% 的留出满意度，不能替代 LLM 核验器。
+- 接入：`verifyTaskAchievements` 支持 `microTaskVerifier`；低 relevance/低置信一律返回 null，LLM 核验器继续作为权威；不做"用模型直接判定达成"。页面只在 `?taskVerifier=micro` 时创建该端口，`micro=1` 默认仍用 LLM 核验器。
+- 真实回合（「我把护目镜戴好，检查镜片有没有裂纹」「我向诺诺问清红蓝局势…」，`taskVerifier=micro`）：tasks 阶段两次都返回空 `achieved`，micro 端口没有输入；问题在**任务阶段不提出达成候选**，不是核验器太慢。护目镜任务仍是 pending。
+- subtask 过滤：`readSubtaskProposals` 新增 `subtask_duplicates_existing`，拒绝与父任务或任何现有任务同文的子任务；测试 `settlement.test.ts` 覆盖。开放式子任务生成仍由 LLM 负责。
+- 下一步：补独立人工标签与更多任务/事实对；先做"达成候选提出"头（严格高精度），再做子任务必要性/重复性头；在 tasks 阶段能稳定提出候选之前，不把核验器换成微型模型。

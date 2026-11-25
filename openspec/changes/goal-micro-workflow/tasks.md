@@ -67,3 +67,6 @@
 - [x] 15m. 移动端代理：CPU 4× + GPU lite、micro=1，回合 284.3 s、turn_budget、2 点；微型 110 编码/382 头输出/15.45 s；各端口加载合计约 4.4 s；JS heap 111 MB；多模型驻留未崩。
 - [ ] 15n. 真机移动浏览器 + 共享 runtime/共享编码器加载 + VRAM/温度；60 秒口径复测。
 - [ ] 15o. updates 剩余成本：tasks 22.3 s/3、position 20.1 s/14、subtasks 15.1 s/3、appearance 7.2 s/3；下一目标 tasks/subtasks（6 次调用 37.4 s），需先补训练正反例。
+- [x] 15p. tasks/subtasks pilot：条件分解 + MiniRBT 句对 relevance/satisfaction 头（80 对，留出 20 行；relevance 18/20、satisfaction 9/15）；`microTaskVerifier` 默认关闭，`taskVerifier=micro` 可开；真实回合 tasks 阶段两次空 achieved，核验器未触发。
+- [x] 15q. 子任务重复过滤：拒绝与父任务/现有任务同文的子任务；测试 1 条。
+- [ ] 15r. 任务达成候选提出头（高精度）+ 更多独立标签；子任务必要性/重复性头；在 tasks 阶段稳定提出候选后再替换核验器。

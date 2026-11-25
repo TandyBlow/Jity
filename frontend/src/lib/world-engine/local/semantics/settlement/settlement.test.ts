@@ -1423,6 +1423,17 @@ describe('six-stage updates', () => {
     expect((ran.evidence.detail as { skipped?: string }).skipped).toBeUndefined();
   });
 
+  it('rejects a subtask that restates its parent goal', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ subtasks: [{ parentTaskId: 'a1', goal: '拿到工具' }] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g_sub', {
+      groupId: 'g_sub', stage: 'subtasks', results: { a: '甲把工具拿在手里。' }, workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).toMatchObject({ stage: 'subtasks', changes: {} });
+    const detail = outcome.evidence.detail as { stageDetail?: { rejectedSubtasks: { reason: string; goal: string }[] } };
+    expect(detail.stageDetail?.rejectedSubtasks).toEqual([expect.objectContaining({ reason: 'subtask_duplicates_existing', goal: '拿到工具' })]);
+  });
+
   it('runs the canonical six stages, moves an item, covers the full cast, and pairs personality with sanity', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [

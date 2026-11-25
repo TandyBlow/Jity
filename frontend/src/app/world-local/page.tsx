@@ -16,6 +16,7 @@ import { createMicroBehavior } from '@/lib/world-engine/local/micro/behavior';
 import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micro/judges';
 import { createMicroContinuation } from '@/lib/world-engine/local/micro/continuation';
 import { createMicroReaction } from '@/lib/world-engine/local/micro/reaction';
+import { createMicroTaskVerifier } from '@/lib/world-engine/local/micro/task-progress';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -591,6 +592,10 @@ export default function WorldLocalPage() {
     const value = new URLSearchParams(window.location.search).get('microContinuation');
     return value === '0' ? 'off' : value === 'rule' ? 'rule' : 'heads';
   });
+  // The task verifier pilot is not enabled by `micro=1`: its held-out
+  // satisfaction accuracy is still too low to replace the LLM verifier.
+  const [taskVerifierMicro] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('taskVerifier') === 'micro');
   const [rollSeed] = useState(() => {
     if (typeof window === 'undefined') return null;
     const raw = new URLSearchParams(window.location.search).get('seed');
@@ -981,9 +986,16 @@ export default function WorldLocalPage() {
             onStats: (record) => recordMicro('reaction', record),
           })
           : undefined;
+        const microTaskVerifier = microEnabled && taskVerifierMicro
+          ? createMicroTaskVerifier({ onStats: (record) => recordMicro('task-verifier', record) })
+          : undefined;
         {
           const armInfo = (window as unknown as { __worldArm?: Record<string, unknown> }).__worldArm;
-          if (armInfo) armInfo.microReaction = Boolean(microReaction);
+          if (armInfo) {
+            armInfo.microReaction = Boolean(microReaction);
+            armInfo.microTaskVerifier = Boolean(microTaskVerifier);
+            armInfo.taskVerifier = taskVerifierMicro ? 'micro' : 'llm';
+          }
         }
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
         // training; the narration engine is not wrapped.
@@ -1013,6 +1025,7 @@ export default function WorldLocalPage() {
           ...(microJudge ? { judge: microJudge } : {}),
           ...(microContinuation ? { microContinuation } : {}),
           ...(microReaction ? { microReaction } : {}),
+          ...(microTaskVerifier ? { microTaskVerifier } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of

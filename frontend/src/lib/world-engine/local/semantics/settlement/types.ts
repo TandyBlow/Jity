@@ -60,6 +60,9 @@ export interface SettlementOptions {
    * decide continuation before any LLM proposal call. A null answer (model
    * missing/failed) falls back to the existing LLM path. */
   microContinuation?: MicroContinuationFn;
+  /** Experimental micro workflow: task/fact verifier. A null or low-confidence
+   * answer falls back to the LLM verifier. */
+  microTaskVerifier?: MicroTaskVerifierFn;
   /** Experimental structured scene arm: apply `去向=` facts directly and skip
    * the merged position prompt when nothing looks uncertain. */
   programScene?: boolean;
@@ -187,6 +190,27 @@ export interface MicroContinuationAnswer {
 export type MicroContinuationFn = (
   request: MicroContinuationRequest,
 ) => Promise<MicroContinuationAnswer | null> | MicroContinuationAnswer | null;
+
+export interface MicroTaskSupport {
+  characterId: Id;
+  taskId: Id;
+  goal: string;
+  ownerName: string;
+  factText: string;
+}
+
+export interface MicroTaskVerdict {
+  characterId: Id;
+  taskId: Id;
+  satisfied: 'yes' | 'partial' | 'no';
+  confidence: number;
+  reason: string;
+}
+
+export type MicroTaskVerifierFn = (request: {
+  supports: MicroTaskSupport[];
+  state: WorldState;
+}) => Promise<MicroTaskVerdict[] | null> | MicroTaskVerdict[] | null;
 
 export interface ModelCallEvidence {
   prompt: string;

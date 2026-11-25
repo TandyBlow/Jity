@@ -1,0 +1,7 @@
+[
+  {
+    "id": "task-choice",
+    "input": "我向诺诺问清红蓝两方局势，并问她我能不能保持中立。",
+    "purpose": "task_lu_choice: ask Nono about the situation and neutrality; the tasks stage may cite a settled fact"
+  }
+]

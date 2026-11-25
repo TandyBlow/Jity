@@ -1,0 +1,7 @@
+[
+  {
+    "id": "task-goggles",
+    "input": "我把护目镜戴好，检查镜片有没有裂纹。",
+    "purpose": "a concrete task_lu_goggles action; the tasks stage may cite a fact and the micro verifier may judge it"
+  }
+]

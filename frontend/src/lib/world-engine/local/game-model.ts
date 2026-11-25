@@ -97,6 +97,9 @@ export interface GameModelOptions {
   /** Experimental micro workflow: trigger class + intent candidates + the
    * three judges replace the reaction writer when they are confident. */
   microReaction?: import('./semantics/actions').ActionHandlerOptions['microReaction'];
+  /** Experimental micro workflow: task/fact verifier. A null or low-confidence
+   * answer falls back to the LLM verifier. */
+  microTaskVerifier?: import('./semantics/settlement/types').MicroTaskVerifierFn;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -226,6 +229,7 @@ export class LocalGameModel implements WorldModelPort {
       microResults: this.options.microResults,
       microUpdates: this.options.microUpdates,
       microContinuation: this.options.microContinuation,
+      microTaskVerifier: this.options.microTaskVerifier,
       programScene: this.options.programScene,
       localPosition: this.options.localPosition,
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
