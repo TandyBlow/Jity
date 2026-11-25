@@ -21,7 +21,7 @@ import {
   positionFromRow, projectStage, referenceError, repeatsText, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson, unwrapIdBrackets,
 } from './support';
 import { projectPoint, type PointProjection } from './projection';
-import { APPEARANCE_WORDS, FAILURE_WORDS, MOVEMENT_WORDS, readDestinations } from './fact-destinations';
+import { APPEARANCE_WORDS, FAILURE_WORDS, MOVEMENT_WORDS, matchLocation, readDestinations } from './fact-destinations';
 import type { SettlementStage } from './support';
 
 interface UpdatesInput {
@@ -1560,15 +1560,8 @@ const MOVE_WORDS = ['走进', '走入', '走到', '走向', '进入', '来到', 
 
 export function destinationOfFact(state: WorldState, text: string): { locationId: Id; name: string; at: number } | null {
   if (!MOVE_WORDS.some((word) => text.includes(word))) return null;
-  let best: { locationId: Id; name: string; at: number } | null = null;
-  for (const [locationId, location] of Object.entries(state.initial.locations)) {
-    const name = location.name ?? '';
-    if (name.length < 2) continue;
-    const at = text.lastIndexOf(name);
-    if (at < 0) continue;
-    if (!best || at > best.at) best = { locationId, name, at };
-  }
-  return best;
+  const matched = matchLocation(state, text);
+  return matched ? { locationId: matched.id, name: matched.name, at: matched.at } : null;
 }
 
 function missingMoves(state: WorldState, results: Record<Id, string>,

@@ -63,3 +63,16 @@ describe('compound actions', () => {
     expect(s.subActions).toHaveLength(1);
   });
 });
+
+describe('location suffixes', () => {
+  it('matches 庭院 against the registered name 中央庭院', () => {
+    const big = {
+      initial: {
+        characters: { lu: { name: '路明非' } }, items: {},
+        locations: { yard: { name: '中央庭院', slots: [] } },
+      },
+    } as unknown as WorldState;
+    const s = buildActionStructure('路明非走进庭院。', scene, big, 2);
+    expect(s.subActions[0].destination?.containerId).toBe('yard');
+  });
+});

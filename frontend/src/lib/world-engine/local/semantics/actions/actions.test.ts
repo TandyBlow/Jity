@@ -653,3 +653,15 @@ describe('structured action arm', () => {
     expect(result.value).toEqual({ kind: 'act', text: '阿宁走进书房。' });
   });
 });
+
+describe('structured protagonist command', () => {
+  it('attaches a destination to the frozen player command', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const result = await createActionHandlers({ engine, options: { structuredActions: true } })
+      .action('hero', actInput(state, 'hero', '我走进书房。'));
+    const value = result.value as { structured?: { subActions?: Array<{ destination?: { containerId: string } | null }> } };
+    expect(value.structured?.subActions?.[0]?.destination?.containerId).toBe('study');
+    expect(engine.prompts).toEqual([]);
+  });
+});

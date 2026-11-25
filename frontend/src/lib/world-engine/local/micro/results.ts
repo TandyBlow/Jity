@@ -87,31 +87,41 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const rollText = `骰点：${roll ? roll.result : '?'}；资格：${roll ? String(roll.eligible) : '?'}；准入：${roll ? String(roll.admitted) : '?'}`;
       const subActions = member.structured?.subActions?.length
         ? member.structured.subActions
-        : [{ id: 'sa1', text: member.actionText, destination: member.structured?.destination ?? null }];
+        : [{ id: 'sa1', text: member.actionText, category: member.structured?.category ?? 'other', destination: member.structured?.destination ?? null }];
       const labels: string[] = [];
       for (const subAction of subActions) {
+        // The player's own declared move is not a contested action: the action
+        // lane resolved a registered destination, so the fact executes it.
+        const programMove = subAction.category === 'move'
+          && subAction.destination?.entityId === member.memberId
+          && member.memberId === request.state.protagonistId;
         const prior = labels.length
           ? `前序：${labels.map((label, index) => `sa${index + 1}=${label}`).join('、')}；`
           : '';
-        const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;
-        const ids = tok.encode(input, 64);
-        const data = BigInt64Array.from(ids, (value) => BigInt(value));
-        const mask = BigInt64Array.from(ids, () => 1n);
-        const out = await session.run({
-          input_ids: new ort.Tensor('int64', data, [1, ids.length]),
-          attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
-        });
-        const logits = Array.from((out.result?.data ?? []) as Float32Array);
-        if (logits.length !== RESULT.length) return null;
-        const max = Math.max(...logits);
-        const exps = logits.map((value) => Math.exp(value - max));
-        const sum = exps.reduce((a, b) => a + b, 0);
-        const best = logits.indexOf(max);
-        if (exps[best] / sum < threshold) {
-          options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
-          return null;
+        let label: string;
+        if (programMove) {
+          label = 'achieved';
+        } else {
+          const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;
+          const ids = tok.encode(input, 64);
+          const data = BigInt64Array.from(ids, (value) => BigInt(value));
+          const mask = BigInt64Array.from(ids, () => 1n);
+          const out = await session.run({
+            input_ids: new ort.Tensor('int64', data, [1, ids.length]),
+            attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
+          });
+          const logits = Array.from((out.result?.data ?? []) as Float32Array);
+          if (logits.length !== RESULT.length) return null;
+          const max = Math.max(...logits);
+          const exps = logits.map((value) => Math.exp(value - max));
+          const sum = exps.reduce((a, b) => a + b, 0);
+          const best = logits.indexOf(max);
+          if (exps[best] / sum < threshold) {
+            options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
+            return null;
+          }
+          label = RESULT[best];
         }
-        const label = RESULT[best];
         labels.push(label);
         let normalized = subAction.text.replace(/我(?!们)/gu, name);
         // A fact may not name a character outside the group; the action text can.

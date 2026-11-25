@@ -7,6 +7,7 @@
 import type { Id, WorldState } from '../../../types';
 import type { ActionScene } from './scene';
 import { resolveRuleTargets } from '../../micro/targets';
+import { matchLocation } from '../settlement/fact-destinations';
 
 export type ActionCategory = 'move' | 'observe' | 'communicate' | 'assist' | 'guard' | 'hide' | 'use' | 'other';
 
@@ -116,17 +117,10 @@ function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTarge
     if (item && person) destination = { entityId: item, containerId: person, slotId: null };
   }
   if (!destination) {
-    let at = -1;
-    let locationId: Id | null = null;
-    for (const [id, location] of Object.entries(state.initial.locations)) {
-      const name = location.name ?? '';
-      if (name.length < 2) continue;
-      const index = text.lastIndexOf(name);
-      if (index > at) { at = index; locationId = id; }
-    }
+    const matched = matchLocation(state, text);
     const moves = CATEGORY_RULES[0][1].some((word) => text.includes(word));
-    if (locationId && moves) {
-      destination = { entityId: scene.actorId, containerId: locationId, slotId: slotFor(state, locationId, text) };
+    if (matched && moves) {
+      destination = { entityId: scene.actorId, containerId: matched.id, slotId: slotFor(state, matched.id, text) };
     }
   }
   return { text, category: categoryOf(text), targetIds: targets, itemIds: matchItems(text, items), destination };

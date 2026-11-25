@@ -1,6 +1,8 @@
 /** Structured destinations carried by settled facts (`去向=entity:container[/slot]`).
  * Pure text parsing so both the settlement runner and the micro updates port
  * read the same channel without importing the browser runtime. */
+import type { Id, WorldState } from '../../../types';
+
 export interface FactDestination {
   containerId: string;
   slotId: string | null;
@@ -14,6 +16,31 @@ export function readDestinations(texts: string[]): Map<string, FactDestination> 
     }
   }
   return map;
+}
+
+/** Registered location named by a text. A full name wins; otherwise a suffix of
+ * the name may match (the player says 庭院 for 中央庭院). Two locations matching
+ * the same text are ambiguous and return null. */
+export function matchLocation(state: WorldState, text: string): { id: Id; at: number; name: string } | null {
+  const hits: Array<{ id: Id; at: number; name: string }> = [];
+  for (const [id, location] of Object.entries(state.initial.locations)) {
+    const name = location.name ?? '';
+    if (name.length < 2) continue;
+    let matched = name;
+    let at = text.lastIndexOf(name);
+    if (at < 0) {
+      for (let cut = 1; cut <= name.length - 2; cut += 1) {
+        const suffix = name.slice(cut);
+        const index = text.lastIndexOf(suffix);
+        if (index >= 0) { matched = suffix; at = index; break; }
+      }
+    }
+    if (at >= 0) hits.push({ id, at, name: matched });
+  }
+  if (!hits.length) return null;
+  hits.sort((left, right) => right.at - left.at || right.name.length - left.name.length);
+  if (hits.length > 1 && hits[0].at === hits[1].at && hits[0].name.length === hits[1].name.length) return null;
+  return hits[0];
 }
 
 /** Wording that asserts a movement happened or was attempted. */
