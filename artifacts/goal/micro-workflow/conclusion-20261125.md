@@ -260,7 +260,7 @@
   | 17 | 153.7 s | 95.7 s | 91.5 s | 3/2/2 | 0 字段 |
 
 - 两 seed 合计四头 vs 规则 −29.3 s，但差异全部来自 seed 11 多出的一个自动点；seed 17 只差 4.2 s、完整状态相同。**直接规则 vs 四头没有被证明有稳定差异**；四头当前的价值是替换 LLM continuation 与结构化重复过滤，不是胜过训练规则。
-- 两 seed 的规则/四头都把 LLM continuation 的 3 个自动点压到 2 个，分别省 51.6/62.2 s；完整状态只差路明非 yard 槽位。
+- 四头相对 LLM continuation 两 seed 分别省 51.6/62.2 s；直接规则在 seed 17 省 58.0 s，在 seed 11 反而慢 2.8 s（自动点少了，但 updates/narration 轨迹更慢）。完整状态只差路明非 yard 槽位。
 - 人工评价：`continuation-human-eval-sheet.md` + `continuation-human-eval-template.json`，4 个留出人物 × base/continuous/player_present/idle 共 50 行，标签隐藏，待独立评价者。assistant 抽查 12 行（`continuation-assistant-spotcheck.json`，非独立）与规则/模型总体一致 10/12；分歧是「查看短讯机是必要第一步」与「泛化求助不推进待办」——两条都说明规则标签漏了语义判断。LLM 离线臂（Qwen3-0.6B，逐候选、同 context）50 行中继续 47 次，规则/微型 14 次，human-LLM 总体一致 5/12；LLM 明显更宽松，不能把它当质量上界。
 
 ## Reaction 微型工作流（2026-11-25）
