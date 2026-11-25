@@ -1,0 +1,75 @@
+{
+ "rows": 124,
+ "labels": {
+  "communicate": 19,
+  "guard": 10,
+  "other": 35,
+  "use": 16,
+  "observe": 17,
+  "move": 21,
+  "assist": 6
+ },
+ "cv": {
+  "four": {
+   "correct": 41,
+   "total": 41,
+   "confusion": {
+    "communicate->communicate": 6,
+    "guard->guard": 3,
+    "other->other": 12,
+    "use->use": 6,
+    "observe->observe": 6,
+    "move->move": 8
+   }
+  },
+  "one": {
+   "correct": 17,
+   "total": 17,
+   "confusion": {
+    "communicate->communicate": 3,
+    "guard->guard": 1,
+    "other->other": 4,
+    "use->use": 2,
+    "observe->observe": 2,
+    "move->move": 4,
+    "assist->assist": 1
+   }
+  },
+  "three": {
+   "correct": 43,
+   "total": 47,
+   "confusion": {
+    "communicate->communicate": 6,
+    "guard->guard": 3,
+    "other->other": 12,
+    "use->use": 6,
+    "other->use": 2,
+    "observe->observe": 6,
+    "move->move": 8,
+    "assist->assist": 2,
+    "communicate->other": 2
+   }
+  },
+  "two": {
+   "correct": 13,
+   "total": 19,
+   "confusion": {
+    "communicate->communicate": 2,
+    "guard->guard": 1,
+    "other->other": 4,
+    "use->use": 2,
+    "observe->observe": 2,
+    "observe->move": 1,
+    "move->move": 1,
+    "assist->assist": 1,
+    "other->communicate": 1,
+    "assist->move": 2,
+    "guard->move": 2
+   }
+  }
+ },
+ "input_tokens_median": 131,
+ "input_tokens_max": 141,
+ "bytes": 41241046,
+ "int8_bytes": 10551229
+}

@@ -32,6 +32,7 @@ import { roomOf } from '../../prompt';
 import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
 import { buildActionStructure, type ActionStructure } from './structure';
+import { templateAction } from './template';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
 import { longestSharedSpan } from './text';
 import { readActionCall, readReactionCall, readTargetsCall } from './inputs';
@@ -261,6 +262,30 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
+    if (options.behavior) {
+      try {
+        const pending = scene.actor.tasks.filter((task) => task.status === 'pending');
+        const category = await options.behavior({
+          input: `角色：${scene.actorName}；位置：${scene.roomName}；个性：${scene.actor.personality.join('，').slice(0, 40)}；待办：${pending.map((task) => `${task.id}=${task.goal}`).join('；').slice(0, 120)}`,
+        });
+        const text = category ? templateAction(category, scene, call.state) : null;
+        if (text) {
+          const checked = checkActionText(text, scene, call.state, checkOptions);
+          if (!checked.issues.some((issue) => issue.severity === 'error')) {
+            issues.push({ code: 'template_action', severity: 'info', message: `${scene.actorName}按${category}模板行动` });
+            return evidence('action', key, {
+              kind: 'act', text: checked.value,
+              ...(options.structuredActions
+                ? { structured: asJson(buildActionStructure(checked.value, scene, call.state, checkOptions.maxTargets)) }
+                : {}),
+            }, 'micro', started, issues, [], '');
+          }
+          issues.push({ code: 'template_failed', severity: 'info', message: `模板行动被拒：${checked.issues.map((issue) => issue.code).join(',')}` });
+        }
+      } catch {
+        // A failed behavior head is evidence, not a reason to fail the turn.
+      }
+    }
     const generated = await generate<{ kind: 'act'; text?: string; structured?: ActionStructure } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
       repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')

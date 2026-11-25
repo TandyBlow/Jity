@@ -200,3 +200,11 @@
 - 局部位置：每个有结算事实的受影响实体发一条小问题（实体、当前位、该条事实、地点表 + 相关槽位），不再发整场景提示；任一条被拒或遗漏移动就回退合并场景。14 次真实位置调用里仍有 1 次 11.5k 字合并回退（37 s），其余为小提示。
 - updates 时间 80.0→98.2 s（局部小调用次数多），但 results 81.6→7.9 s、targets 49.6→3.6 s，整回合净省 70 s。
 - 微型模型任务覆盖率（`coverage_report.py`）：results 15/16 次走微型头（micro_share 1.00）；targets 14/16 走程序、1 次 LLM；updates 21 次程序、21 次 LLM（局部位置）、0 次微型；action 14 次 LLM + 27 次尝试；总体 micro 15 / model 36 / program 36，micro_share 0.29。规则收益与微型收益分开统计。
+
+## action 重试分析与 NPC 行为头（2026-11-25）
+
+- 重试原因（两轮 action 任务级记录）：`action_is_task_goal` 22 次、`absent_character_in_action` 10、`absent_item_in_action` 3、`repair_requested` 24、`repair_failed` 2。主因是模型把待办目标当行动句，修一次仍复读。
+- 行为头（124 条真实 NPC 行动，7 类：move/assist/guard/communicate/observe/use/other）：按 run 留出 41/41、17/17、43/47、13/19。准确率偏高是因为训练行动里大量行动句本身就是待办目标的复述，头学到的是「目标动词→类别」的先验，不是通用行为模型；输入中位 131 token（截断 96），int8 10,551,229 B。HPC 连接超时，改在本地 4060 训练并量化。
+- 模板行动（类别→一句话，槽位来自待办里的登记地点/物品/可见人物）接入 action 臂：第一轮 8 条模板、4 次 LLM、回合 **58.8 s**，但模板把苏茜、唐骁移到了目标里只是被引用的钟楼，行为不合理。
+- 加可行性门禁（move 只有目标里出现「前往/去/走向…」且不在原地才成立）后复跑：4 条模板、9 次 LLM、2 次回退，回合 200.0 s；状态与基线的差异只剩 2 个字段，且微型臂更符合复合输入（护目镜→诺诺）；NPC 位置与基线一致。模板文本仍偏泛、多样性低，开放式行为仍回退 LLM。
+- 覆盖率（behavior2）：action micro 4 / model 9（micro_share 0.31），results 13/13 micro，updates 18 程序/22 LLM，整体 micro 18 / model 32 / program 32（micro_share 0.36）。

@@ -1,0 +1,47 @@
+{
+ "files": {
+  "artifacts/goal/micro-workflow/evidence-compound-llm.json": {
+   "task_records": 16,
+   "attempt_records": 25,
+   "task_sources": {
+    "program": 1,
+    "model": 14,
+    "fallback": 1
+   },
+   "issue_codes": {
+    "protagonist_command": 1,
+    "action_is_task_goal": 10,
+    "absent_character_in_action": 5,
+    "repair_requested": 11,
+    "repair_failed": 1
+   },
+   "attempt_errors": {}
+  },
+  "artifacts/goal/micro-workflow/evidence-localpos-micro.json": {
+   "task_records": 16,
+   "attempt_records": 27,
+   "task_sources": {
+    "program": 1,
+    "model": 14,
+    "fallback": 1
+   },
+   "issue_codes": {
+    "protagonist_command": 1,
+    "action_is_task_goal": 12,
+    "absent_character_in_action": 5,
+    "repair_requested": 13,
+    "repair_failed": 1,
+    "absent_item_in_action": 3
+   },
+   "attempt_errors": {}
+  }
+ },
+ "all_issue_codes": {
+  "protagonist_command": 2,
+  "action_is_task_goal": 22,
+  "absent_character_in_action": 10,
+  "repair_requested": 24,
+  "repair_failed": 2,
+  "absent_item_in_action": 3
+ }
+}

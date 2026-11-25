@@ -665,3 +665,23 @@ describe('structured protagonist command', () => {
     expect(engine.prompts).toEqual([]);
   });
 });
+
+describe('behavior head', () => {
+  it('takes a template action without calling the model', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const handlers = createActionHandlers({ engine, options: { behavior: () => 'observe' } });
+    const result = await handlers.action('ally', actInput(state, 'ally', null));
+    expect(engine.prompts).toEqual([]);
+    expect(result.source).toBe('micro');
+    expect(String((result.value as { text?: string }).text)).toContain('查看');
+  });
+  it('falls back to the model when the head abstains', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([JSON.stringify({ kind: 'act', text: '阿宁走进书房。' })]);
+    const handlers = createActionHandlers({ engine, options: { behavior: () => 'other' } });
+    const result = await handlers.action('ally', actInput(state, 'ally', null));
+    expect(engine.prompts).toHaveLength(1);
+    expect(result.source).toBe('model');
+  });
+});

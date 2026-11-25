@@ -54,6 +54,8 @@ export type ActionIssueCode =
   | 'micro_rejected'
   | 'micro_abstained'
   | 'micro_failed'
+  | 'template_action'
+  | 'template_failed'
   // reaction value
   | 'reaction_too_long'
   | 'reaction_echoes_source'
@@ -133,6 +135,9 @@ export interface ActionHandlerOptions {
    * destination/conditions to an accepted act. Default off keeps the value
    * shape `{kind,text}` every caller and test already relies on. */
   structuredActions?: boolean;
+  /** Experimental NPC behavior arm: the head picks a routine category and the
+   * template writes the text; null/other falls back to the LLM. */
+  behavior?: (request: { input: string }) => Promise<string | null> | string | null;
   /** When the protagonist is the admitted reaction target, the player's own
    * character must not be written by a model. 'minimal' returns a program
    * line that asserts no decision (default); 'model' opts into generation. */

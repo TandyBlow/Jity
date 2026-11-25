@@ -78,6 +78,8 @@ export interface GameModelOptions {
    * stage directly; uncertain scenes fall back to the LLM. */
   programScene?: boolean;
   localPosition?: boolean;
+  /** Experimental NPC behavior head: category → template action; null → LLM. */
+  behavior?: import('./semantics/actions').ActionHandlerOptions['behavior'];
   /** Experimental micro workflow: a rules+scorer targets port. When it returns
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
@@ -250,6 +252,7 @@ export class LocalGameModel implements WorldModelPort {
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       microTargets: this.options.microTargets,
       structuredActions: this.options.structuredActions,
+      behavior: this.options.behavior,
       recentEvents: () => this.recentEvents,
       offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
