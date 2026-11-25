@@ -1,0 +1,48 @@
+[
+ {
+  "file": "artifacts/goal/micro-workflow/evidence-struct-llm.json",
+  "calls": 44,
+  "program_skips": 33,
+  "real_calls": 11,
+  "retry_calls": 4,
+  "stage_calls": {
+   "position": 16,
+   "appearance": 16,
+   "tasks": 3,
+   "subtasks": 3,
+   "personality": 3,
+   "sanity": 3
+  },
+  "real_ms": {
+   "position": 27899,
+   "tasks": 10432,
+   "subtasks": 7212
+  },
+  "total_real_ms": 45543,
+  "prompt_chars_median": 2718,
+  "prompt_chars_max": 3368
+ },
+ {
+  "file": "artifacts/goal/micro-workflow/evidence-struct-micro.json",
+  "calls": 38,
+  "program_skips": 20,
+  "real_calls": 18,
+  "retry_calls": 2,
+  "stage_calls": {
+   "position": 15,
+   "appearance": 15,
+   "tasks": 2,
+   "subtasks": 2,
+   "personality": 2,
+   "sanity": 2
+  },
+  "real_ms": {
+   "position": 136127,
+   "tasks": 17903,
+   "subtasks": 12120
+  },
+  "total_real_ms": 166150,
+  "prompt_chars_median": 2912,
+  "prompt_chars_max": 11583
+ }
+]

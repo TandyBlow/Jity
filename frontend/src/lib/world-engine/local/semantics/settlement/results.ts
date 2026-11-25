@@ -51,8 +51,8 @@ interface Judgment {
 /** What the settled result actually was. The four directions are the product's
  * vocabulary for a player-visible outcome; 「未受影响」 covers a legitimate
  * no-change result and is not a mechanic word. */
-export type ResultOutcome = 'completed' | 'failed' | 'blocked' | 'unaffected';
-export const RESULT_OUTCOMES: ResultOutcome[] = ['completed', 'failed', 'blocked', 'unaffected'];
+export type ResultOutcome = 'completed' | 'partial' | 'failed' | 'blocked' | 'unaffected';
+export const RESULT_OUTCOMES: ResultOutcome[] = ['completed', 'partial', 'failed', 'blocked', 'unaffected'];
 
 interface Fact {
   text: string;
@@ -585,7 +585,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：只写“看懂了规则牌”会把走路从结果里丢掉；不要写“完成参赛选择/任务”。',
     '- 问话就写谁问了谁、对方答了什么或没答；不要写“骰点未获取，因此未能达成目标”。',
     '- 事实必须是这次冻结行动的结果；不要把示例、上一回合的事或别的成员的行动抄成本次事实。',
-    '- fact 带字段：text=这一句事实的完整原句（必填，不能为空）、memberIds=这句话写到的人（必填，数组，只能本组成员）、actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/failed/blocked/unaffected。',
+    '- fact 带字段：text=这一句事实的完整原句（必填，不能为空）、memberIds=这句话写到的人（必填，数组，只能本组成员）、actorId=执行者（本组成员）、targetId=受事（可省）、action=实际动作、outcome=completed/partial/failed/blocked/unaffected。',
     '- failed/blocked 照实写，保留“没有/未/被阻止”；任务目标、骰点资格、判定理由都不是事实。',
     `本组：${groupId}`,
     '成员：',
@@ -1068,9 +1068,10 @@ function readResultsAnswer(
       outcomeSource = 'model';
     } else {
       const label = judgments.find((judgment) => judgment.memberId === actorId)?.label ?? 'no_change';
-      outcome = label === 'achieved' || label === 'partial' ? 'completed'
-        : label === 'blocked' ? 'blocked'
-          : label === 'not_achieved' ? 'failed' : 'unaffected';
+      outcome = label === 'achieved' ? 'completed'
+        : label === 'partial' ? 'partial'
+          : label === 'blocked' ? 'blocked'
+            : label === 'not_achieved' ? 'failed' : 'unaffected';
     }
     // A written outcome can disagree with the group's own judgement or with the
     // sentence (d531's reacted=true re-ask, bed9's blocked while 未被阻止, 9eae's
@@ -1082,9 +1083,10 @@ function readResultsAnswer(
     if (outcomeSource === 'model') {
       const judgment = judgments.find((row) => row.memberId === actorId);
       const label = judgment?.label;
-      const derived: ResultOutcome = label === 'achieved' || label === 'partial' ? 'completed'
-        : label === 'blocked' ? 'blocked'
-          : label === 'not_achieved' ? 'failed' : 'unaffected';
+      const derived: ResultOutcome = label === 'achieved' ? 'completed'
+        : label === 'partial' ? 'partial'
+          : label === 'blocked' ? 'blocked'
+            : label === 'not_achieved' ? 'failed' : 'unaffected';
       const reason = judgment?.reason ?? '';
       const obstruction = /被(?:阻止|拦住|拦下|拦|挡|按|拽|推|制住)|无法|没能|不能|阻止|拦住|拦下|挡住/u.test(cleaned.text);
       const contradictsLabel = (label === 'blocked' && outcome === 'completed')

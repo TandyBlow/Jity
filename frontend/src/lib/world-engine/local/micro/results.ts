@@ -9,7 +9,7 @@ const PHRASE: Record<string, string> = {
   achieved: '达到目的', partial: '只完成一部分', not_achieved: '没有成功', blocked: '被阻止', no_change: '没有变化',
 };
 const OUTCOME: Record<string, string> = {
-  achieved: 'completed', partial: 'completed', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
+  achieved: 'completed', partial: 'partial', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
 };
 
 /** A structured movement hint from the action text: `entity:container`.
@@ -36,6 +36,18 @@ export function destinationHint(action: string, state: MicroResultsRequest['stat
     if (location && state.initial.locations[location]) return `${memberId}:${location}`;
   }
   return null;
+}
+
+/** A settled fact may assert the intended destination only for an achieved
+ * action. Partial, failed and blocked actions must not move anything. */
+export function settledDestination(
+  label: string,
+  destination: { entityId: string; containerId: string; slotId?: string | null } | null | undefined,
+  fallback: () => string | null,
+): string | null {
+  if (label !== 'achieved') return null;
+  if (destination) return `${destination.entityId}:${destination.containerId}${destination.slotId ? `/${destination.slotId}` : ''}`;
+  return fallback();
 }
 
 export interface MicroResultsOptions {
@@ -93,10 +105,11 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const label = RESULT[best];
       judgments.push({ memberId: member.memberId, label, reason: PHRASE[label] });
       const normalized = member.actionText.replace(/我(?!们)/gu, name);
-      const dest = member.structured?.destination;
-      const hint = dest
-        ? `${dest.entityId}:${dest.containerId}${dest.slotId ? `/${dest.slotId}` : ''}`
-        : destinationHint(normalized, request.state, member.memberId);
+      // Only an achieved action may assert the intended destination. A partial,
+      // failed or blocked action must not move anything; updates reads this
+      // hint as a settled state change.
+      const hint = settledDestination(label, member.structured?.destination,
+        () => destinationHint(normalized, request.state, member.memberId));
       facts.push({
         text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}`,
         memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],

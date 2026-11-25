@@ -138,6 +138,23 @@ describe('common-group results', () => {
     expect(isExampleFactText('甲把工具推给乙。')).toBe(false);
   });
 
+  it('derives a partial outcome from a partial judgement instead of completed', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'partial', reason: '只推进到盒边。' },
+        { memberId: 'b', label: 'no_change', reason: '乙没有变化。' },
+      ],
+      facts: [
+        { text: '甲把工具推到盒子边，没有放进去。', memberIds: ['a'] },
+        { text: '乙看着甲推工具。', memberIds: ['b'] },
+      ],
+    })]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', resultsInput());
+    const facts = (outcome.evidence.detail as { facts?: { memberIds?: string[]; outcome?: string }[] }).facts ?? [];
+    const partial = facts.find((fact) => (fact.memberIds ?? []).includes('a'));
+    expect(partial?.outcome).toBe('partial');
+  });
+
   it('carries the structured action into the results prompt and the micro port', async () => {
     const structured = {
       category: 'assist', actorId: 'a', targetIds: ['b'], itemIds: ['tool'],

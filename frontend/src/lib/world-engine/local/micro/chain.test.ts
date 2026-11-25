@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { WorldState } from '../../types';
-import { destinationHint } from './results';
+import { destinationHint, settledDestination } from './results';
 import { readDestinations } from './updates';
 
 const state = {
@@ -31,5 +31,13 @@ describe('micro results -> updates chain', () => {
   });
   it('ignores facts without a hint', () => {
     expect(readDestinations(['路明非蹲在墙角（没有变化）']).size).toBe(0);
+  });
+  it('asserts the destination only for an achieved action', () => {
+    const dest = { entityId: 'water', containerId: 'nono', slotId: null };
+    expect(settledDestination('achieved', dest, () => null)).toBe('water:nono');
+    expect(settledDestination('partial', dest, () => null)).toBeNull();
+    expect(settledDestination('not_achieved', dest, () => null)).toBeNull();
+    expect(settledDestination('blocked', dest, () => null)).toBeNull();
+    expect(settledDestination('no_change', dest, () => null)).toBeNull();
   });
 });

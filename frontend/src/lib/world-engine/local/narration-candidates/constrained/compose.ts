@@ -62,7 +62,7 @@ export function factDirective(fact: SceneFact, sanityStyle: 'direction' | 'numbe
       // words. When the structured record does not carry the action wording, the
       // settled sentence is included so the beat still has content.
       if (fact.structured) {
-        const outcome = { completed: '行动完成', failed: '行动失败', blocked: '行动被阻止', unaffected: '目标没有受到影响' }[fact.structured.outcome];
+        const outcome = { completed: '行动完成', partial: '行动部分完成', failed: '行动失败', blocked: '行动被阻止', unaffected: '目标没有受到影响' }[fact.structured.outcome];
         const who = fact.structured.actor ? `由${fact.structured.actor}` : '';
         const on = fact.structured.target ? `，对象是${fact.structured.target}` : '';
         const what = fact.structured.action ? `，动作是${fact.structured.action}` : '';

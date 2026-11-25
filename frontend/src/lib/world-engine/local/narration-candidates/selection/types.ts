@@ -128,7 +128,7 @@ export interface StructuredSettledFact {
   actorId: string;
   targetId?: string;
   action?: string;
-  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected';
+  outcome: 'completed' | 'partial' | 'failed' | 'blocked' | 'unaffected';
   /** The actor's judgement row was missing: the outcome is not asserted. */
   implicit?: true;
 }

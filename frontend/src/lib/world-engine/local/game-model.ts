@@ -136,7 +136,7 @@ interface Generated { value: Json; raw: string; ms: number; fallback: boolean; e
 
 type SettledFactRecord = {
   text: string; actorId: string; targetId?: string; action?: string;
-  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true;
+  outcome: 'completed' | 'partial' | 'failed' | 'blocked' | 'unaffected'; implicit?: true;
 };
 
 interface PointNarrationSnapshot {

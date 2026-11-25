@@ -67,7 +67,7 @@ export type SceneFact =
   | {
     id: string; kind: 'result'; mandatory: boolean; visibility: FactVisibility; text: string;
     structured?: { actorId: string; actor?: string; action?: string; targetId?: string; target?: string;
-      outcome: 'completed' | 'failed' | 'blocked' | 'unaffected'; implicit?: true };
+      outcome: 'completed' | 'partial' | 'failed' | 'blocked' | 'unaffected'; implicit?: true };
   };
 
 /** One settled result record as committed by the settlement (04). */
@@ -76,7 +76,7 @@ export interface StructuredSettledFact {
   actorId: string;
   targetId?: string;
   action?: string;
-  outcome: 'completed' | 'failed' | 'blocked' | 'unaffected';
+  outcome: 'completed' | 'partial' | 'failed' | 'blocked' | 'unaffected';
   implicit?: true;
 }
 
