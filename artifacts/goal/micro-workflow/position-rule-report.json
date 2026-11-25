@@ -1,0 +1,11 @@
+{
+ "points": 55,
+ "facts": 64,
+ "facts_with_location": 12,
+ "facts_already_there": 0,
+ "proposals_exact": 8,
+ "proposals_container_only": 2,
+ "proposals_mismatch": 2,
+ "points_all_proposals_match": 10,
+ "points_with_mismatch": 2
+}
