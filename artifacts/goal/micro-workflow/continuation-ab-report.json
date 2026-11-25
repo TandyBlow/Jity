@@ -299,17 +299,29 @@
    },
    {
     "entity": "goggles_lu",
-    "field": "item_position",
-    "a": "lu/slot_body",
-    "b": "nono/-"
+    "field": "item",
+    "a": {
+     "position": "lu/slot_body",
+     "appearance": []
+    },
+    "b": {
+     "position": "nono/-",
+     "appearance": []
+    }
    }
   ],
   "llm_vs_micro_off": [
    {
     "entity": "goggles_lu",
-    "field": "item_position",
-    "a": "lu/slot_body",
-    "b": "nono/-"
+    "field": "item",
+    "a": {
+     "position": "lu/slot_body",
+     "appearance": []
+    },
+    "b": {
+     "position": "nono/-",
+     "appearance": []
+    }
    }
   ]
  }

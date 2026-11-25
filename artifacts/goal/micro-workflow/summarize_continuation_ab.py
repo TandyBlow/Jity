@@ -25,10 +25,18 @@ def state_view(state):
             'position': f"{row['position']['containerId']}/{row['position'].get('slotId') or '-'}",
             'sanity': row.get('sanity'),
             'tasks': {tid: task.get('status') for tid, task in (row.get('tasks') or {}).items()},
+            'appearance': [record.get('text') for record in row.get('appearanceChanges') or [] if record.get('active')],
+            'personality': [record.get('text') for record in row.get('personalityChanges') or [] if record.get('active')],
         }
-    items = {iid: f"{row['position']['containerId']}/{row['position'].get('slotId') or '-'}"
-             for iid, row in state.get('items', {}).items()}
-    return {'characters': characters, 'items': items}
+    items = {}
+    for iid, row in state.get('items', {}).items():
+        items[iid] = {
+            'position': f"{row['position']['containerId']}/{row['position'].get('slotId') or '-'}",
+            'appearance': [record.get('text') for record in row.get('appearanceChanges') or [] if record.get('active')],
+        }
+    locations = {lid: [record.get('text') for record in row.get('appearanceChanges') or [] if record.get('active')]
+                 for lid, row in state.get('locations', {}).items()}
+    return {'characters': characters, 'items': items, 'locations': locations}
 
 
 def summary(path):
@@ -85,8 +93,12 @@ def diff(left, right_state):
                 fields.append({'entity': cid, 'field': key, 'a': a.get(key), 'b': b.get(key)})
     for iid in sorted(set(left['state']['items']) | set(right_state['items'])):
         if left['state']['items'].get(iid) != right_state['items'].get(iid):
-            fields.append({'entity': iid, 'field': 'item_position',
+            fields.append({'entity': iid, 'field': 'item',
                            'a': left['state']['items'].get(iid), 'b': right_state['items'].get(iid)})
+    for lid in sorted(set(left['state']['locations']) | set(right_state['locations'])):
+        if left['state']['locations'].get(lid) != right_state['locations'].get(lid):
+            fields.append({'entity': lid, 'field': 'location_appearance',
+                           'a': left['state']['locations'].get(lid), 'b': right_state['locations'].get(lid)})
     return fields
 
 
