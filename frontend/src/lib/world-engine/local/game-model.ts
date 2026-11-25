@@ -132,13 +132,15 @@ export interface GameModelOptions {
   onNarrationEvidence?: (record: Record<string, unknown>) => void;
   onTask?: (task: ModelTask, key: string, detail: {
     ms: number; fallback: boolean; error?: string; raw?: string; promptChars?: number;
-    source?: 'program' | 'model' | 'fallback' | 'micro';
+    source?: 'program' | 'model' | 'fallback' | 'micro' | 'rule';
     issues?: { code: string; severity: string; message: string; detail?: string }[];
     calls?: HandlerResult['calls'];
     value?: Json;
     stageMs?: Record<string, number>;
     stages?: string[];
     scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
+    /** One model attempt inside a task, not the accepted task result. */
+    attempt?: boolean;
   }) => void;
 }
 
@@ -263,6 +265,7 @@ export class LocalGameModel implements WorldModelPort {
       offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
         ms: call.elapsedMs, fallback: !call.decoded, error: call.error, raw: call.raw, promptChars: call.promptChars,
+        source: 'model', attempt: true,
       }),
     } });
   }
@@ -630,7 +633,7 @@ export class LocalGameModel implements WorldModelPort {
     this.options.onTask?.('narration', key, {
       ms: performance.now() - started, fallback: false,
       ...(empty ? { error: 'empty_model_output' } : {}),
-      raw: text, promptChars: brief.prompt.length,
+      raw: text, promptChars: brief.prompt.length, source: 'model',
     });
     if (empty) {
       // The only non-content case: no model text. The page shows a status note;
@@ -721,7 +724,11 @@ export class LocalGameModel implements WorldModelPort {
       beats: beats.map((beat) => ({ id: beat.id, ask: beat.ask, facts: beat.facts, model: beat.text, fallback: beat.fallback, reasons: beat.reasons })),
       violations: [...new Set(reasons)],
     });
-    this.options.onTask?.('narration', key, { ms: performance.now() - started, fallback, error: reasons.length ? [...new Set(reasons)].join(',') : undefined, raw: text });
+    this.options.onTask?.('narration', key, {
+      ms: performance.now() - started, fallback,
+      error: reasons.length ? [...new Set(reasons)].join(',') : undefined, raw: text,
+      source: source === 'draft' ? 'fallback' : 'model',
+    });
     this.options.onNarrationComplete?.({ pointId, raw: text, completion: { raw: text, finishReason: fallback ? 'drafted' : 'stop', firstTokenMs: null, wallMs: performance.now() - started }, fallback, source });
   }
 
@@ -888,6 +895,7 @@ export class LocalGameModel implements WorldModelPort {
     }
     this.options.onTask?.('narration', pointId, {
       ms: result.timings.totalMs, fallback: false, raw: result.text, promptChars: result.promptChars,
+      source: 'model',
     });
     this.options.onNarrationEvidence?.({
       pointId, candidateId: result.candidateId, route: result.route,

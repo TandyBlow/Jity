@@ -389,6 +389,7 @@ export class UpdatesRunner {
       };
       this.options.onTask?.('updates', key, {
         ms: evidence.ms, fallback: false, raw: '', promptChars: 0, stageMs: {}, stages: [stage],
+        source: 'program',
       });
       return { value: calls[0], raw: '', ms: evidence.ms, fallback: false, evidence };
     }
@@ -411,7 +412,7 @@ export class UpdatesRunner {
       };
       this.options.onTask?.('updates', key, {
         ms: evidence.ms, fallback: false, raw: '', promptChars: 0,
-        stageMs: {}, stages: calls.map((call) => call.stage),
+        stageMs: {}, stages: calls.map((call) => call.stage), source: 'program',
       });
       return { value: calls, raw: '', ms: evidence.ms, fallback: false, evidence };
     }
@@ -693,6 +694,7 @@ export class UpdatesRunner {
       error,
       raw: evidence.raw,
       promptChars: calls.reduce((sum, call) => sum + call.prompt.length, 0),
+      source: 'fallback',
     });
     return { value: null, raw: evidence.raw, ms: evidence.ms, fallback: true, error, evidence };
   }

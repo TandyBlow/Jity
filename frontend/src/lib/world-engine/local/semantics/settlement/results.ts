@@ -299,7 +299,7 @@ export async function runResults(
       fallback: false,
       evidence,
     };
-    options.onTask?.('results', key, { ms: outcome.ms, fallback: false, raw: outcome.raw, promptChars: prompt.length });
+    options.onTask?.('results', key, { ms: outcome.ms, fallback: false, raw: outcome.raw, promptChars: prompt.length, source: 'model' });
     return outcome;
   } catch (error) {
     calls = error instanceof JsonCallError ? error.calls : calls;
@@ -321,7 +321,7 @@ export async function runResults(
       error: message,
       evidence,
     };
-    options.onTask?.('results', key, { ms: outcome.ms, fallback: true, error: message, raw: outcome.raw, promptChars: prompt.length });
+    options.onTask?.('results', key, { ms: outcome.ms, fallback: true, error: message, raw: outcome.raw, promptChars: prompt.length, source: 'fallback' });
     return outcome;
   }
 }

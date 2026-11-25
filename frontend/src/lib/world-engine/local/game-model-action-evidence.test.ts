@@ -23,7 +23,7 @@ describe('action evidence at the product callback', () => {
       if (task === 'action') records.push(detail);
     } });
     await model.generate('action', 'friend', { workingState: state } as unknown as Json);
-    const result = records.find((record) => record.source === 'model');
+    const result = records.find((record) => record.source === 'model' && !record.attempt);
     expect(result).toBeDefined();
     expect(result!.value).toEqual({ kind: 'skip' });
     expect(result!.raw).toBe(repaired);
@@ -32,7 +32,9 @@ describe('action evidence at the product callback', () => {
       code: 'action_is_task_goal', severity: 'error', detail: goal,
       message: expect.stringContaining(goal),
     }));
-    // Per-attempt callbacks are not extra character decisions.
-    expect(records.filter((record) => record.source !== undefined)).toHaveLength(1);
+    // Per-attempt callbacks are not extra character decisions; they are
+    // labelled `attempt` so the accepted result stays single.
+    expect(records.filter((record) => record.source !== undefined && !record.attempt)).toHaveLength(1);
+    expect(records.filter((record) => record.attempt).length).toBeGreaterThan(0);
   });
 });

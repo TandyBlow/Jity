@@ -42,13 +42,16 @@ def main():
             total_heads = sum(row['inferences'] * HEADS[port] for port, row in rows.items())
             total_calls = sum(row['task_calls'] for row in rows.values())
             calls = product.get('semanticCalls') or []
-            sources = Counter((call.get('source') or 'unlabelled') for call in calls)
+            accepted = [call for call in calls if not call.get('attempt')]
+            attempts = [call for call in calls if call.get('attempt')]
+            sources = Counter((call.get('source') or 'unlabelled') for call in accepted)
             print(f"{Path(path).name} turn={turn.get('turn')} input={turn.get('input', '')[:20]!r}")
             for port, row in sorted(rows.items()):
                 print(f"  {port:12s} task_calls={row['task_calls']:3d} encoder_runs={row['inferences']:4d} "
                       f"head_outputs={row['inferences'] * HEADS[port]:5d} candidate_scores={row['candidate_scores']:4d}")
             print(f"  micro total  task_calls={total_calls:3d} encoder_runs={total_inf:4d} head_outputs={total_heads:5d}")
             print(f"  task sources {dict(sources)}")
+            print(f"  task attempts {len(attempts)}")
             if not stats:
                 print('  (no per-turn microStats; older evidence records only the session array)')
     if not sys.argv[1:]:

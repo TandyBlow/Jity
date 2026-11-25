@@ -99,7 +99,9 @@ export interface ModelTaskDetail {
   /** Affected projection for this updates group (which owners/rows were judged). */
   scope?: { mode?: string; affectedCharacters?: number; unaffectedCharacters?: number; affectedTaskIds?: string[]; unaffectedTaskIds?: string[]; taskRows?: number } | null;
   /** Who produced the accepted value: the LLM, a micro model, or a program rule. */
-  source?: 'model' | 'micro' | 'program' | 'fallback';
+  source?: 'model' | 'micro' | 'rule' | 'program' | 'fallback';
+  /** One model attempt inside a task, not the accepted task result. */
+  attempt?: boolean;
 }
 
 /** Micro results port: the page's task head answers per member; a null answer
@@ -175,6 +177,8 @@ export interface MicroContinuationRequest {
 export interface MicroContinuationAnswer {
   decision: 'continue' | 'handback';
   reason: string;
+  /** 'rule' is the direct-rule comparison arm; 'micro' ran the heads. */
+  source?: 'micro' | 'rule';
   candidates: MicroContinuationCandidate[];
   accepted: MicroContinuationCandidate[];
   rejected: Array<{ characterId: Id; text: string; reason: string }>;
