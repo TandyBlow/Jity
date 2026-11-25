@@ -1,0 +1,68 @@
+{
+ "model": {
+  "rows": 890,
+  "train": 653,
+  "test": 237,
+  "labels": {
+   "0": 759,
+   "1": 131
+  },
+  "pair_confusion": {
+   "0->0": 169,
+   "1->0": 42,
+   "0->1": 18,
+   "1->1": 8
+  },
+  "top1_groups": {},
+  "unregistered": {
+   "水壶": {
+    "rows": 14,
+    "max_score": -7.734,
+    "no_match": true
+   },
+   "电台": {
+    "rows": 14,
+    "max_score": -7.735,
+    "no_match": true
+   },
+   "地图册": {
+    "rows": 14,
+    "max_score": -7.74,
+    "no_match": true
+   },
+   "钥匙串": {
+    "rows": 14,
+    "max_score": -7.739,
+    "no_match": true
+   },
+   "头盔": {
+    "rows": 14,
+    "max_score": -7.733,
+    "no_match": true
+   },
+   "长柄手电": {
+    "rows": 14,
+    "max_score": -7.738,
+    "no_match": true
+   },
+   "外套": {
+    "rows": 14,
+    "max_score": -7.735,
+    "no_match": true
+   }
+  },
+  "input_tokens_median": 76,
+  "input_tokens_max": 156,
+  "pt_bytes": 41424897
+ },
+ "lexical_baseline": {
+  "pair_confusion": {
+   "0->0": 118,
+   "0->1": 69,
+   "1->1": 50
+  },
+  "positives_matched": "50/50",
+  "note": "substring rule over mention/candidate core name; false positives are owner-siblings (red/blue bands, spare magazines)"
+ },
+ "decision": "not integrated: held-out positives 8/50 vs lexical 50/50; 水壶 and the other unregistered mentions are no-match in both"
+}
