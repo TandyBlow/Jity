@@ -515,6 +515,22 @@ describe('reaction: causal link, attribution and player agency', () => {
     codecAccepts(result);
   });
 
+  it('uses the reaction micro port without a language-model call', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const handlers = createActionHandlers({
+      engine,
+      options: { microReaction: () => '阿宁向后退半步，抬手护住要害。' },
+    });
+    const result = await handlers.reaction('hero', reactionInput(state, 'hero', 'ally', '我把木箱推到门边挡住门口。'));
+    expect(result.source).toBe('micro');
+    expect(result.value).toBe('阿宁向后退半步，抬手护住要害。');
+    expect(engine.prompts).toHaveLength(0);
+    expect(codes(result)).toContain('micro_reaction');
+    expect(codes(result)).not.toContain('reaction_echoes_source');
+    codecAccepts(result);
+  });
+
   it('repairs a reaction that echoes the source action', async () => {
     const state = buildTestWorld();
     const engine = new ScriptedEngine([

@@ -11,7 +11,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-HEADS = {'results': 5, 'judge': 3, 'behavior': 7, 'updates': 2, 'targets': 1, 'continuation': 4, 'reaction': 1}
+HEADS = {'results': 5, 'judge': 3, 'behavior': 7, 'updates': 2, 'targets': 1, 'continuation': 4, 'reaction': 3}
 
 
 def main():

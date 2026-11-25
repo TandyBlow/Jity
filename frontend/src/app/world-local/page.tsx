@@ -15,6 +15,7 @@ import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
 import { createMicroBehavior } from '@/lib/world-engine/local/micro/behavior';
 import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micro/judges';
 import { createMicroContinuation } from '@/lib/world-engine/local/micro/continuation';
+import { createMicroReaction } from '@/lib/world-engine/local/micro/reaction';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -974,6 +975,16 @@ export default function WorldLocalPage() {
             onStats: (record) => recordMicro('continuation', record),
           })
           : undefined;
+        const microReaction = microEnabled && microJudge
+          ? createMicroReaction({
+            judge: microJudge,
+            onStats: (record) => recordMicro('reaction', record),
+          })
+          : undefined;
+        {
+          const armInfo = (window as unknown as { __worldArm?: Record<string, unknown> }).__worldArm;
+          if (armInfo) armInfo.microReaction = Boolean(microReaction);
+        }
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
         // training; the narration engine is not wrapped.
         const recordParam = new URLSearchParams(window.location.search).get('record') === '1';
@@ -1001,6 +1012,7 @@ export default function WorldLocalPage() {
           ...(microBehavior ? { behavior: microBehavior } : {}),
           ...(microJudge ? { judge: microJudge } : {}),
           ...(microContinuation ? { microContinuation } : {}),
+          ...(microReaction ? { microReaction } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of

@@ -94,6 +94,9 @@ export interface GameModelOptions {
   /** Experimental micro workflow: structured events + four heads replace the
    * continuation proposal/judgement LLM calls when they answer. */
   microContinuation?: import('./semantics/settlement/types').MicroContinuationFn;
+  /** Experimental micro workflow: trigger class + intent candidates + the
+   * three judges replace the reaction writer when they are confident. */
+  microReaction?: import('./semantics/actions').ActionHandlerOptions['microReaction'];
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -261,6 +264,7 @@ export class LocalGameModel implements WorldModelPort {
       structuredActions: this.options.structuredActions,
       behavior: this.options.behavior,
       judge: this.options.judge,
+      microReaction: this.options.microReaction,
       recentEvents: () => this.recentEvents,
       offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {

@@ -1,0 +1,7 @@
+[
+  {
+    "id": "reaction-threat",
+    "input": "我推倒唐骁。",
+    "purpose": "an admitted threat creates a reaction slot; the reaction micro workflow may fill it"
+  }
+]

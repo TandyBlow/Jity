@@ -253,3 +253,10 @@
 - LLM 基线本轮（llm2）在玩家回合即被 turn_budget 截断（257.7 s、2 个点、0 个自动点）；同输入同 seed 的上一轮（llm1）跑到 2 个自动点、261.0 s。LLM 路径的方差本身就是证据：它不能稳定地在预算内走完自动链。相对 llm1/llm2，四头臂约 −158 s；护目镜在四头臂已转给诺诺，LLM 臂没转。
 - 指标（micro3 每次玩家操作）：微型 task calls 52；共享编码器 137 次（推理规模以此计）；头输出 488 个（不是 488 次推理）；候选逐项评分 137 行。continuation 3 次/17 编码/68 头输出；results 16/16/80；judge 15/88/264；behavior 10/10/70；targets 8/6/6。任务来源：program 37、micro 29、model 33；另有 10 次 model attempt 单列，已从接受调用中剔除，未标注接受调用为 0。
 - 人工评价：`continuation-human-eval-sheet.md` + `continuation-human-eval-template.json`，4 个留出人物 × base/continuous/player_present/idle 共 50 行，标签隐藏，待独立评价者。assistant 抽查 12 行（`continuation-assistant-spotcheck.json`，非独立）与规则/模型总体一致 10/12；分歧是「查看短讯机是必要第一步」与「泛化求助不推进待办」——两条都说明规则标签漏了语义判断。LLM 离线臂（Qwen3-0.6B，逐候选、同 context）50 行中继续 47 次，规则/微型 14 次，human-LLM 总体一致 5/12；LLM 明显更宽松，不能把它当质量上界。
+
+## Reaction 微型工作流（2026-11-25）
+
+- `micro/reaction.ts`：触发事件理解（offer / question / threat / move / other）→ 意图候选（避开、护住、观察、接过、迟疑、回答、回避、让开、注意）→ 复用 judge 三头打分；合理性门要求意图与触发类匹配、task≥0.5、scene≥0.5、不与发起者行动连续重合 8 字。任何一项不过返回 null，LLM 继续写反应。没有训练专用反应头，这一版是"触发理解 + 意图选择 + 评分头 + 规则门"。
+- 真实威胁回合（输入「我推倒唐骁。」，seed 2，`evidence-reaction-micro3.json`）：roll `lu|nono|trigger_19` 14/11 准入；reaction 端口给 3 个候选打分（857 ms），选中「诺诺蹲下寻找掩体，同时看他下一步。」，`source=micro`，LLM reaction 调用 0 次。同一输入的上一轮（`evidence-reaction-micro2.json`）微型端口低置信弃权，LLM 写了「诺诺的红色识别带在推倒唐骁时…」，`reaction_invents_character` 命中并回退——这正是微型端口要避免的失败模式。
+- 指标口径：reaction 的 3 对 judge 评分计入 `judge` 端口，`reaction` 端口只记任务调用、候选数和选择耗时，避免重复计算编码器运行。
+- 边界：候选是模板句，judge 三头原本为 action 候选训练；真实效果需要更多威胁回合和多 seed A/B，专用反应头仍未训练。

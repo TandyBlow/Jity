@@ -446,6 +446,24 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('reaction', key, asJson(`${scene.actorName}没有作出反应。`), 'program', started, issues, [], '');
     }
 
+    if (options.microReaction) {
+      try {
+        const text = await options.microReaction({
+          scene, source, sourceActionText: call.sourceActionText, state,
+        });
+        if (text) {
+          const checked = checkReactionText(text, { scene, state, source, sourceActionText: call.sourceActionText }, checkOptions);
+          if (!checked.issues.some((issue) => issue.severity === 'error')) {
+            issues.push({ code: 'micro_reaction', severity: 'info', message: `${scene.actorName}的反应由触发事件与三个评分头选出` });
+            return evidence('reaction', key, asJson(checked.value), 'micro', started, issues, [], '');
+          }
+          issues.push({ code: 'micro_reaction_rejected', severity: 'info', message: '反应微型工作流的候选未通过反应检查，改由模型生成' });
+        }
+      } catch {
+        // A micro reaction failure is an abstain, not a task failure.
+      }
+    }
+
     const generated = await generate<string>({
       task: 'reaction', key, prompt: reactionPrompt(scene, source, call.sourceActionText), maxTokens: tokens('reaction'),
       decode: (raw) => decodeTaskOutput('reaction', raw) as string,

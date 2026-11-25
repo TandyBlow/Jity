@@ -62,3 +62,5 @@
 - [ ] 15h. reaction 微型工作流：复用 judge 三头 + 触发事件反应合理性判断；先做候选与门禁，不把规则标签当泛化。
 - [ ] 15i. 多输入/多 seed 完整回合 A/B；移动端同一指标。
 - [x] 15j. 直接规则臂 `microContinuation=rule`：同候选、同 policy、无编码；单输入 seed 11 比四头慢 54.4 s、多一个自动点，直接规则没有比四头更快。
+- [x] 15k. reaction 微型工作流：触发分类 + 意图候选 + judge 三头 + 合理性门；威胁回合 seed 2 选中「诺诺蹲下寻找掩体…」、source=micro、LLM reaction 0 次；`evidence-reaction-micro3.json`。
+- [ ] 15l. 专用反应头与多威胁回合 A/B；模板句质量与 judge 三头在反应输入上的校准。

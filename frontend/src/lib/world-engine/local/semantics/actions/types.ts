@@ -15,6 +15,7 @@
  *   fallback — the model was asked but no answer passed the checks
  */
 import type { Id, Json, WorldState } from '../../../types';
+import type { ActionScene, SceneCharacter } from './scene';
 
 export type ActionTask = 'action' | 'targets' | 'reaction';
 
@@ -56,6 +57,8 @@ export type ActionIssueCode =
   | 'micro_failed'
   | 'template_action'
   | 'template_failed'
+  | 'micro_reaction'
+  | 'micro_reaction_rejected'
   // reaction value
   | 'reaction_too_long'
   | 'reaction_echoes_source'
@@ -156,6 +159,9 @@ export interface ActionHandlerOptions {
    * declared call input. Returning null means "abstain, ask the LLM"; a
    * rejected proposal is recorded and also falls back. */
   microTargets?: MicroTargetsFn;
+  /** Reaction micro workflow: trigger class + intent candidates + the three
+   * judges. Returning null falls back to the LLM reaction writer. */
+  microReaction?: MicroReactionFn;
 }
 
 export interface MicroTargetsRequest {
@@ -172,6 +178,15 @@ export interface MicroTargetsResult {
 }
 
 export type MicroTargetsFn = (request: MicroTargetsRequest) => Promise<MicroTargetsResult | null> | MicroTargetsResult | null;
+
+export interface MicroReactionRequest {
+  scene: ActionScene;
+  source: SceneCharacter;
+  sourceActionText: string;
+  state: WorldState;
+}
+
+export type MicroReactionFn = (request: MicroReactionRequest) => Promise<string | null> | string | null;
 
 export interface ActionHandlers {
   action(key: string, input: Json): Promise<HandlerResult>;
