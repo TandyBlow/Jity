@@ -76,3 +76,21 @@ describe('location suffixes', () => {
     expect(s.subActions[0].destination?.containerId).toBe('yard');
   });
 });
+
+describe('item ownership tie-break', () => {
+  const gear = {
+    initial: {
+      characters: { lu: { name: '路明非' }, nono: { name: '诺诺' } },
+      items: { goggles_lu: { name: '路明非的护目镜' }, spare: { name: '备用护目镜' } },
+      locations: { yard: { name: '庭院', slots: [] } },
+    },
+  } as unknown as WorldState;
+  it('picks the actor-owned item when two names tie', () => {
+    const s = buildActionStructure('路明非把护目镜递给诺诺。', scene, gear, 2);
+    expect(s.subActions[0].itemIds).toEqual(['goggles_lu']);
+    expect(s.subActions[0].destination).toEqual({ entityId: 'goggles_lu', containerId: 'nono', slotId: null });
+  });
+  it('still abstains when neither tied item belongs to the actor', () => {
+    expect(matchItems('护目镜', [{ id: 'a', name: '甲队护目镜' }, { id: 'b', name: '乙队护目镜' }], '路明非')).toEqual([]);
+  });
+});

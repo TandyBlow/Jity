@@ -65,13 +65,17 @@ function coreName(name: string): string {
 
 /** Registered items whose name overlaps the mention; an ambiguous top score
  * returns nothing instead of guessing. */
-export function matchItems(text: string, names: Array<{ id: Id; name: string }>): Id[] {
+export function matchItems(text: string, names: Array<{ id: Id; name: string }>, owner?: string): Id[] {
   const scored = names
-    .map((item) => ({ id: item.id, score: Math.max(longestOverlap(coreName(item.name), text), longestOverlap(item.name, text)) }))
+    .map((item) => ({ id: item.id, name: item.name, score: Math.max(longestOverlap(coreName(item.name), text), longestOverlap(item.name, text)) }))
     .filter((row) => row.score >= 2)
     .sort((left, right) => right.score - left.score);
   if (!scored.length) return [];
-  if (scored.length > 1 && scored[1].score === scored[0].score) return [];
+  if (scored.length > 1 && scored[1].score === scored[0].score) {
+    // A tie is resolved only by ownership: 路明非的护目镜 beats 备用护目镜.
+    const mine = scored.filter((row) => row.score === scored[0].score && owner && row.name.startsWith(`${owner}的`));
+    return mine.length === 1 ? [mine[0].id] : [];
+  }
   return [scored[0].id];
 }
 
@@ -105,14 +109,14 @@ function splitSubActions(text: string): string[] {
   return parts;
 }
 
-function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTargets: number): Omit<SubAction, 'id' | 'order' | 'dependsOn'> {
+function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTargets: number, owner?: string): Omit<SubAction, 'id' | 'order' | 'dependsOn'> {
   const items = Object.entries(state.initial.items).map(([id, item]) => ({ id, name: item.name ?? id }));
   const visible = scene.visible.map((character) => ({ id: character.id, name: character.name }));
   const targets = resolveRuleTargets(text, { visible, absent: scene.absent }, maxTargets) ?? [];
   let destination: ActionDestination | null = null;
   const transfer = /把(.+?)(?:递给|交给|塞给|递到)(.+?)(?:[。；，,！？]|$)/u.exec(text);
   if (transfer) {
-    const item = matchItems(transfer[1], items)[0];
+    const item = matchItems(transfer[1], items, owner)[0];
     const person = visible.find((character) => character.name === transfer[2].trim())?.id;
     if (item && person) destination = { entityId: item, containerId: person, slotId: null };
   }
@@ -123,7 +127,7 @@ function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTarge
       destination = { entityId: scene.actorId, containerId: matched.id, slotId: slotFor(state, matched.id, text) };
     }
   }
-  return { text, category: categoryOf(text), targetIds: targets, itemIds: matchItems(text, items), destination };
+  return { text, category: categoryOf(text), targetIds: targets, itemIds: matchItems(text, items, owner), destination };
 }
 
 export function buildActionStructure(
@@ -135,7 +139,7 @@ export function buildActionStructure(
   const parts = splitSubActions(text);
   const subActions: SubAction[] = parts.map((part, index) => ({
     id: `sa${index + 1}`,
-    ...fieldsFor(part, scene, state, maxTargets),
+    ...fieldsFor(part, scene, state, maxTargets, scene.actorName),
     order: index + 1,
     dependsOn: index === 0 ? [] : [`sa${index}`],
   }));
