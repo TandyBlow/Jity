@@ -274,3 +274,8 @@
 
 - CPU 4× + GPU lite、Edge headless，`micro=1`，compound 输入（`evidence-mobile-micro.json`）：回合 284.3 s、`turn_budget`、只到 2 个点、0 个自动点。微型总计 110 次共享编码、382 个头输出、累计端口时间 15.45 s；单端口加载 targets 2.10 s、judge 0.70 s、behavior 0.67 s、results 0.49 s、updates 0.45 s；JS heap 111 MB（不是 GPU VRAM）。微型弃权 4 次（993 ms），模型 fallback 1 次 16.1 s。
 - 结论：多个微型模型同时驻留没有崩溃，加载约 4.4 s（串行、各端口独立 runtime）；但这是桌面 CPU 降速 + GPU lite 的代理，不是真机，也没有 VRAM/温度数据；60 s 仍未达到，主要成本仍是 LLM 阶段。下一步真机 + 共享 runtime/共享编码器加载，避免每个端口各自加载 tokenizer/会话。
+
+## updates 剩余成本（四头臂 seed 11）
+
+- 44 次接受 updates 调用的 stage 时间：tasks 3 次 22.3 s、position 14 次 20.1 s、subtasks 3 次 15.1 s、appearance 3 次 7.2 s。位置阶段已被局部小提示和程序场景压过一轮，但仍是调用次数最多的；tasks/subtasks 只有 6 次调用却占 37.4 s，是下一个高耗时目标。
+- 这两个阶段是质量敏感的"任务是否达成/是否需要新增子任务"判断，不能直接用现有 results 头替代；需要先补真实正例与反例，再训练专用头并保留 LLM 回退。

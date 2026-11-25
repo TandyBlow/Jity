@@ -66,3 +66,4 @@
 - [ ] 15l. 专用反应头与多威胁回合 A/B；模板句质量与 judge 三头在反应输入上的校准。
 - [x] 15m. 移动端代理：CPU 4× + GPU lite、micro=1，回合 284.3 s、turn_budget、2 点；微型 110 编码/382 头输出/15.45 s；各端口加载合计约 4.4 s；JS heap 111 MB；多模型驻留未崩。
 - [ ] 15n. 真机移动浏览器 + 共享 runtime/共享编码器加载 + VRAM/温度；60 秒口径复测。
+- [ ] 15o. updates 剩余成本：tasks 22.3 s/3、position 20.1 s/14、subtasks 15.1 s/3、appearance 7.2 s/3；下一目标 tasks/subtasks（6 次调用 37.4 s），需先补训练正反例。
