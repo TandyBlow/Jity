@@ -1,0 +1,168 @@
+{
+ "baseline": {
+  "file": "artifacts\\goal\\micro-workflow\\evidence-seed-llm-2026-11-25T0152-0e18.json",
+  "firstReadableMs": 14091,
+  "after": {
+   "place": "西侧服务巷",
+   "nearby": "诺诺",
+   "sanity": "43",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动瞬时 · 当前正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ]
+  },
+  "semanticCalls": 108,
+  "totals": {
+   "calls": 108,
+   "llm": 99,
+   "micro": 9,
+   "ms": 327676
+  },
+  "stats": {
+   "action": {
+    "calls": 38,
+    "ms": 115644,
+    "llm": 37,
+    "micro": 1
+   },
+   "targets": {
+    "calls": 22,
+    "ms": 35213,
+    "llm": 14,
+    "micro": 8
+   },
+   "results": {
+    "calls": 14,
+    "ms": 68539,
+    "llm": 14,
+    "micro": 0
+   },
+   "updates": {
+    "calls": 32,
+    "ms": 102141,
+    "llm": 32,
+    "micro": 0
+   },
+   "narration": {
+    "calls": 2,
+    "ms": 6139,
+    "llm": 2,
+    "micro": 0
+   }
+  }
+ },
+ "micro": {
+  "file": "artifacts\\goal\\micro-workflow\\evidence-seed-micro.json",
+  "firstReadableMs": 10524,
+  "after": {
+   "place": "西侧服务巷",
+   "nearby": "诺诺",
+   "sanity": "43",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#3已提交行动行动 · 当前正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动瞬时正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ]
+  },
+  "semanticCalls": 115,
+  "totals": {
+   "calls": 115,
+   "llm": 86,
+   "micro": 29,
+   "ms": 330522
+  },
+  "stats": {
+   "action": {
+    "calls": 41,
+    "ms": 133190,
+    "llm": 40,
+    "micro": 1
+   },
+   "targets": {
+    "calls": 16,
+    "ms": 3520,
+    "llm": 2,
+    "micro": 14
+   },
+   "results": {
+    "calls": 16,
+    "ms": 11899,
+    "llm": 2,
+    "micro": 14
+   },
+   "updates": {
+    "calls": 38,
+    "ms": 162183,
+    "llm": 38,
+    "micro": 0
+   },
+   "narration": {
+    "calls": 3,
+    "ms": 12090,
+    "llm": 3,
+    "micro": 0
+   },
+   "continuation": {
+    "calls": 1,
+    "ms": 7640,
+    "llm": 1,
+    "micro": 0
+   }
+  }
+ }
+}
