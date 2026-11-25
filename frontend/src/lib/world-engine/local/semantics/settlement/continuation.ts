@@ -426,7 +426,12 @@ export class ContinuationRunner {
     const accepted = read.candidates;
     if (!accepted.length) {
       return this.handback(key, [], started, {
-        reason: answer.reason || 'micro_no_eligible_candidate',
+        // A continue answer whose rows all failed validation is a port
+        // handback, not a model "no follow-up" decision.
+        reason: answer.decision === 'handback'
+          ? (answer.reason || 'micro_handback')
+          : 'micro_no_eligible_candidate',
+        microReason: answer.reason,
         source: 'micro',
         candidates: answer.candidates,
         rejectedCandidates: rejected,

@@ -2055,6 +2055,24 @@ describe('continuation', () => {
     expect(engine.prompts).toHaveLength(0);
   });
 
+  it('turns a micro continue with only invalid rows into a port handback', async () => {
+    const engine = new ScriptedEngine([]);
+    const handlers = createSettlementHandlers({
+      engine,
+      options: {
+        microContinuation: () => ({
+          decision: 'continue', reason: 'novel_unfinished_necessary',
+          candidates: [], accepted: [{ characterId: 'a', text: '甲自己行动。', category: 'move', scores: { novelty: 1, unfinished: 1, necessity: 1, intervene: 0 }, repeat: 'new' }],
+          rejected: [],
+        }),
+      },
+    });
+    const outcome = await handlers.continuation('r1', continuationInput(progress()));
+    expect(outcome.value).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    expect((outcome.evidence.detail as { reason: string }).reason).toBe('micro_no_eligible_candidate');
+    expect(engine.prompts).toHaveLength(0);
+  });
+
   it('falls back to the language model when the micro port abstains', async () => {
     const engine = new ScriptedEngine([continueProposal(), continueJudgment()]);
     const handlers = createSettlementHandlers({ engine, options: { microContinuation: () => null } });
