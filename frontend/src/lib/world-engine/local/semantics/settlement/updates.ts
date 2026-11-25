@@ -63,6 +63,64 @@ function programScenePositions(state: WorldState, results: Record<Id, string>, s
   return rows.length ? rows : null;
 }
 
+
+/** One small position question per affected entity that owns a settled fact.
+ * Entities without a fact are a confirmed no-change; any rejected or missing
+ * move returns null so the merged scene call answers instead. */
+async function stagePositionLocal(ctx: StageContext, scanned: Id[], appearanceIds: Id[]): Promise<StageOutcome | null> {
+  const facts = resultFacts(ctx.results);
+  const calls: ModelCallEvidence[] = [];
+  const changes: Record<Id, Partial<EntityDelta>> = {};
+  try {
+    for (const entityId of scanned) {
+      const fact = facts.find((row) => row.memberId === entityId);
+      if (!fact) continue;
+      const answer = await callJson(ctx.engine, localPositionPrompt(ctx.state, entityId, fact.text), {
+        maxTokens: 120,
+        temperature: 0,
+        timeoutMs: ctx.options.timeoutMs,
+        maxPromptChars: 4000,
+        jsonSchema: POSITION_SCHEMA,
+        maxAttempts: 1,
+        validate: (value) => readPositionChanges(value, ctx.state, new Set([entityId])),
+      });
+      calls.push(...answer.calls);
+      Object.assign(changes, readPositionChanges(answer.value, ctx.state, new Set([entityId])).changes);
+    }
+    if (missingMoves(ctx.state, ctx.results, changes).length) return null;
+    projectStage(ctx.state, 'position', changes);
+    const cue = resultFacts(ctx.results).some((fact) => APPEARANCE_WORDS.some((word) => fact.text.includes(word)));
+    if (appearanceIds.length && ctx.shared && !cue) {
+      ctx.shared.pendingAppearance = { changes: {}, lenientDrops: [], ids: appearanceIds };
+    }
+    return {
+      changes,
+      detail: { scannedEntityIds: scanned, localEntityIds: scanned.filter((id) => facts.some((fact) => fact.memberId === id)), changedEntityIds: Object.keys(changes).sort(), source: 'local' },
+      fallback: false,
+      calls,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function localPositionPrompt(state: WorldState, entityId: Id, factText: string): string {
+  const name = state.initial.characters[entityId]?.name ?? state.initial.items[entityId]?.name ?? entityId;
+  const current = state.characters[entityId]?.position ?? state.items[entityId]?.position;
+  const locations = Object.entries(state.initial.locations).map(([id, location]) => `${id}=${location.name}`).join('；');
+  const named = Object.entries(state.initial.locations)
+    .filter(([, location]) => (location.name ?? '').length >= 2 && factText.includes(location.name))
+    .map(([id, location]) => `- ${id} 槽位：${(location.slots ?? []).map((slot) => `${slot.id}=${slot.label}`).join('，') || '无'}`);
+  return [
+    '你是中文跑团游戏的位置结算器。只输出 JSON。',
+    `实体：${name}（id=${entityId}）当前：${current?.containerId ?? '?'}/${current?.slotId ?? '-'}`,
+    `本组事实：${factText}`,
+    '只判断这个实体本轮是否改变位置。没有变化输出 {"changes":[]}；有变化输出 {"changes":[{"entityId":"' + entityId + '","containerId":"地点id"}]}，进入槽位再加 "slotId"（必须是该地点的槽位 id）。不要新增实体。',
+    `地点：${locations}`,
+    ...(named.length ? ['相关槽位：', ...named] : []),
+  ].join(String.fromCharCode(10));
+}
+
 interface StageContext {
   engine: InferenceEngine;
   groupId: Id | null;
@@ -764,6 +822,10 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
         };
       }
     }
+  }
+  if (ctx.options.localPosition && ctx.results) {
+    const local = await stagePositionLocal(ctx, scanned, appearanceIds);
+    if (local) return local;
   }
   let microNote: string | null = null;
   if (ctx.options.microUpdates) {

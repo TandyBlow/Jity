@@ -975,7 +975,7 @@ export default function WorldLocalPage() {
           ...(microTargets ? { microTargets } : {}),
           ...(microResults ? { microResults } : {}),
           ...(microUpdates ? { microUpdates } : {}),
-          ...(microEnabled ? { structuredActions: true, programScene: true } : {}),
+          ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of
           // a player round holds only that character so its settlement can

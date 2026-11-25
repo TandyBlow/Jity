@@ -77,6 +77,7 @@ export interface GameModelOptions {
   /** Experimental: facts with structured destinations drive the position
    * stage directly; uncertain scenes fall back to the LLM. */
   programScene?: boolean;
+  localPosition?: boolean;
   /** Experimental micro workflow: a rules+scorer targets port. When it returns
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
@@ -214,6 +215,7 @@ export class LocalGameModel implements WorldModelPort {
       microResults: this.options.microResults,
       microUpdates: this.options.microUpdates,
       programScene: this.options.programScene,
+      localPosition: this.options.localPosition,
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
       nextRoundId: () => `round_auto_${Date.now().toString(36)}_${++this.roundCounter}`,
       // The appearance stage measures 7877 chars on the shipped world; a retry

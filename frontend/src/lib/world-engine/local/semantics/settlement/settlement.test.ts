@@ -1735,6 +1735,24 @@ describe('six-stage updates', () => {
     expect((outcome.value as UpdatesCall).changes).toEqual({});
   });
 
+  it('asks one small position question per affected entity', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [{ entityId: 'a', containerId: 'far' }] }),
+      JSON.stringify({ changes: [] }),
+    ]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲走进远处。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine, options: { localPosition: true } })
+      .updates('g1#position', input);
+    expect(engine.prompts).toHaveLength(2);
+    expect(engine.prompts.every((prompt) => prompt.includes('只判断这个实体'))).toBe(true);
+    expect((outcome.value as UpdatesCall).changes.a?.positionSet?.containerId).toBe('far');
+    const stageDetail = (outcome.evidence.detail as { stageDetail?: { source?: string } }).stageDetail;
+    expect(stageDetail?.source).toBe('local');
+  });
+
   it('accepts a movement-head answer that the fact already supports, with no LLM call', async () => {
     const engine = new ScriptedEngine([]);
     const input = {

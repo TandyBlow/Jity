@@ -57,6 +57,9 @@ export interface SettlementOptions {
   /** Experimental structured scene arm: apply `去向=` facts directly and skip
    * the merged position prompt when nothing looks uncertain. */
   programScene?: boolean;
+  /** Experimental: one small position question per affected entity; any
+   * rejection falls back to the merged scene call. */
+  localPosition?: boolean;
   /** Product default: a new task achievement must cite a settled result fact
    * (or a time basis). Unit fixtures may leave this off, but the page port
    * never does. */
