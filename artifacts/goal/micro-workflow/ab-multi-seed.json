@@ -1,0 +1,224 @@
+[
+ {
+  "pair": 1,
+  "firstReadableMs": {
+   "baseline": 14091,
+   "micro": 10524
+  },
+  "totals": {
+   "baseline": {
+    "calls": 108,
+    "llm": 99,
+    "micro": 9,
+    "ms": 327676
+   },
+   "micro": {
+    "calls": 115,
+    "llm": 86,
+    "micro": 29,
+    "ms": 330522
+   }
+  },
+  "stages": {
+   "action": {
+    "baseline": {
+     "calls": 38,
+     "ms": 115644,
+     "llm": 37,
+     "micro": 1
+    },
+    "micro": {
+     "calls": 41,
+     "ms": 133190,
+     "llm": 40,
+     "micro": 1
+    }
+   },
+   "targets": {
+    "baseline": {
+     "calls": 22,
+     "ms": 35213,
+     "llm": 14,
+     "micro": 8
+    },
+    "micro": {
+     "calls": 16,
+     "ms": 3520,
+     "llm": 2,
+     "micro": 14
+    }
+   },
+   "results": {
+    "baseline": {
+     "calls": 14,
+     "ms": 68539,
+     "llm": 14,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 16,
+     "ms": 11899,
+     "llm": 2,
+     "micro": 14
+    }
+   },
+   "updates": {
+    "baseline": {
+     "calls": 32,
+     "ms": 102141,
+     "llm": 32,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 38,
+     "ms": 162183,
+     "llm": 38,
+     "micro": 0
+    }
+   },
+   "narration": {
+    "baseline": {
+     "calls": 2,
+     "ms": 6139,
+     "llm": 2,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 3,
+     "ms": 12090,
+     "llm": 3,
+     "micro": 0
+    }
+   },
+   "continuation": {
+    "micro": {
+     "calls": 1,
+     "ms": 7640,
+     "llm": 1,
+     "micro": 0
+    }
+   }
+  }
+ },
+ {
+  "pair": 2,
+  "firstReadableMs": {
+   "baseline": 24695,
+   "micro": 15639
+  },
+  "totals": {
+   "baseline": {
+    "calls": 131,
+    "llm": 122,
+    "micro": 9,
+    "ms": 346854
+   },
+   "micro": {
+    "calls": 127,
+    "llm": 97,
+    "micro": 30,
+    "ms": 296405
+   }
+  },
+  "stages": {
+   "action": {
+    "baseline": {
+     "calls": 40,
+     "ms": 109505,
+     "llm": 39,
+     "micro": 1
+    },
+    "micro": {
+     "calls": 42,
+     "ms": 142958,
+     "llm": 41,
+     "micro": 1
+    }
+   },
+   "targets": {
+    "baseline": {
+     "calls": 26,
+     "ms": 43073,
+     "llm": 18,
+     "micro": 8
+    },
+    "micro": {
+     "calls": 18,
+     "ms": 9231,
+     "llm": 4,
+     "micro": 14
+    }
+   },
+   "reaction": {
+    "baseline": {
+     "calls": 2,
+     "ms": 5153,
+     "llm": 2,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 2,
+     "ms": 5435,
+     "llm": 2,
+     "micro": 0
+    }
+   },
+   "results": {
+    "baseline": {
+     "calls": 15,
+     "ms": 74305,
+     "llm": 15,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 16,
+     "ms": 10688,
+     "llm": 2,
+     "micro": 14
+    }
+   },
+   "updates": {
+    "baseline": {
+     "calls": 42,
+     "ms": 91099,
+     "llm": 42,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 42,
+     "ms": 95851,
+     "llm": 41,
+     "micro": 1
+    }
+   },
+   "narration": {
+    "baseline": {
+     "calls": 4,
+     "ms": 13378,
+     "llm": 4,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 4,
+     "ms": 16020,
+     "llm": 4,
+     "micro": 0
+    }
+   },
+   "continuation": {
+    "baseline": {
+     "calls": 2,
+     "ms": 10341,
+     "llm": 2,
+     "micro": 0
+    },
+    "micro": {
+     "calls": 3,
+     "ms": 16222,
+     "llm": 3,
+     "micro": 0
+    }
+   }
+  }
+ }
+]
