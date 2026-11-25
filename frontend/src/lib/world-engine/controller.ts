@@ -996,7 +996,11 @@ export class ControllerDriver {
         const actor = req.initiatorId as Id;
         if (!this.memory.groupActors.includes(actor)) this.memory.groupActors.push(actor);
         this.memory.sources = [{ sourceId: actor, actionText: req.actionText as string, targetsExtended: false, pendingTargets: [], rolled: [] }];
-        this.memory.groupActions = [{ memberId: actor, actionText: req.actionText as string, rolls: [] }];
+        const actionOutput = this.memory.lastModel?.output as { structured?: import('./local/semantics/actions/structure').ActionStructure } | undefined;
+        this.memory.groupActions = [{
+          memberId: actor, actionText: req.actionText as string, rolls: [],
+          ...(actionOutput?.structured ? { structured: actionOutput.structured } : {}),
+        }];
         this.memory.updatesCalls = [];
         this.memory.updatesApplied = 0;
         this.memory.updatesPendingRefs = [];

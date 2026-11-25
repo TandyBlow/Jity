@@ -30,6 +30,9 @@ interface GroupMember {
   memberId: Id;
   actionText: string;
   rolls: RollReceipt[];
+  /** Structured action fields from the action lane, sanitized against the
+   * working state; absent on old saves. */
+  structured?: import('../actions/structure').ActionStructure;
 }
 
 interface ResultsInput {
@@ -195,6 +198,7 @@ export async function runResults(
           memberId: member.memberId,
           actionText: member.actionText,
           rolls: member.rolls.map((roll) => ({ result: roll.result, eligible: roll.eligible, admitted: roll.admitted })),
+          ...(member.structured ? { structured: member.structured } : {}),
         })),
         state: workingState,
       });
@@ -420,6 +424,37 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
   }
 }
 
+/** Sanitize the action lane's structure at the trust boundary: unknown ids and
+ * foreign slots are dropped, and an actor mismatch discards the whole block. */
+function parseActionStructure(raw: unknown, state: WorldState, memberId: Id): { structured?: import('../actions/structure').ActionStructure } | null {
+  if (!isRecord(raw)) return null;
+  if (asString(raw.actorId) !== memberId) return null;
+  const category = asString(raw.category);
+  if (!category) return null;
+  const known = (id: string) => Boolean(state.characters[id] ?? state.items[id] ?? state.locations[id]);
+  const ids = (value: unknown) => (Array.isArray(value) ? value.map(asString).filter((id) => id && known(id)) : []);
+  let destination: import('../actions/structure').ActionStructure['destination'] = null;
+  if (isRecord(raw.destination)) {
+    const entityId = asString(raw.destination.entityId);
+    const containerId = asString(raw.destination.containerId);
+    const slotId = asString(raw.destination.slotId) || null;
+    const slots = state.initial.locations[containerId]?.slots ?? state.initial.items[containerId]?.slots ?? state.initial.characters[containerId]?.slots ?? [];
+    if (entityId && known(entityId) && containerId && known(containerId) && (slotId == null || slots.some((slot) => slot.id === slotId))) {
+      destination = { entityId, containerId, slotId };
+    }
+  }
+  return {
+    structured: {
+      category: category as import('../actions/structure').ActionCategory,
+      actorId: memberId,
+      targetIds: ids(raw.targetIds),
+      itemIds: ids(raw.itemIds),
+      destination,
+      conditions: Array.isArray(raw.conditions) ? raw.conditions.map(asString).filter(Boolean).slice(0, 3) : [],
+    },
+  };
+}
+
 function parseResultsInput(input: Json): ResultsInput | { error: string } {
   const data = asRecord(input);
   const state = data.workingState;
@@ -465,7 +500,7 @@ function parseResultsInput(input: Json): ResultsInput | { error: string } {
       targets.add(targetId);
       rolls.push({ targetId, rollId, result, eligible: rawRoll.eligible, admitted: rawRoll.admitted });
     }
-    members.push({ memberId, actionText, rolls });
+    members.push({ memberId, actionText, rolls, ...(parseActionStructure(rawMember.structured, world, memberId) ?? {}) });
   }
   for (const member of members) {
     for (const roll of member.rolls) {
@@ -490,7 +525,12 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
         return `目标${targetName}(${roll.targetId}) 骰点=${roll.result} 资格=${roll.eligible} 准入=${roll.admitted}`;
       }).join('；')
       : '无判定';
-    return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}`;
+    const s = member.structured;
+    const structure = s
+      ? `\n  结构：类别=${s.category}；目标=${s.targetIds.join(',') || '无'}；物品=${s.itemIds.join(',') || '无'}；` +
+        `去向=${s.destination ? `${s.destination.containerId}${s.destination.slotId ? `/${s.destination.slotId}` : ''}` : '无'}`
+      : '';
+    return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}${structure}`;
   });
   const sceneIds = new Set<Id>([...members.map((member) => member.memberId)]);
   if (compact) {

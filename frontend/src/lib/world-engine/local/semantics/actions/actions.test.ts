@@ -630,3 +630,26 @@ describe('model-port adapter', () => {
       .rejects.toThrow(/unsupported_action_port_task:results/);
   });
 });
+
+describe('structured action arm', () => {
+  it('attaches a rule-derived structure to an accepted act', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([JSON.stringify({ kind: 'act', text: '阿宁走进书房。' })]);
+    const result = await createActionHandlers({ engine, options: { structuredActions: true } })
+      .action('ally', actInput(state, 'ally', null));
+    const value = result.value as {
+      kind: string;
+      structured?: { category: string; actorId: string; destination: { containerId: string } | null };
+    };
+    expect(value.kind).toBe('act');
+    expect(value.structured?.actorId).toBe('ally');
+    expect(value.structured?.category).toBe('move');
+    expect(value.structured?.destination?.containerId).toBe('study');
+  });
+  it('keeps the plain value shape when the arm is off', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([JSON.stringify({ kind: 'act', text: '阿宁走进书房。' })]);
+    const result = await createActionHandlers({ engine, options: {} }).action('ally', actInput(state, 'ally', null));
+    expect(result.value).toEqual({ kind: 'act', text: '阿宁走进书房。' });
+  });
+});

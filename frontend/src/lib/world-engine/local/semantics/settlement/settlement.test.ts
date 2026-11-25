@@ -138,6 +138,40 @@ describe('common-group results', () => {
     expect(isExampleFactText('甲把工具推给乙。')).toBe(false);
   });
 
+  it('carries the structured action into the results prompt and the micro port', async () => {
+    const structured = {
+      category: 'assist', actorId: 'a', targetIds: ['b'], itemIds: ['tool'],
+      destination: { entityId: 'tool', containerId: 'b', slotId: null }, conditions: [],
+    };
+    const requests: unknown[] = [];
+    const engine = new ScriptedEngine([JSON.stringify({
+      judgments: [
+        { memberId: 'a', label: 'achieved', reason: '甲把工具递给乙。' },
+        { memberId: 'b', label: 'no_change', reason: '乙接住工具。' },
+      ],
+      facts: [
+        { text: '甲把工具递给乙。', memberIds: ['a'], actorId: 'a', targetId: 'b', action: '递给', outcome: 'completed' },
+        { text: '乙接住工具。', memberIds: ['b'] },
+      ],
+    })]);
+    const input = {
+      groupId: 'g1',
+      members: [
+        { memberId: 'a', actionText: '甲把工具递给乙。', rollRefs: [], structured },
+        { memberId: 'b', actionText: '乙接住工具。', rollRefs: [] },
+      ],
+      workingState: world(),
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: { microResults: (request) => { requests.push(request); return null; } },
+    }).results('g1', input);
+    expect(engine.prompts[0]).toContain('结构：类别=assist');
+    const captured = requests[0] as { members: Array<{ memberId: string; structured?: { destination?: { containerId: string } } }> };
+    expect(captured.members[0].structured?.destination?.containerId).toBe('b');
+    expect(outcome.value).toBeTruthy();
+  });
+
   it('drops an unknown-name success fact after the repairs', async () => {
     const answer = (fact: Record<string, unknown>) => JSON.stringify({
       judgments: [

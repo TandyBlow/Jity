@@ -95,7 +95,11 @@ export interface ModelTaskDetail {
  * as a model answer (`readResultsAnswer` / known-entity / normalize). */
 export interface MicroResultsRequest {
   groupId: Id;
-  members: Array<{ memberId: Id; actionText: string; rolls: Array<{ result: number; eligible: boolean; admitted: boolean }> }>;
+  members: Array<{
+    memberId: Id; actionText: string; rolls: Array<{ result: number; eligible: boolean; admitted: boolean }>;
+    /** Structured action fields when the action lane produced them. */
+    structured?: import('../actions/structure').ActionStructure;
+  }>;
   state: WorldState;
 }
 

@@ -93,7 +93,10 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const label = RESULT[best];
       judgments.push({ memberId: member.memberId, label, reason: PHRASE[label] });
       const normalized = member.actionText.replace(/我(?!们)/gu, name);
-      const hint = destinationHint(normalized, request.state, member.memberId);
+      const dest = member.structured?.destination;
+      const hint = dest
+        ? `${dest.entityId}:${dest.containerId}${dest.slotId ? `/${dest.slotId}` : ''}`
+        : destinationHint(normalized, request.state, member.memberId);
       facts.push({
         text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}`,
         memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],

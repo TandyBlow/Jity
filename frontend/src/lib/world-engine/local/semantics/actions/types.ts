@@ -129,6 +129,10 @@ export interface ActionHandlerOptions {
    * measured ~6s per call, so a 14-actor round does not fit the wait budget).
    * Either way the reason is logged. */
   offscreenPolicy?: 'skip' | 'judge';
+  /** Experimental structured-action arm: attach category/targetIds/itemIds/
+   * destination/conditions to an accepted act. Default off keeps the value
+   * shape `{kind,text}` every caller and test already relies on. */
+  structuredActions?: boolean;
   /** When the protagonist is the admitted reaction target, the player's own
    * character must not be written by a model. 'minimal' returns a program
    * line that asserts no decision (default); 'model' opts into generation. */

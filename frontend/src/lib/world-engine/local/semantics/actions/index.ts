@@ -31,6 +31,7 @@ import type { ModelTask } from '../../../schedule';
 import { roomOf } from '../../prompt';
 import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
+import { buildActionStructure, type ActionStructure } from './structure';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
 import { longestSharedSpan } from './text';
 import { readActionCall, readReactionCall, readTargetsCall } from './inputs';
@@ -223,7 +224,12 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
         return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
       }
       issues.push({ code: 'protagonist_command', severity: 'info', message: '主角的待处理命令原样作为冻结行动' });
-      return evidence('action', key, { kind: 'act', text: call.inputText }, 'program', started, issues, [], '');
+      return evidence('action', key, {
+        kind: 'act', text: call.inputText,
+        ...(options.structuredActions
+          ? { structured: asJson(buildActionStructure(call.inputText, scene, call.state, checkOptions.maxTargets)) }
+          : {}),
+      }, 'program', started, issues, [], '');
     }
 
     // Scene scope: a character in another room is not visible to the player's
@@ -255,7 +261,7 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
-    const generated = await generate<{ kind: 'act'; text?: string } | { kind: 'skip' }>({
+    const generated = await generate<{ kind: 'act'; text?: string; structured?: ActionStructure } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
       repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')
         ? actionPrompt(scene, { omitTasks: true })
@@ -265,7 +271,15 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       check: (value) => {
         if (value.kind === 'skip') return { value, issues: [{ code: 'model_skip', severity: 'info', message: `${scene.actorName}此刻不行动` }], repairs: [] };
         const checked = checkActionText(String(value.text ?? ''), scene, call.state, checkOptions);
-        return { value: { kind: 'act', text: checked.value }, issues: checked.issues, repairs: checked.repairs };
+        return {
+          value: {
+            kind: 'act', text: checked.value,
+            ...(options.structuredActions
+              ? { structured: buildActionStructure(checked.value, scene, call.state, checkOptions.maxTargets) }
+              : {}),
+          },
+          issues: checked.issues, repairs: checked.repairs,
+        };
       },
     });
 

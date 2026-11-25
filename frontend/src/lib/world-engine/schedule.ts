@@ -206,7 +206,12 @@ export interface ControllerMemory {
   /** 本结算组的冻结行动与全部骰点判定（§7.1 results 输入；含未准入 roll）。
    * 随 sources 同生命周期：discover 建立、admit 前插、create_rolls 追加、
    * stage/commit 归零——只覆盖当前组，不是长期行动记录。 */
-  groupActions: { memberId: Id; actionText: string; rolls: { targetId: Id; rollId: Id; result: number; eligible: boolean; admitted: boolean }[] }[];
+  groupActions: {
+    memberId: Id; actionText: string; rolls: { targetId: Id; rollId: Id; result: number; eligible: boolean; admitted: boolean }[];
+    /** Structured action fields from the action lane; absent on old saves and
+     * on reaction-sourced members. */
+    structured?: import('./local/semantics/actions/structure').ActionStructure;
+  }[];
   lastModel: ModelResolution | null;
   /** Targets the model just declared for the current source, kept OUT of
    * lastModel on purpose: every successful transport clears lastModel, and
@@ -1094,7 +1099,10 @@ function settleDecision(view: ScheduleView): Decision {
       input: {
         ...(view.narrationOverlap ? { pointId: work!.pointId } : {}),
         groupId: pending.groupId,
-        members: memory.groupActions.map((member) => ({ memberId: member.memberId, actionText: member.actionText, rollRefs: member.rolls })),
+        members: memory.groupActions.map((member) => ({
+          memberId: member.memberId, actionText: member.actionText, rollRefs: member.rolls,
+          ...(member.structured ? { structured: asJson(member.structured) } : {}),
+        })),
         workingState: asJson(memory.workingState!.state),
       },
     };

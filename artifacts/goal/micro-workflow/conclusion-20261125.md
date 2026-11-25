@@ -88,3 +88,10 @@
 - action 两 seed 都变慢（+18/+34 s），updates 一慢一平（+60/+5 s）；微型 results 改变轨迹，回合净差 −2.7 s（seed 11）与 −53 s（seed 17），两 seed 合计 −56 s、LLM −38 次。
 - 两 seed 的 `after` 完全一致（西侧服务巷、诺诺、理智 43、无已完成任务），没有观察到状态回退。
 - 结论：results 头是第一个真正替代高耗时 LLM 调用的微型模型（阶段省 56–64 s、12–13 次调用、状态一致）；回合收益受轨迹方差影响，两 seed 平均约 −28 s（−11%）、−19 次调用/回合。下一步优先把 action 的 +18–34 s 与位置阶段的结构化事实对齐，而不是继续加分类器。
+
+## action 结构化与固定输入回放（2026-11-25）
+
+- action 臂（`structuredActions`，随 `?micro=1` 开启）在接受的行动文本上生成 `category/actorId/targetIds/itemIds/destination/conditions`：类别与去向用规则，目标用现有指代规则，物品用词面候选匹配；提到「水壶」而世界登记名是「休息区饮水杯」时返回空，不强行匹配。
+- 结构随 `discover_group` 进入 `groupActions`，results 输入与提示都带 `结构：类别/目标/物品/去向`；微 results 的事实据此写 `去向=实体:容器`，updates 端口直接读取，不再从自然语言猜。
+- 固定输入回放（147 次真实 results 调用、173 名成员，同一提示同一输入）：results 头在 144/147 次调用上可以整体替换（3 名成员低置信回退），成员标签与 LLM 一致 153/170（90.0%；four 49/2、one 23/4、three 60/10、two 21/1）。这是**样本内**回放——头在这些 run 上训练过；跨 run 留出准确率仍是 67–77%。
+- 测试：action 结构 6 条、action 臂 2 条、settlement 结构透传 1 条；全量 1314 通过、tsc 干净。

@@ -1,0 +1,20 @@
+{
+ "results_calls": 147,
+ "members": 173,
+ "micro_replaceable_calls": 144,
+ "abstained_members": 3,
+ "label_agreement": {
+  "match": 153,
+  "differ": 17
+ },
+ "per_call_labels": {
+  "four:match": 49,
+  "four:differ": 2,
+  "one:match": 23,
+  "one:differ": 4,
+  "three:match": 60,
+  "three:differ": 10,
+  "two:match": 21,
+  "two:differ": 1
+ }
+}

@@ -71,6 +71,9 @@ export interface GameModelOptions {
    * skipped by the action lane's program rule ('skip'). The page exposes it
    * only through the URL query; the shipped default stays 'judge'. */
   offscreenPolicy?: 'skip' | 'judge';
+  /** Experimental structured-action arm: the action lane emits category,
+   * target/item ids, destination and conditions for results to consume. */
+  structuredActions?: boolean;
   /** Experimental micro workflow: a rules+scorer targets port. When it returns
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
@@ -240,6 +243,7 @@ export class LocalGameModel implements WorldModelPort {
       });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       microTargets: this.options.microTargets,
+      structuredActions: this.options.structuredActions,
       recentEvents: () => this.recentEvents,
       offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {
