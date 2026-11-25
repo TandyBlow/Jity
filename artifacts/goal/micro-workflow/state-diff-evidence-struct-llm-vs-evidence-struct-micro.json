@@ -1,0 +1,31 @@
+{
+ "a": "artifacts/goal/micro-workflow/evidence-struct-llm.json",
+ "b": "artifacts/goal/micro-workflow/evidence-struct-micro.json",
+ "time": [
+  "2009-10-17T15:23:00",
+  "2009-10-17T15:22:00"
+ ],
+ "fields": [
+  {
+   "entity": "caesar",
+   "field": "tasks",
+   "a": {
+    "task_caesar_win": "pending",
+    "task_caesar_contact": "pending",
+    "task_caesar_bridge": "pending",
+    "task_caesar_tang": "pending",
+    "task_caesar_flag": "pending"
+   },
+   "b": {
+    "task_caesar_win": "pending",
+    "task_caesar_contact": "pending",
+    "task_caesar_bridge": "pending",
+    "task_caesar_tang": "pending",
+    "task_caesar_flag": "pending",
+    "task_21": "pending",
+    "task_23": "pending"
+   }
+  }
+ ],
+ "count": 1
+}
