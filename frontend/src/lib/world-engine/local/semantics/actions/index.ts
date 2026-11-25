@@ -32,7 +32,7 @@ import { roomOf } from '../../prompt';
 import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
 import { buildActionStructure, type ActionStructure } from './structure';
-import { templateAction } from './template';
+import { behaviorCandidates } from './candidates';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
 import { longestSharedSpan } from './text';
 import { readActionCall, readReactionCall, readTargetsCall } from './inputs';
@@ -268,7 +268,8 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
         const category = await options.behavior({
           input: `角色：${scene.actorName}；位置：${scene.roomName}；个性：${scene.actor.personality.join('，').slice(0, 40)}；待办：${pending.map((task) => `${task.id}=${task.goal}`).join('；').slice(0, 120)}`,
         });
-        const text = category ? templateAction(category, scene, call.state) : null;
+        const candidate = category ? behaviorCandidates(scene, call.state).find((row) => row.category === category) : null;
+        const text = candidate?.text ?? null;
         if (text) {
           const checked = checkActionText(text, scene, call.state, checkOptions);
           if (!checked.issues.some((issue) => issue.severity === 'error')) {
