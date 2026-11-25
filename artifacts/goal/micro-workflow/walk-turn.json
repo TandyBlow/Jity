@@ -1,0 +1,7 @@
+[
+  {
+    "id": "walk-structured",
+    "input": "我走进庭院。",
+    "purpose": "exercise the structured destination path (lu -> yard) with no appearance cue"
+  }
+]

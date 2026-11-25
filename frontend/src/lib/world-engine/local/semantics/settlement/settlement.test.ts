@@ -159,6 +159,10 @@ describe('common-group results', () => {
     const structured = {
       category: 'assist', actorId: 'a', targetIds: ['b'], itemIds: ['tool'],
       destination: { entityId: 'tool', containerId: 'b', slotId: null }, conditions: [],
+      subActions: [
+        { id: 'sa1', text: '甲把工具递给乙。', category: 'assist', targetIds: ['b'], itemIds: ['tool'], destination: { entityId: 'tool', containerId: 'b', slotId: null }, order: 1, dependsOn: [] },
+        { id: 'sa2', text: '甲退到远处。', category: 'move', targetIds: [], itemIds: [], destination: { entityId: 'a', containerId: 'far', slotId: null }, order: 2, dependsOn: ['sa1'] },
+      ],
     };
     const requests: unknown[] = [];
     const engine = new ScriptedEngine([JSON.stringify({
@@ -184,6 +188,7 @@ describe('common-group results', () => {
       options: { microResults: (request) => { requests.push(request); return null; } },
     }).results('g1', input);
     expect(engine.prompts[0]).toContain('结构：类别=assist');
+    expect(engine.prompts[0]).toContain('子动作：sa1');
     const captured = requests[0] as { members: Array<{ memberId: string; structured?: { destination?: { containerId: string } } }> };
     expect(captured.members[0].structured?.destination?.containerId).toBe('b');
     expect(outcome.value).toBeTruthy();
@@ -1702,6 +1707,32 @@ describe('six-stage updates', () => {
     expect((appearance.value as UpdatesCall).changes.a?.appearanceChanges?.[0]?.text).toBe('衣袖湿了一片。');
     expect(engine.prompts).toHaveLength(1);
     expect(engine.prompts[0]).toContain('第二部分：外貌');
+  });
+
+  it('applies structured destinations without the position call', async () => {
+    const engine = new ScriptedEngine([]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲走进远处。去向=a:far', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine, options: { programScene: true } })
+      .updates('g1#position', input);
+    expect(engine.prompts).toEqual([]);
+    expect((outcome.value as UpdatesCall).changes.a?.positionSet?.containerId).toBe('far');
+    const stageDetail = (outcome.evidence.detail as { stageDetail?: { source?: string } }).stageDetail;
+    expect(stageDetail?.source).toBe('program');
+  });
+
+  it('falls back to the LLM when a fact could change an appearance', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ changes: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲走进远处。去向=a:far', b: '乙的外套沾了泥。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine, options: { programScene: true } })
+      .updates('g1#position', input);
+    expect(engine.prompts.length).toBeGreaterThan(0);
+    expect((outcome.value as UpdatesCall).changes).toEqual({});
   });
 
   it('accepts a movement-head answer that the fact already supports, with no LLM call', async () => {

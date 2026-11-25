@@ -21,6 +21,7 @@ import {
   positionFromRow, projectStage, referenceError, repeatsText, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson, unwrapIdBrackets,
 } from './support';
 import { projectPoint, type PointProjection } from './projection';
+import { APPEARANCE_WORDS, FAILURE_WORDS, MOVEMENT_WORDS, readDestinations } from './fact-destinations';
 import type { SettlementStage } from './support';
 
 interface UpdatesInput {
@@ -29,6 +30,37 @@ interface UpdatesInput {
   stage: UpdatesStage | null;
   results: Record<Id, string>;
   workingState: WorldState;
+}
+
+
+/** Structured scene stage: facts that carry `去向=` and no appearance cue are
+ * applied directly. A movement word without a hint (and without an explicit
+ * failure) is uncertain, so the LLM answers instead. */
+function programScenePositions(state: WorldState, results: Record<Id, string>, scanned: Id[]): Array<{ entityId: Id; containerId: Id; slotId: Id | null }> | null {
+  const facts = resultFacts(results);
+  if (facts.some((fact) => APPEARANCE_WORDS.some((word) => fact.text.includes(word)))) return null;
+  const hints = readDestinations(facts.map((fact) => fact.text));
+  if (!hints.size) return null;
+  const scannedSet = new Set(scanned);
+  const rows: Array<{ entityId: Id; containerId: Id; slotId: Id | null }> = [];
+  for (const [entityId, destination] of hints) {
+    // A hint outside the projection is a movement the position stage would
+    // have missed; abstain instead of applying a partial scene.
+    if (!scannedSet.has(entityId)) return null;
+    const current = state.characters[entityId]?.position ?? state.items[entityId]?.position;
+    if (current && current.containerId === destination.containerId && (current.slotId ?? null) === destination.slotId) continue;
+    rows.push({ entityId, containerId: destination.containerId, slotId: destination.slotId });
+  }
+  for (const fact of facts) {
+    if (!MOVEMENT_WORDS.some((word) => fact.text.includes(word))) continue;
+    if (hints.has(fact.memberId)) continue;
+    if (FAILURE_WORDS.some((word) => fact.text.includes(word))) continue;
+    const destination = destinationOfFact(state, fact.text);
+    const current = state.characters[fact.memberId]?.position;
+    if (destination && current?.containerId === destination.locationId) continue;
+    return null;
+  }
+  return rows.length ? rows : null;
 }
 
 interface StageContext {
@@ -708,6 +740,30 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
   }
   if (!scanned.length) {
     return { changes: {}, detail: { scannedEntityIds: [], positionScope: scope, skipped: 'no_affected_position' }, fallback: false, calls: [] };
+  }
+  if (ctx.options.programScene && ctx.results) {
+    const rows = programScenePositions(ctx.state, ctx.results, scanned);
+    if (rows) {
+      const read = readPositionChanges({ changes: rows }, ctx.state, new Set(scanned));
+      const missing = missingMoves(ctx.state, ctx.results, read.changes);
+      if (!read.rejected.length && !missing.length) {
+        projectStage(ctx.state, 'position', read.changes);
+        if (appearanceIds.length && ctx.shared) {
+          ctx.shared.pendingAppearance = { changes: {}, lenientDrops: [], ids: appearanceIds };
+        }
+        return {
+          changes: read.changes,
+          detail: {
+            scannedEntityIds: scanned,
+            changedEntityIds: Object.keys(read.changes).sort(),
+            source: 'program',
+            ...(appearanceIds.length ? { appearancesProgram: appearanceIds } : {}),
+          },
+          fallback: false,
+          calls: [],
+        };
+      }
+    }
   }
   let microNote: string | null = null;
   if (ctx.options.microUpdates) {

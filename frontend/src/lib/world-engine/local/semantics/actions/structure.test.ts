@@ -46,3 +46,20 @@ describe('action structure', () => {
     expect(s.targetIds).toEqual([]);
   });
 });
+
+describe('compound actions', () => {
+  it('splits a sequenced action into independent sub-actions', () => {
+    const s = buildActionStructure('路明非把水壶推到门边，然后走进庭院。', scene, state, 2);
+    expect(s.subActions).toHaveLength(2);
+    expect(s.subActions[0].id).toBe('sa1');
+    expect(s.subActions[1].id).toBe('sa2');
+    expect(s.subActions[1].dependsOn).toEqual(['sa1']);
+    expect(s.subActions[1].category).toBe('move');
+    expect(s.subActions[1].destination?.containerId).toBe('yard');
+    expect(s.destination).toBeNull();
+  });
+  it('does not split a clause whose subject is somebody else', () => {
+    const s = buildActionStructure('路明非走进庭院，然后他关上门。', scene, state, 2);
+    expect(s.subActions).toHaveLength(1);
+  });
+});

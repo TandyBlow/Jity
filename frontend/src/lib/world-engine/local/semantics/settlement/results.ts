@@ -426,6 +426,18 @@ function assertKnownEntities(answer: ResultsAnswer, members: GroupMember[], stat
 
 /** Sanitize the action lane's structure at the trust boundary: unknown ids and
  * foreign slots are dropped, and an actor mismatch discards the whole block. */
+function sanitizeDestination(raw: unknown, state: WorldState, known: (id: string) => boolean): import('../actions/structure').ActionDestination | null {
+  if (!isRecord(raw)) return null;
+  const entityId = asString(raw.entityId);
+  const containerId = asString(raw.containerId);
+  const slotId = asString(raw.slotId) || null;
+  const slots = state.initial.locations[containerId]?.slots ?? state.initial.items[containerId]?.slots ?? state.initial.characters[containerId]?.slots ?? [];
+  if (entityId && known(entityId) && containerId && known(containerId) && (slotId == null || slots.some((slot) => slot.id === slotId))) {
+    return { entityId, containerId, slotId };
+  }
+  return null;
+}
+
 function parseActionStructure(raw: unknown, state: WorldState, memberId: Id): { structured?: import('../actions/structure').ActionStructure } | null {
   if (!isRecord(raw)) return null;
   if (asString(raw.actorId) !== memberId) return null;
@@ -433,15 +445,23 @@ function parseActionStructure(raw: unknown, state: WorldState, memberId: Id): { 
   if (!category) return null;
   const known = (id: string) => Boolean(state.characters[id] ?? state.items[id] ?? state.locations[id]);
   const ids = (value: unknown) => (Array.isArray(value) ? value.map(asString).filter((id) => id && known(id)) : []);
-  let destination: import('../actions/structure').ActionStructure['destination'] = null;
-  if (isRecord(raw.destination)) {
-    const entityId = asString(raw.destination.entityId);
-    const containerId = asString(raw.destination.containerId);
-    const slotId = asString(raw.destination.slotId) || null;
-    const slots = state.initial.locations[containerId]?.slots ?? state.initial.items[containerId]?.slots ?? state.initial.characters[containerId]?.slots ?? [];
-    if (entityId && known(entityId) && containerId && known(containerId) && (slotId == null || slots.some((slot) => slot.id === slotId))) {
-      destination = { entityId, containerId, slotId };
-    }
+  const subActions: import('../actions/structure').SubAction[] = [];
+  if (Array.isArray(raw.subActions)) {
+    raw.subActions.forEach((row, index) => {
+      if (!isRecord(row)) return;
+      const text = asString(row.text);
+      if (!text) return;
+      subActions.push({
+        id: asString(row.id) || `sa${index + 1}`,
+        text,
+        category: (asString(row.category) || 'other') as import('../actions/structure').ActionCategory,
+        targetIds: ids(row.targetIds),
+        itemIds: ids(row.itemIds),
+        destination: sanitizeDestination(row.destination, state, known),
+        order: index + 1,
+        dependsOn: Array.isArray(row.dependsOn) ? row.dependsOn.map(asString).filter(Boolean) : (index ? [`sa${index}`] : []),
+      });
+    });
   }
   return {
     structured: {
@@ -449,8 +469,9 @@ function parseActionStructure(raw: unknown, state: WorldState, memberId: Id): { 
       actorId: memberId,
       targetIds: ids(raw.targetIds),
       itemIds: ids(raw.itemIds),
-      destination,
+      destination: sanitizeDestination(raw.destination, state, known),
       conditions: Array.isArray(raw.conditions) ? raw.conditions.map(asString).filter(Boolean).slice(0, 3) : [],
+      subActions,
     },
   };
 }
@@ -526,9 +547,15 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
       }).join('；')
       : '无判定';
     const s = member.structured;
+    const place = (d: { containerId: string; slotId?: string | null } | null) => (d ? `${d.containerId}${d.slotId ? `/${d.slotId}` : ''}` : '无');
+    const subActions = s?.subActions?.length
+      ? `
+  子动作：${s.subActions.map((action) => `${action.id} 类别=${action.category} 物品=${action.itemIds.join(',') || '无'} 去向=${place(action.destination)}`).join('；')}`
+      : '';
     const structure = s
-      ? `\n  结构：类别=${s.category}；目标=${s.targetIds.join(',') || '无'}；物品=${s.itemIds.join(',') || '无'}；` +
-        `去向=${s.destination ? `${s.destination.containerId}${s.destination.slotId ? `/${s.destination.slotId}` : ''}` : '无'}`
+      ? `
+  结构：类别=${s.category}；目标=${s.targetIds.join(',') || '无'}；物品=${s.itemIds.join(',') || '无'}；` +
+        `去向=${place(s.destination)}${subActions}`
       : '';
     return `- ${name}（id=${member.memberId}）行动：${member.actionText}\n  判定：${rolls}${structure}`;
   });
@@ -580,7 +607,7 @@ function buildResultsPrompt(groupId: Id, members: GroupMember[], state: WorldSta
     '- label 只描述这次行动的直接结果（achieved/partial/not_achieved/blocked/no_change），不代表任务达成；任务达成由后续阶段单独判断。',
     '- judgments 恰好写本组每个成员一条；场景里没有行动的其他人不是成员，不要 judge 他们，也不要给他们的 judgment 写 effect。',
     '- reason 一句话，20 字以内；facts 每人一句，短句即可。',
-    '- facts 每个成员一条自己的行动结果（共同的可以归多人），memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
+    '- facts 每个成员至少一条自己的行动结果（共同的可以归多人）；有多个子动作时按实际发生的子动作分别写 fact，失败或受阻的子动作写清没有生效；memberIds 只能填本组成员；不写其他人物的行动，不抄判定理由。',
     '- 不写“任务完成/任务达成/目标达成/成功完成/奖励”这类结论；failed/blocked 照实写，保留“没有/未/被阻止”。',
     '- 行动里有走/进入就先写走到哪，有查看就再写看到什么：只写“看懂了规则牌”会把走路从结果里丢掉；不要写“完成参赛选择/任务”。',
     '- 问话就写谁问了谁、对方答了什么或没答；不要写“骰点未获取，因此未能达成目标”。',

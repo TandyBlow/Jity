@@ -1,22 +1,40 @@
 /** Structured action fields computed after the action text is accepted.
  *
- * Category and destination are rule-derived; target ids reuse the targets
- * rules; item ids come from a lexical matcher that returns nothing when the
- * mention has no registered counterpart (no forced alias). The fields travel
- * to the results lane so the same action is not re-read there. */
+ * One member action may contain several sub-actions ("递给诺诺，然后戴上护目镜").
+ * Each gets an independent id, order and dependency; category, targets, items
+ * and destination are derived per sub-action. The top-level fields keep the
+ * single-action shape for callers and prompts that predate sub-actions. */
 import type { Id, WorldState } from '../../../types';
 import type { ActionScene } from './scene';
 import { resolveRuleTargets } from '../../micro/targets';
 
 export type ActionCategory = 'move' | 'observe' | 'communicate' | 'assist' | 'guard' | 'hide' | 'use' | 'other';
 
+export interface ActionDestination {
+  entityId: Id;
+  containerId: Id;
+  slotId: Id | null;
+}
+
+export interface SubAction {
+  id: string;
+  text: string;
+  category: ActionCategory;
+  targetIds: Id[];
+  itemIds: Id[];
+  destination: ActionDestination | null;
+  order: number;
+  dependsOn: string[];
+}
+
 export interface ActionStructure {
   category: ActionCategory;
   actorId: Id;
   targetIds: Id[];
   itemIds: Id[];
-  destination: { entityId: Id; containerId: Id; slotId: Id | null } | null;
+  destination: ActionDestination | null;
   conditions: string[];
+  subActions: SubAction[];
 }
 
 const CATEGORY_RULES: Array<[ActionCategory, string[]]> = [
@@ -76,16 +94,21 @@ function slotFor(state: WorldState, locationId: Id, text: string): Id | null {
   return best >= 3 ? slotId : null;
 }
 
-export function buildActionStructure(
-  text: string,
-  scene: ActionScene,
-  state: WorldState,
-  maxTargets: number,
-): ActionStructure {
+/** A comma followed by a sequencing word starts a new sub-action. A clause
+ * whose subject is somebody else (他/她/他们) is not split: the results lane
+ * judges the other actor, and attributing it here would invent a sub-action. */
+function splitSubActions(text: string): string[] {
+  const parts = text.split(/[，,]\s*(?:然后|接着|再|同时|并)/u).map((part) => part.trim()).filter(Boolean);
+  if (parts.length <= 1) return [text];
+  if (parts.slice(1).some((part) => /^(?:他|她|他们|她们|对方|那人)/u.test(part))) return [text];
+  return parts;
+}
+
+function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTargets: number): Omit<SubAction, 'id' | 'order' | 'dependsOn'> {
   const items = Object.entries(state.initial.items).map(([id, item]) => ({ id, name: item.name ?? id }));
   const visible = scene.visible.map((character) => ({ id: character.id, name: character.name }));
   const targets = resolveRuleTargets(text, { visible, absent: scene.absent }, maxTargets) ?? [];
-  let destination: ActionStructure['destination'] = null;
+  let destination: ActionDestination | null = null;
   const transfer = /把(.+?)(?:递给|交给|塞给|递到)(.+?)(?:[。；，,！？]|$)/u.exec(text);
   if (transfer) {
     const item = matchItems(transfer[1], items)[0];
@@ -106,12 +129,31 @@ export function buildActionStructure(
       destination = { entityId: scene.actorId, containerId: locationId, slotId: slotFor(state, locationId, text) };
     }
   }
+  return { text, category: categoryOf(text), targetIds: targets, itemIds: matchItems(text, items), destination };
+}
+
+export function buildActionStructure(
+  text: string,
+  scene: ActionScene,
+  state: WorldState,
+  maxTargets: number,
+): ActionStructure {
+  const parts = splitSubActions(text);
+  const subActions: SubAction[] = parts.map((part, index) => ({
+    id: `sa${index + 1}`,
+    ...fieldsFor(part, scene, state, maxTargets),
+    order: index + 1,
+    dependsOn: index === 0 ? [] : [`sa${index}`],
+  }));
+  const targets = [...new Set(subActions.flatMap((action) => action.targetIds))];
+  const items = [...new Set(subActions.flatMap((action) => action.itemIds))];
   return {
-    category: categoryOf(text),
+    category: subActions[0].category,
     actorId: scene.actorId,
     targetIds: targets,
-    itemIds: matchItems(text, items),
-    destination,
+    itemIds: items,
+    destination: subActions.length === 1 ? subActions[0].destination : null,
     conditions: [],
+    subActions,
   };
 }

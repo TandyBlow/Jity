@@ -54,6 +54,9 @@ export interface SettlementOptions {
   /** Experimental micro workflow: the movement head answers the position half
    * of the merged scene stage; a null or rejected answer falls back. */
   microUpdates?: MicroUpdatesFn;
+  /** Experimental structured scene arm: apply `去向=` facts directly and skip
+   * the merged position prompt when nothing looks uncertain. */
+  programScene?: boolean;
   /** Product default: a new task achievement must cite a settled result fact
    * (or a time basis). Unit fixtures may leave this off, but the page port
    * never does. */

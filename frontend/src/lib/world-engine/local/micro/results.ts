@@ -84,36 +84,45 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
     for (const member of request.members) {
       const name = request.state.initial.characters[member.memberId]?.name ?? member.memberId;
       const roll = member.rolls[0];
-      const input = `角色：${name}；行动：${member.actionText.slice(0, 80)}；骰点：${roll ? roll.result : '?'}；资格：${roll ? String(roll.eligible) : '?'}；准入：${roll ? String(roll.admitted) : '?'}`;
-      const ids = tok.encode(input, 64);
-      const data = BigInt64Array.from(ids, (value) => BigInt(value));
-      const mask = BigInt64Array.from(ids, () => 1n);
-      const out = await session.run({
-        input_ids: new ort.Tensor('int64', data, [1, ids.length]),
-        attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
-      });
-      const logits = Array.from((out.result?.data ?? []) as Float32Array);
-      if (logits.length !== RESULT.length) return null;
-      const max = Math.max(...logits);
-      const exps = logits.map((value) => Math.exp(value - max));
-      const sum = exps.reduce((a, b) => a + b, 0);
-      const best = logits.indexOf(max);
-      if (exps[best] / sum < threshold) {
-        options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
-        return null;
+      const rollText = `骰点：${roll ? roll.result : '?'}；资格：${roll ? String(roll.eligible) : '?'}；准入：${roll ? String(roll.admitted) : '?'}`;
+      const subActions = member.structured?.subActions?.length
+        ? member.structured.subActions
+        : [{ id: 'sa1', text: member.actionText, destination: member.structured?.destination ?? null }];
+      const labels: string[] = [];
+      for (const subAction of subActions) {
+        const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${rollText}`;
+        const ids = tok.encode(input, 64);
+        const data = BigInt64Array.from(ids, (value) => BigInt(value));
+        const mask = BigInt64Array.from(ids, () => 1n);
+        const out = await session.run({
+          input_ids: new ort.Tensor('int64', data, [1, ids.length]),
+          attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
+        });
+        const logits = Array.from((out.result?.data ?? []) as Float32Array);
+        if (logits.length !== RESULT.length) return null;
+        const max = Math.max(...logits);
+        const exps = logits.map((value) => Math.exp(value - max));
+        const sum = exps.reduce((a, b) => a + b, 0);
+        const best = logits.indexOf(max);
+        if (exps[best] / sum < threshold) {
+          options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
+          return null;
+        }
+        const label = RESULT[best];
+        labels.push(label);
+        const normalized = subAction.text.replace(/我(?!们)/gu, name);
+        // Only an achieved sub-action may assert its destination. A partial,
+        // failed or blocked sub-action must not move anything; updates reads
+        // this hint as a settled state change.
+        const hint = settledDestination(label, subAction.destination,
+          () => destinationHint(normalized, request.state, member.memberId));
+        facts.push({
+          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}`,
+          memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
+        });
       }
-      const label = RESULT[best];
-      judgments.push({ memberId: member.memberId, label, reason: PHRASE[label] });
-      const normalized = member.actionText.replace(/我(?!们)/gu, name);
-      // Only an achieved action may assert the intended destination. A partial,
-      // failed or blocked action must not move anything; updates reads this
-      // hint as a settled state change.
-      const hint = settledDestination(label, member.structured?.destination,
-        () => destinationHint(normalized, request.state, member.memberId));
-      facts.push({
-        text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}`,
-        memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
-      });
+      const overall = labels.every((label) => label === labels[0]) ? labels[0] : 'partial';
+      judgments.push({ memberId: member.memberId, label: overall, reason: PHRASE[overall] });
     }
     options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
     return { judgments, facts };

@@ -6,6 +6,7 @@ import type { Id } from '../../types';
 import type { MicroUpdatesFn, MicroUpdatesRequest } from '../semantics/settlement/types';
 import { resultFacts } from '../semantics/settlement/support';
 import { destinationOfFact } from '../semantics/settlement/updates';
+import { readDestinations } from '../semantics/settlement/fact-destinations';
 import { createBertTokenizer, type BertTokenizer } from './tokenizer';
 import { createMicroRuntime, scoreSingle } from './runtime';
 
@@ -42,18 +43,7 @@ function entityText(request: MicroUpdatesRequest, entityId: Id, facts: string): 
   return `实体：${name}；当前：${container}/${slot}；本组结果：${facts}`;
 }
 
-/** Structured `去向=entity:container[/slot]` hints from the micro results
- * facts. This is the channel that lets one micro model's output feed another
- * without re-parsing prose. */
-export function readDestinations(texts: string[]): Map<string, { containerId: string; slotId: string | null }> {
-  const map = new Map<string, { containerId: string; slotId: string | null }>();
-  for (const text of texts) {
-    for (const match of text.matchAll(/去向=([^:；\s]+):([^/\s；]+)(?:\/([^\s；]+))?/gu)) {
-      map.set(match[1], { containerId: match[2], slotId: match[3] ?? null });
-    }
-  }
-  return map;
-}
+export { readDestinations } from '../semantics/settlement/fact-destinations';
 
 export function createMicroUpdates(options: MicroUpdatesOptions = {}): MicroUpdatesFn {
   let tokenizer: Promise<BertTokenizer> | null = null;
