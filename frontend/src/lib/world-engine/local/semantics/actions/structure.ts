@@ -9,7 +9,7 @@ import type { ActionScene } from './scene';
 import { resolveRuleTargets } from '../../micro/targets';
 import { matchLocation } from '../settlement/fact-destinations';
 
-export type ActionCategory = 'move' | 'observe' | 'communicate' | 'assist' | 'guard' | 'hide' | 'use' | 'other';
+export type ActionCategory = 'move' | 'observe' | 'communicate' | 'assist' | 'guard' | 'hide' | 'use' | 'wait' | 'other';
 
 export interface ActionDestination {
   entityId: Id;
@@ -46,6 +46,7 @@ const CATEGORY_RULES: Array<[ActionCategory, string[]]> = [
   ['hide', ['蹲', '躲', '藏', '伏下', '屏住']],
   ['observe', ['看', '检查', '确认', '查看', '望', '观察', '核对', '清点', '找']],
   ['use', ['用', '换', '装', '拿', '举', '按', '推', '拉', '打开', '关闭', '戴上', '摘下']],
+  ['wait', ['等待', '按兵不动', '留在原地']],
 ];
 
 function longestOverlap(left: string, right: string): number {

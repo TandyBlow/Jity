@@ -1,0 +1,40 @@
+{
+ "category": {
+  "scenarios": 12,
+  "task": 8,
+  "scene": 5,
+  "personality": 12,
+  "reasonable": 5,
+  "no_selection": 4,
+  "reasonable_rate": 0.417,
+  "task_rate": 0.667,
+  "scene_rate": 0.417
+ },
+ "task_only": {
+  "scenarios": 16,
+  "task": 16,
+  "scene": 8,
+  "personality": 16,
+  "reasonable": 8,
+  "reasonable_rate": 0.5,
+  "task_rate": 1.0,
+  "scene_rate": 0.5
+ },
+ "multi": {
+  "scenarios": 16,
+  "task": 16,
+  "scene": 12,
+  "personality": 13,
+  "reasonable": 12,
+  "reasonable_rate": 0.75,
+  "task_rate": 1.0,
+  "scene_rate": 0.75
+ },
+ "oracle": {
+  "scenarios": 16,
+  "reasonable": 16,
+  "reasonable_rate": 1.0,
+  "task_rate": 0.0,
+  "scene_rate": 0.0
+ }
+}

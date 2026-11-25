@@ -33,6 +33,7 @@ import { actionPrompt, reactionPrompt, targetsPrompt } from './prompts';
 import { buildScene, characterView, type ActionScene, type SceneCharacter } from './scene';
 import { buildActionStructure, type ActionStructure } from './structure';
 import { behaviorCandidates } from './candidates';
+import { judgeContext } from '../../micro/judges';
 import { checkActionText, checkReactionText, checkTargets, type CheckOptions } from './checks';
 import { longestSharedSpan } from './text';
 import { readActionCall, readReactionCall, readTargetsCall } from './inputs';
@@ -262,6 +263,49 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
+    if (options.judge) {
+      try {
+        const recent = options.recentEvents?.() ?? [];
+        const total = (score: { task: number; personality: number; scene: number }) => score.task + score.personality + score.scene;
+        const candidates = behaviorCandidates(scene, call.state)
+          .filter((row) => !checkActionText(row.text, scene, call.state, checkOptions).issues.some((issue) => issue.severity === 'error'))
+          .filter((row) => !recent.some((event) => event.includes(row.text.slice(1, 6))));
+        if (candidates.length) {
+          const scores = await options.judge(candidates.map((row) => ({
+            context: judgeContext({
+              item: row.itemIds.every((id) => scene.items.some((item) => item.id === id) || scene.actor.held.some((held) => held.id === id)),
+              target: row.targetIds.every((id) => scene.visible.some((character) => character.id === id)),
+              blocked: false,
+              repeated: false,
+              task: row.taskGoal,
+              personality: scene.actor.personality.join('，'),
+              actor: scene.actorName,
+              room: scene.roomName,
+            }),
+            text: row.text,
+          })));
+          if (scores && scores.length === candidates.length) {
+            const ranked = candidates.map((row, index) => ({ row, score: scores[index] }))
+              .sort((left, right) => total(right.score) - total(left.score));
+            const best = ranked[0];
+            const second = ranked[1];
+            if (best.score.task >= 0.5 && best.score.scene >= 0.5
+              && (!second || total(best.score) - total(second.score) >= 0.2)) {
+              const checked = checkActionText(best.row.text, scene, call.state, checkOptions);
+              issues.push({ code: 'template_action', severity: 'info', message: `${scene.actorName}由三个评分头选中候选行动` });
+              return evidence('action', key, {
+                kind: 'act', text: checked.value,
+                ...(options.structuredActions
+                  ? { structured: asJson(buildActionStructure(checked.value, scene, call.state, checkOptions.maxTargets)) }
+                  : {}),
+              }, 'micro', started, issues, [], '');
+            }
+          }
+        }
+      } catch {
+        // A judge failure falls through to the next arm.
+      }
+    }
     if (options.behavior) {
       try {
         const pending = scene.actor.tasks.filter((task) => task.status === 'pending');

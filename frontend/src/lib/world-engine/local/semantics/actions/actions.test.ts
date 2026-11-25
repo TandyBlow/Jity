@@ -685,3 +685,28 @@ describe('behavior head', () => {
     expect(result.source).toBe('model');
   });
 });
+
+describe('three-judge behavior arm', () => {
+  it('selects a candidate without calling the model', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const handlers = createActionHandlers({
+      engine,
+      options: { judge: (pairs) => pairs.map((_, index) => ({ task: index === 0 ? 0.9 : 0.1, personality: 0.8, scene: index === 0 ? 0.9 : 0.1 })) },
+    });
+    const result = await handlers.action('ally', actInput(state, 'ally', null));
+    expect(engine.prompts).toEqual([]);
+    expect(result.source).toBe('micro');
+  });
+  it('falls back when every candidate scores low', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([JSON.stringify({ kind: 'act', text: '阿宁走进书房。' })]);
+    const handlers = createActionHandlers({
+      engine,
+      options: { judge: (pairs) => pairs.map(() => ({ task: 0.1, personality: 0.1, scene: 0.1 })) },
+    });
+    const result = await handlers.action('ally', actInput(state, 'ally', null));
+    expect(engine.prompts).toHaveLength(1);
+    expect(result.source).toBe('model');
+  });
+});

@@ -80,6 +80,7 @@ export interface GameModelOptions {
   localPosition?: boolean;
   /** Experimental NPC behavior head: category → template action; null → LLM. */
   behavior?: import('./semantics/actions').ActionHandlerOptions['behavior'];
+  judge?: import('./semantics/actions').ActionHandlerOptions['judge'];
   /** Experimental micro workflow: a rules+scorer targets port. When it returns
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
@@ -253,6 +254,7 @@ export class LocalGameModel implements WorldModelPort {
       microTargets: this.options.microTargets,
       structuredActions: this.options.structuredActions,
       behavior: this.options.behavior,
+      judge: this.options.judge,
       recentEvents: () => this.recentEvents,
       offscreenPolicy: this.options.offscreenPolicy ?? 'judge',
       onCall: (call) => this.options.onTask?.(call.task, call.key, {

@@ -36,7 +36,15 @@ export function behaviorCandidates(scene: ActionScene, state: WorldState): Behav
     if (out.some((row) => row.text === text)) return;
     out.push({ id: `bc${out.length + 1}`, category, text, targetIds: [], itemIds: [], destination: null, taskId: task.id, taskGoal: task.goal, ...extra });
   };
-  for (const task of scene.actor.tasks.filter((row) => row.status === 'pending').slice(0, 3)) {
+  const pending = scene.actor.tasks.filter((row) => row.status === 'pending');
+  for (const other of pending.slice(1, 2)) {
+    push('other', `${scene.actorName}先放下手上这件事，转向另一件待办。`, {}, other);
+  }
+  if (scene.recentEvents.length) {
+    push('observe', `${scene.actorName}查看${scene.roomName}里的变化。`, {}, pending[0] ?? { id: '', goal: '' });
+  }
+  push('wait', `${scene.actorName}留在${scene.roomName}等待。`, {}, pending[0] ?? { id: '', goal: '' });
+  for (const task of pending.slice(0, 3)) {
     const goal = task.goal;
     const location = matchLocation(state, goal);
     if (location) {
@@ -61,6 +69,10 @@ export function behaviorCandidates(scene: ActionScene, state: WorldState): Behav
         push('assist', `${scene.actorName}把${item}递给${target.name}。`, { targetIds: [target.id], itemIds: [itemId] }, task);
       }
     }
+    const helper = scene.visible.find((character) => character.id !== target?.id);
+    if (helper) {
+      push('communicate', `${scene.actorName}向${helper.name}求助。`, { targetIds: [helper.id] }, task);
+    }
   }
-  return out.slice(0, 6);
+  return out.slice(0, 10);
 }

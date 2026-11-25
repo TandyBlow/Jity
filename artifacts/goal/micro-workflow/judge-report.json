@@ -1,0 +1,37 @@
+{
+ "rows": 244,
+ "train": 172,
+ "test": 72,
+ "held_actors": [
+  "caesar",
+  "lin",
+  "qin",
+  "tomiyama"
+ ],
+ "positive_rates": {
+  "task": 0.535,
+  "personality": 0.837,
+  "scene": 0.453
+ },
+ "test_confusion": {
+  "task": {
+   "1->1": 40,
+   "0->0": 32
+  },
+  "personality": {
+   "1->1": 53,
+   "0->0": 4,
+   "0->1": 8,
+   "1->0": 7
+  },
+  "scene": {
+   "1->1": 33,
+   "0->0": 34,
+   "0->1": 5
+  }
+ },
+ "input_tokens_median": 148,
+ "input_tokens_max": 177,
+ "bytes": 41237881,
+ "int8_bytes": 10553112
+}

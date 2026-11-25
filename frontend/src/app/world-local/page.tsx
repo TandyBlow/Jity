@@ -13,6 +13,7 @@ import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
 import { createMicroResults } from '@/lib/world-engine/local/micro/results';
 import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
 import { createMicroBehavior } from '@/lib/world-engine/local/micro/behavior';
+import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micro/judges';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -952,6 +953,14 @@ export default function WorldLocalPage() {
             },
           })
           : undefined;
+        const microJudge = microEnabled
+          ? createBehaviorJudge({
+            onStats: (record) => {
+              const store = window as unknown as { __microStats?: unknown[] };
+              (store.__microStats ??= []).push({ port: 'judge', ...record });
+            },
+          })
+          : undefined;
         const microBehavior = microEnabled
           ? createMicroBehavior({
             onStats: (record) => {
@@ -985,6 +994,7 @@ export default function WorldLocalPage() {
           ...(microResults ? { microResults } : {}),
           ...(microUpdates ? { microUpdates } : {}),
           ...(microBehavior ? { behavior: microBehavior } : {}),
+          ...(microJudge ? { judge: microJudge } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of
