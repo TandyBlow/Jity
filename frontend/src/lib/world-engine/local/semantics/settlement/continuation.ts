@@ -6,10 +6,11 @@
  * default zero or one call cap. */
 import type { EntityDelta, Id, Json, TimeAdvance, WorldState } from '../../../types';
 import type { InferenceEngine } from '../../../runtime/engine';
+import type { AcceptedContinuationEvent } from '../../micro/events';
 import { callJson, JsonCallError, joinedMs, joinedRaw } from './engine-call';
 import type {
-  ContinuationPolicyOptions, ModelCallEvidence, SettlementConclusion, SettlementEvidence,
-  SettlementOptions, SettlementOutcome,
+  ContinuationPolicyOptions, MicroContinuationAnswer, ModelCallEvidence, SettlementConclusion,
+  SettlementEvidence, SettlementOptions, SettlementOutcome,
 } from './types';
 import { asRecord, asString, errorText, isRecord, normalizeChangeText, referenceError, resolveCharacterId, toJson } from './support';
 import type { RoundProgressEvidence } from './support';
@@ -40,14 +41,17 @@ interface ContinuationPolicyState {
   repeatStreak: number;
   continues: number;
   lastAccepted: string;
-  /** Every candidate signature accepted earlier in this submission. A later
-   * round cannot replay it even if a different candidate was accepted in
-   * between; this is the consumed-action identity, not a call cap. */
-  consumed: Set<string>;
+  /** Every candidate signature accepted earlier in this submission, with the
+   * world digest it left behind. A later round cannot replay it while that
+   * digest is unchanged; a changed world makes the same sentence a possible
+   * continuation of a new event, bounded by `repeatStreak`. */
+  consumed: Map<string, string>;
   /** Signatures accepted in this session with the world digest they left
    * behind. Survives `reset()`: a new player turn does not make the same
    * automatic action new again. */
   remembered: Map<string, string>;
+  /** Accepted follow-ups for the micro port's novelty context. */
+  history: AcceptedContinuationEvent[];
 }
 
 export interface ContinuationPolicyDecision {
@@ -73,7 +77,8 @@ export const continuationPolicy: Required<ContinuationPolicyOptions> = {
 export class ContinuationPolicy {
   private readonly options: Required<ContinuationPolicyOptions>;
   private state: ContinuationPolicyState = {
-    noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(), remembered: new Map(),
+    noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '',
+    consumed: new Map<string, string>(), remembered: new Map(), history: [],
   };
 
   constructor(options: ContinuationPolicyOptions = {}) {
@@ -88,13 +93,19 @@ export class ContinuationPolicy {
   get maxCandidates(): number { return this.options.maxCandidates; }
 
   reset(): void {
-    // `remembered` deliberately survives: the 10turn run proposed the same
-    // automatic beat in three consecutive turns because a new submission
-    // cleared every identity the previous one had consumed.
+    // `remembered` and `history` deliberately survive: the 10turn run proposed
+    // the same automatic beat in three consecutive turns because a new
+    // submission cleared every identity the previous one had consumed.
     this.state = {
-      noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '', consumed: new Set<string>(),
-      remembered: this.state.remembered,
+      noProgressStreak: 0, repeatStreak: 0, continues: 0, lastAccepted: '',
+      consumed: new Map<string, string>(), remembered: this.state.remembered, history: this.state.history,
     };
+  }
+
+  /** Follow-ups accepted earlier, newest last. The micro port uses this as
+   * novelty context; it never feeds a verdict back as a world fact. */
+  recentAccepted(limit = 8): AcceptedContinuationEvent[] {
+    return this.state.history.slice(-Math.max(1, limit)).map((row) => ({ ...row }));
   }
 
   /** A program rule rejected the proposal before judgment. It is a visible
@@ -131,11 +142,18 @@ export class ContinuationPolicy {
       .map((candidate) => `${candidate.characterId}:${normalizeChangeText(candidate.text)}`)
       .sort();
     const signature = signatures.join('|');
-    const consumedRepeat = signatures.some((row) => this.state.consumed.has(row));
     const worldDigest = progressEvidence?.worldDigest ?? '';
+    // The same sentence under the same world digest is the same event replayed.
+    // A different digest means something actually happened, so continuous
+    // watch/guard may repeat; `repeatStreak` still stops a run of identical
+    // rounds even when each one changed a little.
+    const consumedSameWorld = signatures.some((row) => {
+      const at = this.state.consumed.get(row);
+      return at !== undefined && (!worldDigest || !at || at === worldDigest);
+    });
     const repeatedEarlierTurn = Boolean(worldDigest)
       && signatures.some((row) => this.state.remembered.get(row) === worldDigest);
-    this.state.repeatStreak = consumedRepeat
+    this.state.repeatStreak = consumedSameWorld
       ? this.state.repeatStreak + 1
       : signature && signature === this.state.lastAccepted
         ? this.state.repeatStreak + 1
@@ -152,8 +170,8 @@ export class ContinuationPolicy {
       return { allow: false, reason: 'safety_cap', anomaly: true, ...base };
     }
     // Consumed identity is checked before the softer consecutive-repeat rule:
-    // A -> B -> A must stop exactly like A -> A.
-    if (consumedRepeat) {
+    // A -> B -> A under an unchanged world must stop exactly like A -> A.
+    if (consumedSameWorld) {
       return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
     }
     // The same automatic action, proposed in an earlier turn, with the world
@@ -169,7 +187,7 @@ export class ContinuationPolicy {
     if (this.state.repeatStreak >= this.options.repeatRounds) {
       return { allow: false, reason: 'repeated_candidate', anomaly: false, ...base };
     }
-    for (const row of signatures) this.state.consumed.add(row);
+    for (const row of signatures) this.state.consumed.set(row, worldDigest);
     if (worldDigest) {
       for (const row of signatures) this.state.remembered.set(row, worldDigest);
       // Bound the memory: a long session must not grow without limit.
@@ -178,6 +196,11 @@ export class ContinuationPolicy {
         if (oldest != null) this.state.remembered.delete(oldest);
       }
     }
+    this.state.history.push(...accepted.map((candidate) => ({
+      characterId: candidate.characterId, text: candidate.text,
+      ...(worldDigest ? { worldDigest } : {}),
+    })));
+    if (this.state.history.length > 50) this.state.history.splice(0, this.state.history.length - 50);
     return { allow: true, reason: 'progress', anomaly: false, ...base, consumedCount: this.state.consumed.size };
   }
 }
@@ -227,11 +250,13 @@ export class ContinuationRunner {
   private readonly policy: ContinuationPolicy;
   private readonly nextRoundId?: () => Id;
   private readonly onTaskCallback?: SettlementOptions['onTask'];
+  private readonly microContinuation?: SettlementOptions['microContinuation'];
 
   constructor(private readonly engine: InferenceEngine, options: SettlementOptions = {}) {
     this.policy = new ContinuationPolicy(options.continuation);
     this.nextRoundId = options.nextRoundId;
     this.onTaskCallback = options.onTask;
+    this.microContinuation = options.microContinuation;
   }
 
   reset(): void {
@@ -242,6 +267,10 @@ export class ContinuationRunner {
     const started = performance.now();
     const parsed = parseContinuationInput(input);
     if ('error' in parsed) return failure(key, parsed.error, started);
+    if (this.microContinuation) {
+      const micro = await this.tryMicro(key, parsed, started);
+      if (micro) return micro;
+    }
     const { workingState, roundChanges, roundId } = parsed;
     const proposalPrompt = buildCandidatePrompt(parsed, this.policy.maxCandidates);
     let calls: ModelCallEvidence[] = [];
@@ -362,11 +391,92 @@ export class ContinuationRunner {
     }
   }
 
+  /** Try the micro port before the LLM. null means "not answered" and the
+   * caller must keep the existing LLM path; an explicit handback is a real
+   * micro decision and must not fall through to a paid proposal call. */
+  private async tryMicro(
+    key: Id,
+    parsed: ContinuationInput,
+    started: number,
+  ): Promise<SettlementOutcome<SettlementConclusion> | null> {
+    let answer: MicroContinuationAnswer | null;
+    try {
+      answer = await this.microContinuation!({
+        roundId: parsed.roundId,
+        trigger: parsed.trigger,
+        state: parsed.workingState,
+        roundChanges: parsed.roundChanges,
+        roundProgress: parsed.roundProgress,
+        history: this.policy.recentAccepted(12),
+      });
+    } catch {
+      return null;
+    }
+    if (!answer) return null;
+    let read: CandidateRead;
+    try {
+      read = readCandidates({
+        candidates: answer.accepted.map((row) => ({ characterId: row.characterId, text: row.text })),
+      }, parsed.workingState, this.policy.maxCandidates);
+    } catch {
+      // A malformed micro answer is a port failure, not a handback: fall back.
+      return null;
+    }
+    const rejected = [...answer.rejected, ...read.rejected];
+    const accepted = read.candidates;
+    if (!accepted.length) {
+      return this.handback(key, [], started, {
+        reason: answer.reason || 'micro_no_eligible_candidate',
+        source: 'micro',
+        candidates: answer.candidates,
+        rejectedCandidates: rejected,
+        accepted: [],
+        roundProgress: parsed.roundProgress,
+      }, 'micro');
+    }
+    const decision = this.policy.observe(parsed.roundChanges, accepted, parsed.roundProgress, parsed.trigger);
+    if (!decision.allow) {
+      return this.policyStop(key, [], started, decision, {
+        source: 'micro',
+        candidates: answer.candidates,
+        accepted,
+        rejectedCandidates: rejected,
+        roundProgress: parsed.roundProgress,
+      }, 'micro');
+    }
+    const nextRoundId = this.nextRoundId ? this.nextRoundId() : autoRoundId();
+    if (nextRoundId === parsed.roundId) return failure(key, 'continuation_round_id_reused', started);
+    const value: SettlementConclusion = {
+      kind: 'continue',
+      closedBy: 'model',
+      cancelReason: null,
+      candidateCharacterIds: accepted.map((candidate) => candidate.characterId),
+      nextRoundId,
+    };
+    const evidence = makeEvidence(key, [], false, undefined, {
+      decision: 'continue',
+      reason: answer.reason || 'micro_joint_judgement',
+      source: 'micro',
+      policy: decision,
+      candidates: answer.candidates,
+      accepted,
+      rejectedCandidates: rejected,
+      nextRoundId,
+      roundProgress: parsed.roundProgress,
+    });
+    const outcome: SettlementOutcome<SettlementConclusion> = {
+      value, raw: '', ms: performance.now() - started, fallback: false, evidence,
+    };
+    this.onTask(key, outcome, 0, 'micro');
+    return outcome;
+  }
+
   private handback(
     key: Id,
     calls: ModelCallEvidence[],
     started: number,
     detail: Record<string, unknown>,
+    source: 'model' | 'micro' = 'model',
   ): SettlementOutcome<SettlementConclusion> {
     const evidence = makeEvidence(key, calls, false, undefined, { decision: 'handback', ...detail });
     const outcome: SettlementOutcome<SettlementConclusion> = {
@@ -376,7 +486,7 @@ export class ContinuationRunner {
       fallback: false,
       evidence,
     };
-    this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0));
+    this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0), source);
     return outcome;
   }
 
@@ -389,6 +499,7 @@ export class ContinuationRunner {
     started: number,
     decision: ContinuationPolicyDecision,
     detail: Record<string, unknown>,
+    source: 'model' | 'micro' = 'model',
   ): SettlementOutcome<SettlementConclusion> {
     const reason = `continuation_policy_${decision.reason}`;
     const evidence = makeEvidence(key, calls, false, reason, {
@@ -405,17 +516,23 @@ export class ContinuationRunner {
       error: reason,
       evidence,
     };
-    this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0));
+    this.onTask(key, outcome, calls.reduce((sum, call) => sum + call.prompt.length, 0), source);
     return outcome;
   }
 
-  private onTask(key: Id, outcome: SettlementOutcome<SettlementConclusion>, promptChars: number): void {
+  private onTask(
+    key: Id,
+    outcome: SettlementOutcome<SettlementConclusion>,
+    promptChars: number,
+    source: 'model' | 'micro' = 'model',
+  ): void {
     this.onTaskCallback?.('continuation', key, {
       ms: outcome.ms,
       fallback: outcome.fallback,
       error: outcome.error,
       raw: outcome.raw,
       promptChars,
+      source,
     });
   }
 }

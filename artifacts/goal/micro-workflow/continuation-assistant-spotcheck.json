@@ -1,0 +1,113 @@
+{
+ "reviewer": "assistant (wrote the rule labels; this is a spot-check, not independent human evaluation)",
+ "rows": [
+  {
+   "id": "c01",
+   "novelty": 0,
+   "unfinished": 1,
+   "necessity": 0,
+   "intervene": 0,
+   "overall_continue": 0,
+   "notes": "抽象的换待办句，没有说清转向哪件事，不构成新事件。"
+  },
+  {
+   "id": "c03",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 0,
+   "overall_continue": 1,
+   "notes": "凯撒的待办包含恢复联络；查看短讯机是本轮可执行且必要的第一步，虽然只是观察。"
+  },
+  {
+   "id": "c04",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 0,
+   "overall_continue": 1,
+   "notes": "拿起短讯机推进恢复联络，具体且不需要玩家决定。"
+  },
+  {
+   "id": "c06",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 0,
+   "overall_continue": 1,
+   "notes": "枪响后的现场观察是新事件驱动的合理反应。"
+  },
+  {
+   "id": "c11",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 1,
+   "overall_continue": 0,
+   "notes": "求助对象是主角，应由玩家决定是否回应。"
+  },
+  {
+   "id": "c16",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 0,
+   "overall_continue": 1,
+   "notes": "伤员前往医护处置室，与待办直接一致。"
+  },
+  {
+   "id": "c21",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 0,
+   "overall_continue": 1,
+   "notes": "同一条移动在枪响后仍然成立，属于有意义的连续行为，不是无效重复。"
+  },
+  {
+   "id": "c24",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 1,
+   "overall_continue": 0,
+   "notes": "向主角求助，玩家先决定。"
+  },
+  {
+   "id": "c29",
+   "novelty": 0,
+   "unfinished": 1,
+   "necessity": 0,
+   "intervene": 0,
+   "overall_continue": 0,
+   "notes": "「向芬格尔求助」没有说明求什么，也不对应器材登记的待办；泛化求助不应自动推进。"
+  },
+  {
+   "id": "c41",
+   "novelty": 0,
+   "unfinished": 1,
+   "necessity": 0,
+   "intervene": 0,
+   "overall_continue": 0,
+   "notes": "查看识别带与富山当前的安抚/转介待办关系弱，没有新事件。"
+  },
+  {
+   "id": "c48",
+   "novelty": 1,
+   "unfinished": 1,
+   "necessity": 1,
+   "intervene": 1,
+   "overall_continue": 0,
+   "notes": "求助对象是主角，交还玩家。"
+  },
+  {
+   "id": "c50",
+   "novelty": 0,
+   "unfinished": 0,
+   "necessity": 0,
+   "intervene": 0,
+   "overall_continue": 0,
+   "notes": "没有待办也没有新事件，等待没有推进。"
+  }
+ ]
+}

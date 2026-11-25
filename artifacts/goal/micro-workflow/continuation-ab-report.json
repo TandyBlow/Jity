@@ -1,0 +1,316 @@
+{
+ "input": "我把护目镜递给诺诺，然后走进庭院。",
+ "seed": 11,
+ "arms": {
+  "llm": {
+   "file": "evidence-continuation-llm.json",
+   "wait_ms": 261024,
+   "calls": 132,
+   "by_task": {
+    "action:fallback": {
+     "calls": 1,
+     "ms": 4.3
+    },
+    "action:model": {
+     "calls": 14,
+     "ms": 53.8
+    },
+    "action:none": {
+     "calls": 25,
+     "ms": 58.1
+    },
+    "action:program": {
+     "calls": 1,
+     "ms": 0.0
+    },
+    "continuation:model": {
+     "calls": 2,
+     "ms": 14.8
+    },
+    "narration:none": {
+     "calls": 4,
+     "ms": 19.4
+    },
+    "results:none": {
+     "calls": 15,
+     "ms": 64.5
+    },
+    "targets:fallback": {
+     "calls": 1,
+     "ms": 3.6
+    },
+    "targets:model": {
+     "calls": 7,
+     "ms": 19.9
+    },
+    "targets:none": {
+     "calls": 13,
+     "ms": 23.5
+    },
+    "targets:program": {
+     "calls": 7,
+     "ms": 0.0
+    },
+    "updates:model": {
+     "calls": 19,
+     "ms": 93.5
+    },
+    "updates:none": {
+     "calls": 6,
+     "ms": 0.0
+    },
+    "updates:program": {
+     "calls": 17,
+     "ms": 0.0
+    }
+   },
+   "micro": {},
+   "micro_encoder_runs": 0,
+   "micro_head_outputs": 0,
+   "points": 4,
+   "rounds": 3,
+   "automatic_points": 2,
+   "conclusion": {
+    "kind": "handback",
+    "closedBy": "cancel",
+    "cancelReason": "turn_budget"
+   }
+  },
+  "micro_off": {
+   "file": "evidence-continuation-off.json",
+   "wait_ms": 136890,
+   "calls": 119,
+   "by_task": {
+    "action:micro": {
+     "calls": 11,
+     "ms": 2.7
+    },
+    "action:model": {
+     "calls": 5,
+     "ms": 16.4
+    },
+    "action:none": {
+     "calls": 8,
+     "ms": 15.6
+    },
+    "action:program": {
+     "calls": 1,
+     "ms": 0.0
+    },
+    "continuation:model": {
+     "calls": 4,
+     "ms": 26.8
+    },
+    "narration:none": {
+     "calls": 5,
+     "ms": 19.6
+    },
+    "results:micro": {
+     "calls": 17,
+     "ms": 0.3
+    },
+    "targets:model": {
+     "calls": 1,
+     "ms": 1.4
+    },
+    "targets:none": {
+     "calls": 1,
+     "ms": 1.4
+    },
+    "targets:program": {
+     "calls": 16,
+     "ms": 0.8
+    },
+    "updates:model": {
+     "calls": 24,
+     "ms": 70.8
+    },
+    "updates:none": {
+     "calls": 2,
+     "ms": 0.0
+    },
+    "updates:program": {
+     "calls": 24,
+     "ms": 0.0
+    }
+   },
+   "micro": {
+    "targets": {
+     "task_calls": 9,
+     "encoder_runs": 7,
+     "head_outputs": 7
+    },
+    "results": {
+     "task_calls": 17,
+     "encoder_runs": 17,
+     "head_outputs": 85
+    },
+    "judge": {
+     "task_calls": 16,
+     "encoder_runs": 96,
+     "head_outputs": 288
+    },
+    "behavior": {
+     "task_calls": 10,
+     "encoder_runs": 10,
+     "head_outputs": 70
+    },
+    "updates": {
+     "task_calls": 3,
+     "encoder_runs": 24,
+     "head_outputs": 48
+    }
+   },
+   "micro_encoder_runs": 154,
+   "micro_head_outputs": 498,
+   "points": 5,
+   "rounds": 4,
+   "automatic_points": 3,
+   "conclusion": {
+    "kind": "handback",
+    "closedBy": "cancel",
+    "cancelReason": "continuation_policy_no_progress"
+   }
+  },
+  "micro_on": {
+   "file": "evidence-continuation-micro2.json",
+   "wait_ms": 102297,
+   "calls": 108,
+   "by_task": {
+    "action:fallback": {
+     "calls": 1,
+     "ms": 5.3
+    },
+    "action:micro": {
+     "calls": 10,
+     "ms": 3.1
+    },
+    "action:model": {
+     "calls": 4,
+     "ms": 17.0
+    },
+    "action:none": {
+     "calls": 9,
+     "ms": 21.4
+    },
+    "action:program": {
+     "calls": 1,
+     "ms": 0.0
+    },
+    "continuation:micro": {
+     "calls": 3,
+     "ms": 0.6
+    },
+    "narration:none": {
+     "calls": 4,
+     "ms": 16.2
+    },
+    "reaction:model": {
+     "calls": 1,
+     "ms": 2.7
+    },
+    "reaction:none": {
+     "calls": 1,
+     "ms": 2.7
+    },
+    "results:micro": {
+     "calls": 15,
+     "ms": 0.4
+    },
+    "targets:model": {
+     "calls": 1,
+     "ms": 2.0
+    },
+    "targets:none": {
+     "calls": 1,
+     "ms": 2.0
+    },
+    "targets:program": {
+     "calls": 15,
+     "ms": 0.9
+    },
+    "updates:model": {
+     "calls": 21,
+     "ms": 60.8
+    },
+    "updates:none": {
+     "calls": 2,
+     "ms": 0.0
+    },
+    "updates:program": {
+     "calls": 19,
+     "ms": 0.0
+    }
+   },
+   "micro": {
+    "targets": {
+     "task_calls": 8,
+     "encoder_runs": 6,
+     "head_outputs": 6
+    },
+    "results": {
+     "task_calls": 15,
+     "encoder_runs": 16,
+     "head_outputs": 80
+    },
+    "judge": {
+     "task_calls": 15,
+     "encoder_runs": 88,
+     "head_outputs": 264
+    },
+    "behavior": {
+     "task_calls": 10,
+     "encoder_runs": 10,
+     "head_outputs": 70
+    },
+    "continuation": {
+     "task_calls": 3,
+     "encoder_runs": 17,
+     "head_outputs": 68
+    }
+   },
+   "micro_encoder_runs": 137,
+   "micro_head_outputs": 488,
+   "points": 4,
+   "rounds": 3,
+   "automatic_points": 2,
+   "conclusion": {
+    "kind": "handback",
+    "closedBy": "cancel",
+    "cancelReason": "continuation_policy_no_progress"
+   }
+  }
+ },
+ "state_diffs": {
+  "micro_off_vs_micro_on": [
+   {
+    "entity": "lu",
+    "field": "position",
+    "a": "yard/slot_east_cover",
+    "b": "yard/-"
+   }
+  ],
+  "llm_vs_micro_on": [
+   {
+    "entity": "lu",
+    "field": "position",
+    "a": "yard/slot_east_cover",
+    "b": "yard/-"
+   },
+   {
+    "entity": "goggles_lu",
+    "field": "item_position",
+    "a": "lu/slot_body",
+    "b": "nono/-"
+   }
+  ],
+  "llm_vs_micro_off": [
+   {
+    "entity": "goggles_lu",
+    "field": "item_position",
+    "a": "lu/slot_body",
+    "b": "nono/-"
+   }
+  ]
+ }
+}

@@ -1,0 +1,664 @@
+{
+ "summary": {
+  "rows": 50,
+  "llm_parse": 50,
+  "llm_continue": 47,
+  "rule_continue": 14,
+  "micro_continue": 14,
+  "llm_rule_same": 15,
+  "micro_rule_same": 50,
+  "llm_micro_same": 15
+ },
+ "rows": [
+  {
+   "id": "c01",
+   "scenario": "caesar:base",
+   "candidate": "凯撒先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒当前处境与任务目标直接相关，她需要集中精力处理其他事务以推进剧情发展。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c02",
+   "scenario": "caesar:base",
+   "candidate": "凯撒留在红方集结点等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒作为红方集结点的领导者，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c03",
+   "scenario": "caesar:base",
+   "candidate": "凯撒查看红方短讯机。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒查看红方短讯机，与楚子航争夺，显示其对当前局势的观察和行动意图。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c04",
+   "scenario": "caesar:base",
+   "candidate": "凯撒拿起红方短讯机。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒作为红方领队，与楚子航争夺任务，其行为符合当前情境和角色个性"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c05",
+   "scenario": "caesar:continuous",
+   "candidate": "凯撒先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒放下当前事务，选择转向其他待办，符合其自信且不接受真实伤势换胜利的性格特征。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c06",
+   "scenario": "caesar:continuous",
+   "candidate": "凯撒查看红方集结点里的变化。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒在红方集结点查看相关变化，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c07",
+   "scenario": "caesar:continuous",
+   "candidate": "凯撒留在红方集结点等待。",
+   "llm": {
+    "likely": true,
+    "related": false,
+    "reason": "凯撒留在红方集结点等待，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 0,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c08",
+   "scenario": "caesar:continuous",
+   "candidate": "凯撒查看红方短讯机。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒查看红方短讯机，与楚子航争夺，显示其对当前局势的关注和行动意图。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c09",
+   "scenario": "caesar:player_present",
+   "candidate": "凯撒先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒当前处境与任务目标直接相关，她需要集中精力处理其他事务以推进剧情发展。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c10",
+   "scenario": "caesar:player_present",
+   "candidate": "凯撒留在红方集结点等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒作为红方集结点的领导者，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c11",
+   "scenario": "caesar:player_present",
+   "candidate": "凯撒向路明非求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒向路明非求助，与红方争夺楚子航有关"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c12",
+   "scenario": "caesar:player_present",
+   "candidate": "凯撒查看红方短讯机。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒查看红方短讯机，与楚子航争夺，显示其对当前局势的观察和行动意图。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c13",
+   "scenario": "caesar:idle",
+   "candidate": "凯撒留在红方集结点等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "凯撒作为红方集结点的领导者，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c14",
+   "scenario": "lin:base",
+   "candidate": "林亦舟先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟在处理其他事务时，与当前处境和目标相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c15",
+   "scenario": "lin:base",
+   "candidate": "林亦舟留在西回廊等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟留在西回廊等待，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c16",
+   "scenario": "lin:base",
+   "candidate": "林亦舟走向演习医护处置室。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟在西回廊的位置选择与当前处境直接相关，且符合其性格特征和与苏茜的互动需求"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c17",
+   "scenario": "lin:base",
+   "candidate": "林亦舟查看演习枪。",
+   "llm": {
+    "likely": true,
+    "related": false,
+    "reason": "林亦舟查看演习枪是为了应对当前的战斗情况，与主角处境相关但不直接相关。"
+   },
+   "llm_continue": 0,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c18",
+   "scenario": "lin:continuous",
+   "candidate": "林亦舟先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟在处理其他事务时，与当前处境或目标相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c19",
+   "scenario": "lin:continuous",
+   "candidate": "林亦舟查看西回廊里的变化。",
+   "llm": {
+    "likely": true,
+    "related": false,
+    "reason": "林亦舟查看西回廊里的变化，与当前情境和角色处境相关。"
+   },
+   "llm_continue": 0,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c20",
+   "scenario": "lin:continuous",
+   "candidate": "林亦舟留在西回廊等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟留在西回廊等待，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c21",
+   "scenario": "lin:continuous",
+   "candidate": "林亦舟走向演习医护处置室。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟在当前情境中需要前往演习医护处置室以处理受伤，这与主角当前处境直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c22",
+   "scenario": "lin:player_present",
+   "candidate": "林亦舟先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟在处理其他事务时，与当前处境和目标相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c23",
+   "scenario": "lin:player_present",
+   "candidate": "林亦舟留在西回廊等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟留在西回廊等待，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c24",
+   "scenario": "lin:player_present",
+   "candidate": "林亦舟向路明非求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟向路明非求助以寻求帮助，符合其怕被看成拖累的个性和当前处境。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c25",
+   "scenario": "lin:player_present",
+   "candidate": "林亦舟走向演习医护处置室。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟在西回廊的位置选择与当前处境直接相关，且符合其性格特征和与苏茜的互动需求"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c26",
+   "scenario": "lin:idle",
+   "candidate": "林亦舟留在西回廊等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "林亦舟留在西回廊等待，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c27",
+   "scenario": "qin:base",
+   "candidate": "秦越先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越宁可得罪参赛者，主动放下手中事务并转向其他待办，符合其角色特性与当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c28",
+   "scenario": "qin:base",
+   "candidate": "秦越留在器材棚等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越作为中立器材值班员，宁可得罪参赛者也不愿器材去向不明，且在器材棚等待符合其角色设定和当前处境。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c29",
+   "scenario": "qin:base",
+   "candidate": "秦越向芬格尔求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越作为中立器材值班员，宁可得罪参赛者也不愿器材去向不明，且在真实伤员救助优先于补签的规则下向芬格尔求助是合理的行动。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c30",
+   "scenario": "qin:continuous",
+   "candidate": "秦越先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越宁可得罪参赛者，主动放下当前事务并转向另一件待办，符合其角色特性。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c31",
+   "scenario": "qin:continuous",
+   "candidate": "秦越查看器材棚里的变化。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越查看器材棚里的变化，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c32",
+   "scenario": "qin:continuous",
+   "candidate": "秦越留在器材棚等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越宁可得罪参赛者也不愿器材去向不明，且在器材棚等待是当前处境和目标的直接相关行为。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c33",
+   "scenario": "qin:continuous",
+   "candidate": "秦越向芬格尔求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越作为中立器材值班员，宁可得罪参赛者也不愿器材去向不明，且在枪响事件中向芬格尔求助符合其角色特性。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c34",
+   "scenario": "qin:player_present",
+   "candidate": "秦越先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越宁可得罪参赛者，主动放下手中事务并转向其他待办，符合其角色特性与当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c35",
+   "scenario": "qin:player_present",
+   "candidate": "秦越留在器材棚等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越作为中立器材值班员，宁可得罪参赛者也不愿器材去向不明，且在器材棚等待符合其角色设定和当前处境。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c36",
+   "scenario": "qin:player_present",
+   "candidate": "秦越向芬格尔求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越作为中立器材值班员，宁可得罪参赛者也不愿器材去向不明，且在真实伤员救助优先于补签的规则下向芬格尔求助是合理的行动。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c37",
+   "scenario": "qin:idle",
+   "candidate": "秦越留在器材棚等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "秦越作为中立器材值班员，宁可得罪参赛者也不愿器材去向不明，因此留在器材棚等待是合理的选择。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c38",
+   "scenario": "tomiyama:base",
+   "candidate": "富山雅史先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史在处理伤情时需要优先安抚他人，转向另一件待办任务是符合当前处境和目标的合理行动。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c39",
+   "scenario": "tomiyama:base",
+   "candidate": "富山雅史留在医护休息区等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史作为医护休息区的工作人员，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c40",
+   "scenario": "tomiyama:base",
+   "candidate": "富山雅史向沈澄求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史向沈澄求助，符合其作为心理辅导教员的角色和当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c41",
+   "scenario": "tomiyama:base",
+   "candidate": "富山雅史查看红色识别带。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史在医护休息区查看红色识别带，符合其作为心理辅导教员的角色和当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c42",
+   "scenario": "tomiyama:continuous",
+   "candidate": "富山雅史先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史在紧张情绪下选择暂时放下当前事务，转向其他待办事项，符合其作为心理辅导教员的角色需求和当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c43",
+   "scenario": "tomiyama:continuous",
+   "candidate": "富山雅史查看医护休息区里的变化。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史查看医护休息区里的变化，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c44",
+   "scenario": "tomiyama:continuous",
+   "candidate": "富山雅史留在医护休息区等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史作为心理辅导教员，当前处境是需要安抚和分流，与主角当前处境直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c45",
+   "scenario": "tomiyama:continuous",
+   "candidate": "富山雅史向沈澄求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史向沈澄求助，符合其作为心理辅导教员的角色和当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 1,
+   "micro_continue": 1
+  },
+  {
+   "id": "c46",
+   "scenario": "tomiyama:player_present",
+   "candidate": "富山雅史先放下手上这件事，转向另一件待办。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史在处理伤情时需要优先安抚他人，转向另一件待办任务是符合当前处境和目标的合理行动。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c47",
+   "scenario": "tomiyama:player_present",
+   "candidate": "富山雅史留在医护休息区等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史作为医护休息区的工作人员，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c48",
+   "scenario": "tomiyama:player_present",
+   "candidate": "富山雅史向路明非求助。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史向路明非求助，符合其作为心理辅导教员的角色和当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c49",
+   "scenario": "tomiyama:player_present",
+   "candidate": "富山雅史查看红色识别带。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史在医护休息区查看红色识别带，符合其作为心理辅导教员的角色和当前处境"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  },
+  {
+   "id": "c50",
+   "scenario": "tomiyama:idle",
+   "candidate": "富山雅史留在医护休息区等待。",
+   "llm": {
+    "likely": true,
+    "related": true,
+    "reason": "富山雅史作为医护休息区的工作人员，与当前处境和目标直接相关。"
+   },
+   "llm_continue": 1,
+   "rule_continue": 0,
+   "micro_continue": 0
+  }
+ ]
+}

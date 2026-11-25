@@ -2009,6 +2009,87 @@ describe('continuation', () => {
     expect((outcome.evidence.detail as { decision: string }).decision).toBe('continue');
   });
 
+  it('continues from the micro port without a language-model call', async () => {
+    const engine = new ScriptedEngine([]);
+    let requests = 0;
+    const handlers = createSettlementHandlers({
+      engine,
+      options: {
+        microContinuation: async (request) => {
+          requests += 1;
+          expect(request.trigger).toBe('automatic');
+          expect(request.history).toEqual([]);
+          const row = {
+            characterId: 'b', text: '乙走向门口。', category: 'move',
+            scores: { novelty: 0.9, unfinished: 0.9, necessity: 0.9, intervene: 0.1 },
+            repeat: 'new' as const,
+          };
+          return { decision: 'continue', reason: 'novel_unfinished_necessary', candidates: [row], accepted: [row], rejected: [] };
+        },
+      },
+    });
+    const input = continuationInput(progress()) as Record<string, unknown>;
+    input.roundProgress = { ...(input.roundProgress as object), worldDigest: 'd1' };
+    const outcome = await handlers.continuation('r1', input as Json);
+    expect(requests).toBe(1);
+    expect(outcome.value).toMatchObject({ kind: 'continue', candidateCharacterIds: ['b'] });
+    expect(engine.prompts).toHaveLength(0);
+    expect((outcome.evidence.detail as { source: string }).source).toBe('micro');
+  });
+
+  it('hands back from the micro port without a language-model call', async () => {
+    const engine = new ScriptedEngine([]);
+    const handlers = createSettlementHandlers({
+      engine,
+      options: {
+        microContinuation: () => ({
+          decision: 'handback', reason: 'no_necessary_followup',
+          candidates: [], accepted: [], rejected: [],
+        }),
+      },
+    });
+    const outcome = await handlers.continuation('r1', continuationInput(progress()));
+    expect(outcome.value).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+    expect((outcome.evidence.detail as { source: string; reason: string }).source).toBe('micro');
+    expect((outcome.evidence.detail as { reason: string }).reason).toBe('no_necessary_followup');
+    expect(engine.prompts).toHaveLength(0);
+  });
+
+  it('falls back to the language model when the micro port abstains', async () => {
+    const engine = new ScriptedEngine([continueProposal(), continueJudgment()]);
+    const handlers = createSettlementHandlers({ engine, options: { microContinuation: () => null } });
+    const outcome = await handlers.continuation('r1', continuationInput(progress()));
+    expect((outcome.value as { kind: string }).kind).toBe('continue');
+    expect(engine.prompts).toHaveLength(2);
+    expect((outcome.evidence.detail as { source?: string }).source).toBeUndefined();
+  });
+
+  it('stops a micro repeat under an unchanged world as a policy stop', async () => {
+    const engine = new ScriptedEngine([]);
+    const row = {
+      characterId: 'b', text: '乙守住门口。', category: 'guard',
+      scores: { novelty: 0.9, unfinished: 0.9, necessity: 0.9, intervene: 0.1 },
+      repeat: 'new' as const,
+    };
+    const handlers = createSettlementHandlers({
+      engine,
+      options: {
+        microContinuation: () => ({
+          decision: 'continue', reason: 'novel_unfinished_necessary', candidates: [row], accepted: [row], rejected: [],
+        }),
+      },
+    });
+    const first = continuationInput(progress()) as Record<string, unknown>;
+    first.roundProgress = { ...(first.roundProgress as object), worldDigest: 'd1' };
+    expect((await handlers.continuation('r1', first as Json)).value).toMatchObject({ kind: 'continue' });
+    const second = continuationInput(progress()) as Record<string, unknown>;
+    second.roundProgress = { ...(second.roundProgress as object), worldDigest: 'd1' };
+    const stopped = await handlers.continuation('r2', second as Json);
+    expect(stopped.value).toBeNull();
+    expect(stopped.error).toBe('continuation_policy_repeated_candidate');
+    expect(engine.prompts).toHaveLength(0);
+  });
+
   it('accepts candidateId judgments from the constrained schema', async () => {
     const engine = new ScriptedEngine([
       continueProposal(),

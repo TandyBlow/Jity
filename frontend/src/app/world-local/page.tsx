@@ -14,6 +14,7 @@ import { createMicroResults } from '@/lib/world-engine/local/micro/results';
 import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
 import { createMicroBehavior } from '@/lib/world-engine/local/micro/behavior';
 import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micro/judges';
+import { createMicroContinuation } from '@/lib/world-engine/local/micro/continuation';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -96,6 +97,9 @@ interface WorldTurnRecord {
   pointPrompts?: Array<{ pointId: string; prompt: string; text: string }>;
   /** Semantic-call prompts for this turn; evidence only. */
   semanticPrompts?: Array<{ at: number; prompt: string }>;
+  /** Micro-model calls made during this turn, with encoder runs and head
+   * outputs separated so a turn's micro cost is countable per player input. */
+  microStats?: Array<Record<string, unknown>>;
   /** Raw answer, validated value and issue codes per semantic call. */
   semanticCalls?: Array<{
     task: string; key: string; ms: number; fallback: boolean; raw: string | null;
@@ -577,6 +581,10 @@ export default function WorldLocalPage() {
   // Frozen at mount: the start flow may clean the URL before the model effect.
   const [microParam] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('micro') === '1');
+  // A/B arm: `micro=1&microContinuation=0` keeps the earlier micro workflow
+  // without the continuation heads, so their contribution is isolated.
+  const [microContinuationParam] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('microContinuation') !== '0');
   const [rollSeed] = useState(() => {
     if (typeof window === 'undefined') return null;
     const raw = new URLSearchParams(window.location.search).get('seed');
@@ -923,51 +931,40 @@ export default function WorldLocalPage() {
           webllmModel: arm.runtime === 'webllm' ? webllmModel : null,
           webllmLocal: arm.webllmLocal === true,
           webllmCache: arm.webllmCache ?? 'indexeddb',
+          micro: microParam, microContinuation: microParam && microContinuationParam,
         };
         // Experimental micro workflow: rules + int8 scorer for targets, behind
         // ?micro=1. The LLM path stays the default; stats land on window for
         // the acceptance driver.
         const microEnabled = microParam;
         (window as unknown as { __microEnabled?: boolean }).__microEnabled = microEnabled;
+        /** One micro call goes to both the session-wide array (driver
+         * compatibility) and the current turn record (per-player-operation
+         * accounting). */
+        const recordMicro = (port: string, record: object) => {
+          const row = { port, ...record };
+          const store = window as unknown as { __microStats?: unknown[] };
+          (store.__microStats ??= []).push(row);
+          const turn = turnRecordRef.current;
+          if (turn) (turn.microStats ??= []).push(row);
+        };
         const microTargets = microEnabled
-          ? createMicroTargets({
-            onStats: (record) => {
-              const store = window as unknown as { __microStats?: unknown[] };
-              (store.__microStats ??= []).push({ port: 'targets', ...record });
-            },
-          })
+          ? createMicroTargets({ onStats: (record) => recordMicro('targets', record) })
           : undefined;
         const microResults = microEnabled
-          ? createMicroResults({
-            onStats: (record) => {
-              const store = window as unknown as { __microStats?: unknown[] };
-              (store.__microStats ??= []).push({ port: 'results', ...record });
-            },
-          })
+          ? createMicroResults({ onStats: (record) => recordMicro('results', record) })
           : undefined;
         const microUpdates = microEnabled
-          ? createMicroUpdates({
-            onStats: (record) => {
-              const store = window as unknown as { __microStats?: unknown[] };
-              (store.__microStats ??= []).push({ port: 'updates', ...record });
-            },
-          })
+          ? createMicroUpdates({ onStats: (record) => recordMicro('updates', record) })
           : undefined;
         const microJudge = microEnabled
-          ? createBehaviorJudge({
-            onStats: (record) => {
-              const store = window as unknown as { __microStats?: unknown[] };
-              (store.__microStats ??= []).push({ port: 'judge', ...record });
-            },
-          })
+          ? createBehaviorJudge({ onStats: (record) => recordMicro('judge', record) })
           : undefined;
         const microBehavior = microEnabled
-          ? createMicroBehavior({
-            onStats: (record) => {
-              const store = window as unknown as { __microStats?: unknown[] };
-              (store.__microStats ??= []).push({ port: 'behavior', ...record });
-            },
-          })
+          ? createMicroBehavior({ onStats: (record) => recordMicro('behavior', record) })
+          : undefined;
+        const microContinuation = microEnabled && microContinuationParam
+          ? createMicroContinuation({ onStats: (record) => recordMicro('continuation', record) })
           : undefined;
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
         // training; the narration engine is not wrapped.
@@ -995,6 +992,7 @@ export default function WorldLocalPage() {
           ...(microUpdates ? { microUpdates } : {}),
           ...(microBehavior ? { behavior: microBehavior } : {}),
           ...(microJudge ? { judge: microJudge } : {}),
+          ...(microContinuation ? { microContinuation } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of

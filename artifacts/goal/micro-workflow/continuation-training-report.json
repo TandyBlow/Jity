@@ -1,0 +1,47 @@
+{
+ "rows": 432,
+ "train": 325,
+ "test": 107,
+ "held_actors": [
+  "caesar",
+  "lin",
+  "qin",
+  "tomiyama"
+ ],
+ "positive_rates": {
+  "novelty": 0.662,
+  "unfinished": 0.815,
+  "necessity": 0.529,
+  "intervene": 0.105
+ },
+ "test_confusion": {
+  "novelty": {
+   "1->1": 66,
+   "0->0": 36,
+   "1->0": 5
+  },
+  "unfinished": {
+   "1->1": 83,
+   "0->0": 24
+  },
+  "necessity": {
+   "0->0": 53,
+   "1->1": 49,
+   "1->0": 5
+  },
+  "intervene": {
+   "0->0": 104,
+   "1->1": 3
+  }
+ },
+ "heldout_decisions": {
+  "scenarios": 24,
+  "model_continue": 20,
+  "rule_continue": 20,
+  "same_character": 24
+ },
+ "input_tokens_median": 117,
+ "input_tokens_max": 137,
+ "bytes": 41239381,
+ "int8_bytes": 10554864
+}

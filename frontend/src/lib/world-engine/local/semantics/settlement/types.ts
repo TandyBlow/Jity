@@ -2,9 +2,11 @@
  * existing model-task schemas: results = Record<Id, string>, updates =
  * UpdatesCall (split stage) or UpdatesCall[] (one merged call), continuation =
  * Conclusion. Evidence is additive and never becomes a world fact. */
-import type { Id, Json, WorldState } from '../../../types';
+import type { EntityDelta, Id, Json, TimeAdvance, WorldState } from '../../../types';
 import type { UpdatesCall, UpdatesStage } from '../../../schedule';
 import type { InferenceEngine } from '../../../runtime/engine';
+import type { AcceptedContinuationEvent } from '../../micro/events';
+import type { RoundProgressEvidence } from './support';
 
 export type SettlementTask = 'results' | 'updates' | 'continuation';
 
@@ -54,6 +56,10 @@ export interface SettlementOptions {
   /** Experimental micro workflow: the movement head answers the position half
    * of the merged scene stage; a null or rejected answer falls back. */
   microUpdates?: MicroUpdatesFn;
+  /** Experimental micro workflow: structured event records plus four heads
+   * decide continuation before any LLM proposal call. A null answer (model
+   * missing/failed) falls back to the existing LLM path. */
+  microContinuation?: MicroContinuationFn;
   /** Experimental structured scene arm: apply `去向=` facts directly and skip
    * the merged position prompt when nothing looks uncertain. */
   programScene?: boolean;
@@ -137,6 +143,46 @@ export interface MicroUpdatesAnswer {
 }
 
 export type MicroUpdatesFn = (request: MicroUpdatesRequest) => Promise<MicroUpdatesAnswer | null> | MicroUpdatesAnswer | null;
+
+/** Micro continuation port: four judgements decide whether an automatic round
+ * follows and which characters act in it. A null answer falls back to the LLM
+ * proposal+judgement pair; an explicit handback is a real model decision. */
+export interface MicroContinuationScores {
+  novelty: number;
+  unfinished: number;
+  necessity: number;
+  intervene: number;
+}
+
+export interface MicroContinuationCandidate {
+  characterId: Id;
+  text: string;
+  category: string;
+  scores: MicroContinuationScores;
+  repeat: 'new' | 'new_world' | 'same_world';
+}
+
+export interface MicroContinuationRequest {
+  roundId: Id;
+  trigger: string;
+  state: WorldState;
+  roundChanges: Array<{ pointId: Id; timeAdvance: TimeAdvance | null; entityDeltas: Record<Id, EntityDelta> }>;
+  roundProgress: RoundProgressEvidence | null;
+  /** Follow-ups accepted earlier in this submission/session. */
+  history: AcceptedContinuationEvent[];
+}
+
+export interface MicroContinuationAnswer {
+  decision: 'continue' | 'handback';
+  reason: string;
+  candidates: MicroContinuationCandidate[];
+  accepted: MicroContinuationCandidate[];
+  rejected: Array<{ characterId: Id; text: string; reason: string }>;
+}
+
+export type MicroContinuationFn = (
+  request: MicroContinuationRequest,
+) => Promise<MicroContinuationAnswer | null> | MicroContinuationAnswer | null;
 
 export interface ModelCallEvidence {
   prompt: string;

@@ -232,3 +232,21 @@
 - 流分析（judge 臂 vs LLM 基线）：judge 臂 5 个点（4 normal/1 instant、3 automatic、4 rounds），基线 4 个点（3/1、2 automatic、3 rounds）；continuation 4 次 51.0 s vs 2 次 11.6 s，narration 5 次 33.4 s vs 4 次 13.5 s；judge 臂行动文本 16 条中 3 条重复，continuation 候选里「唐骁听到远处枪声后…」「路明非听到远处枪声后…」跨轮重复。多出的自动轮与被重复接纳的候选是 47 s action 收益被吃掉的主因。
 - 人工评价：`human-eval-sheet.md` + `human-eval-template.json`，16 个留出场景、候选逐条勾选，允许一个场景多个合理行为；尚未有人工标签，三头的泛化能力仍待该数据回答。
 - 三头共享同一编码器，属于多任务模型；独立模型架构的对照保留，未拆。
+
+## Continuation 微型工作流（2026-11-25）
+
+- 结构化事件记录：`micro/events.ts` 把每个 committed point 的 `positionSet/appearanceChanges/sanitySet/tasksAchieved/subtasksAdded` 变成事件行。重复判定用 `actorId + 规范化文本 + worldDigest`：只有「同一世界里的原句重放」在编码前拒绝；世界已变后的同句警戒/观察允许，仍受连续重复上限（2 次）约束。这直接回应「不要简单禁止重复行为」。
+- 四头模型：`continuation-heads-int8.onnx`（MiniRBT 共享编码 + novelty/unfinished/necessity/intervene）。候选来自现有 `behaviorCandidates`（任务/地点/物品/可见人物），同世界重复与 `wait` 先拒绝；每个角色取总分最高候选，四门共同决定继续与行动角色；涉及主角的候选把 intervene 抬到 0.75，交还玩家。模型缺失/异常返回 null，回退原 LLM 提案+判断；`?microContinuation=0` 保留上一版微型工作流作对照。
+- 数据/训练：`continuation-data.jsonl` 432 行 / 84 场景 / 14 人物（base/event/repeat_same/continuous/player_present/idle），标签规则生成且允许多正例；按人物留出 caesar/lin/qin/tomiyama。留出行混淆：novelty 102/107、unfinished 107/107、necessity 102/107、intervene 107/107（留出正例只有 3 条）；决策层与规则臂 24/24 场景同角色。边界：模型在复现规则标签，不是语义泛化证据，也不能据此说它优于 LLM。
+- 真实录音固定输入回放（39 次 continuation 调用）：micro 与录制 LLM 接受的 character set 一致 39/39；但录制 LLM 38/39 都继续，回放只说明「同样会继续」，不证明文本质量。
+- 三臂完整回合 A/B（输入「我把护目镜递给诺诺，然后走进庭院。」，seed=11，`evidence-continuation-{llm,off,micro2}.json`）：
+
+  | 臂 | 回合 | 任务调用 | continuation | 自动点 | 结束原因 |
+  |---|---|---|---|---|---|
+  | LLM-only | 261.0 s | 132 | 2 次 14.8 s | 2 | turn_budget |
+  | micro 无 continuation | 136.9 s | 119 | 4 次 26.8 s | 3 | no_progress |
+  | micro + continuation | 102.3 s | 108 | 3 次 0.6 s | 2 | no_progress |
+
+- 隔离贡献（micro off→on）：−34.6 s、少一个自动点、continuation −26.2 s、updates 真推理 24→21 次；完整状态只差路明非 yard 槽位（off=east_cover，on=无）与 1 min 时钟。对 LLM 基线：−158.7 s；状态差 2 字段，微型臂护目镜已转给诺诺（基线没转），更符合复合输入。限制：单输入单 seed；micro 臂还启用了 results/targets/judge/behavior，三臂差不能全部归给 continuation，隔离贡献来自 off→on。
+- 指标（micro_on 每次玩家操作）：微型 task calls 51、共享编码器 137 次、头输出 488 个、候选逐项评分 137 行；continuation 3 次调用/17 编码/68 头输出；results 15/16/80；judge 15/88/264；behavior 10/10/70；targets 8/6/6。游戏任务调用共 108 次（micro 28、program 35、model 27、fallback 1、未标注 17）。`inference_report.py` 已按端口拆分。
+- 人工评价：`continuation-human-eval-sheet.md` + `continuation-human-eval-template.json`，4 个留出人物 × base/continuous/player_present/idle 共 50 行，标签隐藏，待独立评价者。assistant 抽查 12 行（`continuation-assistant-spotcheck.json`，非独立）与规则/模型总体一致 10/12；分歧是「查看短讯机是必要第一步」与「泛化求助不推进待办」——两条都说明规则标签漏了语义判断。LLM 离线臂（Qwen3-0.6B，逐候选、同 context）50 行中继续 47 次，规则/微型 14 次，human-LLM 总体一致 5/12；LLM 明显更宽松，不能把它当质量上界。

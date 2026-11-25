@@ -91,6 +91,9 @@ export interface GameModelOptions {
   /** Experimental micro workflow: the movement head answers the position half
    * of the merged scene stage; an unsupported move falls back to the LLM. */
   microUpdates?: import('./semantics/settlement/types').MicroUpdatesFn;
+  /** Experimental micro workflow: structured events + four heads replace the
+   * continuation proposal/judgement LLM calls when they answer. */
+  microContinuation?: import('./semantics/settlement/types').MicroContinuationFn;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -217,6 +220,7 @@ export class LocalGameModel implements WorldModelPort {
     this.settlement = createSettlementModelPort(semanticEngine, {
       microResults: this.options.microResults,
       microUpdates: this.options.microUpdates,
+      microContinuation: this.options.microContinuation,
       programScene: this.options.programScene,
       localPosition: this.options.localPosition,
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),
