@@ -48,3 +48,4 @@
 - [x] 13a. 候选扩展：直接/准备/求助/环境/等待/切换，最多 10 条，物品限可见或持有。
 - [x] 13b. 三评分头（task/personality/scene）对照数据 244 行/56 场景；留出人物测试 task 72/72、personality 57/72、scene 67/72。
 - [x] 13c. 四臂离线：类别头合理 0.42、单头 0.50、三头 0.75、oracle 1.00；LLM 臂待真实回合。
+- [x] 13d. 三评分头真实回合：action LLM 40→13、judge 12 次、action 116.1→69.1 s；状态仅护目镜差异（微型正确）；回合 261.3→253.8 s（continuation/narration 吃掉收益）。

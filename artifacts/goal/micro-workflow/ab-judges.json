@@ -1,0 +1,190 @@
+{
+ "baseline": {
+  "file": "artifacts\\goal\\micro-workflow\\evidence-compound-llm.json",
+  "firstReadableMs": 19239,
+  "after": {
+   "place": "中央庭院",
+   "nearby": "唐骁",
+   "sanity": "43",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#4已提交行动行动 · 当前正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#3已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动瞬时正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ]
+  },
+  "semanticCalls": 131,
+  "totals": {
+   "calls": 131,
+   "llm": 108,
+   "micro": 23,
+   "ms": 352406
+  },
+  "stats": {
+   "action": {
+    "calls": 41,
+    "ms": 116131,
+    "llm": 40,
+    "micro": 1
+   },
+   "targets": {
+    "calls": 27,
+    "ms": 49599,
+    "llm": 20,
+    "micro": 7
+   },
+   "results": {
+    "calls": 15,
+    "ms": 81615,
+    "llm": 15,
+    "micro": 0
+   },
+   "updates": {
+    "calls": 42,
+    "ms": 80015,
+    "llm": 27,
+    "micro": 15
+   },
+   "narration": {
+    "calls": 4,
+    "ms": 13481,
+    "llm": 4,
+    "micro": 0
+   },
+   "continuation": {
+    "calls": 2,
+    "ms": 11565,
+    "llm": 2,
+    "micro": 0
+   }
+  }
+ },
+ "micro": {
+  "file": "artifacts\\goal\\micro-workflow\\evidence-judges-micro.json",
+  "firstReadableMs": 14819,
+  "after": {
+   "place": "中央庭院",
+   "nearby": "唐骁",
+   "sanity": "43",
+   "tasks": [
+    {
+     "goal": "在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场",
+     "done": false
+    },
+    {
+     "goal": "向诺诺问清当前红蓝两方局势和自己是否可以保持中立",
+     "done": false
+    },
+    {
+     "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+     "done": false
+    },
+    {
+     "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+     "done": false
+    },
+    {
+     "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+     "done": false
+    },
+    {
+     "goal": "#5已提交行动行动 · 当前正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#4已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#3已提交行动行动正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#2已提交行动瞬时正文已缓存",
+     "done": false
+    },
+    {
+     "goal": "#1已提交行动行动正文已缓存",
+     "done": false
+    }
+   ]
+  },
+  "semanticCalls": 119,
+  "totals": {
+   "calls": 119,
+   "llm": 50,
+   "micro": 69,
+   "ms": 272129
+  },
+  "stats": {
+   "action": {
+    "calls": 25,
+    "ms": 69146,
+    "llm": 13,
+    "micro": 12
+   },
+   "targets": {
+    "calls": 18,
+    "ms": 6277,
+    "llm": 2,
+    "micro": 16
+   },
+   "results": {
+    "calls": 17,
+    "ms": 1178,
+    "llm": 0,
+    "micro": 17
+   },
+   "updates": {
+    "calls": 50,
+    "ms": 111134,
+    "llm": 26,
+    "micro": 24
+   },
+   "narration": {
+    "calls": 5,
+    "ms": 33382,
+    "llm": 5,
+    "micro": 0
+   },
+   "continuation": {
+    "calls": 4,
+    "ms": 51012,
+    "llm": 4,
+    "micro": 0
+   }
+  }
+ }
+}

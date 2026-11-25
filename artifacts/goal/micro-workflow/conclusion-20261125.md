@@ -216,3 +216,12 @@
 - 四臂离线对比（16 个留出场景）：类别头选中 12 个、合理 5（0.42，4 个场景无对应类别候选）；单 task 评分头合理 8/16（0.50）；三头合计合理 12/16（0.75）；oracle（每个场景至少一个合理候选）16/16。三头协同明显优于单头与类别头。
 - 边界：标签是规则生成，不是人工语义判断；三头在同一编码器里联合训练，不是三个独立模型；LLM 臂未离线跑（需要真实浏览器动作提示），下一步用真实回合 A/B 对照。
 - 模型 int8 10,553,112 B，分片存 `judge-model/`（README 里一行拼回，sha256 已记）。
+
+## 三评分头真实回合（compound，seed 11）
+
+- 微型臂（judge 启用）：回合 253.8 s、首读 14.8 s；action 69.1 s、results 1.2 s、targets 6.3 s、updates 111.1 s、continuation 51.0 s、narration 33.4 s。
+- 对照 LLM 基线：回合 261.3 s、首读 19.2 s；action 116.1 s、results 81.6 s、targets 49.6 s、updates 80.0 s、continuation 11.6 s、narration 13.5 s。
+- action 的 LLM 调用 40→13，12 次由三个评分头选中候选；judge 每次 2–7 对、0.2–0.9 s，加载 518 ms。
+- 完整状态只差 1 个字段：护目镜归诺诺（微型正确），其余人物/物品/任务一致。
+- 覆盖率：micro 28 / model 30 / program 41（micro_share 0.48）；action micro 12/model 13（0.48）、results 17/17、targets 16 程序。
+- 结论：离线多评分头合理率 0.75（单头 0.50、类别头 0.42），真实回合 action 阶段省 47 s、状态更符合预期；但 continuation（+39 s）与 narration（+20 s）因轨迹变长吃掉了收益，回合只省 7.5 s。下一步需要约束连续回合/叙事触发，而不是继续动 action。

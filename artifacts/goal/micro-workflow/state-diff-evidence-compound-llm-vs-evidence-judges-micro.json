@@ -1,0 +1,17 @@
+{
+ "a": "artifacts/goal/micro-workflow/evidence-compound-llm.json",
+ "b": "artifacts/goal/micro-workflow/evidence-judges-micro.json",
+ "time": [
+  "2009-10-17T15:23:00",
+  "2009-10-17T15:24:00"
+ ],
+ "fields": [
+  {
+   "entity": "goggles_lu",
+   "field": "item_position",
+   "a": "lu/slot_body",
+   "b": "nono/-"
+  }
+ ],
+ "count": 1
+}
