@@ -61,6 +61,8 @@
 - [ ] 15g. 独立评价者填写 50 行盲评；按分歧修规则/数据（观察作为必要第一步、泛化求助）。
 - [ ] 15h. reaction 微型工作流：复用 judge 三头 + 触发事件反应合理性判断；先做候选与门禁，不把规则标签当泛化。
 - [ ] 15i. 多输入/多 seed 完整回合 A/B；移动端同一指标。
-- [x] 15j. 直接规则臂 `microContinuation=rule`：同候选、同 policy、无编码；单输入 seed 11 比四头慢 54.4 s、多一个自动点，直接规则没有比四头更快。
+- [x] 15j. 直接规则臂 `microContinuation=rule`：同候选、同 policy、无编码；seed 11 规则 153.6 s vs 四头 99.2 s（规则多一个自动点），seed 17 规则 95.7 s vs 四头 91.5 s（状态相同）；两 seed 合计 −29.3 s 但无稳定优势，规则/四头都把 LLM continuation 的 3 个自动点压到 2 个。
 - [x] 15k. reaction 微型工作流：触发分类 + 意图候选 + judge 三头 + 合理性门；威胁回合 seed 2 选中「诺诺蹲下寻找掩体…」、source=micro、LLM reaction 0 次；`evidence-reaction-micro3.json`。
 - [ ] 15l. 专用反应头与多威胁回合 A/B；模板句质量与 judge 三头在反应输入上的校准。
+- [x] 15m. 移动端代理：CPU 4× + GPU lite、micro=1，回合 284.3 s、turn_budget、2 点；微型 110 编码/382 头输出/15.45 s；各端口加载合计约 4.4 s；JS heap 111 MB；多模型驻留未崩。
+- [ ] 15n. 真机移动浏览器 + 共享 runtime/共享编码器加载 + VRAM/温度；60 秒口径复测。

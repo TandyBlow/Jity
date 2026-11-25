@@ -252,6 +252,15 @@
 - off→on（上一版微型工作流 vs 四头）：−51.6 s、少一个自动点；continuation 36.3→0.7 s；updates 76.2→64.7 s。完整状态只差 yard 槽位与 1 min 时钟。
 - LLM 基线本轮（llm2）在玩家回合即被 turn_budget 截断（257.7 s、2 个点、0 个自动点）；同输入同 seed 的上一轮（llm1）跑到 2 个自动点、261.0 s。LLM 路径的方差本身就是证据：它不能稳定地在预算内走完自动链。相对 llm1/llm2，四头臂约 −158 s；护目镜在四头臂已转给诺诺，LLM 臂没转。
 - 指标（micro3 每次玩家操作）：微型 task calls 52；共享编码器 137 次（推理规模以此计）；头输出 488 个（不是 488 次推理）；候选逐项评分 137 行。continuation 3 次/17 编码/68 头输出；results 16/16/80；judge 15/88/264；behavior 10/10/70；targets 8/6/6。任务来源：program 37、micro 29、model 33；另有 10 次 model attempt 单列，已从接受调用中剔除，未标注接受调用为 0。
+- 两 seed 规则 vs 四头（同输入；seed 11/17，`evidence-continuation-{off3,rule3,micro3,off-seed17,rule-seed17,micro-seed17}.json`）：
+
+  | seed | LLM continuation 臂 | 直接规则 | 四头 | 自动点（LLM/规则/四头） | 四头 vs 规则状态 |
+  |---|---|---|---|---|---|
+  | 11 | 150.8 s | 153.6 s | 99.2 s | 3/3/2 | 1 字段（yard 槽位） |
+  | 17 | 153.7 s | 95.7 s | 91.5 s | 3/2/2 | 0 字段 |
+
+- 两 seed 合计四头 vs 规则 −29.3 s，但差异全部来自 seed 11 多出的一个自动点；seed 17 只差 4.2 s、完整状态相同。**直接规则 vs 四头没有被证明有稳定差异**；四头当前的价值是替换 LLM continuation 与结构化重复过滤，不是胜过训练规则。
+- 两 seed 的规则/四头都把 LLM continuation 的 3 个自动点压到 2 个，分别省 51.6/62.2 s；完整状态只差路明非 yard 槽位。
 - 人工评价：`continuation-human-eval-sheet.md` + `continuation-human-eval-template.json`，4 个留出人物 × base/continuous/player_present/idle 共 50 行，标签隐藏，待独立评价者。assistant 抽查 12 行（`continuation-assistant-spotcheck.json`，非独立）与规则/模型总体一致 10/12；分歧是「查看短讯机是必要第一步」与「泛化求助不推进待办」——两条都说明规则标签漏了语义判断。LLM 离线臂（Qwen3-0.6B，逐候选、同 context）50 行中继续 47 次，规则/微型 14 次，human-LLM 总体一致 5/12；LLM 明显更宽松，不能把它当质量上界。
 
 ## Reaction 微型工作流（2026-11-25）
@@ -260,3 +269,8 @@
 - 真实威胁回合（输入「我推倒唐骁。」，seed 2，`evidence-reaction-micro3.json`）：roll `lu|nono|trigger_19` 14/11 准入；reaction 端口给 3 个候选打分（857 ms），选中「诺诺蹲下寻找掩体，同时看他下一步。」，`source=micro`，LLM reaction 调用 0 次。同一输入的上一轮（`evidence-reaction-micro2.json`）微型端口低置信弃权，LLM 写了「诺诺的红色识别带在推倒唐骁时…」，`reaction_invents_character` 命中并回退——这正是微型端口要避免的失败模式。
 - 指标口径：reaction 的 3 对 judge 评分计入 `judge` 端口，`reaction` 端口只记任务调用、候选数和选择耗时，避免重复计算编码器运行。
 - 边界：候选是模板句，judge 三头原本为 action 候选训练；真实效果需要更多威胁回合和多 seed A/B，专用反应头仍未训练。
+
+## 移动端代理（2026-11-25）
+
+- CPU 4× + GPU lite、Edge headless，`micro=1`，compound 输入（`evidence-mobile-micro.json`）：回合 284.3 s、`turn_budget`、只到 2 个点、0 个自动点。微型总计 110 次共享编码、382 个头输出、累计端口时间 15.45 s；单端口加载 targets 2.10 s、judge 0.70 s、behavior 0.67 s、results 0.49 s、updates 0.45 s；JS heap 111 MB（不是 GPU VRAM）。微型弃权 4 次（993 ms），模型 fallback 1 次 16.1 s。
+- 结论：多个微型模型同时驻留没有崩溃，加载约 4.4 s（串行、各端口独立 runtime）；但这是桌面 CPU 降速 + GPU lite 的代理，不是真机，也没有 VRAM/温度数据；60 s 仍未达到，主要成本仍是 LLM 阶段。下一步真机 + 共享 runtime/共享编码器加载，避免每个端口各自加载 tokenizer/会话。
