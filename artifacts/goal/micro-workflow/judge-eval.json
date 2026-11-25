@@ -6,9 +6,10 @@
   "personality": 12,
   "reasonable": 5,
   "no_selection": 4,
-  "reasonable_rate": 0.417,
-  "task_rate": 0.667,
-  "scene_rate": 0.417
+  "total_scenarios": 16,
+  "reasonable_rate": 0.312,
+  "task_rate": 0.5,
+  "scene_rate": 0.312
  },
  "task_only": {
   "scenarios": 16,
@@ -16,6 +17,7 @@
   "scene": 8,
   "personality": 16,
   "reasonable": 8,
+  "total_scenarios": 16,
   "reasonable_rate": 0.5,
   "task_rate": 1.0,
   "scene_rate": 0.5
@@ -26,13 +28,26 @@
   "scene": 12,
   "personality": 13,
   "reasonable": 12,
+  "total_scenarios": 16,
   "reasonable_rate": 0.75,
   "task_rate": 1.0,
   "scene_rate": 0.75
  },
+ "rule": {
+  "scenarios": 16,
+  "task": 16,
+  "scene": 11,
+  "personality": 16,
+  "reasonable": 11,
+  "total_scenarios": 16,
+  "reasonable_rate": 0.688,
+  "task_rate": 1.0,
+  "scene_rate": 0.688
+ },
  "oracle": {
   "scenarios": 16,
   "reasonable": 16,
+  "total_scenarios": 16,
   "reasonable_rate": 1.0,
   "task_rate": 0.0,
   "scene_rate": 0.0

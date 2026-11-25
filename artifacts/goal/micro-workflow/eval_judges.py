@@ -34,7 +34,7 @@ def main():
         mask = np.array([enc['attention_mask']], dtype=np.int64)
         task, personality, scene = judges.run(None, {'input_ids': ids, 'attention_mask': mask})
         scenarios[row['scenario']].append({**row, 'score_task': float(task[0]), 'score_personality': float(personality[0]), 'score_scene': float(scene[0])})
-    arms = {name: Counter() for name in ('category', 'task_only', 'multi', 'oracle')}
+    arms = {name: Counter() for name in ('category', 'task_only', 'multi', 'rule', 'oracle')}
     for scenario, items in scenarios.items():
         actor_id = scenario.split(':')[0]
         actor = world['characters'][actor_id]
@@ -45,8 +45,13 @@ def main():
                                            'attention_mask': np.array([enc['attention_mask']], dtype=np.int64)})[0][0]
         category = BEHAVIOR_LABELS[int(logits.argmax())]
         picked = next((row for row in items if row['category'] == category), None)
+        flags = items[0]['context']
+        def rule_score(row):
+            direct = row['category'] in ('move', 'guard', 'observe', 'use', 'communicate', 'assist')
+            return (3 if direct else 0) + row['personality'] + row['scene']
         for arm, row in (
             ('category', picked),
+            ('rule', max(items, key=rule_score)),
             ('task_only', max(items, key=lambda r: r['score_task'])),
             ('multi', max(items, key=lambda r: r['score_task'] + r['score_personality'] + r['score_scene'])),
         ):
@@ -62,11 +67,12 @@ def main():
         arms['oracle']['scenarios'] += 1
         arms['oracle']['reasonable'] += int(any(r['scene'] == 1 and (r['task'] == 1 or r['category'] in ('wait', 'other')) for r in items))
     out = {arm: dict(counts) for arm, counts in arms.items()}
+    total = len(scenarios)
     for arm, counts in out.items():
-        n = counts.get('scenarios', 0)
-        counts['reasonable_rate'] = round(counts.get('reasonable', 0) / n, 3) if n else 0
-        counts['task_rate'] = round(counts.get('task', 0) / n, 3) if n else 0
-        counts['scene_rate'] = round(counts.get('scene', 0) / n, 3) if n else 0
+        counts['total_scenarios'] = total
+        counts['reasonable_rate'] = round(counts.get('reasonable', 0) / total, 3) if total else 0
+        counts['task_rate'] = round(counts.get('task', 0) / total, 3) if total else 0
+        counts['scene_rate'] = round(counts.get('scene', 0) / total, 3) if total else 0
     (PUB / 'judge-eval.json').write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding='utf8')
     print(json.dumps(out, ensure_ascii=False, indent=1))
 
