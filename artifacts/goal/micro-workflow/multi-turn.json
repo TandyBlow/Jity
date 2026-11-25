@@ -1,0 +1,5 @@
+[
+  {"id": "mt1", "input": "我把护目镜递给诺诺。", "purpose": "transfer a registered item to a visible character"},
+  {"id": "mt2", "input": "我走进庭院。", "purpose": "move to a registered location after the transfer"},
+  {"id": "mt3", "input": "我观察庭院里唐骁的位置。", "purpose": "observe a visible character after moving"}
+]

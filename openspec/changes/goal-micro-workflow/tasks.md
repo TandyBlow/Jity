@@ -70,3 +70,5 @@
 - [x] 15p. tasks/subtasks pilot：条件分解 + MiniRBT 句对 relevance/satisfaction 头（80 对，留出 20 行；relevance 18/20、satisfaction 9/15）；`microTaskVerifier` 默认关闭，`taskVerifier=micro` 可开；真实回合 tasks 阶段两次空 achieved，核验器未触发。
 - [x] 15q. 子任务重复过滤：拒绝与父任务/现有任务同文的子任务；测试 1 条。
 - [ ] 15r. 任务达成候选提出头（高精度）+ 更多独立标签；子任务必要性/重复性头；在 tasks 阶段稳定提出候选后再替换核验器。
+- [x] 15s. 连续三回合（micro=1，seed 11）：88.4/118.0/122.8 s、0 失败、4/8/12 点、微型 136/153/143 编码；发现单动作护目镜转移未生效且正文与 nearby 矛盾，需 probe。
+- [ ] 15t. 单动作转移一致性 probe：action structure / targets / results facts / `去向=` 链路；修复后复跑三回合。

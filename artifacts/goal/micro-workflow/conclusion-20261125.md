@@ -288,3 +288,9 @@
 - 真实回合（「我把护目镜戴好，检查镜片有没有裂纹」「我向诺诺问清红蓝局势…」，`taskVerifier=micro`）：tasks 阶段两次都返回空 `achieved`，micro 端口没有输入；问题在**任务阶段不提出达成候选**，不是核验器太慢。护目镜任务仍是 pending。
 - subtask 过滤：`readSubtaskProposals` 新增 `subtask_duplicates_existing`，拒绝与父任务或任何现有任务同文的子任务；测试 `settlement.test.ts` 覆盖。开放式子任务生成仍由 LLM 负责。
 - 下一步：补独立人工标签与更多任务/事实对；先做"达成候选提出"头（严格高精度），再做子任务必要性/重复性头；在 tasks 阶段能稳定提出候选之前，不把核验器换成微型模型。
+
+## 连续三回合（micro=1，seed 11，`evidence-multi-turn-micro.json`）
+
+- 「我把护目镜递给诺诺。」→「我走进庭院。」→「我观察庭院里唐骁的位置。」三回合全部 COMPLETED、0 失败；回合 88.4 / 118.0 / 122.8 s；点 4 / 8 / 12；微型编码 136 / 153 / 143 次，端口累计 4.96 / 4.47 / 4.26 s；JS heap 146 / 109 / 147 MB。桌面 60 s 仍未达到，三回合都靠 LLM updates 主导。
+- **状态不一致（需要定向排查）**：第一回合输入「我把护目镜递给诺诺。」，状态里 `goggles_lu` 仍在 `lu`，没有转给诺诺；同回合正文写「巷里却没有诺诺」，但 `after.nearby=诺诺`、诺诺就在西侧服务巷。相同转移在复合输入「我把护目镜递给诺诺，然后走进庭院。」的微型臂此前成功（护目镜→诺诺）。这说明单动作转移的 target/item 结构或 results 判定存在方差，不是 continuation 的问题；下一轮用固定输入回放 probe 结构、targets、results 与 facts。
+- 第二回合路明非到达庭院（yard），第三回合仍能在庭院观察唐骁；位置推进本身一致。三回合的自动链都在 `continuation_policy_no_progress` 结束。
