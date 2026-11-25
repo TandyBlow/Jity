@@ -1,32 +1,32 @@
 [
  {
-  "file": "artifacts/goal/micro-workflow/evidence-struct-llm.json",
-  "calls": 44,
+  "file": "artifacts/goal/micro-workflow/evidence-walk-llm.json",
+  "calls": 42,
   "program_skips": 33,
-  "real_calls": 11,
+  "real_calls": 9,
   "retry_calls": 4,
   "stage_calls": {
-   "position": 16,
-   "appearance": 16,
+   "position": 15,
+   "appearance": 15,
    "tasks": 3,
    "subtasks": 3,
    "personality": 3,
    "sanity": 3
   },
   "real_ms": {
-   "position": 27899,
-   "tasks": 10432,
-   "subtasks": 7212
+   "position": 33276,
+   "tasks": 7265,
+   "subtasks": 5091
   },
-  "total_real_ms": 45543,
-  "prompt_chars_median": 2718,
-  "prompt_chars_max": 3368
+  "total_real_ms": 45632,
+  "prompt_chars_median": 2845,
+  "prompt_chars_max": 3369
  },
  {
-  "file": "artifacts/goal/micro-workflow/evidence-struct-micro.json",
+  "file": "artifacts/goal/micro-workflow/evidence-walk-micro.json",
   "calls": 38,
-  "program_skips": 20,
-  "real_calls": 18,
+  "program_skips": 21,
+  "real_calls": 17,
   "retry_calls": 2,
   "stage_calls": {
    "position": 15,
@@ -37,12 +37,13 @@
    "sanity": 2
   },
   "real_ms": {
-   "position": 136127,
-   "tasks": 17903,
-   "subtasks": 12120
+   "position": 129092,
+   "appearance": 2090,
+   "tasks": 9358,
+   "subtasks": 6596
   },
-  "total_real_ms": 166150,
-  "prompt_chars_median": 2912,
+  "total_real_ms": 147136,
+  "prompt_chars_median": 2900,
   "prompt_chars_max": 11583
  }
 ]
