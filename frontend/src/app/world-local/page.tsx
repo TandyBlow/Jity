@@ -99,6 +99,12 @@ interface WorldTurnRecord {
     task: string; key: string; ms: number; fallback: boolean; raw: string | null;
     value: unknown; issues: string[]; error: string | null; promptChars: number | null;
     source: string | null;
+    /** Model attempts behind this task (1 = no retry). */
+    attempts?: number | null;
+    /** Updates stages touched by this call, their ms and the affected scope. */
+    stages?: string[] | null;
+    stageMs?: Record<string, number> | null;
+    scope?: unknown;
   }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
@@ -1015,6 +1021,10 @@ export default function WorldLocalPage() {
                 issues: (detail.issues ?? []).map((issue) => issue.code),
                 error: detail.error ?? null, promptChars: detail.promptChars ?? null,
                 source: detail.source ?? null,
+                attempts: detail.calls?.length ?? null,
+                stages: detail.stages ?? null,
+                stageMs: detail.stageMs ?? null,
+                scope: detail.scope ?? null,
               });
             }
             if (task === 'action' || task === 'targets' || task === 'reaction') {

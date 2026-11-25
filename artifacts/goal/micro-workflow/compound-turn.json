@@ -1,0 +1,7 @@
+[
+  {
+    "id": "compound-transfer-walk",
+    "input": "我把护目镜递给诺诺，然后走进庭院。",
+    "purpose": "compound: transfer a registered item to a visible character, then walk to a registered location"
+  }
+]

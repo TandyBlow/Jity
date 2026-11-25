@@ -8,6 +8,22 @@ const RESULT = ['achieved', 'partial', 'not_achieved', 'blocked', 'no_change'];
 const PHRASE: Record<string, string> = {
   achieved: '达到目的', partial: '只完成一部分', not_achieved: '没有成功', blocked: '被阻止', no_change: '没有变化',
 };
+const OBSTRUCTION = ['被阻止', '拦住', '拦下', '挡住', '锁', '关着', '紧闭', '无法', '没有', '不能', '失败'];
+/** A declared walk is program-confirmed only when nothing in its text
+ * obstructs it, the destination is a registered location, and the actor is the
+ * protagonist. Prior failed sub-actions are checked by the caller. */
+export function programMoveAllowed(input: {
+  text: string; category: string; destination: { entityId: string; containerId: string } | null | undefined;
+  memberId: string; protagonistId: string; currentContainer: string | null; isLocation: boolean;
+}): boolean {
+  return input.category === 'move'
+    && input.destination?.entityId === input.memberId
+    && input.memberId === input.protagonistId
+    && input.isLocation
+    && input.currentContainer !== input.destination.containerId
+    && !OBSTRUCTION.some((word) => input.text.includes(word));
+}
+
 const OUTCOME: Record<string, string> = {
   achieved: 'completed', partial: 'partial', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
 };
@@ -87,19 +103,32 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const rollText = `骰点：${roll ? roll.result : '?'}；资格：${roll ? String(roll.eligible) : '?'}；准入：${roll ? String(roll.admitted) : '?'}`;
       const subActions = member.structured?.subActions?.length
         ? member.structured.subActions
-        : [{ id: 'sa1', text: member.actionText, category: member.structured?.category ?? 'other', destination: member.structured?.destination ?? null }];
+        : [{ id: 'sa1', text: member.actionText, category: member.structured?.category ?? 'other', destination: member.structured?.destination ?? null, order: 1, dependsOn: [] as string[] }];
       const labels: string[] = [];
       for (const subAction of subActions) {
-        // The player's own declared move is not a contested action: the action
-        // lane resolved a registered destination, so the fact executes it.
-        const programMove = subAction.category === 'move'
-          && subAction.destination?.entityId === member.memberId
-          && member.memberId === request.state.protagonistId;
+        const priorBlocked = (subAction.dependsOn ?? []).some((id) => {
+          const index = Number(id.replace('sa', '')) - 1;
+          const label = labels[index];
+          return label === 'blocked' || label === 'not_achieved';
+        });
+        const destination = subAction.destination;
+        const current = request.state.characters[member.memberId]?.position;
+        // A free walk is program-confirmed only when nothing in the text
+        // obstructs it, the destination is a registered location, and no prior
+        // sub-action it depends on failed.
+        const programMove = !priorBlocked && programMoveAllowed({
+          text: subAction.text, category: subAction.category, destination,
+          memberId: member.memberId, protagonistId: request.state.protagonistId,
+          currentContainer: current?.containerId ?? null,
+          isLocation: Boolean(destination?.containerId && request.state.initial.locations[destination.containerId]),
+        });
         const prior = labels.length
           ? `前序：${labels.map((label, index) => `sa${index + 1}=${label}`).join('、')}；`
           : '';
         let label: string;
-        if (programMove) {
+        if (priorBlocked) {
+          label = 'blocked';
+        } else if (programMove) {
           label = 'achieved';
         } else {
           const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;
@@ -125,18 +154,22 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         labels.push(label);
         let normalized = subAction.text.replace(/我(?!们)/gu, name);
         // A fact may not name a character outside the group; the action text can.
+        // The id is kept in a structured marker so the outsider is not lost.
+        const outsiderIds: string[] = [];
         for (const [id, character] of Object.entries(request.state.initial.characters)) {
           if (id === member.memberId || !character.name) continue;
           if (request.members.some((row) => row.memberId === id)) continue;
+          if (normalized.includes(character.name)) outsiderIds.push(id);
           normalized = normalized.split(character.name).join('对方');
         }
         // Only an achieved sub-action may assert its destination. A partial,
         // failed or blocked sub-action must not move anything; updates reads
         // this hint as a settled state change.
-        const hint = settledDestination(label, subAction.destination,
+        const hint = settledDestination(label, destination,
           () => destinationHint(normalized, request.state, member.memberId));
+        const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({
-          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}`,
+          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${involved}`,
           memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
         });
       }

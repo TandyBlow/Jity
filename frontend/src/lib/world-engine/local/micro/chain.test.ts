@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { WorldState } from '../../types';
-import { destinationHint, settledDestination } from './results';
+import { destinationHint, programMoveAllowed, settledDestination } from './results';
 import { readDestinations } from './updates';
 
 const state = {
@@ -39,5 +39,22 @@ describe('micro results -> updates chain', () => {
     expect(settledDestination('not_achieved', dest, () => null)).toBeNull();
     expect(settledDestination('blocked', dest, () => null)).toBeNull();
     expect(settledDestination('no_change', dest, () => null)).toBeNull();
+  });
+});
+
+describe('program move gate', () => {
+  const base = { text: '我走进庭院。', category: 'move', destination: { entityId: 'lu', containerId: 'yard' }, memberId: 'lu', protagonistId: 'lu', currentContainer: 'lane', isLocation: true };
+  it('confirms a plain walk', () => {
+    expect(programMoveAllowed(base)).toBe(true);
+  });
+  it('does not confirm an obstructed walk', () => {
+    expect(programMoveAllowed({ ...base, text: '我走进庭院，但被拦住了。' })).toBe(false);
+  });
+  it('does not confirm a non-location destination', () => {
+    expect(programMoveAllowed({ ...base, isLocation: false })).toBe(false);
+  });
+  it('does not confirm another actor or an already-reached room', () => {
+    expect(programMoveAllowed({ ...base, memberId: 'nono' })).toBe(false);
+    expect(programMoveAllowed({ ...base, currentContainer: 'yard' })).toBe(false);
   });
 });

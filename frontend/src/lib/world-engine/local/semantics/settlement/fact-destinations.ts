@@ -18,29 +18,35 @@ export function readDestinations(texts: string[]): Map<string, FactDestination> 
   return map;
 }
 
-/** Registered location named by a text. A full name wins; otherwise a suffix of
- * the name may match (the player says 庭院 for 中央庭院). Two locations matching
- * the same text are ambiguous and return null. */
+/** Registered location named by a text. A full-name match always wins over a
+ * suffix match, even when the suffix appears later (西回廊 vs 东回廊). Suffix
+ * matches need a unique location; 庭院→中央庭院 is allowed, 回廊 is ambiguous. */
 export function matchLocation(state: WorldState, text: string): { id: Id; at: number; name: string } | null {
-  const hits: Array<{ id: Id; at: number; name: string }> = [];
+  const full: Array<{ id: Id; at: number; name: string }> = [];
+  const suffix: Array<{ id: Id; at: number; name: string }> = [];
   for (const [id, location] of Object.entries(state.initial.locations)) {
     const name = location.name ?? '';
     if (name.length < 2) continue;
-    let matched = name;
-    let at = text.lastIndexOf(name);
-    if (at < 0) {
-      for (let cut = 1; cut <= name.length - 2; cut += 1) {
-        const suffix = name.slice(cut);
-        const index = text.lastIndexOf(suffix);
-        if (index >= 0) { matched = suffix; at = index; break; }
-      }
+    const at = text.lastIndexOf(name);
+    if (at >= 0) {
+      full.push({ id, at, name });
+      continue;
     }
-    if (at >= 0) hits.push({ id, at, name: matched });
+    for (let cut = 1; cut <= name.length - 2; cut += 1) {
+      const part = name.slice(cut);
+      const index = text.lastIndexOf(part);
+      if (index >= 0) { suffix.push({ id, at: index, name: part }); break; }
+    }
   }
-  if (!hits.length) return null;
-  hits.sort((left, right) => right.at - left.at || right.name.length - left.name.length);
-  if (hits.length > 1 && hits[0].at === hits[1].at && hits[0].name.length === hits[1].name.length) return null;
-  return hits[0];
+  if (full.length) {
+    full.sort((left, right) => right.at - left.at);
+    if (full.length > 1 && full[0].at === full[1].at) return null;
+    return full[0];
+  }
+  if (!suffix.length) return null;
+  suffix.sort((left, right) => right.at - left.at || right.name.length - left.name.length);
+  if (suffix.length > 1 && (suffix[0].at === suffix[1].at || suffix[0].name === suffix[1].name)) return null;
+  return suffix[0];
 }
 
 /** Wording that asserts a movement happened or was attempted. */
