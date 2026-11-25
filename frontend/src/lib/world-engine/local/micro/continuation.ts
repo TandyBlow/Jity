@@ -28,9 +28,11 @@ export interface MicroContinuationOptions {
   maxCharacters?: number;
   maxCandidatesPerCharacter?: number;
   threshold?: Partial<MicroContinuationScores>;
+  /** A/B arm: execute the label rules directly instead of the four heads. */
+  ruleOnly?: boolean;
   onStats?: (record: {
     candidates: number; characters: number; inferences: number; headOutputs: number;
-    ms: number; loadMs: number; source: 'micro' | 'abstain' | 'handback'; reason?: string;
+    ms: number; loadMs: number; source: 'micro' | 'rule' | 'abstain' | 'handback'; reason?: string;
   }) => void;
   /** Test/embedded scorer; the default runs the int8 ONNX heads. */
   scoring?: (rows: Array<{ context: string; text: string }>) => Promise<MicroContinuationScores[] | null> | MicroContinuationScores[] | null;
@@ -50,6 +52,35 @@ function sigmoid(value: unknown): number {
 }
 
 /** Stable context format: keep field order identical to training. */
+/** Direct execution of the label rules. This is the comparison arm: it uses
+ * the same structured records and candidates as the heads, with no encoder. */
+export function ruleContinuationScores(input: {
+  recent: string[];
+  repeat: RepeatKind;
+  category: string;
+  taskPending: boolean;
+  involvesProtagonist: boolean;
+}): MicroContinuationScores {
+  const response = ['guard', 'observe', 'move', 'communicate', 'assist'];
+  const taskAdvance = ['move', 'guard', 'use', 'assist', 'communicate'];
+  const recent = input.recent.length > 0;
+  const novelty = input.repeat === 'same_world' || input.category === 'wait'
+    ? 0
+    : recent || input.repeat === 'new_world'
+      ? 1
+      : input.taskPending && input.category !== 'observe'
+        ? 1
+        : input.category === 'observe' ? 0 : 1;
+  const unfinished = input.category !== 'wait'
+    && (input.taskPending || (recent && response.includes(input.category))) ? 1 : 0;
+  const necessity = input.repeat !== 'same_world' && input.category !== 'wait'
+    && ((recent && response.includes(input.category))
+      || (input.taskPending && taskAdvance.includes(input.category))) ? 1 : 0;
+  const intervene = input.involvesProtagonist
+    && ['communicate', 'assist', 'guard', 'move', 'use'].includes(input.category) ? 1 : 0;
+  return { novelty, unfinished, necessity, intervene };
+}
+
 export function continuationContext(input: {
   recent: string[];
   repeat: RepeatKind;
@@ -160,11 +191,16 @@ export function createMicroContinuation(options: MicroContinuationOptions = {}):
         ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs),
         source: 'handback', reason,
       });
-      return { decision: 'handback', reason, candidates: [], accepted: [], rejected };
+      return { decision: 'handback', reason, source: options.ruleOnly ? 'rule' : 'micro', candidates: [], accepted: [], rejected };
     }
     let scores: MicroContinuationScores[] | null;
     try {
-      scores = await (options.scoring ?? scoreDefault)(rows.map((row) => ({ context: row.context, text: row.candidate.text })));
+      scores = options.ruleOnly
+        ? rows.map((row) => ruleContinuationScores({
+          recent, repeat: row.repeat, category: row.candidate.category,
+          taskPending: Boolean(row.candidate.taskId), involvesProtagonist: row.involvesProtagonist,
+        }))
+        : await (options.scoring ?? scoreDefault)(rows.map((row) => ({ context: row.context, text: row.candidate.text })));
     } catch {
       scores = null;
     }
@@ -233,13 +269,15 @@ export function createMicroContinuation(options: MicroContinuationOptions = {}):
         : 'no_necessary_followup';
     options.onStats?.({
       candidates: rows.length, characters: characters.length,
-      inferences: rows.length, headOutputs: rows.length * LABELS.length,
+      inferences: options.ruleOnly ? 0 : rows.length,
+      headOutputs: options.ruleOnly ? 0 : rows.length * LABELS.length,
       ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs),
-      source: accepted.length ? 'micro' : 'handback', reason,
+      source: accepted.length ? (options.ruleOnly ? 'rule' : 'micro') : 'handback', reason,
     });
     return {
       decision: accepted.length ? 'continue' : 'handback',
       reason,
+      source: options.ruleOnly ? 'rule' : 'micro',
       candidates,
       accepted,
       rejected,

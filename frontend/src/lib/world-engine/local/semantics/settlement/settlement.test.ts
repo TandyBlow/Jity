@@ -2055,6 +2055,30 @@ describe('continuation', () => {
     expect(engine.prompts).toHaveLength(0);
   });
 
+  it('tags a direct-rule continuation as rule in task evidence', async () => {
+    const engine = new ScriptedEngine([]);
+    const seen: Array<{ task: string; source?: string }> = [];
+    const row = {
+      characterId: 'b', text: '乙走向门口。', category: 'move',
+      scores: { novelty: 1, unfinished: 1, necessity: 1, intervene: 0 },
+      repeat: 'new' as const,
+    };
+    const handlers = createSettlementHandlers({
+      engine,
+      options: {
+        onTask: (task, _key, detail) => seen.push({ task, source: detail.source }),
+        microContinuation: () => ({
+          decision: 'continue', reason: 'novel_unfinished_necessary', source: 'rule',
+          candidates: [row], accepted: [row], rejected: [],
+        }),
+      },
+    });
+    const outcome = await handlers.continuation('r1', continuationInput(progress()));
+    expect((outcome.value as { kind: string }).kind).toBe('continue');
+    expect(seen).toContainEqual({ task: 'continuation', source: 'rule' });
+    expect((outcome.evidence.detail as { source: string }).source).toBe('rule');
+  });
+
   it('turns a micro continue with only invalid rows into a port handback', async () => {
     const engine = new ScriptedEngine([]);
     const handlers = createSettlementHandlers({

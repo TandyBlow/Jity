@@ -108,6 +108,22 @@ describe('micro continuation', () => {
     expect(answer?.reason).toBe('player_intervention');
   });
 
+  it('executes the rules directly without an encoder in the rule arm', async () => {
+    const stats: unknown[] = [];
+    const port = createMicroContinuation({
+      ruleOnly: true,
+      maxCandidatesPerCharacter: 8,
+      onStats: (record) => stats.push(record),
+    });
+    const answer = await port({
+      roundId: 'round_rule', trigger: 'player', state: state(), roundChanges: [],
+      roundProgress: progress, history: [],
+    });
+    expect(answer?.decision).toBe('continue');
+    expect(answer?.accepted.map((row) => row.characterId)).toEqual(['tang']);
+    expect(stats[0]).toMatchObject({ source: 'rule', inferences: 0, headOutputs: 0 });
+  });
+
   it('returns null when the scorer is unavailable', async () => {
     const port = createMicroContinuation({ scoring: () => null, maxCandidatesPerCharacter: 8 });
     const answer = await port({

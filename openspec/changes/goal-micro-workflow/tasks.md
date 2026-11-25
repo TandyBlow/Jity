@@ -55,9 +55,10 @@
 - [x] 15a. 结构化事件记录 `micro/events.ts`：位置/外貌/理智/任务/子任务事件，actor+文本+worldDigest 区分「同世界原句重放」与「世界已变后的连续行为」；4 条测试。
 - [x] 15b. continuation 四头：`continuation-data.jsonl` 432 行/84 场景/14 人物；MiniRBT 共享编码 + novelty/unfinished/necessity/intervene；留出人物 4 个，决策层与规则臂 24/24；int8 10,554,864 B；报告 `continuation-training-report.json`。
 - [x] 15c. 接入 `microContinuation`：程序候选 + 四头 + 重复/wait 预拒 + 主角介入门 + LLM 回退；`?micro=1`、`?microContinuation=0` 对照；settlement 测试 5 条。
-- [x] 15d. 三臂 A/B（compound 输入，seed 11）：LLM 261.0 s / micro 无 continuation 136.9 s / micro + continuation 102.3 s；自动点 2/3/2；完整状态差 2/1 字段；`continuation-ab-report.json`。
-- [x] 15e. 指标：每回合 `microStats` 按端口统计 task calls/encoder runs/head outputs/candidate scores；micro_on 一次操作 137 编码、488 头输出；`inference_report.py`。
+- [x] 15d. 四臂 A/B（compound 输入，seed 11）：LLM 257.7 s（turn_budget）/ micro 无 continuation 150.8 s / micro 直接规则 153.6 s / micro 四头 99.2 s；自动点 0/3/3/2；规则 vs 四头完整状态差 1 字段；`continuation-ab-report.json`。
+- [x] 15e. 指标：每回合 `microStats` 按端口统计 task calls/encoder runs/head outputs/candidate scores；四头臂一次操作 137 编码（推理规模）、488 头输出（不是推理次数）；接受任务未标注 0，model attempt 单列；`inference_report.py`。
 - [x] 15f. 录音回放 39 次 continuation 与 LLM 接受一致 39/39；Qwen3-0.6B 离线臂 + 50 行盲评表 + assistant 抽查 12 行（非独立）。
 - [ ] 15g. 独立评价者填写 50 行盲评；按分歧修规则/数据（观察作为必要第一步、泛化求助）。
 - [ ] 15h. reaction 微型工作流：复用 judge 三头 + 触发事件反应合理性判断；先做候选与门禁，不把规则标签当泛化。
 - [ ] 15i. 多输入/多 seed 完整回合 A/B；移动端同一指标。
+- [x] 15j. 直接规则臂 `microContinuation=rule`：同候选、同 policy、无编码；单输入 seed 11 比四头慢 54.4 s、多一个自动点，直接规则没有比四头更快。

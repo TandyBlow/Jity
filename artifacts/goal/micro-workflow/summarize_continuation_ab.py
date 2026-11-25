@@ -11,9 +11,10 @@ from pathlib import Path
 
 PUB = Path('D:/others/Jity/artifacts/goal/micro-workflow')
 ARMS = {
-    'llm': PUB / 'evidence-continuation-llm.json',
-    'micro_off': PUB / 'evidence-continuation-off.json',
-    'micro_on': PUB / 'evidence-continuation-micro2.json',
+    'llm': PUB / 'evidence-continuation-llm2.json',
+    'micro_off': PUB / 'evidence-continuation-off3.json',
+    'micro_rule': PUB / 'evidence-continuation-rule3.json',
+    'micro_on': PUB / 'evidence-continuation-micro3.json',
 }
 HEADS = {'results': 5, 'judge': 3, 'behavior': 7, 'updates': 2, 'targets': 1, 'continuation': 4, 'reaction': 1}
 
@@ -44,8 +45,9 @@ def summary(path):
     turn = data['turns'][0]
     product = turn.get('product') or {}
     calls = product.get('semanticCalls') or []
+    accepted = [call for call in calls if not call.get('attempt')]
     by_task = defaultdict(lambda: {'calls': 0, 'ms': 0.0})
-    for call in calls:
+    for call in accepted:
         key = f"{call.get('task')}:{call.get('source') or 'none'}"
         by_task[key]['calls'] += 1
         by_task[key]['ms'] += call.get('ms') or 0
@@ -105,7 +107,7 @@ def diff(left, right_state):
 def main():
     arms = {name: summary(path) for name, path in ARMS.items()}
     comparisons = {}
-    for a, b in (('micro_off', 'micro_on'), ('llm', 'micro_on'), ('llm', 'micro_off')):
+    for a, b in (('micro_rule', 'micro_on'), ('micro_off', 'micro_on'), ('llm', 'micro_on'), ('llm', 'micro_off')):
         comparisons[f'{a}_vs_{b}'] = diff(arms[a], arms[b]['state'])
     for arm in arms.values():
         arm.pop('state')

@@ -105,4 +105,4 @@ G1 之后新增：
 
 ## 7. 微型工作流补充（2026-11-25）
 
-- R10 continuation：结构化事件记录 + 四头微型模型已接入 `?micro=1`（可用 `microContinuation=0` 退回上一版微型工作流）。单输入 seed 11 三臂：LLM-only 261.0 s、micro 无 continuation 136.9 s、micro + continuation 102.3 s；后者少一个自动点，完整状态与前两臂只差 yard 槽位/时钟，护目镜转移比 LLM 基线更符合输入。每次玩家操作微型推理 137 次共享编码、488 个头输出；continuation 3 次调用/17 编码/68 头输出。仍待多输入/多 seed、独立盲评与 reaction 工作流。证据 `artifacts/goal/micro-workflow/continuation-ab-report.json`、`conclusion-20261125.md`、`continuation-training-report.json`；决策 D-033。
+- R10 continuation：结构化事件记录 + 四头微型模型已接入 `?micro=1`（`microContinuation=0` 退回上一版微型工作流，`microContinuation=rule` 直接跑规则作对照）。单输入 seed 11 四臂：LLM-only 257.7 s（本轮未到 continuation 即 turn_budget）、micro 无 continuation 150.8 s、micro 直接规则 153.6 s、micro 四头 99.2 s；四头少一个自动点，完整状态与规则臂只差 yard 槽位，护目镜转移比 LLM 基线更符合输入。每次玩家操作微型推理 137 次共享编码、488 个头输出（前者才是推理规模）；continuation 3 次调用/17 编码/68 头输出；接受任务来源未标注 0，10 次 model attempt 单列。仍待多输入/多 seed、独立盲评、reaction 与移动端。证据 `artifacts/goal/micro-workflow/continuation-ab-report.json`、`conclusion-20261125.md`、`continuation-training-report.json`；决策 D-033。

@@ -1,0 +1,17 @@
+{
+ "a": "artifacts/goal/micro-workflow/evidence-continuation-llm2.json",
+ "b": "artifacts/goal/micro-workflow/evidence-continuation-micro3.json",
+ "time": [
+  "2009-10-17T15:21:00",
+  "2009-10-17T15:23:00"
+ ],
+ "fields": [
+  {
+   "entity": "goggles_lu",
+   "field": "item_position",
+   "a": "lu/slot_body",
+   "b": "nono/-"
+  }
+ ],
+ "count": 1
+}

@@ -424,6 +424,7 @@ export class ContinuationRunner {
     }
     const rejected = [...answer.rejected, ...read.rejected];
     const accepted = read.candidates;
+    const source: 'micro' | 'rule' = answer.source === 'rule' ? 'rule' : 'micro';
     if (!accepted.length) {
       return this.handback(key, [], started, {
         // A continue answer whose rows all failed validation is a port
@@ -432,22 +433,22 @@ export class ContinuationRunner {
           ? (answer.reason || 'micro_handback')
           : 'micro_no_eligible_candidate',
         microReason: answer.reason,
-        source: 'micro',
+        source,
         candidates: answer.candidates,
         rejectedCandidates: rejected,
         accepted: [],
         roundProgress: parsed.roundProgress,
-      }, 'micro');
+      }, source);
     }
     const decision = this.policy.observe(parsed.roundChanges, accepted, parsed.roundProgress, parsed.trigger);
     if (!decision.allow) {
       return this.policyStop(key, [], started, decision, {
-        source: 'micro',
+        source,
         candidates: answer.candidates,
         accepted,
         rejectedCandidates: rejected,
         roundProgress: parsed.roundProgress,
-      }, 'micro');
+      }, source);
     }
     const nextRoundId = this.nextRoundId ? this.nextRoundId() : autoRoundId();
     if (nextRoundId === parsed.roundId) return failure(key, 'continuation_round_id_reused', started);
@@ -461,7 +462,7 @@ export class ContinuationRunner {
     const evidence = makeEvidence(key, [], false, undefined, {
       decision: 'continue',
       reason: answer.reason || 'micro_joint_judgement',
-      source: 'micro',
+      source,
       policy: decision,
       candidates: answer.candidates,
       accepted,
@@ -472,7 +473,7 @@ export class ContinuationRunner {
     const outcome: SettlementOutcome<SettlementConclusion> = {
       value, raw: '', ms: performance.now() - started, fallback: false, evidence,
     };
-    this.onTask(key, outcome, 0, 'micro');
+    this.onTask(key, outcome, 0, source);
     return outcome;
   }
 
@@ -481,7 +482,7 @@ export class ContinuationRunner {
     calls: ModelCallEvidence[],
     started: number,
     detail: Record<string, unknown>,
-    source: 'model' | 'micro' = 'model',
+    source: 'model' | 'micro' | 'rule' = 'model',
   ): SettlementOutcome<SettlementConclusion> {
     const evidence = makeEvidence(key, calls, false, undefined, { decision: 'handback', ...detail });
     const outcome: SettlementOutcome<SettlementConclusion> = {
@@ -504,7 +505,7 @@ export class ContinuationRunner {
     started: number,
     decision: ContinuationPolicyDecision,
     detail: Record<string, unknown>,
-    source: 'model' | 'micro' = 'model',
+    source: 'model' | 'micro' | 'rule' = 'model',
   ): SettlementOutcome<SettlementConclusion> {
     const reason = `continuation_policy_${decision.reason}`;
     const evidence = makeEvidence(key, calls, false, reason, {
@@ -529,7 +530,7 @@ export class ContinuationRunner {
     key: Id,
     outcome: SettlementOutcome<SettlementConclusion>,
     promptChars: number,
-    source: 'model' | 'micro' = 'model',
+    source: 'model' | 'micro' | 'rule' = 'model',
   ): void {
     this.onTaskCallback?.('continuation', key, {
       ms: outcome.ms,

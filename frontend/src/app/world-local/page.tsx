@@ -111,6 +111,8 @@ interface WorldTurnRecord {
     stages?: string[] | null;
     stageMs?: Record<string, number> | null;
     scope?: unknown;
+    /** One model attempt inside a task, not an accepted task result. */
+    attempt?: boolean;
   }>;
   /** Scheduling clocks, relative to submit. pointCommittedAtMs is recorded when
    * the driver starts narrating that committed point (no transport timestamp
@@ -581,10 +583,13 @@ export default function WorldLocalPage() {
   // Frozen at mount: the start flow may clean the URL before the model effect.
   const [microParam] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('micro') === '1');
-  // A/B arm: `micro=1&microContinuation=0` keeps the earlier micro workflow
-  // without the continuation heads, so their contribution is isolated.
-  const [microContinuationParam] = useState(() => typeof window !== 'undefined'
-    && new URLSearchParams(window.location.search).get('microContinuation') !== '0');
+  // A/B arms: off keeps the earlier micro workflow; rule executes the label
+  // rules directly (no encoder); heads is the micro model.
+  const [microContinuationMode] = useState<'off' | 'rule' | 'heads'>(() => {
+    if (typeof window === 'undefined') return 'heads';
+    const value = new URLSearchParams(window.location.search).get('microContinuation');
+    return value === '0' ? 'off' : value === 'rule' ? 'rule' : 'heads';
+  });
   const [rollSeed] = useState(() => {
     if (typeof window === 'undefined') return null;
     const raw = new URLSearchParams(window.location.search).get('seed');
@@ -931,7 +936,7 @@ export default function WorldLocalPage() {
           webllmModel: arm.runtime === 'webllm' ? webllmModel : null,
           webllmLocal: arm.webllmLocal === true,
           webllmCache: arm.webllmCache ?? 'indexeddb',
-          micro: microParam, microContinuation: microParam && microContinuationParam,
+          micro: microParam, microContinuation: microParam ? microContinuationMode : null,
         };
         // Experimental micro workflow: rules + int8 scorer for targets, behind
         // ?micro=1. The LLM path stays the default; stats land on window for
@@ -963,8 +968,11 @@ export default function WorldLocalPage() {
         const microBehavior = microEnabled
           ? createMicroBehavior({ onStats: (record) => recordMicro('behavior', record) })
           : undefined;
-        const microContinuation = microEnabled && microContinuationParam
-          ? createMicroContinuation({ onStats: (record) => recordMicro('continuation', record) })
+        const microContinuation = microEnabled && microContinuationMode !== 'off'
+          ? createMicroContinuation({
+            ruleOnly: microContinuationMode === 'rule',
+            onStats: (record) => recordMicro('continuation', record),
+          })
           : undefined;
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
         // training; the narration engine is not wrapped.
@@ -1043,6 +1051,7 @@ export default function WorldLocalPage() {
                 stages: detail.stages ?? null,
                 stageMs: detail.stageMs ?? null,
                 scope: detail.scope ?? null,
+                attempt: detail.attempt === true,
               });
             }
             if (task === 'action' || task === 'targets' || task === 'reaction') {
