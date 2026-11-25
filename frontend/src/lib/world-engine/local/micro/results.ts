@@ -70,7 +70,7 @@ export interface MicroResultsOptions {
   vocabUrl?: string;
   modelUrl?: string;
   threshold?: number;
-  onStats?: (record: { members: number; ms: number; loadMs: number; source: 'micro' | 'abstain' }) => void;
+  onStats?: (record: { members: number; inferences?: number; ms: number; loadMs: number; source: 'micro' | 'abstain' }) => void;
 }
 
 export function createMicroResults(options: MicroResultsOptions = {}): MicroResultsFn {
@@ -96,6 +96,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
     const ort = await import('onnxruntime-web/wasm');
     const threshold = options.threshold ?? 0.45;
     const judgments: Array<{ memberId: string; label: string; reason: string }> = [];
+    let judged = 0;
     const facts: Array<{ text: string; memberIds: string[]; actorId: string; outcome: string }> = [];
     for (const member of request.members) {
       const name = request.state.initial.characters[member.memberId]?.name ?? member.memberId;
@@ -139,6 +140,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
             input_ids: new ort.Tensor('int64', data, [1, ids.length]),
             attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
           });
+          judged += 1;
           const logits = Array.from((out.result?.data ?? []) as Float32Array);
           if (logits.length !== RESULT.length) return null;
           const max = Math.max(...logits);
@@ -146,7 +148,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           const sum = exps.reduce((a, b) => a + b, 0);
           const best = logits.indexOf(max);
           if (exps[best] / sum < threshold) {
-            options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
+            options.onStats?.({ members: request.members.length, inferences: judged, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
             return null;
           }
           label = RESULT[best];
@@ -176,7 +178,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const overall = labels.every((label) => label === labels[0]) ? labels[0] : 'partial';
       judgments.push({ memberId: member.memberId, label: overall, reason: PHRASE[overall] });
     }
-    options.onStats?.({ members: request.members.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
+    options.onStats?.({ members: request.members.length, inferences: judged, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
     return { judgments, facts };
   };
 }

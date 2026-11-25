@@ -881,7 +881,11 @@ try {
           pointPrompts: Array.isArray(record.pointPrompts) ? record.pointPrompts : null,
           semanticPrompts: Array.isArray(record.semanticPrompts) ? record.semanticPrompts : null,
           actions: Array.isArray(record.actions) ? record.actions : null,
-          microStats: globalThis.__microStats ?? null,
+          // Per-turn stats: each WorldTurnRecord owns the micro calls made
+          // during that player operation. The session-wide array stays for
+          // older evidence readers.
+          microStats: Array.isArray(record.microStats) ? record.microStats : null,
+          microStatsAll: globalThis.__microStats ?? null,
           microEnabled: globalThis.__microEnabled ?? null,
           semanticLog: globalThis.__semanticLog ?? null,
           semanticCalls: Array.isArray(record.semanticCalls) ? record.semanticCalls : null,

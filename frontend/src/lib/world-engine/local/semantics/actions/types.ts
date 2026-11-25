@@ -139,7 +139,7 @@ export interface ActionHandlerOptions {
    * template writes the text; null/other falls back to the LLM. */
   behavior?: (request: { input: string }) => Promise<string | null> | string | null;
   /** Three candidate judges (task/personality/scene); null falls back. */
-  judge?: (pairs: Array<{ context: string; text: string }>) => Promise<Array<{ task: number; personality: number; scene: number }> | null>;
+  judge?: (pairs: Array<{ context: string; text: string }>) => Promise<Array<{ task: number; personality: number; scene: number }> | null> | Array<{ task: number; personality: number; scene: number }> | null;
   /** When the protagonist is the admitted reaction target, the player's own
    * character must not be written by a model. 'minimal' returns a program
    * line that asserts no decision (default); 'model' opts into generation. */

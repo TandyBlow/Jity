@@ -9,7 +9,7 @@ export interface MicroBehaviorOptions {
   vocabUrl?: string;
   modelUrl?: string;
   threshold?: number;
-  onStats?: (record: { category: string; ms: number; loadMs: number }) => void;
+  onStats?: (record: { category: string; inferences?: number; ms: number; loadMs: number }) => void;
 }
 
 export function createMicroBehavior(options: MicroBehaviorOptions = {}) {
@@ -49,7 +49,7 @@ export function createMicroBehavior(options: MicroBehaviorOptions = {}) {
       if (p < (options.threshold ?? 0.4)) return null;
       const label = LABELS[best];
       options.onStats?.({
-        category: label, ms: Math.round(performance.now() - started),
+        category: label, inferences: 1, ms: Math.round(performance.now() - started),
         loadMs: Math.round(runtime.stats().loadMs),
       });
       return label === 'other' ? null : label;

@@ -16,7 +16,7 @@ export interface MicroUpdatesOptions {
   /** Probability of "moved" above which the head claims a move. */
   threshold?: number;
   onStats?: (record: {
-    entities: number; ms: number; loadMs: number;
+    entities: number; inferences?: number; ms: number; loadMs: number;
     source: 'micro' | 'abstain'; moved: string[]; reason?: string;
   }) => void;
 }
@@ -78,7 +78,7 @@ export function createMicroUpdates(options: MicroUpdatesOptions = {}): MicroUpda
       if (p >= threshold) moved.push(entityId);
     }
     const stats = (source: 'micro' | 'abstain', reason?: string) => options.onStats?.({
-      entities: request.scanned.length, ms: Math.round(performance.now() - started),
+      entities: request.scanned.length, inferences: request.scanned.length, ms: Math.round(performance.now() - started),
       loadMs: Math.round(runtime.stats().loadMs), source, moved, ...(reason ? { reason } : {}),
     });
     const hints = readDestinations(Object.values(request.results));
