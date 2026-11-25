@@ -1,5 +1,5 @@
 /** Three candidate judges (task / personality / scene) in one int8 model. */
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
 export interface JudgeScores { task: number; personality: number; scene: number }
@@ -12,18 +12,10 @@ export interface MicroJudgeOptions {
 }
 
 export function createBehaviorJudge(options: MicroJudgeOptions = {}): BehaviorJudgeFn {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/judge-heads-int8.onnx'),
     };
   }

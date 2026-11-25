@@ -3,7 +3,7 @@
 import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlement/types';
 import type { WorldState } from '../../types';
 import { roomOf } from '../prompt';
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
 const RESULT = ['achieved', 'partial', 'not_achieved', 'blocked', 'no_change'];
@@ -111,18 +111,10 @@ export interface MicroResultsOptions {
 }
 
 export function createMicroResults(options: MicroResultsOptions = {}): MicroResultsFn {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/task-heads-int8.onnx'),
     };
   }

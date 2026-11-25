@@ -76,3 +76,5 @@
 - [x] 15v. 叙事状态守卫：presence/item ownership 两类 violation；candidate + instruct 路径检查；instruct 矛盾时用事实草稿重写一次；零时长/台账标记清理。
 - [x] 15w. 任务核验条件化：`outcomeGate` 不再把「达到目的」直接判 yes；`conditionCoverage` 缺失条件时 yes→partial、0 覆盖→no；单测覆盖。
 - [ ] 15x. 剩余叙事问题：多回合台账泄漏、空移动、ambiguous「放下」；program_text_not_model 回退回合。
+- [x] 15y. 共享 tokenizer：`micro/shared.ts` 按 URL 缓存，七个端口共用；ORT 模块单例不变。
+- [ ] 15z. 共享 runtime 会话池、批量推理、跨端口编码复用；移动端多模型驻留复测。

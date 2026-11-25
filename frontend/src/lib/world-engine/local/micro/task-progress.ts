@@ -10,7 +10,7 @@ import type { Id, WorldState } from '../../types';
 import type { MicroTaskVerdict, MicroTaskVerifierFn } from '../semantics/settlement/types';
 import { matchLocation } from '../semantics/settlement/fact-destinations';
 import { matchItems } from '../semantics/actions/structure';
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
 const CONFIRM = ['确认', '报告', '说明', '告知', '问清', '核实', '看见', '检查', '证明', '登记', '回答', '听清'];
@@ -98,18 +98,10 @@ export function conditionCoverage(conditions: TaskConditions, factText: string):
 }
 
 export function createMicroTaskVerifier(options: MicroTaskProgressOptions = {}): MicroTaskVerifierFn {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/task-match-int8.onnx'),
     };
   }

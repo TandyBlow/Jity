@@ -3,7 +3,7 @@
 import type { Id } from '../../types';
 import type { MicroTargetsFn, MicroTargetsRequest, MicroTargetsResult } from '../semantics/actions';
 import { buildScene } from '../semantics/actions';
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime, scorePair, type MicroRuntime } from './runtime';
 
 export interface MicroTargetsOptions {
@@ -48,18 +48,10 @@ export function resolveRuleTargets(
 }
 
 export function createMicroTargets(options: MicroTargetsOptions = {}): MicroTargetsFn {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime: MicroRuntime = createMicroRuntime({ threads: options.threads ?? 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/pair-scorer-int8.onnx'),
     };
   }

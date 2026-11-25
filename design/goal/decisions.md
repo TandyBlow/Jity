@@ -408,4 +408,4 @@
 - 状态：`signed`（2026-11-25）。
 - 决定：先修「行动成功但状态不变」和「正文与已提交状态矛盾」两条独立故障，不换模型统一处理。状态侧用结构化 `去向=` 进入 projection 与 programScene；叙事侧用在场/物品归属守卫，失败时用已结算事实草稿重写一次，仍失败才回落程序草稿。任务核验移除「达到目的→任务完成」的直接映射，改为逐项条件覆盖；覆盖不足时 yes 降为 partial，零覆盖判 no。
 - 证据：`evidence-transfer-single9.json`（goggles_lu→nono、source=model、problems=0）、`evidence-multi-turn-micro2.json`、`projection.test.ts`、`results.test.ts`、`committed-narration.test.ts`、`task-progress.test.ts`。
-- 影响：不通过放宽校验或提前结束事件换性能；仍待多回合台账泄漏、空移动与 program 回落。
+- 影响：不通过放宽校验或提前结束事件换性能；共享 tokenizer 已接入（七端口一次词表加载），共享 runtime/批量推理未做；仍待多回合台账泄漏、空移动与 program 回落。

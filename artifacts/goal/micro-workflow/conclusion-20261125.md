@@ -303,3 +303,8 @@
 - 叙事一致性：`alignNarration` 新增 `presence_contradiction`（在场人物被写缺席）和 `item_ownership_contradiction`（把别人的物品收进自己口袋）；candidate 路径和 instruct 路径都跑同一检查。instruct 路径首次矛盾时用**已结算事实草稿**重写一次；成功则保留模型正文，失败才回落程序草稿。`factualNarration` 不再输出 `去向=`/`涉及=` 标记，零时长不再写「0秒」。
 - 验证：`transfer-single9` 状态 `goggles_lu→nono`、正文「路明非向诺诺递了护目镜…」、source=model、problems=0；`evidence-multi-turn-micro2.json` 三回合护目镜都在诺诺，未再出现「没有诺诺/收进胸袋」。单测：projection 包含去向物品、settlement programScene 应用物品去向、results 转移/在场守卫、alignment 两类矛盾、task 条件覆盖。
 - 仍存在：多回合后两回合正文夹带结果台账（「凯撒：查看红方短讯机。（只完成一部分）」）和「从中央庭院走到中央庭院」空移动；「放下护目镜」在状态为诺诺持有时仍有歧义；重写失败的回合会回落程序草稿，驱动报 `program_text_not_model`（`evidence-transfer-single7/8`）。
+
+## 共享资源（2026-11-25）
+
+- `micro/shared.ts` 按 vocab URL 缓存 tokenizer，targets/results/behavior/judge/updates/continuation/task-progress 七个端口共用一次词表加载；ORT 模块本来已是单例。模型会话仍按端口/权重文件各自持有，`loadMs` 仍是各端口自己的统计。
+- 未做：共享 runtime 的会话池、批量推理、跨端口编码复用。原因：当前瓶颈仍是 LLM updates/narration，而不是微型端；共享 tokenizer 先去掉确定性的重复加载。移动端多模型驻留的 4.4 s 加载需要下一轮复测。

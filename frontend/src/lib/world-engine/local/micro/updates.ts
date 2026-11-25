@@ -7,7 +7,7 @@ import type { MicroUpdatesFn, MicroUpdatesRequest } from '../semantics/settlemen
 import { resultFacts } from '../semantics/settlement/support';
 import { destinationOfFact } from '../semantics/settlement/updates';
 import { readDestinations } from '../semantics/settlement/fact-destinations';
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime, scoreSingle } from './runtime';
 
 export interface MicroUpdatesOptions {
@@ -46,18 +46,10 @@ function entityText(request: MicroUpdatesRequest, entityId: Id, facts: string): 
 export { readDestinations } from '../semantics/settlement/fact-destinations';
 
 export function createMicroUpdates(options: MicroUpdatesOptions = {}): MicroUpdatesFn {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/movement-head-int8.onnx'),
     };
   }

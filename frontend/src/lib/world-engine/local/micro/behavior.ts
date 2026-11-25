@@ -1,6 +1,6 @@
 /** NPC behavior category head: one of seven routine categories, or null when
  * the model is unsure or says `other` (the LLM then writes the action). */
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
 const LABELS = ['move', 'assist', 'guard', 'communicate', 'observe', 'use', 'other'];
@@ -13,18 +13,10 @@ export interface MicroBehaviorOptions {
 }
 
 export function createMicroBehavior(options: MicroBehaviorOptions = {}) {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/behavior-head-int8.onnx'),
     };
   }

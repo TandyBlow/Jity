@@ -16,7 +16,7 @@ import type {
 import { buildScene } from '../semantics/actions/scene';
 import { behaviorCandidates, type BehaviorCandidate } from '../semantics/actions/candidates';
 import { visibleCharacters } from '../prompt';
-import { createBertTokenizer, type BertTokenizer } from './tokenizer';
+import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 import {
   buildRoundEvents, classifyRepeat, eventLines, repeatLabel, type RepeatKind,
@@ -97,18 +97,10 @@ export function continuationContext(input: {
 }
 
 export function createMicroContinuation(options: MicroContinuationOptions = {}): MicroContinuationFn {
-  let tokenizer: Promise<BertTokenizer> | null = null;
   const runtime = createMicroRuntime({ threads: 1 });
   async function ensure() {
-    if (!tokenizer) {
-      tokenizer = (async () => {
-        const response = await fetch(options.vocabUrl ?? '/micro/minirbt-vocab.txt');
-        if (!response.ok) throw new Error('micro_vocab_fetch_failed');
-        return createBertTokenizer(await response.text());
-      })();
-    }
     return {
-      tok: await tokenizer,
+      tok: await getMicroTokenizer(options.vocabUrl),
       session: await runtime.load(options.modelUrl ?? '/micro/continuation-heads-int8.onnx'),
     };
   }
