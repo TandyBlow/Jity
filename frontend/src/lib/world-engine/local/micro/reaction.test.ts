@@ -37,6 +37,20 @@ describe('reaction micro workflow', () => {
     expect(stats[0]).toMatchObject({ source: 'micro', pairs: 3, inferences: 0, headOutputs: 0 });
   });
 
+  it('includes the trigger and source in the judge context', async () => {
+    let seen = '';
+    const port = createMicroReaction({
+      judge: (pairs) => {
+        seen = pairs[0].context;
+        return pairs.map(() => ({ task: 0.9, personality: 0.9, scene: 0.9 }));
+      },
+    });
+    await port(request());
+    expect(seen).toContain('触发行动');
+    expect(seen).toContain('木箱');
+    expect(seen).toContain('发起者：路明非');
+  });
+
   it('abstains when the judges are not confident', async () => {
     const port = createMicroReaction({
       judge: (pairs) => pairs.map(() => ({ task: 0.2, personality: 0.2, scene: 0.2 })),

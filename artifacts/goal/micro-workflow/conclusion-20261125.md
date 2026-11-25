@@ -268,6 +268,7 @@
 - `micro/reaction.ts`：触发事件理解（offer / question / threat / move / other）→ 意图候选（避开、护住、观察、接过、迟疑、回答、回避、让开、注意）→ 复用 judge 三头打分；合理性门要求意图与触发类匹配、task≥0.5、scene≥0.5、不与发起者行动连续重合 8 字。任何一项不过返回 null，LLM 继续写反应。没有训练专用反应头，这一版是"触发理解 + 意图选择 + 评分头 + 规则门"。
 - 真实威胁回合（输入「我推倒唐骁。」，seed 2，`evidence-reaction-micro3.json`）：roll `lu|nono|trigger_19` 14/11 准入；reaction 端口给 3 个候选打分（857 ms），选中「诺诺蹲下寻找掩体，同时看他下一步。」，`source=micro`，LLM reaction 调用 0 次。同一输入的上一轮（`evidence-reaction-micro2.json`）微型端口低置信弃权，LLM 写了「诺诺的红色识别带在推倒唐骁时…」，`reaction_invents_character` 命中并回退——这正是微型端口要避免的失败模式。
 - 指标口径：reaction 的 3 对 judge 评分计入 `judge` 端口，`reaction` 端口只记任务调用、候选数和选择耗时，避免重复计算编码器运行。
+- 输入完善：reaction 的 judge 上下文保留训练时的现场标志，再追加 `触发行动：<发起者行动>` 与 `发起者：<姓名>`。`evidence-reaction-rich.json`（seed 2，同一威胁回合）仍 source=micro、3 候选 764 ms；但 judge 三头原本按 action 候选训练，专用反应头与更多关系字段（世界没有关系表）仍未做。
 - 边界：候选是模板句，judge 三头原本为 action 候选训练；真实效果需要更多威胁回合和多 seed A/B，专用反应头仍未训练。
 
 ## 移动端代理（2026-11-25）

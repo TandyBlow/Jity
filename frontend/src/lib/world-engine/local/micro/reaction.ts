@@ -94,11 +94,13 @@ export function createMicroReaction(options: MicroReactionOptions = {}): MicroRe
     const trigger = reactionTrigger(request.sourceActionText);
     const candidates = reactionCandidates(request.scene, request.source, trigger);
     const goal = request.scene.actor.tasks.find((task) => task.status === 'pending')?.goal ?? '';
-    const context = judgeContext({
+    // Keep the trained scene flags first; append the real trigger so the
+    // judge sees what the reaction is responding to, not only scene booleans.
+    const context = `${judgeContext({
       item: false, target: true, blocked: false, repeated: false,
       task: goal, personality: request.scene.actor.personality.join('，'),
       actor: request.scene.actorName, room: request.scene.roomName,
-    });
+    })}；触发行动：${request.sourceActionText.slice(0, 100)}；发起者：${request.source.name}`;
     let scores: JudgeScores[] | null;
     try {
       scores = await options.judge(candidates.map((candidate) => ({ context, text: candidate.text })));
