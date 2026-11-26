@@ -1,0 +1,13 @@
+{
+ "params": 4687369,
+ "encoderInt8MB": 2.15,
+ "decoderInt8MB": 2.99,
+ "encodeMs": 20.9,
+ "perTokenMs": 5.48,
+ "tokens": 12,
+ "fullP50Ms": 89.6,
+ "fullP95Ms": 166.6,
+ "sampleInput": "事件|角色=lu；行动=目标：我把门厅长桌拖到侧墙让出楼梯口。",
+ "sampleOutput": "result=completed|item=foyer_table|env=stairs_clear",
+ "note": "fixed 96/64, int8 onnxruntime CPU; not browser"
+}
