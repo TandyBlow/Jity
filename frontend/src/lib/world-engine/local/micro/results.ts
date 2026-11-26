@@ -28,6 +28,17 @@ export function programMoveAllowed(input: {
     && !OBSTRUCTION.some((word) => input.text.includes(word));
 }
 
+export function programEnvAllowed(input: {
+  text: string; itemIds: string[]; memberId: string; state: WorldState;
+}): boolean {
+  if (input.itemIds.length !== 1) return false;
+  const itemId = input.itemIds[0];
+  if (!input.state.initial.items[itemId]) return false;
+  if (!environmentPhrase(input.text)) return false;
+  if (OBSTRUCTION.some((word) => input.text.includes(word))) return false;
+  return roomOf(input.state, itemId) === roomOf(input.state, input.memberId);
+}
+
 const OUTCOME: Record<string, string> = {
   achieved: 'completed', partial: 'partial', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
 };
@@ -173,13 +184,17 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           text: subAction.text, category: subAction.category, destination,
           memberId: member.memberId, state: request.state,
         });
+        const programEnv = !priorBlocked && programEnvAllowed({
+          text: subAction.text, itemIds: subAction.itemIds ?? [],
+          memberId: member.memberId, state: request.state,
+        });
         const prior = labels.length
           ? `前序：${labels.map((label, index) => `sa${index + 1}=${label}`).join('、')}；`
           : '';
         let label: string;
         if (priorBlocked) {
           label = 'blocked';
-        } else if (programMove || programTransfer) {
+        } else if (programMove || programTransfer || programEnv) {
           label = 'achieved';
         } else {
           const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;

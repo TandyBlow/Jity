@@ -129,18 +129,9 @@ def world_identity():
 
 
 def world_knowledge_text():
-    path = ROOT / 'frontend/public/worlds/dragon-raja-free-day.world.json'
-    if not path.exists():
-        return ''
-    world = json.loads(path.read_text(encoding='utf8'))
-    initial = world.get('initial') or {}
-    parts = []
-    for group in ('locations', 'items', 'characters'):
-        for entity in (initial.get(group) or {}).values():
-            parts.append(str(entity.get('name') or ''))
-            parts.append(str(entity.get('description') or ''))
-            parts.append(str(entity.get('initialAppearance') or ''))
-    return '\n'.join(part for part in parts if part)
+    # The static world description is omniscient setup, not the character's
+    # prior knowledge; only earlier turns count as known for info.
+    return ''
 
 
 def prompt_facts(turn):

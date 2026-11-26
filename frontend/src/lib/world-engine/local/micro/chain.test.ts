@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { WorldState } from '../../types';
-import { destinationHint, programMoveAllowed, settledDestination } from './results';
+import { destinationHint, programEnvAllowed, programMoveAllowed, settledDestination } from './results';
 import { environmentHint, environmentPhrase, readEnvironments } from '../semantics/settlement/fact-environments';
 import { readDestinations } from './updates';
 
@@ -68,6 +68,27 @@ describe('environment channel', () => {
     expect(environmentPhrase('我把门厅的正门推开。')).toBe('已被推开');
     expect(environmentPhrase('我把门厅的正门推开一点。', 'partial')).toBe('已被部分推开');
     expect(environmentPhrase('我走进门厅。')).toBeNull();
+  });
+});
+
+describe('program env gate', () => {
+  const state = {
+    initial: {
+      locations: { shed: { name: '器材棚' }, yard: { name: '庭院' } },
+      items: { counter: { name: '器材领用台' } },
+      characters: { lu: { name: '路明非' } },
+    },
+    items: { counter: { position: { containerId: 'shed' } } },
+    characters: { lu: { position: { containerId: 'shed' } } },
+  } as unknown as WorldState;
+  const base = { text: '我把领用台推到墙边。', itemIds: ['counter'], memberId: 'lu', state };
+  it('confirms a local physical manipulation', () => {
+    expect(programEnvAllowed(base)).toBe(true);
+  });
+  it('declines a remote item, an obstruction and a non-env verb', () => {
+    expect(programEnvAllowed({ ...base, text: '我把庭院里的领用台推到墙边。', state: { ...state, characters: { lu: { position: { containerId: 'yard' } } } } as unknown as WorldState })).toBe(false);
+    expect(programEnvAllowed({ ...base, text: '领用台锁着，推不动。' })).toBe(false);
+    expect(programEnvAllowed({ ...base, text: '我查看领用台。' })).toBe(false);
   });
 });
 
