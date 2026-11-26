@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 4, "env:insufficient": 22, "info:insufficient": 59, "env:absent": 39, "info:present": 33, "env:conflict": 14, "env:present": 21}
+Counts: {"info:absent": 6, "env:insufficient": 22, "info:insufficient": 66, "env:absent": 51, "info:present": 36, "env:conflict": 14, "env:present": 21}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -456,6 +456,78 @@ Counts: {"info:absent": 4, "env:insufficient": 22, "info:insufficient": 59, "env
 
 ## sm4-i-irrelevant-4 (train, cache, info_irrelevant_known)
 - action: 我整理背心的胸袋，确认弹匣还在。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm5-i-fail-1 (train, cache, info_failure)
+- action: 我问诺诺演习口令是什么。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='诺诺未答出口令，未获得信息' support='诺诺没有答上来' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm5-i-new-1 (train, cache, info_new)
+- action: 我问诺诺红方控制哪个方向，她说了西侧。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='诺诺告知红方控制西侧' support='她说了西侧' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-repeat-1 (train, cache, info_repeat)
+- action: 我重复问诺诺红方控制哪个方向，她再说一遍。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='诺诺重复红方控制方向' support='诺诺又说了一遍' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-transfer-1 (train, cache, info_irrelevant_known)
+- action: 我把护目镜递给诺诺。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:goggles_lu", "before": {"position": {"containerId": "lu", "slotId": "slot_body", "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "nono", "slotId": null, "relativeTo": null}, "appearance": {}}}], "env": []}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm5-i-irrelevant-1 (train, cache, info_irrelevant_known)
+- action: 我整理背心的胸袋，把弹匣按紧。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm5-i-new-2 (train, cache, info_new)
+- action: 我走到医护处置室，问顾岚空床还有几张，她答了。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "aid", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks"
+- info: present proposed=True content='顾岚告知空床数量' support='问对方空床还有几张，她答了' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-repeat-2 (train, cache, info_repeat)
+- action: 我再问顾岚空床还有几张。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_127": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"tas
+- info: absent proposed=False content='顾岚未答空床数量，路明非未获新信息' support='顾岚没有答话' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-fail-2 (train, cache, info_failure)
+- action: 我问顾岚演习口令。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得口令，仅开口询问' support='路明非想向顾岚问演习口令' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm5-i-transfer-2 (train, cache, info_irrelevant_known)
+- action: 我把桌上的水杯拿到手里。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_127": "pending", "task_149": "pending", "task_150": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relati
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-repeat-3 (train, cache, info_repeat)
+- action: 我问秦越器材笼里有什么，他重复了一遍。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_127": "pending", "task_149": "achieved", "task_150": "pending", "task_200": "pending"}}, "after": {"position": {"containerId": "red_rally",
+- info: insufficient proposed=False content='秦越未答出器材笼内容' support='他重复了一遍' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-fail-3 (train, cache, info_failure)
+- action: 我问秦越演习口令是什么。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_127": "pending", "task_149": "achieved", "task_150": "pending", "task_200": "pending", "task_223": "pending"}}, "after": {"position": {"con
+- info: insufficient proposed=False content='秦越未回答口令，路明非未获得信息' support='他问完，秦越没有回答' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm5-i-irrelevant-2 (train, cache, info_irrelevant_known)
+- action: 我靠着墙听广播里的音乐。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: insufficient proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
