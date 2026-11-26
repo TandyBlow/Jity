@@ -163,3 +163,5 @@ G1 之后新增：
 - 独立审计未通过 + v3/KV 浏览器（2026-11-26）：审计 pass=false：未核验仍写 present=false、7 条缓存全来自旧 prompt（含 checks 污染）、env absent 依赖空外观差分、`superseded` vs `supersedes`、意图被当支持、差分漏 characters/positions/tasks；不训练。浏览器 v3 候选指针 fixed full 171.1/178.3 ms、12.91 ms/token；KV full 68.5/94.5 ms、3.09 ms/token、prefill 23.1，2.5×/4.91×；输出一致，模型 14.8M，权重留本地。决策 D-052，报告 `design/goal/real-semantic-pipeline.md`。
 
 - 六条件验收门（2026-11-26）：`validate_real_semantic.py` 拒绝未核验/冲突进 train、旧缓存、scenario 进 train、意图回显当支持、缓存缺 hash/版本/模型/证据、非 scenario test；流水线补三值 target/trainable、全状态差分、版本化缓存、settled 去命令回显。旧 7 条数据集 pass=false（27 failures），后台用 v2 prompt 重标 20+8；过门前不训练。D-053。
+
+- 验收门五洞与反例单测（2026-11-26）：修 environment_keys（未动物品不算）、env absent（只认明确否定）、20+8 覆盖、模型标签元数据、raw/train 分离按字段过滤；`test_real_semantic_gate.py` 11 条全过；`train_micro_semantic.py` 先验 manifest 哈希再过门。当前缓存 7 旧 + 1 v2，训练覆盖缺失，仍不训练。D-054。

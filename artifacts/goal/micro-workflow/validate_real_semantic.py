@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-"""Automatic acceptance gate for the real semantic dataset.
+"""Automatic acceptance gate for the raw and training real-semantic data.
 
-Exit 1 on any violation. The six conditions mirror the user's acceptance:
-1. no unverified/conflict label in train;
-2. no old-version cache hit;
-3. no frozen test row in train;
-4. no player intent used as an actual result;
-5. every used cache record has input hash, prompt version, model, evidence;
-6. test labels are not in train and not used for threshold fitting.
+Exit 1 on any violation. The six conditions:
+1. the training export contains only target-bearing fields, no unverified/
+   conflict fields;
+2. every used label has a v2 cache record with a matching input hash, model and
+   evidence (model-generated labels included, not only cache hits);
+3. the 20 product rows are train and the 8 frozen scenarios are test; no
+   scenario in train;
+4. no settled action echo / player-intent support;
+5. every cache record used has the required metadata;
+6. test rows are scenario-only and never enter train or threshold fitting.
+Also checks full coverage of the expected 20 + 8 ids.
 """
 import hashlib
 import json
@@ -17,10 +21,28 @@ from pathlib import Path
 ROOT = Path('D:/others/Jity')
 HERE = ROOT / 'artifacts/goal/micro-workflow'
 DATASET = HERE / 'real-semantic.jsonl'
+TRAIN = HERE / 'real-semantic-train.jsonl'
+TEST = HERE / 'real-semantic-test.jsonl'
 CACHE = HERE / 'real-semantic-cache.jsonl'
 SCENARIOS = HERE / 'scenarios-independent.json'
 OUT = HERE / 'micro-generative/real-semantic-validation.json'
 VERSION = 'v2'
+
+
+def read_jsonl(path):
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in path.read_text(encoding='utf8').splitlines() if line.strip()]
+
+
+def expected_ids():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('data', HERE / 'real_semantic_data.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    train_ids = {row['id'] for row in module.load_run41()}
+    test_ids = {row['id'] for row in module.load_scenarios()}
+    return train_ids, test_ids
 
 
 def input_hash(row):
@@ -30,71 +52,71 @@ def input_hash(row):
     return hashlib.sha256(payload.encode('utf8')).hexdigest()
 
 
-def main():
-    rows = [json.loads(line) for line in DATASET.read_text(encoding='utf8').splitlines() if line.strip()]
-    cache = {}
-    if CACHE.exists():
-        for line in CACHE.read_text(encoding='utf8').splitlines():
-            if line.strip():
-                record = json.loads(line)
-                cache[record.get('id')] = record
-    scenario_ids = {row['id'] for row in json.loads(SCENARIOS.read_text(encoding='utf8'))}
+def validate(raw, train, test, cache, expected_train, expected_test, scenario_ids):
     failures = []
-    used_cache = set()
-    train_rows = [row for row in rows if row.get('split') == 'train']
-    test_rows = [row for row in rows if row.get('split') == 'test']
-    for row in rows:
-        for field, item in (row.get('label') or {}).items():
-            status = item.get('status')
-            target = item.get('target')
-            trainable = item.get('trainable')
-            if row.get('split') == 'train':
-                if status in ('insufficient', 'conflict'):
-                    failures.append(f"{row['id']}:{field} train has {status}")
-                if not trainable or target is None:
-                    failures.append(f"{row['id']}:{field} train not trainable")
-            if status == 'present' and target is not True:
-                failures.append(f"{row['id']}:{field} present target != true")
-            if status == 'absent' and target is not False:
-                failures.append(f"{row['id']}:{field} absent target != false")
-            if status in ('insufficient', 'conflict') and target is not None:
-                failures.append(f"{row['id']}:{field} unverified target not null")
+    raw_by_id = {row['id']: row for row in raw}
+    for identity in expected_train - set(raw_by_id):
+        failures.append(f'missing train input {identity}')
+    for identity in expected_test - set(raw_by_id):
+        failures.append(f'missing test input {identity}')
+    for identity in set(raw_by_id) - expected_train - expected_test:
+        failures.append(f'unexpected input {identity}')
+    for row in raw:
+        meta = row.get('labelMeta') or {}
+        if meta.get('promptVersion') != VERSION:
+            failures.append(f"{row['id']} labelMeta promptVersion != {VERSION}")
+        if meta.get('inputHash') != input_hash(row):
+            failures.append(f"{row['id']} labelMeta input hash mismatch")
+        if not meta.get('labelModel'):
+            failures.append(f"{row['id']} labelMeta missing labelModel")
+        if not meta.get('evidence'):
+            failures.append(f"{row['id']} labelMeta missing evidence")
         for settled in row.get('settled') or []:
             if settled.get('task') == 'action' and settled.get('text') == row.get('input'):
                 failures.append(f"{row['id']} settled contains the player intent echo")
         for field, item in (row.get('label') or {}).items():
-            support = (item.get('support') or '').strip()
-            if item.get('status') == 'present' and support:
-                text = row.get('text') or ''
-                settled_text = json.dumps(row.get('settled') or [], ensure_ascii=False)
-                if support not in text and support not in settled_text:
+            if item.get('status') == 'present':
+                support = (item.get('support') or '').strip()
+                if support and support not in (row.get('text') or '') and support not in json.dumps(
+                        row.get('settled') or [], ensure_ascii=False):
                     failures.append(f"{row['id']}:{field} support only in intent/unknown source")
-        if row.get('labelSource') == 'cache':
-            used_cache.add(row['id'])
-            record = cache.get(row['id'])
-            if not record:
-                failures.append(f"{row['id']} cache source but no cache record")
-            else:
-                if record.get('promptVersion') != VERSION:
-                    failures.append(f"{row['id']} old-version cache hit")
-                if record.get('inputHash') != input_hash(row):
-                    failures.append(f"{row['id']} cache input hash mismatch")
-                for key in ('labelModel', 'evidence'):
-                    if not record.get(key):
-                        failures.append(f"{row['id']} cache missing {key}")
-        if row.get('split') == 'train' and row['id'] in scenario_ids:
-            failures.append(f"{row['id']} frozen test in train")
-        if row.get('split') == 'test' and row['id'] not in scenario_ids:
-            failures.append(f"{row['id']} non-scenario in test")
-    if not train_rows:
-        failures.append('no train rows')
-    if not test_rows:
-        failures.append('no test rows')
-    if any(row['id'] in scenario_ids for row in train_rows):
-        failures.append('scenario ids in train')
-    report = {'version': VERSION, 'pass': not failures, 'rows': len(rows),
-              'trainRows': len(train_rows), 'testRows': len(test_rows),
-              'usedCache': len(used_cache), 'failures': failures}
+            if item.get('status') == 'present' and item.get('target') is not True:
+                failures.append(f"{row['id']}:{field} present target != true")
+            if item.get('status') == 'absent' and item.get('target') is not False:
+                failures.append(f"{row['id']}:{field} absent target != false")
+            if item.get('status') in ('insufficient', 'conflict') and item.get('target') is not None:
+                failures.append(f"{row['id']}:{field} unverified target not null")
+    scenario_in_train = {row['id'] for row in train} & scenario_ids
+    if scenario_in_train:
+        failures.append(f'scenario ids in training export: {sorted(scenario_in_train)}')
+    for item in train:
+        if not item.get('labels'):
+            failures.append(f"{item['id']} training row has no trainable labels")
+        for field, label in (item.get('labels') or {}).items():
+            if not label.get('trainable'):
+                failures.append(f"{item['id']}:{field} untrainable field in training export")
+            if label.get('target') not in (True, False):
+                failures.append(f"{item['id']}:{field} training target not true/false")
+    test_ids = {row['id'] for row in test}
+    if test_ids != expected_test:
+        failures.append(f'test export ids != expected: missing={sorted(expected_test - test_ids)} '
+                        f'extra={sorted(test_ids - expected_test)}')
+    if not train:
+        failures.append('training export is empty')
+    return failures
+
+
+def main():
+    raw = read_jsonl(DATASET)
+    train = read_jsonl(TRAIN)
+    test = read_jsonl(TEST)
+    cache = read_jsonl(CACHE)
+    expected_train, expected_test = expected_ids()
+    scenario_ids = {row['id'] for row in json.loads(SCENARIOS.read_text(encoding='utf8'))}
+    failures = validate(raw, train, test, cache, expected_train, expected_test, scenario_ids)
+    report = {'version': VERSION, 'pass': not failures, 'rawRows': len(raw), 'trainRows': len(train),
+              'testRows': len(test), 'expectedTrain': len(expected_train), 'expectedTest': len(expected_test),
+              'failures': failures}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding='utf8')
     print(json.dumps(report, ensure_ascii=False, indent=1))

@@ -139,8 +139,10 @@ def environment_keys(before_view, after_view, location_ids):
         if after.get('appearance') != before.get('appearance'):
             keys.append(key)
         elif key.startswith('item:'):
-            container = ((after.get('position') or {}).get('containerId') or '')
-            if container in location_ids:
+            before_position = before.get('position') or {}
+            after_position = after.get('position') or {}
+            container = (after_position.get('containerId') or '')
+            if before_position != after_position and container in location_ids:
                 keys.append(key)
     for key, before in before_view.items():
         if key not in after_view and before.get('appearance'):
@@ -259,7 +261,7 @@ def classify(field, item, row, diff, support, content, source, settled_text):
             return 'conflict'
         if ENV_ACTION.search(settled_text):
             return 'conflict'
-        if NEG_ENV.search(settled_text) or not env_keys:
+        if NEG_ENV.search(settled_text):
             return 'absent'
         return 'insufficient'
     # info
@@ -295,6 +297,45 @@ def verify(row, proposal):
     return result
 
 
+def cache_meta(row):
+    if not CACHE.exists():
+        return {}
+    for line in CACHE.read_text(encoding='utf8').splitlines():
+        if not line.strip():
+            continue
+        record = json.loads(line)
+        if (record.get('id') == row['id'] and record.get('promptVersion') == PROMPT_VERSION
+                and record.get('inputHash') == input_hash(row)):
+            return {'promptVersion': record.get('promptVersion'), 'inputHash': record.get('inputHash'),
+                    'labelModel': record.get('labelModel'), 'evidence': record.get('evidence')}
+    return {}
+
+
+def export_training(rows):
+    train, test = [], []
+    for row in rows:
+        labels = {field: item for field, item in (row.get('label') or {}).items() if item.get('trainable')}
+        item = {'id': row['id'], 'split': row['split'], 'input': row['input'], 'text': row['text'],
+                'settled': row['settled'], 'stateDiff': row['stateDiff'], 'labels': labels}
+        if row['split'] == 'train' and labels:
+            train.append(item)
+        if row['split'] == 'test':
+            test.append(item)
+    return train, test
+
+
+def write_manifest(rows, train, test):
+    import hashlib
+    manifest = {'promptVersion': PROMPT_VERSION,
+                'raw': hashlib.sha256(DATASET.read_bytes()).hexdigest(),
+                'train': hashlib.sha256(json.dumps(train, ensure_ascii=False).encode('utf8')).hexdigest(),
+                'test': hashlib.sha256(json.dumps(test, ensure_ascii=False).encode('utf8')).hexdigest(),
+                'rawRows': len(rows), 'trainRows': len(train), 'testRows': len(test)}
+    (HERE / 'real-semantic-manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1),
+                                                      encoding='utf8')
+    return manifest
+
+
 def main():
     rows = load_scenarios() + load_run41()
     cache_only = os.environ.get('CACHE_ONLY', '').lower() in ('1', 'true')
@@ -309,7 +350,7 @@ def main():
                        'text': row['text'], 'settled': row['settled'],
                        'before': row['before'], 'after': row['after'],
                        'stateDiff': verified['stateDiff'], 'label': verified['fields'],
-                       'labelSource': source,
+                       'labelSource': source, 'labelMeta': cache_meta(row),
                        'split': 'test' if row['id'] in SCENARIO_IDS else 'train'})
         print(index + 1, row['id'], source,
               {field: verified['fields'][field]['status'] for field in ('info', 'env')}, file=sys.stderr)
@@ -335,10 +376,19 @@ def main():
                          f"evidence={item['evidence']}")
         lines.append('')
     SPOT.write_text('\n'.join(lines), encoding='utf8')
+    train, test = export_training(output)
+    (HERE / 'real-semantic-train.jsonl').write_text(
+        ''.join(json.dumps(row, ensure_ascii=False) + '\n' for row in train), encoding='utf8')
+    (HERE / 'real-semantic-test.jsonl').write_text(
+        ''.join(json.dumps(row, ensure_ascii=False) + '\n' for row in test), encoding='utf8')
+    manifest = write_manifest(output, train, test)
     print(f'{len(output)} rows -> {DATASET} / {SPOT}', file=sys.stderr)
+    print(json.dumps(manifest, ensure_ascii=False), file=sys.stderr)
 
 
 if __name__ == '__main__':
     main()
+    from validate_real_semantic import main as validate
+    validate()
     from validate_real_semantic import main as validate
     validate()
