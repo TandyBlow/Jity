@@ -651,3 +651,9 @@
 - env-2 回合「我沿楼梯走上钟楼顶层」没有移动：`走上` 不在移动词表，结构类别 other、无 destination。补 `走上/上楼/下楼/走过/走出/走回` 到结构与 settlement 的移动词表。
 - 同回合后一拍把 `balcony_door` 写成「已被部分拉开」，但玩家仍在门厅：micro results 的 `environmentHint` 没有检查行动者与物品同房间。现在物品提示要求 `roomOf(item) == roomOf(actor)`；地点回退要求行动者就在该地点。
 - 另有 sc05 的 instant 点正文因新增细节句被判 `state_consistency_violation` 并回落程序稿；叙事路径在整段重写之前先做句级裁剪：只删被 alignment 指出的句子，保留其余模型正文，再判一次。真实回合待复跑验证。
+
+## D-063 复合动作的环境局部性（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 上一版局部性只比较「回合前」行动者房间，导致「走进器材棚，把弹药箱掀开」这类移动+操作复合动作不再生成 `环境=`（ammo/canvas 记录消失）。现在按子动作顺序维护 actorRoom：有目的地时按到达房间判断，无目的地时用前一子动作更新后的房间；`programEnvAllowed` 同样接收 actorRoom。
+- 单测覆盖到达房间与后续子动作；env-2/env-4 重跑验证。
