@@ -522,3 +522,12 @@
 - result：未加权 0.667，类别加权 0.333（加权把 5 条 completed + 1 条 partial 判成 failed）；D-048 的“类别加权”被推翻，保留未加权分类器，等更大平衡集再校准。
 - 浏览器逐 token：5M 试点固定 96/64、encoder/decoder-step 分图、int8 ORT-WASM；Edge 下 load 939 ms、encode 33.8 ms、9.61 ms/token、12 token 全链 p50 118.1 / p95 150.2 ms；模型 5.14 MB。v3 候选指针的浏览器导出/耗时仍未测。
 - 决定：不再换架构；模板数据不计入学习曲线；下一步用人工/核验语义数据扩规模，做“存在性分类 -> 专用开放字段提取器”，保留未加权 result 分类器，并导出 v3 候选指针的逐 token 浏览器图；语义质量达标后再接产品、五臂。证据 `design/goal/micro-generative-scale.md`、`scale-report.json`、`exists-report.json`、`browser-seq2seq-probe.json`。
+
+## D-050 真实语义数据生产流程（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 数据源：20 条真实产品输入（`run41-turns-20-chunk*.json`）+ 8 条冻结场景（`evidence-independent-scenarios-6b.json`），按 id 去重（s12 重复）；字段含玩家行动、同回合正文、前后状态与快照；8 个场景另带 checks。
+- 流程：DeepSeek 强模型提出 `{info:{present,content,support}, env:{...}}`，要求 support 是行动/正文原文子串；脚本做事实核验（子串 + env 状态外观 + 移动/物品转移拒绝 + info 行动摘要拒绝），生成 `real-semantic.jsonl` 与 `real-semantic-spotcheck.md`；spot-check 供用户人工抽查，不自动批准。缓存 `real-semantic-cache.jsonl`，重跑不再调 API。
+- 首批标签暴露了强模型的类别错误：把移动（sc03/sc05）和物品转移（sc04）写成 env，把 NPC 行动摘要（sc02/sc04）写成 info；子串核验能通过，但类别规则拒绝。sc01 的“没有答出”判 info=false，符合任务保持 pending；sc05 的检修口观察保留为 info。
+- 当前：pro 模型较慢，撰写时缓存 5/28；标签流程、核验和抽查文件已就绪，三任务（存在性 / 专用内容提取 / 事实支持）和 held-out 真实事件的状态补丁尚未训练/验证。用户目标是“多个微型模型协同理解一个未见事件并正确改世界状态”，本轮未完成。
+- 决定：停止模板扩容；先把真实语义缓存跑完并抽查；再训练三任务、在 sc06/sc08/sc01/s11/g8-t3 上按存在性、给定类别提取、完整工作流分别统计；状态补丁把 env 映射到 item/location 外观、info 映射到任务条件/事实；随后做 v3 候选指针浏览器导出与固定长度 vs KV Cache，再五臂。证据 `design/goal/real-semantic-pipeline.md`、`real_semantic_data.py`、`real-semantic-cache.jsonl`。
