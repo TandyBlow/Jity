@@ -195,6 +195,7 @@ const browser = profile
 evidence.harness.launchArgs = launchArgs;
 evidence.harness.profile = profile || null;
 evidence.harness.cpuThrottle = Number.isFinite(cpuThrottle) && cpuThrottle > 1 ? cpuThrottle : null;
+evidence.harness.blockApi = has('--block-api');
 evidence.harness.gpuLite = gpuLite;
 
 try {
