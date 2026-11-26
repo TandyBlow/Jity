@@ -44,11 +44,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--smoke', action='store_true')
     parser.add_argument('--epochs', type=int, default=30)
+    parser.add_argument('--data', default=str(DATA))
+    parser.add_argument('--field', choices=FIELDS)
     args = parser.parse_args()
-    rows = [json.loads(line) for line in DATA.read_text(encoding='utf8').splitlines() if line.strip()]
+    rows = [json.loads(line) for line in Path(args.data).read_text(encoding='utf8').splitlines() if line.strip()]
     counts = Counter((row['field'], row['label']) for row in rows)
+    selected = [args.field] if args.field else FIELDS
     if not args.smoke:
-        for field in FIELDS:
+        for field in selected:
             if counts[(field, True)] < 50 or counts[(field, False)] < 50:
                 raise SystemExit(f'{field} needs 50 pos + 50 neg, has {counts[(field, True)]}/{counts[(field, False)]}')
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -58,6 +61,8 @@ def main():
     lossf = nn.CrossEntropyLoss()
     feats = []
     for row in rows:
+        if args.field and row['field'] != args.field:
+            continue
         ids, mask = encode(tok, row['text'])
         feats.append((ids, mask, FIELDS.index(row['field']), int(row['label'])))
     random.seed(20261126)
