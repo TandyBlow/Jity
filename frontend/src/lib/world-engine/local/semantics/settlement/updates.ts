@@ -604,6 +604,11 @@ export class UpdatesRunner {
       if (dropped.length) outcome.detail = { ...outcome.detail, droppedNoopEntityIds: dropped.sort() };
       return cleaned;
     } catch (error) {
+      if (stage === 'personality') {
+        outcome.detail = { ...outcome.detail, optionalStageError: `stage_candidate_rejected:${errorText(error)}` };
+        outcome.fallback = true;
+        return {};
+      }
       outcome.error = outcome.error ?? `stage_candidate_rejected:${errorText(error)}`;
       outcome.fallback = true;
       return {};
@@ -1428,7 +1433,17 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       calls: answer.calls,
     };
   } catch (error) {
-    return stageFailure({ scannedCharacterIds: scanned, allCharacterIds: characters, triggeredByTaskIds: triggerIds.sort() }, error);
+    // Personality is optional: a malformed answer must not discard the task
+    // achievements that were verified in the same point.
+    return {
+      changes: {},
+      detail: {
+        scannedCharacterIds: scanned, allCharacterIds: characters,
+        triggeredByTaskIds: triggerIds.sort(), optionalStageError: errorText(error),
+      },
+      fallback: true,
+      calls: error instanceof JsonCallError ? error.calls : [],
+    };
   }
 }
 
@@ -1465,8 +1480,7 @@ async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
     const calls = error instanceof JsonCallError ? error.calls : [];
     return {
       changes,
-      detail: { owners, fallback: 'current_sanity', reason: errorText(error) },
-      error: errorText(error),
+      detail: { owners, fallback: 'current_sanity', optionalStageError: errorText(error) },
       fallback: true,
       calls,
     };
@@ -1857,6 +1871,18 @@ function readDescriptionOperations(
     const bare = unwrapIdBrackets(raw);
     return resolveCharacterId(state, bare) ?? factOwners?.get(bare) ?? null;
   };
+  // Personality is an optional attribute: one bad row must not discard the
+  // task achievements settled in the same point. Reject the row, keep the rest.
+  const rejectRow = (entityId: string, reason: string): boolean => {
+    if (kind !== 'personality') return false;
+    rejections?.push({ entityId: entityId || '(empty)', reason });
+    return true;
+  };
+  const rejectEntity = (entityId: string, reason: string): boolean => {
+    if (kind !== 'personality') return false;
+    rejections?.push({ entityId, reason });
+    return true;
+  };
   const payload = asRecord(value);
   let rows = payload.operations;
   if (!Array.isArray(rows) && kind === 'personality' && !Array.isArray(payload.scanned) && Array.isArray(payload.changes)) {
@@ -1871,14 +1897,20 @@ function readDescriptionOperations(
     for (const raw of changesRaw) {
       if (!isRecord(raw)) throw new Error('changes entries must be objects');
       const entityId = resolvePersonalityId(asString(raw.entityId));
-      if (!entityId) throw new Error(referenceError(state, asString(raw.entityId), 'character', roster(state)[0]));
+      if (!entityId) {
+        if (rejectRow(asString(raw.entityId), 'unknown_character')) continue;
+        throw new Error(referenceError(state, asString(raw.entityId), 'character', roster(state)[0]));
+      }
       if (onlyIds && !onlyIds.has(entityId)) continue;
       changed.add(entityId);
     }
     const keep: Record<string, unknown>[] = [];
     for (const raw of scannedRaw) {
       const entityId = resolvePersonalityId(raw);
-      if (!entityId) throw new Error(referenceError(state, raw, 'character', roster(state)[0]));
+      if (!entityId) {
+        if (rejectRow(raw, 'unknown_character')) continue;
+        throw new Error(referenceError(state, raw, 'character', roster(state)[0]));
+      }
       if (onlyIds && !onlyIds.has(entityId)) continue;
       if (changed.has(entityId)) continue;
       const recordIds = activeRecords(state, 'personality', entityId).filter((record) => record.active).map((record) => record.id);
@@ -1895,11 +1927,20 @@ function readDescriptionOperations(
     const rawEntityId = asString(raw.entityId);
     const bareEntityId = unwrapIdBrackets(rawEntityId);
     const entityId = kind === 'appearance' ? resolveEntityId(state, bareEntityId) : resolvePersonalityId(rawEntityId);
-    if (!entityId) throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
+    if (!entityId) {
+      if (rejectRow(rawEntityId, 'unknown_character')) continue;
+      throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
+    }
     if (!targets.has(entityId)) continue;
-    if (!allTargets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
+    if (!allTargets.has(entityId)) {
+      if (rejectRow(rawEntityId, 'not_a_character')) continue;
+      throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
+    }
     const op = asString(raw.op);
-    if (!OPS.has(op)) throw new Error(`invalid operation ${op || '?'} for ${entityId}`);
+    if (!OPS.has(op)) {
+      if (rejectRow(entityId, `invalid_operation:${op || '?'}`)) continue;
+      throw new Error(`invalid operation ${op || '?'} for ${entityId}`);
+    }
     let recordIds = Array.isArray(raw.recordIds) ? raw.recordIds.map(asString).filter(Boolean) : null;
     if (recordIds && op === 'add') {
       // The 0.6B copies the shape's id field into recordIds ("<lu>"). An `add`
@@ -1908,7 +1949,10 @@ function readDescriptionOperations(
       const known = new Set(activeRecords(state, kind, entityId).filter((record) => record.active).map((record) => record.id));
       recordIds = recordIds.filter((id) => known.has(unwrapIdBrackets(id)));
     }
-    if (!recordIds) throw new Error(`recordIds must be an array for ${entityId}`);
+    if (!recordIds) {
+      if (rejectRow(entityId, 'recordIds_not_array')) continue;
+      throw new Error(`recordIds must be an array for ${entityId}`);
+    }
     let text = raw.text == null ? null : asString(raw.text);
     // A 0.6B often writes the current text next to `keep` (or next to `remove`).
     // The op is unambiguous and the text is redundant there; failing the whole
@@ -1918,78 +1962,88 @@ function readDescriptionOperations(
       lenient?.push({ entityId, op, droppedText: text });
       text = null;
     }
-    if (op === 'add' && !text) throw new Error(`add requires text for ${entityId}`);
-    if (op === 'add' && recordIds.length) throw new Error(`add cannot supersede records for ${entityId}`);
-    if (op === 'remove' && !recordIds.length) throw new Error(`remove requires record ids for ${entityId}`);
-    if (op === 'replace' && !text) throw new Error(`replace requires text for ${entityId}`);
-    if (op === 'replace' && !recordIds.length) throw new Error(`replace requires record ids for ${entityId}`);
+    const invalidRow = op === 'add' && !text ? 'add_without_text'
+      : op === 'add' && recordIds.length ? 'add_with_records'
+        : op === 'remove' && !recordIds.length ? 'remove_without_records'
+          : op === 'replace' && !text ? 'replace_without_text'
+            : op === 'replace' && !recordIds.length ? 'replace_without_records' : null;
+    if (invalidRow) {
+      if (rejectRow(entityId, invalidRow)) continue;
+      throw new Error(`${invalidRow.replace(/_/g, ' ')} for ${entityId}`);
+    }
     const list = byEntity.get(entityId) ?? [];
     list.push({ op: op as OperationRow['op'], recordIds, text });
     byEntity.set(entityId, list);
   }
-  if (requireEveryEntity) {
+  // The personality prompt says unnamed characters are unchanged; missing
+  // entries are the default, not a reason to reject the whole point.
+  if (requireEveryEntity && kind !== 'personality') {
     for (const id of targets) if (!byEntity.has(id)) throw new Error(`personality scan omitted ${id}`);
   }
   const used = activeChangeIds(state);
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const [entityId, ops] of byEntity) {
-    const active = activeRecords(state, kind, entityId).filter((record) => record.active);
-    const activeIds = new Set(active.map((record) => record.id));
-    const covered = new Set<Id>();
-    const generated: { change: Change; oldTexts: string[] }[] = [];
-    for (const op of ops) {
-      for (const recordId of op.recordIds) {
-        if (!activeIds.has(recordId)) throw new Error(`${entityId} has no active record ${recordId}`);
-        if (covered.has(recordId)) throw new Error(`${entityId} record ${recordId} is covered twice`);
-        covered.add(recordId);
+    try {
+      const active = activeRecords(state, kind, entityId).filter((record) => record.active);
+      const activeIds = new Set(active.map((record) => record.id));
+      const covered = new Set<Id>();
+      const generated: { change: Change; oldTexts: string[] }[] = [];
+      for (const op of ops) {
+        for (const recordId of op.recordIds) {
+          if (!activeIds.has(recordId)) throw new Error(`${entityId} has no active record ${recordId}`);
+          if (covered.has(recordId)) throw new Error(`${entityId} record ${recordId} is covered twice`);
+          covered.add(recordId);
+        }
+        if (op.op === 'keep') continue;
+        if (kind === 'personality' && op.text && echoFacts.some((fact) => repeatsText(op.text as string, fact))) {
+          rejections?.push({ entityId, reason: 'personality_echoes_fact' });
+          continue;
+        }
+        if (kind === 'personality' && op.text && namesWorldEntity(state, op.text as string)) {
+          // The real 0.6B stored "护目镜戴好并确认镜片无裂纹" as a personality change:
+          // a compressed event sentence, not a tendency. A trait that names a
+          // character, item or place is the event again, so it is dropped. The
+          // prompt already forbids names; this is the structural enforcement.
+          rejections?.push({ entityId, reason: 'personality_names_entity' });
+          continue;
+        }
+        const supersedes = op.op === 'remove' || op.op === 'replace' ? [...op.recordIds] : [];
+        const change: Change = {
+          id: allocator.changeId(kind, entityId, used),
+          text: op.op === 'remove' ? null : op.text,
+          supersedes,
+        };
+        used.add(change.id);
+        generated.push({
+          change,
+          oldTexts: active.filter((record) => supersedes.includes(record.id)).map((record) => record.text).filter((text): text is string => Boolean(text)),
+        });
       }
-      if (op.op === 'keep') continue;
-      if (kind === 'personality' && op.text && echoFacts.some((fact) => repeatsText(op.text as string, fact))) {
-        rejections?.push({ entityId, reason: 'personality_echoes_fact' });
-        continue;
+      if (activeIds.size > 0 && covered.size !== activeIds.size) {
+        throw new Error(`${entityId} record operation coverage incomplete`);
       }
-      if (kind === 'personality' && op.text && namesWorldEntity(state, op.text as string)) {
-        // The real 0.6B stored "护目镜戴好并确认镜片无裂纹" as a personality change:
-        // a compressed event sentence, not a tendency. A trait that names a
-        // character, item or place is the event again, so it is dropped. The
-        // prompt already forbids names; this is the structural enforcement.
-        rejections?.push({ entityId, reason: 'personality_names_entity' });
-        continue;
+      const remaining = active
+        .filter((record) => !covered.has(record.id))
+        .map((record) => record.text)
+        .filter((text): text is string => Boolean(text));
+      const seenTexts = new Set(remaining.map(normalizeChangeText));
+      for (const { change, oldTexts } of generated) {
+        if (change.text == null) continue;
+        const normalized = normalizeChangeText(change.text);
+        if (!normalized) throw new Error(`${entityId} has empty ${kind} text`);
+        if (seenTexts.has(normalized)) throw new Error(`${entityId} ${kind} operation makes no effective change`);
+        for (const oldText of oldTexts) if (sameChangeText(oldText, change.text)) {
+          throw new Error(`${entityId} ${kind} replacement repeats an old record`);
+        }
+        seenTexts.add(normalized);
       }
-      const supersedes = op.op === 'remove' || op.op === 'replace' ? [...op.recordIds] : [];
-      const change: Change = {
-        id: allocator.changeId(kind, entityId, used),
-        text: op.op === 'remove' ? null : op.text,
-        supersedes,
-      };
-      used.add(change.id);
-      generated.push({
-        change,
-        oldTexts: active.filter((record) => supersedes.includes(record.id)).map((record) => record.text).filter((text): text is string => Boolean(text)),
-      });
-    }
-    if (activeIds.size > 0 && covered.size !== activeIds.size) {
-      throw new Error(`${entityId} record operation coverage incomplete`);
-    }
-    const remaining = active
-      .filter((record) => !covered.has(record.id))
-      .map((record) => record.text)
-      .filter((text): text is string => Boolean(text));
-    const seenTexts = new Set(remaining.map(normalizeChangeText));
-    for (const { change, oldTexts } of generated) {
-      if (change.text == null) continue;
-      const normalized = normalizeChangeText(change.text);
-      if (!normalized) throw new Error(`${entityId} has empty ${kind} text`);
-      if (seenTexts.has(normalized)) throw new Error(`${entityId} ${kind} operation makes no effective change`);
-      for (const oldText of oldTexts) if (sameChangeText(oldText, change.text)) {
-        throw new Error(`${entityId} ${kind} replacement repeats an old record`);
+      if (generated.length) {
+        changes[entityId] = kind === 'appearance'
+          ? { appearanceChanges: generated.map(({ change }) => change) }
+          : { personalityChanges: generated.map(({ change }) => change) };
       }
-      seenTexts.add(normalized);
-    }
-    if (generated.length) {
-      changes[entityId] = kind === 'appearance'
-        ? { appearanceChanges: generated.map(({ change }) => change) }
-        : { personalityChanges: generated.map(({ change }) => change) };
+    } catch (error) {
+      if (!rejectEntity(entityId, errorText(error))) throw error;
     }
   }
   return changes;

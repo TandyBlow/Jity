@@ -1612,6 +1612,46 @@ describe('six-stage updates', () => {
     expect(calls.find((call) => call.stage === 'personality')!.changes.a?.personalityChanges?.[0]?.text).toBe('更愿意先动手。');
   });
 
+  it('keeps the verified task when the personality call cannot be repaired', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      'not json',
+      'not json',
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'tasks')!.changes.a.tasksAchieved).toEqual(['a1']);
+    expect(calls.find((call) => call.stage === 'personality')!.changes).toEqual({});
+    expect(outcome.error).toBeUndefined();
+  });
+
+  it('rejects one invalid personality row and keeps the verified task', async () => {
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ operations: [
+        { entityId: '<bad>', op: 'add', recordIds: [], text: '这条应被拒绝。' },
+        { entityId: 'a', op: 'add', recordIds: [], text: '更愿意先动手。' },
+      ] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'tasks')!.changes.a.tasksAchieved).toEqual(['a1']);
+    expect(calls.find((call) => call.stage === 'personality')!.changes.a.personalityChanges?.[0]?.text).toBe('更愿意先动手。');
+    const personality = calls.find((call) => call.stage === 'personality')!;
+    expect(JSON.stringify(personality)).not.toContain('应被拒绝');
+  });
+
   it('drops a personality text that just repeats the settled fact', async () => {
     // Real 0.6B (probe 04-six-stage-real-8): the personality answer for both lu
     // and nono was the settled fact verbatim. A permanent trait made of the
@@ -2011,7 +2051,7 @@ describe('six-stage updates', () => {
     expect(engine.prompts.some((prompt) => prompt.includes('理智重算器'))).toBe(false);
   });
 
-  it('aborts the whole six-stage point when the sanity answer cannot be repaired', async () => {
+  it('defers a failed sanity recalculation to current values without dropping tasks', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [] }),
       JSON.stringify({ operations: [] }),
@@ -2032,12 +2072,12 @@ describe('six-stage updates', () => {
     ]);
     const handlers = createSettlementHandlers({ engine });
     const outcome = await handlers.updates('g1', updatesInput());
-    expect(outcome.value).toBeNull();
-    expect(outcome.fallback).toBe(true);
-    expect(outcome.error).toContain('missing sanity');
-    const detail = outcome.evidence.detail as { reason: string; stageErrors?: { stage: string }[] };
-    expect(detail.reason).toBe('point_aborted_after_repair');
-    expect(detail.stageErrors?.map((row) => row.stage)).toEqual(['sanity']);
+    expect(outcome.value).not.toBeNull();
+    expect(outcome.error).toBeUndefined();
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'tasks')!.changes.a.tasksAchieved).toEqual(['a1']);
+    expect(calls.find((call) => call.stage === 'personality')!.changes.a.personalityChanges).toHaveLength(1);
+    expect(calls.find((call) => call.stage === 'sanity')!.changes.a.sanitySet).toBe(60);
   });
 
   it('returns one UpdatesCall for a split stage and uses the batch task achievement for personality', async () => {
