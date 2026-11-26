@@ -90,9 +90,10 @@ function categoryOf(text: string): ActionCategory {
 function slotFor(state: WorldState, locationId: Id, text: string): Id | null {
   let best = 0;
   let slotId: Id | null = null;
-  for (const slot of state.initial.locations[locationId].slots ?? []) {
-    let score = 0;
-    for (let i = 0; i + 3 <= slot.label.length; i += 1) {
+  const slots = state.initial.locations[locationId]?.slots ?? state.initial.items[locationId]?.slots ?? [];
+  for (const slot of slots) {
+    let score = slot.label.length >= 2 && text.includes(slot.label) ? 3 : 0;
+    for (let i = 0; score === 0 && i + 3 <= slot.label.length; i += 1) {
       if (text.includes(slot.label.slice(i, i + 3))) score = 3;
     }
     if (score > best) { best = score; slotId = slot.id; }
@@ -120,6 +121,14 @@ function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTarge
     const item = matchItems(transfer[1], items, owner)[0];
     const person = visible.find((character) => character.name === transfer[2].trim())?.id;
     if (item && person) destination = { entityId: item, containerId: person, slotId: null };
+  }
+  if (!destination) {
+    const placement = /(?:塞进|放进|放到|放在|装进|插进|收进)(.+?)(?:[。；，,！？]|$)/u.exec(text);
+    if (placement) {
+      const container = matchItems(placement[1], items, owner)[0];
+      const moved = matchItems(text, items, owner).find((id) => id !== container);
+      if (container && moved) destination = { entityId: moved, containerId: container, slotId: slotFor(state, container, text) };
+    }
   }
   if (!destination) {
     const matched = matchLocation(state, text);

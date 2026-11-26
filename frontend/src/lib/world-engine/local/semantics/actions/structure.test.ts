@@ -17,6 +17,23 @@ const scene = {
 } as unknown as ActionScene;
 
 describe('action structure', () => {
+  it('reads an item container and slot as the moved item destination', () => {
+    const gear = {
+      ...state,
+      initial: {
+        ...state.initial,
+        items: {
+          ...state.initial.items,
+          spare_mag2: { name: '通用短枪弹匣乙' },
+          jacket_lu: { name: '演习背心', slots: [{ id: 'slot_chest', label: '胸袋' }] },
+          ammo_box: { name: '开盖演习弹药箱' },
+        },
+      },
+    } as unknown as WorldState;
+    const s = buildActionStructure('路明非把通用短枪弹匣乙从弹药箱里塞进演习背心的胸袋。', scene, gear, 2);
+    expect(s.destination).toEqual({ entityId: 'spare_mag2', containerId: 'jacket_lu', slotId: 'slot_chest' });
+  });
+
   it('reads a walk as a destination for the actor', () => {
     const s = buildActionStructure('路明非走进庭院。', scene, state, 2);
     expect(s.category).toBe('move');
