@@ -1123,7 +1123,9 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
   for (const rawSettled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
     // Structured markers are evidence, not prose.
     if (/^(?:去向|涉及|环境)=/u.test(rawSettled)) continue;
-    const settled = rawSettled.replace(/；?(?:去向|环境)=[^；。]*/gu, '').replace(/；?涉及=[^；。]*/gu, '').trim();
+    const settled = rawSettled.replace(/；?(?:去向|环境)=[^；。]*/gu, '').replace(/；?涉及=[^；。]*/gu, '')
+      .replace(/（(?:达到目的|只完成一部分|没有成功|被阻止|没有变化)）/gu, '')
+      .replace(/^([^：:，。]{1,8})[：:]/u, '$1').trim();
     if (!settled) continue;
     if (/完成了刚才的动作|行动发生了，但没有产生新的结果|本组结算未能确认|未能确认新的结果|向.+移动/u.test(settled)) continue;
     const sentence = endSentence(settled.replace(new RegExp(`^${name}[：:，,]?`, 'u'), name));
