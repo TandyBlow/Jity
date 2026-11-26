@@ -12,6 +12,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DATASET = HERE / 'real-semantic.jsonl'
 OUT = HERE / 'semantic-events.jsonl'
+# 结构化标记是标签本身，训练输入不能带
+MARKER = re.compile(r'；?(?:去向|环境|信息|涉及)=[^；。]*')
 ENV_ACTION = re.compile('提开|掀开|翻开|拉开|推开|推|挪动|挪开|拖动|拖到|拖开|拖走|移开|让出|固定|释放|扣好|放下|放倒|关上|搬到|摆到|挂到|插进|拔出|扶正|撕下|踢开|推倒|拉下|盖上|盖回|擦净|清理')
 
 
@@ -33,7 +35,7 @@ def main():
                 label = False
             else:
                 continue
-            samples.append({'id': f"{row['id']}#{index}", 'field': 'env', 'text': text,
+            samples.append({'id': f"{row['id']}#{index}", 'field': 'env', 'text': MARKER.sub('', text),
                             'label': label, 'rowId': row['id'], 'class': row.get('class')})
     OUT.write_text(''.join(json.dumps(sample, ensure_ascii=False) + '\n' for sample in samples), encoding='utf8')
     counts = {'pos': sum(1 for sample in samples if sample['label']),

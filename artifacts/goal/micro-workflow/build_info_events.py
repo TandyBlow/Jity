@@ -14,6 +14,7 @@ DATASET = HERE / 'real-semantic.jsonl'
 OUT = HERE / 'semantic-info-events.jsonl'
 INFO = re.compile('问|打听|询问|请教|读|看|查看|观察|检查|确认|核对|发现|听见|听到|告诉|回答|说明|报告|念|搜索|翻找')
 NO_ANSWER = re.compile('没有答|没答|未答|拒绝回答|没有说|没说|问不出|没有回应|没有找到|没有看到')
+MARKER = re.compile('；?(?:去向|环境|信息|涉及)=[^；。]*')
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
                 label = False
             else:
                 label = True
-            samples.append({'id': f"{row['id']}#i{index}", 'field': 'info', 'text': text,
+            samples.append({'id': f"{row['id']}#i{index}", 'field': 'info', 'text': MARKER.sub('', text),
                             'label': label, 'rowId': row['id'], 'class': row.get('class')})
     OUT.write_text(''.join(json.dumps(sample, ensure_ascii=False) + '\n' for sample in samples), encoding='utf8')
     pos = sum(1 for sample in samples if sample['label'])

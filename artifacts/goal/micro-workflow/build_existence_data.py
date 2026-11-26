@@ -5,18 +5,21 @@ One row per field and turn: the player action and the settled facts, with the
 binary label from the verified export. The state diff is deliberately not in
 the text: printing 环境差分 would hand the head its own label."""
 import json
+import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 TRAIN = HERE / 'real-semantic-train.jsonl'
 OUT = HERE / 'semantic-existence.jsonl'
+# 结构化标记是标签本身，进模型输入就变成抄答案
+MARKER = re.compile(r'；?(?:去向|环境|信息|涉及)=[^；。]*')
 
 
 def main():
     rows = [json.loads(line) for line in TRAIN.read_text(encoding='utf8').splitlines() if line.strip()]
     samples = []
     for row in rows:
-        facts = ' '.join(str(item.get('text') or '') for item in row.get('settled') or []
+        facts = ' '.join(MARKER.sub('', str(item.get('text') or '')) for item in row.get('settled') or []
                          if item.get('task') == 'results')[:900]
         text = f"玩家：{row.get('input') or ''}\n事实：{facts}"[:1200]
         for field, label in (row.get('labels') or {}).items():
