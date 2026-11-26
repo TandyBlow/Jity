@@ -66,7 +66,7 @@ describe('task proposer', () => {
     });
     const result = await proposer({ state: world, facts: [{ id: 'f1', memberId: 'hero', text: '路明非检查电量。' }] });
     expect(result?.supports).toEqual([]);
-    expect(result?.pending.find((row) => row.taskId === 'task_hero_choice')).toMatchObject({ matched: 0, total: 1 });
+    expect(result?.pending.find((row) => row.taskId === 'task_hero_choice')).toMatchObject({ matched: 0, total: 2 });
     expect(result?.updates.find((row) => row.taskId === 'task_hero_choice')?.label).toBe('keyword');
   });
 

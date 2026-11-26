@@ -254,6 +254,12 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
       const entry = ledger.get(row.taskId);
       if (!entry) continue;
       let label = scored.label;
+      if (row.condition.kind === 'decision' && /决定|选择|选定|选了|就走|走这/u.test(row.text)) {
+        // A decision is a grammatical act; the verifier still judges whether
+        // it satisfies this goal. The condition head has no decision class yet.
+        label = 'satisfied';
+        scored.confidence = Math.max(scored.confidence, 0.9);
+      }
       if (label === 'satisfied' && !satisfiesProgramFloor(row.condition, row.text, entry)) {
         label = row.condition.kind === 'confirmation' ? 'keyword' : 'attempt';
       }

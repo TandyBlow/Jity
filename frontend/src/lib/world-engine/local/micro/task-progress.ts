@@ -27,6 +27,7 @@ export interface TaskConditions {
   target: string | null;
   confirmation: string | null;
   action: string | null;
+  decision: string | null;
   conditions: string[];
 }
 
@@ -40,6 +41,7 @@ export function conditionRelevant(condition: TaskCondition, text: string): boole
   }
   if (condition.kind === 'time') return text.includes(condition.value);
   if (condition.kind === 'confirmation') return CONFIRM.some((word) => text.includes(word));
+  if (condition.kind === 'decision') return /决定|选择|选定|选|走|路线|通道|回廊|庭院/u.test(text);
   if (condition.kind === 'action') {
     return text.includes(condition.value) || ACTION.some((word) => text.includes(word))
       || /戴|穿|拿|打|开|关|放|递|接|检查|确认|报告|问|说/u.test(text);
@@ -49,7 +51,7 @@ export function conditionRelevant(condition: TaskCondition, text: string): boole
 
 export interface TaskCondition {
   id: string;
-  kind: 'time' | 'location' | 'item' | 'target' | 'confirmation' | 'action';
+  kind: 'time' | 'location' | 'item' | 'target' | 'confirmation' | 'action' | 'decision';
   value: string;
   label: string;
 }
@@ -65,6 +67,7 @@ export function taskConditions(goal: string, state: WorldState, ownerName: strin
   if (conditions.location) push('location', conditions.location);
   if (conditions.item) push('item', conditions.item);
   if (conditions.target) push('target', conditions.target);
+  if (conditions.decision) push('decision', conditions.decision);
   if (conditions.confirmation) push('confirmation', conditions.confirmation);
   if (conditions.action) push('action', conditions.action);
   return rows;
@@ -81,7 +84,9 @@ export function decomposeTask(goal: string, state: WorldState, ownerName: string
   });
   const item = itemId ? (state.initial.items[itemId]?.name ?? itemId) : null;
   const target = Object.values(state.initial.characters).find((character) => character.name && goal.includes(character.name))?.name ?? null;
-  const location = matchLocation(state, goal)?.name ?? null;
+  const decision = /选择|决定|选定|选一条/u.test(goal)
+    ? (goal.match(/选择[^，。；]*|决定[^，。；]*|选定[^，。；]*|选一条[^，。；]*/u)?.[0] ?? '选择') : null;
+  const location = decision ? null : matchLocation(state, goal)?.name ?? null;
   const time = TIME.exec(goal)?.[0] ?? null;
   const confirmation = CONFIRM.find((word) => goal.includes(word)) ?? null;
   const action = ACTION.find((word) => goal.includes(word)) ?? null;
@@ -90,10 +95,11 @@ export function decomposeTask(goal: string, state: WorldState, ownerName: string
     location ? `地点=${location}` : '',
     item ? `物品=${item}` : '',
     target ? `对象=${target}` : '',
+    decision ? `决策=${decision}` : '',
     confirmation ? `确认=${confirmation}` : '',
     action ? `动作=${action}` : '',
   ].filter(Boolean);
-  return { goal, time, location, item, target, confirmation, action, conditions };
+  return { goal, time, location, item, target, confirmation, action, decision, conditions };
 }
 
 const SAT = ['yes', 'partial', 'no'] as const;
@@ -137,6 +143,7 @@ export function conditionCoverage(conditions: TaskConditions, factText: string):
     ...(conditions.location ? [[`地点=${conditions.location}`, factText.includes(conditions.location)] as [string, boolean]] : []),
     ...(conditions.item ? [[`物品=${conditions.item}`, factText.includes(conditions.item)] as [string, boolean]] : []),
     ...(conditions.target ? [[`对象=${conditions.target}`, factText.includes(conditions.target)] as [string, boolean]] : []),
+    ...(conditions.decision ? [[`决策=${conditions.decision}`, /决定|选择|选定|选了|就走|走这/u.test(factText)] as [string, boolean]] : []),
     ...(conditions.confirmation ? [[`确认=${conditions.confirmation}`, CONFIRM.some((word) => factText.includes(word))] as [string, boolean]] : []),
     ...(conditions.action ? [[`动作=${conditions.action}`, ACTION.some((word) => factText.includes(word))] as [string, boolean]] : []),
   ];

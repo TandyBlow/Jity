@@ -16,6 +16,15 @@ describe('task-progress micro workflow', () => {
     expect(conditions.conditions.length).toBeGreaterThanOrEqual(2);
   });
 
+  it('turns a route choice into a decision, not a location', () => {
+    const state = buildTestWorld();
+    const conditions = decomposeTask('在大厅和书房之间选择一条有掩护的路线', state, '路明非');
+    expect(conditions.decision).toContain('选择一条有掩护的路线');
+    expect(conditions.location).toBeNull();
+    expect(conditionCoverage(conditions, '路明非决定走大厅这条路线。').matched).toBe(1);
+    expect(conditionCoverage(conditions, '路明非站在大厅门口。').matched).toBe(0);
+  });
+
   it('uses explicit outcome wording as a deterministic gate', () => {
     expect(outcomeGate('路明非找到钥匙（达到目的）。')).toBeNull();
     expect(outcomeGate('路明非只找到一半（只完成一部分）。')).toBe('partial');
