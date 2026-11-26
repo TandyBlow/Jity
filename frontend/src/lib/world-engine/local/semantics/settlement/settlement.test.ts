@@ -1899,6 +1899,18 @@ describe('six-stage updates', () => {
     expect(outcome.error).toBeUndefined();
   });
 
+  it('applies an env hint carried by a partial fact', async () => {
+    const state = world();
+    state.items.box.position = { containerId: 'room', slotId: null, relativeTo: null };
+    const engine = new ScriptedEngine([JSON.stringify({ operations: [] })]);
+    const input = {
+      ...(updatesInput(state, 'appearance') as Record<string, unknown>),
+      results: { a: '甲走到房间，把盒子拉下一半，挡住半边窗口。（只完成一部分）；环境=box:已被部分拉下' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#appearance', input);
+    expect((outcome.value as UpdatesCall).changes.box?.appearanceChanges?.[0]?.text).toBe('已被部分拉下');
+  });
+
   it('applies structured destinations without the position call', async () => {
     const engine = new ScriptedEngine([]);
     const input = {
