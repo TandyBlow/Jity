@@ -770,3 +770,10 @@
 - `--offline`（页面与两个模型就绪后断网跑全部回合）两回合 2/2 完成、0 问题，之后恢复网络做刷新恢复：`overallRestored=true`、任务快照稳定、历史 2/2，本地存档不依赖网络。证据 `evidence-offline-1-2026-11-26T2306-b400.json`，`harness.offline=true`。
 - 掉速：同两回合在线（断 API 臂）是 76.7/87.0 s，离线臂是 212.1/230.7 s，约 2.5 倍。离线可玩性成立，但离线路径有额外的等待（疑似每回合的网络请求超时），列为性能缺陷待查，不宣称离线档达标。
 - 备注：驱动的 `harness.saveServiceBlocked` 本来就记录 `--block-api`；D-078 里新加的 `harness.blockApi` 是重复字段，保留不影响证据。
+
+## D-081 离线前预热微型会话，掉速消除（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 原离线运行 212/231 s、生成 59/112 次：ONNX 微型头在断网后首次加载失败，逐成员退回 LLM，回合变慢约一倍。页面在模型就绪、断网之前用 `warmMicroSession` 建好共享 ORT 会话（results/targets/judge/behavior/movement/continuation/task-condition/pair-scorer，影子模式再加 existence 两个）并预热分词器。
+- 重跑 `--offline` 两回合：76.1/86.6 s、生成 25/55，与在线（76.7/87.0 s、25/55）一致；刷新恢复 overallRestored=true、任务快照稳定。证据 `evidence-offline-2.json`，`harness.offline=true`。
+- 代价：启动时把约 90 MB 的 int8 头装进内存（影子模式再加 21 MB）；这是离线可用的前提，后续可做按需驻留/释放。

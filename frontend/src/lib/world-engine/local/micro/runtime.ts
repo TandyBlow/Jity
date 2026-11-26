@@ -47,6 +47,12 @@ interface SharedSession {
 const sharedSessions = new Map<string, SharedSession>();
 let useClock = 0;
 
+/** Create the shared session now (before going offline) so a later load
+ * reuses it instead of fetching weights again. */
+export async function warmMicroSession(url: string): Promise<void> {
+  await createMicroRuntime().load(url).then(() => undefined).catch(() => undefined);
+}
+
 export function createMicroRuntime(options: MicroRuntimeOptions = {}): MicroRuntime {
   if (options.wasmPaths) wasmPaths = options.wasmPaths;
   const threads = options.threads ?? 1;

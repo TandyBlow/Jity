@@ -12,6 +12,8 @@ import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
 import { createMicroResults } from '@/lib/world-engine/local/micro/results';
 import { createMicroExistence } from '@/lib/world-engine/local/micro/existence';
+import { warmMicroSession } from '@/lib/world-engine/local/micro/runtime';
+import { getMicroTokenizer } from '@/lib/world-engine/local/micro/shared';
 import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
 import { createMicroBehavior } from '@/lib/world-engine/local/micro/behavior';
 import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micro/judges';
@@ -1436,6 +1438,17 @@ export default function WorldLocalPage() {
         if (!alive) { await semantic.dispose(); await narrationLoading.catch(() => undefined); return; }
         await narrationLoading;
         if (!alive) { await narration.dispose(); return; }
+        // 微型模型的会话要在断网前建好，否则离线回合会退回 LLM
+        if (microParam) {
+          const models = [
+            '/micro/task-heads-int8.onnx', '/micro/task-match-int8.onnx',
+            '/micro/judge-heads-int8.onnx', '/micro/behavior-head-int8.onnx', '/micro/movement-head-int8.onnx',
+            '/micro/continuation-heads-int8.onnx', '/micro/task-condition-int8.onnx', '/micro/pair-scorer-int8.onnx',
+            ...(existenceShadow ? ['/micro/existence-env-int8.onnx', '/micro/existence-info-int8.onnx'] : []),
+          ];
+          await Promise.allSettled(models.map((url) => warmMicroSession(url)));
+          await getMicroTokenizer().catch(() => undefined);
+        }
         await refresh();
         if (!alive) return;
         setPhase('ready');
