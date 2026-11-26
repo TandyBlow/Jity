@@ -22,4 +22,9 @@ describe('location matching', () => {
   it('accepts a unique suffix', () => {
     expect(matchLocation(state, '走进庭院')?.id).toBe('yard');
   });
+  it('prefers the longer name when one location name contains another', () => {
+    const nested = { initial: { locations: { tower: { name: '钟楼' }, top: { name: '钟楼顶层' } } } } as unknown as WorldState;
+    expect(matchLocation(nested, '走上钟楼顶层')?.id).toBe('top');
+    expect(matchLocation(nested, '走进钟楼')?.id).toBe('tower');
+  });
 });

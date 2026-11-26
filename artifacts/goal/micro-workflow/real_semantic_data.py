@@ -237,7 +237,9 @@ def load_scenarios():
 def load_semantic_routes():
     definition = json.loads((HERE / 'semantic-scenarios.json').read_text(encoding='utf8'))
     meta = {}
+    invalid = set()
     for route in definition.get('routes') or []:
+        invalid.update(route.get('invalid') or [])
         for turn in route.get('turns') or []:
             meta[turn['id']] = {'class': turn.get('class'), 'split': route.get('split', 'train')}
     rows = {}
@@ -248,6 +250,9 @@ def load_semantic_routes():
         previous = initial_snapshot()
         prior = world_knowledge_text()
         for turn in data.get('turns') or []:
+            if turn['id'] in invalid:
+                previous = turn.get('snapshotAfterTurn') or previous
+                continue
             row = load_turn(turn, 'semantic', previous, prior_text=prior, prompt_facts_ok=True)
             info = meta.get(turn['id']) or {}
             row['class'] = info.get('class')

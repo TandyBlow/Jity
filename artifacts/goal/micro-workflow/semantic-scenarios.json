@@ -367,7 +367,14 @@
      "input": "我把白旗往插槽里插回一半，卡住了。",
      "purpose": "部分完成物品复位"
     }
-   ]
+   ],
+   "invalid": [
+    "sm2-e-move-2",
+    "sm2-e-success-5",
+    "sm2-e-transfer-2",
+    "sm2-e-partial-1"
+   ],
+   "invalidReason": "走上 had no destination; player stayed in foyer, later turns not comparable"
   },
   {
    "id": "env-3",

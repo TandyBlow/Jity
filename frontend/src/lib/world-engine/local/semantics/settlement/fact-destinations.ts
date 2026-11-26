@@ -39,8 +39,9 @@ export function matchLocation(state: WorldState, text: string): { id: Id; at: nu
     }
   }
   if (full.length) {
-    full.sort((left, right) => right.at - left.at);
-    if (full.length > 1 && full[0].at === full[1].at) return null;
+    full.sort((left, right) => right.at - left.at || right.name.length - left.name.length);
+    // 同一位置的长短名（钟楼 vs 钟楼顶层）取更长者；同长不同地点才算歧义
+    if (full.length > 1 && full[0].at === full[1].at && full[0].name.length === full[1].name.length) return null;
     return full[0];
   }
   if (!suffix.length) return null;
