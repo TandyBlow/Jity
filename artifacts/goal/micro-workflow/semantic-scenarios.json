@@ -1389,6 +1389,36 @@
      "purpose": "整理装备"
     }
    ]
+  },
+  {
+   "id": "env-9",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm9-e-move-1",
+     "class": "env_irrelevant_move",
+     "input": "我走进中央庭院。",
+     "purpose": "纯移动，环境不变"
+    },
+    {
+     "id": "sm9-e-transfer-1",
+     "class": "env_item_transfer",
+     "input": "我把护目镜递给诺诺。",
+     "purpose": "物品转移"
+    },
+    {
+     "id": "sm9-e-move-2",
+     "class": "env_irrelevant_move",
+     "input": "我沿着服务巷走回器材棚。",
+     "purpose": "纯移动"
+    },
+    {
+     "id": "sm9-e-transfer-2",
+     "class": "env_item_transfer",
+     "input": "我把弹匣塞进胸袋。",
+     "purpose": "物品转移"
+    }
+   ]
   }
  ]
 }
