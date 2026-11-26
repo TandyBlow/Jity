@@ -126,3 +126,26 @@ def test_field_counts_and_training_threshold():
     counts = gate.field_counts(full)
     assert counts == {'env': {'pos': 50, 'neg': 50}}
     assert gate.training_ready(counts) == {'env': True}
+
+
+def test_read_env_hints_parses_micro_tag():
+    hints = pipeline.read_env_hints(['路明非把盖子提开（只完成一部分）；环境=hatch_cover:已被部分提开；涉及=nono'])
+    assert hints == [{'entityId': 'hatch_cover', 'text': '已被部分提开'}]
+
+
+def test_env_hint_and_record_are_hard_evidence():
+    def snap(app=''):
+        changes = [{'id': 'a1', 'text': app, 'supersedes': [], 'sourcePointId': 'p',
+                    'sourceSequence': 1, 'active': True}] if app else []
+        return {'transport': {'state': {
+            'characters': {}, 'locations': {'room': {'id': 'room', 'appearanceChanges': []}},
+            'items': {'box': {'id': 'box', 'position': {'containerId': 'room'},
+                              'appearanceChanges': changes}}}}}
+    row_ = {'id': 'x', 'text': '路明非把盒子提开。',
+            'settled': [{'task': 'results', 'key': 'lu',
+                         'text': '路明非把盒子提开（达到目的）；环境=box:已被提开'}],
+            'structured': [{'key': 'lu', 'text': '路明非把盒子提开。'}],
+            'snapshotBefore': snap(), 'snapshot': snap('已被提开')}
+    result = pipeline.verify(row_, {'env': {'present': False, 'content': '', 'support': ''}})
+    assert result['fields']['env']['status'] == 'present'
+    assert result['fields']['env']['target'] is True
