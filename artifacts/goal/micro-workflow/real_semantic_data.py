@@ -38,6 +38,7 @@ NEG_ENV = re.compile('没有动|没有打开|没有移动|未打开|未移动|�
 ENV_HINT = re.compile(r'环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
 ENV_FAIL = re.compile('拉不开|打不开|推不开|掀不开|纹丝不动|卡住|卡死|锁着|锁上|被阻止|无法|不能|失败|没有成功|没能|未能')
 INFO_WORDS = re.compile('问|打听|询问|请教|读|看|查看|观察|检查|确认|核对|发现|听见|听到|告诉|回答|说明|报告|念|搜索|翻找')
+MOVE_WORDS = re.compile('走进|走入|走到|走向|进入|来到|回到|退回|退到|跑到|冲向|赶到|爬上|走下|穿过|离开|前往|走到')
 
 
 def load_env():
@@ -165,8 +166,38 @@ def prompt_facts(turn):
     return facts
 
 
+def prompt_structures(turn):
+    rows = []
+    seen = set()
+    product = turn.get('product') or {}
+    texts = [row.get('prompt') for row in (product.get('semanticPrompts') or [])
+             if isinstance(row, dict) and isinstance(row.get('prompt'), str)]
+    texts += [call.get('prompt') for call in (product.get('submission') or {}).get('calls') or []
+              if isinstance(call, dict) and isinstance(call.get('prompt'), str)]
+    pattern = re.compile(
+        r'- ([^\n（]+)（id=([\w-]+)）行动：([^\n]*)\n[^\n]*\n\s*结构：类别=([^；\n]+)；目标=([^；\n]*)；物品=([^；\n]*)；去向=([^\n]*)')
+    for text in texts:
+        for match in pattern.finditer(text):
+            key = match.group(2)
+            action = match.group(3).strip()
+            if (key, action) in seen:
+                continue
+            seen.add((key, action))
+            items = [item for item in re.split(r'[,，、]', match.group(6)) if item and item != '无']
+            destination = match.group(7).strip()
+            rows.append({'key': key, 'text': action, 'category': match.group(4),
+                         'itemIds': items, 'destination': None if destination in ('', '无') else destination})
+    return rows
+
+
 def load_turn(turn, source, previous, checks=None, prior_text='', prompt_facts_ok=False):
     settled_rows = settled(turn)
+    structured = structured_actions(turn)
+    known_structures = {(row.get('key'), row.get('text')) for row in structured}
+    for row in prompt_structures(turn):
+        if (row['key'], row['text']) not in known_structures:
+            structured.append(row)
+            known_structures.add((row['key'], row['text']))
     if prompt_facts_ok:
         known = {row.get('text') for row in settled_rows if row.get('text')}
         for fact in prompt_facts(turn):
@@ -178,7 +209,7 @@ def load_turn(turn, source, previous, checks=None, prior_text='', prompt_facts_o
             'text': turn.get('text') or '', 'before': turn.get('before') or {},
             'after': turn.get('after') or {}, 'snapshotBefore': previous,
             'snapshot': turn.get('snapshotAfterTurn') or {},
-            'settled': settled_rows, 'structured': structured_actions(turn),
+            'settled': settled_rows, 'structured': structured,
             'priorText': prior_text, 'checks': checks or []}
 
 
@@ -304,11 +335,12 @@ def state_diff(row):
 
 def prompt(row, diff):
     settled_text = json.dumps(row['settled'][:32], ensure_ascii=False)[:3500]
+    diff_text = json.dumps(diff, ensure_ascii=False)[:2500]
     return f"""你是 Jity（中文 TRPG）的事件标注器。只输出一个 JSON 对象，不要解释。
 玩家意图（只是意图，不是已发生）：{row['input']}
 已结算行动（程序/模型已接受的结果）：{settled_text}
 同回合叙事（只能当描述，不得补写状态）：{row['text'][:3000]}
-本回合状态差分（旧快照的新增/移除；known=false 表示没有回合前快照）：{json.dumps(diff, ensure_ascii=False)}
+本回合状态差分（旧快照的新增/移除；known=false 表示没有回合前快照）：{diff_text}
 输出：
 {{"info":{{"present":true/false,"content":"<=30字","support":"原文子串","evidence":"settled|narrative"}},
   "env":{{"present":true/false,"content":"<=30字","support":"原文子串","evidence":"settled|state"}}}}
@@ -346,10 +378,15 @@ def label(row, cache_only=False):
     if not key:
         return None, 'no-key'
     from openai import OpenAI
-    client = OpenAI(api_key=key, base_url=env.get('LLM_BASE_URL') or 'https://api.deepseek.com')
+    client = OpenAI(api_key=key, base_url=env.get('LLM_BASE_URL') or 'https://api.deepseek.com',
+                    timeout=90, max_retries=2)
     model = env.get('LABEL_MODEL') or 'deepseek-v4-pro'
-    response = client.chat.completions.create(
-        model=model, temperature=0, messages=[{'role': 'user', 'content': prompt(row, state_diff(row))}])
+    try:
+        response = client.chat.completions.create(
+            model=model, temperature=0, messages=[{'role': 'user', 'content': prompt(row, state_diff(row))}])
+    except Exception as error:
+        print(row['id'], 'api-error', str(error)[:200], file=sys.stderr)
+        return None, 'api-error'
     text = response.choices[0].message.content or ''
     match = re.search(r'\{.*\}', text, re.S)
     if not match:
@@ -422,6 +459,9 @@ def classify(field, item, row, diff, support, content, source, settled_text):
     # info
     prior = row.get('priorText') or ''
     known = bool(prior and content and len(content) >= 4 and content in prior)
+    structured = row.get('structured') or []
+    info_capable = any(INFO_WORDS.search(str(action.get('text') or '')) for action in structured)
+    move_capable = any(MOVE_WORDS.search(str(action.get('text') or '')) for action in structured)
     protagonist = row.get('protagonistName') or ''
     player_source = source
     if protagonist:
@@ -436,6 +476,9 @@ def classify(field, item, row, diff, support, content, source, settled_text):
             return 'insufficient'
         if ACTION_VERBS.search(content):
             return 'insufficient'
+        # 纯物品操作不算获取信息
+        if structured and not info_capable and not move_capable:
+            return 'absent'
         if protagonist and support not in player_source:
             return 'insufficient'
         if not protagonist and support not in settled_text and support not in source:
@@ -448,10 +491,10 @@ def classify(field, item, row, diff, support, content, source, settled_text):
     if re.search('告诉|回答|说明|报告|问清|核实', settled_text) and not ACTION_VERBS.search(settled_text):
         return 'conflict'
     structured = row.get('structured') or []
-    if structured and not any(INFO_WORDS.search(str(action.get('text') or '')) for action in structured):
+    if structured and not any(INFO_WORDS.search(str(action.get('text') or '')) for action in structured) \
+            and not any(MOVE_WORDS.search(str(action.get('text') or '')) for action in structured):
         return 'absent'
     return 'insufficient'
-
 
 def verify(row, proposal):
     diff = state_diff(row)

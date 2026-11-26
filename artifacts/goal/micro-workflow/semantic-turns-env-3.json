@@ -1,0 +1,62 @@
+[
+ {
+  "id": "sm3-e-move-1",
+  "input": "我把护目镜戴好，走进中央庭院。",
+  "purpose": "装备后移动，环境不变"
+ },
+ {
+  "id": "sm3-e-success-1",
+  "input": "我把南端石花槽搬到喷泉池边。",
+  "purpose": "搬动石花槽改变环境"
+ },
+ {
+  "id": "sm3-e-success-2",
+  "input": "我把庭院里的倒放长椅扶正。",
+  "purpose": "扶正长椅改变环境"
+ },
+ {
+  "id": "sm3-e-success-3",
+  "input": "我走到西回廊，把柱子上的检修图撕下来。",
+  "purpose": "撕下检修图改变环境"
+ },
+ {
+  "id": "sm3-e-success-4",
+  "input": "我走到东回廊，把低窗软垫拖到墙根。",
+  "purpose": "移动软垫改变环境"
+ },
+ {
+  "id": "sm3-e-success-5",
+  "input": "我把东回廊的遮光帘全部拉下。",
+  "purpose": "拉下遮光帘改变环境"
+ },
+ {
+  "id": "sm3-e-move-2",
+  "input": "我穿过小桥走进钟楼门厅。",
+  "purpose": "纯移动"
+ },
+ {
+  "id": "sm3-e-success-6",
+  "input": "我把门厅的长桌往侧面推到墙边。",
+  "purpose": "推走长桌改变环境"
+ },
+ {
+  "id": "sm3-e-failure-1",
+  "input": "我拉钟楼地下检修门，门闩插着，拉不开。",
+  "purpose": "尝试开门失败"
+ },
+ {
+  "id": "sm3-e-success-7",
+  "input": "我走上顶层，把玻璃门关上。",
+  "purpose": "关闭玻璃门改变环境"
+ },
+ {
+  "id": "sm3-e-transfer-1",
+  "input": "我把中立白旗从旗座拔出来。",
+  "purpose": "物品转移"
+ },
+ {
+  "id": "sm3-e-transfer-2",
+  "input": "我把白旗重新插回旗座。",
+  "purpose": "物品转移"
+ }
+]
