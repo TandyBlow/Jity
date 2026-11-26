@@ -602,6 +602,84 @@
      "purpose": "部分环境操作"
     }
    ]
+  },
+  {
+   "id": "info-4",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm4-i-new-1",
+     "class": "info_new",
+     "input": "我读服务巷右墙上的赛区路线图，确认地下检修通道的入口。",
+     "purpose": "读取路线图获取新信息"
+    },
+    {
+     "id": "sm4-i-new-2",
+     "class": "info_new",
+     "input": "我走到器材棚，翻看领用台上的器材领用簿，确认最后一条记录。",
+     "purpose": "读取领用簿"
+    },
+    {
+     "id": "sm4-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我查看器材笼里的折叠梯和安全绳。",
+     "purpose": "查看笼内已知器材"
+    },
+    {
+     "id": "sm4-i-new-3",
+     "class": "info_new",
+     "input": "我查看弹药箱里剩下的弹匣数量。",
+     "purpose": "清点弹药数量"
+    },
+    {
+     "id": "sm4-i-irrelevant-2",
+     "class": "info_irrelevant_known",
+     "input": "我走到庭院，查看唐骁左臂上的红色识别带。",
+     "purpose": "查看已知识别带"
+    },
+    {
+     "id": "sm4-i-new-4",
+     "class": "info_new",
+     "input": "我查看喷泉池边新留下的弹着点。",
+     "purpose": "观察新的弹着点"
+    },
+    {
+     "id": "sm4-i-new-5",
+     "class": "info_new",
+     "input": "我走到西回廊，读柱子上的检修图。",
+     "purpose": "读取检修图"
+    },
+    {
+     "id": "sm4-i-new-6",
+     "class": "info_new",
+     "input": "我查看林亦舟扭伤的脚踝。",
+     "purpose": "观察伤情"
+    },
+    {
+     "id": "sm4-i-new-7",
+     "class": "info_new",
+     "input": "我走到医护处置室，读登记台上的分诊夹板。",
+     "purpose": "读取分诊记录"
+    },
+    {
+     "id": "sm4-i-irrelevant-3",
+     "class": "info_irrelevant_known",
+     "input": "我查看空床边的医疗箱。",
+     "purpose": "查看医疗箱"
+    },
+    {
+     "id": "sm4-i-new-8",
+     "class": "info_new",
+     "input": "我听广播里宣布的剩余时间。",
+     "purpose": "听广播获取时间信息"
+    },
+    {
+     "id": "sm4-i-irrelevant-4",
+     "class": "info_irrelevant_known",
+     "input": "我整理背心的胸袋，确认弹匣还在。",
+     "purpose": "核对已知装备"
+    }
+   ]
   }
  ]
 }
