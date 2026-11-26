@@ -1,5 +1,6 @@
 /** `环境=entity:state` in settled facts; move/transfer is not env. */
 import type { Id, WorldState } from '../../../types';
+import { matchLocation } from './fact-destinations';
 
 export interface FactEnvironment {
   entityId: string;
@@ -53,7 +54,15 @@ export function environmentHint(
 ): { entityId: Id; text: string } | null {
   if (itemIds.length !== 1) return null;
   const entityId = itemIds[0];
-  if (!state.initial.items[entityId]) return null;
+  const item = state.initial.items[entityId];
+  if (!item) return null;
+  // 地点名前缀不是物品证据：门厅的正门 ≠ 门厅翻倒长桌
+  const location = state.initial.locations ? matchLocation(state, text) : null;
+  const plain = (value: string) => value.replace(/的/gu, '');
+  if (location && item.name.startsWith(location.name)) {
+    const distinctive = plain(item.name.slice(location.name.length));
+    if (distinctive && !plain(text).includes(distinctive)) return null;
+  }
   const phrase = environmentPhrase(text, label);
   return phrase ? { entityId, text: phrase } : null;
 }

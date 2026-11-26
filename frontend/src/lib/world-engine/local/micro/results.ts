@@ -12,7 +12,8 @@ const RESULT = ['achieved', 'partial', 'not_achieved', 'blocked', 'no_change'];
 const PHRASE: Record<string, string> = {
   achieved: '达到目的', partial: '只完成一部分', not_achieved: '没有成功', blocked: '被阻止', no_change: '没有变化',
 };
-const OBSTRUCTION = ['被阻止', '拦住', '拦下', '被挡住', '锁', '关着', '紧闭', '无法', '没有', '不能', '失败'];
+const OBSTRUCTION = ['被阻止', '拦住', '拦下', '被挡住', '锁', '关着', '紧闭', '无法', '没有', '不能', '失败',
+  '拉不开', '打不开', '推不开', '掀不开', '卡住', '卡死', '纹丝不动'];
 /** A declared walk is program-confirmed only when nothing in its text
  * obstructs it, the destination is a registered location, and the actor is the
  * protagonist. Prior failed sub-actions are checked by the caller. */

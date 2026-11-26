@@ -69,6 +69,17 @@ describe('environment channel', () => {
     expect(environmentPhrase('我把门厅的正门推开一点。', 'partial')).toBe('已被部分推开');
     expect(environmentPhrase('我走进门厅。')).toBeNull();
   });
+  it('does not use a location prefix as item evidence', () => {
+    const gateState = {
+      initial: {
+        locations: { foyer: { name: '钟楼门厅' }, lane: { name: '西侧服务巷' } },
+        items: { foyer_table: { name: '门厅翻倒长桌' }, hatch_cover: { name: '服务巷检修盖' } },
+      },
+    } as unknown as WorldState;
+    expect(environmentHint('我把门厅虚掩的正门关上。', ['foyer_table'], gateState, null)).toBeNull();
+    expect(environmentHint('我把服务巷检修盖提开。', ['hatch_cover'], gateState, null))
+      .toEqual({ entityId: 'hatch_cover', text: '已被提开' });
+  });
 });
 
 describe('program env gate', () => {
@@ -89,6 +100,7 @@ describe('program env gate', () => {
   it('declines a remote item, an obstruction and a non-env verb', () => {
     expect(programEnvAllowed({ ...base, text: '我把庭院里的领用台推到墙边。', state: { ...state, characters: { lu: { position: { containerId: 'yard' } } } } as unknown as WorldState })).toBe(false);
     expect(programEnvAllowed({ ...base, text: '领用台锁着，推不动。' })).toBe(false);
+    expect(programEnvAllowed({ ...base, text: '我拉检修门，拉不开。' })).toBe(false);
     expect(programEnvAllowed({ ...base, text: '我查看领用台。' })).toBe(false);
   });
 });
