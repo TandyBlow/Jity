@@ -1,4 +1,5 @@
 /** `环境=entity:state` in settled facts; move/transfer is not env. */
+const FAIL = /拉不开|打不开|推不开|掀不开|卡住|卡死|纹丝不动|没能|未能|没有|被阻止|被挡住/u;
 import type { Id, WorldState } from '../../../types';
 import { roomOf } from '../../prompt';
 import { matchLocation } from './fact-destinations';
@@ -56,6 +57,7 @@ export function environmentHint(
   actorRoom?: Id,
 ): { entityId: Id; text: string } | null {
   if (itemIds.length !== 1) return null;
+  if (FAIL.test(text)) return null;
   const entityId = itemIds[0];
   const item = state.initial.items[entityId];
   if (!item) return null;

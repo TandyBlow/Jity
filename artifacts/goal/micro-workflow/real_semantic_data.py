@@ -414,6 +414,9 @@ def classify(field, item, row, diff, support, content, source, settled_text):
             ENV_ACTION.search(str(action.get('text') or '')) for action in structured)
         if not diff['known']:
             return 'insufficient'
+        failure = bool(ENV_FAIL.search(settled_text + source) or NEG_ENV.search(settled_text + source))
+        if failure and (hints or env_keys):
+            return 'conflict'
         # 结构化标签+已记录外观是硬证据
         if hints and env_keys and hint_keys & recorded:
             return 'present'

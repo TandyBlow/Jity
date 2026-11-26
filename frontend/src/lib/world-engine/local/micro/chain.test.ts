@@ -64,6 +64,13 @@ describe('environment channel', () => {
     expect(environmentHint('我把帘子掀开。', ['curtain'], envState, { entityId: 'curtain', containerId: 'box' }))
       .toEqual({ entityId: 'curtain', text: '已被掀开' });
   });
+  it('declines a failed manipulation even with an env verb', () => {
+    const door = {
+      initial: { locations: { foyer: { name: '钟楼门厅' } }, items: { hatch_door: { name: '钟楼地下检修门' } } },
+    } as unknown as WorldState;
+    expect(environmentHint('我把钟楼地下检修门拉开，门闩插着，拉不开。', ['hatch_door'], door, null))
+      .toBeNull();
+  });
   it('phrases a location manipulation without an item', () => {
     expect(environmentPhrase('我把门厅的正门推开。')).toBe('已被推开');
     expect(environmentPhrase('我把门厅的正门推开一点。', 'partial')).toBe('已被部分推开');

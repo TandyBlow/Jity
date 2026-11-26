@@ -55,7 +55,8 @@ export const MOVEMENT_WORDS = ['走进', '走入', '走到', '走向', '走过',
 
 /** Wording that says the attempt did not take effect; such a fact is a
  * confirmed no-change, not an uncertain one. */
-export const FAILURE_WORDS = ['没有', '没能', '未能', '未', '被阻止', '拦住', '拦下', '被挡住', '失败', '落空', '无法'] as const;
+export const FAILURE_WORDS = ['没有', '没能', '未能', '未', '被阻止', '拦住', '拦下', '被挡住', '失败', '落空', '无法',
+  '拉不开', '打不开', '推不开', '掀不开', '卡住', '卡死', '纹丝不动'] as const;
 
 /** Wording that could change an appearance; anything here is uncertain and
  * must go to the LLM appearance stage. */
