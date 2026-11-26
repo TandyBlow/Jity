@@ -9,12 +9,31 @@ export interface FactEnvironment {
   text: string;
 }
 
-export function readEnvironments(texts: string[]): FactEnvironment[] {
+/** A model may write a display name (`<弹药箱>`) instead of the id; resolve it
+ * against the world's own names, never guess beyond an exact name match. */
+export function resolveEntityId(state: WorldState, raw: string): string {
+  const name = raw.replace(/^<|>$/gu, '');
+  const spaces = [state.initial.items, state.initial.locations, state.initial.characters];
+  if (spaces.some((space) => space && space[raw])) return raw;
+  const contained: string[] = [];
+  for (const space of spaces) {
+    for (const [id, entity] of Object.entries(space ?? {})) {
+      const full = (entity as { name?: string }).name ?? '';
+      if (full === name) return id;
+      if (name.length >= 2 && full.includes(name)) contained.push(id);
+    }
+  }
+  // 短名只有在唯一包含时才算（弹药箱 → 开盖演习弹药箱；护目镜有两个就放弃）
+  return contained.length === 1 ? contained[0] : name;
+}
+
+export function readEnvironments(texts: string[], state?: WorldState): FactEnvironment[] {
   const rows: FactEnvironment[] = [];
   for (const text of texts) {
     for (const match of text.matchAll(/环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)/gu)) {
       const body = match[2].trim();
-      const entityId = match[1].replace(/^<|>$/gu, '');
+      const raw = match[1].replace(/^<|>$/gu, '');
+      const entityId = state ? resolveEntityId(state, raw) : raw;
       if (body && entityId) rows.push({ entityId, text: body });
     }
   }

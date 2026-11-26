@@ -1021,7 +1021,7 @@ function programEnvironmentPatches(ctx: StageContext, scanned: Id[]): {
   const scannedSet = new Set(scanned);
   for (const fact of resultFacts(ctx.results)) {
     if (FAILURE_WORDS.some((word) => fact.text.includes(word))) continue;
-    for (const hint of readEnvironments([fact.text])) {
+    for (const hint of readEnvironments([fact.text], ctx.state)) {
       const entityId = hint.entityId;
       if (!ctx.state.locations[entityId] && !ctx.state.items[entityId]) continue;
       if (!scannedSet.has(entityId)) continue;

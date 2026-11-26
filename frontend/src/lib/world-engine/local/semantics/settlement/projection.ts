@@ -116,7 +116,7 @@ export function projectPoint(
       if (mentions(fact.text, id, names)) factEntities.add(id);
     }
   }
-  for (const hint of readEnvironments(facts.map((fact) => fact.text))) {
+  for (const hint of readEnvironments(facts.map((fact) => fact.text), state)) {
     if (names.has(hint.entityId)) factEntities.add(hint.entityId);
   }
   // A structured `去向=` is an explicit affected entity even when the prose
