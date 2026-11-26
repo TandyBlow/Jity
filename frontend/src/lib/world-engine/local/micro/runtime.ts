@@ -72,7 +72,12 @@ export function createMicroRuntime(options: MicroRuntimeOptions = {}): MicroRunt
         held.add(url);
         entry.refs += 1;
         loads += 1;
-        loadMs += entry.loadMs;
+        const firstHolder = entry.refs === 1;
+        if (entry.loadMs) {
+          if (firstHolder) loadMs += entry.loadMs;
+        } else {
+          entry.pending.then(() => { if (firstHolder) loadMs += entry.loadMs; }).catch(() => undefined);
+        }
       }
       entry.lastUsed = ++useClock;
       return entry.pending;
@@ -123,7 +128,7 @@ export async function runBatch(session: MicroSession, rows: number[][]): Promise
     input_ids: new ort.Tensor('int64', ids, [batch, width]),
     attention_mask: new ort.Tensor('int64', mask, [batch, width]),
   });
-  const first = Object.values(out)[0]?.data as Float32Array | undefined;
+  const first = ((out.labels ?? Object.values(out)[0])?.data) as Float32Array | undefined;
   if (!first || first.length % batch !== 0) throw new Error('batch_output_shape_mismatch');
   const classes = first.length / batch;
   return Array.from({ length: batch }, (_, index) => Array.from(first.slice(index * classes, (index + 1) * classes)));
