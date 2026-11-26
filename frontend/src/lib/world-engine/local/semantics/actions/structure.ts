@@ -114,10 +114,18 @@ function splitSubActions(text: string): string[] {
   return parts;
 }
 
+/** Verbs after which the manipulated object has already been named. */
+const MANIPULATION_VERBS = /打开|提开|掀开|翻开|拉开|推开|挪开|拖开|拖到|移到|搬到|推到|关上|合上|盖回|挂到|扶正|撕下|踢开|拉下|拉起|拉上|叠好|擦净|清理/u;
+
 function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTargets: number, owner?: string): Omit<SubAction, 'id' | 'order' | 'dependsOn'> {
   const items = Object.entries(state.initial.items).map(([id, item]) => ({ id, name: item.name ?? id }));
   const visible = scene.visible.map((character) => ({ id: character.id, name: character.name }));
   const targets = resolveRuleTargets(text, { visible, absent: scene.absent }, maxTargets) ?? [];
+  // 先看操作动词之前的宾语，避免把后文的通道/地点当成被操作物品
+  const verb = MANIPULATION_VERBS.exec(text);
+  const objectText = verb && verb.index > 0 ? text.slice(0, verb.index) : text;
+  const objectItems = matchItems(objectText, items, owner);
+  const itemIds = objectItems.length ? objectItems : matchItems(text, items, owner);
   let destination: ActionDestination | null = null;
   const transfer = /把(.+?)(?:递给|交给|塞给|递到)(.+?)(?:[。；，,！？]|$)/u.exec(text);
   if (transfer) {
@@ -140,7 +148,7 @@ function fieldsFor(text: string, scene: ActionScene, state: WorldState, maxTarge
       destination = { entityId: scene.actorId, containerId: matched.id, slotId: slotFor(state, matched.id, text) };
     }
   }
-  return { text, category: categoryOf(text), targetIds: targets, itemIds: matchItems(text, items, owner), destination };
+  return { text, category: categoryOf(text), targetIds: targets, itemIds, destination };
 }
 
 export function buildActionStructure(

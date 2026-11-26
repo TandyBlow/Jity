@@ -55,6 +55,24 @@ describe('action structure', () => {
     expect(s.itemIds).toEqual([]);
     expect(s.destination).toBeNull();
   });
+  it('matches the manipulated object before the verb, not a later route word', () => {
+    const gear = {
+      ...state,
+      initial: {
+        ...state.initial,
+        items: {
+          hatch_cover: { name: '服务巷检修盖' },
+          hatch_door: { name: '钟楼地下检修门' },
+          foyer_table: { name: '门厅翻倒长桌' },
+        },
+        locations: { ...state.initial.locations, foyer: { name: '钟楼门厅' } },
+      },
+    } as unknown as WorldState;
+    const cover = buildActionStructure('我抓住检修盖的拉环把盖子提开，看见通往钟楼的地下检修通道。', scene, gear, 2);
+    expect(cover.subActions[0].itemIds).toEqual(['hatch_cover']);
+    const table = buildActionStructure('我把门厅的长桌推到墙边。', scene, gear, 2);
+    expect(table.subActions[0].itemIds).toEqual(['foyer_table']);
+  });
   it('returns no item when two candidates tie', () => {
     expect(matchItems('饮水杯', [{ id: 'water', name: '休息区饮水杯' }, { id: 'cup', name: '饮水杯' }])).toEqual([]);
   });
