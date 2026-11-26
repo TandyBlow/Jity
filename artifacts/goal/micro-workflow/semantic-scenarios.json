@@ -1419,6 +1419,36 @@
      "purpose": "物品转移"
     }
    ]
+  },
+  {
+   "id": "env-10",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm10-e-success-1",
+     "class": "env_success",
+     "input": "我走进器材棚，把弹药箱盖子掀开。",
+     "purpose": "掀开箱盖"
+    },
+    {
+     "id": "sm10-e-success-2",
+     "class": "env_success",
+     "input": "我把领用台推到墙边。",
+     "purpose": "推台改变环境"
+    },
+    {
+     "id": "sm10-e-move-1",
+     "class": "env_irrelevant_move",
+     "input": "我走进中央庭院。",
+     "purpose": "纯移动"
+    },
+    {
+     "id": "sm10-e-transfer-1",
+     "class": "env_item_transfer",
+     "input": "我把护目镜递给诺诺。",
+     "purpose": "物品转移"
+    }
+   ]
   }
  ]
 }
