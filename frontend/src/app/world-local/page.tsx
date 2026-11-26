@@ -1140,9 +1140,10 @@ export default function WorldLocalPage() {
             // Only a run-level failure (empty answer, transport error) gets a
             // note. Non-empty model prose is never annotated as corrected.
             const failed = Boolean(detail.error) && (detail.error === 'empty_model_output' || detail.fallback);
+            const fallbackNote = detail.error === 'empty_model_output' ? '模型这次没有写出正文。' : '正文已按已结算事实修正';
             setEntries((list) => updateLast(list, (entry) => ({
               ...entry,
-              note: failed ? (detail.error === 'empty_model_output' ? '模型这次没有写出正文。' : detail.error ?? null) : null,
+              note: failed ? fallbackNote : null,
               ms: Math.round(detail.ms),
             })));
           },

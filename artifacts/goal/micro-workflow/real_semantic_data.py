@@ -165,14 +165,15 @@ def prompt_facts(turn):
     return facts
 
 
-def load_turn(turn, source, previous, checks=None, prior_text=''):
+def load_turn(turn, source, previous, checks=None, prior_text='', prompt_facts_ok=False):
     settled_rows = settled(turn)
-    known = {row.get('text') for row in settled_rows if row.get('text')}
-    for fact in prompt_facts(turn):
-        if fact['text'] not in known:
-            settled_rows.append({'task': 'results', 'key': fact['memberId'], 'kind': 'text',
-                                 'text': fact['text'], 'targets': None})
-            known.add(fact['text'])
+    if prompt_facts_ok:
+        known = {row.get('text') for row in settled_rows if row.get('text')}
+        for fact in prompt_facts(turn):
+            if fact['text'] not in known:
+                settled_rows.append({'task': 'results', 'key': fact['memberId'], 'kind': 'text',
+                                     'text': fact['text'], 'targets': None})
+                known.add(fact['text'])
     return {'id': turn['id'], 'source': source, 'input': turn.get('input') or '',
             'text': turn.get('text') or '', 'before': turn.get('before') or {},
             'after': turn.get('after') or {}, 'snapshotBefore': previous,
@@ -225,7 +226,7 @@ def load_semantic_routes():
         previous = initial_snapshot()
         prior = world_knowledge_text()
         for turn in data.get('turns') or []:
-            row = load_turn(turn, 'semantic', previous, prior_text=prior)
+            row = load_turn(turn, 'semantic', previous, prior_text=prior, prompt_facts_ok=True)
             info = meta.get(turn['id']) or {}
             row['class'] = info.get('class')
             row['split'] = info.get('split', 'train')
