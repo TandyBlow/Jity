@@ -26,3 +26,15 @@
 {"id": "sm15-i-r3#e14", "rowId": "sm15-i-r3", "entityId": "hatch_cover", "action": "我走进服务巷检修口，查看服务巷检修盖的拉环。", "appearance": "铁盖虚掩，拉环可握，重量需要稳定提起；盖沿不宜放枪和松散弹匣。", "clause": "拉环可握", "start": 5, "end": 9}
 {"id": "sm15-i-r5#e14", "rowId": "sm15-i-r5", "entityId": "foyer_table", "action": "我走进钟楼门厅，查看门厅翻倒长桌的桌腿。", "appearance": "长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去；挪桌需要先腾开桌腿压住的位置。", "clause": "挪桌需要先腾开桌腿压住的位置", "start": 24, "end": 38}
 {"id": "sm15-i-r6#e14", "rowId": "sm15-i-r6", "entityId": "hatch_door", "action": "我查看钟楼地下检修门的门闩。", "appearance": "铁门关闭，内侧门闩插在槽里；门外是地下检修通道，外面没有能直接开闩的把手。", "clause": "内侧门闩插在槽里", "start": 5, "end": 13}
+{"id": "sm16-i-r1#e15", "rowId": "sm16-i-r1", "entityId": "red_map_desk", "action": "我走进红方集结点，查看红方地图桌的桌脚。", "appearance": "桌脚稳固，桌上压着庭院平面图；桌下空间能容一只电池盒。", "clause": "桌脚稳固", "start": 0, "end": 4}
+{"id": "sm16-i-r2#e14", "rowId": "sm16-i-r2", "entityId": "red_map_desk", "action": "我读红方地图桌下的电池盒空间。", "appearance": "桌脚稳固，桌上压着庭院平面图；桌下空间能容一只电池盒。", "clause": "桌下空间能容一只电池盒", "start": 15, "end": 26}
+{"id": "sm16-i-r3#e14", "rowId": "sm16-i-r3", "entityId": "caesar_map", "action": "我读凯撒的庭院平面图上的正门进攻线。", "appearance": "图上标出正门进攻线与东回廊绕行线；两条都只是待选计划，没有执行成功的记录。", "clause": "图上标出正门进攻线与东回廊绕行线", "start": 0, "end": 16}
+{"id": "sm16-i-r5#e14", "rowId": "sm16-i-r5", "entityId": "radio_battery_case", "action": "我查看短讯机电池盒的盒面。", "appearance": "盒内有两枚满电R型短讯电池，盖子打开，盒面写着短讯机专用。", "clause": "盒面写着短讯机专用", "start": 19, "end": 28}
+{"id": "sm17-i-r1#e14", "rowId": "sm17-i-r1", "entityId": "blue_flag", "action": "我走进钟楼顶层，读蓝方信号旗的底端接口。", "appearance": "蓝布与短杆靠在南窗下，底端接口与旗台相配；尚未安装，不能据此认定蓝方已取得最终控制。", "clause": "底端接口与旗台相配", "start": 11, "end": 20}
+{"id": "sm17-i-r2#e14", "rowId": "sm17-i-r2", "entityId": "balcony_door", "action": "我查看顶层玻璃门的门把。", "appearance": "门合着但未锁，门把缠一道蓝布；向外推开可到外廊，玻璃完整。", "clause": "门把缠一道蓝布", "start": 7, "end": 14}
+{"id": "sm18-i-r1#e16", "rowId": "sm18-i-r1", "entityId": "lin_gun", "action": "我走进西回廊，查看林亦舟放下的演习枪的弹匣。", "appearance": "枪躺在第三根廊柱旁，保险合上，弹匣内剩4发；与坐着的林亦舟相隔一臂，已离开他的手。", "clause": "弹匣内剩4发", "start": 15, "end": 21}
+{"id": "sm18-i-r2#e15", "rowId": "sm18-i-r2", "entityId": "broken_blue_band", "action": "我查看折断的蓝布带的断口。", "appearance": "蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰。", "clause": "断口散开", "start": 15, "end": 19}
+{"id": "sm18-i-r3#e20", "rowId": "sm18-i-r3", "entityId": "shen_band", "action": "我走进医护休息区，读沈澄拆下的红色识别带上的登记。", "appearance": "红布带叠在长椅旁，已脱离沈澄身体，和她退出演习的登记相符。", "clause": "和她退出演习的登记相符", "start": 17, "end": 28}
+{"id": "sm18-i-r4#e16", "rowId": "sm18-i-r4", "entityId": "blanket", "action": "我查看保温毯旁的长椅空位。", "appearance": "毯子折在长椅空位旁，干燥，可供退出后怕冷的人使用。", "clause": "毯子折在长椅空位旁", "start": 0, "end": 9}
+{"id": "sm19-i-r1#e18", "rowId": "sm19-i-r1", "entityId": "supply_counter", "action": "我走进器材棚，查看器材领用台上笔尖。", "appearance": "台上夹着领用簿，笔尖尚湿；台下留有放备用护具的位置。", "clause": "笔尖尚湿", "start": 8, "end": 12}
+{"id": "sm19-i-r3#e14", "rowId": "sm19-i-r3", "entityId": "spare_mag2", "action": "我查看通用短枪弹匣乙的卡榫。", "appearance": "装有8发弗里嘉演习弹，无阵营标记，卡榫与诺诺的演习短枪相配。", "clause": "卡榫与诺诺的演习短枪相配", "start": 17, "end": 29}
