@@ -555,3 +555,18 @@
   5. 状态补丁所需的 characters/positions/tasks/item container 未进差分；sc02 的 check 是 characters.lu.appearanceChanges，sc04 是物品容器，sc06 是 task_lu_route，当前全部不可见；`removed` 也未使用。
 - 浏览器 v3 候选指针已完成：固定前缀 vs KV Cache，Edge/ORT-WASM，12 token。fixed full 171.1 ms p50 / 178.3 p95、decode 150.6、12.91 ms/token；KV full 68.5 / 94.5、decode 30.7 / 40.3、3.09 ms/token、prefill 23.1；输出逐 token 相同，full 2.5×、decode 4.91×、per-token 4.18×。模型 14.8M，int8 encoder/decoder/KV/candidate 10.5/4.8/4.6/0.05 MB；权重留在本地，报告 `v3-onnx-report.json`、`browser-v3-*.json`。
 - 决定：数据流程仍未通过，不训练。下一轮按审计修：`trainable`/三值 target；全状态差分（characters/positions/tasks/items，`supersedes`，`removed`）；意图/已结算/叙事/状态严格分离；env absent 只在明确否定证据；ENV_VERBS 用通用语义而非 held-out check；缓存加 prompt 版本并作废旧 7 条，重新用无 checks 的 prompt 标 20 训练 + 8 测试；然后三任务与状态补丁。浏览器 KV 成果保留，五臂等数据通过后再跑。
+
+## D-053 六条件验收门与旧数据淘汰（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 验收门 `validate_real_semantic.py`，退出码 1 即拒绝训练，六条：
+  1. train 中 `insufficient`/`conflict` 为零；只有 `present`/`absent` 且 `trainable=true`。
+  2. 旧版本缓存命中为零：每条使用中的缓存必须有 `promptVersion=v2` 且 `inputHash` 匹配。
+  3. 冻结测试进入 train 为零：8 个 scenario 全部 test-only；20 条产品输入 train。
+  4. 玩家意图当实际结果为零：`settled` 排除 `task=action` 的命令回显；support 只能来自已结算/叙事/状态差分，不能来自 intent。
+  5. 缓存记录必须有 `inputHash`、`promptVersion`、`labelModel`、`evidence`。
+  6. 测试标签不进 train/阈值：validator 检查 test 只含 scenario、train 不含 scenario；测试标签仍由人工抽查/独立核验。
+- 流水线同步修：三值 `target`（true/false/null）+ `trainable`；`state_diff` 覆盖 characters/positions/tasks/items/locations，外观用引擎的 `supersedes`，保留 `removed`；env 用通用语义而非 held-out check；`settled` 剔除 protagonist command echo；缓存带输入哈希/prompt 版本/模型/证据/时间；旧 7 条缓存因无版本/哈希被忽略。
+- 当前旧数据集（7 条，全 test、旧缓存、无 train）被验收门拒绝：`pass=false`，27 条 failure（target 缺失、旧缓存、意图回显、无 train）。新 prompt 的重新标注已在后台启动；完成后必须 `pass=true` 才能训练。
+- 浏览器 KV 保留：14.8M v3 full 68.5 ms vs 5M 118.1 ms；模型和配置不同，不能归因于参数量。用户判断推理效率已有依据，瓶颈是数据/语义；不再优先优化推理，KV 留待真实游戏与移动端验证。
+- 决定：验收门通过前不训练、不接产品；下一步重标 20+8、过门、独立审计复跑，再三任务、状态补丁、五臂。

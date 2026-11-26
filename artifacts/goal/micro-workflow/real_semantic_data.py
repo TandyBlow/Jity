@@ -30,9 +30,9 @@ SCENARIO_IDS = {'sc01-dialogue-nono-neutrality', 'sc02-conflict-yard-cover', 'sc
                 'sc04-item-magazine', 'sc05-move-hatch', 'sc06-env-hatch-route', 'sc07-move-foyer',
                 'sc08-env-foyer-table'}
 
-ENV_VERBS = re.compile('提开|掀开|翻开|拉开|提起|拖到|拖开|拖走|挪开|移开|让出|侧墙|固定|释放|扣好|放下|放倒')
-MOVE_VERBS = re.compile('走|进入|停在|退|跑|爬上|下到|来到|到达|离开|退回')
 ACTION_VERBS = re.compile('求助|办成|查完|记下|拿起|取出|塞进|递给|交给|拒绝|决定|答应|告诉')
+CACHE_VERSION = 'v2'
+PROMPT_VERSION = 'v2'
 NEG_INFO = re.compile('没有答|没答|未答|拒绝回答|没有说|没说|未能|问不出|没有回应')
 NEG_ENV = re.compile('没有动|没有打开|没有移动|未打开|未移动|保持原样|没有变化')
 
@@ -51,7 +51,7 @@ def load_env():
 def settled(row):
     results = []
     for action in row.get('actions') or []:
-        if action.get('recordKind') != 'result':
+        if action.get('recordKind') != 'result' or action.get('task') == 'action':
             continue
         value = action.get('value')
         if isinstance(value, dict):
@@ -102,33 +102,66 @@ def load_scenarios():
     return rows
 
 
-def active_changes(snapshot, bucket):
+def active_appearance(records):
+    superseded = set()
+    for record in records:
+        if isinstance(record, dict):
+            superseded.update(record.get('supersedes') or [])
+    return {record.get('id'): str(record.get('text') or '') for record in records
+            if isinstance(record, dict) and record.get('id') not in superseded}
+
+
+def snapshot_view(snapshot):
     state = (snapshot or {}).get('transport', {}).get('state') or {}
-    entries = state.get(bucket) or {}
-    changes = {}
-    for identity, entry in entries.items():
-        records = entry.get('appearanceChanges') or []
-        active = [record for record in records if isinstance(record, dict) and not record.get('superseded')]
-        if active:
-            changes[identity] = str(active[-1].get('text') or '')
-    return changes
+    view = {}
+    for identity, character in (state.get('characters') or {}).items():
+        view['char:' + identity] = {
+            'position': character.get('position'),
+            'appearance': active_appearance(character.get('appearanceChanges') or []),
+            'tasks': {tid: task.get('status') for tid, task in (character.get('tasks') or {}).items()},
+        }
+    for identity, item in (state.get('items') or {}).items():
+        view['item:' + identity] = {
+            'position': item.get('position'),
+            'appearance': active_appearance(item.get('appearanceChanges') or []),
+        }
+    for identity, location in (state.get('locations') or {}).items():
+        view['loc:' + identity] = {
+            'appearance': active_appearance(location.get('appearanceChanges') or []),
+        }
+    return view
+
+
+def environment_keys(before_view, after_view, location_ids):
+    keys = []
+    for key, after in after_view.items():
+        before = before_view.get(key) or {}
+        if after.get('appearance') != before.get('appearance'):
+            keys.append(key)
+        elif key.startswith('item:'):
+            container = ((after.get('position') or {}).get('containerId') or '')
+            if container in location_ids:
+                keys.append(key)
+    for key, before in before_view.items():
+        if key not in after_view and before.get('appearance'):
+            keys.append(key)
+    return keys
 
 
 def state_diff(row):
     before = row.get('snapshotBefore')
     after = row.get('snapshot') or {}
-    before_changes = {}
-    after_changes = {}
-    if before:
-        before_changes.update(active_changes(before, 'items'))
-        before_changes.update(active_changes(before, 'locations'))
-    after_changes.update(active_changes(after, 'items'))
-    after_changes.update(active_changes(after, 'locations'))
-    added = [{'id': identity, 'text': text} for identity, text in after_changes.items()
-             if before_changes.get(identity) != text]
-    removed = [{'id': identity, 'text': text} for identity, text in before_changes.items()
-               if identity not in after_changes]
-    return {'known': bool(before), 'added': added, 'removed': removed}
+    if not before:
+        return {'known': False, 'added': [], 'removed': [], 'changed': [], 'env': []}
+    before_view = snapshot_view(before)
+    after_view = snapshot_view(after)
+    added = [{'key': key, 'after': after_view[key]} for key in after_view if key not in before_view]
+    removed = [{'key': key, 'before': before_view[key]} for key in before_view if key not in after_view]
+    changed = [{'key': key, 'before': before_view.get(key), 'after': after_view[key]}
+               for key in after_view if before_view.get(key) != after_view[key]]
+    location_ids = set((after.get('transport', {}).get('state') or {}).get('locations') or {})
+    env = environment_keys(before_view, after_view, location_ids)
+    return {'known': True, 'added': added, 'removed': removed, 'changed': changed, 'env': env}
 
 
 def prompt(row, diff):
@@ -145,8 +178,16 @@ def prompt(row, diff):
 - 只标已结算行动/状态差分支持的事实；意图、计划、别人未完成的行为不算。
 - info：本回合实际获得的新信息；被拒绝/没答出 = present=false。
 - env：环境或物品状态实际改变；移动、拿起、转移不算 env。
-- support 必须是“玩家意图”“已结算行动”或“叙事”里的原文子串；没有支持 = present=false。
-- 如果行动说 env 改变但状态差分没有新增，不要改成 false；保留候选，核验器会标 conflict。"""
+- support 必须来自已结算行动、叙事或状态差分；玩家意图只是意图，不能当事实支持。
+- 如果行动说 env 改变但状态差分没有对应变化，不要改成 false；保留候选，核验器会标 conflict。"""
+
+
+def input_hash(row):
+    payload = row.get('input', '') + '\n' + row.get('text', '') + '\n' + json.dumps(
+        row.get('settled') or [], ensure_ascii=False) + '\n' + json.dumps(
+        state_diff(row), ensure_ascii=False)
+    import hashlib
+    return hashlib.sha256(payload.encode('utf8')).hexdigest()
 
 
 def label(row, cache_only=False):
@@ -155,7 +196,8 @@ def label(row, cache_only=False):
         for line in CACHE.read_text(encoding='utf8').splitlines():
             if line.strip():
                 record = json.loads(line)
-                cache[record['id']] = record['label']
+                if record.get('promptVersion') == PROMPT_VERSION and record.get('inputHash') == input_hash(row):
+                    cache[record['id']] = record['label']
     if row['id'] in cache:
         return cache[row['id']], 'cache'
     if cache_only:
@@ -174,35 +216,50 @@ def label(row, cache_only=False):
     if not match:
         return None, 'bad-json'
     proposal = json.loads(match.group(0))
+    record = {'id': row['id'], 'inputHash': input_hash(row), 'promptVersion': PROMPT_VERSION,
+              'labelModel': model, 'evidence': {'info': (proposal.get('info') or {}).get('evidence'),
+                                                 'env': (proposal.get('env') or {}).get('evidence')},
+              'label': proposal, 'at': time.time()}
     with CACHE.open('a', encoding='utf8') as handle:
-        handle.write(json.dumps({'id': row['id'], 'label': proposal}, ensure_ascii=False) + '\n')
+        handle.write(json.dumps(record, ensure_ascii=False) + '\n')
     return proposal, 'model'
+
+
+ENV_ACTION = re.compile('提开|掀开|翻开|拉开|打开|推开|推|挪动|挪开|拖动|拖到|拖开|拖走|移开|让出|固定|释放|扣好|放下|放倒|关上|搬到|摆到|挂到|插进|拔出')
+ENV_TEXT = ('appearance', 'position')
 
 
 def classify(field, item, row, diff, support, content, source, settled_text):
     present = bool(item.get('present'))
     support_ok = bool(support and support in source)
     if field == 'env':
+        env_keys = diff.get('env') or []
         if present:
             if not support_ok or not content:
                 return 'insufficient'
             if not diff['known']:
                 return 'insufficient'
-            if diff['added']:
-                overlap = any(support in change['text'] or content in change['text'] or
-                              change['text'] in support or change['text'] in content
-                              for change in diff['added'])
-                return 'present' if overlap else 'conflict'
-            if ENV_VERBS.search(settled_text + source):
+            if env_keys:
+                values = []
+                for key in env_keys:
+                    for bucket in ('changed', 'added'):
+                        for change in diff.get(bucket) or []:
+                            if change.get('key') == key:
+                                values.append(json.dumps(change, ensure_ascii=False))
+                if any(support in value or content in value or
+                       (support and support in value) for value in values):
+                    return 'present'
+                return 'conflict'
+            if ENV_ACTION.search(settled_text + source):
                 return 'conflict'
             return 'insufficient'
         if not diff['known']:
             return 'insufficient'
-        if not diff['added'] and ENV_VERBS.search(settled_text + source):
+        if env_keys:
             return 'conflict'
-        if not diff['added'] and not ENV_VERBS.search(settled_text):
-            return 'absent'
-        if NEG_ENV.search(settled_text):
+        if ENV_ACTION.search(settled_text):
+            return 'conflict'
+        if NEG_ENV.search(settled_text) or not env_keys:
             return 'absent'
         return 'insufficient'
     # info
@@ -221,15 +278,17 @@ def classify(field, item, row, diff, support, content, source, settled_text):
 
 def verify(row, proposal):
     diff = state_diff(row)
-    source = row['input'] + '\n' + row['text']
     settled_text = json.dumps(row['settled'], ensure_ascii=False)
+    source = row['text'] + '\n' + settled_text
     result = {'stateDiff': diff, 'fields': {}}
     for field in ('info', 'env'):
         item = proposal.get(field) or {}
         support = str(item.get('support') or '').strip()
         content = str(item.get('content') or '').strip()
         status = classify(field, item, row, diff, support, content, source, settled_text)
-        result['fields'][field] = {'status': status, 'present': status == 'present',
+        target = True if status == 'present' else False if status == 'absent' else None
+        result['fields'][field] = {'status': status, 'target': target,
+                                   'trainable': status in ('present', 'absent'),
                                    'content': content, 'support': support,
                                    'proposed': bool(item.get('present')),
                                    'evidence': item.get('evidence') or ''}
@@ -281,3 +340,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    from validate_real_semantic import main as validate
+    validate()

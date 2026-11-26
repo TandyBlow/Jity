@@ -118,6 +118,31 @@ before the three tasks.
 The v3 candidate-pointer browser arm and KV-cache measurement are already
 done (D-052); the product/five-arm work waits for the data pass.
 
+## Acceptance gate (D-053)
+
+`validate_real_semantic.py` exits 1 unless all six conditions hold:
+
+1. zero `insufficient`/`conflict` in train; every train field has
+   `trainable=true` and a `true`/`false` target;
+2. zero old-version cache hits; every used cache record has `promptVersion=v2`
+   and a matching `inputHash`;
+3. zero frozen test rows in train; the 8 scenarios are test-only; the 20
+   product turns are train;
+4. zero player-intent echoes as settled support; support comes only from
+   settled actions, narration or the state diff;
+5. every used cache record has `inputHash`, `promptVersion`, `labelModel` and
+   `evidence`;
+6. test rows only come from the scenario set and cannot enter train or
+   threshold tuning; the test labels remain subject to the independent
+   spot-check.
+
+The pipeline now writes a three-value `target` + `trainable`, a full state
+diff (characters/positions/tasks/items/locations, engine `supersedes`,
+`removed`), a versioned cache, and excludes the protagonist command echo from
+settled actions. The old 7-row dataset fails the gate (27 failures: missing
+targets, old cache, intent echoes, no train rows); the re-label with the v2
+prompt is running. Nothing trains until the gate passes.
+
 ## Reproduce
 
 ```bash
