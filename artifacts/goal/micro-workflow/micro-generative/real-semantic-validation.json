@@ -1,19 +1,19 @@
 {
  "version": "v2",
  "pass": true,
- "rawRows": 52,
- "trainRows": 28,
+ "rawRows": 72,
+ "trainRows": 42,
  "testRows": 8,
- "expectedTrain": 44,
+ "expectedTrain": 64,
  "expectedTest": 8,
  "fieldCounts": {
   "info": {
-   "pos": 16,
-   "neg": 2
+   "pos": 25,
+   "neg": 3
   },
   "env": {
-   "pos": 3,
-   "neg": 19
+   "pos": 12,
+   "neg": 22
   }
  },
  "trainingMinimum": "50/field",

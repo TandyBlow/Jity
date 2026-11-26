@@ -376,7 +376,7 @@ def label(row, cache_only=False):
     from openai import OpenAI
     client = OpenAI(api_key=key, base_url=env.get('LLM_BASE_URL') or 'https://api.deepseek.com',
                     timeout=90, max_retries=2)
-    model = env.get('LABEL_MODEL') or 'deepseek-v4-pro'
+    model = os.environ.get('LABEL_MODEL') or env.get('LABEL_MODEL') or 'deepseek-v4-pro'
     try:
         response = client.chat.completions.create(
             model=model, temperature=0, messages=[{'role': 'user', 'content': prompt(row, state_diff(row))}])
@@ -414,8 +414,9 @@ def classify(field, item, row, diff, support, content, source, settled_text):
             ENV_ACTION.search(str(action.get('text') or '')) for action in structured)
         if not diff['known']:
             return 'insufficient'
-        failure = bool(ENV_FAIL.search(settled_text + source) or NEG_ENV.search(settled_text + source))
-        if failure and (hints or env_keys):
+        hinted = [str(item.get('text') or '') for item in row.get('settled') or []
+                  if item.get('task') == 'results' and read_env_hints([str(item.get('text') or '')])]
+        if any(ENV_FAIL.search(value) or NEG_ENV.search(value) for value in hinted):
             return 'conflict'
         # 结构化标签+已记录外观是硬证据
         if hints and env_keys and hint_keys & recorded:
@@ -448,7 +449,7 @@ def classify(field, item, row, diff, support, content, source, settled_text):
         if hints:
             return 'conflict'
         partial = '只完成一部分' in settled_text or '部分' in settled_text
-        if not partial and (NEG_ENV.search(settled_text + source) or ENV_FAIL.search(settled_text + source)):
+        if not partial and (NEG_ENV.search(settled_text) or ENV_FAIL.search(settled_text)):
             return 'absent'
         if capable:
             return 'conflict'
@@ -505,6 +506,8 @@ def verify(row, proposal):
         support = str(item.get('support') or '').strip()
         content = str(item.get('content') or '').strip()
         status = classify(field, item, row, diff, support, content, source, settled_text)
+        if status == 'present' and support and support not in source:
+            support = ''
         target = True if status == 'present' else False if status == 'absent' else None
         result['fields'][field] = {'status': status, 'target': target,
                                    'trainable': status in ('present', 'absent'),

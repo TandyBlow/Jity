@@ -41,7 +41,7 @@ def main():
     from openai import OpenAI
     client = OpenAI(api_key=key, base_url=env.get('LLM_BASE_URL') or 'https://api.deepseek.com',
                     timeout=90, max_retries=2)
-    model = env.get('LABEL_MODEL') or 'deepseek-v4-pro'
+    model = os.environ.get('LABEL_MODEL') or env.get('LABEL_MODEL') or 'deepseek-v4-pro'
     lock = threading.Lock()
 
     def work(row):
