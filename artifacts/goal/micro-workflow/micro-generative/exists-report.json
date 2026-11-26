@@ -1,0 +1,270 @@
+{
+ "trainRows": 1000,
+ "testRows": 24,
+ "posWeight": [
+  3.484304904937744,
+  9.8695650100708,
+  5.849315166473389,
+  8.615385055541992,
+  5.172839641571045,
+  19.83333396911621
+ ],
+ "existence": {
+  "info": {
+   "gold": 6,
+   "predicted": 7,
+   "precision": 0.286,
+   "recall": 0.333,
+   "f1": 0.308
+  },
+  "env": {
+   "gold": 4,
+   "predicted": 7,
+   "precision": 0.571,
+   "recall": 1.0,
+   "f1": 0.727
+  },
+  "promise": {
+   "gold": 4,
+   "predicted": 2,
+   "precision": 1.0,
+   "recall": 0.5,
+   "f1": 0.667
+  },
+  "decision": {
+   "gold": 7,
+   "predicted": 5,
+   "precision": 0.8,
+   "recall": 0.571,
+   "f1": 0.667
+  },
+  "cause": {
+   "gold": 4,
+   "predicted": 6,
+   "precision": 0.333,
+   "recall": 0.5,
+   "f1": 0.4
+  },
+  "neg": {
+   "gold": 1,
+   "predicted": 3,
+   "precision": 0.333,
+   "recall": 1.0,
+   "f1": 0.5
+  }
+ },
+ "span": {
+  "info": {
+   "rows": 6,
+   "substringRate": 0.167
+  },
+  "env": {
+   "rows": 4,
+   "substringRate": 0.0
+  },
+  "promise": {
+   "rows": 4,
+   "substringRate": 0.25
+  },
+  "decision": {
+   "rows": 7,
+   "substringRate": 0.429
+  },
+  "cause": {
+   "rows": 4,
+   "substringRate": 0.0
+  },
+  "neg": {
+   "rows": 1,
+   "substringRate": 1.0
+  }
+ },
+ "generationOpen": {
+  "250": {
+   "cause": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "decision": {
+    "goldPositives": 7,
+    "precision": 0.2,
+    "recall": 0.333,
+    "f1": 0.25
+   },
+   "dest": {
+    "goldPositives": 4,
+    "precision": 0.667,
+    "recall": 0.667,
+    "f1": 0.667
+   },
+   "env": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "info": {
+    "goldPositives": 6,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "item": {
+    "goldPositives": 11,
+    "precision": 0.273,
+    "recall": 0.75,
+    "f1": 0.4
+   },
+   "loc": {
+    "goldPositives": 3,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "neg": {
+    "goldPositives": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "promise": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "target": {
+    "goldPositives": 9,
+    "precision": 0.357,
+    "recall": 1.0,
+    "f1": 0.526
+   }
+  },
+  "500": {
+   "cause": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "decision": {
+    "goldPositives": 7,
+    "precision": 0.2,
+    "recall": 0.333,
+    "f1": 0.25
+   },
+   "dest": {
+    "goldPositives": 4,
+    "precision": 0.2,
+    "recall": 0.5,
+    "f1": 0.286
+   },
+   "env": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "info": {
+    "goldPositives": 6,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "item": {
+    "goldPositives": 11,
+    "precision": 0.286,
+    "recall": 1.0,
+    "f1": 0.444
+   },
+   "loc": {
+    "goldPositives": 3,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "neg": {
+    "goldPositives": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "promise": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "target": {
+    "goldPositives": 9,
+    "precision": 0.444,
+    "recall": 0.571,
+    "f1": 0.5
+   }
+  },
+  "1000": {
+   "cause": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "decision": {
+    "goldPositives": 7,
+    "precision": 0.2,
+    "recall": 0.333,
+    "f1": 0.25
+   },
+   "dest": {
+    "goldPositives": 4,
+    "precision": 0.333,
+    "recall": 0.333,
+    "f1": 0.333
+   },
+   "env": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "info": {
+    "goldPositives": 6,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "item": {
+    "goldPositives": 11,
+    "precision": 0.357,
+    "recall": 1.0,
+    "f1": 0.526
+   },
+   "loc": {
+    "goldPositives": 3,
+    "precision": 1.0,
+    "recall": 0.333,
+    "f1": 0.5
+   },
+   "neg": {
+    "goldPositives": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "promise": {
+    "goldPositives": 4,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "target": {
+    "goldPositives": 9,
+    "precision": 0.667,
+    "recall": 0.75,
+    "f1": 0.706
+   }
+  }
+ }
+}

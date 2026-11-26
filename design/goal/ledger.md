@@ -153,3 +153,5 @@ G1 之后新增：
 - ONNX 形状补测（2026-11-26）：legacy exporter 的动态轴是名义的；独立 int8 图只在 `src=55,tgt=18` 可跑，54/56/96×64 都失败。固定 96×64 导出可跑，5M int8 7.86 MB、单次 forward CPU p50 3.3 ms；不是逐 token，也不是浏览器。浏览器臂需固定 padding + encoder/decoder-step 分图或 dynamo；当前不宣称浏览器通过。决策 D-047，报告 `design/goal/micro-generative-pilot.md`。
 
 - 手写训练种子（2026-11-26）：28 条手写（12 条件 + 12 事件 + 4 条 `frost`），与 24 条测试不重叠；v3 训练 123 行。BERT 候选指针 0.346 字段 / 0.481 实体 / 0.400 新世界实体 / 0.083 精确；95 行时为 0.244/0.333/0.200/0.042。从头候选 0.295/0.333/0.200。`info/env/promise/cause/neg` 仍 0；result 不稳定（BERT 0.5、从头 0.75、分类器 0.583）；p50 约 94 ms。数据有响应，继续扩手写训练；不接产品。决策 D-048。
+
+- 数据规模与开放字段（2026-11-26）：固定 BERT 候选指针，123 基础 + 877 模板 = 1000；250/500/1000 热启动。字段 0.333/0.333/0.359、实体 0.370/0.333/0.481、mistport 实体全 0；28 条手写种子 0.346/0.481/0.400，模板扩容没有迁移到新世界。开放字段生成 info/env/promise/cause 全 0，存在性分类 F1 0.31–0.73；span 子串率 env/cause 0、info 0.17，需专用短序列提取。result 未加权 0.667 vs 加权 0.333，保留未加权。浏览器 5M 逐 token：encode 33.8 ms、9.61 ms/token、12 token p50 118.1 ms；v3 浏览器未测。决策 D-049，报告 `design/goal/micro-generative-scale.md`。

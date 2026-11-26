@@ -1,0 +1,396 @@
+{
+ "baseRows": 123,
+ "generatedRows": 877,
+ "testRows": 24,
+ "testWorlds": [
+  "dragon",
+  "mistport"
+ ],
+ "openCounts": {
+  "cause": 162,
+  "decision": 104,
+  "env": 92,
+  "info": 223,
+  "neg": 48,
+  "promise": 146
+ },
+ "testOpenCounts": {
+  "cause": 4,
+  "decision": 7,
+  "env": 4,
+  "info": 6,
+  "neg": 1,
+  "promise": 4
+ },
+ "spanCoverage": {
+  "cause": {
+   "rows": 4,
+   "substringRate": 0.0
+  },
+  "decision": {
+   "rows": 7,
+   "substringRate": 0.429
+  },
+  "env": {
+   "rows": 4,
+   "substringRate": 0.0
+  },
+  "info": {
+   "rows": 6,
+   "substringRate": 0.167
+  },
+  "neg": {
+   "rows": 1,
+   "substringRate": 1.0
+  },
+  "promise": {
+   "rows": 4,
+   "substringRate": 0.25
+  }
+ },
+ "stages": {
+  "250": {
+   "rows": 24,
+   "exact": 0.083,
+   "fieldRecall": 0.333,
+   "perField": {
+    "act": 0.167,
+    "cause": 0.0,
+    "conf": 0.714,
+    "decision": 0.143,
+    "dest": 0.5,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.25,
+    "loc": 0.0,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.667,
+    "target": 0.357,
+    "time": 0.333
+   },
+   "resultAccuracy": 0.667,
+   "p50Ms": 78.8,
+   "p95Ms": 105.5,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.348,
+     "entityFieldRecall": 0.455
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.25,
+     "entityFieldRecall": 0.0
+    }
+   },
+   "entityFieldRecall": 0.37,
+   "openFieldRecall": 0.314,
+   "trainMs": 94068,
+   "trainSize": 250,
+   "fieldMetrics": {
+    "cause": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "decision": {
+     "goldPositives": 7,
+     "precision": 0.2,
+     "recall": 0.333,
+     "f1": 0.25
+    },
+    "dest": {
+     "goldPositives": 4,
+     "precision": 0.667,
+     "recall": 0.667,
+     "f1": 0.667
+    },
+    "env": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "info": {
+     "goldPositives": 6,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "item": {
+     "goldPositives": 11,
+     "precision": 0.273,
+     "recall": 0.75,
+     "f1": 0.4
+    },
+    "loc": {
+     "goldPositives": 3,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "neg": {
+     "goldPositives": 1,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "promise": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "target": {
+     "goldPositives": 9,
+     "precision": 0.357,
+     "recall": 1.0,
+     "f1": 0.526
+    }
+   }
+  },
+  "500": {
+   "rows": 24,
+   "exact": 0.042,
+   "fieldRecall": 0.333,
+   "perField": {
+    "act": 0.4,
+    "cause": 0.0,
+    "conf": 0.625,
+    "decision": 0.143,
+    "dest": 0.167,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.286,
+    "loc": 0.0,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.667,
+    "target": 0.333,
+    "time": 0.2
+   },
+   "resultAccuracy": 0.667,
+   "p50Ms": 86.3,
+   "p95Ms": 141.7,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.348,
+     "entityFieldRecall": 0.409
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.25,
+     "entityFieldRecall": 0.0
+    }
+   },
+   "entityFieldRecall": 0.333,
+   "openFieldRecall": 0.333,
+   "trainMs": 89543,
+   "trainSize": 500,
+   "fieldMetrics": {
+    "cause": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "decision": {
+     "goldPositives": 7,
+     "precision": 0.2,
+     "recall": 0.333,
+     "f1": 0.25
+    },
+    "dest": {
+     "goldPositives": 4,
+     "precision": 0.2,
+     "recall": 0.5,
+     "f1": 0.286
+    },
+    "env": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "info": {
+     "goldPositives": 6,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "item": {
+     "goldPositives": 11,
+     "precision": 0.286,
+     "recall": 1.0,
+     "f1": 0.444
+    },
+    "loc": {
+     "goldPositives": 3,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "neg": {
+     "goldPositives": 1,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "promise": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "target": {
+     "goldPositives": 9,
+     "precision": 0.444,
+     "recall": 0.571,
+     "f1": 0.5
+    }
+   }
+  },
+  "1000": {
+   "rows": 24,
+   "exact": 0.042,
+   "fieldRecall": 0.359,
+   "perField": {
+    "act": 0.4,
+    "cause": 0.0,
+    "conf": 0.429,
+    "decision": 0.143,
+    "dest": 0.2,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.357,
+    "loc": 0.333,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.75,
+    "target": 0.545,
+    "time": 0.0
+   },
+   "resultAccuracy": 0.75,
+   "p50Ms": 86.7,
+   "p95Ms": 173.7,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.379,
+     "entityFieldRecall": 0.591
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.25,
+     "entityFieldRecall": 0.0
+    }
+   },
+   "entityFieldRecall": 0.481,
+   "openFieldRecall": 0.294,
+   "trainMs": 209613,
+   "trainSize": 1000,
+   "fieldMetrics": {
+    "cause": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "decision": {
+     "goldPositives": 7,
+     "precision": 0.2,
+     "recall": 0.333,
+     "f1": 0.25
+    },
+    "dest": {
+     "goldPositives": 4,
+     "precision": 0.333,
+     "recall": 0.333,
+     "f1": 0.333
+    },
+    "env": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "info": {
+     "goldPositives": 6,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "item": {
+     "goldPositives": 11,
+     "precision": 0.357,
+     "recall": 1.0,
+     "f1": 0.526
+    },
+    "loc": {
+     "goldPositives": 3,
+     "precision": 1.0,
+     "recall": 0.333,
+     "f1": 0.5
+    },
+    "neg": {
+     "goldPositives": 1,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "promise": {
+     "goldPositives": 4,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "target": {
+     "goldPositives": 9,
+     "precision": 0.667,
+     "recall": 0.75,
+     "f1": 0.706
+    }
+   }
+  }
+ },
+ "result": {
+  "classes": [
+   "partial",
+   "completed",
+   "blocked",
+   "failed"
+  ],
+  "weights": [
+   2.237499952316284,
+   0.3678082227706909,
+   2.632352828979492,
+   2.200819730758667
+  ],
+  "unweighted": {
+   "accuracy": 0.667,
+   "rows": 12,
+   "confusion": {
+    "completed->failed": 1,
+    "partial->completed": 3,
+    "completed->completed": 6,
+    "failed->failed": 1,
+    "blocked->blocked": 1
+   }
+  },
+  "weighted": {
+   "accuracy": 0.333,
+   "rows": 12,
+   "confusion": {
+    "completed->failed": 5,
+    "partial->completed": 2,
+    "completed->completed": 2,
+    "failed->failed": 1,
+    "blocked->blocked": 1,
+    "partial->failed": 1
+   }
+  }
+ }
+}
