@@ -70,6 +70,48 @@ describe('task proposer', () => {
     expect(result?.updates.find((row) => row.taskId === 'task_hero_choice')?.label).toBe('keyword');
   });
 
+  it('restores the cross-turn ledger from a snapshot and dedupes facts', async () => {
+    const first = createMicroTaskProposer({ scoring });
+    await first({ state: state(), facts: [{ id: 'f1', memberId: 'hero', text: '路明非拿起手电。' }] });
+    await first({ state: state(), facts: [{ id: 'f2', memberId: 'hero', text: '路明非打开手电。' }] });
+    const snapshot = first.exportLedger();
+    expect(snapshot?.entries.find((entry) => entry.taskId === 'task_hero_key')?.status).toMatchObject({ c1: 'satisfied', c3: 'satisfied' });
+    expect(snapshot?.seenFacts).toContain('hero:路明非拿起手电。');
+
+    const second = createMicroTaskProposer({ scoring });
+    second.importLedger(snapshot);
+    const third = await second({
+      state: state(),
+      facts: [
+        { id: 'f1', memberId: 'hero', text: '路明非拿起手电。' },
+        { id: 'f2', memberId: 'hero', text: '路明非打开手电。' },
+        { id: 'f3', memberId: 'hero', text: '路明非确认电量。' },
+      ],
+    });
+    expect(third?.supports).toEqual([expect.objectContaining({ characterId: 'hero', taskId: 'task_hero_key' })]);
+  });
+
+  it('invalidates a satisfied item condition when the item leaves the owner', async () => {
+    const world = state();
+    const proposer = createMicroTaskProposer({ scoring });
+    const facts = [
+      { id: 'f1', memberId: 'hero', text: '路明非拿起手电。' },
+      { id: 'f2', memberId: 'hero', text: '路明非打开手电。' },
+      { id: 'f3', memberId: 'hero', text: '路明非确认电量。' },
+    ];
+    await proposer({ state: world, facts });
+    world.items.torch.position.containerId = 'ally';
+    const after = await proposer({ state: world, facts: [] });
+    expect(after?.supports).toEqual([]);
+    const pending = after?.pending.find((row) => row.taskId === 'task_hero_key');
+    expect(pending).toMatchObject({ matched: 2, total: 3 });
+    expect(pending?.missing.join('')).toContain('已失效');
+
+    world.items.torch.position.containerId = 'hero';
+    const again = await proposer({ state: world, facts: [] });
+    expect(again?.supports).toEqual([expect.objectContaining({ taskId: 'task_hero_key' })]);
+  });
+
   it('does not count keyword or attempt as a satisfied condition', async () => {
     const proposer = createMicroTaskProposer({
       scoring: (rows) => rows.map(() => ({ label: 'keyword' as const, confidence: 0.9 })),

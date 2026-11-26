@@ -17,7 +17,7 @@ import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micr
 import { createMicroContinuation } from '@/lib/world-engine/local/micro/continuation';
 import { createMicroReaction } from '@/lib/world-engine/local/micro/reaction';
 import { createMicroTaskVerifier } from '@/lib/world-engine/local/micro/task-progress';
-import { createMicroTaskProposer } from '@/lib/world-engine/local/micro/task-proposer';
+import { createMicroTaskProposer, type TaskLedgerSnapshot } from '@/lib/world-engine/local/micro/task-proposer';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -535,6 +535,8 @@ async function openWithLease(
   alive: () => boolean,
   narrationSourceOf: () => Record<string, { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }> | undefined,
   onCommit: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void,
+  taskLedgerOf?: () => TaskLedgerSnapshot | undefined,
+  onRestoreTaskLedger?: (ledger: TaskLedgerSnapshot | null) => void,
   forceHandback = false,
   attempts = 20,
   roll?: () => number,
@@ -552,7 +554,7 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(taskLedgerOf ? { taskLedgerOf } : {}), ...(onRestoreTaskLedger ? { onRestoreTaskLedger } : {}), ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
       );
       if (opened.created) await opened.session.start();
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
@@ -1292,7 +1294,10 @@ export default function WorldLocalPage() {
         let session: LocalGameSession;
         let restored = false;
         try {
-          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent, arm.schedHandback ?? false, 20, seededRoll);
+          session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent,
+            microTaskProposer ? () => microTaskProposer.exportLedger() ?? undefined : undefined,
+            microTaskProposer ? (ledger) => microTaskProposer.importLedger(ledger) : undefined,
+            arm.schedHandback ?? false, 20, seededRoll);
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           // A save can carry an advance left open by a failed turn. The next
           // submit would be refused as turn_in_progress (2603 run: ready, then

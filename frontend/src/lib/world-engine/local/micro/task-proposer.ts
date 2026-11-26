@@ -2,7 +2,7 @@
  * conditions each settled fact supports, so several facts across turns can
  * jointly complete one task. The proposer only proposes; the existing verifier
  * remains the authority that commits an achievement. */
-import type { Id } from '../../types';
+import type { Id, WorldState } from '../../types';
 import type { MicroTaskProposal, MicroTaskProposerFn } from '../semantics/settlement/types';
 import { CONFIRM, conditionRelevant, taskConditions, type TaskCondition } from './task-progress';
 import { getMicroTokenizer } from './shared';
@@ -11,11 +11,39 @@ import { createMicroRuntime } from './runtime';
 const LABELS = ['none', 'keyword', 'attempt', 'satisfied'] as const;
 type Label = typeof LABELS[number];
 const RANK: Record<Label, number> = { none: 0, keyword: 1, attempt: 2, satisfied: 3 };
+export const TASK_LEDGER_VERSION = 1 as const;
+
+/** Serializable ledger carried inside the local game snapshot. It is not part
+ * of WorldState: the world digest never depends on proposer bookkeeping. */
+export interface TaskLedgerSnapshot {
+  version: typeof TASK_LEDGER_VERSION;
+  worldId: string;
+  seenFacts: string[];
+  entries: Array<{
+    taskId: Id;
+    ownerId: Id;
+    conditions: TaskCondition[];
+    status: Record<string, Label>;
+    active: Record<string, boolean>;
+    evidence: Record<string, { factId: string; text: string }>;
+    invalidatedAt: Record<string, string | null>;
+  }>;
+}
+
+export interface MicroTaskProposerPort extends MicroTaskProposerFn {
+  exportLedger(): TaskLedgerSnapshot | null;
+  importLedger(snapshot: unknown): void;
+  resetLedger(): void;
+}
 
 interface LedgerEntry {
+  ownerId: Id;
   conditions: TaskCondition[];
   status: Record<string, Label>;
+  /** False only for a satisfied condition that no longer holds (item lost). */
+  active: Record<string, boolean>;
   evidence: Record<string, { factId: string; text: string }>;
+  invalidatedAt: Record<string, string | null>;
 }
 
 /** A satisfied label still needs the condition's own evidence: the action verb,
@@ -41,7 +69,8 @@ export interface MicroTaskProposerOptions {
   scoring?: (rows: Array<{ condition: TaskCondition; goal: string; text: string }>) => Promise<Array<{ label: Label; confidence: number }> | null> | Array<{ label: Label; confidence: number }> | null;
   onStats?: (record: {
     facts: number; conditions: number; inferences: number; headOutputs: number;
-    proposed: number; ms: number; loadMs: number; source: 'micro' | 'abstain'; reason?: string;
+    proposed: number; invalidated?: number; ms: number; loadMs: number;
+    source: 'micro' | 'abstain'; reason?: string;
   }) => void;
 }
 
@@ -52,11 +81,96 @@ function softmax(values: number[]): number[] {
   return exps.map((value) => value / sum);
 }
 
-export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}): MicroTaskProposerFn {
+export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}): MicroTaskProposerPort {
   const runtime = createMicroRuntime({ threads: 1 });
   const ledger = new Map<Id, LedgerEntry>();
   const seenFacts = new Set<string>();
   let worldId: string | null = null;
+
+  function resetLedger(): void {
+    ledger.clear();
+    seenFacts.clear();
+    worldId = null;
+  }
+
+  /** Item conditions are continuous; everything else is historical. */
+  function itemHeldBy(state: WorldState, ownerId: Id, name: string): boolean | null {
+    const core = name.replace(/^.+?的/u, '');
+    const ids = Object.keys(state.initial.items);
+    const itemId = ids.find((id) => state.initial.items[id].name === name)
+      ?? ids.find((id) => state.initial.items[id].name === core)
+      ?? ids.find((id) => (state.initial.items[id].name ?? '').includes(core));
+    if (!itemId) return null;
+    let container: Id | null = state.items[itemId]?.position.containerId ?? null;
+    const seen = new Set<Id>();
+    while (container && !state.characters[container] && state.items[container] && !seen.has(container)) {
+      seen.add(container);
+      container = state.items[container].position.containerId;
+    }
+    return container === ownerId;
+  }
+
+  function refreshLifetimes(state: WorldState): void {
+    const now = state.time.dateTime;
+    for (const entry of ledger.values()) {
+      for (const condition of entry.conditions) {
+        if (condition.kind !== 'item' || entry.status[condition.id] !== 'satisfied') continue;
+        const held = itemHeldBy(state, entry.ownerId, condition.value);
+        if (held === null) continue;
+        if (!held && entry.active[condition.id] !== false) {
+          entry.active[condition.id] = false;
+          entry.invalidatedAt[condition.id] = now;
+        } else if (held && entry.active[condition.id] === false) {
+          entry.active[condition.id] = true;
+          entry.invalidatedAt[condition.id] = null;
+        }
+      }
+    }
+  }
+
+  function exportLedger(): TaskLedgerSnapshot | null {
+    if (!worldId) return null;
+    return {
+      version: TASK_LEDGER_VERSION,
+      worldId,
+      seenFacts: [...seenFacts],
+      entries: [...ledger].map(([taskId, entry]) => ({
+        taskId,
+        ownerId: entry.ownerId,
+        conditions: entry.conditions,
+        status: entry.status,
+        active: entry.active,
+        evidence: entry.evidence,
+        invalidatedAt: entry.invalidatedAt,
+      })),
+    };
+  }
+
+  function importLedger(snapshot: unknown): void {
+    resetLedger();
+    if (!snapshot || typeof snapshot !== 'object') return;
+    const value = snapshot as Partial<TaskLedgerSnapshot>;
+    if (value.version !== TASK_LEDGER_VERSION || typeof value.worldId !== 'string' || !Array.isArray(value.entries)) return;
+    worldId = value.worldId;
+    for (const key of value.seenFacts ?? []) if (typeof key === 'string') seenFacts.add(key);
+    for (const raw of value.entries) {
+      if (!raw || typeof raw.taskId !== 'string' || typeof raw.ownerId !== 'string' || !Array.isArray(raw.conditions)) continue;
+      const status: Record<string, Label> = { ...(raw.status ?? {}) };
+      const active: Record<string, boolean> = { ...(raw.active ?? {}) };
+      for (const condition of raw.conditions) {
+        if (!LABELS.includes(status[condition.id])) status[condition.id] = 'none';
+        if (typeof active[condition.id] !== 'boolean') active[condition.id] = status[condition.id] === 'satisfied';
+      }
+      ledger.set(raw.taskId, {
+        ownerId: raw.ownerId,
+        conditions: raw.conditions,
+        status,
+        active,
+        evidence: { ...(raw.evidence ?? {}) },
+        invalidatedAt: { ...(raw.invalidatedAt ?? {}) },
+      });
+    }
+  }
 
   async function score(rows: Array<{ condition: TaskCondition; goal: string; text: string }>) {
     const tok = await getMicroTokenizer(options.vocabUrl);
@@ -80,13 +194,11 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
     return out;
   }
 
-  return async (request): Promise<MicroTaskProposal | null> => {
+  const port = (async (request): Promise<MicroTaskProposal | null> => {
     const started = performance.now();
-    if (worldId !== null && worldId !== request.state.worldId) {
-      ledger.clear();
-      seenFacts.clear();
-    }
+    if (worldId !== null && worldId !== request.state.worldId) resetLedger();
     worldId = request.state.worldId;
+    refreshLifetimes(request.state);
     const threshold = {
       satisfied: options.threshold?.satisfied ?? 0.6,
       attempt: options.threshold?.attempt ?? 0.55,
@@ -106,12 +218,16 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
         if (!entry) {
           const conditions = taskConditions(task.goal, request.state, initial.name);
           if (!conditions.length) continue;
-          entry = { conditions, status: {}, evidence: {} };
-          for (const condition of conditions) entry.status[condition.id] = 'none';
+          entry = { ownerId: fact.memberId, conditions, status: {}, active: {}, evidence: {}, invalidatedAt: {} };
+          for (const condition of conditions) {
+            entry.status[condition.id] = 'none';
+            entry.active[condition.id] = false;
+            entry.invalidatedAt[condition.id] = null;
+          }
           ledger.set(task.id, entry);
         }
         for (const condition of entry.conditions) {
-          if (entry.status[condition.id] === 'satisfied') continue;
+          if (entry.status[condition.id] === 'satisfied' && entry.active[condition.id]) continue;
           if (!conditionRelevant(condition, fact.text)) continue;
           rows.push({ condition, factId: fact.id, text: fact.text, taskId: task.id, goal: task.goal });
         }
@@ -147,20 +263,26 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
           : label === 'keyword' ? threshold.keyword : 1;
       if (scored.confidence < minimum) continue;
       const previous = entry.status[row.condition.id];
-      if (RANK[label] <= RANK[previous]) continue;
+      const reactivating = label === 'satisfied' && previous === 'satisfied' && entry.active[row.condition.id] === false;
+      if (!reactivating && RANK[label] <= RANK[previous]) continue;
       entry.status[row.condition.id] = label;
+      if (label === 'satisfied') {
+        entry.active[row.condition.id] = true;
+        entry.invalidatedAt[row.condition.id] = null;
+      }
       entry.evidence[row.condition.id] = { factId: row.factId, text: row.text };
       updates.push({ taskId: row.taskId, conditionId: row.condition.id, label, factId: row.factId, text: row.text });
     }
     const supports: MicroTaskProposal['supports'] = [];
     const pending: MicroTaskProposal['pending'] = [];
     for (const [taskId, entry] of ledger) {
-      const owner = Object.entries(request.state.characters).find(([, row]) => row.tasks[taskId])?.[0];
-      if (!owner) continue;
+      const owner = entry.ownerId;
       const currentTask = request.state.characters[owner]?.tasks[taskId];
       if (!currentTask || currentTask.status !== 'pending') continue;
-      const matched = entry.conditions.filter((condition) => entry.status[condition.id] === 'satisfied').length;
-      const missing = entry.conditions.filter((condition) => entry.status[condition.id] !== 'satisfied').map((condition) => condition.label);
+      const live = (condition: TaskCondition) => entry.status[condition.id] === 'satisfied' && entry.active[condition.id];
+      const matched = entry.conditions.filter(live).length;
+      const missing = entry.conditions.filter((condition) => !live(condition))
+        .map((condition) => (entry.status[condition.id] === 'satisfied' ? `${condition.label}（已失效）` : condition.label));
       pending.push({ taskId, matched, total: entry.conditions.length, missing });
       if (matched === entry.conditions.length) {
         const evidence = entry.conditions.map((condition) => entry.evidence[condition.id]).filter(Boolean);
@@ -172,12 +294,18 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
         });
       }
     }
+    const invalidated = [...ledger.values()].reduce((sum, entry) => sum
+      + entry.conditions.filter((condition) => entry.status[condition.id] === 'satisfied' && entry.active[condition.id] === false).length, 0);
     options.onStats?.({
       facts: request.facts.length, conditions: rows.length, inferences: rows.length,
-      headOutputs: rows.length, proposed: supports.length,
+      headOutputs: rows.length, proposed: supports.length, invalidated,
       ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs),
       source: rows.length ? 'micro' : 'abstain',
     });
     return { supports, updates, pending };
-  };
+  }) as MicroTaskProposerPort;
+  port.exportLedger = exportLedger;
+  port.importLedger = importLedger;
+  port.resetLedger = resetLedger;
+  return port;
 }

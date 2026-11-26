@@ -26,9 +26,13 @@ import {
  * and `draft` remain readable so old saves keep their honest labels. */
 export interface NarrationSourceNote { source: 'model' | 'mixed' | 'program' | 'draft'; note?: string }
 
+import type { TaskLedgerSnapshot } from './micro/task-proposer';
+
 export interface LocalGameSnapshot {
   transport: ReturnType<LocalWorldTransport['snapshot']>;
   commands: string[];
+  /** Cross-turn task-condition evidence; opaque to the transport. */
+  taskLedger?: TaskLedgerSnapshot;
   /** Resume hint: the model plan for the open round. Validated against the
    * transport record on restore; never a second source of game facts. */
   checkpoint?: LocalSchedulerCheckpoint;
@@ -81,6 +85,10 @@ export interface LocalGameOptions {
   onEvent?: (event: LocalSessionEvent) => void;
   /** Page-owned provenance for committed narration text (label only). */
   narrationSourceOf?: () => Record<string, NarrationSourceNote> | undefined;
+  /** Opaque task-condition ledger saved with every snapshot. */
+  taskLedgerOf?: () => TaskLedgerSnapshot | undefined;
+  /** Restore the ledger from a loaded snapshot (null on a new world). */
+  onRestoreTaskLedger?: (ledger: TaskLedgerSnapshot | null) => void;
 }
 
 interface ResolvedOptions extends LocalGameOptions {
@@ -218,6 +226,7 @@ export class LocalGameSession {
       throw error;
     }
     session = new LocalGameSession(transport, model, initial ?? null, commands, { ...options, worldId, sessionId });
+    options.onRestoreTaskLedger?.(null);
     await session.persistInitial();
     return session;
   }
@@ -283,6 +292,7 @@ export class LocalGameSession {
       // Provenance saved with the previous page must survive a reload: the
       // in-memory source ref is empty on a fresh page.
       session.restoredSources = restoredSources;
+      options.onRestoreTaskLedger?.(snapshot.taskLedger ?? null);
       const savedIds = snapshot.commandPointIds;
       if (Array.isArray(savedIds) && savedIds.length === session.commands.length) {
         session.commandPointIds = savedIds.map((id) => (typeof id === 'string' ? id : null));
@@ -342,6 +352,8 @@ export class LocalGameSession {
     // not store.
     const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
+    const ledger = this.options.taskLedgerOf?.();
+    if (ledger) snapshot.taskLedger = ledger;
     if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];
     return snapshot;
   }
@@ -512,6 +524,8 @@ export class LocalGameSession {
     if (checkpoint) snapshot.checkpoint = checkpoint;
     const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
+    const ledger = this.options.taskLedgerOf?.();
+    if (ledger) snapshot.taskLedger = ledger;
     if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];
     return snapshot;
   }

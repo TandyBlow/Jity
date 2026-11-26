@@ -7,6 +7,7 @@ import type { ModelTask } from '../schedule';
 import type { InitialTemplate, Json } from '../types';
 import { SHORT_STATE } from '../runtime/b3-short-samples';
 import { LocalGameSession, type LocalSessionEvent } from './session';
+import type { TaskLedgerSnapshot } from './micro/task-proposer';
 import {
   createLocalProgressStore, LEGACY_SNAPSHOT_KEY, MemoryProgressBackend, migrateLegacySnapshot, ProgressConflictError,
   SessionLeaseHeldError, type LegacyStorageLike, type LocalProgressStore,
@@ -280,6 +281,22 @@ describe('LocalGameSession durability', () => {
     expect(Object.keys(legacySession.snapshot.transport.rolls)).toEqual(rollKeys);
     expect(legacySession.snapshot.transport.rolls[rollKeys[0]].rollId).toBe(rollBefore.rollId);
     expect(legacySession.snapshot.transport.version).toBe(1);
+  });
+
+  it('carries the task ledger through save and restore', async () => {
+    const ledger: TaskLedgerSnapshot = { version: 1, worldId: 'w', seenFacts: ['hero:事实'], entries: [] };
+    const seen: Array<TaskLedgerSnapshot | null> = [];
+    const session = await LocalGameSession.create(template(), scriptedModel([]), {
+      leaseHeartbeat: false, roll: () => 13, taskLedgerOf: () => ledger,
+      onRestoreTaskLedger: (value) => seen.push(value),
+    });
+    await session.start();
+    expect(session.snapshot.taskLedger).toEqual(ledger);
+    expect(seen).toEqual([null]);
+    await LocalGameSession.restore(session.snapshot, scriptedModel([]), {
+      leaseHeartbeat: false, onRestoreTaskLedger: (value) => seen.push(value),
+    });
+    expect(seen.at(-1)).toEqual(ledger);
   });
 
   it('resumes a turn whose work was written but whose model input was lost', async () => {
