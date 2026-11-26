@@ -46,6 +46,7 @@ def main():
     parser.add_argument('--epochs', type=int, default=30)
     parser.add_argument('--data', default=str(DATA))
     parser.add_argument('--field', choices=FIELDS)
+    parser.add_argument('--holdout', default='')
     args = parser.parse_args()
     rows = [json.loads(line) for line in Path(args.data).read_text(encoding='utf8').splitlines() if line.strip()]
     counts = Counter((row['field'], row['label']) for row in rows)
@@ -60,11 +61,13 @@ def main():
     opt = torch.optim.AdamW(model.parameters(), lr=2e-5)
     lossf = nn.CrossEntropyLoss()
     feats = []
+    test_feats = []
     for row in rows:
         if args.field and row['field'] != args.field:
             continue
         ids, mask = encode(tok, row['text'])
-        feats.append((ids, mask, FIELDS.index(row['field']), int(row['label'])))
+        target = test_feats if args.holdout and str(row.get('rowId', '')).startswith(args.holdout) else feats
+        target.append((ids, mask, FIELDS.index(row['field']), int(row['label'])))
     random.seed(20261126)
     torch.manual_seed(20261126)
     for epoch in range(args.epochs):
@@ -82,8 +85,9 @@ def main():
             print(json.dumps({'epoch': epoch + 1, 'loss': round(total / len(feats), 4)}), flush=True)
     model.eval()
     confusion = {field: Counter() for field in FIELDS}
+    eval_rows = test_feats or feats
     with torch.no_grad():
-        for ids, mask, field, label in feats:
+        for ids, mask, field, label in eval_rows:
             logits = model(ids.to(device), mask.to(device))[field]
             pred = int(logits.argmax().item())
             confusion[FIELDS[field]][f'{label}->{pred}'] += 1
