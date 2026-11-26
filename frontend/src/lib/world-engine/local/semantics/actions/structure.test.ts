@@ -39,6 +39,14 @@ describe('action structure', () => {
     expect(s.category).toBe('move');
     expect(s.destination).toEqual({ entityId: 'lu', containerId: 'yard', slotId: null });
   });
+  it('reads a control-room walk inside a compound action', () => {
+    const withControl = {
+      ...state,
+      initial: { ...state.initial, locations: { ...state.initial.locations, control: { name: '控制室' } } },
+    } as unknown as WorldState;
+    const s = buildActionStructure('我走进控制室，把记录单翻开', scene, withControl, 2);
+    expect(s.subActions[0].destination?.containerId).toBe('control');
+  });
   it('matches a slot label fragment', () => {
     const s = buildActionStructure('路明非走进庭院，站到第三根柱子旁。', scene, state, 2);
     expect(s.destination?.slotId).toBe('slot_pillar3');
