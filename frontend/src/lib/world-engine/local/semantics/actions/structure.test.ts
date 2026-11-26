@@ -75,6 +75,14 @@ describe('action structure', () => {
     const arrival = buildActionStructure('我走进钟楼门厅，把长桌推到侧墙', scene, gear, 2);
     expect(arrival.subActions[0].itemIds).toEqual(['foyer_table']);
   });
+  it('matches a blanket named after a move', () => {
+    const items = [
+      { id: 'blanket', name: '保温毯' },
+      { id: 'empty_bed', name: '医护空床' },
+      { id: 'medical_case', name: '医护箱' },
+    ];
+    expect(matchItems('我走进医护休息区，把保温毯', items)).toEqual(['blanket']);
+  });
   it('returns no item when two candidates tie', () => {
     expect(matchItems('饮水杯', [{ id: 'water', name: '休息区饮水杯' }, { id: 'cup', name: '饮水杯' }])).toEqual([]);
   });
