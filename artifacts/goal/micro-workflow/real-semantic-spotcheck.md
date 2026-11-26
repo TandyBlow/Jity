@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env:absent": 53, "info:present": 37, "env:conflict": 19, "env:present": 50}
+Counts: {"info:absent": 65, "env:insufficient": 23, "info:insufficient": 74, "env:absent": 70, "info:present": 25, "env:conflict": 19, "env:present": 52}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -49,13 +49,13 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sc08-env-foyer-table (test, cache, scenario)
 - action: 我抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: insufficient proposed=True content='路明非把长桌拖到侧墙' support='把长桌拖到侧墙' evidence=narrative
+- info: absent proposed=True content='路明非把长桌拖到侧墙' support='把长桌拖到侧墙' evidence=narrative
 - env: conflict proposed=True content='门厅长桌区空出' support='门厅里又少了那块地' evidence=narrative
 
 ## sm-e-success-1 (train, cache, env_success)
 - action: 我抓住检修盖的拉环，把服务巷检修盖提开，露出下面的短梯。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending
-- info: present proposed=True content='路明非把服务巷检修盖提开，露出短梯（只完成一部分）' support='路明非抓住检修盖的拉环，把服务巷检修盖提开，露出下面的短梯。（只完成一部分）' evidence=settled
+- info: absent proposed=True content='路明非把服务巷检修盖提开，露出短梯（只完成一部分）' support='路明非抓住检修盖的拉环，把服务巷检修盖提开，露出下面的短梯。（只完成一部分）' evidence=settled
 - env: present proposed=True content='hatch_cover:已被部分提开' support='hatch_cover:已被部分提开' evidence=settled
 
 ## sm-e-move-1 (train, cache, env_irrelevant_move)
@@ -67,7 +67,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm-e-success-2 (train, cache, env_success)
 - action: 我把庭院南端倒放的长椅拖开，让出石花槽后的通道。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:bench_cover", "before": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {"change_65": "已被部分拖开"}}}], "env": ["item:bench_cover"]}
-- info: present proposed=True content='路明非把庭院南端倒放的长椅拖开，只完成一部分' support='路明非把庭院南端倒放的长椅拖开，让出石花槽后的通道。（只完成一部分）' evidence=settled
+- info: absent proposed=True content='路明非把庭院南端倒放的长椅拖开，只完成一部分' support='路明非把庭院南端倒放的长椅拖开，让出石花槽后的通道。（只完成一部分）' evidence=settled
 - env: present proposed=True content='倒放的长椅已被部分拖开' support='已被部分拖开' evidence=state
 
 ## sm-e-transfer-1 (train, cache, env_item_transfer)
@@ -91,25 +91,25 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm-e-success-4 (train, cache, env_success)
 - action: 我抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_22": "pending", "task_23": "pending", "task_92": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeT
-- info: insufficient proposed=True content='门厅里长桌被拖了一半，楼梯口还挤着那块板' support='门厅里长桌被拖了一半，楼梯口还挤着那块板' evidence=narrative
+- info: absent proposed=True content='门厅里长桌被拖了一半，楼梯口还挤着那块板' support='门厅里长桌被拖了一半，楼梯口还挤着那块板' evidence=narrative
 - env: present proposed=True content='门厅长桌已被部分拖开' support='环境=foyer_table:已被部分拖开' evidence=settled
 
 ## sm-e-partial-1 (train, cache, env_partial)
 - action: 我抬起长桌的一端，只挪开一条能侧身过的缝，担架还是过不去。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: present proposed=True content='路明非抬起长桌只挪开侧身缝，担架还是过不去' support='路明非抬起长桌的一端，只挪开一条能侧身过的缝，担架还是过不去' evidence=settled
+- info: absent proposed=True content='路明非抬起长桌只挪开侧身缝，担架还是过不去' support='路明非抬起长桌的一端，只挪开一条能侧身过的缝，担架还是过不去' evidence=settled
 - env: conflict proposed=False content='' support='' evidence=state
 
 ## sm-e-fail-2 (train, cache, env_failure)
 - action: 我回身去拉钟楼地下检修门，门从里面插着门闩，拉不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_22": "pending", "task_23": "pending", "task_92": "pending", "task_156": "pending"}}, "after": {"position": {"containerId": "red_rally", "sl
-- info: present proposed=True content='门从里面插着门闩，拉不开' support='门从里面插着门闩，拉不开' evidence=settled
+- info: absent proposed=True content='门从里面插着门闩，拉不开' support='门从里面插着门闩，拉不开' evidence=settled
 - env: absent proposed=False content='' support='' evidence=
 
 ## sm-e-move-2 (train, cache, env_irrelevant_move)
 - action: 我沿楼梯走上钟楼顶层。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_22": "pending", "task_23": "pending", "task_92": "pending", "task_156": "pending", "task_198": "pending"}}, "after": {"position": {"contain
-- info: present proposed=True content='路明非沿楼梯走上钟楼顶层' support='路明非沿楼梯走上钟楼顶层。（达到目的）' evidence=settled
+- info: absent proposed=True content='路明非沿楼梯走上钟楼顶层' support='路明非沿楼梯走上钟楼顶层。（达到目的）' evidence=settled
 - env: absent proposed=False content='' support='' evidence=
 
 ## sm-e-success-5 (train, cache, env_success)
@@ -121,7 +121,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm-e-transfer-2 (train, cache, env_item_transfer)
 - action: 我把中立白旗从旗座的插槽里取下来，卷好。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: present proposed=True content='路明非把中立白旗从旗座的插槽里取下来，卷好。' support='路明非把中立白旗从旗座的插槽里取下来，卷好' evidence=settled
+- info: absent proposed=True content='路明非把中立白旗从旗座的插槽里取下来，卷好。' support='路明非把中立白旗从旗座的插槽里取下来，卷好' evidence=settled
 - env: insufficient proposed=True content='中立白旗从旗座插槽取下并卷好' support='路明非把中立白旗从旗座的插槽里取下来，卷好' evidence=settled
 
 ## sm-i-new-1 (train, cache, info_new)
@@ -193,7 +193,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm-i-irrelevant-3 (train, cache, info_irrelevant_known)
 - action: 我靠着领用台站了一会儿，听棚外的枪声。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: insufficient proposed=False content='听棚外的枪声没有成功' support='听棚外的枪声。（没有成功）' evidence=settled
+- info: absent proposed=False content='听棚外的枪声没有成功' support='听棚外的枪声。（没有成功）' evidence=settled
 - env: absent proposed=False content='无环境变化' support='"env": []' evidence=state
 
 ## sm2-e-success-1 (train, cache, env_success)
@@ -205,13 +205,13 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm2-e-failure-1 (train, cache, env_failure)
 - action: 我抓住器材笼的挂锁往下按，锁扣卡死，打不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: present proposed=True content='器材笼挂锁锁扣卡死打不开' support='锁扣卡死，打不开' evidence=settled
+- info: absent proposed=True content='器材笼挂锁锁扣卡死打不开' support='锁扣卡死，打不开' evidence=settled
 - env: absent proposed=False content='' support='' evidence=
 
 ## sm2-e-success-2 (train, cache, env_success)
 - action: 我把器材领用台推到墙边，腾出中间的过道。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending
-- info: present proposed=True content='路明非把器材领用台推到墙边，腾出中间过道。' support='路明非把器材领用台推到墙边，腾出中间的过道。（达到目的）' evidence=settled
+- info: absent proposed=True content='路明非把器材领用台推到墙边，腾出中间过道。' support='路明非把器材领用台推到墙边，腾出中间的过道。（达到目的）' evidence=settled
 - env: present proposed=True content='器材领用台已被推开' support='环境=supply_counter:已被推开' evidence=settled
 
 ## sm2-e-success-3 (train, cache, env_success)
@@ -229,19 +229,19 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm2-e-transfer-1 (train, cache, env_item_transfer)
 - action: 我把通用短枪弹匣乙收进演习背心的胸袋。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: present proposed=True content='路明非把通用短枪弹匣乙收进演习背心的胸袋（只完成一部分）' support='路明非把通用短枪弹匣乙收进演习背心的胸袋。（只完成一部分）' evidence=settled
+- info: absent proposed=True content='路明非把通用短枪弹匣乙收进演习背心的胸袋（只完成一部分）' support='路明非把通用短枪弹匣乙收进演习背心的胸袋。（只完成一部分）' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm2-e-success-4 (train, cache, env_success)
 - action: 我回身把门厅虚掩的正门关上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "loc:foyer", "before": {"appearance": {}}, "after": {"appearance": {"change_141": "已被关上"}}}], "env": ["loc:foyer"]}
-- info: present proposed=True content='路明非回身把门厅虚掩的正门关上（达到目的）' support='路明非回身把门厅虚掩的正门关上。（达到目的）' evidence=settled
+- info: absent proposed=True content='路明非回身把门厅虚掩的正门关上（达到目的）' support='路明非回身把门厅虚掩的正门关上。（达到目的）' evidence=settled
 - env: present proposed=True content='门厅正门已被关上' support='环境=foyer:已被关上' evidence=settled
 
 ## sm2-e-failure-2 (train, cache, env_failure)
 - action: 我用力拉钟楼地下检修门，门闩从里面插着，拉不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: present proposed=True content='钟楼地下检修门门闩从里面插着，拉不开' support='门闩从里面插着，拉不开' evidence=settled
+- info: absent proposed=True content='钟楼地下检修门门闩从里面插着，拉不开' support='门闩从里面插着，拉不开' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm4-e-success-1 (train, cache, env_success)
@@ -253,7 +253,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm4-e-failure-1 (train, cache, env_failure)
 - action: 我把器材笼的挂锁往下按，锁扣卡死，打不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending
-- info: present proposed=True content='器材笼挂锁锁扣卡死，无法打开' support='路明非尝试打开器材笼的挂锁，但锁扣卡死，无法打开' evidence=settled
+- info: absent proposed=True content='器材笼挂锁锁扣卡死，无法打开' support='路明非尝试打开器材笼的挂锁，但锁扣卡死，无法打开' evidence=settled
 - env: conflict proposed=True content='器材笼挂锁锁扣卡死' support='路明非尝试打开器材笼的挂锁，但锁扣卡死，无法打开' evidence=settled
 
 ## sm4-e-success-2 (train, cache, env_success)
@@ -271,19 +271,19 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm4-e-failure-2 (train, cache, env_failure)
 - action: 我把钟楼地下检修门拉开，门闩插着，拉不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:hatch_door", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {"change_102": "已被拉开"}}}], "env": ["item:hatch_door"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: conflict proposed=True content='钟楼地下检修门已被拉开' support='环境=hatch_door:已被拉开' evidence=settled
 
 ## sm4-e-success-4 (train, cache, env_success)
 - action: 我走上顶层，把玻璃门推开，再把白旗从旗座拔出来。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "top", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"ta
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='顶层玻璃门已被推开' support='把玻璃门推开' evidence=settled
 
 ## sm4-e-success-5 (train, cache, env_success)
 - action: 我把白旗重新插回旗座，再把玻璃门关上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:balcony_door", "before": {"position": {"containerId": "top", "slotId": null, "relativeTo": null}, "appearance": {"change_123": "已被推开"}}, "after": {"position": {"containerId": "top", "slotId": null, "relativeTo": null}, "appearance": {"change_123": "已被推开", "change_144": "已被关上"}}}], "env": ["item:balcony_door"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: conflict proposed=True content='玻璃门已被关上' support='玻璃门关上' evidence=narrative
 
 ## sm4-e-success-6 (train, cache, env_success)
@@ -301,7 +301,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm4-e-move-1 (train, cache, env_irrelevant_move)
 - action: 我戴上护目镜，沿着庭院西侧走回服务巷。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "lane", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"ta
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm4-e-success-8 (train, cache, env_success)
@@ -313,7 +313,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm4-e-success-9 (train, cache, env_success)
 - action: 我把检修盖重新提开一条缝。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:hatch_cover", "before": {"position": {"containerId": "hatch", "slotId": null, "relativeTo": null}, "appearance": {"change_226": "已被盖回"}}, "after": {"position": {"containerId": "hatch", "slotId": null, "relativeTo": null}, "appearance": {"change_226": "已被盖回", "change_247": "已被提开"}}}], "env": ["item:hatch_cover"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='检修盖被提开一条缝' support='路明非把检修盖重新提开一条缝' evidence=settled
 
 ## sm5-e-success-1 (train, cache, env_success)
@@ -325,13 +325,13 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-e-success-2 (train, cache, env_success)
 - action: 我把器材领用簿翻开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:fingel", "before": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_fingel_deal": "pending", "task_fingel_map": "pending", "task_fingel_camera": "pending", "task_fingel_help": "pending", "task_fingel_soup": "pending"}}, "after": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_fingel_deal": 
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='器材领用簿已被翻开' support='器材领用簿翻开' evidence=settled
 
 ## sm5-e-success-3 (train, cache, env_success)
 - action: 我把笼门上的挂锁取下来，挂到墙钩上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='笼门挂锁已被挂到墙钩上' support='路明非把笼门上的挂锁取下来，挂到墙钩上' evidence=settled
 
 ## sm5-e-success-4 (train, cache, env_success)
@@ -343,7 +343,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-e-success-5 (train, cache, env_success)
 - action: 我把庭院空弹匣踢开，再把长椅拖到墙边。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_42": "pending", "task_65": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='庭院空弹匣已被踢开，长椅已被拖开' support='路明非把庭院空弹匣踢开（达到目的）；环境=empty_magazine:已被踢开' evidence=settled
 
 ## sm5-e-success-6 (train, cache, env_success)
@@ -355,7 +355,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-e-success-7 (train, cache, env_success)
 - action: 我把苏茜的备用弹匣收进背心，再把遮光帘拉上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_42": "pending", "task_65": "pending", "task_113": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relative
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='东回廊遮光帘被拉起' support='' evidence=state
 
 ## sm5-e-success-8 (train, cache, env_success)
@@ -367,7 +367,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-e-success-9 (train, cache, env_success)
 - action: 我走上顶层，把玻璃门推开，再把蓝方信号旗从栏杆上解下来。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "achieved", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "top", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"t
-- info: insufficient proposed=False content='未获得新信息' support='路明非没有问出具体的答案' evidence=narrative
+- info: absent proposed=False content='未获得新信息' support='路明非没有问出具体的答案' evidence=narrative
 - env: present proposed=True content='顶层玻璃门已被推开' support='把玻璃门推开' evidence=settled
 
 ## sm5-e-success-10 (train, cache, env_success)
@@ -481,13 +481,13 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-i-transfer-1 (train, cache, info_irrelevant_known)
 - action: 我把护目镜递给诺诺。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:goggles_lu", "before": {"position": {"containerId": "lu", "slotId": "slot_body", "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "nono", "slotId": null, "relativeTo": null}, "appearance": {}}}], "env": []}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm5-i-irrelevant-1 (train, cache, info_irrelevant_known)
 - action: 我整理背心的胸袋，把弹匣按紧。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm5-i-new-2 (train, cache, info_new)
@@ -511,7 +511,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-i-transfer-2 (train, cache, info_irrelevant_known)
 - action: 我把桌上的水杯拿到手里。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_127": "pending", "task_149": "pending", "task_150": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relati
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=settled
 
 ## sm5-i-repeat-3 (train, cache, info_repeat)
@@ -529,7 +529,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm5-i-irrelevant-2 (train, cache, info_irrelevant_known)
 - action: 我靠着墙听广播里的音乐。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm6-e-success-1 (train, cache, env_success)
@@ -541,7 +541,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm6-e-success-2 (train, cache, env_success)
 - action: 我把检修图挂到墙上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:maintenance_chart", "before": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {"change_20": "已被展开"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {"change_20": "已被展开", "change_41": "已被挂到"}}}], "env": ["item:maintenance_chart"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='检修图已被挂到墙上' support='已被挂到' evidence=settled
 
 ## sm6-e-success-3 (train, cache, env_success)
@@ -553,13 +553,13 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm6-e-success-4 (train, cache, env_success)
 - action: 我把记分面板转向窗口。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm6-e-failure-1 (train, cache, env_failure)
 - action: 我推控制室的门，门锁着，推不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: conflict proposed=False content='' support='' evidence=settled
 
 ## sm6-e-success-5 (train, cache, env_success)
@@ -595,7 +595,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm6-e-success-10 (train, cache, env_success)
 - action: 我把弹药箱盖子盖回。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='弹药箱盖被盖回' support='弹药箱盖子盖回' evidence=settled
 
 ## sm6-e-success-11 (train, cache, env_success)
@@ -613,7 +613,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm7-e-success-2 (train, cache, env_success)
 - action: 我把弹药箱盖子掀开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:ammo_box", "before": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {"change_39": "已被掀开"}}}], "env": ["item:ammo_box"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='弹药箱盖子已被掀开' support='路明非把弹药箱盖子掀开' evidence=settled
 
 ## sm7-e-success-3 (train, cache, env_success)
@@ -643,7 +643,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm7-e-success-7 (train, cache, env_success)
 - action: 我把钟楼地下检修门关上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:hatch_door", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {"change_149": "已被关上"}}}], "env": ["item:hatch_door"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='钟楼地下检修门已被关上' support='钟楼地下检修门关闭，门闩插好' evidence=narrative
 
 ## sm7-e-success-8 (train, cache, env_success)
@@ -685,13 +685,13 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm8-e-success-2 (train, cache, env_success)
 - action: 我把备用红色识别带挂回架子，再把笼门上的挂锁挂到墙钩上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:cage_lock", "before": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {"change_39": "已被部分挂到"}}}], "env": ["item:cage_lock"]}
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='笼门挂锁已被部分挂到墙钩上' support='把笼门上的挂锁挂到墙钩上。（只完成一部分）' evidence=settled
 
 ## sm8-e-success-3 (train, cache, env_success)
 - action: 我把领用簿翻开，再把弹药箱盖子盖回。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:checkout_book", "before": {"position": {"containerId": "supply_counter", "slotId": "slot_top", "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "supply_counter", "slotId": "slot_top", "relativeTo": null}, "appearance": {"change_59": "已被翻开"}}}, {"key": "item:ammo_box", "before": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}}, "after": {"position": {"conta
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='领用簿已被翻开，弹药箱已被盖回' support='已被翻开' evidence=state
 
 ## sm8-e-success-4 (train, cache, env_success)
@@ -715,7 +715,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm8-e-success-7 (train, cache, env_success)
 - action: 我走上顶层，把玻璃门推开，再把蓝方信号旗挂到栏杆上。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "top", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"ta
-- info: insufficient proposed=False content='' support='' evidence=settled
+- info: absent proposed=False content='' support='' evidence=settled
 - env: present proposed=True content='顶层玻璃门已被推开，蓝方信号旗已被挂到栏杆上' support='' evidence=settled
 
 ## sm8-e-success-8 (train, cache, env_success)
@@ -727,7 +727,7 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 ## sm8-e-success-9 (train, cache, env_success)
 - action: 我把分诊夹翻开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "east_arcade", "slotId": "slot_window", "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_107": "pending", "task_130": "pending", "task_154": "pending", "task_178": "pending"}}, "after": {"position": {"containerId": "e
-- info: insufficient proposed=False content='未获得新信息' support='只把夹面翻了一下' evidence=settled
+- info: absent proposed=False content='未获得新信息' support='只把夹面翻了一下' evidence=settled
 - env: conflict proposed=False content='无环境状态改变' support='楼里没有别的动静' evidence=narrative
 
 ## sm8-e-success-10 (train, cache, env_success)
@@ -747,6 +747,126 @@ Counts: {"info:absent": 9, "env:insufficient": 22, "info:insufficient": 98, "env
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "east_arcade", "slotId": "slot_window", "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_107": "pending", "task_130": "pending", "task_154": "pending", "task_178": "pending", "task_200": "pending", "task_223": "pendin
 - info: absent proposed=False content='' support='' evidence=settled
 - env: conflict proposed=False content='' support='' evidence=settled
+
+## sm8-i-transfer-1 (train, cache, info_irrelevant_known)
+- action: 我把护目镜递给诺诺。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:goggles_lu", "before": {"position": {"containerId": "lu", "slotId": "slot_body", "relativeTo": null}, "appearance": {}}, "after": {"position": {"containerId": "nono", "slotId": null, "relativeTo": null}, "appearance": {}}}], "env": []}
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm8-i-transfer-2 (train, cache, info_irrelevant_known)
+- action: 我把弹匣塞进胸袋。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm8-i-transfer-3 (train, cache, info_irrelevant_known)
+- action: 我拿起领用台上的领用簿。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='未获得新信息' support='' evidence=settled
+- env: absent proposed=False content='领用簿未被拿起' support='' evidence=settled
+
+## sm8-i-transfer-4 (train, cache, info_irrelevant_known)
+- action: 我把水杯放到台面。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm8-i-irrelevant-1 (train, cache, info_irrelevant_known)
+- action: 我整理背心的胸袋。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_42": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm8-i-transfer-5 (train, cache, info_irrelevant_known)
+- action: 我戴上护目镜。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_42": "pending", "task_103": "pending"}}, "after": {"position": {"containerId": "bridge", "slotId": "slot_west_end", "relativeTo": null}, "a
+- info: absent proposed=True content='路明非戴上护目镜并成功使用' support='路明非戴上护目镜并成功使用了物品' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm8-i-transfer-6 (train, cache, info_irrelevant_known)
+- action: 我把红色识别带缠到手臂上。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm8-i-transfer-7 (train, cache, info_irrelevant_known)
+- action: 我把空弹匣踢到墙角。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "bridge", "slotId": "slot_west_end", "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_42": "pending", "task_103": "pending"}}, "after": {"position": {"containerId": "bridge", "slotId": "slot_west_end", "relativeTo": n
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm8-i-irrelevant-2 (train, cache, info_irrelevant_known)
+- action: 我靠着墙站着。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm8-i-irrelevant-3 (train, cache, info_irrelevant_known)
+- action: 我蹲在掩体后等待。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm8-i-irrelevant-4 (train, cache, info_irrelevant_known)
+- action: 我把长椅扶正。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='' support='' evidence=settled
+- env: insufficient proposed=True content='长椅被扶正' support='路明非把长椅扶正' evidence=settled
+
+## sm8-i-transfer-8 (train, cache, info_irrelevant_known)
+- action: 我把保温毯叠好。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "bridge", "slotId": "slot_west_end", "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "achieved", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_42": "pending", "task_103": "achieved", "task_164": "pending", "task_185": "pending"}}, "after": {"position": {"containerId": "bri
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm9-e-move-1 (train, cache, env_irrelevant_move)
+- action: 我走进中央庭院。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm9-e-transfer-1 (train, cache, env_item_transfer)
+- action: 我把护目镜递给诺诺。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm9-e-move-2 (train, cache, env_irrelevant_move)
+- action: 我沿着服务巷走回器材棚。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"ta
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm9-e-transfer-2 (train, cache, env_item_transfer)
+- action: 我把弹匣塞进胸袋。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='未获得明确信息' support='路明非没有找到明确的答案' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-e-success-1 (train, cache, env_success)
+- action: 我走进器材棚，把弹药箱盖子掀开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks
+- info: insufficient proposed=True content='弹药箱内有两具短枪弹匣，各装八发演习弹' support='箱里有两具通用短枪弹匣，各装了八发演习弹' evidence=narrative
+- env: present proposed=True content='弹药箱已被掀开' support='已被掀开' evidence=state
+
+## sm10-e-success-2 (train, cache, env_success)
+- action: 我把领用台推到墙边。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:fingel", "before": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_fingel_deal": "pending", "task_fingel_map": "pending", "task_fingel_camera": "pending", "task_fingel_help": "pending", "task_fingel_soup": "pending"}}, "after": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_fingel_deal": 
+- info: absent proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='领用台已被推到墙边' support='领用台推到墙边' evidence=settled
+
+## sm10-e-move-1 (train, cache, env_irrelevant_move)
+- action: 我走进中央庭院。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"ta
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-e-transfer-1 (train, cache, env_item_transfer)
+- action: 我把护目镜递给诺诺。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending", "task_41": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task
+- info: absent proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
 
 ## s01-act-move (train, cache, 20-input)
 - action: 我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。

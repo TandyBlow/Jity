@@ -459,10 +459,12 @@ def classify(field, item, row, diff, support, content, source, settled_text):
     # info
     prior = row.get('priorText') or ''
     known = bool(prior and content and len(content) >= 4 and content in prior)
-    structured = row.get('structured') or []
+    protagonist = row.get('protagonistName') or ''
+    # 只看主人公动作：NPC 的「查看」不代表玩家获得了信息
+    structured = [action for action in (row.get('structured') or [])
+                  if not row.get('protagonistId') or action.get('key') == row.get('protagonistId')]
     info_capable = any(INFO_WORDS.search(str(action.get('text') or '')) for action in structured)
     move_capable = any(MOVE_WORDS.search(str(action.get('text') or '')) for action in structured)
-    protagonist = row.get('protagonistName') or ''
     player_source = source
     if protagonist:
         player_facts = [str(item.get('text') or '') for item in row.get('settled') or []
@@ -476,8 +478,8 @@ def classify(field, item, row, diff, support, content, source, settled_text):
             return 'insufficient'
         if ACTION_VERBS.search(content):
             return 'insufficient'
-        # 纯物品操作不算获取信息
-        if structured and not info_capable and not move_capable:
+        # 纯物品操作不算获取信息；NPC 转述的信息仍算（support 里有信息动词）
+        if structured and not info_capable and not move_capable and not INFO_WORDS.search(content + support):
             return 'absent'
         if protagonist and support not in player_source:
             return 'insufficient'
@@ -490,9 +492,7 @@ def classify(field, item, row, diff, support, content, source, settled_text):
         return 'absent'
     if re.search('告诉|回答|说明|报告|问清|核实', settled_text) and not ACTION_VERBS.search(settled_text):
         return 'conflict'
-    structured = row.get('structured') or []
-    if structured and not any(INFO_WORDS.search(str(action.get('text') or '')) for action in structured) \
-            and not any(MOVE_WORDS.search(str(action.get('text') or '')) for action in structured):
+    if structured and not info_capable and not move_capable:
         return 'absent'
     return 'insufficient'
 

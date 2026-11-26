@@ -672,3 +672,11 @@
 - `readSubtaskProposals` 增加两道程序守卫：目标以其他角色名开头 → `subtask_foreign_subject`；目标复述结算事实（`goalWordingOverlap >= 0.85`）→ `subtask_restates_fact`。两者都只记录拒绝、不改合法输出；单测覆盖。
 - 验收脚本的 `tasks` 快照原来取 `aside li`，把历史时间点行也读成任务；现在页面任务行带 `data-done`，脚本只读这类行。旧证据里的「#N已提交行动…」任务条目是读取伪影，不是内核状态。
 - env-8 完成后 turn 级 env 正例 50、负例 47；env-9（4 个负例回合）与 env-10（2 正 2 负）用于过线，之后先训 env 存在性头。
+
+## D-066 env 存在性头首训与存在性样本修正（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 数据：env-9（4 个移动/转移负例）与 env-10（2 个成功 + 2 个负例）实跑完成、无 problems；turn 级字段变为 info 23 正/63 负、env 52 正/65 负，env 过 50/50 门。
+- 修正两个会让训练结果失真的问题：`semantic-existence.jsonl` 原先把 `环境差分` 直接写进输入文本，等于把标签交给模型，已删除；样本没有 `rowId`，`--holdout sm6-` 静默留空、在全量上评估，已补 `rowId`。
+- 首训：MiniRBT-H256 BERT 头，30 轮，loss 0.7551 → 0.0002；留出 sm6- 9 条（8 正/1 负）全对。样本太小且严重不平衡（52:65），只说明管线可跑，不说明泛化；下一步扩 info 正例与独立留出。
+- info 标签器修正：信息能力只看主人公动作（NPC 的「查看」不再让回合变成 info capable）；NPC 转述的信息仍按 content/support 的信息动词算 present。info 正例从 36 降到 23，是去噪结果，不是退步；正例不足的根因是结算事实不携带读取内容。
