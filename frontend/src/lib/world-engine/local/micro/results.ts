@@ -30,14 +30,15 @@ export function programMoveAllowed(input: {
 }
 
 export function programEnvAllowed(input: {
-  text: string; itemIds: string[]; memberId: string; state: WorldState;
+  text: string; itemIds: string[]; memberId: string; state: WorldState; actorRoom?: string;
 }): boolean {
   if (input.itemIds.length !== 1) return false;
   const itemId = input.itemIds[0];
   if (!input.state.initial.items[itemId]) return false;
   if (!environmentPhrase(input.text)) return false;
   if (OBSTRUCTION.some((word) => input.text.includes(word))) return false;
-  return roomOf(input.state, itemId) === roomOf(input.state, input.memberId);
+  const room = input.actorRoom ?? roomOf(input.state, input.memberId);
+  return roomOf(input.state, itemId) === room;
 }
 
 const OUTCOME: Record<string, string> = {
@@ -164,6 +165,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         .filter(([id]) => id !== member.memberId && roomOf(request.state, id) === roomOf(request.state, member.memberId))
         .map(([, row]) => request.state.initial.characters[row.id]?.name ?? row.id)
         .filter(Boolean);
+      let actorRoom = roomOf(request.state, member.memberId);
       for (const subAction of subActions) {
         const priorBlocked = (subAction.dependsOn ?? []).some((id) => {
           const index = Number(id.replace('sa', '')) - 1;
@@ -187,7 +189,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         });
         const programEnv = !priorBlocked && programEnvAllowed({
           text: subAction.text, itemIds: subAction.itemIds ?? [],
-          memberId: member.memberId, state: request.state,
+          memberId: member.memberId, state: request.state, actorRoom,
         });
         const prior = labels.length
           ? `前序：${labels.map((label, index) => `sa${index + 1}=${label}`).join('、')}；`
@@ -239,12 +241,12 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         // Physical manipulation of one registered item is the program half of
         // the env channel; semantic env judgment replaces it when trained.
         let env = !priorBlocked
-          ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination, label, member.memberId)
+          ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination, label, member.memberId, actorRoom)
           : null;
         if (!env && !priorBlocked) {
           const phrase = environmentPhrase(subAction.text, label);
           const location = phrase ? matchLocation(request.state, subAction.text) : null;
-          if (phrase && location && roomOf(request.state, member.memberId) === location.id) {
+          if (phrase && location && actorRoom === location.id) {
             env = { entityId: location.id, text: phrase };
           }
         }
@@ -253,6 +255,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${env ? `；环境=${env.entityId}:${env.text}` : ''}${involved}`,
           memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
         });
+        if (destination && label === 'achieved') actorRoom = roomOf(request.state, destination.containerId);
       }
       const overall = labels.every((label) => label === labels[0]) ? labels[0] : 'partial';
       judgments.push({ memberId: member.memberId, label: overall, reason: PHRASE[overall] });

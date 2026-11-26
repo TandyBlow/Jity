@@ -50,15 +50,21 @@ export function environmentHint(
   text: string,
   itemIds: Id[],
   state: WorldState,
-  _destination: unknown,
+  destination: unknown,
   label = 'achieved',
   memberId?: Id,
+  actorRoom?: Id,
 ): { entityId: Id; text: string } | null {
   if (itemIds.length !== 1) return null;
   const entityId = itemIds[0];
   const item = state.initial.items[entityId];
   if (!item) return null;
-  if (memberId && roomOf(state, entityId) !== roomOf(state, memberId)) return null;
+  if (memberId) {
+    // A move and a manipulation in one action: judge locality at the arrival.
+    const container = (destination as { containerId?: Id } | null)?.containerId;
+    const room = container ? roomOf(state, container) : (actorRoom ?? roomOf(state, memberId));
+    if (room !== roomOf(state, entityId)) return null;
+  }
   // 地点名前缀不是物品证据：门厅的正门 ≠ 门厅翻倒长桌
   const location = state.initial.locations ? matchLocation(state, text) : null;
   const plain = (value: string) => value.replace(/的/gu, '');

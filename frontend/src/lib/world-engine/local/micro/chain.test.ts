@@ -93,6 +93,9 @@ describe('environment channel', () => {
     expect(environmentHint('我把领用台推到墙边。', ['counter'], local, null, 'achieved', 'lu'))
       .toEqual({ entityId: 'counter', text: '已被推开' });
     expect(environmentHint('我把领用台推到墙边。', ['counter'], local, null, 'achieved', 'nono')).toBeNull();
+    const arriving = { ...local, characters: { ...local.characters, lu: { position: { containerId: 'yard' } } } } as unknown as WorldState;
+    expect(environmentHint('我走进器材棚，把领用台推到墙边。', ['counter'], arriving,
+      { containerId: 'shed' }, 'achieved', 'lu')).toEqual({ entityId: 'counter', text: '已被推开' });
   });
 });
 
@@ -110,6 +113,8 @@ describe('program env gate', () => {
   it('confirms a local physical manipulation', () => {
     expect(programEnvAllowed(base)).toBe(true);
     expect(programEnvAllowed({ ...base, text: '我把遮光帘拉下一半，挡住半边窗口。' })).toBe(true);
+    const arriving = { ...state, characters: { lu: { position: { containerId: 'yard' } } } } as unknown as WorldState;
+    expect(programEnvAllowed({ ...base, state: arriving, actorRoom: 'shed' })).toBe(true);
   });
   it('declines a remote item, an obstruction and a non-env verb', () => {
     expect(programEnvAllowed({ ...base, text: '我把庭院里的领用台推到墙边。', state: { ...state, characters: { lu: { position: { containerId: 'yard' } } } } as unknown as WorldState })).toBe(false);
