@@ -737,3 +737,10 @@
 - `?existenceShadow=1` 时页面创建 `createMicroExistence`，results 端口把本轮事实文本送进 env/info 两个 int8 头，分数写进 results 的 microStats 和控制台一行 `[world-local existence] env… info…`；不改任何判定。ONNX 动态长度导出（192/64 两个长度都跑通），int8 各 10.55 MB、本机 CPU p50 1.5 ms；二进制不进库，`frontend/public/micro/existence-manifest.json` 记 sha256/字节/训练计数，`export_existence_onnx.py` 可重建。
 - 真实页面 4 回合：两个环境成功（掀弹药箱、推领用台）env 分数 0.984/0.945，移动与转移回合 ~0.007；info 分数在 0.49-0.63 间（该路线没有信息事件）。这是分类器臂的第一份真实页面证据。
 - 验收驱动的控制台过滤只收含 `world-local` 等关键词的行；影子分数行因此用 `world-local` 前缀，其余诊断行不会被采集。
+
+## D-076 LLM 臂在同四回合的输出（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 同 `shadow-turns-1`（掀弹药箱、推领用台、移动、转移）在无 micro 的 LLM 臂重跑：回合 1 270 s，事实写 `环境=<弹药箱>:弹药已打开`——尖括号里是显示名不是实体 id，程序无法据此写状态；回合 2 258 s，真实环境变化没有 `环境=`；回合 3 渲染进程崩溃（Target crashed），4 回合未完成。
+- 同输入的规则/混合臂：两个成功都带 `环境=ammo_box/supply_counter`，回合 70-88 s。LLM 臂在环境事件上 0/2 可用，且延迟超过 60 s 门槛；五臂对比前需要 LLM 提示明确用实体 id（或加显示名→id 解析）并治理 250 s 级回合的资源。
+- 当前「生成式」与「LLM」两臂共用同一条 LLM results 路径；没有单独的生成式环境模型接入。分类器臂已由 `?existenceShadow=1` 记录分数（D-075）。
