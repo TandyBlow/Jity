@@ -215,6 +215,14 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
   // dramatize dice (d101) and print judgments (page runs 2026-11-10). Keep only
   // clauses that describe what changed.
   const settled = squash(resultsText).split(/[；;]/u).map((part) => part.trim())
+    // 信息标记在正文提示里变成一句可写的内容，标记本身不出现
+    .map((part) => {
+      const info = /^信息[=＝]([^:：]+)[:：](.+)$/u.exec(part);
+      if (!info) return part;
+      const item = after.initial.items[info[1]]?.name ?? info[1];
+      const clause = info[2].trim().replace(/^[^：:，。]{1,8}[：:]/u, '');
+      return `看清了${item}上的内容：${clause}`;
+    })
     .filter((part) => part && !/(骰点|骰子|判定|检定|资格|无法反应|未成功|未达成|未被|未获得|未能|因此)/u.test(part))
     .filter((part) => !(part.includes(name) && namesElsewhere(part)))
     .join('；');

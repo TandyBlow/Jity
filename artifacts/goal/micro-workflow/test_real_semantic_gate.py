@@ -149,3 +149,28 @@ def test_env_hint_and_record_are_hard_evidence():
     result = pipeline.verify(row_, {'env': {'present': False, 'content': '', 'support': ''}})
     assert result['fields']['env']['status'] == 'present'
     assert result['fields']['env']['target'] is True
+
+
+def test_read_info_hints_parses_micro_tag():
+    hints = pipeline.read_info_hints(['路明非读规则牌（达到目的）；信息=rules:医护白线禁射；涉及=nono'])
+    assert hints == [{'entityId': 'rules', 'text': '医护白线禁射'}]
+
+
+def info_row(prior=''):
+    return {'id': 'x', 'text': '路明非读服务巷规则牌。',
+            'settled': [{'task': 'results', 'key': 'lu',
+                         'text': '路明非读服务巷规则牌（达到目的）；信息=rules:医护白线禁射'}],
+            'structured': [{'key': 'lu', 'text': '路明非读服务巷规则牌。'}],
+            'priorText': prior, 'snapshotBefore': {}, 'snapshot': {}}
+
+
+def test_info_hint_is_hard_evidence_with_content():
+    result = pipeline.verify(info_row(), {'info': {'present': False, 'content': '', 'support': ''}})
+    info = result['fields']['info']
+    assert info['status'] == 'present' and info['target'] is True
+    assert info['content'] == '医护白线禁射' and info['support'] == '医护白线禁射'
+
+
+def test_info_hint_known_in_prior_is_absent():
+    result = pipeline.verify(info_row(prior='……医护白线禁射……'), {'info': {'present': False, 'content': '', 'support': ''}})
+    assert result['fields']['info']['status'] == 'absent'

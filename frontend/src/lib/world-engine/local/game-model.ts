@@ -1141,9 +1141,17 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
   }
   const actionGrams = bigramsOf(declared);
   for (const rawSettled of resultsText.split('；').map((part) => part.trim()).filter(Boolean)) {
+    // 读取信息是玩家能看到的内容，转成一句正文而不是丢掉
+    const info = /^信息[=＝]([^:：]+)[:：](.+)$/u.exec(rawSettled);
+    if (info) {
+      const item = after.initial.items[info[1]]?.name ?? info[1];
+      const clause = info[2].trim().replace(/^[^：:，。]{1,8}[：:]/u, '');
+      out.push(endSentence(`${name}看清了${item}上的内容：${clause}`));
+      continue;
+    }
     // Structured markers are evidence, not prose.
     if (/^(?:去向|涉及|环境)=/u.test(rawSettled)) continue;
-    const settled = rawSettled.replace(/；?(?:去向|环境)=[^；。]*/gu, '').replace(/；?涉及=[^；。]*/gu, '')
+    const settled = rawSettled.replace(/；?(?:去向|环境)=[^；。]*/gu, '').replace(/；?信息=[^；。]*/gu, '').replace(/；?涉及=[^；。]*/gu, '')
       .replace(/（(?:达到目的|只完成一部分|没有成功|被阻止|没有变化)）/gu, '')
       .replace(/^([^：:，。]{1,8})[：:]/u, '$1').trim();
     if (!settled) continue;

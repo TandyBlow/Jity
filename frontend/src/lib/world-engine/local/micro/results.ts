@@ -4,6 +4,7 @@ import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlemen
 import type { WorldState } from '../../types';
 import { roomOf } from '../prompt';
 import { environmentHint, environmentPhrase } from '../semantics/settlement/fact-environments';
+import { informationHint } from '../semantics/settlement/fact-informations';
 import { matchLocation } from '../semantics/settlement/fact-destinations';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
@@ -250,9 +251,14 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
             env = { entityId: location.id, text: phrase };
           }
         }
+        // Reading one registered item yields the appearance clause that shares
+        // the action's topic term; no topic -> no information claim.
+        const info = !priorBlocked
+          ? informationHint(subAction.text, subAction.itemIds ?? [], request.state, label, member.memberId, actorRoom)
+          : null;
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({
-          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${env ? `；环境=${env.entityId}:${env.text}` : ''}${involved}`,
+          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${env ? `；环境=${env.entityId}:${env.text}` : ''}${info ? `；信息=${info.entityId}:${info.text}` : ''}${involved}`,
           memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
         });
         if (destination && label === 'achieved') actorRoom = roomOf(request.state, destination.containerId);

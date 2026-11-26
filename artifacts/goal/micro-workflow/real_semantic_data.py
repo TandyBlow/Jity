@@ -36,6 +36,7 @@ PROMPT_VERSION = 'v2'
 NEG_INFO = re.compile('没有答|没答|未答|拒绝回答|没有说|没说|未能|问不出|没有回应')
 NEG_ENV = re.compile('没有动|没有打开|没有移动|未打开|未移动|保持原样|没有变化')
 ENV_HINT = re.compile(r'环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
+INFO_HINT = re.compile(r'信息[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
 ENV_FAIL = re.compile('拉不开|打不开|推不开|掀不开|纹丝不动|卡住|卡死|锁着|锁上|被阻止|无法|不能|失败|没有成功|没能|未能')
 INFO_WORDS = re.compile('问|打听|询问|请教|读|看|查看|观察|检查|确认|核对|发现|听见|听到|告诉|回答|说明|报告|念|搜索|翻找')
 MOVE_WORDS = re.compile('走进|走入|走到|走向|进入|来到|回到|退回|退到|跑到|冲向|赶到|爬上|走下|穿过|离开|前往|走到')
@@ -84,6 +85,19 @@ def structured_actions(turn):
                      'itemIds': structure.get('itemIds') or [],
                      'destination': structure.get('destination')})
     return rows
+
+
+def read_info_hints(texts):
+    hints = []
+    for text in texts:
+        if not isinstance(text, str):
+            continue
+        for match in INFO_HINT.finditer(text):
+            entity = match.group(1).strip().strip('<>')
+            body = match.group(2).strip()
+            if entity and body:
+                hints.append({'entityId': entity, 'text': body})
+    return hints
 
 
 def read_env_hints(texts):
@@ -458,6 +472,11 @@ def classify(field, item, row, diff, support, content, source, settled_text):
         return 'absent'
     # info
     prior = row.get('priorText') or ''
+    # 程序抽取的 信息= 是硬证据：正文原句来自实体已提交外貌
+    hints = read_info_hints(fact_texts(row))
+    if hints:
+        fresh = [hint['text'] for hint in hints if hint['text'] not in prior]
+        return 'present' if fresh else 'absent'
     known = bool(prior and content and len(content) >= 4 and content in prior)
     protagonist = row.get('protagonistName') or ''
     # 只看主人公动作：NPC 的「查看」不代表玩家获得了信息
@@ -496,6 +515,10 @@ def classify(field, item, row, diff, support, content, source, settled_text):
         return 'absent'
     return 'insufficient'
 
+def fact_texts(row):
+    return [str(item.get('text') or '') for item in row.get('settled') or [] if item.get('task') == 'results']
+
+
 def verify(row, proposal):
     diff = state_diff(row)
     settled_text = json.dumps(row['settled'], ensure_ascii=False)
@@ -506,6 +529,11 @@ def verify(row, proposal):
         support = str(item.get('support') or '').strip()
         content = str(item.get('content') or '').strip()
         status = classify(field, item, row, diff, support, content, source, settled_text)
+        if field == 'info' and status == 'present':
+            prior = row.get('priorText') or ''
+            fresh = [hint['text'] for hint in read_info_hints(fact_texts(row)) if hint['text'] not in prior]
+            if fresh:
+                content, support = fresh[0], fresh[0]
         if status == 'present' and support and support not in source:
             support = ''
         target = True if status == 'present' else False if status == 'absent' else None
