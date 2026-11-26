@@ -92,10 +92,11 @@ def main():
             pred = int(logits.argmax().item())
             confusion[FIELDS[field]][f'{label}->{pred}'] += 1
     OUT.mkdir(parents=True, exist_ok=True)
-    torch.save(model.cpu(), OUT / 'semantic-heads.pt')
+    target = OUT / f"semantic-heads{'-' + args.field if args.field else ''}.pt"
+    torch.save(model.cpu(), target)
     print(json.dumps({'counts': {f'{k[0]}:{k[1]}': v for k, v in counts.items()},
                       'confusion': {field: dict(counter) for field, counter in confusion.items()},
-                      'model': str(OUT / 'semantic-heads.pt')}, ensure_ascii=False), flush=True)
+                      'model': str(target)}, ensure_ascii=False), flush=True)
 
 
 if __name__ == '__main__':
