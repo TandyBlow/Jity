@@ -1,0 +1,74 @@
+[
+ {
+  "id": "sm10-i-read-1",
+  "class": "info_new",
+  "input": "我读演习规则牌上关于夺旗的条款。",
+  "purpose": "读取规则牌正文"
+ },
+ {
+  "id": "sm10-i-read-2",
+  "class": "info_new",
+  "input": "我读赛区路线图上关于地下检修通道的标注。",
+  "purpose": "读取路线图正文"
+ },
+ {
+  "id": "sm10-i-ask-1",
+  "class": "info_new",
+  "input": "我问诺诺红方现在控制哪个方向。",
+  "purpose": "诺诺回答"
+ },
+ {
+  "id": "sm10-i-read-3",
+  "class": "info_new",
+  "input": "我查看诺诺左臂识别带的颜色。",
+  "purpose": "读取人物外观"
+ },
+ {
+  "id": "sm10-i-read-4",
+  "class": "info_new",
+  "input": "我走进值钟间，读检修图上关于释放杆的说明。",
+  "purpose": "移动+读取"
+ },
+ {
+  "id": "sm10-i-read-5",
+  "class": "info_new",
+  "input": "我走进控制室，读旗台状态面板上的停赛时间。",
+  "purpose": "移动+读面板"
+ },
+ {
+  "id": "sm10-i-read-6",
+  "class": "info_new",
+  "input": "我读安全事件记录单上关于证人的栏目。",
+  "purpose": "读表格栏目"
+ },
+ {
+  "id": "sm10-i-ask-2",
+  "class": "info_new",
+  "input": "我问曼施坦因停赛时间。",
+  "purpose": "NPC回答"
+ },
+ {
+  "id": "sm10-i-read-7",
+  "class": "info_new",
+  "input": "我走进医护处置室，读分诊夹上林亦舟的登记。",
+  "purpose": "移动+读登记"
+ },
+ {
+  "id": "sm10-i-read-8",
+  "class": "info_new",
+  "input": "我查看顾岚的听诊器。",
+  "purpose": "读取人物外观"
+ },
+ {
+  "id": "sm10-i-read-9",
+  "class": "info_new",
+  "input": "我走进器材棚，读器材领用簿上关于担架的领取栏。",
+  "purpose": "移动+读领用簿"
+ },
+ {
+  "id": "sm10-i-read-10",
+  "class": "info_new",
+  "input": "我查看芬格尔的相机电池图标。",
+  "purpose": "读取物品细节"
+ }
+]

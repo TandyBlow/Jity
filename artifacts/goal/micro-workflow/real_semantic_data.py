@@ -34,6 +34,8 @@ ACTION_VERBS = re.compile('求助|办成|查完|记下|拿起|取出|塞进|递�
 CACHE_VERSION = 'v2'
 PROMPT_VERSION = 'v2'
 NEG_INFO = re.compile('没有答|没答|未答|拒绝回答|没有说|没说|未能|问不出|没有回应')
+# 模型声称的信息必须说出内容，不能只是"读到了/知道了"
+INFO_RESULT = re.compile('是|为|写着|标着|显示|告诉|告知|回答|答了|答出|说|只剩|尚未|已经|有|没有|能|不能|可以|需要|禁止|不得|允许|属于|位于')
 NEG_ENV = re.compile('没有动|没有打开|没有移动|未打开|未移动|保持原样|没有变化')
 ENV_HINT = re.compile(r'环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
 INFO_HINT = re.compile(r'信息[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
@@ -415,6 +417,13 @@ ENV_ACTION = re.compile('提开|掀开|翻开|拉开|打开|推开|推|挪动|�
 ENV_TEXT = ('appearance', 'position')
 
 
+def normalized_cn(value, name=''):
+    text = str(value or '')
+    if name:
+        text = text.replace(name, '')
+    return re.sub(r'[^一-鿿A-Za-z0-9]', '', text.replace('我', ''))
+
+
 def classify(field, item, row, diff, support, content, source, settled_text):
     present = bool(item.get('present'))
     support_ok = bool(support and support in source)
@@ -486,23 +495,29 @@ def classify(field, item, row, diff, support, content, source, settled_text):
     move_capable = any(MOVE_WORDS.search(str(action.get('text') or '')) for action in structured)
     player_source = source
     if protagonist:
-        player_facts = [str(item.get('text') or '') for item in row.get('settled') or []
-                        if item.get('task') == 'results'
-                        and (item.get('key') == row.get('protagonistId') or protagonist in str(item.get('text') or ''))]
-        player_narration = ''.join(sentence for sentence in re.split(r'(?<=[。！？\n])', row.get('text') or '')
-                                   if protagonist in sentence)
-        player_source = player_narration + '\n' + '\n'.join(player_facts)
+        # 只认结算事实：叙事正文可能是幻觉（黑色识别带 vs 状态里的红色）
+        player_source = '\n'.join(str(item.get('text') or '') for item in row.get('settled') or []
+                                  if item.get('task') == 'results'
+                                  and (item.get('key') == row.get('protagonistId')
+                                       or protagonist in str(item.get('text') or '')))
     if present:
         if not support_ok or not content:
             return 'insufficient'
         if ACTION_VERBS.search(content):
             return 'insufficient'
+        # 复述动作本身不是信息（"查看红色识别带" 没有说出结果）
+        echo = normalized_cn(support or content, protagonist)
+        asked = normalized_cn(row.get('input') or '', protagonist)
+        if asked and echo and (echo in asked or asked in echo):
+            return 'absent'
         # 纯物品操作不算获取信息；NPC 转述的信息仍算（support 里有信息动词）
         if structured and not info_capable and not move_capable and not INFO_WORDS.search(content + support):
             return 'absent'
         if protagonist and support not in player_source:
             return 'insufficient'
         if not protagonist and support not in settled_text and support not in source:
+            return 'insufficient'
+        if not INFO_RESULT.search(content + support):
             return 'insufficient'
         if known:
             return 'absent'

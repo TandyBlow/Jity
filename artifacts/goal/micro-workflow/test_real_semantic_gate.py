@@ -174,3 +174,34 @@ def test_info_hint_is_hard_evidence_with_content():
 def test_info_hint_known_in_prior_is_absent():
     result = pipeline.verify(info_row(prior='……医护白线禁射……'), {'info': {'present': False, 'content': '', 'support': ''}})
     assert result['fields']['info']['status'] == 'absent'
+
+
+def info_proposal_row(fact, content, support):
+    return {'id': 'x', 'text': '路明非问诺诺红方控制哪个方向。',
+            'settled': [{'task': 'results', 'key': 'lu', 'text': fact}],
+            'structured': [{'key': 'lu', 'text': '我问诺诺红方控制哪个方向。'}],
+            'protagonistId': 'lu', 'protagonistName': '路明非', 'priorText': ''}
+
+
+def test_info_present_needs_actual_content():
+    row_ = info_proposal_row('路明非读检修图，把旗台结构记住了。（只完成一部分）',
+                             '路明非把旗台结构记住了', '路明非读检修图，把旗台结构记住了')
+    result = pipeline.verify(row_, {'info': {'present': True, 'content': '路明非把旗台结构记住了',
+                                             'support': '路明非读检修图，把旗台结构记住了'}})
+    assert result['fields']['info']['status'] == 'insufficient'
+
+
+def test_info_answer_from_fact_is_present():
+    row_ = info_proposal_row('诺诺告知红方控制西侧。（达到目的）',
+                             '红方控制西侧', '诺诺告知红方控制西侧')
+    result = pipeline.verify(row_, {'info': {'present': True, 'content': '红方控制西侧',
+                                             'support': '诺诺告知红方控制西侧'}})
+    assert result['fields']['info']['status'] == 'present'
+
+
+def test_info_narration_only_support_is_insufficient():
+    row_ = info_proposal_row('路明非查看对方左臂识别带的颜色。（只完成一部分）',
+                             '唐骁左臂识别带为黑色', '唐骁的识别带是黑色的，路明非把颜色记下来')
+    result = pipeline.verify(row_, {'info': {'present': True, 'content': '唐骁左臂识别带为黑色',
+                                             'support': '唐骁的识别带是黑色的，路明非把颜色记下来'}})
+    assert result['fields']['info']['status'] == 'insufficient'

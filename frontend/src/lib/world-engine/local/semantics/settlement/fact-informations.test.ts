@@ -4,7 +4,11 @@ import { informationHint, readInformations } from './fact-informations';
 
 const state = {
   initial: {
-    characters: { lu: { name: '路明非' }, nono: { name: '诺诺' } },
+    characters: {
+      lu: { name: '路明非' },
+      nono: { name: '诺诺' },
+      tang: { name: '唐骁', initialAppearance: '红色识别带勒在肩上，护目镜完好。' },
+    },
     items: {
       rules: { name: '演习规则牌', initialAppearance: '牌面写明：使用弗里嘉演习弹；护目镜必须戴好；医护白线禁射；15:45停赛。' },
       map: { name: '赛区路线图', initialAppearance: '图上画出庭院、东西回廊；地下检修通道用虚线标注。' },
@@ -15,6 +19,7 @@ const state = {
   characters: {
     lu: { position: { containerId: 'lane' } },
     nono: { position: { containerId: 'shed' } },
+    tang: { position: { containerId: 'lane' } },
   },
   items: {
     rules: { position: { containerId: 'lane' } },
@@ -45,6 +50,14 @@ describe('information hints', () => {
   it('uses the arrival room of a compound move', () => {
     const hint = informationHint('我读服务巷规则牌上关于医护白线的条款', ['rules'], state, 'achieved', 'nono', 'lane');
     expect(hint?.text).toBe('医护白线禁射');
+  });
+  it('uses the sub-action destination of a move-and-read action', () => {
+    const hint = informationHint('我走进服务巷，读规则牌上关于医护白线的条款', ['rules'], state, 'achieved', 'nono', 'shed', { containerId: 'lane' });
+    expect(hint?.text).toBe('医护白线禁射');
+  });
+  it('reads a character appearance clause the same way', () => {
+    const hint = informationHint('我查看唐骁左臂识别带的颜色', ['tang'], state, 'achieved', 'lu');
+    expect(hint?.text).toBe('红色识别带勒在肩上');
   });
   it('requires one item and an achieved or partial action', () => {
     expect(informationHint('我读规则牌上关于医护白线的条款', ['rules', 'map'], state, 'achieved', 'lu')).toBeNull();

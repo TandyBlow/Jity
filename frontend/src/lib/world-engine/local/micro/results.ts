@@ -253,8 +253,9 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         }
         // Reading one registered item yields the appearance clause that shares
         // the action's topic term; no topic -> no information claim.
+        const reading = [...(subAction.itemIds ?? []), ...(subAction.targetIds ?? [])];
         const info = !priorBlocked
-          ? informationHint(subAction.text, subAction.itemIds ?? [], request.state, label, member.memberId, actorRoom)
+          ? informationHint(subAction.text, reading, request.state, label, member.memberId, actorRoom, destination)
           : null;
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({

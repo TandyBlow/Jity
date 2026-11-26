@@ -37,16 +37,19 @@ export function informationHint(
   label = 'achieved',
   memberId?: Id,
   actorRoom?: Id,
+  destination?: { containerId?: Id } | null,
 ): { entityId: Id; text: string } | null {
   if (label !== 'achieved' && label !== 'partial') return null;
   if (itemIds.length !== 1) return null;
   if (!READ.test(text)) return null;
   const entityId = itemIds[0];
-  const item = state.initial.items[entityId];
+  // 人物外貌同样可读（识别带颜色、伤势），规则与物品一致
+  const item = state.initial.items[entityId] ?? state.initial.characters[entityId];
   if (!item?.initialAppearance) return null;
   // 移动+读取的复合动作按子动作到达房间判断
-  if (memberId && roomOf(state, entityId) !== (actorRoom ?? roomOf(state, memberId))) return null;
-  const clauses = item.initialAppearance.split(/[；。]/u).map((clause) => clause.trim()).filter(Boolean);
+  const arrival = destination?.containerId ? roomOf(state, destination.containerId) : null;
+  if (memberId && roomOf(state, entityId) !== (arrival ?? actorRoom ?? roomOf(state, memberId))) return null;
+  const clauses = item.initialAppearance.split(/[；。，,]/u).map((clause) => clause.trim()).filter(Boolean);
   let best: { clause: string; length: number; at: number } | null = null;
   for (const clause of clauses) {
     let hit: { length: number; at: number } | null = null;
