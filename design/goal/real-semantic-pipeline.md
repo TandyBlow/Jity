@@ -153,3 +153,27 @@ PYTHONUTF8=1 CACHE_ONLY=1 python -X utf8 artifacts/goal/micro-workflow/real_sema
 
 Outputs: `real-semantic.jsonl`, `real-semantic-cache.jsonl`,
 `real-semantic-spotcheck.md`.
+
+## 2026-11-26 semantic routes and env patch
+
+- Settled facts carry `环境=<entity>:<state>`. Micro results emits it for one
+  achieved/partial local manipulation (item or location); updates applies it as
+  an appearance `add` before the LLM appearance stage.
+- Semantic routes: `semantic-scenarios.json` (env-1, info-1, mix-1 test, env-2,
+  info-2, env-3, info-3, env-4 compound, env-5 multi-manipulation, info-4
+  observation, info-5 repeat/failure). The runner is
+  `run_semantic_routes.py`; the harness is `accept-world-local.mjs`.
+- Labeler: `prompt_facts` extracts `f1 [id] fact` from recorded updates
+  prompts; `initial_snapshot` provides the turn-1 before; info is scoped to
+  protagonist facts and session-prior text; env needs a matching tag+record or
+  explicit failure/no-env-action evidence.
+- First labeled round (env-1 + info-1): gate pass, raw 52 / train 28 / test 8;
+  info 16 pos / 2 neg, env 3 pos / 19 neg. Event-level env export: 151 samples
+  (3 pos / 148 neg). Positives remain the bottleneck.
+- Frozen scenarios (evidence-independent-scenarios-8): state **48/48**,
+  task 14/14, unique route task 1/1, false 0, missed 0, prose issues 1 turn
+  (sc05 source_program), mean 63.5 s. sc06 hatch cover and sc08 long table
+  appearance checks now pass.
+- Remaining: grow env positives (compound routes), info negatives (repeat/
+  failure routes), then train existence/content/support; fix the sc05 instant-
+  point narration fallback; five-arm and mobile.
