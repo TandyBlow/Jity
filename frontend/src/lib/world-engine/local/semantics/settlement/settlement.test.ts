@@ -648,6 +648,24 @@ describe('common-group results', () => {
     expect(answered?.targetId).toBeUndefined();
   });
 
+  it('reattributes a target-response fact to the acting member', async () => {
+    const answer = JSON.stringify({
+      judgments: [{ memberId: 'a', label: 'partial', reason: '甲问乙，乙没有回答。', effects: [] }],
+      facts: [{ text: '乙没有回答。', memberIds: ['a'], actorId: 'a', outcome: 'partial' }],
+    });
+    const engine = new ScriptedEngine([answer, answer]);
+    const outcome = await createSettlementHandlers({ engine }).results('g1', {
+      groupId: 'g1',
+      members: [{ memberId: 'a', actionText: '我问乙现在的局势。', rollRefs: [] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(outcome.error).toBeUndefined();
+    expect(outcome.value).not.toBeNull();
+    expect((outcome.value as Record<string, string>).a).toContain('没有回答');
+    const facts = (outcome.evidence.detail as { facts: { actorId: string; targetId?: string }[] }).facts;
+    expect(facts[0]).toMatchObject({ actorId: 'a', targetId: 'b' });
+  });
+
   it('rejects the prompt example copied as a fact, then settles without inventing one', async () => {
     // 10turn turn 4 (2026-11-11T0928-94ef): the accepted group_72 answer was
     // «秦越做了什么/看到什么» — the example row from the results prompt.

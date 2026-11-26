@@ -1021,8 +1021,19 @@ function readResultsAnswer(
       // On the final attempt the sentence names exactly one member: that member
       // is its subject and the declared memberIds are the slip. Reattribute it
       // instead of aborting the point over an id that the text already states.
+      const mentionedName = mentioned.length === 1 ? state.initial.characters[mentioned[0]]?.name : null;
+      const responds = /回答|回应|拒绝|摇头|点头|说|喊/u.test(original);
+      const targetOwner = mentioned.length === 1 && responds
+        ? (members.find((member) => member.rolls.some((roll) => roll.targetId === mentioned[0]))
+          ?? (mentionedName && members.find((member) => /问|说|喊|告诉|报告|回答|解释|示意|呼叫|对讲|请求|请|劝|要求/u.test(member.actionText)
+            && member.actionText.includes(mentionedName))))
+        : undefined;
       if (options.dropEmptyResults && mentioned.length === 1 && memberById.has(mentioned[0])) {
         recipientIds = [mentioned[0]];
+      } else if (options.dropEmptyResults && targetOwner) {
+        // A sentence about the declared target's response is this member's
+        // result; keep it instead of failing the whole turn.
+        recipientIds = [targetOwner.memberId];
       } else {
         const names = mentioned.map((id) => state.initial.characters[id]?.name ?? id).join('、');
         const inGroup = mentioned.some((id) => memberById.has(id));
@@ -1086,6 +1097,11 @@ function readResultsAnswer(
         .filter((id) => mentioned.includes(id) && id !== actorId);
       if (declaredTargets.length === 1) {
         targetId = declaredTargets[0];
+        targetSource = 'derived';
+      } else if (mentioned.length === 1 && mentioned[0] !== actorId) {
+        // The fact itself names one recipient; a communicate action has no roll
+        // target, so the sentence is the only evidence.
+        targetId = mentioned[0];
         targetSource = 'derived';
       }
     }
