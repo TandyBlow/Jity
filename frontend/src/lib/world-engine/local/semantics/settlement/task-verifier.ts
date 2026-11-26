@@ -39,7 +39,14 @@ export interface VerifierResult {
   raw: string;
   ms: number;
   calls: ModelCallEvidence[];
+  /** The same prompt was already judged by this engine instance. */
+  cached?: boolean;
 }
+
+/** Temperature-0 verifier prompts are deterministic; the proposer can re-emit
+ * the same support on every tasks stage until the task is committed. */
+const verifierMemo = new WeakMap<InferenceEngine, Map<string, VerifierVerdict[]>>();
+const VERIFIER_MEMO_LIMIT = 32;
 
 const VERIFIER_SCHEMA = {
   type: 'object',
@@ -113,15 +120,29 @@ export async function verifyTaskAchievements(
     ...lines,
     `输出 {"judgments":[{"characterId":"${supports[0]?.characterId ?? 'lu'}","taskId":"${supports[0]?.taskId ?? 't1'}","satisfied":"yes|no|partial","reason":"一句话"}]}（每条一行，不能多也不能少）。`,
   ].join('\n');
+  const maxTokens = 520;
+  const temperature = ctx.options.temperature ?? 0;
+  const memoKey = `${maxTokens}|${temperature}|${prompt}`;
+  const memoized = verifierMemo.get(ctx.engine)?.get(memoKey);
+  if (memoized) {
+    return { judgments: memoized.map((row) => ({ ...row })), raw: '', ms: 0, calls: [], cached: true };
+  }
   const answer = await callJson(ctx.engine, prompt, {
-    maxTokens: 520,
-    temperature: ctx.options.temperature ?? 0,
+    maxTokens,
+    temperature,
     timeoutMs: ctx.options.timeoutMs,
     maxPromptChars: ctx.options.maxPromptChars,
     jsonSchema: VERIFIER_SCHEMA,
     validate: (value) => readVerifierJudgments(value, supports),
   });
   const judgments = readVerifierJudgments(answer.value, supports);
+  let memo = verifierMemo.get(ctx.engine);
+  if (!memo) {
+    memo = new Map();
+    verifierMemo.set(ctx.engine, memo);
+  }
+  if (memo.size >= VERIFIER_MEMO_LIMIT) memo.delete(memo.keys().next().value!);
+  memo.set(memoKey, judgments.map((row) => ({ ...row })));
   return { judgments, raw: answer.raw, ms: answer.ms, calls: answer.calls };
 }
 

@@ -93,14 +93,31 @@ describe('task-progress micro workflow', () => {
         return '{"judgments":[{"characterId":"hero","taskId":"task_hero_key","satisfied":"yes","reason":"跨回合满足"}]}';
       },
     };
-    const result = await verifyTaskAchievements({
-      engine,
+    let calls = 0;
+    const engineWithCount: InferenceEngine = {
+      ...engine,
+      complete: async (text) => {
+        calls += 1;
+        prompt = text;
+        return '{"judgments":[{"characterId":"hero","taskId":"task_hero_key","satisfied":"yes","reason":"跨回合满足"}]}';
+      },
+    };
+    const request = {
+      engine: engineWithCount,
       state: buildTestWorld(),
       results: {},
       options: {},
-    }, [{ characterId: 'hero', taskId: 'task_hero_key', basis: 'cross_turn', basisText: '路明非打开手电；路明非确认电量。' }]);
+    };
+    const supports = [{ characterId: 'hero', taskId: 'task_hero_key', basis: 'cross_turn', basisText: '路明非打开手电；路明非确认电量。' }];
+    const result = await verifyTaskAchievements(request, supports);
     expect(prompt).toContain('路明非打开手电；路明非确认电量。');
     expect(result.judgments[0]).toMatchObject({ satisfied: 'yes' });
+
+    const cached = await verifyTaskAchievements(request, supports);
+    expect(calls).toBe(1);
+    expect(cached.cached).toBe(true);
+    expect(cached.calls).toHaveLength(0);
+    expect(cached.judgments).toEqual(result.judgments);
   });
 
   it('lets the micro verdict replace the LLM verifier call', async () => {

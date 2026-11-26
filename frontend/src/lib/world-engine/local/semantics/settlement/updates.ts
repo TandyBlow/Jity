@@ -1144,6 +1144,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
                   supports: allowed,
                   proposer: proposal,
                   verifier: checked.judgments,
+                  verifierCached: checked.cached === true,
                 },
                 decidedTaskIds: decidedIds,
                 newlyAchievedTaskIds: newlyAchieved,
@@ -1190,6 +1191,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     let acceptedSupports = read.supports;
     let rejected = read.rejected;
     let verifier: VerifierVerdict[] | null = null;
+    let verifierCached = false;
     let verifierCalls: ModelCallEvidence[] = [];
     if (strictSupport && read.supports.length) {
       try {
@@ -1198,6 +1200,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           read.supports,
         );
         verifier = checked.judgments;
+        verifierCached = checked.cached === true;
         verifierCalls = checked.calls;
       } catch (error) {
         if (error instanceof JsonCallError) {
@@ -1252,6 +1255,7 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           rejectedTaskIds: rejected,
           supports: acceptedSupports,
           verifier: verifier ?? undefined,
+          verifierCached,
           defaultedUnchanged: read.defaultedUnchanged,
           proposer: proposerEvidence,
         },
