@@ -771,6 +771,17 @@ export class WllamaInferenceEngine implements InferenceEngine {
     return calls.length;
   }
 
+  /** Stop the worker and free its memory while keeping the engine reusable.
+   * The next complete()/load() reloads the same model from lastModelUrls. */
+  async release(): Promise<void> {
+    if (this.disposed || !this.instance || this.activeCalls.size > 0) return;
+    const instance = this.instance;
+    this.instance = null;
+    this.loadedIdentity = null;
+    this.info.modelId = null;
+    await this.exitInstance(instance);
+  }
+
   async dispose(): Promise<void> {
     if (this.disposePromise) return this.disposePromise;
     this.disposed = true;

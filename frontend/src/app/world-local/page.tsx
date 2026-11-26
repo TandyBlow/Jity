@@ -397,6 +397,8 @@ function engineCounters(label: string, engine: ProductEnginePort | null): WorldT
 interface ProductEnginePort extends InferenceEngine {
   /** Forwarded to the real runtime so the stop button can cancel a cold load. */
   cancelActive(): number;
+  /** Free the worker while keeping the port reusable (idle hidden tab). */
+  release?(): Promise<void>;
   runtime(): {
     needsReload: boolean; workersCreated: number; workersExited: number; generations: number; loadCount: number;
     contextSize?: number; modelId?: string | null; backend?: string; gpuLayers?: number;
@@ -473,7 +475,11 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
   };
   return {
     get info() { return { backend: current?.info.backend ?? 'wllama', modelId: current?.info.modelId ?? null }; },
-    load: async () => { await ensure(); },
+    load: async () => {
+      const engine = await ensure();
+      if (engine.runtime.needsReload) await engine.ensureLoaded();
+    },
+    release: async () => { if (current) await current.release(); },
     dispose: async () => {
       closed = true;
       const inFlight = loadingEngine;
@@ -707,13 +713,17 @@ export default function WorldLocalPage() {
   const [view, setView] = useState<ViewState | null>(null);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [stage, setStage] = useState<string>('');
   // The acceptance driver cannot tell a quiet failure recovery from an idle
   // page by body text alone; expose the same busy flag the submit guard uses.
-  useEffect(() => { (window as unknown as { __worldBusy?: boolean }).__worldBusy = busy; }, [busy]);
+  useEffect(() => {
+    busyRef.current = busy;
+    (window as unknown as { __worldBusy?: boolean }).__worldBusy = busy;
+  }, [busy]);
   const sessionRef = useRef<LocalGameSession | null>(null);
   /** Product cap: one submit may wait 300 s at most. Automatic follow-up rounds
    * are stopped at 295 s so the player gets the committed point back inside the
@@ -1465,9 +1475,26 @@ export default function WorldLocalPage() {
       if (event.persisted) { void session.flushPersistence().catch(() => undefined); return; }
       void session.close().catch(() => undefined);
     };
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        flush();
+        // Free the GGUF workers only when no turn is in flight; the next turn
+        // (or visibility) reloads them. Mid-turn tab switches keep the worker.
+        if (!busyRef.current) {
+          void semanticRef.current?.release?.();
+          void narrationRef.current?.release?.();
+        }
+        return;
+      }
+      void semanticRef.current?.load().catch(() => undefined);
+      void narrationRef.current?.load().catch(() => undefined);
+    };
     window.addEventListener('pagehide', onPageHide);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
-    return () => { window.removeEventListener('pagehide', onPageHide); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('pagehide', onPageHide);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   /** Explicit takeover after a "another tab owns this save" stop. The chosen
