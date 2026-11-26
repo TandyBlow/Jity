@@ -116,3 +116,14 @@ G1 之后新增：
 - task 台账持久化补充（2026-11-26）：`LocalGameSnapshot.taskLedger` 随本地存档/同步保存；`taskLedgerOf`/`onRestoreTaskLedger` 在保存/恢复时导入导出，`seenFacts` 去重，物品条件按持有链失效/恢复，其他条件保持历史成立。`evidence-task-accum-refresh1.json`：第 2 回合后刷新 restored=true，第 3 回合仍以 3/3 完成护目镜任务并 `achieved`；第 3 回合 accepted 139.5 s，仍是 60 s 门槛问题。决策 D-037。
 
 - 共享 runtime/批推理补充（2026-11-26）：ORT session 按 URL 共享、refcount，task proposer 条件行 padding 成批一次推理；`evidence-task-accum-batch1.json` proposer 17 行 344 ms（旧 18 行 721 ms，−52%），但 8/11 行小批 90/66 ms 比旧的 72/47 ms 慢，需按行数阈值；回合等待 84.2/90.0/124.9 s，任务仍 achieved，heap 149/137/128 MB。自动空闲驱逐与端口 release 未做；GGUF 仍是内存主项。决策 D-038。
+
+## 8. 完整工作流性能优化（2026-11-26 起）
+
+研发重心从逐端口建设转到一次玩家操作的协同效率。入口证据：micro9 / refresh1 / batch1 的完整回合仍 84–147 s；task proposer 已进入回归维护。
+
+- **回合时间轴**：记录模型加载、提示处理、生成、等待、重试与阶段依赖，定位真正阻塞玩家操作的计算（脚本：`artifacts/goal/micro-workflow/turn_timeline.py`，待补）。
+- **剩余 LLM 语义**：优先用微型模型替代高耗时 tasks/subtasks/personality/sanity；完成后续子任务提案与专用反应头。
+- **批/并行与复用**：独立微型任务并行；同一状态+事实的重复核验复用已验证结果；避免重复编码。小批量阈值不再是重点。
+- **GGUF 驻留/上下文/调度**：模型加载、驻留、上下文长度、空闲释放；共享会话缓存没有重复 session 可省，内存主项是 GGUF。
+- **独立场景集**：物品交互、移动、对话、冲突、任务推进、环境变化六类，不再集中于护目镜。
+- **桌面/移动完整回合**：持续测 30/60 s 阶段目标，保持状态与质量。

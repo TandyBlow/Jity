@@ -431,3 +431,10 @@
 - 决定：ORT session 按模型 URL 全页共享，端口持有引用计数；`dispose` 在最后一个引用释放时释放会话。task proposer 把条件/事实行 padding 成一批，一次 `session.run` 取回每行 logits；`packBatch` 单独测试。暂不做自动空闲驱逐：端口在整个会话期持有引用，需要端口级 release 信号后才能安全回收。
 - 证据：`evidence-task-accum-batch1.json` COMPLETED、0 failures；proposer 17 行 344 ms（micro9 同量级 18 行 721 ms，−52%），8 行 90 ms vs 72 ms、11 行 66 ms vs 47 ms（小批 padding 反而慢）；回合等待 84.2/90.0/124.9 s，护目镜任务仍 `achieved`；JS heap 149/137/128 MB。单测 `runtime.test.ts`。
 - 影响：条件行多时批推理有效，小批应按行数阈值退回单行；内存主项仍是 narration/semantic GGUF，micro session 共享/批推理只解决重复会话与逐行开销。下一步：端口级 release/空闲驱逐，LLM tasks 重试收敛。
+
+## D-039 进入完整工作流性能优化阶段（2026-11-26，用户指令）
+
+- 状态：`signed`（2026-11-26）。
+- 决定：task proposer、跨回合条件、存档恢复与任务提交已进入回归维护；研发重心转为一次玩家操作的端到端效率。建立每回合时间轴（加载/提示/生成/等待/重试/依赖），按真实阻塞排序；优先用微型模型替换剩余高耗时语义任务（tasks/subtasks/personality/sanity、后续子任务、专用反应）；独立微型任务并行/批推理，同一状态+事实的重复核验复用已验证结果；优化 GGUF 驻留、上下文长度、调度与空闲释放；建立六类独立场景集；桌面/移动持续测 30/60 s。小批量阈值不再作为重点。
+- 证据：micro9/refresh1/batch1 完整回合 84.2–146.9 s；proposer 17 行 344 ms（旧 721 ms）但回合仍由 LLM 主导；batch1 heap 149/137/128 MB，共享会话无重复可省；micro9 任务 `achieved`、refresh1 刷新后仍 `achieved`。
+- 影响：不再以单端口训练/阈值为主；性能结论必须来自整回合时间轴与真实页面。30 s/60 s 未达前不宣称性能通过。

@@ -2,6 +2,8 @@
 
 状态：closed（2026-11-24 最终裁决：笔记本档按 v13 默认通过（D-028）；移动档按 60 秒同口径不通过（D-023））。日期：2026-11-22。基线：`agent@7329ce21`。
 
+> 2026-11-26：产品进入「完整工作流性能优化」阶段；终态门槛不变，执行项与能力状态见 `ledger.md` §8、决策 D-039。
+
 本文只写最终目标：做完是什么样。执行路线、能力状态与历史证据不在本文——能力看 [`ledger.md`](ledger.md)，裁决看 [`decisions.md`](decisions.md)，架构事实看 [`architecture.md`](architecture.md)，验收协议看 [`acceptance.md`](acceptance.md)。冲突时以 `decisions.md` 为准。
 
 ## 1. 最终目标
