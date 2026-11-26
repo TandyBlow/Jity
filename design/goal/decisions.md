@@ -438,3 +438,12 @@
 - 决定：task proposer、跨回合条件、存档恢复与任务提交已进入回归维护；研发重心转为一次玩家操作的端到端效率。建立每回合时间轴（加载/提示/生成/等待/重试/依赖），按真实阻塞排序；优先用微型模型替换剩余高耗时语义任务（tasks/subtasks/personality/sanity、后续子任务、专用反应）；独立微型任务并行/批推理，同一状态+事实的重复核验复用已验证结果；优化 GGUF 驻留、上下文长度、调度与空闲释放；建立六类独立场景集；桌面/移动持续测 30/60 s。小批量阈值不再作为重点。
 - 证据：micro9/refresh1/batch1 完整回合 84.2–146.9 s；proposer 17 行 344 ms（旧 721 ms）但回合仍由 LLM 主导；batch1 heap 149/137/128 MB，共享会话无重复可省；micro9 任务 `achieved`、refresh1 刷新后仍 `achieved`。
 - 影响：不再以单端口训练/阈值为主；性能结论必须来自整回合时间轴与真实页面。30 s/60 s 未达前不宣称性能通过。
+
+## D-040 整回合性能：动作模板回退、verifier memo、GGUF 驻留（2026-11-26，用户指令）
+
+- 状态：`signed`（2026-11-26）。
+- 决定：研发重心转向端到端。动作阶段在 LLM 把任务目标当行动时，第一次拒绝后直接使用已校验的模板候选，不再付两次 repair；`templateFallback:false` 保留实验路径。任务核验对同一 engine 上完全相同的温度 0 prompt 做 32 条成功判决 memo，命中不调 LLM、失败不缓存。GGUF 侧把叙事默认上下文 4096→2048（约省 224 MiB f16 KV），页面不再保留已 fetch 的 GGUF Blob（最多省 1.4 GiB Blob 配额；硬停止重载改为重新 fetch）。独立场景集 `scenarios-independent.json` 覆盖物品交互、移动、对话、冲突、任务推进、环境变化，共 8 回合。
+- 证据：`evidence-task-accum-action1.json`（动作回退）：等待 69.2/85.3/100.8 s，action1 的 action LLM 调用 8/8/8（batch1 16/16/19）、attempt 6/6/7（batch1 11/10/12）、action ms 28.9/31.5/42.3（batch1 42-65），护目镜仍 `achieved`，COMPLETED/0 failures。`timeline-20261126.md`：9 回合均值 107.6 s，action 24.1 s、position 14.9 s、tasks+subtasks 22.0 s、正文尾 26.5 s；没有相同 prompt 的完全重复调用。verifier memo 与 GGUF 改动的整回合复测进行中（perf1）。
+- 影响：动作重试是最大单项可省；verifier memo 只省重复核验（2-5 s/次），不是 100 s 主因；GGUF 改动解决内存/Blob 配额，不把回合拉到 30/60 s。空闲 worker 释放、narration 双跑、position 批处理仍是下一轮。
+
+- 复测（perf1，2026-11-26）：三回合 COMPLETED、0 failures；等待 68.0/88.2/119.2 s，护目镜 1/3→2/3→3/3 并 `achieved`；action 仍是 8 次 LLM/6-7 次 attempt。verifier memo 在这三回合 0 命中（每回合只出现一次相同 support），只对重试点/恢复回合有意义，不能算当前收益。叙事 2048/不保留 Blob 只降内存，不降回合时间。空闲 worker 释放已接入：tab 隐藏且无回合在跑时退出两个 worker，可见时预热重载；真实页面未测该路径。

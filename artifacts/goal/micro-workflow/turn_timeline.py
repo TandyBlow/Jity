@@ -61,6 +61,12 @@ def main():
                     print(f'| {stage} | {row["calls"]} | {ms(row["ms"])} |')
             if micro:
                 print('micro: ' + ', '.join(f'{port} {row["calls"]}/{ms(row["ms"])}ms' for port, row in sorted(micro.items())))
+            action_calls = [call for call in calls if call.get('task') == 'action']
+            if action_calls:
+                sources = Counter(call.get('source') or '?' for call in action_calls)
+                attempts = sum(1 for call in action_calls if call.get('attempt'))
+                print(f'action sources {dict(sources)} attempts={attempts} '
+                      f'llm_calls={sum(1 for call in action_calls if (call.get("ms") or 0) > 0)}')
             if repeated:
                 print('repeated accepted calls: ' + ', '.join(f'{key} x{count}' for key, count in repeated[:10]))
             engines = product.get('engines') or []

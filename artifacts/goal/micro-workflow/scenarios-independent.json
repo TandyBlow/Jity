@@ -1,0 +1,370 @@
+[
+ {
+  "id": "sc01-dialogue-nono-neutrality",
+  "category": [
+   "dialogue",
+   "task progression"
+  ],
+  "input": "我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。",
+  "purpose": "对话：在服务巷同一可见场景内向诺诺问清局势与中立可能；本回合不移动、不碰物品。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "lane"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": "slot_wall"
+   },
+   {
+    "kind": "state",
+    "path": "characters.nono.position.containerId",
+    "equals": "lane"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_choice.status",
+    "from": "pending",
+    "equals": "achieved"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_match.status",
+    "equals": "pending"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_goggles.status",
+    "equals": "pending"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_kit.status",
+    "equals": "pending"
+   }
+  ],
+  "rationale": {
+   "dialogue": "对话：同一可见场景内问清局势，检查对话事实能推动 task_lu_choice 的对象（诺诺）与确认（问清）两个条件。",
+   "task progression": "任务推进：把 task_lu_choice 从 pending 推到 achieved，同时用根任务、护目镜任务、装备任务仍 pending 防止误提交。"
+  }
+ },
+ {
+  "id": "sc02-conflict-yard-cover",
+  "category": [
+   "conflict",
+   "movement"
+  ],
+  "input": "我贴着服务巷的低墙绕到庭院西口，低身走进庭院，躲到南端石花槽后，朝倒放长椅后的唐骁举起空着的双手，喊林亦舟是真扭伤，医护白线内停火。",
+  "purpose": "冲突：从服务巷进入庭院南端掩体，在唐骁同一可见场景内表明真实伤情并要求停火。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "yard"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": "slot_south_cover"
+   },
+   {
+    "kind": "state",
+    "path": "characters.tang.position.containerId",
+    "equals": "yard"
+   },
+   {
+    "kind": "appearance",
+    "path": "characters.lu.appearanceChanges",
+    "noneActiveTextMatches": "(中弹|命中|淘汰|出局|演习弹痕)"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_match.status",
+    "equals": "pending"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_choice.status",
+    "equals": "achieved"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_route.status",
+    "equals": "pending"
+   }
+  ],
+  "rationale": {
+   "conflict": "冲突：在同一庭院可见场景进入南端掩体并向唐骁喊话，检查主角落位、不被错误命中、根任务不提前完成。",
+   "movement": "移动：本回合用『走进庭院 + 南端石花槽后』把位置落到 yard/slot_south_cover，验证掩体槽位。"
+  }
+ },
+ {
+  "id": "sc03-move-shed",
+  "category": [
+   "movement"
+  ],
+  "input": "我沿庭院西侧退回服务巷，走进器材棚，到器材笼外找值班员秦越。",
+  "purpose": "移动：从庭院经服务巷回到器材棚，落到器材笼外槽位。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "shed"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": "slot_cage"
+   },
+   {
+    "kind": "state",
+    "path": "characters.qin.position.containerId",
+    "equals": "shed"
+   },
+   {
+    "kind": "state",
+    "path": "items.spare_mag2.position.containerId",
+    "equals": "ammo_box"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_choice.status",
+    "equals": "achieved"
+   }
+  ],
+  "rationale": {
+   "movement": "移动：用『退回/走进 + 注册地点』让程序确认落位，并检查器材笼槽位而非只换父地点。"
+  }
+ },
+ {
+  "id": "sc04-item-magazine",
+  "category": [
+   "item interaction"
+  ],
+  "input": "我把通用短枪弹匣乙从开盖的弹药箱里取出来，塞进演习背心的胸袋。",
+  "purpose": "物品交互：把弹匣从 ammo_box/slot_right 移入 jacket_lu/slot_chest，验证物品的嵌套容器链，且不碰护目镜。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "items.spare_mag2.position.containerId",
+    "equals": "jacket_lu"
+   },
+   {
+    "kind": "state",
+    "path": "items.spare_mag2.position.slotId",
+    "equals": "slot_chest"
+   },
+   {
+    "kind": "state",
+    "path": "items.spare_mag1.position.containerId",
+    "equals": "ammo_box"
+   },
+   {
+    "kind": "state",
+    "path": "items.jacket_lu.position.containerId",
+    "equals": "lu"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "shed"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": "slot_cage"
+   }
+  ],
+  "rationale": {
+   "item interaction": "物品交互：用弹药箱弹匣移入背心胸袋，检查嵌套容器链与单件领取，不涉及护目镜。"
+  }
+ },
+ {
+  "id": "sc05-move-hatch",
+  "category": [
+   "movement"
+  ],
+  "input": "我退出器材棚，沿服务巷走到服务巷检修口，停在拉环旁边。",
+  "purpose": "移动：从器材棚回到服务巷检修口，验证跨父级地点移动且随身弹匣不脱手。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "hatch"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": null
+   },
+   {
+    "kind": "state",
+    "path": "items.spare_mag2.position.containerId",
+    "equals": "jacket_lu"
+   },
+   {
+    "kind": "state",
+    "path": "items.hatch_cover.position.containerId",
+    "equals": "hatch"
+   },
+   {
+    "kind": "state",
+    "path": "items.flashlight.position.containerId",
+    "equals": "hatch"
+   }
+  ],
+  "rationale": {
+   "movement": "移动：用『退出/走到 + 服务巷检修口』确认跨父级落位，并检查随身物品仍在背心容器内。"
+  }
+ },
+ {
+  "id": "sc06-env-hatch-route",
+  "category": [
+   "environment change",
+   "task progression"
+  ],
+  "input": "我抓住检修盖的拉环把盖子提开，看见下面的短梯和通往钟楼的地下检修通道，决定就走这条有掩护的路线。",
+  "purpose": "环境变化：翻开服务巷检修盖并暴露通往钟楼的地下检修通道；同时让 task_lu_route 的地点条件成立。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "hatch"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": null
+   },
+   {
+    "kind": "state",
+    "path": "items.hatch_cover.position.containerId",
+    "equals": "hatch"
+   },
+   {
+    "kind": "appearance",
+    "anyOf": [
+     {
+      "path": "items.hatch_cover.appearanceChanges",
+      "activeTextMatches": "(提开|掀开|打开|翻开|拉开|提起)"
+     },
+     {
+      "path": "locations.hatch.appearanceChanges",
+      "activeTextMatches": "(检修盖|盖).*(提开|掀开|打开|翻开|拉开|提起)"
+     }
+    ]
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_route.status",
+    "from": "pending",
+    "equals": "achieved"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_choice.status",
+    "equals": "achieved"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_match.status",
+    "equals": "pending"
+   }
+  ],
+  "rationale": {
+   "environment change": "环境变化：翻检修盖露出短梯与地下通道，检查外貌变化记录，且落位仍停在检修口。",
+   "task progression": "任务推进：把 task_lu_route 的地点条件（地下检修通道）从 pending 推到 achieved，并检查 task_lu_choice 仍保持。"
+  }
+ },
+ {
+  "id": "sc07-move-foyer",
+  "category": [
+   "movement"
+  ],
+  "input": "我离开检修口，沿服务巷绕到西侧，从西门进入门厅。",
+  "purpose": "移动：从检修口经服务巷进入钟楼门厅，验证后缀地名定位、最后目的地与随身物品保持。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "foyer"
+   },
+   {
+    "kind": "state",
+    "path": "characters.lu.position.slotId",
+    "equals": null
+   },
+   {
+    "kind": "state",
+    "path": "items.spare_mag2.position.containerId",
+    "equals": "jacket_lu"
+   },
+   {
+    "kind": "state",
+    "path": "items.foyer_table.position.containerId",
+    "equals": "foyer"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_route.status",
+    "equals": "achieved"
+   }
+  ],
+  "rationale": {
+   "movement": "移动：用『门厅』后缀定位钟楼门厅，避开『钟楼』父名同名歧义，检查最后目的地与随身弹匣。"
+  }
+ },
+ {
+  "id": "sc08-env-foyer-table",
+  "category": [
+   "environment change"
+  ],
+  "input": "我抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口。",
+  "purpose": "环境变化：移开门厅翻倒长桌，恢复楼梯口通行；本回合结束时仍在 15:45 停赛前。",
+  "checks": [
+   {
+    "kind": "state",
+    "path": "characters.lu.position.containerId",
+    "equals": "foyer"
+   },
+   {
+    "kind": "state",
+    "path": "items.foyer_table.position.containerId",
+    "equals": "foyer"
+   },
+   {
+    "kind": "appearance",
+    "anyOf": [
+     {
+      "path": "items.foyer_table.appearanceChanges",
+      "activeTextMatches": "(拖到|拖开|挪开|移开|让出|侧墙)"
+     },
+     {
+      "path": "locations.foyer.appearanceChanges",
+      "activeTextMatches": "(长桌|桌).*(拖|挪|移|侧墙)|楼梯口.*(通|让出)"
+     }
+    ]
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_route.status",
+    "equals": "achieved"
+   },
+   {
+    "kind": "task",
+    "path": "characters.lu.tasks.task_lu_match.status",
+    "equals": "pending"
+   },
+   {
+    "kind": "state",
+    "path": "time.dateTime",
+    "lte": "2009-10-17T15:45:00"
+   }
+  ],
+  "rationale": {
+   "environment change": "环境变化：清开楼梯口长桌，检查外貌变化记录与停赛前时间，不依赖叙事声称。"
+  }
+ }
+]

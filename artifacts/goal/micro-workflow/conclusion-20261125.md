@@ -334,3 +334,9 @@
 - ORT session 按 URL 全页共享（refcount），task proposer 条件行 padding 后一次推理。`evidence-task-accum-batch1.json` COMPLETED、0 failures；护目镜仍 1/3→2/3→3/3 并 `achieved`。
 - proposer：17 行 344 ms（micro9 18 行 721 ms，−52%）；8 行 90 ms、11 行 66 ms，比旧 72/47 ms 慢——小批 padding 成本超过省下的 session.run 开销，下一版按行数阈值切换。
 - 回合等待 84.2 / 90.0 / 124.9 s，JS heap 149 / 137 / 128 MB。共享 cache 没有重复 session 可省，heap 基本不变；内存主项仍是 narration/semantic GGUF。自动空闲驱逐/端口 release 未做。
+
+## 整回合性能：动作模板回退与资源（2026-11-26）
+
+- 时间轴（9 回合）：均值 107.6 s；action 24.1 s（97 次语义、41 次重试 70.5 s）、position 14.9 s、tasks+subtasks 22.0 s、正文尾 26.5 s；无完全重复 prompt、无重复 session。
+- 动作修复：任务目标照抄首次被拒后用已校验模板候选，不再两次 repair。action1 等待 69.2/85.3/100.8 s，action LLM 8/8/8（旧 16/16/19）、attempt 6/6/7（旧 11/10/12）；perf1 68.0/88.2/119.2 s，护目镜仍 `achieved`。
+- 资源：叙事 ctx 4096→2048；不再保留 GGUF Blob（最多省 1.4 GiB Blob 配额）；tab 隐藏且无回合时释放 worker，可见预热。verifier 同 prompt memo 在这三回合 0 命中。60 s 仍未达到；下一步正文双跑、position 批处理、专用子任务/反应头、独立场景与移动端。
