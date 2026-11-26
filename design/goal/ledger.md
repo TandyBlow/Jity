@@ -175,3 +175,5 @@ G1 之后新增：
 - 冻结八场景（2026-11-26，scenarios-8）：状态 48/48、任务 14/14、唯一任务 1/1、false 0、missed 0、prose 问题 1 回合、均值 63.5 s、max 83.0 s。sc06 检修盖与 sc08 长桌环境外观均通过；6b 的 46/48 与 3 回合 prose 问题已改善。决策 D-061。
 
 - 语义数据第二轮（2026-11-26）：env-2（前 8 回合有效）+ env-4 完成并标注；验收门 pass，train 64 行；字段计数 info 25 pos / 3 neg、env 12 pos / 22 neg（trainingReady=false）。失败词改为只看带 `环境=` 的事实，避免 instant 叙事的「没有」污染；env-5/info-4/info-5 采集中。决策 D-056/D-058/D-061。
+
+- 第三轮数据（2026-11-26）：env-6 完成，记录检修图/工作台/医护箱/空床/保温毯/备用护目镜/领用簿/弹药箱/长椅/石花槽；标注后 info 35 pos/6 neg、env 29 pos/47 neg。门控 pass；控制室移动在真实回合未提交（结构 destination=null，单测同文本通过，待查）。env-7 与 info-6/7（LLM results 臂）采集中。D-061/D-062。
