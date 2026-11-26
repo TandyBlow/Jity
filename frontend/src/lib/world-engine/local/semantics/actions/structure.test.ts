@@ -72,6 +72,8 @@ describe('action structure', () => {
     expect(cover.subActions[0].itemIds).toEqual(['hatch_cover']);
     const table = buildActionStructure('我把门厅的长桌推到墙边。', scene, gear, 2);
     expect(table.subActions[0].itemIds).toEqual(['foyer_table']);
+    const arrival = buildActionStructure('我走进钟楼门厅，把长桌推到侧墙', scene, gear, 2);
+    expect(arrival.subActions[0].itemIds).toEqual(['foyer_table']);
   });
   it('returns no item when two candidates tie', () => {
     expect(matchItems('饮水杯', [{ id: 'water', name: '休息区饮水杯' }, { id: 'cup', name: '饮水杯' }])).toEqual([]);

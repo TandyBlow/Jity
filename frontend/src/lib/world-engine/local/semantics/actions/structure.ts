@@ -71,7 +71,14 @@ export function matchItems(text: string, names: Array<{ id: Id; name: string }>,
   const strip = (value: string) => value.replace(/的/gu, '');
   const target = strip(text);
   const scored = names
-    .map((item) => ({ id: item.id, name: item.name, score: Math.max(longestOverlap(strip(coreName(item.name)), target), longestOverlap(strip(item.name), target)) }))
+    .map((item) => {
+      const plainName = strip(item.name);
+      const overlap = Math.max(longestOverlap(strip(coreName(item.name)), target), longestOverlap(plainName, target));
+      // 尾部名词是区分同地点物品的强证据（长桌 vs 检修门）
+      const tail = plainName.slice(-2);
+      const bonus = tail.length === 2 && target.includes(tail) ? 3 : 0;
+      return { id: item.id, name: item.name, score: overlap + bonus };
+    })
     .filter((row) => row.score >= 2)
     .sort((left, right) => right.score - left.score);
   if (!scored.length) return [];
