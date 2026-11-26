@@ -1,0 +1,20 @@
+{
+ "note": "Shadow existence heads (env/info) trained in this workspace from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder.",
+ "encoder": "artifacts/benchmark/minirbt-h256-snapshot (MIT)",
+ "files": {
+  "existence-env-int8.onnx": {
+   "sha256": "a091c0e90cbf713cfcdad8121b2cf8d64b2472421c6a8c589e921ceb579a5413",
+   "bytes": 10549943,
+   "field": "env",
+   "trainingRows": {"pos": 53, "neg": 153},
+   "holdout": {"route": "sm6-", "correct": 8, "total": 9}
+  },
+  "existence-info-int8.onnx": {
+   "sha256": "a20dcc8a5ce796433287dd36bde0490ddfb459bd0634351138374b1da70da6fb",
+   "bytes": 10549943,
+   "field": "info",
+   "trainingRows": {"pos": 57, "neg": 92},
+   "holdout": {"route": "sm10-", "correct": 9, "total": 10}
+  }
+ }
+}

@@ -11,6 +11,7 @@ import type { InferenceEngine } from '@/lib/world-engine/runtime/engine';
 import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
 import { createMicroResults } from '@/lib/world-engine/local/micro/results';
+import { createMicroExistence } from '@/lib/world-engine/local/micro/existence';
 import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
 import { createMicroBehavior } from '@/lib/world-engine/local/micro/behavior';
 import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micro/judges';
@@ -611,6 +612,9 @@ export default function WorldLocalPage() {
     && new URLSearchParams(window.location.search).get('taskVerifier') === 'micro');
   const [taskProposerMicro] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('taskProposer') === 'micro');
+  // Shadow-only existence heads: scores are recorded, never applied.
+  const [existenceShadow] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('existenceShadow') === '1');
   const [rollSeed] = useState(() => {
     if (typeof window === 'undefined') return null;
     const raw = new URLSearchParams(window.location.search).get('seed');
@@ -981,8 +985,9 @@ export default function WorldLocalPage() {
         const microTargets = microEnabled
           ? createMicroTargets({ onStats: (record) => recordMicro('targets', record) })
           : undefined;
+        const existencePort = microEnabled && existenceShadow ? createMicroExistence() : undefined;
         const microResults = microEnabled
-          ? createMicroResults({ onStats: (record) => recordMicro('results', record) })
+          ? createMicroResults({ existence: existencePort, onStats: (record) => recordMicro('results', record) })
           : undefined;
         const microUpdates = microEnabled
           ? createMicroUpdates({ onStats: (record) => recordMicro('updates', record) })

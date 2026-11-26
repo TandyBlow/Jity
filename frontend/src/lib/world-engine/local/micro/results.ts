@@ -8,6 +8,7 @@ import { informationHint } from '../semantics/settlement/fact-informations';
 import { matchLocation } from '../semantics/settlement/fact-destinations';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
+import type { MicroExistenceScores } from './existence';
 
 const RESULT = ['achieved', 'partial', 'not_achieved', 'blocked', 'no_change'];
 const PHRASE: Record<string, string> = {
@@ -134,7 +135,9 @@ export interface MicroResultsOptions {
   vocabUrl?: string;
   modelUrl?: string;
   threshold?: number;
-  onStats?: (record: { members: number; inferences?: number; ms: number; loadMs: number; source: 'micro' | 'abstain' }) => void;
+  /** Shadow existence heads; scores are evidence only, never a decision. */
+  existence?: (text: string) => Promise<MicroExistenceScores | null>;
+  onStats?: (record: { members: number; inferences?: number; ms: number; loadMs: number; source: 'micro' | 'abstain'; existence?: MicroExistenceScores | null }) => void;
 }
 
 export function createMicroResults(options: MicroResultsOptions = {}): MicroResultsFn {
@@ -269,7 +272,12 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const overall = labels.every((label) => label === labels[0]) ? labels[0] : 'partial';
       judgments.push({ memberId: member.memberId, label: overall, reason: PHRASE[overall] });
     }
-    options.onStats?.({ members: request.members.length, inferences: judged, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
+    const existence = options.existence
+      ? await options.existence(facts.map((fact) => fact.text).join(' '))
+      : undefined;
+    // 影子分数走 world-local 前缀，验收驱动会采集这行
+    if (existence) console.info(`[world-local existence] env=${existence.env.toFixed(4)} info=${existence.info.toFixed(4)}`);
+    options.onStats?.({ members: request.members.length, inferences: judged, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro', existence });
     return { judgments, facts };
   };
 }

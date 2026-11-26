@@ -312,3 +312,6 @@ frontend/artifacts/
 
 # Local inference lease lock (resource_lease.py)
 /resources/
+
+# Browser-local int8 existence heads (rebuild via export_existence_onnx.py)
+frontend/public/micro/existence-*-int8.onnx
