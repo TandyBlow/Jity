@@ -212,6 +212,162 @@
      "purpose": "环境变化加移动"
     }
    ]
+  },
+  {
+   "id": "info-2",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm2-i-new-1",
+     "class": "info_new",
+     "input": "我问诺诺：蓝方的集结点设在校园哪一侧？",
+     "purpose": "询问场景描述未给出的蓝方位置"
+    },
+    {
+     "id": "sm2-i-repeat-1",
+     "class": "info_repeat",
+     "input": "我再问诺诺一遍：蓝方集结点在哪一侧？",
+     "purpose": "重复刚问过的信息"
+    },
+    {
+     "id": "sm2-i-fail-1",
+     "class": "info_failure",
+     "input": "我问诺诺：今天演习结束的准确口令是什么？",
+     "purpose": "对方不可能知道的口令"
+    },
+    {
+     "id": "sm2-i-new-2",
+     "class": "info_new",
+     "input": "我走进器材棚，问芬格尔相机备用电池放在哪。",
+     "purpose": "移动后询问备用电池位置"
+    },
+    {
+     "id": "sm2-i-repeat-2",
+     "class": "info_repeat",
+     "input": "我问秦越器材笼里有哪些器材，他报了一遍。",
+     "purpose": "笼内器材在场景描述中已经可见"
+    },
+    {
+     "id": "sm2-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我看了看芬格尔脖子上的旧相机。",
+     "purpose": "查看已知物品，不构成新信息"
+    },
+    {
+     "id": "sm2-i-new-3",
+     "class": "info_new",
+     "input": "我走进庭院问唐骁：他现在守的是哪一侧？",
+     "purpose": "询问对方当前职责"
+    },
+    {
+     "id": "sm2-i-fail-2",
+     "class": "info_failure",
+     "input": "我问唐骁：红方下一步会从哪里进攻？",
+     "purpose": "对方无法确认的预测"
+    },
+    {
+     "id": "sm2-i-irrelevant-2",
+     "class": "info_irrelevant_known",
+     "input": "我走到医护休息区，看见沈澄面前的饮水杯。",
+     "purpose": "看见已知物品"
+    },
+    {
+     "id": "sm2-i-new-4",
+     "class": "info_new",
+     "input": "我问顾岚：林亦舟的扭伤要多久才能恢复？",
+     "purpose": "询问伤情判断"
+    },
+    {
+     "id": "sm2-i-fail-3",
+     "class": "info_failure",
+     "input": "我问顾岚：演习口令是什么？",
+     "purpose": "医护不可能知道的口令"
+    },
+    {
+     "id": "sm2-i-new-5",
+     "class": "info_new",
+     "input": "我查看处置室登记台上的分诊夹板，确认林亦舟的登记。",
+     "purpose": "查看登记信息"
+    }
+   ]
+  },
+  {
+   "id": "env-2",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm2-e-success-1",
+     "class": "env_success",
+     "input": "我走进器材棚，把开盖演习弹药箱的盖子完全掀开。",
+     "purpose": "移动并掀开弹药箱盖"
+    },
+    {
+     "id": "sm2-e-failure-1",
+     "class": "env_failure",
+     "input": "我抓住器材笼的挂锁往下按，锁扣卡死，打不开。",
+     "purpose": "尝试开锁失败"
+    },
+    {
+     "id": "sm2-e-success-2",
+     "class": "env_success",
+     "input": "我把器材领用台推到墙边，腾出中间的过道。",
+     "purpose": "移动领用台改变环境"
+    },
+    {
+     "id": "sm2-e-success-3",
+     "class": "env_success",
+     "input": "我走到东回廊，把遮光帘拉下一半，挡住半边窗口。",
+     "purpose": "移动并改变遮光帘状态"
+    },
+    {
+     "id": "sm2-e-move-1",
+     "class": "env_irrelevant_move",
+     "input": "我走过跨溪小桥，进入钟楼门厅。",
+     "purpose": "纯移动"
+    },
+    {
+     "id": "sm2-e-transfer-1",
+     "class": "env_item_transfer",
+     "input": "我把通用短枪弹匣乙收进演习背心的胸袋。",
+     "purpose": "物品换容器"
+    },
+    {
+     "id": "sm2-e-success-4",
+     "class": "env_success",
+     "input": "我回身把门厅虚掩的正门关上。",
+     "purpose": "关上地点正门"
+    },
+    {
+     "id": "sm2-e-failure-2",
+     "class": "env_failure",
+     "input": "我用力拉钟楼地下检修门，门闩从里面插着，拉不开。",
+     "purpose": "尝试开门失败"
+    },
+    {
+     "id": "sm2-e-move-2",
+     "class": "env_irrelevant_move",
+     "input": "我沿楼梯走上钟楼顶层。",
+     "purpose": "纯移动"
+    },
+    {
+     "id": "sm2-e-success-5",
+     "class": "env_success",
+     "input": "我把顶层的玻璃门拉开一条缝，侧身出去。",
+     "purpose": "改变玻璃门状态"
+    },
+    {
+     "id": "sm2-e-transfer-2",
+     "class": "env_item_transfer",
+     "input": "我把中立白旗从旗座插槽里拔出来，握在手里。",
+     "purpose": "物品转移"
+    },
+    {
+     "id": "sm2-e-partial-1",
+     "class": "env_partial",
+     "input": "我把白旗往插槽里插回一半，卡住了。",
+     "purpose": "部分完成物品复位"
+    }
+   ]
   }
  ]
 }
