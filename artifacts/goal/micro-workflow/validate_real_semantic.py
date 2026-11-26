@@ -111,6 +111,19 @@ def validate(raw, train, test, cache, expected_train, expected_test, scenario_id
     return failures
 
 
+def field_counts(train):
+    counts = {}
+    for item in train:
+        for field, label in (item.get('labels') or {}).items():
+            bucket = 'pos' if label.get('target') is True else 'neg'
+            counts.setdefault(field, {'pos': 0, 'neg': 0})[bucket] += 1
+    return counts
+
+
+def training_ready(counts, minimum=50):
+    return {field: row['pos'] >= minimum and row['neg'] >= minimum for field, row in counts.items()}
+
+
 def main():
     raw = read_jsonl(DATASET)
     train = read_jsonl(TRAIN)
@@ -119,9 +132,13 @@ def main():
     expected_train, expected_test = expected_ids()
     scenario_ids = {row['id'] for row in json.loads(SCENARIOS.read_text(encoding='utf8'))}
     failures = validate(raw, train, test, cache, expected_train, expected_test, scenario_ids)
+    counts = field_counts(train)
+    minimum = 50
+    ready = training_ready(counts, minimum)
     report = {'version': VERSION, 'pass': not failures, 'rawRows': len(raw), 'trainRows': len(train),
               'testRows': len(test), 'expectedTrain': len(expected_train), 'expectedTest': len(expected_test),
-              'failures': failures}
+              'fieldCounts': counts, 'trainingMinimum': minimum + '/field',
+              'trainingReady': ready, 'failures': failures}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding='utf8')
     print(json.dumps(report, ensure_ascii=False, indent=1))

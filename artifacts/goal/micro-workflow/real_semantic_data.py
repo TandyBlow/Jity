@@ -98,6 +98,25 @@ def read_env_hints(texts):
     return hints
 
 
+def initial_snapshot():
+    path = ROOT / 'frontend/public/worlds/dragon-raja-free-day.world.json'
+    if not path.exists():
+        return None
+    world = json.loads(path.read_text(encoding='utf8'))
+    initial = world.get('initial') or {}
+    state = {'characters': {}, 'items': {}, 'locations': {}}
+    for identity, entity in (initial.get('characters') or {}).items():
+        state['characters'][identity] = {
+            'id': identity, 'position': entity.get('initialPosition'),
+            'appearanceChanges': [], 'personalityChanges': [], 'tasks': entity.get('tasks') or {}}
+    for identity, entity in (initial.get('items') or {}).items():
+        state['items'][identity] = {
+            'id': identity, 'position': entity.get('initialPosition'), 'appearanceChanges': []}
+    for identity in (initial.get('locations') or {}):
+        state['locations'][identity] = {'id': identity, 'appearanceChanges': []}
+    return {'transport': {'state': state}}
+
+
 def world_knowledge_text():
     path = ROOT / 'frontend/public/worlds/dragon-raja-free-day.world.json'
     if not path.exists():
@@ -192,7 +211,7 @@ def load_semantic_routes():
         data = json.loads(path.read_text(encoding='utf8'))
         if data.get('status') not in ('COMPLETED', 'FAILED', 'PREFLIGHT'):
             continue
-        previous = None
+        previous = initial_snapshot()
         prior = world_knowledge_text()
         for turn in data.get('turns') or []:
             row = load_turn(turn, 'semantic', previous, prior_text=prior)

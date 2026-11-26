@@ -114,3 +114,15 @@ def test_gate_rejects_test_not_scenario():
     test[0]['id'] = 't1'
     failures = gate.validate(raw, train, test, [], {'t1', 't2'}, {'s1'}, {'s1'})
     assert any('test export ids' in item for item in failures)
+
+
+def test_field_counts_and_training_threshold():
+    train = [train_export('t1'), train_export('t2')]
+    counts = gate.field_counts(train)
+    assert counts == {'info': {'pos': 0, 'neg': 2}}
+    assert gate.training_ready(counts) == {'info': False}
+    full = [{'labels': {'env': {'target': True}}} for _ in range(50)]
+    full += [{'labels': {'env': {'target': False}}} for _ in range(50)]
+    counts = gate.field_counts(full)
+    assert counts == {'env': {'pos': 50, 'neg': 50}}
+    assert gate.training_ready(counts) == {'env': True}

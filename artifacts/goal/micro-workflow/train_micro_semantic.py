@@ -38,7 +38,19 @@ def main():
         sys.exit(1)
     from validate_real_semantic import main as validate
     validate()
-    print(json.dumps({'trainRows': len(train), 'testRows': len(test),
+    counts = {}
+    for item in train:
+        for field, label in (item.get('labels') or {}).items():
+            bucket = 'pos' if label.get('target') is True else 'neg'
+            counts.setdefault(field, {'pos': 0, 'neg': 0})[bucket] += 1
+    missing = {field: row for field, row in counts.items() if row['pos'] < 50 or row['neg'] < 50}
+    if not counts:
+        missing = {'info': {'pos': 0, 'neg': 0}, 'env': {'pos': 0, 'neg': 0}}
+    if missing:
+        print(json.dumps({'refuse': 'trial needs 50 pos + 50 neg per field', 'counts': counts,
+                          'missing': missing}, ensure_ascii=False, indent=1), file=sys.stderr)
+        sys.exit(1)
+    print(json.dumps({'trainRows': len(train), 'testRows': len(test), 'fieldCounts': counts,
                       'manifest': manifest}, ensure_ascii=False, indent=1))
     # The three task models (existence, specialized extraction, support) are
     # trained here in the next step; the gate above is mandatory.

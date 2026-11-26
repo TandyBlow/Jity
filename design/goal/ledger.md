@@ -167,3 +167,5 @@ G1 之后新增：
 - 验收门五洞与反例单测（2026-11-26）：修 environment_keys（未动物品不算）、env absent（只认明确否定）、20+8 覆盖、模型标签元数据、raw/train 分离按字段过滤；`test_real_semantic_gate.py` 11 条全过；`train_micro_semantic.py` 先验 manifest 哈希再过门。当前缓存 7 旧 + 1 v2，训练覆盖缺失，仍不训练。D-054。
 
 - 28 条标签完成但有效样本不足（2026-11-26）：验收门 pass=true、raw 28/train 20/test 8；字段计数 info 25 present/1 absent/2 insufficient，env 27 insufficient/1 conflict/0 present/0 absent；训练导出只有 20 条 info:pos，info 负例 0、env 字段 0。形式过门不等于可训练；不训练。修 conflict 取输入/叙事、info 新事实约束、状态差分、最小正负样本门、补采 env/info 负例。D-055。
+
+- 环境状态补丁与语义场景（2026-11-26）：新增 `环境=实体:状态` 通道，micro results 动词表生成、updates 在 appearance 前写 add 记录、projection 纳入标签实体；真实回合 hatch_cover 记录「已被部分提开」，fact 与快照一致，驱动无报错。叙事草稿剥离结果台账（`（达到目的）`、行首冒号）与结构化标记。语义场景 32 回合（info-1/env-1 train、mix-1 test），labeler 从 updates prompt 取事实、用初始快照补首回合 diff，env 负例按明确失败/无环境动词判定，info 重复/已知按先前文本判定。决策 D-056。报告 `docs/tasks/semantic-env-channel-2026-11-26.md`。

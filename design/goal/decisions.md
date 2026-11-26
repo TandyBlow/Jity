@@ -592,3 +592,14 @@
 - 但按字段统计的有效样本：`info` 25 present / 1 absent / 2 insufficient；`env` 27 insufficient / 1 conflict / 0 present / 0 absent。训练导出只有 20 条 `info:pos`，`info` 负例 0，`env` 可训练字段 0。
 - 原因：`info` 定义偏宽，叙事事实被当新信息；`env` 的真实 appearance 变化几乎为空，位置/任务未纳入；`absent` 只认明确否定；`conflict` 只查 `settled`，sc06/s07 的环境动作留在输入/叙事，只有 sc08 进了 conflict。验收门形式通过不等于数据可训练。
 - 决定：不训练。修 `conflict` 从 `settled + 输入/叙事` 取环境动作；`info` 加“新事实”约束；状态差分补齐 item/location/character/position/task；验收门增加每字段最小正负样本数；继续采集真实 env 与 info 负例事件；达到计数后再训练三任务、状态补丁、五臂。证据 `real-semantic-validation.json`、`real-semantic.jsonl`、`real-semantic-train.jsonl`。
+
+## D-056 环境状态补丁通道与语义场景集（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 已结算事实新增 `环境=<实体id>:<状态短句>` 通道：micro results 对 achieved/partial、单一登记物品、物理操作动词、无转移目的地生成该标签（`fact-environments.ts` 动词表；转移/多物品/受阻不生成）；LLM results 提示同步要求。
+- updates 在 appearance 阶段之前应用补丁：实体必须是地点/物品且在 projection 内；含失败词的事实跳过；重复文本跳过；每个补丁写一条 `add` appearance 记录。已覆盖实体不再询问 LLM；覆盖+pending 可整段跳过调用。projection 把标签实体加入 `affectedAppearance`。
+- 真实页面证据（`evidence-semantic-env-1.json` 首回合）：fact `环境=hatch_cover:已被部分提开`，快照 `items.hatch_cover.appearanceChanges=[已被部分提开]`，驱动 problems=0；micro results 把提盖误判 partial，因此状态用「部分」措辞，避免伪造完全打开。
+- 叙事修复：program 草稿此前原样输出 `凯撒：查看红方短讯机。（只完成一部分）` 台账；`factualNarration` 现在剥离结果标记与行首冒号，`环境=` 与 `去向=`/`涉及=` 一样从草稿移除。模型路径仍由 `ledger_leak` FATAL 拦截。
+- 语义场景集 `semantic-scenarios.json`：32 个真实页回合，info-1（12，train）/env-1（12，train）/mix-1（8，test），覆盖 info/env 十类；`real_semantic_data.py` 从 updates prompt 提取 `f1 [id 名] 事实` 作为 settled 事实，并用世界初始快照作为每条路线首回合的 before。
+- 负例规则：env absent 需要明确失败词，或结构化行动无环境操作动词且差分已知为空；有环境动词但无记录=conflict，partial=conflict。info absent 需要明确无答、提议内容已在先前路线/世界描述中重复，或结构化行动无法获取信息。
+- 下一步：跑完三条路线，按字段统计正负样本；达到试训数量后训练存在性/内容提取/事实支持三任务。未训练前不宣称语义能力提升。
