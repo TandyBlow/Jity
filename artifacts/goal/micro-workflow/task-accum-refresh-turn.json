@@ -1,0 +1,5 @@
+[
+  {"id": "tar1", "input": "我拿起护目镜。", "purpose": "goggles item condition"},
+  {"id": "tar2", "input": "我把护目镜戴好。", "purpose": "goggles action condition; reload after this turn", "refreshAfter": true},
+  {"id": "tar3", "input": "我检查镜片有没有裂纹。", "purpose": "confirmation condition; only the restored ledger can supply item+action"}
+]

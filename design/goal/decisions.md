@@ -415,5 +415,12 @@
 - 状态：`signed`（2026-11-26）。
 - 决定：tasks 批只在最后一个 plan point 跑，但 `staged` 在点提交时清空，玩家点的 results 进不了 tasks 阶段；`ControllerMemory.roundResults` 按回合合并每个 `stage_unit` 的 results，point-rest 批读整轮，`pointPlan`/`round_conclusion_conclude`/`clearRoundWork` 重置。task proposer 继续只提案、核验器提交；每条条件由 4 类模型判断 none/keyword/attempt/satisfied，跨回合台账只在 satisfied 全齐时提案。`satisfied` 增加程序下限：action 必须在事实里出现动作词（或首字），confirmation 必须出现确认词且任务自身 item/target/location 之一出现在事实或跨回合依据里；这是上限约束，不是完成判定。proposer 的条件标签随 support 传给微型核验器，替代词面 `conditionCoverage`；LLM 核验器提示改为打印 `basisText`，跨回合依据不再显示“引用不存在”。personality 阶段把 `<f1>` 这类事实 id 解析为事实所属人物，避免一个 0.6B 格式错误让整点失败、丢掉同点任务达成。
 - 模型实验：带 `任务：<goal>\n条件：<label>` 输入的 v2 条件模型留出 73.7%，真实行上把护目镜确认从 satisfied 降为 keyword；不部署 v2，部署模型仍是 condition+fact 的 v1（留出 88.9%）。真实错误由程序下限兜住。
-- 证据：`evidence-task-accum-micro4.json`（玩家事实缺失，facts=12 全 NPC）、`evidence-task-accum-micro6.json`（跨回合护目镜 support 3/3，但 `task_lu_kit` 被“拿起护目镜”误判为 `进入`，且 personality `<f1>` 让整点取消）、`evidence-task-accum-micro7.json`（程序下限后 turn1 1/3、turn2 2/3、turn3 3/3 + verifier yes，kit 误判消失；personality 改写 `<人物id>` 仍使整点 turn_failed）。`<f1>`/`<人物id>` 到触发人物的映射已加单测；micro8 真机复跑在首回合前因宿主机内存低被停止，未重跑，占位符修复尚无真实页面证据。
+- 证据：`evidence-task-accum-micro4.json`（玩家事实缺失，facts=12 全 NPC）、`evidence-task-accum-micro6.json`（跨回合护目镜 support 3/3，但 `task_lu_kit` 被“拿起护目镜”误判为 `进入`，且 personality `<f1>` 让整点取消）、`evidence-task-accum-micro7.json`（程序下限后 turn1 1/3、turn2 2/3、turn3 3/3 + verifier yes，kit 误判消失；personality 改写 `<人物id>` 仍使整点 turn_failed）。`<f1>`/`<人物id>` 到触发人物的映射已加单测；micro8 真机复跑在首回合前因宿主机内存低被停止；micro9 完成三回合验收（COMPLETED、0 failures）：护目镜 1/3→2/3→3/3、verifier yes、快照 `task_lu_goggles=achieved`、回合后待办列表已移除该任务；personality 写 `<f1>` 且复述事实的行被独立拒绝，未丢任务。回合等待 123.5/107.7/121.4 s。
 - 影响：不为了任务进度放宽六阶段原子提交；personality 失败仍记录，但已知事实 id 不再让点失败。仍待：proposer 台账跨刷新持久化、后续子任务提案、移动端与共享 runtime/批推理。
+
+## D-037 task 条件台账进入本地存档（2026-11-26，用户指令）
+
+- 状态：`signed`（2026-11-26）。
+- 决定：task proposer 的跨回合台账不放进 `WorldState`（不改变 world digest），作为 `LocalGameSnapshot.taskLedger` 随每次本地存档/进度同步保存；`taskLedgerOf` 在保存时导出，`onRestoreTaskLedger` 在 restore/create 时导入/清空。快照版本 1 保存 `worldId`、已去重事实键、每个任务的条件、status、active、evidence 和失效时间。物品条件视为持续条件：每次 proposer 调用按当前持有链复核，物品离开任务主人则 `active=false` 并记 `invalidatedAt`；重新持有则恢复。时间/地点/对象/动作/确认条件视为历史条件，满足后保持。只有全部条件 satisfied 且 active 才提案。
+- 证据：`task-proposer.test.ts`（导出/导入、重复事实去重、物品失效/恢复）、`session-recovery.test.ts`（快照携带并回传台账）、`evidence-task-accum-refresh1.json`（第 2 回合后 reload，`restored=true`、history 2→2；第 3 回合仍以 3/3 完成护目镜任务，快照 `achieved`）。
+- 影响：刷新、存档切换、回滚都使用与快照同版本的台账；重复事实不再重复打分。第 3 回合 accepted 139.5 s，60 s 门槛仍未达到，tasks 阶段在最终 support 前有重复调用；下一步用共享 runtime/批推理/重试收敛压这部分成本。

@@ -314,3 +314,17 @@
 - `alignNarration` 新增 `ledger_leak`：括号结果词（达到目的/只完成一部分/没有成功/被阻止/没有变化）或「人物：动作」行进入正文即判矛盾；candidate/instruct 两条路径都受同一 FATAL 集约束。
 - `alignmentPacket`：同一地点内的槽位变化记为 `at`，不再生成 `moved` 事实；`factualNarration` 同样只在容器真正变化时写「走到」，避免「从中央庭院走到中央庭院」。
 - 回归测试：`committed-narration.test.ts` 的台账行；`game-model-alignment.test.ts` 的同地点槽位 vs 真实换地点。全量 1379 passed / 17 skipped，tsc 干净。
+
+## task proposer 三回合达成（2026-11-26，micro9）
+
+- 输入「我拿起护目镜。」→「我把护目镜戴好。」→「我检查镜片有没有裂纹。」，`micro=1&microContinuation=heads&microReaction=1&taskProposer=micro`。三回合 COMPLETED、0 failures；回合等待 123.5 / 107.7 / 121.4 s，首段正文 9.1 / 17.7 / 18.4 s，正文 171 / 170 / 490 字。
+- 护目镜任务条件进度 1/3 → 2/3 → 3/3；第 3 回合 proposer 提出 support（item/confirmation/action 全 satisfied），LLM verifier 判 yes；快照 `state.characters.lu.tasks.task_lu_goggles.status=achieved`，页面回合后待办列表已移除该任务。`task_lu_kit` 保持 1/2，`action：进入` 未被「拿起护目镜」满足。
+- personality 第 3 回合输出 `<f1>` + 复述事实的文本；实体映射到 lu，复述/命名实体的行被独立拒绝，sanity 走 program；任务达成未被丢弃。第 3 回合 tasks 阶段 2.1 s，personality 6.5 s。
+- 微型推理：task-proposer 每回合 1 次调用、18/11/7 次编码与头输出、0.72/0.07/0.05 s；整回合微型编码 153/142/142、头输出 520/496/509、3.7–11.1 s。剩余时间仍由 LLM 结算/叙事主导。
+- 下一步：台账写入本地存档（刷新/切换/回滚、失效条件）、共享 runtime/批推理/会话回收、后续子任务提案。
+
+## task 台账刷新恢复（2026-11-26，refresh1）
+
+- 输入同上三回合，但第 2 回合 `refreshAfter=true`：页面 reload 后 `restored=true`、history 2→2、同地点同理智。第 3 回合 proposer 仍拿到前两回合的 item/action 条件，最终 3/3、verifier yes、快照 `task_lu_goggles=achieved`。
+- 台账随 `LocalGameSnapshot.taskLedger` 保存/恢复，`seenFacts` 去重；物品条件按当前持有链失效/恢复，其余条件保持历史成立。单测覆盖导出/导入、重复事实、物品失效/恢复与会话快照回传。
+- 成本：第 3 回合 accepted 139.5 s，触发 `accepted_over_60s`；tasks 阶段在最终 support 前有重复调用，刷新本身 34.2 s。下一轮优先共享 runtime/批推理/重试收敛。
