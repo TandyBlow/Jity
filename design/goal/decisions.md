@@ -664,3 +664,11 @@
 - env-8 复合路线实跑记录：spare_goggles、cage_lock、checkout_book、ammo_box、empty_magazine、bench_cover、window_pad、canvas_blind、foyer_table、hatch_door、blue_flag、balcony_door 等；预计 env 正例越过 50。
 - 长路线性能退化明显：info-6 前五回合 104/124/213/262 s，env-8 中段 184–242 s；8 回合冻结场景仍 63.5 s 均值。数据采集继续，但整回合性能是下一阶段首要产品问题。
 - 训练准备：`semantic-events.jsonl` 事件级 env 样本（正例=带 `环境=` 的事实，负例=无环境动词的事实）；`train_existence_heads.py --data semantic-events.jsonl --field env --holdout sm6-` 支持按路线留出。事件级负例充足，正例随 env-8 达标后先训 env 存在性头，info 继续采集。
+
+## D-065 子任务守卫与证据读取（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- env-8 快照显示 `caesar` 每回合多一条任务，12 回合累计 13 条，9 条以「路明非…」开头、内容是本回合结算事实（如「路明非走上顶层，把玻璃门推开」）。根因：subtasks 阶段把结算事实当作新目标，且父任务属于别人。
+- `readSubtaskProposals` 增加两道程序守卫：目标以其他角色名开头 → `subtask_foreign_subject`；目标复述结算事实（`goalWordingOverlap >= 0.85`）→ `subtask_restates_fact`。两者都只记录拒绝、不改合法输出；单测覆盖。
+- 验收脚本的 `tasks` 快照原来取 `aside li`，把历史时间点行也读成任务；现在页面任务行带 `data-done`，脚本只读这类行。旧证据里的「#N已提交行动…」任务条目是读取伪影，不是内核状态。
+- env-8 完成后 turn 级 env 正例 50、负例 47；env-9（4 个负例回合）与 env-10（2 正 2 负）用于过线，之后先训 env 存在性头。
