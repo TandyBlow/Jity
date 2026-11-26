@@ -1,0 +1,15 @@
+{
+ "fp32MB": 7.62,
+ "int8MB": 7.86,
+ "outputs": {
+  "96": [
+   1,
+   64,
+   617
+  ],
+  "95": "InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: src for the following indices"
+ },
+ "p50Ms": 3.3,
+ "p95Ms": 4.1,
+ "note": "teacher-forcing forward at fixed 96/64; not the browser decode loop"
+}

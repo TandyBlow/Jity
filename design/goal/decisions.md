@@ -496,3 +496,10 @@
 - v3 候选指针：解码器在实体字段发 `<e>`，对行内候选做点积选择；BERT 编码器冻结，候选编码器从头训练。BERT 候选指针字段 0.244、实体 0.333、新世界实体 0.200；从头候选字段 0.205、实体 0.296、新世界实体 0.000。候选指针是首个整体超过自由 ID（0.244 vs 0.231）且能选新世界实体的臂；增益小，`mistport` 只有 4 行。
 - 有限类：BERT+线性 result 分类器 0.583；BERT 候选指针生成 `result` 0.583、从头 0.500；分类器预测全 `completed`，12 条中 7 条 completed；没有生成优势，保留分类器。`info/env/promise/decision/cause/time` 仍为 0；95 行训练数据是瓶颈。
 - 决定：后续混合臂采用“候选评分指针 + 冻结 MiniRBT 编码器”处理实体字段，实体候选由链接器/世界表提供；`result` 用分类器；生成只承担开放式字段与复合条件。下一步先扩手写**训练**数据并按世界/任务类型/事件类型分测试集，再接入 `/world-local` 做五臂、浏览器 ONNX 与产品收益；不扩大参数量。证据 `design/goal/micro-generative-v2.md`、`v2-report.json`、`v3-report.json`。
+
+## D-047 ONNX 形状缺陷与固定长度回退（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 事实：独立模型的 ONNX 声明 `src_len/tgt_len` 为动态，但 legacy exporter 把 dummy 长度写死。`indep_5M_conditions-int8.onnx` 只在 `src=55,tgt=18` 可跑，54/56/96×64 都在 `Reshape` 失败；其余独立图同类。该缺陷来自 D-045 的导出配方；`onnxscript` 未安装，dynamo 导出未跑。已复现并记入 `independent-report.json:shapeCheck`。
+- 固定长度回退：96×64 导出可跑并量化，5M int8 7.86 MB，CPU p50 3.3 ms（单次 teacher-forcing forward，不是逐 token 解码，也不是浏览器）。证据 `fixed-onnx-report.json`、`check_fixed_onnx.py`。
+- 决定：当前 ONNX 不作为可部署动态模型；浏览器混合臂必须用固定 padding 并分别导出 encoder/decoder-step 图，或先安装 `onnxscript` 走 dynamo；在完成前不宣称浏览器延迟/内存通过。D-045/D-046 的 int8 MB 只作权重体积，不当作运行时形状能力。下一步仍按 D-046：手写训练数据 + 候选指针 + 分类器 result，然后五臂。

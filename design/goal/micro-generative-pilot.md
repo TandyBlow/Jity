@@ -72,6 +72,22 @@ Per-field for the independent 15M arms in this run: event `result` 0.833;
 `target/item/dest/info/env` 0.000. Conditions `item` 0.312, `target` 0.364,
 `conf` 0.368, `loc` 0.692 (absence-inclusive); `time/act/decision` 0.000.
 
+### ONNX shape caveat
+
+The exported graphs declare dynamic axes but the legacy exporter baked the
+dummy lengths. `indep_5M_conditions-int8.onnx` runs at `src=55, tgt=18` and
+fails at 54, 56, or 96×64; the other independent graphs have the same defect.
+The declared `src_len`/`tgt_len` are nominal. Do not treat these as deployable
+dynamic models or use the int8 MB as a browser memory number without re-export.
+
+A fixed 96×64 export runs and quantizes: int8 7.86 MB for the 5M width, CPU p50
+3.3 ms for one teacher-forcing forward (not the per-token decode loop, not a
+browser). `check_fixed_onnx.py` / `fixed-onnx-report.json` record this. The next
+browser arm must either pad to a fixed length and export separate encoder and
+decoder-step graphs, or use a dynamo export (`onnxscript` is not installed).
+The v2/v3 reports do not claim a browser number; the five-arm browser
+measurement is still pending.
+
 ## Per-field, independent 15M arms (separate run)
 
 15M event model (held-out actors): `result` 0.833; `target` 0.000; `item` 0.000;
@@ -121,7 +137,9 @@ number. The earlier same-process run had `result` 1.000 and conditions
 6. Latency and size. The 15M model runs at 30–41 ms p50 GPU, 50–85 ms p95;
    CPU p50 is 66 ms for the multi 15M. int8 is 6.6 / 19.8 / 44.7 MB for
    5M/15M/30M. Browser WASM/WebGPU was not measured; the CPU numbers are a
-   desktop lower bound and cannot be used as the browser cost.
+   desktop lower bound and cannot be used as the browser cost. The ONNX graphs
+   are fixed-shape at their traced lengths despite nominal dynamic axes; see
+   the shape caveat above.
 
 ## Decision
 

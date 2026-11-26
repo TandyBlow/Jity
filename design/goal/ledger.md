@@ -149,3 +149,5 @@ G1 之后新增：
 - 微型生成试点（2026-11-26）：从零 5M/15M/30M Encoder-Decoder，条件与事件两任务，380 行、留出 15 任务/3 角色；测试字段召回 conditions 0.21–0.36、events 0.35–0.60，整串精确 0–0.22；独立 15M 事件 0.60 最好，5M 0.35、30M 0.45；多任务/共享编码器不优于独立；15M 事件仅 `result` 1.0，实体 `target/item/dest` 为 0；int8 6.6/19.8/44.7 MB，15M GPU p50 30–41 ms、CPU 66 ms（浏览器未测）。不接入生成臂，先做人工数据 + `result` 混合头 + 实体链接，再在冻结场景集上五臂比较。决策 D-045，报告 `design/goal/micro-generative-pilot.md`。
 
 - 微型生成 v2/v3（2026-11-26）：去重 95 行训练 + 24 条手写测试（含 `mistport` 新世界）。自由 ID/`<pN>` 索引 2×2：BERT 自由字段 0.231、实体 0.259；`<pN>` 0.179/0.111；新世界实体全 0。候选评分指针：BERT 字段 0.244、实体 0.333、新世界实体 0.200；从头 0.205/0.296/0.000。result 分类器 0.583，生成 result 0.583/0.500，无生成优势；开放字段仍 0；数据是瓶颈。独立 5M/15M/30M ONNX 补测 int8 6.57/19.84/44.66 MB、CPU p50 54–106 ms，15M 条件 0.417/事件 0.50。后续采用候选指针 + 冻结 MiniRBT 处理实体、分类器处理 result，先扩手写训练数据再接产品五臂。决策 D-046，报告 `design/goal/micro-generative-v2.md`。
+
+- ONNX 形状补测（2026-11-26）：legacy exporter 的动态轴是名义的；独立 int8 图只在 `src=55,tgt=18` 可跑，54/56/96×64 都失败。固定 96×64 导出可跑，5M int8 7.86 MB、单次 forward CPU p50 3.3 ms；不是逐 token，也不是浏览器。浏览器臂需固定 padding + encoder/decoder-step 分图或 dynamo；当前不宣称浏览器通过。决策 D-047，报告 `design/goal/micro-generative-pilot.md`。

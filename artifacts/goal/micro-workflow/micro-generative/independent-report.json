@@ -186,5 +186,18 @@
    "fp32MB": 133.7,
    "int8MB": 44.66
   }
+ },
+ "shapeCheck": {
+  "tracedSrc": 55,
+  "tracedTgt": 18,
+  "src55_tgt18": "ok",
+  "src54_tgt18": "fail",
+  "src56_tgt18": "fail",
+  "src96_tgt64": "fail",
+  "fixedExport96x64": "ok",
+  "fixedInt8MB": 7.86,
+  "fixedCpuP50Ms": 3.3,
+  "fixedNote": "single teacher-forcing forward, not the browser decode loop",
+  "dynamicAxes": "nominal only; legacy exporter baked lengths"
  }
 }
