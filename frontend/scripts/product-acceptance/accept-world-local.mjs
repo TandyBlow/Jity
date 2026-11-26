@@ -1004,7 +1004,9 @@ try {
         const turns = globalThis.__worldTurns;
         const record = Array.isArray(turns) ? turns.at(-1) : null;
         const actions = record?.actions;
-        return Array.isArray(actions) ? actions.slice(-40) : (actions ?? null);
+        // The protagonist's action row can be older than the last 40 NPC rows;
+        // keep the whole turn so structure-based labelling sees it.
+        return Array.isArray(actions) ? actions : (actions ?? null);
       }).catch(() => null);
       entry.live = await page.evaluate(() => {
         const live = globalThis.__worldLive;

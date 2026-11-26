@@ -423,8 +423,10 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // 0b. Ledger leakage: result rows («凯撒：查看红方短讯机。（只完成一部分）»)
     // are evidence, not prose. A colon-led line naming a roster character, or
     // any parenthesised result marker, is a leak.
-    const ledgerLeak = /（(?:达到目的|只完成一部分|没有成功|被阻止|没有变化)）/u.test(sentence)
-      || (/^[^。！？]{1,12}：/u.test(sentence) && [...names].some((name) => sentence.includes(name)));
+    const colon = /^([^。！？：]{1,12})：/u.exec(sentence);
+    const colonLedger = Boolean(colon) && [...names].some((name) => colon![1].includes(name))
+      && !/(问|说|喊|道|告诉|回答|叫|念|报告|低声|大声)/u.test(colon![1]);
+    const ledgerLeak = /（(?:达到目的|只完成一部分|没有成功|被阻止|没有变化)）/u.test(sentence) || colonLedger;
     if (ledgerLeak) {
       violations.push({ kind: 'ledger_leak', sentence, detail: 'result ledger line copied into prose' });
       continue;

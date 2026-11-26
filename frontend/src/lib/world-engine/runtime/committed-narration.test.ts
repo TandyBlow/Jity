@@ -38,6 +38,15 @@ test('rejects a result-ledger line copied into prose', () => {
   expect(result.violations.map((violation) => violation.kind)).toContain('ledger_leak');
 });
 
+test('allows dialogue introduced by a speech verb', () => {
+  const { before, after } = reads();
+  const packet = projectCommittedNarration(after, before);
+  const result = alignNarration(packet, '路明非压低声音问诺诺：红方的人现在都控制着哪些方向。', {
+    roster: ['凯撒', '路明非', '诺诺'],
+  });
+  expect(result.violations.map((violation) => violation.kind)).not.toContain('ledger_leak');
+});
+
 test('rejects an absent claim for a character committed in the room', () => {
   const { before, after } = reads();
   const packet = projectCommittedNarration(after, before);
