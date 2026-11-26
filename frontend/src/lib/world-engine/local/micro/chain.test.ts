@@ -55,6 +55,8 @@ describe('environment channel', () => {
   it('hints a physical manipulation of an unseen item', () => {
     expect(environmentHint('我把帘子掀开。', ['curtain'], envState, null))
       .toEqual({ entityId: 'curtain', text: '已被掀开' });
+    expect(environmentHint('我把帘子掀开一条缝。', ['curtain'], envState, null, 'partial'))
+      .toEqual({ entityId: 'curtain', text: '已被部分掀开' });
   });
   it('declines transfers, ambiguity and mere observation', () => {
     expect(environmentHint('我把帘子掀开。', ['curtain'], envState, { entityId: 'curtain', containerId: 'box' })).toBeNull();

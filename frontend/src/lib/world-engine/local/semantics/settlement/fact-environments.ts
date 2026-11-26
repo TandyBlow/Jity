@@ -39,13 +39,16 @@ export function environmentHint(
   itemIds: Id[],
   state: WorldState,
   destination: unknown,
+  label = 'achieved',
 ): { entityId: Id; text: string } | null {
   if (destination) return null;
+  if (label !== 'achieved' && label !== 'partial') return null;
   if (itemIds.length !== 1) return null;
   const entityId = itemIds[0];
   if (!state.initial.items[entityId]) return null;
   for (const [verb, phrase] of EFFECTS) {
-    if (text.includes(verb)) return { entityId, text: phrase };
+    if (!text.includes(verb)) continue;
+    return { entityId, text: label === 'achieved' ? phrase : `已被部分${phrase.slice(2)}` };
   }
   return null;
 }

@@ -221,8 +221,8 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           () => destinationHint(normalized, request.state, member.memberId));
         // Physical manipulation of one registered item is the program half of
         // the env channel; semantic env judgment replaces it when trained.
-        const env = label === 'achieved' && !priorBlocked
-          ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination)
+        const env = !priorBlocked
+          ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination, label)
           : null;
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({
