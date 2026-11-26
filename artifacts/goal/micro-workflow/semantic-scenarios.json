@@ -1311,6 +1311,84 @@
      "purpose": "两次环境操作"
     }
    ]
+  },
+  {
+   "id": "info-9",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm9-i-new-1",
+     "class": "info_new",
+     "input": "我读服务巷规则牌上关于医护白线的条款。",
+     "purpose": "读规则条款"
+    },
+    {
+     "id": "sm9-i-new-2",
+     "class": "info_new",
+     "input": "我读赛区地图上标注的地下通道入口位置。",
+     "purpose": "读地图入口"
+    },
+    {
+     "id": "sm9-i-new-3",
+     "class": "info_new",
+     "input": "我查看唐骁左臂识别带的颜色。",
+     "purpose": "观察识别带"
+    },
+    {
+     "id": "sm9-i-new-4",
+     "class": "info_new",
+     "input": "我走进值钟间，读检修图上关于旗台的说明。",
+     "purpose": "读检修图"
+    },
+    {
+     "id": "sm9-i-new-5",
+     "class": "info_new",
+     "input": "我走进医护处置室，读分诊夹板上林亦舟的登记。",
+     "purpose": "读登记"
+    },
+    {
+     "id": "sm9-i-new-6",
+     "class": "info_new",
+     "input": "我走进控制室，读记分面板上的比分。",
+     "purpose": "读比分"
+    },
+    {
+     "id": "sm9-i-new-7",
+     "class": "info_new",
+     "input": "我读广播话筒旁贴的停赛时间。",
+     "purpose": "读停赛时间"
+    },
+    {
+     "id": "sm9-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我查看唐骁的红色识别带。",
+     "purpose": "查看已知识别带"
+    },
+    {
+     "id": "sm9-i-irrelevant-2",
+     "class": "info_irrelevant_known",
+     "input": "我查看护目镜镜片有没有裂纹。",
+     "purpose": "核对已知镜片"
+    },
+    {
+     "id": "sm9-i-fail-1",
+     "class": "info_failure",
+     "input": "我问诺诺演习口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm9-i-fail-2",
+     "class": "info_failure",
+     "input": "我问顾岚演习口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm9-i-irrelevant-3",
+     "class": "info_irrelevant_known",
+     "input": "我整理背心胸袋。",
+     "purpose": "整理装备"
+    }
+   ]
   }
  ]
 }
