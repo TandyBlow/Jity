@@ -763,3 +763,10 @@
 - 状态：`signed`（2026-11-26）。
 - 刷新验收补一项：`refreshRestore` 现在比较刷新前后页面任务快照（tasksBefore/tasksAfter）并纳入 `overallRestored`；两回合实跑 tasksStable=true（5 条对 5 条）、历史 2→2、overallRestored=true、刷新 37.1 s。针对目标里的「刷新后 tasks/subtasks 重复」给出直接证据，至少这条路线没有重复。
 - 两设备：启动 progress-sync 服务（uvicorn 8010，`LOCAL_PROGRESS_TOKEN`），`two-device-smoke.mjs` 协议级实跑通过——root、幂等重放、陈旧 CAS 拒绝、设备 B 分叉、两分支都可读、显式选支（revision 4）；输出存 `evidence-two-device-sync-1.json`。这是协议级证据，不是两台真机页面；服务在测试后已停止。
+
+## D-080 离线运行证据与掉速（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- `--offline`（页面与两个模型就绪后断网跑全部回合）两回合 2/2 完成、0 问题，之后恢复网络做刷新恢复：`overallRestored=true`、任务快照稳定、历史 2/2，本地存档不依赖网络。证据 `evidence-offline-1-2026-11-26T2306-b400.json`，`harness.offline=true`。
+- 掉速：同两回合在线（断 API 臂）是 76.7/87.0 s，离线臂是 212.1/230.7 s，约 2.5 倍。离线可玩性成立，但离线路径有额外的等待（疑似每回合的网络请求超时），列为性能缺陷待查，不宣称离线档达标。
+- 备注：驱动的 `harness.saveServiceBlocked` 本来就记录 `--block-api`；D-078 里新加的 `harness.blockApi` 是重复字段，保留不影响证据。
