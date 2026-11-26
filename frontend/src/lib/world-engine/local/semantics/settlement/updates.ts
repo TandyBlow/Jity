@@ -89,7 +89,7 @@ async function stagePositionLocal(ctx: StageContext, scanned: Id[], appearanceId
       // stay/observe/item verb or no registered place. Item transfers are not
       // actor movement; their `去向=` is handled above. Uncertain facts still
       // get the small question.
-      const moves = /走|跑|移|前往|进入|退|撤|爬|穿|离开|赶|到达|到了|回到|回去|回来|进去|出去|下去|上去|过去/u.test(fact.text);
+      const moves = /走|跑|移|前往|进入|退|撤|爬|穿|钻|跨|挪|闪|绕|离开|赶|到达|到了|回到|回去|回来|进去|出去|下去|上去|过去|冲向|来到|靠近|贴近|走上|走下/u.test(fact.text);
       const stays = /留|待|站|坐|守|停|原地|不动|看|观察|检查|说|问|回答|等|拿|递|放|塞|交/u.test(fact.text);
       if (!moves && (stays || !matchLocation(ctx.state, fact.text))) {
         noMove.push(entityId);
