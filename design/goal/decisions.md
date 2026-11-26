@@ -610,3 +610,14 @@
 - 真实回合 `sm-e-success-2`「把庭院南端倒放的长椅拖开」被结构匹配到 `flower_box`（石花槽）而不是 `bench_cover`：登记名「倒放长椅」与口语「倒放的长椅」只差一个「的」，最长重叠从 4 降到 2。修复 `matchItems` 在比较前去掉「的」，并加回归测试；旧证据中 flower_box 的错误记录不作为训练答案，该路线重跑。
 - 无登记物品的地点操作（如「把门厅的正门推开」）不产生 `环境=`；新增 `environmentPhrase`，micro results 在没有物品可指、没有转移目的地时用 `matchLocation` 落到地点并写 `环境=<地点>:<状态>`。物品优先，地点仅在唯一后缀/全名匹配时使用。
 - 这两项都保持通用规则，不按场景 id 或冻结 checks 编码。
+
+## D-058 环境补丁的后续修复（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 真实回合暴露三个补丁相关问题，均已修并加测试：
+  1. `matchItems` 比较前去掉「的」，口语「倒放的长椅」正确落到 `bench_cover`，不再误配 `flower_box`。
+  2. 有活动外貌记录后，appearance LLM 答案未覆盖旧记录会整段拒绝并中止回合（env-2 turn2 `ammo_box record operation coverage incomplete`）。现在 appearance 的 `add` 对未覆盖活动记录做隐式 keep；旧记录保留，回合继续。
+  3. 微 results 对本地物品操作的 achieved 判定过保守（领用台「推到墙边」被判没有成功）。新增 `programEnvAllowed`：单一登记物品、本地同房间、环境动词、无阻挡词时按 achieved 处理并写 `环境=`；与 programMove/programTransfer 同一分工。
+- info 的「已知」判定改为只看本路线先前回合文本，不用静态世界描述（全局设定不等于角色已知）；观察类场景因此能产生新信息正例。
+- 语义场景扩到 info-1/env-1/mix-1 + info-2/env-2 + info-3/env-3 + env-4 + info-4；env-4 用复合动作一回合两次环境操作。
+- 真实证据：env-2 turn1 `ammo_box=已被掀开`；turn2 锁失败不再中止；程序环境门与隐式 keep 的回归单测通过。
