@@ -59,6 +59,9 @@ export interface WllamaEngineOptions {
    * OPFS cache write, which can fail on a nearly-full origin even when the
    * model itself fits. */
   directBlob?: boolean;
+  /** Keep the fetched GGUF Blob for a hard-stop reload. Default true; false
+   * frees the Blob quota at the cost of refetching after a hard stop. */
+  retainModelBlob?: boolean;
   /** How long an abort request may stay unhonoured before the worker is
    * terminated. Default 2500 ms; 0 terminates as soon as the abort is
    * requested. A terminated worker drops the loaded model. */
@@ -455,7 +458,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       }
       this.instance = instance;
       if (cacheAfterLoad) {
-        this.cachedBlobs = cacheAfterLoad;
+        this.cachedBlobs = this.options.retainModelBlob === false ? null : cacheAfterLoad;
         this.cachedIdentity = identity;
       }
       this.loadedIdentity = { modelUrls, identity: modelUrls.join('|'), contextSize: this.contextSize, gpuLayers: this.gpuLayers };

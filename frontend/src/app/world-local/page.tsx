@@ -58,7 +58,9 @@ const NARRATION_MODELS = {
   // D-028 product default (user decision 2026-11-24): the v13 hand-written
   // LoRA. The base entry below stays available as an evaluation arm.
   'qwen3-1.7b-narr-lora': {
-    url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 4096,
+    // Narration prompts measured <=427 tokens plus <=480 output; 2048 covers
+    // them with margin and halves the f16 KV cache.
+    url: '/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf', bytes: 1_107_408_768, contextSize: 2048,
     sha256: '82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a',
   },
   // Evaluation arm: a 1.5B checkpoint trained on the page narration format
@@ -332,7 +334,9 @@ async function loadEngine(
     });
   };
   const cache = cacheTypes ? { cacheTypeK: 'q8_0' as const, cacheTypeV: 'q8_0' as const } : {};
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
+  // Do not retain the fetched GGUF Blob: two resident engines otherwise hold
+  // ~1.4 GiB of Blob quota. A hard-stop reload refetches instead (rare).
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 120_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     // A user cancel or dispose is not a GPU failure: retrying on CPU would
@@ -341,7 +345,7 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 120_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
