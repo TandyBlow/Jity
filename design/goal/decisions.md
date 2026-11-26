@@ -424,3 +424,10 @@
 - 决定：task proposer 的跨回合台账不放进 `WorldState`（不改变 world digest），作为 `LocalGameSnapshot.taskLedger` 随每次本地存档/进度同步保存；`taskLedgerOf` 在保存时导出，`onRestoreTaskLedger` 在 restore/create 时导入/清空。快照版本 1 保存 `worldId`、已去重事实键、每个任务的条件、status、active、evidence 和失效时间。物品条件视为持续条件：每次 proposer 调用按当前持有链复核，物品离开任务主人则 `active=false` 并记 `invalidatedAt`；重新持有则恢复。时间/地点/对象/动作/确认条件视为历史条件，满足后保持。只有全部条件 satisfied 且 active 才提案。
 - 证据：`task-proposer.test.ts`（导出/导入、重复事实去重、物品失效/恢复）、`session-recovery.test.ts`（快照携带并回传台账）、`evidence-task-accum-refresh1.json`（第 2 回合后 reload，`restored=true`、history 2→2；第 3 回合仍以 3/3 完成护目镜任务，快照 `achieved`）。
 - 影响：刷新、存档切换、回滚都使用与快照同版本的台账；重复事实不再重复打分。第 3 回合 accepted 139.5 s，60 s 门槛仍未达到，tasks 阶段在最终 support 前有重复调用；下一步用共享 runtime/批推理/重试收敛压这部分成本。
+
+## D-038 共享 ORT 会话与条件批推理（2026-11-26，用户指令）
+
+- 状态：`signed`（2026-11-26）。
+- 决定：ORT session 按模型 URL 全页共享，端口持有引用计数；`dispose` 在最后一个引用释放时释放会话。task proposer 把条件/事实行 padding 成一批，一次 `session.run` 取回每行 logits；`packBatch` 单独测试。暂不做自动空闲驱逐：端口在整个会话期持有引用，需要端口级 release 信号后才能安全回收。
+- 证据：`evidence-task-accum-batch1.json` COMPLETED、0 failures；proposer 17 行 344 ms（micro9 同量级 18 行 721 ms，−52%），8 行 90 ms vs 72 ms、11 行 66 ms vs 47 ms（小批 padding 反而慢）；回合等待 84.2/90.0/124.9 s，护目镜任务仍 `achieved`；JS heap 149/137/128 MB。单测 `runtime.test.ts`。
+- 影响：条件行多时批推理有效，小批应按行数阈值退回单行；内存主项仍是 narration/semantic GGUF，micro session 共享/批推理只解决重复会话与逐行开销。下一步：端口级 release/空闲驱逐，LLM tasks 重试收敛。

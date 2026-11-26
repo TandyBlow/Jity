@@ -328,3 +328,9 @@
 - 输入同上三回合，但第 2 回合 `refreshAfter=true`：页面 reload 后 `restored=true`、history 2→2、同地点同理智。第 3 回合 proposer 仍拿到前两回合的 item/action 条件，最终 3/3、verifier yes、快照 `task_lu_goggles=achieved`。
 - 台账随 `LocalGameSnapshot.taskLedger` 保存/恢复，`seenFacts` 去重；物品条件按当前持有链失效/恢复，其余条件保持历史成立。单测覆盖导出/导入、重复事实、物品失效/恢复与会话快照回传。
 - 成本：第 3 回合 accepted 139.5 s，触发 `accepted_over_60s`；tasks 阶段在最终 support 前有重复调用，刷新本身 34.2 s。下一轮优先共享 runtime/批推理/重试收敛。
+
+## 共享会话与批推理（2026-11-26，batch1）
+
+- ORT session 按 URL 全页共享（refcount），task proposer 条件行 padding 后一次推理。`evidence-task-accum-batch1.json` COMPLETED、0 failures；护目镜仍 1/3→2/3→3/3 并 `achieved`。
+- proposer：17 行 344 ms（micro9 18 行 721 ms，−52%）；8 行 90 ms、11 行 66 ms，比旧 72/47 ms 慢——小批 padding 成本超过省下的 session.run 开销，下一版按行数阈值切换。
+- 回合等待 84.2 / 90.0 / 124.9 s，JS heap 149 / 137 / 128 MB。共享 cache 没有重复 session 可省，heap 基本不变；内存主项仍是 narration/semantic GGUF。自动空闲驱逐/端口 release 未做。
