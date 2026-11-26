@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sm14-i-r1",
+  "class": "info_new",
+  "input": "我走进中央庭院，读庭院空弹匣上的红胶带。",
+  "purpose": "复合移动+空弹匣"
+ },
+ {
+  "id": "sm14-i-r2",
+  "class": "info_new",
+  "input": "我查看倒放长椅的木背板。",
+  "purpose": "长椅"
+ },
+ {
+  "id": "sm14-i-r3",
+  "class": "info_new",
+  "input": "我查看南端石花槽内侧可蹲下的位置。",
+  "purpose": "石花槽"
+ },
+ {
+  "id": "sm14-i-r4",
+  "class": "info_new",
+  "input": "我走进东回廊，查看苏茜的备用弹匣上的蓝色胶带。",
+  "purpose": "复合移动+备用弹匣"
+ },
+ {
+  "id": "sm14-i-r5",
+  "class": "info_new",
+  "input": "我查看低窗软垫铺的石沿。",
+  "purpose": "软垫"
+ },
+ {
+  "id": "sm14-i-r6",
+  "class": "info_new",
+  "input": "我读东回廊遮光帘的拉绳。",
+  "purpose": "遮光帘"
+ }
+]

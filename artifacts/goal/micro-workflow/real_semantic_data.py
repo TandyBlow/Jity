@@ -36,6 +36,9 @@ PROMPT_VERSION = 'v2'
 NEG_INFO = re.compile('没有答|没答|未答|拒绝回答|没有说|没说|未能|问不出|没有回应')
 # 模型声称的信息必须说出内容，不能只是"读到了/知道了"
 INFO_RESULT = re.compile('是|为|写着|标着|显示|告诉|告知|回答|答了|答出|说|只剩|尚未|已经|有|没有|能|不能|可以|需要|禁止|不得|允许|属于|位于')
+# 疑问句不是答案；除非同时有回答动词
+INFO_QUESTION = re.compile('吗|？|什么|谁|哪|怎么|是否|有没有|多少|几')
+INFO_ANSWER = re.compile('告诉|告知|回答|答了|答出|说|显示|写着|标着|说明')
 NEG_ENV = re.compile('没有动|没有打开|没有移动|未打开|未移动|保持原样|没有变化')
 ENV_HINT = re.compile(r'环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
 INFO_HINT = re.compile(r'信息[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
@@ -518,6 +521,9 @@ def classify(field, item, row, diff, support, content, source, settled_text):
         if not protagonist and support not in settled_text and support not in source:
             return 'insufficient'
         if not INFO_RESULT.search(content + support):
+            return 'insufficient'
+        # 问句本身不是获得的答案
+        if INFO_QUESTION.search(content + support) and not INFO_ANSWER.search(content + support):
             return 'insufficient'
         if known:
             return 'absent'

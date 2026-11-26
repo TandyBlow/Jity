@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 87, "env:insufficient": 23, "info:insufficient": 86, "env:absent": 82, "env:conflict": 19, "env:present": 52, "info:present": 3}
+Counts: {"info:absent": 91, "env:insufficient": 23, "info:insufficient": 91, "env:absent": 93, "env:conflict": 20, "env:present": 52, "info:present": 6}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -163,7 +163,7 @@ Counts: {"info:absent": 87, "env:insufficient": 23, "info:insufficient": 86, "en
 ## sm-i-fail-2 (train, cache, info_failure)
 - action: 我问芬格尔：地下检修通道里有没有埋伏？
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: present proposed=True content='路明非问芬格尔地下检修通道里有没有埋伏（达到目的）' support='路明非问对方：地下检修通道里有没有埋伏？（达到目的）' evidence=settled
+- info: insufficient proposed=True content='路明非问芬格尔地下检修通道里有没有埋伏（达到目的）' support='路明非问对方：地下检修通道里有没有埋伏？（达到目的）' evidence=settled
 - env: absent proposed=False content='无环境状态改变' support='"env": []' evidence=state
 
 ## sm-i-irrelevant-2 (train, cache, info_irrelevant_known)
@@ -939,6 +939,78 @@ Counts: {"info:absent": 87, "env:insufficient": 23, "info:insufficient": 86, "en
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: absent proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=settled
+
+## sm10-i-read-1 (train, cache, info_new)
+- action: 我读演习规则牌上关于夺旗的条款。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='夺旗须取下中立白旗、把本队旗插入底座并由现场确认' support='夺旗须取下中立白旗、把本队旗插入底座并由现场确认' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm10-i-read-2 (train, cache, info_new)
+- action: 我读赛区路线图上关于地下检修通道的标注。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='地下检修通道用虚线标注' support='地下检修通道用虚线标注' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm10-i-ask-1 (train, cache, info_new)
+- action: 我问诺诺红方现在控制哪个方向。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='诺诺未答话，未获得红方控制方向信息' support='诺诺没有答话' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-read-3 (train, cache, info_new)
+- action: 我查看诺诺左臂识别带的颜色。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='诺诺左臂识别带为红色' support='诺诺的红色识别带缠在左臂' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-read-4 (train, cache, info_new)
+- action: 我走进值钟间，读检修图上关于释放杆的说明。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "
+- info: present proposed=True content='图上画明：先向内压释放杆' support='图上画明：先向内压释放杆' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=settled
+
+## sm10-i-read-5 (train, cache, info_new)
+- action: 我走进控制室，读旗台状态面板上的停赛时间。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未找到停赛时间面板' support='他没有找到那块显示停赛时间的面板' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-read-6 (train, cache, info_new)
+- action: 我读安全事件记录单上关于证人的栏目。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未找到证人栏目合适记录' support='没有找到合适的记录' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-ask-2 (train, cache, info_new)
+- action: 我问曼施坦因停赛时间。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='路明非未问出停赛时间' support='路明非没有问出结果' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-read-7 (train, cache, info_new)
+- action: 我走进医护处置室，读分诊夹上林亦舟的登记。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "aid", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": 
+- info: absent proposed=True content='读到林亦舟的分诊登记信息' support='读分诊夹上林亦舟的登记' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-read-8 (train, cache, info_new)
+- action: 我查看顾岚的听诊器。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=True content='路明非查看了顾岚的听诊器' support='路明非查看了顾岚的听诊器' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm10-i-read-9 (train, cache, info_new)
+- action: 我走进器材棚，读器材领用簿上关于担架的领取栏。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "aid", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"tas
+- info: present proposed=True content='担架、安全绳和折叠梯的领取栏仍空' support='担架、安全绳和折叠梯的领取栏仍空' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm10-i-read-10 (train, cache, info_new)
+- action: 我查看芬格尔的相机电池图标。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=True content='路明非查看了芬格尔相机电池图标' support='路明非成功查看了芬格尔的相机电池图标' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
 
 ## s01-act-move (train, cache, 20-input)
 - action: 我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。

@@ -1,0 +1,56 @@
+[
+ {
+  "id": "sm11-i-r1",
+  "class": "info_new",
+  "input": "我读演习规则牌上关于医护白线的条款。",
+  "purpose": "规则牌"
+ },
+ {
+  "id": "sm11-i-r2",
+  "class": "info_new",
+  "input": "我读演习规则牌上关于停赛时间的条款。",
+  "purpose": "规则牌另一条"
+ },
+ {
+  "id": "sm11-i-r3",
+  "class": "info_new",
+  "input": "我读赛区路线图上关于跨溪小桥的标注。",
+  "purpose": "路线图"
+ },
+ {
+  "id": "sm11-i-r4",
+  "class": "info_new",
+  "input": "我走进器材棚，读器材领用簿上关于担架的领取栏。",
+  "purpose": "复合移动+领用簿"
+ },
+ {
+  "id": "sm11-i-r5",
+  "class": "info_new",
+  "input": "我读开盖演习弹药箱上关于封套的说明。",
+  "purpose": "弹药箱"
+ },
+ {
+  "id": "sm11-i-r6",
+  "class": "info_new",
+  "input": "我查看备用护目镜的弹力带。",
+  "purpose": "备用护目镜"
+ },
+ {
+  "id": "sm11-i-r7",
+  "class": "info_new",
+  "input": "我查看器材笼挂锁的锁梁。",
+  "purpose": "挂锁"
+ },
+ {
+  "id": "sm11-i-r8",
+  "class": "info_new",
+  "input": "我读芬格尔的相机上电池图标。",
+  "purpose": "相机"
+ },
+ {
+  "id": "sm11-i-r9",
+  "class": "info_new",
+  "input": "我读芬格尔的饭票夹上的食堂饭票数量。",
+  "purpose": "饭票夹"
+ }
+]

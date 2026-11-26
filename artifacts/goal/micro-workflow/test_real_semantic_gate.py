@@ -205,3 +205,12 @@ def test_info_narration_only_support_is_insufficient():
     result = pipeline.verify(row_, {'info': {'present': True, 'content': '唐骁左臂识别带为黑色',
                                              'support': '唐骁的识别带是黑色的，路明非把颜色记下来'}})
     assert result['fields']['info']['status'] == 'insufficient'
+
+
+def test_info_question_without_answer_is_insufficient():
+    row_ = info_proposal_row('路明非问芬格尔地下检修通道里有没有埋伏。（达到目的）',
+                             '路明非问芬格尔地下检修通道里有没有埋伏（达到目的）',
+                             '路明非问芬格尔地下检修通道里有没有埋伏（达到目的）')
+    result = pipeline.verify(row_, {'info': {'present': True, 'content': '路明非问芬格尔地下检修通道里有没有埋伏（达到目的）',
+                                             'support': '路明非问芬格尔地下检修通道里有没有埋伏（达到目的）'}})
+    assert result['fields']['info']['status'] == 'insufficient'

@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sm13-i-r1",
+  "class": "info_new",
+  "input": "我走进控制室，读安全广播话筒上通话键的说明。",
+  "purpose": "复合移动+话筒"
+ },
+ {
+  "id": "sm13-i-r2",
+  "class": "info_new",
+  "input": "我读旗台状态面板上的停赛时间。",
+  "purpose": "面板时间"
+ },
+ {
+  "id": "sm13-i-r3",
+  "class": "info_new",
+  "input": "我读旗台状态面板上的指示灯。",
+  "purpose": "面板灯"
+ },
+ {
+  "id": "sm13-i-r4",
+  "class": "info_new",
+  "input": "我读安全事件记录单上关于证人的栏目。",
+  "purpose": "记录单"
+ },
+ {
+  "id": "sm13-i-r5",
+  "class": "info_new",
+  "input": "我走进值钟间，读检修图上关于释放杆的说明。",
+  "purpose": "复合移动+检修图"
+ },
+ {
+  "id": "sm13-i-r6",
+  "class": "info_new",
+  "input": "我读检修图上关于杆身的说明。",
+  "purpose": "检修图杆身"
+ }
+]

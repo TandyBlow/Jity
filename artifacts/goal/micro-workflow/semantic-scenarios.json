@@ -1526,6 +1526,229 @@
      "purpose": "读取物品细节"
     }
    ]
+  },
+  {
+   "id": "info-11",
+   "turns": [
+    {
+     "id": "sm11-i-r1",
+     "class": "info_new",
+     "input": "我读演习规则牌上关于医护白线的条款。",
+     "purpose": "规则牌"
+    },
+    {
+     "id": "sm11-i-r2",
+     "class": "info_new",
+     "input": "我读演习规则牌上关于停赛时间的条款。",
+     "purpose": "规则牌另一条"
+    },
+    {
+     "id": "sm11-i-r3",
+     "class": "info_new",
+     "input": "我读赛区路线图上关于跨溪小桥的标注。",
+     "purpose": "路线图"
+    },
+    {
+     "id": "sm11-i-r4",
+     "class": "info_new",
+     "input": "我走进器材棚，读器材领用簿上关于担架的领取栏。",
+     "purpose": "复合移动+领用簿"
+    },
+    {
+     "id": "sm11-i-r5",
+     "class": "info_new",
+     "input": "我读开盖演习弹药箱上关于封套的说明。",
+     "purpose": "弹药箱"
+    },
+    {
+     "id": "sm11-i-r6",
+     "class": "info_new",
+     "input": "我查看备用护目镜的弹力带。",
+     "purpose": "备用护目镜"
+    },
+    {
+     "id": "sm11-i-r7",
+     "class": "info_new",
+     "input": "我查看器材笼挂锁的锁梁。",
+     "purpose": "挂锁"
+    },
+    {
+     "id": "sm11-i-r8",
+     "class": "info_new",
+     "input": "我读芬格尔的相机上电池图标。",
+     "purpose": "相机"
+    },
+    {
+     "id": "sm11-i-r9",
+     "class": "info_new",
+     "input": "我读芬格尔的饭票夹上的食堂饭票数量。",
+     "purpose": "饭票夹"
+    }
+   ]
+  },
+  {
+   "id": "info-12",
+   "turns": [
+    {
+     "id": "sm12-i-r1",
+     "class": "info_new",
+     "input": "我走进医护处置室，读医护箱里冷敷袋的位置。",
+     "purpose": "复合移动+医护箱"
+    },
+    {
+     "id": "sm12-i-r2",
+     "class": "info_new",
+     "input": "我查看未启用冷敷袋的制冷层。",
+     "purpose": "冷敷袋"
+    },
+    {
+     "id": "sm12-i-r3",
+     "class": "info_new",
+     "input": "我读弹力绷带是否用于固定脚踝。",
+     "purpose": "绷带"
+    },
+    {
+     "id": "sm12-i-r4",
+     "class": "info_new",
+     "input": "我查看检查手套的纸套。",
+     "purpose": "手套"
+    },
+    {
+     "id": "sm12-i-r5",
+     "class": "info_new",
+     "input": "我查看医护空床的制动轮。",
+     "purpose": "空床"
+    },
+    {
+     "id": "sm12-i-r6",
+     "class": "info_new",
+     "input": "我读伤情登记夹上林亦舟的登记。",
+     "purpose": "登记夹"
+    }
+   ]
+  },
+  {
+   "id": "info-13",
+   "turns": [
+    {
+     "id": "sm13-i-r1",
+     "class": "info_new",
+     "input": "我走进控制室，读安全广播话筒上通话键的说明。",
+     "purpose": "复合移动+话筒"
+    },
+    {
+     "id": "sm13-i-r2",
+     "class": "info_new",
+     "input": "我读旗台状态面板上的停赛时间。",
+     "purpose": "面板时间"
+    },
+    {
+     "id": "sm13-i-r3",
+     "class": "info_new",
+     "input": "我读旗台状态面板上的指示灯。",
+     "purpose": "面板灯"
+    },
+    {
+     "id": "sm13-i-r4",
+     "class": "info_new",
+     "input": "我读安全事件记录单上关于证人的栏目。",
+     "purpose": "记录单"
+    },
+    {
+     "id": "sm13-i-r5",
+     "class": "info_new",
+     "input": "我走进值钟间，读检修图上关于释放杆的说明。",
+     "purpose": "复合移动+检修图"
+    },
+    {
+     "id": "sm13-i-r6",
+     "class": "info_new",
+     "input": "我读检修图上关于杆身的说明。",
+     "purpose": "检修图杆身"
+    }
+   ]
+  },
+  {
+   "id": "info-14",
+   "turns": [
+    {
+     "id": "sm14-i-r1",
+     "class": "info_new",
+     "input": "我走进中央庭院，读庭院空弹匣上的红胶带。",
+     "purpose": "复合移动+空弹匣"
+    },
+    {
+     "id": "sm14-i-r2",
+     "class": "info_new",
+     "input": "我查看倒放长椅的木背板。",
+     "purpose": "长椅"
+    },
+    {
+     "id": "sm14-i-r3",
+     "class": "info_new",
+     "input": "我查看南端石花槽内侧可蹲下的位置。",
+     "purpose": "石花槽"
+    },
+    {
+     "id": "sm14-i-r4",
+     "class": "info_new",
+     "input": "我走进东回廊，查看苏茜的备用弹匣上的蓝色胶带。",
+     "purpose": "复合移动+备用弹匣"
+    },
+    {
+     "id": "sm14-i-r5",
+     "class": "info_new",
+     "input": "我查看低窗软垫铺的石沿。",
+     "purpose": "软垫"
+    },
+    {
+     "id": "sm14-i-r6",
+     "class": "info_new",
+     "input": "我读东回廊遮光帘的拉绳。",
+     "purpose": "遮光帘"
+    }
+   ]
+  },
+  {
+   "id": "info-15",
+   "turns": [
+    {
+     "id": "sm15-i-r1",
+     "class": "info_new",
+     "input": "我走进跨溪小桥，查看小桥松动护栏的螺母。",
+     "purpose": "复合移动+护栏"
+    },
+    {
+     "id": "sm15-i-r2",
+     "class": "info_new",
+     "input": "我读医护通道标牌上的慢行提示。",
+     "purpose": "标牌"
+    },
+    {
+     "id": "sm15-i-r3",
+     "class": "info_new",
+     "input": "我走进服务巷检修口，查看服务巷检修盖的拉环。",
+     "purpose": "复合移动+检修盖"
+    },
+    {
+     "id": "sm15-i-r4",
+     "class": "info_new",
+     "input": "我查看绝缘手电的电量指示。",
+     "purpose": "手电"
+    },
+    {
+     "id": "sm15-i-r5",
+     "class": "info_new",
+     "input": "我走进钟楼门厅，查看门厅翻倒长桌的桌腿。",
+     "purpose": "复合移动+长桌"
+    },
+    {
+     "id": "sm15-i-r6",
+     "class": "info_new",
+     "input": "我查看钟楼地下检修门的门闩。",
+     "purpose": "检修门"
+    }
+   ]
   }
  ]
 }
