@@ -27,7 +27,8 @@
     "kind": "task",
     "path": "characters.lu.tasks.task_lu_choice.status",
     "from": "pending",
-    "equals": "achieved"
+    "equals": "pending",
+    "note": "a question without an actual answer does not complete the task"
    },
    {
     "kind": "task",
@@ -48,7 +49,8 @@
   "rationale": {
    "dialogue": "对话：同一可见场景内问清局势，检查对话事实能推动 task_lu_choice 的对象（诺诺）与确认（问清）两个条件。",
    "task progression": "任务推进：把 task_lu_choice 从 pending 推到 achieved，同时用根任务、护目镜任务、装备任务仍 pending 防止误提交。"
-  }
+  },
+  "note": "The single question is a partial dialogue; the task stays pending until an answer fact exists."
  },
  {
   "id": "sc02-conflict-yard-cover",
@@ -87,7 +89,8 @@
    {
     "kind": "task",
     "path": "characters.lu.tasks.task_lu_choice.status",
-    "equals": "achieved"
+    "equals": "pending",
+    "note": "a question without an actual answer does not complete the task"
    },
    {
     "kind": "task",
@@ -131,7 +134,8 @@
    {
     "kind": "task",
     "path": "characters.lu.tasks.task_lu_choice.status",
-    "equals": "achieved"
+    "equals": "pending",
+    "note": "a question without an actual answer does not complete the task"
    }
   ],
   "rationale": {
@@ -265,7 +269,8 @@
    {
     "kind": "task",
     "path": "characters.lu.tasks.task_lu_choice.status",
-    "equals": "achieved"
+    "equals": "pending",
+    "note": "a question without an actual answer does not complete the task"
    },
    {
     "kind": "task",

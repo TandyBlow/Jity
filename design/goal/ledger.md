@@ -135,3 +135,5 @@ G1 之后新增：
 - 独立场景基准（2026-11-26）：8/8 完成；地点轨迹正确；状态 FAILED（turn5 program_text_not_model，turn7/8 prose_not_identical_to_record）；全部任务 pending，对话事实只到「只完成一部分」，route 地点条件未成立；等待 139.6/111.5/144.1/118.1/86.2/79.9/95.9/95.1 s。action 回退改用 judge 排序；position 三分类（确定移动/确定无移动/不确定）已提交，场景回归运行中。决策 D-041。
 
 - 场景回归（2026-11-26）：8 场景 COMPLETED/0 failures，等待 59.8/75.6/95.0/79.7/62.6/60.2/78.3/81.2 s（均值约 74 s，基线约 109 s），turn1 59.8 s；地点轨迹正确；任务仍全 pending；turn5 的 program_text_not_model 消失，turn5/7/8 仍有 prose_not_identical_to_record。决策 D-041 更新。
+
+- 语义理解优先（2026-11-26）：场景指标 39/48 状态、11/14 任务、3 回合叙事问题、均值 74.1 s；COMPLETED 不等于质量通过。已修跨人物证据（proposer 判断所有 pending 任务）、路线 decision 条件、物品嵌套容器目的地与两字槽位；对话场景期望改为等待回答。下一步 results 结构化事实、信息/承诺/环境/物品/复合条件、四类微型模型与泛化数据。决策 D-043。
