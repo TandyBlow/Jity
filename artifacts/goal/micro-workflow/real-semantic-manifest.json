@@ -1,0 +1,9 @@
+{
+ "promptVersion": "v2",
+ "raw": "52c186440c5445b338051e429340c44c92286de07c2d63c23aa7d3d141986e9a",
+ "train": "9d5240e9568194241d8f33c4944fcefea152c8b42990c893bde35d42d309e76e",
+ "test": "bc7287007e81f123ea5437c2a68c59647caf202bab44b30ea637c32b7d6e844e",
+ "rawRows": 28,
+ "trainRows": 20,
+ "testRows": 8
+}

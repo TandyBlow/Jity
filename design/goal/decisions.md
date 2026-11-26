@@ -584,3 +584,11 @@
 - 训练入口 `train_micro_semantic.py` 先校验 manifest 的 raw/train/test 哈希，再执行验收门；任一失败退出 1。三任务训练只读取过滤后的 train 导出。
 - 当前数据未过门：缓存 8 条中 7 条旧版无哈希、1 条 v2；20 条训练覆盖缺失。旧标签器已停；重标与过门是下一步，不训练。
 - 浏览器 KV 保留；推理效率已有依据，不再优先优化；真实游戏/移动端再验证。
+
+## D-055 28 条标签完成，但有效训练样本不足（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 标签器完成，验收门 `pass=true`：raw 28、train 20、test 8，覆盖完整，旧缓存 0 命中，`labelMeta` 完整。
+- 但按字段统计的有效样本：`info` 25 present / 1 absent / 2 insufficient；`env` 27 insufficient / 1 conflict / 0 present / 0 absent。训练导出只有 20 条 `info:pos`，`info` 负例 0，`env` 可训练字段 0。
+- 原因：`info` 定义偏宽，叙事事实被当新信息；`env` 的真实 appearance 变化几乎为空，位置/任务未纳入；`absent` 只认明确否定；`conflict` 只查 `settled`，sc06/s07 的环境动作留在输入/叙事，只有 sc08 进了 conflict。验收门形式通过不等于数据可训练。
+- 决定：不训练。修 `conflict` 从 `settled + 输入/叙事` 取环境动作；`info` 加“新事实”约束；状态差分补齐 item/location/character/position/task；验收门增加每字段最小正负样本数；继续采集真实 env 与 info 负例事件；达到计数后再训练三任务、状态补丁、五臂。证据 `real-semantic-validation.json`、`real-semantic.jsonl`、`real-semantic-train.jsonl`。

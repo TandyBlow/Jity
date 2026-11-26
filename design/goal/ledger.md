@@ -165,3 +165,5 @@ G1 之后新增：
 - 六条件验收门（2026-11-26）：`validate_real_semantic.py` 拒绝未核验/冲突进 train、旧缓存、scenario 进 train、意图回显当支持、缓存缺 hash/版本/模型/证据、非 scenario test；流水线补三值 target/trainable、全状态差分、版本化缓存、settled 去命令回显。旧 7 条数据集 pass=false（27 failures），后台用 v2 prompt 重标 20+8；过门前不训练。D-053。
 
 - 验收门五洞与反例单测（2026-11-26）：修 environment_keys（未动物品不算）、env absent（只认明确否定）、20+8 覆盖、模型标签元数据、raw/train 分离按字段过滤；`test_real_semantic_gate.py` 11 条全过；`train_micro_semantic.py` 先验 manifest 哈希再过门。当前缓存 7 旧 + 1 v2，训练覆盖缺失，仍不训练。D-054。
+
+- 28 条标签完成但有效样本不足（2026-11-26）：验收门 pass=true、raw 28/train 20/test 8；字段计数 info 25 present/1 absent/2 insufficient，env 27 insufficient/1 conflict/0 present/0 absent；训练导出只有 20 条 info:pos，info 负例 0、env 字段 0。形式过门不等于可训练；不训练。修 conflict 取输入/叙事、info 新事实约束、状态差分、最小正负样本门、补采 env/info 负例。D-055。
