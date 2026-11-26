@@ -44,53 +44,79 @@ browser.
 | indep 30M event | 33.30M | 133.7 | 44.7* | 35.9 ms | 54.1 ms | — | — | 0.45 | 0.000 |
 | shared 2-decoder 15M | 22.59M | 90.3 | — | 32.2 ms | 50.5 ms | — | 0.278 | 0.35 | 0.111 |
 
-`*` the int8 size is the measured per-scale model size; the ONNX export is the
-multi-task graph. Per-task independent graphs were not exported separately.
-
 `field R` is the fraction of gold `key=value` fields reproduced on the held-out
 rows. Exact match requires the whole continuation to match. Conditions and
 events are scored on the continuation: the `COND|` header and the event actor
 are supplied as a decoder prefix, so they are not counted.
 
-## Per-field, best dedicated arms
+The independent rows above were produced in the same process as the multi-task
+arms. A separate process (`measure_independent_models.py`, same data/split,
+seed 20261126, 40 epochs) exported each independent model and measured CPU:
 
-15M event model (held-out actors): `result` 1.000; `target` 0.000; `item` 0.000;
+| arm | field R | exact | int8 MB | CPU p50 | CPU p95 |
+|---|---:|---:|---:|---:|---:|
+| 5M cond | 0.315 | 0.067 | 6.57 | 55.3 ms | 77.8 ms |
+| 5M event | 0.400 | 0.000 | 6.57 | 54.2 ms | 77.4 ms |
+| 15M cond | 0.417 | 0.250 | 19.84 | 81.1 ms | 132.5 ms |
+| 15M event | 0.500 | 0.000 | 19.84 | 55.0 ms | 85.8 ms |
+| 30M cond | 0.287 | 0.200 | 44.66 | 43.0 ms | 149.4 ms |
+| 30M event | 0.350 | 0.000 | 44.66 | 105.9 ms | 133.6 ms |
+
+The independent field-recall numbers differ from the earlier rows by training
+order and run variance (for example 15M events 0.50 here vs 0.60 earlier; 15M
+conditions 0.417 vs 0.333). The latency/size columns are the measured ones; the
+CPU p50 spread at 30M is noise from a single-threaded desktop measurement.
+Report: `artifacts/goal/micro-workflow/micro-generative/independent-report.json`.
+
+Per-field for the independent 15M arms in this run: event `result` 0.833;
+`target/item/dest/info/env` 0.000. Conditions `item` 0.312, `target` 0.364,
+`conf` 0.368, `loc` 0.692 (absence-inclusive); `time/act/decision` 0.000.
+
+## Per-field, independent 15M arms (separate run)
+
+15M event model (held-out actors): `result` 0.833; `target` 0.000; `item` 0.000;
 `dest` 0.000; `info`, `env`, `promise`, `decision`, `cause` absent or 0.000.
 
-15M conditions model (held-out tasks): `loc` 0.800 (many rows have no location;
-absence counts as correct), `target` 0.333, `conf` 0.167, `act` 0.000,
-`time` 0.000, `decision` 0.000, `item` 0.000.
+15M conditions model (held-out tasks): `loc` 0.692 (many rows have no location;
+absence counts as correct), `target` 0.364, `conf` 0.368, `item` 0.312,
+`act` 0.000, `time` 0.000, `decision` 0.000.
 
 The 15M event `result` accuracy is on a small held-out set (3 actors, positive
 and negative rows); it is a signal for a hybrid result head, not a production
-number.
+number. The earlier same-process run had `result` 1.000 and conditions
+`item` 0.000; the difference is run variance.
 
 ## Findings
 
 1. The format is learnable; held-out extraction is not. Train field recall is
-   about 1.0, test conditions 0.21–0.36 and events 0.35–0.60; exact match
-   0–0.22. The four surface variants do not create semantic diversity.
+   about 1.0, test conditions 0.21–0.42 and events 0.35–0.60 across the two
+   runs; exact match 0–0.25. The four surface variants do not create semantic
+   diversity.
 
-2. Entity IDs are not copied reliably. The 15M event model gets `result` but
-   `target/item/dest` are 0; the conditions model gets some targets but no
-   items. Constrained decoding raised the 15M independent conditions arm from
-   about 0.27 to 0.33–0.34 across runs, but did not fix event entities. Entity IDs must stay
+2. Entity IDs are not copied reliably. The 15M event model gets `result`
+   (0.833–1.0) but `target/item/dest` are 0; the conditions model gets some
+   items/targets in the separate run but `time/act/decision` stay 0. Constrained
+   decoding raised the 15M independent conditions arm from about 0.27 to
+   0.33–0.42 across runs, but did not fix event entities. Entity IDs must stay
    with the linker/classifier or be selected from an explicit candidate set,
    not generated as free tokens.
 
-3. Scale does not pay at this data size. 5M conditions 0.213 / events 0.35;
-   15M 0.333 / 0.60; 30M 0.278 / 0.45. The best event arm is 15M independent;
-   30M is worse and 2.4× slower. 5M remains the latency/size baseline.
+3. Scale does not pay at this data size. Separate independent run: 5M
+   conditions 0.315 / events 0.40; 15M 0.417 / 0.50; 30M 0.287 / 0.35. The best
+   event arm is 15M; 30M is worse and 2.4× slower. 5M remains the latency/size
+   baseline.
 
 4. Independent dedicated models beat the shared variants. The 15M multi-task
-   model reaches events 0.35 versus 0.60 for the independent 15M event model;
-   the shared encoder + two decoders reaches 0.35. The shared encoder trades
-   event accuracy for conditions; there is no evidence for sharing at 308 rows.
+   model reaches events 0.35 versus 0.50 for the independent 15M event model in
+   the separate run; the shared encoder + two decoders reaches 0.35. The shared
+   encoder trades event accuracy for conditions; there is no evidence for
+   sharing at this data size.
 
 5. The only high-accuracy generative field is event `result`. `info`, `env`,
    `promise`, `decision`, `cause`, `time`, `act`, and condition `item` are at
-   or near zero. These are exactly the fields the LLM/rule/classifier stack
-   currently supplies. A direct replacement would regress semantics.
+   or near zero (15M item 0.312 is the exception in one run). These are exactly
+   the fields the LLM/rule/classifier stack currently supplies. A direct
+   replacement would regress semantics.
 
 6. Latency and size. The 15M model runs at 30–41 ms p50 GPU, 50–85 ms p95;
    CPU p50 is 66 ms for the multi 15M. int8 is 6.6 / 19.8 / 44.7 MB for

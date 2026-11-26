@@ -1,0 +1,1583 @@
+{
+ "trainRows": 95,
+ "testRows": 24,
+ "trainConditions": 73,
+ "trainEvents": 22,
+ "testConditions": 12,
+ "testEvents": 12,
+ "worlds": [
+  "dragon",
+  "mistport"
+ ],
+ "srcVocab": 688,
+ "outPointerVocab": 357,
+ "outFreeVocab": 443,
+ "arms": {
+  "scratch_pointer": {
+   "rows": 24,
+   "exact": 0.0,
+   "fieldRecall": 0.179,
+   "perField": {
+    "act": 0.0,
+    "cause": 0.0,
+    "conf": 0.444,
+    "decision": 0.0,
+    "dest": 0.2,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.071,
+    "loc": 0.0,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.583,
+    "target": 0.071,
+    "time": 0.0
+   },
+   "p50Ms": 43.3,
+   "p95Ms": 82.3,
+   "predictions": [
+    {
+     "id": "hc1",
+     "world": "dragon",
+     "type": "item",
+     "got": {
+      "target": "spare_gun",
+      "conf": "确认",
+      "act": "决定正面"
+     },
+     "want": {
+      "time": "进交火区之前",
+      "item": "goggles_lu",
+      "conf": "确认",
+      "act": "戴好"
+     }
+    },
+    {
+     "id": "hc2",
+     "world": "dragon",
+     "type": "route",
+     "got": {
+      "target": "west",
+      "conf": "说明"
+     },
+     "want": {
+      "decision": "挑一条有掩体的路"
+     }
+    },
+    {
+     "id": "hc3",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "loc": "blue_rally",
+      "target": "tower",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "target": "nono",
+      "conf": "核实",
+      "info": "红蓝双方当前钟楼控制"
+     }
+    },
+    {
+     "id": "hc4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {},
+     "want": {
+      "promise": "在场者亲口答应配合"
+     }
+    },
+    {
+     "id": "hc5",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "loc": "red_map_desk",
+      "target": "foyer",
+      "conf": "确认",
+      "act": "离开"
+     },
+     "want": {
+      "loc": "hatch",
+      "conf": "确认",
+      "env": "检修盖打开",
+      "decision": "决定是否走地下"
+     }
+    },
+    {
+     "id": "hc6",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "loc": "su",
+      "target": "su",
+      "act": "离"
+     },
+     "want": {
+      "loc": "lane",
+      "target": "caesar",
+      "conf": "看见",
+      "promise": "约好进攻信号",
+      "decision": "决定何时离开服务巷",
+      "act": "离开"
+     }
+    },
+    {
+     "id": "hc7",
+     "world": "dragon",
+     "type": "negation",
+     "got": {
+      "item": "rules",
+      "conf": "确认"
+     },
+     "want": {
+      "neg": "1",
+      "item": "rules",
+      "info": "医护白线内禁止交火"
+     }
+    },
+    {
+     "id": "hc8",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "target": "nono",
+      "conf": "确认",
+      "act": "决定正面"
+     },
+     "want": {
+      "time": "15:45",
+      "target": "nono",
+      "conf": "确认",
+      "promise": "负责服务巷"
+     }
+    },
+    {
+     "id": "hc9",
+     "world": "dragon",
+     "type": "route",
+     "got": {
+      "loc": "<bad>",
+      "act": "换上"
+     },
+     "want": {
+      "decision": "选一条能过小队且避开松动护栏的路",
+      "info": "松动护栏"
+     }
+    },
+    {
+     "id": "hc10",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "item": "shen",
+      "conf": "确认"
+     },
+     "want": {
+      "item": "spare_mag2",
+      "target": "su",
+      "act": "交给",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "he1",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "<bad>",
+      "dest": "jacket_lu/slot_chest"
+     },
+     "want": {
+      "result": "completed",
+      "item": "spare_mag2",
+      "dest": "jacket_lu/slot_chest"
+     }
+    },
+    {
+     "id": "he2",
+     "world": "dragon",
+     "type": "dialogue",
+     "got": {
+      "result": "completed",
+      "target": "west_arcade",
+      "info": "three_blue_loose_rail"
+     },
+     "want": {
+      "result": "partial",
+      "target": "lu",
+      "info": "红方仍在钟楼；蓝方三人守在西回廊",
+      "cause": "诺诺只回答了一部分"
+     }
+    },
+    {
+     "id": "he3",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "cold_pack",
+      "dest": "cold_pack"
+     },
+     "want": {
+      "result": "completed",
+      "item": "hatch_cover",
+      "env": "检修盖被掀开"
+     }
+    },
+    {
+     "id": "he4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {
+      "result": "completed",
+      "item": "lu"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "promise": "说出地下检修门插闩位置"
+     }
+    },
+    {
+     "id": "he5",
+     "world": "dragon",
+     "type": "decision",
+     "got": {
+      "result": "completed",
+      "target": "tunnel"
+     },
+     "want": {
+      "result": "completed",
+      "decision": "走地下检修通道",
+      "dest": "tunnel"
+     }
+    },
+    {
+     "id": "he6",
+     "world": "dragon",
+     "type": "multi",
+     "got": {
+      "result": "completed",
+      "item": "shen"
+     },
+     "want": {
+      "result": "partial",
+      "target": "tang",
+      "decision": "正面吸引",
+      "cause": "西回廊射界压制"
+     }
+    },
+    {
+     "id": "he7",
+     "world": "dragon",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "item": "tang"
+     },
+     "want": {
+      "result": "failed",
+      "item": "tang_magazine",
+      "cause": "弹匣脱手掉落"
+     }
+    },
+    {
+     "id": "he8",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "result": "completed",
+      "item": "hatch",
+      "info": "three_blue_loose_rail"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "info": "楚子航仍守顶层，护栏已松动"
+     }
+    },
+    {
+     "id": "he9",
+     "world": "dragon",
+     "type": "refusal",
+     "got": {
+      "result": "completed",
+      "item": "canvas_blind",
+      "info": "caesar"
+     },
+     "want": {
+      "result": "blocked",
+      "target": "lu",
+      "item": "radio_nono",
+      "cause": "红方占用同一频段"
+     }
+    },
+    {
+     "id": "he10",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "foyer"
+     },
+     "want": {
+      "result": "completed",
+      "item": "bench_cover",
+      "dest": "foyer",
+      "env": "楼梯口通道让出"
+     }
+    },
+    {
+     "id": "mw1",
+     "world": "mistport",
+     "type": "item",
+     "got": {
+      "loc": "rope",
+      "item": "换上"
+     },
+     "want": {
+      "time": "天黑前",
+      "item": "lantern",
+      "loc": "pier",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "mw2",
+     "world": "mistport",
+     "type": "route",
+     "got": {
+      "target": "pier"
+     },
+     "want": {
+      "decision": "选一条能避开巡夜人的路"
+     }
+    },
+    {
+     "id": "mw3",
+     "world": "mistport",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "aria"
+     },
+     "want": {
+      "result": "completed",
+      "item": "chart",
+      "dest": "warehouse",
+      "env": "防水袋扣紧"
+     }
+    },
+    {
+     "id": "mw4",
+     "world": "mistport",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "item": "cass"
+     },
+     "want": {
+      "result": "partial",
+      "item": "lantern",
+      "info": "缆绳缺失"
+     }
+    }
+   ],
+   "params": 7781221,
+   "entityFieldRecall": 0.111,
+   "openFieldRecall": 0.216,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.197,
+     "entityFieldRecall": 0.136
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.083,
+     "entityFieldRecall": 0.0
+    }
+   }
+  },
+  "bert_pointer": {
+   "rows": 24,
+   "exact": 0.0,
+   "fieldRecall": 0.179,
+   "perField": {
+    "act": 0.25,
+    "cause": 0.0,
+    "conf": 0.5,
+    "decision": 0.0,
+    "dest": 0.167,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.071,
+    "loc": 0.0,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.5,
+    "target": 0.083,
+    "time": 0.0
+   },
+   "p50Ms": 52.5,
+   "p95Ms": 70.4,
+   "predictions": [
+    {
+     "id": "hc1",
+     "world": "dragon",
+     "type": "item",
+     "got": {
+      "item": "spare_gun",
+      "conf": "确认",
+      "act": "戴好"
+     },
+     "want": {
+      "time": "进交火区之前",
+      "item": "goggles_lu",
+      "conf": "确认",
+      "act": "戴好"
+     }
+    },
+    {
+     "id": "hc2",
+     "world": "dragon",
+     "type": "route",
+     "got": {
+      "loc": "west",
+      "conf": "核实"
+     },
+     "want": {
+      "decision": "挑一条有掩体的路"
+     }
+    },
+    {
+     "id": "hc3",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "loc": "blue_rally",
+      "target": "nono",
+      "conf": "报告"
+     },
+     "want": {
+      "target": "nono",
+      "conf": "核实",
+      "info": "红蓝双方当前钟楼控制"
+     }
+    },
+    {
+     "id": "hc4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {},
+     "want": {
+      "promise": "在场者亲口答应配合"
+     }
+    },
+    {
+     "id": "hc5",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "loc": "aid"
+     },
+     "want": {
+      "loc": "hatch",
+      "conf": "确认",
+      "env": "检修盖打开",
+      "decision": "决定是否走地下"
+     }
+    },
+    {
+     "id": "hc6",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "item": "su",
+      "target": "lane",
+      "act": "恢复"
+     },
+     "want": {
+      "loc": "lane",
+      "target": "caesar",
+      "conf": "看见",
+      "promise": "约好进攻信号",
+      "decision": "决定何时离开服务巷",
+      "act": "离开"
+     }
+    },
+    {
+     "id": "hc7",
+     "world": "dragon",
+     "type": "negation",
+     "got": {
+      "item": "rules"
+     },
+     "want": {
+      "neg": "1",
+      "item": "rules",
+      "info": "医护白线内禁止交火"
+     }
+    },
+    {
+     "id": "hc8",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "target": "lu",
+      "conf": "确认",
+      "act": "恢复"
+     },
+     "want": {
+      "time": "15:45",
+      "target": "nono",
+      "conf": "确认",
+      "promise": "负责服务巷"
+     }
+    },
+    {
+     "id": "hc9",
+     "world": "dragon",
+     "type": "route",
+     "got": {},
+     "want": {
+      "decision": "选一条能过小队且避开松动护栏的路",
+      "info": "松动护栏"
+     }
+    },
+    {
+     "id": "hc10",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "item": "shen",
+      "conf": "确认"
+     },
+     "want": {
+      "item": "spare_mag2",
+      "target": "su",
+      "act": "交给",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "he1",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "white_flag",
+      "dest": "jacket_lu/slot_chest"
+     },
+     "want": {
+      "result": "completed",
+      "item": "spare_mag2",
+      "dest": "jacket_lu/slot_chest"
+     }
+    },
+    {
+     "id": "he2",
+     "world": "dragon",
+     "type": "dialogue",
+     "got": {
+      "result": "completed",
+      "target": "west_arcade",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "result": "partial",
+      "target": "lu",
+      "info": "红方仍在钟楼；蓝方三人守在西回廊",
+      "cause": "诺诺只回答了一部分"
+     }
+    },
+    {
+     "id": "he3",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "medical_case",
+      "env": "hatch_open"
+     },
+     "want": {
+      "result": "completed",
+      "item": "hatch_cover",
+      "env": "检修盖被掀开"
+     }
+    },
+    {
+     "id": "he4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {
+      "result": "partial",
+      "cause": "lu"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "promise": "说出地下检修门插闩位置"
+     }
+    },
+    {
+     "id": "he5",
+     "world": "dragon",
+     "type": "decision",
+     "got": {
+      "result": "completed",
+      "decision": "route_hatch"
+     },
+     "want": {
+      "result": "completed",
+      "decision": "走地下检修通道",
+      "dest": "tunnel"
+     }
+    },
+    {
+     "id": "he6",
+     "world": "dragon",
+     "type": "multi",
+     "got": {
+      "result": "completed",
+      "item": "west_arcade",
+      "dest": "caesar"
+     },
+     "want": {
+      "result": "partial",
+      "target": "tang",
+      "decision": "正面吸引",
+      "cause": "西回廊射界压制"
+     }
+    },
+    {
+     "id": "he7",
+     "world": "dragon",
+     "type": "negative",
+     "got": {
+      "result": "completed"
+     },
+     "want": {
+      "result": "failed",
+      "item": "tang_magazine",
+      "cause": "弹匣脱手掉落"
+     }
+    },
+    {
+     "id": "he8",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "result": "completed",
+      "item": "hatch",
+      "env": "red_holds_bell"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "info": "楚子航仍守顶层，护栏已松动"
+     }
+    },
+    {
+     "id": "he9",
+     "world": "dragon",
+     "type": "refusal",
+     "got": {
+      "result": "completed",
+      "item": "nono",
+      "dest": "canvas_blind"
+     },
+     "want": {
+      "result": "blocked",
+      "target": "lu",
+      "item": "radio_nono",
+      "cause": "红方占用同一频段"
+     }
+    },
+    {
+     "id": "he10",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "rifle_caesar",
+      "env": "stairs_clear"
+     },
+     "want": {
+      "result": "completed",
+      "item": "bench_cover",
+      "dest": "foyer",
+      "env": "楼梯口通道让出"
+     }
+    },
+    {
+     "id": "mw1",
+     "world": "mistport",
+     "type": "item",
+     "got": {
+      "target": "rope",
+      "conf": "确认"
+     },
+     "want": {
+      "time": "天黑前",
+      "item": "lantern",
+      "loc": "pier",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "mw2",
+     "world": "mistport",
+     "type": "route",
+     "got": {
+      "loc": "warehouse"
+     },
+     "want": {
+      "decision": "选一条能避开巡夜人的路"
+     }
+    },
+    {
+     "id": "mw3",
+     "world": "mistport",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "target": "rope",
+      "info": "three_blue_loose_rail"
+     },
+     "want": {
+      "result": "completed",
+      "item": "chart",
+      "dest": "warehouse",
+      "env": "防水袋扣紧"
+     }
+    },
+    {
+     "id": "mw4",
+     "world": "mistport",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "target": "lantern",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "result": "partial",
+      "item": "lantern",
+      "info": "缆绳缺失"
+     }
+    }
+   ],
+   "params": 14758501,
+   "entityFieldRecall": 0.111,
+   "openFieldRecall": 0.216,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.182,
+     "entityFieldRecall": 0.136
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.167,
+     "entityFieldRecall": 0.0
+    }
+   }
+  },
+  "scratch_free": {
+   "rows": 24,
+   "exact": 0.0,
+   "fieldRecall": 0.064,
+   "perField": {
+    "": 0.0,
+    "act": 0.0,
+    "cause": 0.0,
+    "conf": 0.0,
+    "decision": 0.0,
+    "dest": 0.0,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.0,
+    "loc": 0.0,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.25,
+    "target": 0.083,
+    "time": 0.0
+   },
+   "p50Ms": 39.5,
+   "p95Ms": 66.3,
+   "predictions": [
+    {
+     "id": "hc1",
+     "world": "dragon",
+     "type": "item",
+     "got": {
+      "item": "blue_radio"
+     },
+     "want": {
+      "time": "进交火区之前",
+      "item": "goggles_lu",
+      "conf": "确认",
+      "act": "戴好"
+     }
+    },
+    {
+     "id": "hc2",
+     "world": "dragon",
+     "type": "route",
+     "got": {
+      "loc": "tower",
+      "conf": "核对"
+     },
+     "want": {
+      "decision": "挑一条有掩体的路"
+     }
+    },
+    {
+     "id": "hc3",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "loc": "aid",
+      "target": "确认",
+      "": "复"
+     },
+     "want": {
+      "target": "nono",
+      "conf": "核实",
+      "info": "红蓝双方当前钟楼控制"
+     }
+    },
+    {
+     "id": "hc4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {},
+     "want": {
+      "promise": "在场者亲口答应配合"
+     }
+    },
+    {
+     "id": "hc5",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "loc": "tower",
+      "target": "chu",
+      "conf": "route_hatch"
+     },
+     "want": {
+      "loc": "hatch",
+      "conf": "确认",
+      "env": "检修盖打开",
+      "decision": "决定是否走地下"
+     }
+    },
+    {
+     "id": "hc6",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "target": "恢复",
+      "result": "partial"
+     },
+     "want": {
+      "loc": "lane",
+      "target": "caesar",
+      "conf": "看见",
+      "promise": "约好进攻信号",
+      "decision": "决定何时离开服务巷",
+      "act": "离开"
+     }
+    },
+    {
+     "id": "hc7",
+     "world": "dragon",
+     "type": "negation",
+     "got": {
+      "target": "报告",
+      "result": "completed"
+     },
+     "want": {
+      "neg": "1",
+      "item": "rules",
+      "info": "医护白线内禁止交火"
+     }
+    },
+    {
+     "id": "hc8",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "target": "lu",
+      "info": "unanswered"
+     },
+     "want": {
+      "time": "15:45",
+      "target": "nono",
+      "conf": "确认",
+      "promise": "负责服务巷"
+     }
+    },
+    {
+     "id": "hc9",
+     "world": "dragon",
+     "type": "route",
+     "got": {},
+     "want": {
+      "decision": "选一条能过小队且避开松动护栏的路",
+      "info": "松动护栏"
+     }
+    },
+    {
+     "id": "hc10",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "item": "camera",
+      "result": "partial"
+     },
+     "want": {
+      "item": "spare_mag2",
+      "target": "su",
+      "act": "交给",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "he1",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "goggles_lu",
+      "dest": "red_holds_bell"
+     },
+     "want": {
+      "result": "completed",
+      "item": "spare_mag2",
+      "dest": "jacket_lu/slot_chest"
+     }
+    },
+    {
+     "id": "he2",
+     "world": "dragon",
+     "type": "dialogue",
+     "got": {
+      "result": "completed",
+      "target": "lu",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "result": "partial",
+      "target": "lu",
+      "info": "红方仍在钟楼；蓝方三人守在西回廊",
+      "cause": "诺诺只回答了一部分"
+     }
+    },
+    {
+     "id": "he3",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "real_injury"
+     },
+     "want": {
+      "result": "completed",
+      "item": "hatch_cover",
+      "env": "检修盖被掀开"
+     }
+    },
+    {
+     "id": "he4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {
+      "result": "partial",
+      "item": "safety_rope"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "promise": "说出地下检修门插闩位置"
+     }
+    },
+    {
+     "id": "he5",
+     "world": "dragon",
+     "type": "decision",
+     "got": {
+      "result": "partial",
+      "item": "说明"
+     },
+     "want": {
+      "result": "completed",
+      "decision": "走地下检修通道",
+      "dest": "tunnel"
+     }
+    },
+    {
+     "id": "he6",
+     "world": "dragon",
+     "type": "multi",
+     "got": {
+      "result": "completed",
+      "item": "safety_rope"
+     },
+     "want": {
+      "result": "partial",
+      "target": "tang",
+      "decision": "正面吸引",
+      "cause": "西回廊射界压制"
+     }
+    },
+    {
+     "id": "he7",
+     "world": "dragon",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "item": "camera"
+     },
+     "want": {
+      "result": "failed",
+      "item": "tang_magazine",
+      "cause": "弹匣脱手掉落"
+     }
+    },
+    {
+     "id": "he8",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "result": "completed",
+      "item": "safety_rope"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "info": "楚子航仍守顶层，护栏已松动"
+     }
+    },
+    {
+     "id": "he9",
+     "world": "dragon",
+     "type": "refusal",
+     "got": {
+      "result": "completed",
+      "item": "检查"
+     },
+     "want": {
+      "result": "blocked",
+      "target": "lu",
+      "item": "radio_nono",
+      "cause": "红方占用同一频段"
+     }
+    },
+    {
+     "id": "he10",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "partial",
+      "item": "spare_mag2",
+      "dest": "hatch_open"
+     },
+     "want": {
+      "result": "completed",
+      "item": "bench_cover",
+      "dest": "foyer",
+      "env": "楼梯口通道让出"
+     }
+    },
+    {
+     "id": "mw1",
+     "world": "mistport",
+     "type": "item",
+     "got": {
+      "item": "blue_radio",
+      "conf": "说明"
+     },
+     "want": {
+      "time": "天黑前",
+      "item": "lantern",
+      "loc": "pier",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "mw2",
+     "world": "mistport",
+     "type": "route",
+     "got": {
+      "loc": "tower",
+      "result": "交给"
+     },
+     "want": {
+      "decision": "选一条能避开巡夜人的路"
+     }
+    },
+    {
+     "id": "mw3",
+     "world": "mistport",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "检查"
+     },
+     "want": {
+      "result": "completed",
+      "item": "chart",
+      "dest": "warehouse",
+      "env": "防水袋扣紧"
+     }
+    },
+    {
+     "id": "mw4",
+     "world": "mistport",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "target": "camera"
+     },
+     "want": {
+      "result": "partial",
+      "item": "lantern",
+      "info": "缆绳缺失"
+     }
+    }
+   ],
+   "params": 7825339,
+   "entityFieldRecall": 0.037,
+   "openFieldRecall": 0.078,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.061,
+     "entityFieldRecall": 0.045
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.083,
+     "entityFieldRecall": 0.0
+    }
+   }
+  },
+  "bert_free": {
+   "rows": 24,
+   "exact": 0.042,
+   "fieldRecall": 0.231,
+   "perField": {
+    "act": 0.4,
+    "cause": 0.0,
+    "conf": 0.333,
+    "decision": 0.0,
+    "dest": 0.2,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.25,
+    "loc": 0.0,
+    "neg": 0.0,
+    "promise": 0.0,
+    "result": 0.5,
+    "target": 0.273,
+    "time": 0.0
+   },
+   "p50Ms": 57.8,
+   "p95Ms": 91.0,
+   "predictions": [
+    {
+     "id": "hc1",
+     "world": "dragon",
+     "type": "item",
+     "got": {
+      "item": "goggles_lu",
+      "conf": "确认",
+      "act": "戴好"
+     },
+     "want": {
+      "time": "进交火区之前",
+      "item": "goggles_lu",
+      "conf": "确认",
+      "act": "戴好"
+     }
+    },
+    {
+     "id": "hc2",
+     "world": "dragon",
+     "type": "route",
+     "got": {
+      "loc": "east_arcade",
+      "target": "su",
+      "conf": "确认",
+      "act": "离开"
+     },
+     "want": {
+      "decision": "挑一条有掩体的路"
+     }
+    },
+    {
+     "id": "hc3",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "loc": "tower",
+      "target": "lu",
+      "conf": "说明"
+     },
+     "want": {
+      "target": "nono",
+      "conf": "核实",
+      "info": "红蓝双方当前钟楼控制"
+     }
+    },
+    {
+     "id": "hc4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {},
+     "want": {
+      "promise": "在场者亲口答应配合"
+     }
+    },
+    {
+     "id": "hc5",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "loc": "east_arcade",
+      "item": "hatch_door",
+      "conf": "检查"
+     },
+     "want": {
+      "loc": "hatch",
+      "conf": "确认",
+      "env": "检修盖打开",
+      "decision": "决定是否走地下"
+     }
+    },
+    {
+     "id": "hc6",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "loc": "east_arcade",
+      "target": "su",
+      "conf": "确认",
+      "act": "离开"
+     },
+     "want": {
+      "loc": "lane",
+      "target": "caesar",
+      "conf": "看见",
+      "promise": "约好进攻信号",
+      "decision": "决定何时离开服务巷",
+      "act": "离开"
+     }
+    },
+    {
+     "id": "hc7",
+     "world": "dragon",
+     "type": "negation",
+     "got": {
+      "item": "shen_band"
+     },
+     "want": {
+      "neg": "1",
+      "item": "rules",
+      "info": "医护白线内禁止交火"
+     }
+    },
+    {
+     "id": "hc8",
+     "world": "dragon",
+     "type": "composite",
+     "got": {
+      "target": "doctor",
+      "conf": "说明"
+     },
+     "want": {
+      "time": "15:45",
+      "target": "nono",
+      "conf": "确认",
+      "promise": "负责服务巷"
+     }
+    },
+    {
+     "id": "hc9",
+     "world": "dragon",
+     "type": "route",
+     "got": {
+      "act": "守"
+     },
+     "want": {
+      "decision": "选一条能过小队且避开松动护栏的路",
+      "info": "松动护栏"
+     }
+    },
+    {
+     "id": "hc10",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "item": "goggles_lu",
+      "target": "su",
+      "conf": "确认",
+      "act": "离开"
+     },
+     "want": {
+      "item": "spare_mag2",
+      "target": "su",
+      "act": "交给",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "he1",
+     "world": "dragon",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "spare_mag2",
+      "dest": "jacket_lu/slot_chest"
+     },
+     "want": {
+      "result": "completed",
+      "item": "spare_mag2",
+      "dest": "jacket_lu/slot_chest"
+     }
+    },
+    {
+     "id": "he2",
+     "world": "dragon",
+     "type": "dialogue",
+     "got": {
+      "result": "completed",
+      "target": "lu",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "result": "partial",
+      "target": "lu",
+      "info": "红方仍在钟楼；蓝方三人守在西回廊",
+      "cause": "诺诺只回答了一部分"
+     }
+    },
+    {
+     "id": "he3",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "hatch_cover",
+      "env": "hatch_open"
+     },
+     "want": {
+      "result": "completed",
+      "item": "hatch_cover",
+      "env": "检修盖被掀开"
+     }
+    },
+    {
+     "id": "he4",
+     "world": "dragon",
+     "type": "promise",
+     "got": {
+      "result": "partial",
+      "target": "lu",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "promise": "说出地下检修门插闩位置"
+     }
+    },
+    {
+     "id": "he5",
+     "world": "dragon",
+     "type": "decision",
+     "got": {
+      "result": "completed",
+      "decision": "route_hatch"
+     },
+     "want": {
+      "result": "completed",
+      "decision": "走地下检修通道",
+      "dest": "tunnel"
+     }
+    },
+    {
+     "id": "he6",
+     "world": "dragon",
+     "type": "multi",
+     "got": {
+      "result": "completed",
+      "target": "chu",
+      "info": "three_blue_loose_rail"
+     },
+     "want": {
+      "result": "partial",
+      "target": "tang",
+      "decision": "正面吸引",
+      "cause": "西回廊射界压制"
+     }
+    },
+    {
+     "id": "he7",
+     "world": "dragon",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "item": "spare_mag2",
+      "info": "red_holds_bell"
+     },
+     "want": {
+      "result": "failed",
+      "item": "tang_magazine",
+      "cause": "弹匣脱手掉落"
+     }
+    },
+    {
+     "id": "he8",
+     "world": "dragon",
+     "type": "information",
+     "got": {
+      "result": "completed",
+      "target": "chu",
+      "info": "three_blue_loose_rail"
+     },
+     "want": {
+      "result": "completed",
+      "target": "lu",
+      "info": "楚子航仍守顶层，护栏已松动"
+     }
+    },
+    {
+     "id": "he9",
+     "world": "dragon",
+     "type": "refusal",
+     "got": {
+      "result": "completed",
+      "item": "lu",
+      "dest": "lu"
+     },
+     "want": {
+      "result": "blocked",
+      "target": "lu",
+      "item": "radio_nono",
+      "cause": "红方占用同一频段"
+     }
+    },
+    {
+     "id": "he10",
+     "world": "dragon",
+     "type": "environment",
+     "got": {
+      "result": "completed",
+      "item": "foyer_table",
+      "env": "stairs_clear"
+     },
+     "want": {
+      "result": "completed",
+      "item": "bench_cover",
+      "dest": "foyer",
+      "env": "楼梯口通道让出"
+     }
+    },
+    {
+     "id": "mw1",
+     "world": "mistport",
+     "type": "item",
+     "got": {
+      "item": "lin_radio",
+      "conf": "确认"
+     },
+     "want": {
+      "time": "天黑前",
+      "item": "lantern",
+      "loc": "pier",
+      "conf": "确认"
+     }
+    },
+    {
+     "id": "mw2",
+     "world": "mistport",
+     "type": "route",
+     "got": {
+      "loc": "east_arcade",
+      "target": "su",
+      "conf": "检查"
+     },
+     "want": {
+      "decision": "选一条能避开巡夜人的路"
+     }
+    },
+    {
+     "id": "mw3",
+     "world": "mistport",
+     "type": "transfer",
+     "got": {
+      "result": "completed",
+      "item": "hatch_cover",
+      "env": "hatch_open"
+     },
+     "want": {
+      "result": "completed",
+      "item": "chart",
+      "dest": "warehouse",
+      "env": "防水袋扣紧"
+     }
+    },
+    {
+     "id": "mw4",
+     "world": "mistport",
+     "type": "negative",
+     "got": {
+      "result": "completed",
+      "item": "safety_rope"
+     },
+     "want": {
+      "result": "partial",
+      "item": "lantern",
+      "info": "缆绳缺失"
+     }
+    }
+   ],
+   "params": 14802619,
+   "entityFieldRecall": 0.259,
+   "openFieldRecall": 0.216,
+   "byWorld": {
+    "dragon": {
+     "rows": 20,
+     "fieldRecall": 0.242,
+     "entityFieldRecall": 0.318
+    },
+    "mistport": {
+     "rows": 4,
+     "fieldRecall": 0.167,
+     "entityFieldRecall": 0.0
+    }
+   }
+  }
+ },
+ "resultClassifier": {
+  "accuracy": 0.583,
+  "rows": 12,
+  "confusion": {
+   "completed->completed": 7,
+   "partial->completed": 3,
+   "failed->completed": 1,
+   "blocked->completed": 1
+  },
+  "scratch_pointer": 0.583,
+  "bert_pointer": 0.5,
+  "scratch_free": 0.333,
+  "bert_free": 0.5
+ }
+}

@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+"""Hand-authored gold rows for the micro generative v2 test set.
+
+These are test-only: they are never used for training. They deliberately use
+new phrasings, composite conditions, negation, open-ended event fields and a
+second world whose entity IDs never appear in training.
+"""
+
+MISTPORT = {
+    'chars': {'aria': '阿莉亚', 'borin': '博林', 'cass': '卡斯'},
+    'items': {'lantern': '风灯', 'rope': '缆绳', 'chart': '海图'},
+    'locs': {'pier': '北码头', 'lighthouse': '灯塔', 'warehouse': '仓库'},
+}
+
+ROWS = [
+    # --- first world, conditions ---
+    {'id': 'hc1', 'kind': 'conditions', 'world': 'dragon', 'type': 'item', 'actor': 'lu',
+     'text': '进交火区之前把护目镜戴稳，顺手确认镜片没有裂',
+     'gold': {'time': '进交火区之前', 'item': 'goggles_lu', 'conf': '确认', 'act': '戴好'}},
+    {'id': 'hc2', 'kind': 'conditions', 'world': 'dragon', 'type': 'route', 'actor': 'lu',
+     'text': '别走正路，从庭院、西回廊、地下通道里挑一条有掩体的路',
+     'gold': {'decision': '挑一条有掩体的路'}},
+    {'id': 'hc3', 'kind': 'conditions', 'world': 'dragon', 'type': 'information', 'actor': 'lu',
+     'text': '找诺诺核实红蓝两边现在谁占着钟楼',
+     'gold': {'target': 'nono', 'conf': '核实', 'info': '红蓝双方当前钟楼控制'}},
+    {'id': 'hc4', 'kind': 'conditions', 'world': 'dragon', 'type': 'promise', 'actor': 'lu',
+     'text': '让至少一个在场的人亲口答应配合，别替别人打包票',
+     'gold': {'promise': '在场者亲口答应配合'}},
+    {'id': 'hc5', 'kind': 'conditions', 'world': 'dragon', 'type': 'environment', 'actor': 'lu',
+     'text': '确认服务巷检修盖已经打开，再决定要不要走地下',
+     'gold': {'loc': 'hatch', 'conf': '确认', 'env': '检修盖打开', 'decision': '决定是否走地下'}},
+    {'id': 'hc6', 'kind': 'conditions', 'world': 'dragon', 'type': 'composite', 'actor': 'nono',
+     'text': '先和凯撒约好双方都能看见的信号，再定什么时候离开服务巷',
+     'gold': {'loc': 'lane', 'target': 'caesar', 'conf': '看见', 'promise': '约好进攻信号',
+              'decision': '决定何时离开服务巷', 'act': '离开'}},
+    {'id': 'hc7', 'kind': 'conditions', 'world': 'dragon', 'type': 'negation', 'actor': 'lu',
+     'text': '没有看到规则牌就不要说医护白线内可以开火',
+     'gold': {'neg': '1', 'item': 'rules', 'info': '医护白线内禁止交火'}},
+    {'id': 'hc8', 'kind': 'conditions', 'world': 'dragon', 'type': 'composite', 'actor': 'caesar',
+     'text': '在15:45前确认诺诺愿不愿意负责服务巷，并让她给出可核对的答复',
+     'gold': {'time': '15:45', 'target': 'nono', 'conf': '确认', 'promise': '负责服务巷'}},
+    {'id': 'hc9', 'kind': 'conditions', 'world': 'dragon', 'type': 'route', 'actor': 'caesar',
+     'text': '从小桥和地下通道里选一条能过小队的路，别在松动护栏那里挤成一团',
+     'gold': {'decision': '选一条能过小队且避开松动护栏的路', 'info': '松动护栏'}},
+    {'id': 'hc10', 'kind': 'conditions', 'world': 'dragon', 'type': 'transfer', 'actor': 'lu',
+     'text': '把备用弹匣交给苏茜，并且确认她还没有打空',
+     'gold': {'item': 'spare_mag2', 'target': 'su', 'act': '交给', 'conf': '确认'}},
+
+    # --- first world, events ---
+    {'id': 'he1', 'kind': 'events', 'world': 'dragon', 'type': 'transfer', 'actor': 'lu',
+     'text': '我把备用弹匣从弹药箱里摸出来，塞进背心右边的胸袋',
+     'gold': {'result': 'completed', 'item': 'spare_mag2', 'dest': 'jacket_lu/slot_chest'}},
+    {'id': 'he2', 'kind': 'events', 'world': 'dragon', 'type': 'dialogue', 'actor': 'nono',
+     'text': '诺诺没直接回答，只说红方还在钟楼，蓝方三个人在西回廊',
+     'gold': {'result': 'partial', 'target': 'lu', 'info': '红方仍在钟楼；蓝方三人守在西回廊',
+              'cause': '诺诺只回答了一部分'}},
+    {'id': 'he3', 'kind': 'events', 'world': 'dragon', 'type': 'environment', 'actor': 'lu',
+     'text': '我抓住检修盖的拉环，把盖子掀到一边',
+     'gold': {'result': 'completed', 'item': 'hatch_cover', 'env': '检修盖被掀开'}},
+    {'id': 'he4', 'kind': 'events', 'world': 'dragon', 'type': 'promise', 'actor': 'fingel',
+     'text': '芬格尔拍着胸口答应路明非，只要不淘汰他，就把地下检修门的插闩位置说出来',
+     'gold': {'result': 'completed', 'target': 'lu', 'promise': '说出地下检修门插闩位置'}},
+    {'id': 'he5', 'kind': 'events', 'world': 'dragon', 'type': 'decision', 'actor': 'lu',
+     'text': '我想了想，决定从地下检修通道走，不走庭院正路',
+     'gold': {'result': 'completed', 'decision': '走地下检修通道', 'dest': 'tunnel'}},
+    {'id': 'he6', 'kind': 'events', 'world': 'dragon', 'type': 'multi', 'actor': 'caesar',
+     'text': '凯撒先让唐骁报告庭院火力，听完才决定正面吸引，结果被西回廊的射界压住',
+     'gold': {'result': 'partial', 'target': 'tang', 'decision': '正面吸引', 'cause': '西回廊射界压制'}},
+    {'id': 'he7', 'kind': 'events', 'world': 'dragon', 'type': 'negative', 'actor': 'tang',
+     'text': '唐骁想换弹匣，但手一滑，弹匣掉在地上，没能装上',
+     'gold': {'result': 'failed', 'item': 'tang_magazine', 'cause': '弹匣脱手掉落'}},
+    {'id': 'he8', 'kind': 'events', 'world': 'dragon', 'type': 'information', 'actor': 'su',
+     'text': '苏茜从东回廊看见楚子航还守在顶层，回来告诉路明非护栏已经松了',
+     'gold': {'result': 'completed', 'target': 'lu', 'info': '楚子航仍守顶层，护栏已松动'}},
+    {'id': 'he9', 'kind': 'events', 'world': 'dragon', 'type': 'refusal', 'actor': 'nono',
+     'text': '诺诺拒绝了路明非借短讯机的请求，说红方还在用同一频段',
+     'gold': {'result': 'blocked', 'target': 'lu', 'item': 'radio_nono', 'cause': '红方占用同一频段'}},
+    {'id': 'he10', 'kind': 'events', 'world': 'dragon', 'type': 'environment', 'actor': 'lu',
+     'text': '我把倒下的长椅拖到楼梯口旁边，让出上楼的通道',
+     'gold': {'result': 'completed', 'item': 'bench_cover', 'dest': 'foyer', 'env': '楼梯口通道让出'}},
+
+    # --- second world, unseen IDs ---
+    {'id': 'mw1', 'kind': 'conditions', 'world': 'mistport', 'type': 'item', 'actor': 'aria',
+     'text': '天黑前把风灯挂到北码头的系船柱上，再确认缆绳没有断',
+     'gold': {'time': '天黑前', 'item': 'lantern', 'loc': 'pier', 'conf': '确认'}},
+    {'id': 'mw2', 'kind': 'conditions', 'world': 'mistport', 'type': 'route', 'actor': 'borin',
+     'text': '从灯塔和仓库之间选一条能避开巡夜人的路',
+     'gold': {'decision': '选一条能避开巡夜人的路'}},
+    {'id': 'mw3', 'kind': 'events', 'world': 'mistport', 'type': 'transfer', 'actor': 'aria',
+     'text': '阿莉亚把海图塞进仓库墙上的防水袋，确认袋口扣紧',
+     'gold': {'result': 'completed', 'item': 'chart', 'dest': 'warehouse', 'env': '防水袋扣紧'}},
+    {'id': 'mw4', 'kind': 'events', 'world': 'mistport', 'type': 'negative', 'actor': 'cass',
+     'text': '卡斯没找到缆绳，只把风灯点着了',
+     'gold': {'result': 'partial', 'item': 'lantern', 'info': '缆绳缺失'}},
+]
