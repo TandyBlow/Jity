@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { WorldState } from '../../types';
 import { destinationHint, programMoveAllowed, settledDestination } from './results';
+import { environmentHint, readEnvironments } from '../semantics/settlement/fact-environments';
 import { readDestinations } from './updates';
 
 const state = {
@@ -39,6 +40,26 @@ describe('micro results -> updates chain', () => {
     expect(settledDestination('not_achieved', dest, () => null)).toBeNull();
     expect(settledDestination('blocked', dest, () => null)).toBeNull();
     expect(settledDestination('no_change', dest, () => null)).toBeNull();
+  });
+});
+
+describe('environment channel', () => {
+  const envState = { initial: { items: { hatch_cover: { name: '服务巷检修盖' }, curtain: { name: '帘子' } } } } as unknown as WorldState;
+  it('reads a structured environment fact', () => {
+    expect(readEnvironments(['路明非把盖子提开（达到目的）；环境=hatch_cover:已被提开']))
+      .toEqual([{ entityId: 'hatch_cover', text: '已被提开' }]);
+  });
+  it('stops the text at a fact separator', () => {
+    expect(readEnvironments(['a；环境=hatch_cover:已被提开；涉及=nono'])[0].text).toBe('已被提开');
+  });
+  it('hints a physical manipulation of an unseen item', () => {
+    expect(environmentHint('我把帘子掀开。', ['curtain'], envState, null))
+      .toEqual({ entityId: 'curtain', text: '已被掀开' });
+  });
+  it('declines transfers, ambiguity and mere observation', () => {
+    expect(environmentHint('我把帘子掀开。', ['curtain'], envState, { entityId: 'curtain', containerId: 'box' })).toBeNull();
+    expect(environmentHint('我把帘子掀开。', ['curtain', 'hatch_cover'], envState, null)).toBeNull();
+    expect(environmentHint('我看了看帘子。', ['curtain'], envState, null)).toBeNull();
   });
 });
 

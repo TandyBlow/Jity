@@ -3,6 +3,7 @@
 import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlement/types';
 import type { WorldState } from '../../types';
 import { roomOf } from '../prompt';
+import { environmentHint } from '../semantics/settlement/fact-environments';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
@@ -144,7 +145,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const rollText = `骰点：${roll ? roll.result : '?'}；资格：${roll ? String(roll.eligible) : '?'}；准入：${roll ? String(roll.admitted) : '?'}`;
       const subActions = member.structured?.subActions?.length
         ? member.structured.subActions
-        : [{ id: 'sa1', text: member.actionText, category: member.structured?.category ?? 'other', destination: member.structured?.destination ?? null, order: 1, dependsOn: [] as string[] }];
+        : [{ id: 'sa1', text: member.actionText, category: member.structured?.category ?? 'other', itemIds: member.structured?.itemIds ?? [], destination: member.structured?.destination ?? null, order: 1, dependsOn: [] as string[] }];
       const labels: string[] = [];
       const visibleNames = Object.entries(request.state.characters)
         .filter(([id]) => id !== member.memberId && roomOf(request.state, id) === roomOf(request.state, member.memberId))
@@ -218,9 +219,14 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         // this hint as a settled state change.
         const hint = settledDestination(label, destination,
           () => destinationHint(normalized, request.state, member.memberId));
+        // Physical manipulation of one registered item is the program half of
+        // the env channel; semantic env judgment replaces it when trained.
+        const env = label === 'achieved' && !priorBlocked
+          ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination)
+          : null;
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({
-          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${involved}`,
+          text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${env ? `；环境=${env.entityId}:${env.text}` : ''}${involved}`,
           memberIds: [member.memberId], actorId: member.memberId, outcome: OUTCOME[label],
         });
       }

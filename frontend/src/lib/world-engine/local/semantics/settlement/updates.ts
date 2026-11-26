@@ -22,6 +22,7 @@ import {
 } from './support';
 import { projectPoint, type PointProjection } from './projection';
 import { APPEARANCE_WORDS, FAILURE_WORDS, MOVEMENT_WORDS, matchLocation, readDestinations } from './fact-destinations';
+import { readEnvironments } from './fact-environments';
 import type { SettlementStage } from './support';
 
 interface UpdatesInput {
@@ -997,6 +998,47 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
   }
 }
 
+function mergeAppearanceChanges(...maps: Array<Record<Id, Partial<EntityDelta>>>): Record<Id, Partial<EntityDelta>> {
+  const out: Record<Id, Partial<EntityDelta>> = {};
+  for (const map of maps) {
+    for (const [entityId, partial] of Object.entries(map)) {
+      const existing = out[entityId]?.appearanceChanges ?? [];
+      out[entityId] = { appearanceChanges: [...existing, ...(partial.appearanceChanges ?? [])] };
+    }
+  }
+  return out;
+}
+
+/** Applied before the LLM appearance stage: a settled `环境=` fact becomes one
+ * add record; failure facts and unknown entities never patch state. */
+function programEnvironmentPatches(ctx: StageContext, scanned: Id[]): {
+  changes: Record<Id, Partial<EntityDelta>>;
+  patches: Array<{ entityId: Id; text: string }>;
+} {
+  const changes: Record<Id, Partial<EntityDelta>> = {};
+  const patches: Array<{ entityId: Id; text: string }> = [];
+  const used = activeChangeIds(ctx.state);
+  const scannedSet = new Set(scanned);
+  for (const fact of resultFacts(ctx.results)) {
+    if (FAILURE_WORDS.some((word) => fact.text.includes(word))) continue;
+    for (const hint of readEnvironments([fact.text])) {
+      const entityId = hint.entityId;
+      if (!ctx.state.locations[entityId] && !ctx.state.items[entityId]) continue;
+      if (!scannedSet.has(entityId)) continue;
+      const text = normalizeChangeText(hint.text);
+      if (!text || text.length > 60) continue;
+      const active = activeRecords(ctx.state, 'appearance', entityId).filter((record) => record.active);
+      if (active.some((record) => sameChangeText(record.text, text))) continue;
+      if (patches.some((patch) => patch.entityId === entityId && patch.text === text)) continue;
+      const change: Change = { id: ctx.allocator.changeId('appearance', entityId, used), text, supersedes: [] };
+      used.add(change.id);
+      changes[entityId] = { appearanceChanges: [...(changes[entityId]?.appearanceChanges ?? []), change] };
+      patches.push({ entityId, text });
+    }
+  }
+  return { changes, patches };
+}
+
 async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
   const projection = projectPoint(ctx.state, ctx.baselineState, ctx.results, ctx.priorChanges, ctx.mode);
   const scanned = projection.affectedAppearance;
@@ -1013,26 +1055,29 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
   if (!scanned.length) {
     return { changes: {}, detail: { scannedEntityIds: [], appearanceScope: scope, skipped: 'no_affected_appearance' }, fallback: false, calls: [] };
   }
+  const env = programEnvironmentPatches(ctx, scanned);
+  let leftover = scanned.filter((id) => !env.changes[id]);
   const pending = ctx.shared?.pendingAppearance;
   let reused: Record<Id, Partial<EntityDelta>> = {};
   let reusedDrops: { entityId: string; op: string; droppedText: string }[] = [];
-  let leftover = scanned;
   if (pending) {
     // Already answered by the merged position call: project that half instead of
     // paying a second prefill for the same facts and the same entity lines.
-    const covered = scanned.filter((id) => pending.ids.includes(id));
-    leftover = scanned.filter((id) => !pending.ids.includes(id));
+    const covered = leftover.filter((id) => pending.ids.includes(id));
+    leftover = leftover.filter((id) => !pending.ids.includes(id));
     reused = Object.fromEntries(Object.entries(pending.changes).filter(([id]) => covered.includes(id)));
     reusedDrops = pending.lenientDrops.filter((row) => covered.includes(row.entityId));
   }
   if (pending && !leftover.length) {
-    projectStage(ctx.state, 'appearance', reused);
+    const changes = mergeAppearanceChanges(env.changes, reused);
+    projectStage(ctx.state, 'appearance', changes);
     return {
-      changes: reused,
+      changes,
       detail: {
         scannedEntityIds: scanned,
-        changedEntityIds: Object.keys(reused).sort(),
+        changedEntityIds: Object.keys(changes).sort(),
         appearanceScope: scope,
+        environmentPatches: env.patches,
         lenientDrops: reusedDrops,
         mergedWithPosition: true,
       },
@@ -1055,17 +1100,18 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
       validate: (value) => readDescriptionOperations(value, ctx.state, 'appearance', ctx.allocator, false, new Set(leftover), [], [], []),
     });
     const fresh = readDescriptionOperations(answer.value, ctx.state, 'appearance', ctx.allocator, false, new Set(leftover), [], [], lenientDrops);
-    const changes = { ...reused, ...fresh };
+    const changes = mergeAppearanceChanges(env.changes, reused, fresh);
     projectStage(ctx.state, 'appearance', changes);
     return {
       changes,
       detail: { scannedEntityIds: scanned, changedEntityIds: Object.keys(changes).sort(), appearanceScope: scope,
+        environmentPatches: env.patches,
         lenientDrops: [...reusedDrops, ...lenientDrops], ...(pending ? { mergedWithPosition: true, leftoverIds: leftover } : {}) },
       fallback: false,
       calls: answer.calls,
     };
   } catch (error) {
-    return stageFailure({ scannedEntityIds: scanned, appearanceScope: scope }, error);
+    return stageFailure({ scannedEntityIds: scanned, appearanceScope: scope, environmentPatches: env.patches }, error);
   }
 }
 

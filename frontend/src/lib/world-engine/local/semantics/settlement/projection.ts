@@ -13,6 +13,7 @@ import type { EntityDelta, Id, WorldState } from '../../../types';
 import type { SettlementStage } from './support';
 import { activeRecords, allTasks, resultFacts } from './support';
 import { readDestinations } from './fact-destinations';
+import { readEnvironments } from './fact-environments';
 
 export interface UnaffectedRow {
   id: Id;
@@ -114,6 +115,9 @@ export function projectPoint(
     for (const id of names.keys()) {
       if (mentions(fact.text, id, names)) factEntities.add(id);
     }
+  }
+  for (const hint of readEnvironments(facts.map((fact) => fact.text))) {
+    if (names.has(hint.entityId)) factEntities.add(hint.entityId);
   }
   // A structured `去向=` is an explicit affected entity even when the prose
   // name is ambiguous (two goggles): include the item and its container so the

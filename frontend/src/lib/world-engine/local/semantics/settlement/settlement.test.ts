@@ -1860,6 +1860,28 @@ describe('six-stage updates', () => {
     expect(engine.prompts[0]).toContain('第二部分：外貌');
   });
 
+  it('applies a settled environment fact without asking the appearance model', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ operations: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'appearance') as Record<string, unknown>),
+      results: { a: '甲把盒子提开（达到目的）；环境=box:已被提开' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#appearance', input);
+    expect((outcome.value as UpdatesCall).changes.box?.appearanceChanges?.[0]?.text).toBe('已被提开');
+    const detail = (outcome.evidence.detail as { stageDetail?: { environmentPatches?: unknown[] } }).stageDetail;
+    expect(detail?.environmentPatches).toEqual([{ entityId: 'box', text: '已被提开' }]);
+  });
+
+  it('does not patch an environment that the fact says failed', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ operations: [] })]);
+    const input = {
+      ...(updatesInput(world(), 'appearance') as Record<string, unknown>),
+      results: { a: '甲没能把盒子提开（没有成功）；环境=box:已被提开' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#appearance', input);
+    expect((outcome.value as UpdatesCall).changes.box).toBeUndefined();
+  });
+
   it('applies structured destinations without the position call', async () => {
     const engine = new ScriptedEngine([]);
     const input = {

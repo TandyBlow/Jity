@@ -1,0 +1,51 @@
+/** Environment changes carried by settled facts (`环境=entityId:state text`).
+ * A plain move/item transfer is a position change, never an environment change. */
+import type { Id, WorldState } from '../../../types';
+
+export interface FactEnvironment {
+  entityId: string;
+  text: string;
+}
+
+export function readEnvironments(texts: string[]): FactEnvironment[] {
+  const rows: FactEnvironment[] = [];
+  for (const text of texts) {
+    for (const match of text.matchAll(/环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)/gu)) {
+      const body = match[2].trim();
+      const entityId = match[1].replace(/^<|>$/gu, '');
+      if (body && entityId) rows.push({ entityId, text: body });
+    }
+  }
+  return rows;
+}
+
+/** Verb -> resulting state phrase (program shortcut until the env head ships). */
+const EFFECTS: Array<[string, string]> = [
+  ['提开', '已被提开'], ['掀开', '已被掀开'], ['翻开', '已被翻开'],
+  ['打开', '已被打开'], ['推开', '已被推开'], ['拉开', '已被拉开'],
+  ['提起', '已被提起'], ['挪开', '已被挪开'], ['拖开', '已被拖开'],
+  ['拖到', '已被拖开'], ['拖走', '已被拖走'], ['移开', '已被移开'],
+  ['移到', '已被移开'], ['搬到', '已被搬开'], ['让出', '已被移开'],
+  ['关上', '已被关上'], ['合上', '已被合上'], ['盖回', '已被盖回'],
+  ['点亮', '已被点亮'], ['清理', '已被清理'], ['擦净', '已被擦净'],
+  ['拆下', '已被拆下'], ['卸下', '已被卸下'],
+];
+
+/** Program env hint for one achieved sub-action. A registered item that the
+ * text physically manipulates gets the state phrase; anything ambiguous stays
+ * with the semantic stages. */
+export function environmentHint(
+  text: string,
+  itemIds: Id[],
+  state: WorldState,
+  destination: unknown,
+): { entityId: Id; text: string } | null {
+  if (destination) return null;
+  if (itemIds.length !== 1) return null;
+  const entityId = itemIds[0];
+  if (!state.initial.items[entityId]) return null;
+  for (const [verb, phrase] of EFFECTS) {
+    if (text.includes(verb)) return { entityId, text: phrase };
+  }
+  return null;
+}
