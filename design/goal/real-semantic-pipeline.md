@@ -1,80 +1,93 @@
 # Real semantic data pipeline — 2026-11-26
 
-Status: pipeline in place; labeler running; not yet a trained three-task
+Status: four-state verifier; 7/28 cached; not yet a trained three-task
 pipeline.
 
 ## Source events
 
-- 20 real product turns from `run41-turns-20-chunk*.json`.
-- 8 frozen scenario turns from `evidence-independent-scenarios-6b.json`.
-- Unique events by id (one duplicate s12 removed); 20 + 8 rows.
-- Fields: player action, same-turn narration, before/after summaries, state
-  snapshot, scenario checks for the 8.
+- 20 real product turns from `run41-turns-20-chunk*.json` (5 separate chunks;
+  the first turn of each chunk has no before snapshot).
+- 8 frozen scenario turns from `evidence-independent-scenarios-6b.json`; the
+  whole set is test-only.
+- Each row stores: player intent, settled actions (`actions` results),
+  same-turn narration, before/after summaries, before/after snapshots, and the
+  scenario checks for the 8.
 
-## Labeling
+## Separation
 
-`real_semantic_data.py` asks DeepSeek (`LLM_BASE_URL`, `DEEPSEEK_API_KEY`,
-`deepseek-v4-pro`) for:
+- **intent**: the player input; never treated as a settled fact.
+- **settled**: `actions` entries with `recordKind=result`; the factual source
+  for `info` and for the action half of `env`.
+- **narration**: the prose; can corroborate but cannot create a state change.
+- **state**: the before/after snapshot diff of active item/location
+  `appearanceChanges`.
 
-```json
-{"info": {"present": true, "content": "...", "support": "..."},
- "env":  {"present": true, "content": "...", "support": "..."}}
-```
+## State diff
 
-- `info`: new information actually gained this turn.
-- `env`: environment or item state actually changed this turn.
-- The support must be a verbatim substring of the action/narration.
-- Cache: `real-semantic-cache.jsonl`; reruns skip the API.
+`state_diff(row)` compares the previous turn's snapshot with this turn's
+snapshot and returns `known`, `added`, `removed`. The first turn of each chunk/
+scenario has `known=false`. A missing before snapshot never becomes a negative
+label. This replaces the old post-turn `state_summary` that read the active
+appearance list instead of this turn's new records.
 
-## Fact verification (stronger than substring)
+## Four label states
 
-- The support must appear verbatim.
-- `env`: must contain an environment verb (提开/拖到/让出/固定/释放/…), must
-  not be a movement (进入/停在/走/退/…), and must have a state appearance
-  change in the snapshot or an explicit environment verb.
-- `info`: must not be an action summary (求助/查完/记下/拿起/塞进/递给/…).
-- Rejected fields become `present=false`; the raw model proposal stays in the
-  cache for the spot-check.
+- `present`: support verified, and for `env` a matching new appearance record
+  or a settled action fact for `info`.
+- `absent`: confirmed negative only — explicit no-answer/no-change evidence
+  (sc01 “没有答出”) or a known empty state diff with no environment action.
+- `insufficient`: evidence missing (unknown before, support not found, env
+  action without a state diff, ambiguous info). Not a negative sample.
+- `conflict`: the settled action/narration and the old state disagree (sc06
+  hatch open but no new appearance; sc08 table moved but no new appearance).
+  This is the **fix set**, never a negative sample.
 
-This rejects the first obvious labeler errors: movement recorded as `env`
-(sc03/sc05), item transfer recorded as `env` (sc04), and NPC action summaries
-recorded as `info` (sc02/sc04).
+Unverified proposals keep their raw content/support for the spot-check; they
+are not rewritten to `present=false` as training negatives.
 
-## Spot-check
+## Split
 
-`real-semantic-spotcheck.md` lists every event with the action, proposal,
-verifier decision and support. It is for the user; it is not auto-approved.
+- Test: all 8 scenario ids; they are one continuous game process and stay
+  entirely out of training.
+- Train: the 20 product turns, grouped by the 5 chunks; no turn is split across
+  train/test.
+- The 8 scenario checks are evaluation only; they are not shown to the labeler.
 
-## What the first labels show
+## First verified rows (7 cached)
 
-- sc01 (dialogue, no answer): info false, env false — correct for the task
-  staying pending.
-- sc03/sc05: the model proposes movement as `env`; the verifier rejects it.
-- sc04: item transfer proposed as `env`; rejected.
-- sc02: NPC action summary proposed as `info`; rejected.
-- sc05: hatch/ladder observation kept as `info`.
-- The labeler is slow on the pro model (5/28 cached when this note was
-  written); the cache makes reruns cheap.
+- sc01: info `absent` (“诺诺没有答出”), env `insufficient` (no before snapshot).
+- sc02/sc04: info `insufficient` (NPC action summaries, not information);
+  env `insufficient` (movement/item transfer, not environment).
+- sc03/sc05/sc07: info `present` (people/camera, hatch/ladder, foyer door);
+  env `insufficient` (movement, not an environment change).
+- sc06: env `conflict` — the action opens the hatch but the old state has no
+  new appearance. This is the fix set the user predicted.
+- sc06 info `insufficient`: the proposal labels the route decision, not the
+  observation of the ladder/tunnel; the spot-check must correct it.
+- sc08 is not cached yet; the expected result from the action is a conflict
+  (table moved, old state missing the appearance).
+- The strong model's category mistakes remain visible in the raw cache; the
+  verifier downgrades them instead of turning them into negatives.
 
 ## Next
 
-1. Finish the cache and review the spot-check file; replace weak labels.
-2. Train the three tasks on the verified rows: info/env existence, specialized
-   content extraction (given the correct category), and fact-support
-   verification.
-3. Evaluate on the held-out real events (sc06, sc08, sc01, s11, g8-t3):
-   existence accuracy, extraction accuracy given category, full-workflow
-   accuracy, and the state patch.
-4. Wire the state patch: env -> item/location appearance change; info -> task
-   condition/fact. The held-out sc06/sc08 checks are the state target.
-5. Then the v3 candidate-pointer browser export and fixed vs KV-cache decode,
+1. Finish the cache (or label the remaining 21 with the strong model), then
+   review the spot-check; correct the conflict/fix set and the sc06 info.
+2. Expand verified real events; do not add template volume.
+3. Train the three tasks only on `present`/`absent` rows: existence,
+   specialized extraction given the category, fact-support verification.
+4. Evaluate on the 8 held-out scenarios: existence accuracy, extraction given
+   category, full workflow, and the state patch. The patch must add the
+   sc06/sc08 environment changes and must not add extra changes.
+5. Then the v3 candidate-pointer browser export and fixed vs KV-cache decode;
    followed by the five-arm comparison.
 
 ## Reproduce
 
 ```bash
 cd /d/others/Jity
-PYTHONUTF8=1 python -X utf8 artifacts/goal/micro-workflow/real_semantic_data.py
+PYTHONUTF8=1 CACHE_ONLY=1 python -X utf8 artifacts/goal/micro-workflow/real_semantic_data.py
+# without CACHE_ONLY, missing ids are sent to the strong model
 ```
 
 Outputs: `real-semantic.jsonl`, `real-semantic-cache.jsonl`,

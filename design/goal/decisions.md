@@ -531,3 +531,15 @@
 - 首批标签暴露了强模型的类别错误：把移动（sc03/sc05）和物品转移（sc04）写成 env，把 NPC 行动摘要（sc02/sc04）写成 info；子串核验能通过，但类别规则拒绝。sc01 的“没有答出”判 info=false，符合任务保持 pending；sc05 的检修口观察保留为 info。
 - 当前：pro 模型较慢，撰写时缓存 5/28；标签流程、核验和抽查文件已就绪，三任务（存在性 / 专用内容提取 / 事实支持）和 held-out 真实事件的状态补丁尚未训练/验证。用户目标是“多个微型模型协同理解一个未见事件并正确改世界状态”，本轮未完成。
 - 决定：停止模板扩容；先把真实语义缓存跑完并抽查；再训练三任务、在 sc06/sc08/sc01/s11/g8-t3 上按存在性、给定类别提取、完整工作流分别统计；状态补丁把 env 映射到 item/location 外观、info 映射到任务条件/事实；随后做 v3 候选指针浏览器导出与固定长度 vs KV Cache，再五臂。证据 `design/goal/real-semantic-pipeline.md`、`real_semantic_data.py`、`real-semantic-cache.jsonl`。
+
+## D-051 语义数据四态与回合差分（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 用户核查指出的三个问题已修：
+  1. `state_summary` 改为 `state_diff(before, after)`：只比较回合前/后快照的活动外观记录，输出 `known/added/removed`；每个 chunk/场景首回合无前快照时 `known=false`，不据此产生负例。
+  2. 标签不再是“未通过=present false”。四态：`present` / `absent`（需明确“没有答出/没有变化”证据）/ `insufficient`（证据不足）/ `conflict`（已结算行动或叙事与旧状态冲突）。`insufficient` 与 `conflict` 不进训练负例；`conflict` 是修复集，保留内容/支持供人工抽查。
+  3. 8 个冻结场景整体 test-only；20 条产品输入按 5 个 chunk 作 train，不跨同一连续过程切分；场景 checks 不进 labeler。
+- 新增区分：玩家意图、`actions` 已结算结果、同回合叙事、回合前后快照差分；叙事不能补写状态。
+- 首批 7 条缓存结果：sc01 info absent（没有答出）、env insufficient（无前快照）；sc02/sc04 info insufficient（NPC 行动摘要不是信息）、env insufficient（移动/物品转移不是环境）；sc03/sc05/sc07 info present；sc06 env **conflict**（行动提开检修盖，旧状态无新增外观），正是用户预判的修复事件；sc06 info insufficient（模型把路线决策当观察，需抽查修正）；sc08 未缓存，按行动应产生 conflict。
+- 后台旧标签器已停止；新核验用 `CACHE_ONLY=1` 在 7 条缓存上跑通。强模型类别错误保留在原始缓存，核验器只降级，不制造负样本。
+- 决定：不急于训练；先跑完/抽查真实数据，修正 sc06 info 与 sc08 conflict，再在 `present`/`absent` 上训练三任务；held-out 8 场景测状态补丁且检查无额外变化；随后 v3 浏览器/KV 与五臂。证据 `design/goal/real-semantic-pipeline.md`、`real-semantic.jsonl`、`real-semantic-spotcheck.md`。

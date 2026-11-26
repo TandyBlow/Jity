@@ -4,3 +4,4 @@
 {"id": "sc04-item-magazine", "label": {"info": {"present": true, "content": "芬格尔查完并把器材棚变化记下来", "support": "芬格尔查完，把器材棚里的变化记下来"}, "env": {"present": true, "content": "通用短枪弹匣乙被放入演习背心胸袋", "support": "路明非拿起开盖的弹药箱，从里面取出了通用短枪弹匣乙，塞进演习背心的胸袋"}}}
 {"id": "sc05-move-hatch", "label": {"info": {"present": true, "content": "检修口拉环朝上，盖下有短梯，路明非手不够且未动", "support": "他停在检修口边，拉环朝上。盖下有短梯，他握着枪，想把梯子带下去，手不够。路明非没有动"}, "env": {"present": true, "content": "路明非从器材棚移动到服务巷检修口，停在拉环旁", "support": "我退出器材棚，沿服务巷走到服务巷检修口，停在拉环旁边"}}}
 {"id": "sc06-env-hatch-route", "label": {"info": {"present": true, "content": "路明非完成选择有掩护路线，决定走地下检修通道", "support": "路明非完成了「在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线」"}, "env": {"present": false, "content": "", "support": ""}}}
+{"id": "sc07-move-foyer", "label": {"info": {"present": true, "content": "钟楼门厅正门半开，门后有弹着痕", "support": "钟楼门厅的正门半开着，木门背后有弹着痕"}, "env": {"present": true, "content": "路明非从西门进入门厅", "support": "从西门进入门厅"}}}

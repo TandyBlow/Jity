@@ -157,3 +157,5 @@ G1 之后新增：
 - 数据规模与开放字段（2026-11-26）：固定 BERT 候选指针，123 基础 + 877 模板 = 1000；250/500/1000 热启动。字段 0.333/0.333/0.359、实体 0.370/0.333/0.481、mistport 实体全 0；28 条手写种子 0.346/0.481/0.400，模板扩容没有迁移到新世界。开放字段生成 info/env/promise/cause 全 0，存在性分类 F1 0.31–0.73；span 子串率 env/cause 0、info 0.17，需专用短序列提取。result 未加权 0.667 vs 加权 0.333，保留未加权。浏览器 5M 逐 token：encode 33.8 ms、9.61 ms/token、12 token p50 118.1 ms；v3 浏览器未测。决策 D-049，报告 `design/goal/micro-generative-scale.md`。
 
 - 真实语义数据流程（2026-11-26）：20 条真实输入 + 8 条场景，DeepSeek pro 提 info/env，子串 + 状态外观 + 移动/转移 + 行动摘要规则核验，生成 dataset 与 spot-check；首批暴露移动/转移写成 env、NPC 行动写成 info，均被拒绝；sc01 no-answer info=false、sc05 观察保留。缓存 5/28，三任务与 held-out 状态补丁未训，未达“多模型共同改状态”。决策 D-050，报告 `design/goal/real-semantic-pipeline.md`。
+
+- 语义数据四态（2026-11-26）：按用户核查修正为回合前/后快照差分、四态 present/absent/insufficient/conflict、8 场景整体 test-only/20 输入 train；未核验不再当负例。7 条缓存：sc01 info absent、env insufficient；sc02/sc04 insufficient；sc03/sc05/sc07 info present；sc06 env conflict（旧状态未提交检修盖外观）、info insufficient（误标路线决策）；sc08 未缓存。旧标签器已停，未训练。决策 D-051。
