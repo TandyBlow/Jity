@@ -110,4 +110,8 @@ describe('item ownership tie-break', () => {
   it('still abstains when neither tied item belongs to the actor', () => {
     expect(matchItems('护目镜', [{ id: 'a', name: '甲队护目镜' }, { id: 'b', name: '乙队护目镜' }], '路明非')).toEqual([]);
   });
+  it('matches across a colloquial 的 in the registered name', () => {
+    const items = [{ id: 'bench', name: '倒放长椅' }, { id: 'flower', name: '南端石花槽' }];
+    expect(matchItems('把庭院南端倒放的长椅拖开，让出石花槽后的通道', items)).toEqual(['bench']);
+  });
 });

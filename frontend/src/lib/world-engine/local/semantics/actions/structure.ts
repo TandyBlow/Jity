@@ -67,8 +67,11 @@ function coreName(name: string): string {
 /** Registered items whose name overlaps the mention; an ambiguous top score
  * returns nothing instead of guessing. */
 export function matchItems(text: string, names: Array<{ id: Id; name: string }>, owner?: string): Id[] {
+  // 口语里的「倒放的长椅」和登记名「倒放长椅」只差一个「的」；去掉后再比最长重叠。
+  const strip = (value: string) => value.replace(/的/gu, '');
+  const target = strip(text);
   const scored = names
-    .map((item) => ({ id: item.id, name: item.name, score: Math.max(longestOverlap(coreName(item.name), text), longestOverlap(item.name, text)) }))
+    .map((item) => ({ id: item.id, name: item.name, score: Math.max(longestOverlap(strip(coreName(item.name)), target), longestOverlap(strip(item.name), target)) }))
     .filter((row) => row.score >= 2)
     .sort((left, right) => right.score - left.score);
   if (!scored.length) return [];
