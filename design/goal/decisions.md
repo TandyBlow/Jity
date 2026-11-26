@@ -603,3 +603,10 @@
 - 语义场景集 `semantic-scenarios.json`：32 个真实页回合，info-1（12，train）/env-1（12，train）/mix-1（8，test），覆盖 info/env 十类；`real_semantic_data.py` 从 updates prompt 提取 `f1 [id 名] 事实` 作为 settled 事实，并用世界初始快照作为每条路线首回合的 before。
 - 负例规则：env absent 需要明确失败词，或结构化行动无环境操作动词且差分已知为空；有环境动词但无记录=conflict，partial=conflict。info absent 需要明确无答、提议内容已在先前路线/世界描述中重复，或结构化行动无法获取信息。
 - 下一步：跑完三条路线，按字段统计正负样本；达到试训数量后训练存在性/内容提取/事实支持三任务。未训练前不宣称语义能力提升。
+
+## D-057 别名「的」与环境地点操作（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 真实回合 `sm-e-success-2`「把庭院南端倒放的长椅拖开」被结构匹配到 `flower_box`（石花槽）而不是 `bench_cover`：登记名「倒放长椅」与口语「倒放的长椅」只差一个「的」，最长重叠从 4 降到 2。修复 `matchItems` 在比较前去掉「的」，并加回归测试；旧证据中 flower_box 的错误记录不作为训练答案，该路线重跑。
+- 无登记物品的地点操作（如「把门厅的正门推开」）不产生 `环境=`；新增 `environmentPhrase`，micro results 在没有物品可指、没有转移目的地时用 `matchLocation` 落到地点并写 `环境=<地点>:<状态>`。物品优先，地点仅在唯一后缀/全名匹配时使用。
+- 这两项都保持通用规则，不按场景 id 或冻结 checks 编码。
