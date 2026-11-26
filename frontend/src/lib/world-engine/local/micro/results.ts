@@ -3,7 +3,8 @@
 import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlement/types';
 import type { WorldState } from '../../types';
 import { roomOf } from '../prompt';
-import { environmentHint } from '../semantics/settlement/fact-environments';
+import { environmentHint, environmentPhrase } from '../semantics/settlement/fact-environments';
+import { matchLocation } from '../semantics/settlement/fact-destinations';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
@@ -221,9 +222,14 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           () => destinationHint(normalized, request.state, member.memberId));
         // Physical manipulation of one registered item is the program half of
         // the env channel; semantic env judgment replaces it when trained.
-        const env = !priorBlocked
+        let env = !priorBlocked
           ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination, label)
           : null;
+        if (!env && !priorBlocked && !destination) {
+          const phrase = environmentPhrase(subAction.text, label);
+          const location = phrase ? matchLocation(request.state, subAction.text) : null;
+          if (phrase && location) env = { entityId: location.id, text: phrase };
+        }
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({
           text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${env ? `；环境=${env.entityId}:${env.text}` : ''}${involved}`,

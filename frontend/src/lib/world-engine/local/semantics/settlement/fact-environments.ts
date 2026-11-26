@@ -1,5 +1,4 @@
-/** Environment changes carried by settled facts (`环境=entityId:state text`).
- * A plain move/item transfer is a position change, never an environment change. */
+/** `环境=entity:state` in settled facts; move/transfer is not env. */
 import type { Id, WorldState } from '../../../types';
 
 export interface FactEnvironment {
@@ -31,9 +30,16 @@ const EFFECTS: Array<[string, string]> = [
   ['拆下', '已被拆下'], ['卸下', '已被卸下'],
 ];
 
-/** Program env hint for one achieved sub-action. A registered item that the
- * text physically manipulates gets the state phrase; anything ambiguous stays
- * with the semantic stages. */
+export function environmentPhrase(text: string, label = 'achieved'): string | null {
+  if (label !== 'achieved' && label !== 'partial') return null;
+  for (const [verb, phrase] of EFFECTS) {
+    if (!text.includes(verb)) continue;
+    return label === 'achieved' ? phrase : `已被部分${phrase.slice(2)}`;
+  }
+  return null;
+}
+
+/** One-item physical manipulation -> state phrase; ambiguous stays null. */
 export function environmentHint(
   text: string,
   itemIds: Id[],
@@ -42,13 +48,9 @@ export function environmentHint(
   label = 'achieved',
 ): { entityId: Id; text: string } | null {
   if (destination) return null;
-  if (label !== 'achieved' && label !== 'partial') return null;
   if (itemIds.length !== 1) return null;
   const entityId = itemIds[0];
   if (!state.initial.items[entityId]) return null;
-  for (const [verb, phrase] of EFFECTS) {
-    if (!text.includes(verb)) continue;
-    return { entityId, text: label === 'achieved' ? phrase : `已被部分${phrase.slice(2)}` };
-  }
-  return null;
+  const phrase = environmentPhrase(text, label);
+  return phrase ? { entityId, text: phrase } : null;
 }

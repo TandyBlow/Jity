@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { WorldState } from '../../types';
 import { destinationHint, programMoveAllowed, settledDestination } from './results';
-import { environmentHint, readEnvironments } from '../semantics/settlement/fact-environments';
+import { environmentHint, environmentPhrase, readEnvironments } from '../semantics/settlement/fact-environments';
 import { readDestinations } from './updates';
 
 const state = {
@@ -62,6 +62,11 @@ describe('environment channel', () => {
     expect(environmentHint('我把帘子掀开。', ['curtain'], envState, { entityId: 'curtain', containerId: 'box' })).toBeNull();
     expect(environmentHint('我把帘子掀开。', ['curtain', 'hatch_cover'], envState, null)).toBeNull();
     expect(environmentHint('我看了看帘子。', ['curtain'], envState, null)).toBeNull();
+  });
+  it('phrases a location manipulation without an item', () => {
+    expect(environmentPhrase('我把门厅的正门推开。')).toBe('已被推开');
+    expect(environmentPhrase('我把门厅的正门推开一点。', 'partial')).toBe('已被部分推开');
+    expect(environmentPhrase('我走进门厅。')).toBeNull();
   });
 });
 

@@ -374,13 +374,17 @@ def classify(field, item, row, diff, support, content, source, settled_text):
         env_keys = diff.get('env') or []
         hints = read_env_hints([settled_text, row.get('text') or ''])
         hint_keys = {hint['entityId'] for hint in hints}
+        recorded = {key.split(':', 1)[-1] for key in env_keys}
         structured = row.get('structured') or []
         capable = bool(ENV_ACTION.search(settled_text)) or any(
             ENV_ACTION.search(str(action.get('text') or '')) for action in structured)
+        if not diff['known']:
+            return 'insufficient'
+        # 结构化标签+已记录外观是硬证据
+        if hints and env_keys and hint_keys & recorded:
+            return 'present'
         if present:
             if not content:
-                return 'insufficient'
-            if not diff['known']:
                 return 'insufficient'
             if env_keys:
                 if hint_keys & {key.split(':', 1)[-1] for key in env_keys}:
@@ -564,7 +568,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-    from validate_real_semantic import main as validate
-    validate()
     from validate_real_semantic import main as validate
     validate()
