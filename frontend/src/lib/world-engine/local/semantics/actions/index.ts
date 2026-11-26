@@ -275,6 +275,9 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       return evidence('action', key, { kind: 'skip' }, 'program', started, issues, [], '');
     }
 
+    // Reuse the judge's ranked candidates as the task-goal fallback: the first
+    // legal template is not necessarily the best one.
+    let judgedFallback: { kind: 'act'; text: string; structured?: ActionStructure } | null = null;
     if (options.judge) {
       try {
         const recent = options.recentEvents?.() ?? [];
@@ -299,6 +302,17 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
           if (scores && scores.length === candidates.length) {
             const ranked = candidates.map((row, index) => ({ row, score: scores[index] }))
               .sort((left, right) => total(right.score) - total(left.score));
+            const fallback = ranked
+              .map(({ row }) => ({ row, checked: checkActionText(row.text, scene, call.state, checkOptions) }))
+              .find(({ checked }) => !checked.issues.some((issue) => issue.severity === 'error'));
+            if (fallback) {
+              judgedFallback = {
+                kind: 'act', text: fallback.checked.value,
+                ...(options.structuredActions
+                  ? { structured: buildActionStructure(fallback.checked.value, scene, call.state, checkOptions.maxTargets) }
+                  : {}),
+              };
+            }
             const best = ranked[0];
             const second = ranked[1];
             if (best.score.task >= 0.5 && best.score.scene >= 0.5
@@ -346,7 +360,7 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     // A task-goal copy is the model's most common action failure. The scene
     // already has checked template candidates; use one instead of paying two
     // repair calls for a sentence the model cannot make concrete.
-    const templateFallback = options.templateFallback === false ? null : (() => {
+    const templateFallback = options.templateFallback === false ? null : (judgedFallback ?? (() => {
       for (const row of behaviorCandidates(scene, call.state)) {
         const checked = checkActionText(row.text, scene, call.state, checkOptions);
         if (checked.issues.some((item) => item.severity === 'error')) continue;
@@ -358,7 +372,7 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
         };
       }
       return null;
-    })();
+    })());
     const generated = await generate<{ kind: 'act'; text?: string; structured?: ActionStructure } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
       repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')

@@ -355,6 +355,29 @@ describe('action: autonomous, named and failed judgement', () => {
     codecAccepts(result);
   });
 
+  it('uses the judge-ranked candidate, not the first legal one, as the fallback', async () => {
+    const state = buildTestWorld();
+    const goal = state.characters.ally!.tasks.task_ally_watch.goal;
+    const engine = new ScriptedEngine([JSON.stringify({ kind: 'act', text: goal })]);
+    let candidates: string[] = [];
+    const handlers = createActionHandlers({
+      engine,
+      options: {
+        judge: (pairs) => {
+          candidates = pairs.map((pair) => pair.text);
+          // Below the direct micro gate (task/scene < 0.5) but enough to rank.
+          return pairs.map((_, index) => (index === pairs.length - 1
+            ? { task: 0.4, personality: 0.4, scene: 0.4 }
+            : { task: 0.1, personality: 0.1, scene: 0.1 }));
+        },
+      },
+    });
+    const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
+    expect(result.source).toBe('micro');
+    expect(result.attempts).toBe(1);
+    expect(result.value).toEqual({ kind: 'act', text: candidates.at(-1) });
+  });
+
   it('rejects a paraphrase of the player action, not only a verbatim copy', async () => {
     const state = buildTestWorld();
     // No 8-character contiguous span with the player line: only the
