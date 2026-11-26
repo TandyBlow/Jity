@@ -131,3 +131,5 @@ G1 之后新增：
 - 整回合性能补充（2026-11-26）：时间轴 9 回合均值 107.6 s；action 24.1 s（97 次语义、41 次重试 70.5 s）、position 14.9 s、tasks+subtasks 22.0 s、正文尾 26.5 s。动作任务目标照抄改为首次拒绝后模板回退：action1 等待 69.2/85.3/100.8 s，action LLM 8 次、attempt 6-7、action 28.9-42.3 s，任务仍 achieved。verifier 同 prompt 温度 0 memo（32 条、只存成功）；叙事 ctx 2048、停止保留 GGUF Blob（最多省 1.4 GiB）；独立场景集 8 回合六类。perf1 复测中；空闲 worker 释放、narration 双跑未做。决策 D-040。
 
 - perf1 复测（2026-11-26）：等待 68.0/88.2/119.2 s，action 8 次 LLM/6-7 attempt，护目镜 `achieved`；verifier memo 0 命中；叙事 ctx 2048/不保留 Blob 是内存优化，不降时间。空闲 worker 释放已接入（隐藏且非 busy），真机未测。决策 D-040。
+
+- 独立场景基准（2026-11-26）：8/8 完成；地点轨迹正确；状态 FAILED（turn5 program_text_not_model，turn7/8 prose_not_identical_to_record）；全部任务 pending，对话事实只到「只完成一部分」，route 地点条件未成立；等待 139.6/111.5/144.1/118.1/86.2/79.9/95.9/95.1 s。action 回退改用 judge 排序；position 三分类（确定移动/确定无移动/不确定）已提交，场景回归运行中。决策 D-041。

@@ -340,3 +340,9 @@
 - 时间轴（9 回合）：均值 107.6 s；action 24.1 s（97 次语义、41 次重试 70.5 s）、position 14.9 s、tasks+subtasks 22.0 s、正文尾 26.5 s；无完全重复 prompt、无重复 session。
 - 动作修复：任务目标照抄首次被拒后用已校验模板候选，不再两次 repair。action1 等待 69.2/85.3/100.8 s，action LLM 8/8/8（旧 16/16/19）、attempt 6/6/7（旧 11/10/12）；perf1 68.0/88.2/119.2 s，护目镜仍 `achieved`。
 - 资源：叙事 ctx 4096→2048；不再保留 GGUF Blob（最多省 1.4 GiB Blob 配额）；tab 隐藏且无回合时释放 worker，可见预热。verifier 同 prompt memo 在这三回合 0 命中。60 s 仍未达到；下一步正文双跑、position 批处理、专用子任务/反应头、独立场景与移动端。
+
+## 独立场景基准与回归（2026-11-26）
+
+- 8 个独立输入（对话、冲突、移动、物品、环境）8/8 完成，地点轨迹正确；总状态 FAILED：turn5 `program_text_not_model/source_program`，turn7/8 `prose_not_identical_to_record`。等待 139.6/111.5/144.1/118.1/86.2/79.9/95.9/95.1 s。
+- 全部任务 pending：对话结果事实为「只完成一部分」，`task_lu_choice` 0/2；检修通道回合 `task_lu_route` 0/1。说明任务理解还没有跨出护目镜范式；场景期望需按真实语义复核。
+- 之后：action 回退用 judge 排序取最高分合法候选；position 按确定移动/确定无移动/不确定三分类，只对不确定问模型。同一 8 场景集回归（`evidence-independent-scenarios-2.json`）运行中。
