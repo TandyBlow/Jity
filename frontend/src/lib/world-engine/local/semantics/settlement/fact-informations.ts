@@ -86,11 +86,10 @@ export function informationHint(
 
 /** Longest common substring length (both strings are short clauses). */
 function longestShared(left: string, right: string): number {
-  let best = 0;
-  for (let size = Math.min(left.length, right.length); size > best; size -= 1) {
+  for (let size = Math.min(left.length, right.length); size >= 2; size -= 1) {
     for (let start = 0; start + size <= left.length; start += 1) {
       if (right.includes(left.slice(start, start + size))) return size;
     }
   }
-  return best;
+  return 0;
 }
