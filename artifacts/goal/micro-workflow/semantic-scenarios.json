@@ -843,6 +843,318 @@
      "purpose": "听广播，不主动获取信息"
     }
    ]
+  },
+  {
+   "id": "env-6",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm6-e-success-1",
+     "class": "env_success",
+     "input": "我走进值钟间，把工作台推到墙边，再把检修图展开。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm6-e-success-2",
+     "class": "env_success",
+     "input": "我把检修图挂到墙上。",
+     "purpose": "挂图改变环境"
+    },
+    {
+     "id": "sm6-e-success-3",
+     "class": "env_success",
+     "input": "我走进控制室，把记录单翻开，再把话筒推到桌角。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm6-e-success-4",
+     "class": "env_success",
+     "input": "我把记分面板转向窗口。",
+     "purpose": "转向面板改变环境"
+    },
+    {
+     "id": "sm6-e-failure-1",
+     "class": "env_failure",
+     "input": "我推控制室的门，门锁着，推不开。",
+     "purpose": "推门失败"
+    },
+    {
+     "id": "sm6-e-success-5",
+     "class": "env_success",
+     "input": "我走进医护处置室，把空床推到墙边，再把医护箱打开。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm6-e-success-6",
+     "class": "env_success",
+     "input": "我把分诊夹翻开。",
+     "purpose": "翻开夹板改变环境"
+    },
+    {
+     "id": "sm6-e-success-7",
+     "class": "env_success",
+     "input": "我走进休息区，把保温毯叠好，再把识别带挂到墙钩上。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm6-e-success-8",
+     "class": "env_success",
+     "input": "我走进器材棚，把备用护目镜摆到台面，再把备用识别带挂回架子。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm6-e-success-9",
+     "class": "env_success",
+     "input": "我把领用簿合上。",
+     "purpose": "合上领用簿"
+    },
+    {
+     "id": "sm6-e-success-10",
+     "class": "env_success",
+     "input": "我把弹药箱盖子盖回。",
+     "purpose": "盖回箱盖"
+    },
+    {
+     "id": "sm6-e-success-11",
+     "class": "env_success",
+     "input": "我走进庭院，把长椅拖到墙边，再把石花槽扶正。",
+     "purpose": "两次环境操作"
+    }
+   ]
+  },
+  {
+   "id": "env-7",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm7-e-success-1",
+     "class": "env_success",
+     "input": "我走进器材棚，把备用枪摆到台面，再把备用蓝带挂回架子。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-2",
+     "class": "env_success",
+     "input": "我把弹药箱盖子掀开。",
+     "purpose": "掀开箱盖"
+    },
+    {
+     "id": "sm7-e-success-3",
+     "class": "env_success",
+     "input": "我走进庭院，把空弹匣踢开，再把长椅扶正。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-4",
+     "class": "env_success",
+     "input": "我走到东回廊，把软垫拉回窗下，再把遮光帘拉起。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-5",
+     "class": "env_success",
+     "input": "我走进西回廊，把折断的蓝带挂到柱子上。",
+     "purpose": "挂带改变环境"
+    },
+    {
+     "id": "sm7-e-success-6",
+     "class": "env_success",
+     "input": "我走进钟楼门厅，把长桌推到墙边。",
+     "purpose": "推桌改变环境"
+    },
+    {
+     "id": "sm7-e-success-7",
+     "class": "env_success",
+     "input": "我把钟楼地下检修门关上。",
+     "purpose": "关门改变环境"
+    },
+    {
+     "id": "sm7-e-success-8",
+     "class": "env_success",
+     "input": "我走上顶层，把玻璃门拉开，再把蓝方信号旗挂到栏杆上。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-9",
+     "class": "env_success",
+     "input": "我走进医护处置室，把空床推回墙边，再把医护箱合上。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-10",
+     "class": "env_success",
+     "input": "我走进休息区，把保温毯挂到椅背上，再把识别带叠好。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-11",
+     "class": "env_success",
+     "input": "我走进值钟间，把检修图叠好，再把工作台拉回原位。",
+     "purpose": "两次环境操作"
+    },
+    {
+     "id": "sm7-e-success-12",
+     "class": "env_success",
+     "input": "我走进控制室，把记录单合上，再把话筒拉回桌中。",
+     "purpose": "两次环境操作"
+    }
+   ]
+  },
+  {
+   "id": "info-6",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm6-i-new-1",
+     "class": "info_new",
+     "input": "我问诺诺红方控制哪里。",
+     "purpose": "询问局势"
+    },
+    {
+     "id": "sm6-i-repeat-1",
+     "class": "info_repeat",
+     "input": "我再问诺诺红方控制哪里。",
+     "purpose": "重复局势"
+    },
+    {
+     "id": "sm6-i-fail-1",
+     "class": "info_failure",
+     "input": "我问诺诺口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm6-i-new-2",
+     "class": "info_new",
+     "input": "我走进器材棚，问芬格尔钥匙在谁手里。",
+     "purpose": "询问钥匙"
+    },
+    {
+     "id": "sm6-i-repeat-2",
+     "class": "info_repeat",
+     "input": "我再问芬格尔钥匙在谁手里。",
+     "purpose": "重复钥匙"
+    },
+    {
+     "id": "sm6-i-fail-2",
+     "class": "info_failure",
+     "input": "我问芬格尔地下通道有没有埋伏。",
+     "purpose": "埋伏失败"
+    },
+    {
+     "id": "sm6-i-repeat-3",
+     "class": "info_repeat",
+     "input": "我问秦越器材笼里有什么。",
+     "purpose": "笼内器材已知"
+    },
+    {
+     "id": "sm6-i-fail-3",
+     "class": "info_failure",
+     "input": "我问秦越演习口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm6-i-new-3",
+     "class": "info_new",
+     "input": "我走进医护处置室，问顾岚空床还有几张。",
+     "purpose": "询问空床"
+    },
+    {
+     "id": "sm6-i-repeat-4",
+     "class": "info_repeat",
+     "input": "我再问顾岚空床还有几张。",
+     "purpose": "重复空床"
+    },
+    {
+     "id": "sm6-i-fail-4",
+     "class": "info_failure",
+     "input": "我问顾岚演习口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm6-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我整理胸袋里的弹匣。",
+     "purpose": "整理装备"
+    }
+   ]
+  },
+  {
+   "id": "info-7",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm7-i-fail-1",
+     "class": "info_failure",
+     "input": "我问诺诺演习结束的准确时间。",
+     "purpose": "对方不知道"
+    },
+    {
+     "id": "sm7-i-fail-2",
+     "class": "info_failure",
+     "input": "我问诺诺口令是什么。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm7-i-repeat-1",
+     "class": "info_repeat",
+     "input": "我问秦越笼门什么时候开，他重复了一遍。",
+     "purpose": "重复笼门"
+    },
+    {
+     "id": "sm7-i-repeat-2",
+     "class": "info_repeat",
+     "input": "我问秦越器材怎么归还。",
+     "purpose": "流程重复/无答"
+    },
+    {
+     "id": "sm7-i-fail-3",
+     "class": "info_failure",
+     "input": "我问芬格尔地下通道有没有埋伏。",
+     "purpose": "埋伏失败"
+    },
+    {
+     "id": "sm7-i-repeat-3",
+     "class": "info_repeat",
+     "input": "我问芬格尔相机电池在哪。",
+     "purpose": "电池位置已知"
+    },
+    {
+     "id": "sm7-i-fail-4",
+     "class": "info_failure",
+     "input": "我问顾岚演习口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm7-i-repeat-4",
+     "class": "info_repeat",
+     "input": "我问顾岚空床还有几张。",
+     "purpose": "重复空床"
+    },
+    {
+     "id": "sm7-i-fail-5",
+     "class": "info_failure",
+     "input": "我问曼施坦因演习口令。",
+     "purpose": "口令失败"
+    },
+    {
+     "id": "sm7-i-repeat-5",
+     "class": "info_repeat",
+     "input": "我问曼施坦因现在比分，他说面板上有。",
+     "purpose": "已知面板"
+    },
+    {
+     "id": "sm7-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我把护目镜戴上，扣好背心。",
+     "purpose": "装备整理"
+    },
+    {
+     "id": "sm7-i-irrelevant-2",
+     "class": "info_irrelevant_known",
+     "input": "我靠着墙听远处的枪声。",
+     "purpose": "听声音"
+    }
+   ]
   }
  ]
 }

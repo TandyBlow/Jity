@@ -1,0 +1,62 @@
+[
+ {
+  "id": "sm7-i-fail-1",
+  "input": "我问诺诺演习结束的准确时间。",
+  "purpose": "对方不知道"
+ },
+ {
+  "id": "sm7-i-fail-2",
+  "input": "我问诺诺口令是什么。",
+  "purpose": "口令失败"
+ },
+ {
+  "id": "sm7-i-repeat-1",
+  "input": "我问秦越笼门什么时候开，他重复了一遍。",
+  "purpose": "重复笼门"
+ },
+ {
+  "id": "sm7-i-repeat-2",
+  "input": "我问秦越器材怎么归还。",
+  "purpose": "流程重复/无答"
+ },
+ {
+  "id": "sm7-i-fail-3",
+  "input": "我问芬格尔地下通道有没有埋伏。",
+  "purpose": "埋伏失败"
+ },
+ {
+  "id": "sm7-i-repeat-3",
+  "input": "我问芬格尔相机电池在哪。",
+  "purpose": "电池位置已知"
+ },
+ {
+  "id": "sm7-i-fail-4",
+  "input": "我问顾岚演习口令。",
+  "purpose": "口令失败"
+ },
+ {
+  "id": "sm7-i-repeat-4",
+  "input": "我问顾岚空床还有几张。",
+  "purpose": "重复空床"
+ },
+ {
+  "id": "sm7-i-fail-5",
+  "input": "我问曼施坦因演习口令。",
+  "purpose": "口令失败"
+ },
+ {
+  "id": "sm7-i-repeat-5",
+  "input": "我问曼施坦因现在比分，他说面板上有。",
+  "purpose": "已知面板"
+ },
+ {
+  "id": "sm7-i-irrelevant-1",
+  "input": "我把护目镜戴上，扣好背心。",
+  "purpose": "装备整理"
+ },
+ {
+  "id": "sm7-i-irrelevant-2",
+  "input": "我靠着墙听远处的枪声。",
+  "purpose": "听声音"
+ }
+]

@@ -1,0 +1,62 @@
+[
+ {
+  "id": "sm6-i-new-1",
+  "input": "我问诺诺红方控制哪里。",
+  "purpose": "询问局势"
+ },
+ {
+  "id": "sm6-i-repeat-1",
+  "input": "我再问诺诺红方控制哪里。",
+  "purpose": "重复局势"
+ },
+ {
+  "id": "sm6-i-fail-1",
+  "input": "我问诺诺口令。",
+  "purpose": "口令失败"
+ },
+ {
+  "id": "sm6-i-new-2",
+  "input": "我走进器材棚，问芬格尔钥匙在谁手里。",
+  "purpose": "询问钥匙"
+ },
+ {
+  "id": "sm6-i-repeat-2",
+  "input": "我再问芬格尔钥匙在谁手里。",
+  "purpose": "重复钥匙"
+ },
+ {
+  "id": "sm6-i-fail-2",
+  "input": "我问芬格尔地下通道有没有埋伏。",
+  "purpose": "埋伏失败"
+ },
+ {
+  "id": "sm6-i-repeat-3",
+  "input": "我问秦越器材笼里有什么。",
+  "purpose": "笼内器材已知"
+ },
+ {
+  "id": "sm6-i-fail-3",
+  "input": "我问秦越演习口令。",
+  "purpose": "口令失败"
+ },
+ {
+  "id": "sm6-i-new-3",
+  "input": "我走进医护处置室，问顾岚空床还有几张。",
+  "purpose": "询问空床"
+ },
+ {
+  "id": "sm6-i-repeat-4",
+  "input": "我再问顾岚空床还有几张。",
+  "purpose": "重复空床"
+ },
+ {
+  "id": "sm6-i-fail-4",
+  "input": "我问顾岚演习口令。",
+  "purpose": "口令失败"
+ },
+ {
+  "id": "sm6-i-irrelevant-1",
+  "input": "我整理胸袋里的弹匣。",
+  "purpose": "整理装备"
+ }
+]
