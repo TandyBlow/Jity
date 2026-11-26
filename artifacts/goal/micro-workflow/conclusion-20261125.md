@@ -346,3 +346,9 @@
 - 8 个独立输入（对话、冲突、移动、物品、环境）8/8 完成，地点轨迹正确；总状态 FAILED：turn5 `program_text_not_model/source_program`，turn7/8 `prose_not_identical_to_record`。等待 139.6/111.5/144.1/118.1/86.2/79.9/95.9/95.1 s。
 - 全部任务 pending：对话结果事实为「只完成一部分」，`task_lu_choice` 0/2；检修通道回合 `task_lu_route` 0/1。说明任务理解还没有跨出护目镜范式；场景期望需按真实语义复核。
 - 之后：action 回退用 judge 排序取最高分合法候选；position 按确定移动/确定无移动/不确定三分类，只对不确定问模型。同一 8 场景集回归（`evidence-independent-scenarios-2.json`）运行中。
+
+## 场景回归（2026-11-26，scenarios-2）
+
+- 同一 8 输入，action 回退用 judge 排序、position 三分类后：**COMPLETED、0 failures**（基线 FAILED）；等待 59.8/75.6/95.0/79.7/62.6/60.2/78.3/81.2 s，均值约 74 s（基线约 109 s）；地点轨迹正确；turn1 59.8 s 首次 ≤60 s。
+- 任务仍全部 pending：对话结果只到“只完成一部分”，route 地点条件未成立；通用任务理解没有跨出护目镜范式。turn5 的 `program_text_not_model` 消失；turn5/7/8 仍有 `prose_not_identical_to_record`。
+- 仍是下一优先级：instant 正文双跑/叙事并行、刷新后 tasks/subtasks 退化、专用子任务/反应头、资源释放真实页面与移动端。

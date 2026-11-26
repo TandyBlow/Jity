@@ -454,3 +454,5 @@
 - 场景基准：`scenarios-independent.json` 8 回合（对话、冲突、移动×3、物品、环境×2）已跑（`evidence-independent-scenarios-1.json`）。8/8 回合完成，地点全部符合预期（服务巷→庭院→器材棚→检修口→门厅）；但总状态 FAILED：第 5 回合 `program_text_not_model/source_program`，第 7/8 回合 `prose_not_identical_to_record`；全部任务仍 pending。对话回合的结果事实是「只完成一部分」，`task_lu_choice` 0/2；检修通道回合的结果没有让 `task_lu_route` 的地点条件成立。说明通用任务理解仍不足，场景断言需要按真实语义复核。等待 139.6/111.5/144.1/118.1/86.2/79.9/95.9/95.1 s（均值约 108.8 s）。
 - 代码：action 回退改为复用三头 judge 的排序，取最高分合法候选；position 先做确定移动（`去向=`）、确定无移动（无移动动词 + 停留/观察/物品动词或无地点名）与不确定（移动动词无目的地）三分，只对不确定问模型。
 - 影响：动作回退不再默认第一个合法候选；position 的模型调用应明显下降。两项改动后正用同一 8 场景集回归（`evidence-independent-scenarios-2.json`），未完成前不宣称通用任务理解通过。
+
+- 场景回归（scenarios-2，2026-11-26）：action 回退改用 judge 排序、position 三分类后，同一 8 场景 **COMPLETED、0 failures**（基线为 FAILED）。等待 59.8/75.6/95.0/79.7/62.6/60.2/78.3/81.2 s，均值约 74 s（基线约 109 s）；第 1 回合 59.8 s 首次进入 60 s。地点轨迹全部正确。仍全部任务 pending（对话结果只完成一部分、route 条件未成立）；turn5 的 `program_text_not_model` 消失，turn5/7/8 仍有 `prose_not_identical_to_record`。`prose_not_identical_to_record` 和任务通用性仍是下一优先级。

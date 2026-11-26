@@ -133,3 +133,5 @@ G1 之后新增：
 - perf1 复测（2026-11-26）：等待 68.0/88.2/119.2 s，action 8 次 LLM/6-7 attempt，护目镜 `achieved`；verifier memo 0 命中；叙事 ctx 2048/不保留 Blob 是内存优化，不降时间。空闲 worker 释放已接入（隐藏且非 busy），真机未测。决策 D-040。
 
 - 独立场景基准（2026-11-26）：8/8 完成；地点轨迹正确；状态 FAILED（turn5 program_text_not_model，turn7/8 prose_not_identical_to_record）；全部任务 pending，对话事实只到「只完成一部分」，route 地点条件未成立；等待 139.6/111.5/144.1/118.1/86.2/79.9/95.9/95.1 s。action 回退改用 judge 排序；position 三分类（确定移动/确定无移动/不确定）已提交，场景回归运行中。决策 D-041。
+
+- 场景回归（2026-11-26）：8 场景 COMPLETED/0 failures，等待 59.8/75.6/95.0/79.7/62.6/60.2/78.3/81.2 s（均值约 74 s，基线约 109 s），turn1 59.8 s；地点轨迹正确；任务仍全 pending；turn5 的 program_text_not_model 消失，turn5/7/8 仍有 prose_not_identical_to_record。决策 D-041 更新。
