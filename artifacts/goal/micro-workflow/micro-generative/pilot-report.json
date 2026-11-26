@@ -1,0 +1,278 @@
+{
+ "rows": 380,
+ "train": 308,
+ "test": 72,
+ "vocab": 617,
+ "heldTasks": [
+  "task_caesar_bridge",
+  "task_chu_flag",
+  "task_chu_su",
+  "task_doctor_triage",
+  "task_fingel_soup",
+  "task_lin_sent",
+  "task_lu_match",
+  "task_manstein_log",
+  "task_nono_signal",
+  "task_qin_ladder",
+  "task_shen_recover",
+  "task_su_reload",
+  "task_tang_pause",
+  "task_tomiyama_refer",
+  "task_zhou_retreat"
+ ],
+ "heldActors": [
+  "chu",
+  "manstein",
+  "zhou"
+ ],
+ "arms": {
+  "multi_5M": {
+   "exact": 0.125,
+   "fieldRecall": 0.281,
+   "p50Ms": 23.1,
+   "p95Ms": 32.8,
+   "encodeMs": 1.4,
+   "perTokenMs": 2.88,
+   "tokens": 6.8,
+   "perField": {
+    "act": 0.0,
+    "cause": 0.0,
+    "conf": 0.208,
+    "decision": 0.0,
+    "dest": 0.0,
+    "info": 0.0,
+    "item": 0.087,
+    "loc": 1.0,
+    "result": 0.083,
+    "target": 0.094,
+    "time": 0.0
+   },
+   "condFieldRecall": 0.324,
+   "eventFieldRecall": 0.05,
+   "trainFieldRecall": 0.986,
+   "params": 4687369,
+   "sizeMB": 18.7,
+   "trainMs": 17586,
+   "cpuP50Ms": 42.0,
+   "cpuP95Ms": 78.8
+  },
+  "multi_15M": {
+   "exact": 0.222,
+   "fieldRecall": 0.359,
+   "p50Ms": 30.3,
+   "p95Ms": 52.1,
+   "encodeMs": 1.9,
+   "perTokenMs": 4.51,
+   "tokens": 5.8,
+   "perField": {
+    "act": 0.0,
+    "conf": 0.278,
+    "decision": 0.0,
+    "dest": 0.0,
+    "info": 0.0,
+    "item": 0.174,
+    "loc": 0.385,
+    "result": 0.583,
+    "target": 0.333,
+    "time": 0.0
+   },
+   "condFieldRecall": 0.361,
+   "eventFieldRecall": 0.35,
+   "trainFieldRecall": 0.988,
+   "params": 14630793,
+   "sizeMB": 58.5,
+   "trainMs": 26882,
+   "cpuP50Ms": 66.1,
+   "cpuP95Ms": 81.3
+  },
+  "multi_30M": {
+   "exact": 0.222,
+   "fieldRecall": 0.32,
+   "p50Ms": 43.6,
+   "p95Ms": 123.0,
+   "encodeMs": 2.1,
+   "perTokenMs": 5.52,
+   "tokens": 7.6,
+   "perField": {
+    "act": 0.0,
+    "conf": 0.159,
+    "decision": 0.0,
+    "dest": 0.0,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.0,
+    "loc": 0.4,
+    "result": 0.667,
+    "target": 0.273,
+    "time": 0.0
+   },
+   "condFieldRecall": 0.306,
+   "eventFieldRecall": 0.4,
+   "trainFieldRecall": 0.993,
+   "params": 33298697,
+   "sizeMB": 133.2,
+   "trainMs": 49899,
+   "cpuP50Ms": 109.9,
+   "cpuP95Ms": 162.8
+  },
+  "indep5M_conditions": {
+   "exact": 0.15,
+   "fieldRecall": 0.213,
+   "p50Ms": 26.8,
+   "p95Ms": 43.6,
+   "encodeMs": 1.8,
+   "perTokenMs": 3.82,
+   "tokens": 5.7,
+   "perField": {
+    "act": 0.0,
+    "conf": 0.05,
+    "decision": 0.0,
+    "item": 0.0,
+    "loc": 0.375,
+    "target": 0.304,
+    "time": 0.0
+   },
+   "trainFieldRecall": 1.0,
+   "params": 4687369,
+   "sizeMB": 18.7
+  },
+  "indep5M_events": {
+   "exact": 0.0,
+   "fieldRecall": 0.35,
+   "p50Ms": 34.3,
+   "p95Ms": 47.3,
+   "encodeMs": 1.6,
+   "perTokenMs": 3.41,
+   "tokens": 9.7,
+   "perField": {
+    "dest": 0.0,
+    "info": 0.0,
+    "item": 0.0,
+    "result": 0.583,
+    "target": 0.0
+   },
+   "trainFieldRecall": 0.976,
+   "params": 4687369,
+   "sizeMB": 18.7
+  },
+  "indep15M_conditions": {
+   "exact": 0.167,
+   "fieldRecall": 0.333,
+   "p50Ms": 31.2,
+   "p95Ms": 85.0,
+   "encodeMs": 1.4,
+   "perTokenMs": 4.03,
+   "tokens": 6.9,
+   "perField": {
+    "act": 0.0,
+    "conf": 0.167,
+    "decision": 0.0,
+    "item": 0.0,
+    "loc": 0.8,
+    "target": 0.333,
+    "time": 0.0
+   },
+   "trainFieldRecall": 1.0,
+   "params": 14630793,
+   "sizeMB": 58.5
+  },
+  "indep15M_events": {
+   "exact": 0.0,
+   "fieldRecall": 0.6,
+   "p50Ms": 40.9,
+   "p95Ms": 50.6,
+   "encodeMs": 1.8,
+   "perTokenMs": 4.23,
+   "tokens": 9,
+   "perField": {
+    "dest": 0.0,
+    "item": 0.0,
+    "result": 1.0,
+    "target": 0.0
+   },
+   "trainFieldRecall": 0.976,
+   "params": 14630793,
+   "sizeMB": 58.5
+  },
+  "indep30M_conditions": {
+   "exact": 0.183,
+   "fieldRecall": 0.278,
+   "p50Ms": 38.7,
+   "p95Ms": 100.3,
+   "encodeMs": 2.0,
+   "perTokenMs": 5.12,
+   "tokens": 5.9,
+   "perField": {
+    "act": 0.0,
+    "conf": 0.146,
+    "decision": 0.0,
+    "item": 0.231,
+    "loc": 0.615,
+    "target": 0.3,
+    "time": 0.0
+   },
+   "trainFieldRecall": 1.0,
+   "params": 33298697,
+   "sizeMB": 133.2
+  },
+  "indep30M_events": {
+   "exact": 0.0,
+   "fieldRecall": 0.45,
+   "p50Ms": 35.9,
+   "p95Ms": 54.1,
+   "encodeMs": 1.8,
+   "perTokenMs": 4.68,
+   "tokens": 8,
+   "perField": {
+    "dest": 0.0,
+    "env": 0.0,
+    "info": 0.0,
+    "item": 0.0,
+    "result": 0.75,
+    "target": 0.0
+   },
+   "trainFieldRecall": 0.976,
+   "params": 33298697,
+   "sizeMB": 133.2
+  },
+  "shared2_15M": {
+   "exact": 0.111,
+   "fieldRecall": 0.289,
+   "p50Ms": 32.2,
+   "p95Ms": 50.5,
+   "encodeMs": 1.6,
+   "perTokenMs": 4.51,
+   "tokens": 6.4,
+   "perField": {
+    "act": 0.0,
+    "conf": 0.159,
+    "decision": 0.0,
+    "dest": 0.0,
+    "info": 0.0,
+    "item": 0.0,
+    "loc": 0.571,
+    "result": 0.583,
+    "target": 0.136,
+    "time": 0.0
+   },
+   "params": 22587401,
+   "sizeMB": 90.3,
+   "condFieldRecall": 0.278,
+   "eventFieldRecall": 0.35
+  }
+ },
+ "onnx": {
+  "5M": {
+   "fp32MB": 19.06,
+   "int8MB": 6.57
+  },
+  "15M": {
+   "fp32MB": 58.93,
+   "int8MB": 19.84
+  },
+  "30M": {
+   "fp32MB": 133.7,
+   "int8MB": 44.66
+  }
+ }
+}

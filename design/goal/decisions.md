@@ -479,3 +479,11 @@
 - 当前：`scenarios-independent.json` 已冻结 sha256 `8a52c6aeb8abea71ad0d4d25c338c46b9ae038bbb2d96d161ffaf33ce5235805`；`scenario_report.py` 已加唯一任务/false/missed 指标。下一步：结构化事件 schema + 生成端口 + 数据集/五臂评测。
 
 - scenarios-6b（2026-11-26）：嵌套物品 transfer guard 修复后，8 场景 COMPLETED、0 failures；状态断言 46/48（95.8%）、唯一任务 1/1（task_lu_route）、false 0、missed 0、叙事问题 3 回合；均值 76.3 s（max 88.2），turn1 58.0 s。剩余仅检修盖/长桌两个环境外貌 anyOf 与 3 个 prose provenance 标记。该证据不改变 D-044：1 个唯一任务仍不足以证明多类任务理解。
+
+## D-045 微型生成试点：先不接入生成臂（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 试点：`micro_generative_pilot.py` 训练从零开始的 Encoder-Decoder，标称 5M/15M/30M（实际 4.69M/14.63M/33.30M），分别做任务条件分解与事件提取；输出 `key=value` 短序列，实体字段用世界 ID，输入附实体表，解码时把 `target/item/loc/dest` 限制在表内候选。数据 380 行（308 训练/72 测试），按 15 个任务和 3 个事件角色留出；标签来自规则/动作结构，训练字段召回约 1.0，因此测试差距是记忆而非欠拟合。
+- 结果：测试字段召回 conditions 0.21–0.36、events 0.35–0.60，整串精确 0–0.22。最好的事件臂是独立 15M（0.60）；5M 为 0.35，30M 为 0.45。多任务 15M 事件 0.35、共享编码器+双解码器 22.59M 事件 0.35，均低于独立 15M；共享编码器没有收益。15M 事件只有 `result` 达到 1.000，`target/item/dest` 为 0；条件臂 `time/act/decision/item` 为 0，`target` 0.333。约束解码把 15M 条件从约 0.27 提到 0.33–0.34，但没有修好事件实体。
+- 延迟/体积：15M GPU p50 30–41 ms、p95 50–85 ms；CPU p50 66 ms；int8 6.6/19.8/44.7 MB（5M/15M/30M）。浏览器 WASM/WebGPU 未测，不能把桌面 CPU 当浏览器成本。证据：`design/goal/micro-generative-pilot.md`、`artifacts/goal/micro-workflow/micro-generative/pilot-report.json`。
+- 决定：不把生成臂接入 `/world-local`，不替换任务条件分类器或实体链接。下一步：手写/人工标注的同义、否定、隐含结果、他人信息、多事件和同词不同结果测试集；只把 5M–15M 的 `result` 头做混合臂，实体继续由动作结构/链接器给出，`info/env/promise/decision/cause` 继续由 LLM 或核验器处理；条件生成只在任务创建/修改时缓存；最后在冻结的 `scenarios-independent.json` 上做五臂比较，不能拿本轮试点替代真实页面证据。
