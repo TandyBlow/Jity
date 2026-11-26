@@ -168,7 +168,7 @@ interface PointNarrationSnapshot {
 const FATAL_ALIGNMENT = new Set([
   'added_event', 'actor_swap', 'direction_reversed', 'wrong_number',
   'movement_without_fact', 'task_claimed_without_fact', 'state_claim_without_fact',
-  'presence_contradiction', 'item_ownership_contradiction',
+  'presence_contradiction', 'item_ownership_contradiction', 'ledger_leak',
 ]);
 
 
@@ -1053,7 +1053,7 @@ const MOVEMENT = /走|跑|移动|前往|走向|进入|退|撤|爬|穿过|绕过|
  * protagonist and entities with a committed delta enter the packet; static
  * "everyone is here" facts would demand a roll-call that the scene language
  * never uses. */
-function alignmentPacket(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState): CommittedNarration {
+export function alignmentPacket(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState): CommittedNarration {
   const facts: NarrationFact[] = [];
   const view = after.protagonistId;
   const changed = Object.keys(delta.entityDeltas ?? {});
@@ -1067,8 +1067,15 @@ function alignmentPacket(before: WorldState | null, delta: { timeAdvance?: TimeA
     const d = delta.entityDeltas?.[id];
     if (d?.positionSet) {
       const fromId = previous?.position.containerId;
+      const toId = character.position.containerId;
       const from = fromId ? before?.initial.locations[fromId]?.name : undefined;
-      if (from && fromId) facts.push({ id: `${id}:position`, actorId: id, name, kind: 'moved', fromId, from, toId: character.position.containerId, to: locationName(after, character.position.containerId) });
+      if (from && fromId && fromId !== toId) {
+        facts.push({ id: `${id}:position`, actorId: id, name, kind: 'moved', fromId, from, toId, to: locationName(after, toId) });
+      } else if (id === view) {
+        // A slot change inside the same location is not a move; describing it
+        // as «从中央庭院走到中央庭院» is a no-op movement.
+        facts.push({ id: `${id}:position`, actorId: id, name, kind: 'at', locationId: toId, location: locationName(after, toId) });
+      }
     } else if (id === view) {
       facts.push({ id: `${id}:position`, actorId: id, name, kind: 'at', locationId: character.position.containerId, location: locationName(after, character.position.containerId) });
     }
@@ -1091,7 +1098,8 @@ function factualNarration(before: WorldState | null, delta: { timeAdvance?: Time
   const room = roomOf(after, view);
   const place = locationName(after, room);
   const declared = actionText.trim().replace(/^我(?!们)/u, '').replace(/[。！？!?]+$/u, '');
-  const moves = Boolean(change?.positionSet);
+  const moves = Boolean(change?.positionSet && before
+    && before.characters[view]?.position.containerId !== change.positionSet.containerId);
   if (moves) {
     const from = before ? locationName(before, before.characters[view]?.position.containerId ?? '') : '';
     const to = locationName(after, change?.positionSet?.containerId ?? room);

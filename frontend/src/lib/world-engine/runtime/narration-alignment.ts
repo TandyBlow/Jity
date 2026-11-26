@@ -25,6 +25,7 @@ export type ViolationKind =
   | 'actor_swap' | 'direction_reversed' | 'wrong_number'
   | 'task_claimed_without_fact' | 'movement_without_fact' | 'state_claim_without_fact'
   | 'presence_contradiction' | 'item_ownership_contradiction'
+  | 'ledger_leak'
   | 'wrong_time' | 'added_event' | 'empty_narration' | 'wrong_person';
 
 export interface AlignmentViolation { kind: ViolationKind; sentence: string; detail: string }
@@ -417,6 +418,16 @@ export function alignNarration(packet: CommittedNarration, text: string, options
           detail: `${wrong.amount} ${wrong.unit} vs expected ${options.time.amount} ${options.time.unit}` });
         continue;
       }
+    }
+
+    // 0b. Ledger leakage: result rows («凯撒：查看红方短讯机。（只完成一部分）»)
+    // are evidence, not prose. A colon-led line naming a roster character, or
+    // any parenthesised result marker, is a leak.
+    const ledgerLeak = /（(?:达到目的|只完成一部分|没有成功|被阻止|没有变化)）/u.test(sentence)
+      || (/^[^。！？]{1,12}：/u.test(sentence) && [...names].some((name) => sentence.includes(name)));
+    if (ledgerLeak) {
+      violations.push({ kind: 'ledger_leak', sentence, detail: 'result ledger line copied into prose' });
+      continue;
     }
 
     // 1b. Presence: a character committed in the room cannot be narrated as

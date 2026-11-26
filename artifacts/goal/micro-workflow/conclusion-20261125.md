@@ -308,3 +308,9 @@
 
 - `micro/shared.ts` 按 vocab URL 缓存 tokenizer，targets/results/behavior/judge/updates/continuation/task-progress 七个端口共用一次词表加载；ORT 模块本来已是单例。模型会话仍按端口/权重文件各自持有，`loadMs` 仍是各端口自己的统计。
 - 未做：共享 runtime 的会话池、批量推理、跨端口编码复用。原因：当前瓶颈仍是 LLM updates/narration，而不是微型端；共享 tokenizer 先去掉确定性的重复加载。移动端多模型驻留的 4.4 s 加载需要下一轮复测。
+
+## 叙事回归：台账泄漏与空移动（2026-11-26）
+
+- `alignNarration` 新增 `ledger_leak`：括号结果词（达到目的/只完成一部分/没有成功/被阻止/没有变化）或「人物：动作」行进入正文即判矛盾；candidate/instruct 两条路径都受同一 FATAL 集约束。
+- `alignmentPacket`：同一地点内的槽位变化记为 `at`，不再生成 `moved` 事实；`factualNarration` 同样只在容器真正变化时写「走到」，避免「从中央庭院走到中央庭院」。
+- 回归测试：`committed-narration.test.ts` 的台账行；`game-model-alignment.test.ts` 的同地点槽位 vs 真实换地点。全量 1379 passed / 17 skipped，tsc 干净。

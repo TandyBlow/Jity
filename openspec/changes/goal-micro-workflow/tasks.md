@@ -78,3 +78,4 @@
 - [ ] 15x. 剩余叙事问题：多回合台账泄漏、空移动、ambiguous「放下」；program_text_not_model 回退回合。
 - [x] 15y. 共享 tokenizer：`micro/shared.ts` 按 URL 缓存，七个端口共用；ORT 模块单例不变。
 - [ ] 15z. 共享 runtime 会话池、批量推理、跨端口编码复用；移动端多模型驻留复测。
+- [x] 15aa. 叙事回归：`ledger_leak` 与同地点槽位不生成 moved；测试 3 条。

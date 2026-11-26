@@ -31,6 +31,13 @@ function reads() {
   return { before, after };
 }
 
+test('rejects a result-ledger line copied into prose', () => {
+  const { before, after } = reads();
+  const packet = projectCommittedNarration(after, before);
+  const result = alignNarration(packet, '凯撒：查看红方短讯机。（只完成一部分）', { roster: ['凯撒'] });
+  expect(result.violations.map((violation) => violation.kind)).toContain('ledger_leak');
+});
+
 test('rejects an absent claim for a character committed in the room', () => {
   const { before, after } = reads();
   const packet = projectCommittedNarration(after, before);
