@@ -229,6 +229,17 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
           }
           ledger.set(task.id, entry);
         }
+        if (fact.memberId !== ownerId) {
+          // Another character may support this task only when the fact names
+          // the owner or is the task's target; otherwise every wide-scene fact
+          // would propose every task.
+          const memberName = request.state.initial.characters[fact.memberId]?.name ?? '';
+          const target = entry.conditions.find((condition) => condition.kind === 'target');
+          const targetMatch = Boolean(target && memberName
+            && (target.value.includes(memberName) || memberName.includes(target.value.replace(/^.+?的/u, ''))));
+          const ownerName = owner.name ?? '';
+          if (!targetMatch && !(ownerName && fact.text.includes(ownerName))) continue;
+        }
         for (const condition of entry.conditions) {
           if (entry.status[condition.id] === 'satisfied' && entry.active[condition.id]) continue;
           if (!conditionRelevant(condition, fact.text)) continue;
