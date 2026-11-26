@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 6, "env:insufficient": 22, "info:insufficient": 66, "env:absent": 51, "info:present": 36, "env:conflict": 14, "env:present": 21}
+Counts: {"info:absent": 7, "env:insufficient": 22, "info:insufficient": 76, "env:absent": 52, "info:present": 37, "env:conflict": 17, "env:present": 29}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -531,6 +531,78 @@ Counts: {"info:absent": 6, "env:insufficient": 22, "info:insufficient": 66, "env
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: insufficient proposed=False content='' support='' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
+
+## sm6-e-success-1 (train, cache, env_success)
+- action: 我走进值钟间，把工作台推到墙边，再把检修图展开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='工作台被推到墙边，检修图被展开' support='把工作台推到墙边，把检修图展开' evidence=settled
+
+## sm6-e-success-2 (train, cache, env_success)
+- action: 我把检修图挂到墙上。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:maintenance_chart", "before": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {"change_20": "已被展开"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {"change_20": "已被展开", "change_41": "已被挂到"}}}], "env": ["item:maintenance_chart"]}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='检修图已被挂到墙上' support='已被挂到' evidence=settled
+
+## sm6-e-success-3 (train, cache, env_success)
+- action: 我走进控制室，把记录单翻开，再把话筒推到桌角。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=settled
+
+## sm6-e-success-4 (train, cache, env_success)
+- action: 我把记分面板转向窗口。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm6-e-failure-1 (train, cache, env_failure)
+- action: 我推控制室的门，门锁着，推不开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=settled
+
+## sm6-e-success-5 (train, cache, env_success)
+- action: 我走进医护处置室，把空床推到墙边，再把医护箱打开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "aid", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": 
+- info: insufficient proposed=False content='未获得新信息' support='没有找到听的人' evidence=settled
+- env: present proposed=True content='医护箱被打开，空床被推开' support='箱里的东西都倒在一边' evidence=state
+
+## sm6-e-success-6 (train, cache, env_success)
+- action: 我把分诊夹翻开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='路明非翻开分诊夹，只看到一部分内容' support='路明非把分诊夹翻开。（只完成一部分）' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=settled
+
+## sm6-e-success-7 (train, cache, env_success)
+- action: 我走进休息区，把保温毯叠好，再把识别带挂到墙钩上。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "aid", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "achieved", "task_lu_goggles": "pending", "task_lu_route": "achieved", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "rest", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"t
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='保温毯已被叠好' support='把保温毯叠好' evidence=settled
+
+## sm6-e-success-8 (train, cache, env_success)
+- action: 我走进器材棚，把备用护目镜摆到台面，再把备用识别带挂回架子。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "rest", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "achieved", "task_lu_goggles": "pending", "task_lu_route": "achieved", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='备用护目镜已被摆到台面' support='备用护目镜摆到台面' evidence=settled
+
+## sm6-e-success-9 (train, cache, env_success)
+- action: 我把领用簿合上。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:fingel", "before": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_fingel_deal": "pending", "task_fingel_map": "pending", "task_fingel_camera": "pending", "task_fingel_help": "pending", "task_fingel_soup": "pending"}}, "after": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_fingel_deal": 
+- info: absent proposed=False content='未获得新信息' support='没有找到明显的变化' evidence=narrative
+- env: present proposed=True content='领用簿已被合上' support='领用簿合上' evidence=settled
+
+## sm6-e-success-10 (train, cache, env_success)
+- action: 我把弹药箱盖子盖回。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='弹药箱盖被盖回' support='弹药箱盖子盖回' evidence=settled
+
+## sm6-e-success-11 (train, cache, env_success)
+- action: 我走进庭院，把长椅拖到墙边，再把石花槽扶正。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "achieved", "task_lu_goggles": "pending", "task_lu_route": "achieved", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: present proposed=True content='长椅被拖开，石花槽被扶正' support='长椅拖到墙边' evidence=settled
 
 ## s01-act-move (train, cache, 20-input)
 - action: 我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。
