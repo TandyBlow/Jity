@@ -92,7 +92,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
   return {
     requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null, playerAdvance: null,
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-    narration: null, workingState: null, sources: [], staged: [], restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
+    narration: null, workingState: null, sources: [], staged: [], roundResults: {}, restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
     lastRoundIdentityError: null, roundIdentityBlocked: null,
     continuation: null, continuationStop: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
@@ -681,6 +681,7 @@ export class ControllerDriver {
     switch (decision.task) {
       case 'pointPlan':
         this.memory.plan = structuredClone(output) as unknown as PlannedPoint[];
+        this.memory.roundResults = {};
         break;
       case 'time':
         this.memory.successorTime = structuredClone(output) as unknown as TimeAdvance;
@@ -1063,6 +1064,7 @@ export class ControllerDriver {
       case 'checkpoint_stage_unit':
         this.memory.restoredUnit = null;
         this.memory.staged.push({ groupId: req.groupId as Id, actorIds: (req.candidates as { actorIds: Id[] }).actorIds, candidates: req.candidates as never, results: req.results as Record<Id, string> });
+        this.memory.roundResults = { ...(this.memory.roundResults ?? {}), ...(req.results as Record<Id, string>) };
         this.memory.lastResults = null;
         this.memory.updatesCalls = [];
         this.memory.updatesApplied = 0;
@@ -1194,6 +1196,7 @@ export class ControllerDriver {
       case 'round_conclusion_conclude': {
         this.memory.continuation = null;
         this.memory.roundChanges = null; // 本轮已结束：下一 round 从零累计
+        this.memory.roundResults = {};
         const kind = (data as { kind?: string }).kind;
         if (kind === 'continue') {
           this.memory.plan = null;
@@ -1233,7 +1236,7 @@ export class ControllerDriver {
     Object.assign(this.memory, {
       playerInput: null, plan: null, planIndex: 0, prepareSuccessor: false,
       roundChanges: null,
-      workingState: null, sources: [], staged: [], stagedTimeScan: null,
+      workingState: null, sources: [], staged: [], roundResults: {}, stagedTimeScan: null,
       restoredUnit: null,
       groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
       continuation: null, continuationStop: null, successorTime: null, commitPayload: null, narration: null, roundIdentityBlocked: null,

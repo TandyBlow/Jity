@@ -514,6 +514,30 @@ describe('updates split (1–6 per-stage calls)', () => {
     // The delta entity is roster-consistent; coverage follows the world roster.
     expect(candidates).toMatchObject({ tasksAchieved: { person_a: ['v13'] }, subtasksAdded: { person_a: [{ id: 'v13', ownerId: 'person_a', parentTaskId: null, goal: '确认门边', status: 'pending' }] }, personalityCoverageIds: ['person_a'] });
   });
+  test('the point-rest batch reads results from every point of the round', () => {
+    const w = world({
+      advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false },
+      activeRoundId: 'r1', activePointId: 'p2',
+      round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null },
+    });
+    const wk = pointWork({ pointId: 'p2', phase: 'select_actor', working: { cursor: ORDER.length, actedIds: ['person_b'], visitedIds: ['person_b'], settledUnitIds: [], intentStatus: 'pending' } });
+    const m = memory({
+      plan: [
+        { pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] },
+        { pointId: 'p2', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_b'] },
+      ],
+      planIndex: 1,
+      pointRestPending: true,
+      workingState: { key: workingStateKey(wk), state: workingState() },
+      staged: [{ groupId: 'g2', actorIds: ['person_b'], candidates: {} as never, results: { person_b: '第二点结果。' } }],
+      roundResults: { person_a: '第一点结果。', person_b: '第二点结果。' },
+      updatesStages: ['tasks'],
+    });
+    expect(next(w, control({ revision: 5 }), wk, m)).toMatchObject({
+      kind: 'model', task: 'updates', key: 'point_rest:p2#tasks',
+      input: { results: { person_a: '第一点结果。', person_b: '第二点结果。' } },
+    });
+  });
   test('rejects out-of-order stage sequences', () => {
     const input = { taskIds: new Set<string>(), changeIds: new Set<string>() };
     expect(() => checkUpdatesStages(input, [

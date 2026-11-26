@@ -192,6 +192,8 @@ export interface ControllerMemory {
   workingState: { key: string; state: WorldState } | null;
   sources: SourceAnalysis[];
   staged: StagedUnit[];
+  /** 本回合所有已暂存组的结果合并；点提交清空 staged 后仍供 rest 批读全轮。 */
+  roundResults?: Record<Id, string>;
   /** Confirmed candidates recovered before stage_unit; replay verbatim. */
   restoredUnit?: StagedUnit | null;
   /** Time-scan unit staged for the open point: it rides into every later
@@ -898,7 +900,9 @@ function selectActorDecision(view: ScheduleView): Decision {
     if (pointRest) {
       // One updates pass over every group's settled results; the six-stage
       // order holds because all scene stages already ran group by group.
-      const results = Object.assign({}, ...memory.staged.map((unit) => unit.results));
+      const results = memory.roundResults && Object.keys(memory.roundResults).length
+        ? memory.roundResults
+        : Object.assign({}, ...memory.staged.map((unit) => unit.results));
       return updatesModelCall(view, `point_rest:${work!.pointId}`, {
         groupId: work!.pointId, mode: 'group', results, workingState: asJson(memory.workingState!.state),
       });
