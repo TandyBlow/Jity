@@ -524,6 +524,84 @@
      "purpose": "听广播，不主动获取信息"
     }
    ]
+  },
+  {
+   "id": "env-4",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm4-e-success-1",
+     "class": "env_success",
+     "input": "我走进器材棚，把弹药箱的盖子掀开，再把领用台推到墙边。",
+     "purpose": "同一回合两次环境操作"
+    },
+    {
+     "id": "sm4-e-failure-1",
+     "class": "env_failure",
+     "input": "我把器材笼的挂锁往下按，锁扣卡死，打不开。",
+     "purpose": "开锁失败"
+    },
+    {
+     "id": "sm4-e-success-2",
+     "class": "env_success",
+     "input": "我走到东回廊，把遮光帘拉下，再把低窗软垫拖到墙根。",
+     "purpose": "同一回合两次环境操作"
+    },
+    {
+     "id": "sm4-e-success-3",
+     "class": "env_success",
+     "input": "我穿过小桥走进钟楼门厅，把长桌推到侧墙，再把正门关上。",
+     "purpose": "物品与地点两次环境操作"
+    },
+    {
+     "id": "sm4-e-failure-2",
+     "class": "env_failure",
+     "input": "我把钟楼地下检修门拉开，门闩插着，拉不开。",
+     "purpose": "开门失败"
+    },
+    {
+     "id": "sm4-e-success-4",
+     "class": "env_success",
+     "input": "我走上顶层，把玻璃门推开，再把白旗从旗座拔出来。",
+     "purpose": "环境操作加物品转移"
+    },
+    {
+     "id": "sm4-e-success-5",
+     "class": "env_success",
+     "input": "我把白旗重新插回旗座，再把玻璃门关上。",
+     "purpose": "环境操作加物品转移"
+    },
+    {
+     "id": "sm4-e-success-6",
+     "class": "env_success",
+     "input": "我走下楼梯回到门厅，把正门重新打开。",
+     "purpose": "地点环境操作"
+    },
+    {
+     "id": "sm4-e-success-7",
+     "class": "env_success",
+     "input": "我走到庭院，把长椅扶正，再把石花槽搬回原位。",
+     "purpose": "同一回合两次环境操作"
+    },
+    {
+     "id": "sm4-e-move-1",
+     "class": "env_irrelevant_move",
+     "input": "我戴上护目镜，沿着庭院西侧走回服务巷。",
+     "purpose": "纯移动"
+    },
+    {
+     "id": "sm4-e-success-8",
+     "class": "env_success",
+     "input": "我走到检修口，把检修盖盖回，再把手电收进包里。",
+     "purpose": "环境操作加物品转移"
+    },
+    {
+     "id": "sm4-e-success-9",
+     "class": "env_success",
+     "input": "我把检修盖重新提开一条缝。",
+     "purpose": "部分环境操作"
+    }
+   ]
   }
  ]
 }
