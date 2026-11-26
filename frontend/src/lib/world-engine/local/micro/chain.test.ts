@@ -80,6 +80,20 @@ describe('environment channel', () => {
     expect(environmentHint('我把服务巷检修盖提开。', ['hatch_cover'], gateState, null))
       .toEqual({ entityId: 'hatch_cover', text: '已被提开' });
   });
+  it('requires the actor to be in the item room', () => {
+    const local = {
+      initial: {
+        locations: { shed: { name: '器材棚' }, yard: { name: '庭院' } },
+        items: { counter: { name: '器材领用台' } },
+        characters: { lu: { name: '路明非' }, nono: { name: '诺诺' } },
+      },
+      items: { counter: { position: { containerId: 'shed' } } },
+      characters: { lu: { position: { containerId: 'shed' } }, nono: { position: { containerId: 'yard' } } },
+    } as unknown as WorldState;
+    expect(environmentHint('我把领用台推到墙边。', ['counter'], local, null, 'achieved', 'lu'))
+      .toEqual({ entityId: 'counter', text: '已被推开' });
+    expect(environmentHint('我把领用台推到墙边。', ['counter'], local, null, 'achieved', 'nono')).toBeNull();
+  });
 });
 
 describe('program env gate', () => {

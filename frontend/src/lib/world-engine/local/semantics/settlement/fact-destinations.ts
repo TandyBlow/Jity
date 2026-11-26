@@ -50,7 +50,7 @@ export function matchLocation(state: WorldState, text: string): { id: Id; at: nu
 }
 
 /** Wording that asserts a movement happened or was attempted. */
-export const MOVEMENT_WORDS = ['走进', '走入', '走到', '走向', '进入', '来到', '回到', '退回', '退到', '跑到', '冲向', '赶到', '爬上', '走下', '钻出', '穿过', '递给', '交给', '塞给', '递到', '放进', '放到', '放在', '塞进', '送到'] as const;
+export const MOVEMENT_WORDS = ['走进', '走入', '走到', '走向', '进入', '来到', '回到', '退回', '退到', '跑到', '冲向', '赶到', '爬上', '走下', '走上', '上楼', '下楼', '钻出', '穿过', '递给', '交给', '塞给', '递到', '放进', '放到', '放在', '塞进', '送到'] as const;
 
 /** Wording that says the attempt did not take effect; such a fact is a
  * confirmed no-change, not an uncertain one. */
