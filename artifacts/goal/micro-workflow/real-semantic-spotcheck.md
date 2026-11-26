@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 4, "env:insufficient": 22, "info:insufficient": 53, "env:absent": 27, "info:present": 27, "env:conflict": 14, "env:present": 21}
+Counts: {"info:absent": 4, "env:insufficient": 22, "info:insufficient": 59, "env:absent": 39, "info:present": 33, "env:conflict": 14, "env:present": 21}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -387,6 +387,78 @@ Counts: {"info:absent": 4, "env:insufficient": 22, "info:insufficient": 53, "env
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: insufficient proposed=False content='' support='' evidence=settled
 - env: conflict proposed=False content='' support='' evidence=settled
+
+## sm4-i-new-1 (train, cache, info_new)
+- action: 我读服务巷右墙上的赛区路线图，确认地下检修通道的入口。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:caesar", "before": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending", "task_caesar_contact": "pending", "task_caesar_bridge": "pending", "task_caesar_tang": "pending", "task_caesar_flag": "pending"}}, "after": {"position": {"containerId": "red_rally", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_caesar_win": "pending
+- info: insufficient proposed=False content='路线图未确认入口' support='只完成一部分' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm4-i-new-2 (train, cache, info_new)
+- action: 我走到器材棚，翻看领用台上的器材领用簿，确认最后一条记录。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": 
+- info: present proposed=True content='确认领用簿最后一条记录' support='确认最后一条记录' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm4-i-irrelevant-1 (train, cache, info_irrelevant_known)
+- action: 我查看器材笼里的折叠梯和安全绳。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
+- info: insufficient proposed=True content='器材笼里只有折叠梯和安全绳' support='器材笼里没有别的，只有折叠梯和安全绳' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm4-i-new-3 (train, cache, info_new)
+- action: 我查看弹药箱里剩下的弹匣数量。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得弹匣数量信息' support='只数完了一部分' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm4-i-irrelevant-2 (train, cache, info_irrelevant_known)
+- action: 我走到庭院，查看唐骁左臂上的红色识别带。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "shed", "slotId": "slot_counter", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "ta
+- info: present proposed=True content='路明非查看唐骁左臂红色识别带' support='路明非走到庭院，查看了唐骁左臂上的红色识别带' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm4-i-new-4 (train, cache, info_new)
+- action: 我查看喷泉池边新留下的弹着点。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得新信息' support='路明非查看喷泉池边新留下的弹着点。（只完成一部分）' evidence=settled
+- env: absent proposed=False content='无环境变化' support='' evidence=state
+
+## sm4-i-new-5 (train, cache, info_new)
+- action: 我走进钟楼，沿楼梯到值钟间，读墙上的旗台机械检修图。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "yard", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks":
+- info: present proposed=True content='路明非在值钟间查看旗台机械检修图' support='路明非走进钟楼，沿楼梯到值钟间，读墙上的旗台机械检修图' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm4-i-new-6 (train, cache, info_new)
+- action: 我回到西回廊，查看林亦舟扭伤的脚踝。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "west_arcade", "slotId": null, "relativeTo": null}, "appearance": {}, "
+- info: insufficient proposed=False content='未获得新信息' support='林亦舟的脚踝没有受伤' evidence=narrative
+- env: absent proposed=False content='无环境变化' support='没有发现什么' evidence=narrative
+
+## sm4-i-new-7 (train, cache, info_new)
+- action: 我走到医护处置室，读登记台上的分诊夹板。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "west_arcade", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "achieved", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "aid", "slotId": "slot_desk", "relativeTo": null}, "appearance": {},
+- info: present proposed=True content='路明非在医护处置室读分诊夹板' support='路明非走到医护处置室，读登记台上的分诊夹板' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm4-i-irrelevant-3 (train, cache, info_irrelevant_known)
+- action: 我查看空床边的医疗箱。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='医疗箱里没有东西' support='箱里没有东西' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm4-i-new-8 (train, cache, info_new)
+- action: 我走进控制室，听广播里宣布的剩余时间。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='广播宣布剩余时间' support='听广播里宣布的剩余时间' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm4-i-irrelevant-4 (train, cache, info_irrelevant_known)
+- action: 我整理背心的胸袋，确认弹匣还在。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='' support='' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
 
 ## s01-act-move (train, cache, 20-input)
 - action: 我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。
