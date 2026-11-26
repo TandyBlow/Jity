@@ -3,6 +3,14 @@ import { buildTestWorld, withPosition } from '../semantics/actions/fixtures';
 import { factContradictsPresence, programTransferAllowed } from './results';
 
 describe('micro results transfer guard', () => {
+  it('confirms putting a held item into an item container in the room', () => {
+    const state = buildTestWorld();
+    expect(programTransferAllowed({
+      text: '我把手电塞进木箱顶。', category: 'use',
+      destination: { entityId: 'torch', containerId: 'crate', slotId: 'slot_top' }, memberId: 'hero', state,
+    })).toBe(true);
+  });
+
   it('confirms a transfer when the item is held and the target is in the room', () => {
     const state = buildTestWorld();
     expect(programTransferAllowed({

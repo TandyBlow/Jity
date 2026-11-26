@@ -30,7 +30,7 @@ const OUTCOME: Record<string, string> = {
   achieved: 'completed', partial: 'partial', not_achieved: 'failed', blocked: 'blocked', no_change: 'unaffected',
 };
 
-const TRANSFER = ['递给', '交给', '塞给', '递到', '送给', '递上'];
+const TRANSFER = ['递给', '交给', '塞给', '递到', '送给', '递上', '塞进', '放进', '装进', '放到', '放在', '塞到', '装入'];
 
 /** A transfer is program-confirmed only when the item is in the actor's hands,
  * the target is in the same room, the text names a transfer verb, and nothing
@@ -39,16 +39,27 @@ const TRANSFER = ['递给', '交给', '塞给', '递到', '送给', '递上'];
 export function programTransferAllowed(input: {
   text: string;
   category: string;
-  destination: { entityId: string; containerId: string } | null | undefined;
+  destination: { entityId: string; containerId: string; slotId?: string | null } | null | undefined;
   memberId: string;
   state: WorldState;
 }): boolean {
-  if (input.category !== 'assist' || !input.destination) return false;
+  if (!['assist', 'use'].includes(input.category) || !input.destination) return false;
   const item = input.state.items[input.destination.entityId];
-  const target = input.state.initial.characters[input.destination.containerId];
-  if (!item || !target) return false;
-  if (item.position.containerId !== input.memberId) return false;
-  if (roomOf(input.state, input.destination.containerId) !== roomOf(input.state, input.memberId)) return false;
+  const targetCharacter = input.state.initial.characters[input.destination.containerId];
+  const targetItem = input.state.initial.items[input.destination.containerId];
+  if (!item || (!targetCharacter && !targetItem)) return false;
+  if (item.position.containerId === input.destination.containerId) return false;
+  const heldByActor = item.position.containerId === input.memberId;
+  const sourceRoom = roomOf(input.state, item.position.containerId);
+  const actorRoom = roomOf(input.state, input.memberId);
+  // Taking from an open container in the same room is as valid as from the hand.
+  if (!heldByActor && (!sourceRoom || sourceRoom !== actorRoom)) return false;
+  if (targetCharacter) {
+    if (roomOf(input.state, input.destination.containerId) !== actorRoom) return false;
+  } else if (roomOf(input.state, input.destination.containerId) !== actorRoom
+    && input.state.items[input.destination.containerId]?.position.containerId !== input.memberId) {
+    return false;
+  }
   if (!TRANSFER.some((word) => input.text.includes(word))) return false;
   if (OBSTRUCTION.some((word) => input.text.includes(word))) return false;
   return true;
