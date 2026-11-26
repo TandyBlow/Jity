@@ -2512,6 +2512,8 @@ function readSubtaskProposals(
   const used = new Set<Id>([...allKnownTaskIds(state), ...allEntityIds(state)]);
   const usedGoals = new Set<string>();
   const existingGoals = new Set(allTasks(state).map(({ task }) => normalizeChangeText(task.goal)));
+  const characterNames = Object.entries(state.initial.characters)
+    .map(([id, character]) => [id, character.name ?? ''] as const);
   const changes: Record<Id, Partial<EntityDelta>> = {};
   for (const raw of rows) {
     if (!isRecord(raw)) throw new Error('subtask must be an object');
@@ -2529,6 +2531,16 @@ function readSubtaskProposals(
     const normalizedGoal = normalizeChangeText(goal);
     if (normalizedGoal === normalizeChangeText(parent.task.goal) || existingGoals.has(normalizedGoal)) {
       options.rejections?.push({ parentTaskId, goal, reason: 'subtask_duplicates_existing' });
+      continue;
+    }
+    // 别人的动作不是负责任务的目标（路明非走到东回廊 → caesar 的任务）
+    if (characterNames.some(([id, name]) => id !== parent.ownerId && name && goal.startsWith(name))) {
+      options.rejections?.push({ parentTaskId, goal, reason: 'subtask_foreign_subject' });
+      continue;
+    }
+    // 复述本轮事实是事件记录，不是新目标（"路明非成功翻开记录单" 曾被写成任务）
+    if (options.facts?.some((fact) => goalWordingOverlap(fact, goal) >= 0.85)) {
+      options.rejections?.push({ parentTaskId, goal, reason: 'subtask_restates_fact' });
       continue;
     }
     // A new goal has to come from this point: the 0.6B invented one unrelated

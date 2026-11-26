@@ -506,9 +506,11 @@ try {
       sanity: read('精神值'),
       place: read('地点'),
       nearby: panel.split('在附近')[1]?.split('当前任务')[0]?.trim() ?? null,
-      tasks: [...document.querySelectorAll('aside li')].map((node) => ({
+      // Only the status panel's task rows carry data-done; `aside li` also
+      // matched history rows, whose titles then looked like extra tasks.
+      tasks: [...document.querySelectorAll('aside li[data-done]')].map((node) => ({
         goal: node.textContent?.trim() ?? '',
-        done: (node.style?.textDecoration ?? '').includes('line-through'),
+        done: node.getAttribute('data-done') === 'true',
       })),
       historyCount: /已行动：(\d+)/.exec(panel)?.[1] ?? null,
       storageChars: (localStorage.getItem('jity.world.local.snapshot.v1') ?? '').length,

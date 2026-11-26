@@ -2041,7 +2041,7 @@ export default function WorldLocalPage() {
             <div className={styles.sideRow}>{view?.visible.length ? view.visible.join('、') : '没有别人'}</div>
             <div className={styles.sideLabelSpaced}>当前任务</div>
             <ul className={styles.taskList}>
-              {(view?.tasks ?? []).map((task, index) => <li key={index} className={task.done ? styles.taskDone : undefined}>{task.goal}</li>)}
+              {(view?.tasks ?? []).map((task, index) => <li key={index} data-done={task.done ? 'true' : 'false'} className={task.done ? styles.taskDone : undefined}>{task.goal}</li>)}
             </ul>
           </div>
           <div className={`${styles.sideCard} ${styles.sideCardSpaced}`}>

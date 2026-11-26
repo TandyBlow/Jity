@@ -1486,6 +1486,22 @@ describe('six-stage updates', () => {
     expect(detail.stageDetail?.rejectedSubtasks).toEqual([expect.objectContaining({ reason: 'subtask_duplicates_existing', goal: '拿到工具' })]);
   });
 
+  it('rejects a subtask with a foreign subject or a fact restatement', async () => {
+    const engine = new ScriptedEngine([JSON.stringify({ subtasks: [
+      { parentTaskId: 'a1', goal: '乙把工具拿到手' },
+      { parentTaskId: 'a1', goal: '甲把工具拿到手，工具上有刻痕' },
+      { parentTaskId: 'a1', goal: '查看工具上的刻痕' },
+    ] })]);
+    const handlers = createSettlementHandlers({ engine });
+    const outcome = await handlers.updates('g_sub2', {
+      groupId: 'g_sub2', stage: 'subtasks', results: { a: '甲把工具拿到手，工具上有刻痕。', b: '乙留在房间。' }, workingState: world(),
+    } as unknown as Json);
+    const call = outcome.value as UpdatesCall;
+    expect(call.changes.a?.subtasksAdded?.map((task) => task.goal)).toEqual(['查看工具上的刻痕']);
+    const detail = outcome.evidence.detail as { stageDetail?: { rejectedSubtasks: { reason: string }[] } };
+    expect(detail.stageDetail?.rejectedSubtasks.map((row) => row.reason)).toEqual(['subtask_foreign_subject', 'subtask_restates_fact']);
+  });
+
   it('runs the canonical six stages, moves an item, covers the full cast, and pairs personality with sanity', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [
