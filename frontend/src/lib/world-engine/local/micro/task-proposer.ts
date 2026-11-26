@@ -52,7 +52,11 @@ interface LedgerEntry {
 function satisfiesProgramFloor(condition: TaskCondition, text: string, entry: LedgerEntry): boolean {
   if (condition.kind === 'action') return text.includes(condition.value) || text.includes(condition.value[0]);
   if (condition.kind === 'confirmation') {
-    if (!CONFIRM.some((word) => text.includes(word))) return false;
+    const confirm = CONFIRM.find((word) => text.includes(word));
+    if (!confirm) return false;
+    // “没有回答/未确认/拒绝说明” is not a confirmation act.
+    const at = text.indexOf(confirm);
+    if (/没有|没|未|不|拒绝|无法/u.test(text.slice(Math.max(0, at - 4), at))) return false;
     const anchors = entry.conditions.filter((row) => row.kind === 'item' || row.kind === 'target' || row.kind === 'location');
     if (!anchors.length) return false;
     const basis = [text, ...Object.values(entry.evidence).map((row) => row.text)].join('；');

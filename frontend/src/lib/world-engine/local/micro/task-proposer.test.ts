@@ -132,6 +132,19 @@ describe('task proposer', () => {
     expect(answered?.supports).toEqual([expect.objectContaining({ characterId: 'hero', taskId: 'task_hero_ask' })]);
   });
 
+  it('does not treat a negated answer as a confirmation', async () => {
+    const world = state();
+    const ask = { id: 'task_hero_ask', ownerId: 'hero', parentTaskId: null, goal: '向阿宁问清门后有没有人', status: 'pending' as const };
+    world.characters.hero.tasks.task_hero_ask = { ...ask };
+    world.initial.characters.hero.tasks.task_hero_ask = { ...ask };
+    const proposer = createMicroTaskProposer({
+      scoring: (rows) => rows.map(() => ({ label: 'satisfied' as const, confidence: 0.99 })),
+    });
+    await proposer({ state: world, facts: [{ id: 'f1', memberId: 'hero', text: '路明非问阿宁门后有没有人。' }] });
+    const answer = await proposer({ state: world, facts: [{ id: 'f2', memberId: 'ally', text: '阿宁没有回答路明非。' }] });
+    expect(answer?.supports).toEqual([]);
+  });
+
   it('does not count keyword or attempt as a satisfied condition', async () => {
     const proposer = createMicroTaskProposer({
       scoring: (rows) => rows.map(() => ({ label: 'keyword' as const, confidence: 0.9 })),
