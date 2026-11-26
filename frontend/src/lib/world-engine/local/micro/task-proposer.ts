@@ -6,7 +6,7 @@ import type { Id, WorldState } from '../../types';
 import type { MicroTaskProposal, MicroTaskProposerFn } from '../semantics/settlement/types';
 import { CONFIRM, conditionRelevant, taskConditions, type TaskCondition } from './task-progress';
 import { getMicroTokenizer } from './shared';
-import { createMicroRuntime } from './runtime';
+import { createMicroRuntime, runBatch } from './runtime';
 
 const LABELS = ['none', 'keyword', 'attempt', 'satisfied'] as const;
 type Label = typeof LABELS[number];
@@ -175,17 +175,11 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
   async function score(rows: Array<{ condition: TaskCondition; goal: string; text: string }>) {
     const tok = await getMicroTokenizer(options.vocabUrl);
     const session = await runtime.load(options.modelUrl ?? '/micro/task-condition-int8.onnx');
-    const ort = await import('onnxruntime-web/wasm');
+    const encodings = rows.map((row) => tok.encodePair(`条件：${row.condition.label}`, row.text, 160).ids);
+    const batches = await runBatch(session, encodings);
+    if (batches.length !== rows.length) return null;
     const out: Array<{ label: Label; confidence: number }> = [];
-    for (const row of rows) {
-      const { ids } = tok.encodePair(`条件：${row.condition.label}`, row.text, 160);
-      const data = BigInt64Array.from(ids, (value) => BigInt(value));
-      const mask = BigInt64Array.from(ids, () => 1n);
-      const result = await session.run({
-        input_ids: new ort.Tensor('int64', data, [1, ids.length]),
-        attention_mask: new ort.Tensor('int64', mask, [1, ids.length]),
-      });
-      const logits = Array.from((result.labels?.data ?? []) as Float32Array);
+    for (const logits of batches) {
       if (logits.length !== LABELS.length) return null;
       const probabilities = softmax(logits);
       const best = probabilities.indexOf(Math.max(...probabilities));
