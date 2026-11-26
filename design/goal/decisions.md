@@ -730,3 +730,10 @@
 - 存在性头（MiniRBT-H256，30 轮）：env 留出 sm6- 9 条 8 对（7/8 正、1/1 负，loss 0.51→0.0001）；info 留出 sm10- 10 条 9 对（4/4 正、5/6 负，1 个负例误报，loss 0.76→0.028）。模型分字段保存为 `semantic-heads-{env,info}.pt`。
 - 抽取候选头：55 对、组留出 11 组 top1 6/11（loss 0.67→0.06）。
 - 离线三臂（`compare_arms.py`）：规则臂对核验标签全量 env 98.5%（精确率 1.0、召回 0.943，3 个漏报），info 98.7%（精确率 0.982、1 个误报）；留出集上 env 规则 9/9、分类器 7/9，info 规则与分类器都 9/10。分类器训练标签多来自规则通道，全量一致不代表独立；生成式/混合/LLM 三臂要用页面证据单独测，当前只完成了规则、分类器两臂。
+
+## D-075 存在性头影子接入 /world-local（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- `?existenceShadow=1` 时页面创建 `createMicroExistence`，results 端口把本轮事实文本送进 env/info 两个 int8 头，分数写进 results 的 microStats 和控制台一行 `[world-local existence] env… info…`；不改任何判定。ONNX 动态长度导出（192/64 两个长度都跑通），int8 各 10.55 MB、本机 CPU p50 1.5 ms；二进制不进库，`frontend/public/micro/existence-manifest.json` 记 sha256/字节/训练计数，`export_existence_onnx.py` 可重建。
+- 真实页面 4 回合：两个环境成功（掀弹药箱、推领用台）env 分数 0.984/0.945，移动与转移回合 ~0.007；info 分数在 0.49-0.63 间（该路线没有信息事件）。这是分类器臂的第一份真实页面证据。
+- 验收驱动的控制台过滤只收含 `world-local` 等关键词的行；影子分数行因此用 `world-local` 前缀，其余诊断行不会被采集。

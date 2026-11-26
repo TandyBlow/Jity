@@ -199,3 +199,5 @@ G1 之后新增：
 - 状态：`signed`（2026-11-26）。
 - `evidence-independent-scenarios-11.json`（micro 臂、seed=11）：状态 **48/48**、任务 14/14、达成 3/3、false 0、missed 0、prose 问题 0 回合、均值 64.7 s、最大 88.9 s，与 scenarios-8 的 63.5 s 同水平；今天的子任务守卫、信息通道与叙事标记转换没有破坏冻结场景。
 - 无 micro 查询的同场景运行（scenarios-10）单回合 250 s、第 3 回合渲染进程崩溃（LLM 臂压力），说明五臂里的 LLM 臂需要单独的资源与超时治理，不能与产品臂共用同一浏览器条件。
+
+- 影子接入（2026-11-26）：`?existenceShadow=1` 在结果端口记录 env/info 存在性分数，不改判定；4 回合真实页面 env 0.984/0.945 vs ~0.007，分类器臂有第一份页面证据。ONNX int8 10.55MB/字段，本地保留、manifest 记哈希。D-075。
