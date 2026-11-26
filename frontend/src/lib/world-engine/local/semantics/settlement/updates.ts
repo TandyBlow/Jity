@@ -74,9 +74,27 @@ async function stagePositionLocal(ctx: StageContext, scanned: Id[], appearanceId
   const calls: ModelCallEvidence[] = [];
   const changes: Record<Id, Partial<EntityDelta>> = {};
   try {
+    const moved: Id[] = [];
+    const noMove: Id[] = [];
     for (const entityId of scanned) {
       const fact = facts.find((row) => row.memberId === entityId);
       if (!fact) continue;
+      const hint = readDestinations([fact.text]).get(entityId);
+      if (hint) {
+        changes[entityId] = { positionSet: { containerId: hint.containerId, slotId: hint.slotId, relativeTo: null } };
+        moved.push(entityId);
+        continue;
+      }
+      // Definite no-move: no actor-movement verb and either an explicit
+      // stay/observe/item verb or no registered place. Item transfers are not
+      // actor movement; their `去向=` is handled above. Uncertain facts still
+      // get the small question.
+      const moves = /走|跑|移|前往|进入|退|撤|爬|穿|离开|赶|到达|到了|回到|回去|回来|进去|出去|下去|上去|过去/u.test(fact.text);
+      const stays = /留|待|站|坐|守|停|原地|不动|看|观察|检查|说|问|回答|等|拿|递|放|塞|交/u.test(fact.text);
+      if (!moves && (stays || !matchLocation(ctx.state, fact.text))) {
+        noMove.push(entityId);
+        continue;
+      }
       const answer = await callJson(ctx.engine, localPositionPrompt(ctx.state, entityId, fact.text), {
         maxTokens: 120,
         temperature: 0,
@@ -97,7 +115,12 @@ async function stagePositionLocal(ctx: StageContext, scanned: Id[], appearanceId
     }
     return {
       changes,
-      detail: { scannedEntityIds: scanned, localEntityIds: scanned.filter((id) => facts.some((fact) => fact.memberId === id)), changedEntityIds: Object.keys(changes).sort(), source: 'local' },
+      detail: {
+        scannedEntityIds: scanned,
+        localEntityIds: scanned.filter((id) => facts.some((fact) => fact.memberId === id)),
+        changedEntityIds: Object.keys(changes).sort(),
+        programMoveIds: moved.sort(), noMoveIds: noMove.sort(), source: 'local',
+      },
       fallback: false,
       calls,
     };

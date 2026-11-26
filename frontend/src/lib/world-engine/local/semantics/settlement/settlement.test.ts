@@ -1698,6 +1698,18 @@ describe('six-stage updates', () => {
     expect(engine.prompts.some((prompt) => prompt.includes('新增小任务判断器'))).toBe(true);
   });
 
+  it('skips the position model when every fact has no movement or place cue', async () => {
+    const engine = new ScriptedEngine([]);
+    const input = {
+      ...(updatesInput(world(), 'position') as Record<string, unknown>),
+      results: { a: '甲检查工具。', b: '乙留在房间。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine, options: { localPosition: true } })
+      .updates('g1', input);
+    expect(outcome.value).toMatchObject({ stage: 'position', changes: {} });
+    expect(engine.prompts).toHaveLength(0);
+  });
+
   it('never invents a position for an actor whose fact has no destination', async () => {
     // 09's open request (4b1e turn 10): the lu fact is "路明非离开演习场" with no
     // destination. The position stage only reads the answer's own changes array;
@@ -1856,7 +1868,7 @@ describe('six-stage updates', () => {
     expect((outcome.value as UpdatesCall).changes).toEqual({});
   });
 
-  it('asks one small position question per affected entity', async () => {
+  it('asks the small position question only for the moving entity', async () => {
     const engine = new ScriptedEngine([
       JSON.stringify({ changes: [{ entityId: 'a', containerId: 'far' }] }),
       JSON.stringify({ changes: [] }),
@@ -1867,8 +1879,9 @@ describe('six-stage updates', () => {
     } as unknown as Json;
     const outcome = await createSettlementHandlers({ engine, options: { localPosition: true } })
       .updates('g1#position', input);
-    expect(engine.prompts).toHaveLength(2);
-    expect(engine.prompts.every((prompt) => prompt.includes('只判断这个实体'))).toBe(true);
+    // b 的「留在房间」是确定无移动，不再问模型。
+    expect(engine.prompts).toHaveLength(1);
+    expect(engine.prompts[0]).toContain('只判断这个实体');
     expect((outcome.value as UpdatesCall).changes.a?.positionSet?.containerId).toBe('far');
     const stageDetail = (outcome.evidence.detail as { stageDetail?: { source?: string } }).stageDetail;
     expect(stageDetail?.source).toBe('local');
