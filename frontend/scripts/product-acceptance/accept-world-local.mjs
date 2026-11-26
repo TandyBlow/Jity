@@ -1249,6 +1249,10 @@ try {
     : stateBeforeReload.historyCount === stateAfterReload.historyCount;
   const entriesRestored = (reportedEntries ?? (entriesAfterReload >= entriesBeforeReload
     && entriesContract.count >= entriesBeforeReload));
+  // 刷新不得让任务列表重复或丢失：比较刷新前后的任务快照
+  const tasksBefore = JSON.stringify(stateBeforeReload.tasks ?? []);
+  const tasksAfter = JSON.stringify(stateAfterReload.tasks ?? []);
+  const tasksStable = tasksBefore === tasksAfter;
   const engineSegments = await page.evaluate(() => (window.__worldTurns ?? []).map((turn) => ({
     index: turn.index, engines: turn.engines ?? null, source: turn.source ?? null,
   }))).catch(() => null);
@@ -1264,6 +1268,9 @@ try {
     historyCountBefore: stateBeforeReload.historyCount,
     historyCountAfter: stateAfterReload.historyCount,
     historyStable,
+    tasksBefore: stateBeforeReload.tasks ?? null,
+    tasksAfter: stateAfterReload.tasks ?? null,
+    tasksStable,
     committedBefore: entriesContract.inputs.length ? entriesContract.inputs.slice(0, 5) : null,
     stateBefore: stateBeforeReload,
     stateAfter: stateAfterReload,
@@ -1275,7 +1282,7 @@ try {
     entriesRestored,
     // The product may only claim recovery when everything a player relies on
     // is actually back. A matching place/sanity is not enough.
-    overallRestored: stateRestored && historyRestored && entriesRestored,
+    overallRestored: stateRestored && historyRestored && entriesRestored && tasksStable,
   };
   if (!entriesRestored) noteFailure('reload', `entries were not restored after refresh: ${entriesBeforeReload} -> ${entriesAfterReload}`, evidence.refreshRestore);
   if (!stateRestored) noteFailure('reload', 'state changed across refresh/restore', evidence.refreshRestore);

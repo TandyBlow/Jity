@@ -1,0 +1,40 @@
+{
+  "worldId": "smoke_mwy5n1cj",
+  "steps": [
+    {
+      "step": "root",
+      "snapshotId": "snap_4b4f30d796668e272af2326cc0695d06475ae7583acd67d9600ea99cd1cce492",
+      "revision": 1
+    },
+    {
+      "step": "idempotent replay",
+      "revision": 1
+    },
+    {
+      "step": "stale CAS rejected",
+      "code": "revision_mismatch"
+    },
+    {
+      "step": "device A advance",
+      "snapshotId": "snap_a25c171ef37a83be833701b426e0056582bb38544b3d81384dc9fcd8ca4c42bd",
+      "revision": 2
+    },
+    {
+      "step": "device B fork",
+      "snapshotId": "snap_618cbc772acc62696c6bb83ed223e600d3ac490423c534e334cdf40123340913",
+      "head": "snap_a25c171ef37a83be833701b426e0056582bb38544b3d81384dc9fcd8ca4c42bd"
+    },
+    {
+      "step": "both branches readable",
+      "branches": [
+        "snap_618cbc772acc62696c6bb83ed223e600d3ac490423c534e334cdf40123340913",
+        "snap_a25c171ef37a83be833701b426e0056582bb38544b3d81384dc9fcd8ca4c42bd"
+      ]
+    },
+    {
+      "step": "branch choice",
+      "head": "snap_618cbc772acc62696c6bb83ed223e600d3ac490423c534e334cdf40123340913",
+      "revision": 4
+    }
+  ]
+}
