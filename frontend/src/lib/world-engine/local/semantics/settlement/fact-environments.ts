@@ -46,10 +46,9 @@ export function environmentHint(
   text: string,
   itemIds: Id[],
   state: WorldState,
-  destination: unknown,
+  _destination: unknown,
   label = 'achieved',
 ): { entityId: Id; text: string } | null {
-  if (destination) return null;
   if (itemIds.length !== 1) return null;
   const entityId = itemIds[0];
   if (!state.initial.items[entityId]) return null;

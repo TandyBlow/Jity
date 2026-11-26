@@ -58,10 +58,11 @@ describe('environment channel', () => {
     expect(environmentHint('我把帘子掀开一条缝。', ['curtain'], envState, null, 'partial'))
       .toEqual({ entityId: 'curtain', text: '已被部分掀开' });
   });
-  it('declines transfers, ambiguity and mere observation', () => {
-    expect(environmentHint('我把帘子掀开。', ['curtain'], envState, { entityId: 'curtain', containerId: 'box' })).toBeNull();
+  it('declines ambiguity and mere observation', () => {
     expect(environmentHint('我把帘子掀开。', ['curtain', 'hatch_cover'], envState, null)).toBeNull();
     expect(environmentHint('我看了看帘子。', ['curtain'], envState, null)).toBeNull();
+    expect(environmentHint('我把帘子掀开。', ['curtain'], envState, { entityId: 'curtain', containerId: 'box' }))
+      .toEqual({ entityId: 'curtain', text: '已被掀开' });
   });
   it('phrases a location manipulation without an item', () => {
     expect(environmentPhrase('我把门厅的正门推开。')).toBe('已被推开');

@@ -225,7 +225,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         let env = !priorBlocked
           ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination, label)
           : null;
-        if (!env && !priorBlocked && !destination) {
+        if (!env && !priorBlocked) {
           const phrase = environmentPhrase(subAction.text, label);
           const location = phrase ? matchLocation(request.state, subAction.text) : null;
           if (phrase && location) env = { entityId: location.id, text: phrase };

@@ -137,7 +137,7 @@ def main():
     ready = training_ready(counts, minimum)
     report = {'version': VERSION, 'pass': not failures, 'rawRows': len(raw), 'trainRows': len(train),
               'testRows': len(test), 'expectedTrain': len(expected_train), 'expectedTest': len(expected_test),
-              'fieldCounts': counts, 'trainingMinimum': minimum + '/field',
+              'fieldCounts': counts, 'trainingMinimum': f'{minimum}/field',
               'trainingReady': ready, 'failures': failures}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding='utf8')
