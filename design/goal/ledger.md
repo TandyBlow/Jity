@@ -159,3 +159,5 @@ G1 之后新增：
 - 真实语义数据流程（2026-11-26）：20 条真实输入 + 8 条场景，DeepSeek pro 提 info/env，子串 + 状态外观 + 移动/转移 + 行动摘要规则核验，生成 dataset 与 spot-check；首批暴露移动/转移写成 env、NPC 行动写成 info，均被拒绝；sc01 no-answer info=false、sc05 观察保留。缓存 5/28，三任务与 held-out 状态补丁未训，未达“多模型共同改状态”。决策 D-050，报告 `design/goal/real-semantic-pipeline.md`。
 
 - 语义数据四态（2026-11-26）：按用户核查修正为回合前/后快照差分、四态 present/absent/insufficient/conflict、8 场景整体 test-only/20 输入 train；未核验不再当负例。7 条缓存：sc01 info absent、env insufficient；sc02/sc04 insufficient；sc03/sc05/sc07 info present；sc06 env conflict（旧状态未提交检修盖外观）、info insufficient（误标路线决策）；sc08 未缓存。旧标签器已停，未训练。决策 D-051。
+
+- 独立审计未通过 + v3/KV 浏览器（2026-11-26）：审计 pass=false：未核验仍写 present=false、7 条缓存全来自旧 prompt（含 checks 污染）、env absent 依赖空外观差分、`superseded` vs `supersedes`、意图被当支持、差分漏 characters/positions/tasks；不训练。浏览器 v3 候选指针 fixed full 171.1/178.3 ms、12.91 ms/token；KV full 68.5/94.5 ms、3.09 ms/token、prefill 23.1，2.5×/4.91×；输出一致，模型 14.8M，权重留本地。决策 D-052，报告 `design/goal/real-semantic-pipeline.md`。

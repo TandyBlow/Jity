@@ -69,18 +69,54 @@ are not rewritten to `present=false` as training negatives.
 - The strong model's category mistakes remain visible in the raw cache; the
   verifier downgrades them instead of turning them into negatives.
 
-## Next
+## Independent audit (2026-11-26)
 
-1. Finish the cache (or label the remaining 21 with the strong model), then
-   review the spot-check; correct the conflict/fix set and the sc06 info.
-2. Expand verified real events; do not add template volume.
-3. Train the three tasks only on `present`/`absent` rows: existence,
-   specialized extraction given the category, fact-support verification.
-4. Evaluate on the 8 held-out scenarios: existence accuracy, extraction given
-   category, full workflow, and the state patch. The patch must add the
-   sc06/sc08 environment changes and must not add extra changes.
-5. Then the v3 candidate-pointer browser export and fixed vs KV-cache decode;
-   followed by the five-arm comparison.
+An independent read-only audit returned **pass=false**. The formal split and
+the sc06 conflict/sc01 absent cases are right, but the pipeline still violates
+the user's concerns:
+
+1. `verify()` still writes `present=false` for `insufficient`/`conflict`; 10/14
+   field labels are unverified but binary negatives. No `trainable` flag.
+2. All 7 cache labels came from the old prompt that injected post-turn
+   summaries and the scenario checks; the new prompt produced no labels. The
+   cache has no `evidence` field, and all 7 are test rows with check
+   contamination.
+3. `env absent` defaults to an empty appearance diff. The 912 item/location
+   entries have zero appearance records, so an empty diff is not evidence of
+   no change. `active_changes` tests `superseded` while the engine uses
+   `supersedes`; the diff ignores characters/positions/tasks; `ENV_VERBS`
+   mirrors the held-out sc06/sc08 checks and misses s07's 推/挪动.
+4. Player intent is accepted as support: `settled` includes the protagonist
+   command echo (`task=action`, text equals the input), and `info` can be
+   decided by the player's own words. Intent, settled actions, narration and
+   state are not separated.
+5. The diff only looks at item/location appearance; characters (sc02 check),
+   item container (sc04), task status (sc06) and `removed` are invisible.
+
+**No training is allowed on this dataset.** The next pass must fix these
+before the three tasks.
+
+## Next after the audit
+
+1. Add a three-value target (`true`/`false`/`null`) plus `trainable`; never
+   encode `insufficient`/`conflict` as `present=false`.
+2. Replace the appearance-only diff with a full state diff: characters,
+   positions, tasks, item containers/slots, item/location appearance with the
+   engine's `supersedes`; use `removed`; keep the environment field tied to
+   actual environment changes, not held-out check regexes.
+3. Exclude the protagonist command echo from `settled`; support must come from
+   settled actions or narration, never from the player intent; separate the
+   four sources in the row and prompt.
+4. `env absent` only with explicit no-change/no-action evidence; a missing
+   before snapshot or an empty appearance channel is `insufficient`.
+5. Add a prompt version to the cache, invalidate the old 7 check-contaminated
+   test labels, and re-label the 20 train + 8 test with the checks-free prompt;
+   the 8 scenarios stay test-only and the checks stay evaluation-only.
+6. Only then train the three tasks on `trainable` rows and evaluate the state
+   patch on the 8 scenarios, including extra-change checks.
+
+The v3 candidate-pointer browser arm and KV-cache measurement are already
+done (D-052); the product/five-arm work waits for the data pass.
 
 ## Reproduce
 

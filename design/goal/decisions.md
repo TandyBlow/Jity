@@ -543,3 +543,15 @@
 - 首批 7 条缓存结果：sc01 info absent（没有答出）、env insufficient（无前快照）；sc02/sc04 info insufficient（NPC 行动摘要不是信息）、env insufficient（移动/物品转移不是环境）；sc03/sc05/sc07 info present；sc06 env **conflict**（行动提开检修盖，旧状态无新增外观），正是用户预判的修复事件；sc06 info insufficient（模型把路线决策当观察，需抽查修正）；sc08 未缓存，按行动应产生 conflict。
 - 后台旧标签器已停止；新核验用 `CACHE_ONLY=1` 在 7 条缓存上跑通。强模型类别错误保留在原始缓存，核验器只降级，不制造负样本。
 - 决定：不急于训练；先跑完/抽查真实数据，修正 sc06 info 与 sc08 conflict，再在 `present`/`absent` 上训练三任务；held-out 8 场景测状态补丁且检查无额外变化；随后 v3 浏览器/KV 与五臂。证据 `design/goal/real-semantic-pipeline.md`、`real-semantic.jsonl`、`real-semantic-spotcheck.md`。
+
+## D-052 独立审计未通过；v3/KV 浏览器已通（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 独立审计（并行 agent，只读）`pass=false`。除了 sc06 env=conflict、sc01 info=absent、8 场景 test/20 输入 train 这些形式项，仍有实质违规：
+  1. `verify()` 仍写 `present=false`，`insufficient`/`conflict` 与 `absent` 共用二元负例；10/14 未核验字段会被当负样本。没有 `trainable` 标志。
+  2. 7 条缓存全部来自旧 prompt（含“回合后摘要 + 场景检查”），mtime 早于修复脚本；新 prompt 未产生任何标签。缓存无 `evidence` 字段，且 7 条全是 test，含 held-out checks 污染。
+  3. env `absent` 默认来自“外观差分为空”；但 912 个 item/location 的 `appearanceChanges` 全空，空外观不是无变化证据；`active_changes` 用 `superseded` 而引擎用 `supersedes`；差分类只读 item/location 外观，忽略 characters/position/task；`ENV_VERBS` 基本照抄 sc06/sc08 的 check 正则，s07 的“推/挪动”反而落成负例。
+  4. 玩家意图被当支持：`settled` 含 protagonist command echo（`task=action`、text 等于输入），prompt 允许 support 来自“玩家意图”，info 的 present/absent 可由玩家自己的话决定，未区分意图/已结算/叙事/状态。
+  5. 状态补丁所需的 characters/positions/tasks/item container 未进差分；sc02 的 check 是 characters.lu.appearanceChanges，sc04 是物品容器，sc06 是 task_lu_route，当前全部不可见；`removed` 也未使用。
+- 浏览器 v3 候选指针已完成：固定前缀 vs KV Cache，Edge/ORT-WASM，12 token。fixed full 171.1 ms p50 / 178.3 p95、decode 150.6、12.91 ms/token；KV full 68.5 / 94.5、decode 30.7 / 40.3、3.09 ms/token、prefill 23.1；输出逐 token 相同，full 2.5×、decode 4.91×、per-token 4.18×。模型 14.8M，int8 encoder/decoder/KV/candidate 10.5/4.8/4.6/0.05 MB；权重留在本地，报告 `v3-onnx-report.json`、`browser-v3-*.json`。
+- 决定：数据流程仍未通过，不训练。下一轮按审计修：`trainable`/三值 target；全状态差分（characters/positions/tasks/items，`supersedes`，`removed`）；意图/已结算/叙事/状态严格分离；env absent 只在明确否定证据；ENV_VERBS 用通用语义而非 held-out check；缓存加 prompt 版本并作废旧 7 条，重新用无 checks 的 prompt 标 20 训练 + 8 测试；然后三任务与状态补丁。浏览器 KV 成果保留，五臂等数据通过后再跑。

@@ -1,0 +1,94 @@
+{
+ "trainRows": 123,
+ "handTrainRows": 28,
+ "seed": 20261126,
+ "epochs": 60,
+ "trainSeconds": 33.3,
+ "reusedCheckpoint": true,
+ "params": 14826926,
+ "checkpointMB": 59.4,
+ "testMetrics": {
+  "rows": 24,
+  "exact": 0.042,
+  "fieldRecall": 0.333,
+  "perField": {
+   "act": 0.25,
+   "cause": 0.0,
+   "conf": 0.571,
+   "decision": 0.143,
+   "dest": 0.333,
+   "env": 0.0,
+   "info": 0.0,
+   "item": 0.5,
+   "loc": 0.0,
+   "neg": 0.0,
+   "promise": 0.0,
+   "result": 0.5,
+   "target": 0.364,
+   "time": 0.333
+  },
+  "resultAccuracy": 0.5,
+  "p50Ms": 135.3,
+  "p95Ms": 251.0,
+  "byWorld": {
+   "dragon": {
+    "rows": 20,
+    "fieldRecall": 0.333,
+    "entityFieldRecall": 0.5
+   },
+   "mistport": {
+    "rows": 4,
+    "fieldRecall": 0.333,
+    "entityFieldRecall": 0.4
+   }
+  },
+  "entityFieldRecall": 0.481,
+  "openFieldRecall": 0.255
+ },
+ "int8MB": {
+  "encoder": 10.49,
+  "decoder": 4.79,
+  "decoder_kv": 4.58,
+  "candidate": 0.05
+ },
+ "kvExport": {
+  "feasible": true,
+  "cached": "self-attention past K/V per layer, 8 tensors of [1,8,64,32]",
+  "crossAttention": "encoder memory tensor is computed once and reused; its K/V projections are recomputed inside each step"
+ },
+ "testParity": {
+  "rows": 24,
+  "truncatedSourceRows": 10,
+  "fp32KvMatchesFixed": 24,
+  "fixedMatchesTorch": 17,
+  "kvMatchesTorch": 16,
+  "fixedKvEqual": 23
+ },
+ "sample": {
+  "id": "lu",
+  "input": "事件|角色=lu；行动=目标：我把门厅长桌拖到侧墙让出楼梯口。；候选=1:芬格尔的饭票夹=meal_tickets；2:弹力绷带=bandage；3:门厅翻倒长桌=foyer_table",
+  "gold": {
+   "result": "completed",
+   "item": "foyer_table",
+   "env": "stairs_clear"
+  },
+  "seedTokens": 6,
+  "sourceTokens": 77,
+  "candidates": 3,
+  "torchOutput": "result=completed|item=foyer_table|env=stairs_clear",
+  "onnxFixedOutput": "result=completed|item=foyer_table|env=stairs_clear",
+  "onnxKvOutput": "result=completed|item=foyer_table|env=stairs_clear",
+  "fixedTokens": 19,
+  "kvTokens": 19,
+  "fixedPointerSelections": 1,
+  "kvPointerSelections": 1,
+  "textsEqual": true,
+  "fixedIdsMatchTorch": true,
+  "kvIdsMatchTorch": true,
+  "fixedKvEqual": true,
+  "onnxCpuFixedP50Ms": 4.68,
+  "onnxCpuKvP50Ms": 1.32,
+  "kvCalls": 18,
+  "note": "onnxruntime CPU, int8; the browser probe measures ORT-WASM"
+ }
+}

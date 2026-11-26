@@ -1,0 +1,47 @@
+{
+ "method": "fixed-prefix",
+ "loadMs": 358,
+ "sampleId": "lu",
+ "sampleInput": "事件|角色=lu；行动=目标：我把门厅长桌拖到侧墙让出楼梯口。；候选=1:芬格尔的饭票夹=meal_tickets；2:弹力绷带=bandage；3:门厅翻倒长桌=foyer_table",
+ "samplePrefix": "EV|actor=lu|",
+ "expected": "result=completed|item=foyer_table|env=stairs_clear",
+ "vocabSize": 398,
+ "sameTokensAcrossDecoders": true,
+ "sameOutputAcrossDecoders": true,
+ "output": "result=completed|item=foyer_table|env=stairs_clear",
+ "tokens": 12,
+ "pointerSelections": 1,
+ "encodeMs": 19.1,
+ "perTokenMs": 12.91,
+ "decodeP50Ms": 150.6,
+ "decodeP95Ms": 157.7,
+ "fullP50Ms": 171.1,
+ "fullP95Ms": 178.3,
+ "runs": [
+  {
+   "fullMs": 178.3,
+   "decodeMs": 157.7,
+   "tokens": 12
+  },
+  {
+   "fullMs": 173.5,
+   "decodeMs": 154.8,
+   "tokens": 12
+  },
+  {
+   "fullMs": 171.1,
+   "decodeMs": 150.6,
+   "tokens": 12
+  },
+  {
+   "fullMs": 167.5,
+   "decodeMs": 148.6,
+   "tokens": 12
+  },
+  {
+   "fullMs": 164.5,
+   "decodeMs": 145.4,
+   "tokens": 12
+  }
+ ]
+}
