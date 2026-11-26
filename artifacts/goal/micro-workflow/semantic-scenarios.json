@@ -509,7 +509,7 @@
     {
      "id": "sm3-i-new-6",
      "class": "info_new",
-     "input": "我走进控制室，问曼施坦因现在比分。",
+     "input": "我走进演习观察席，问曼施坦因现在比分。",
      "purpose": "询问比分"
     },
     {
@@ -521,7 +521,7 @@
     {
      "id": "sm3-i-irrelevant-2",
      "class": "info_irrelevant_known",
-     "input": "我查看控制室的记分面板。",
+     "input": "我查看演习观察席的记分面板。",
      "purpose": "查看已有面板"
     },
     {
@@ -677,7 +677,7 @@
     {
      "id": "sm4-i-new-8",
      "class": "info_new",
-     "input": "我走进控制室，听广播里宣布的剩余时间。",
+     "input": "我走进演习观察席，听广播里宣布的剩余时间。",
      "purpose": "听广播获取时间信息"
     },
     {
@@ -761,7 +761,7 @@
     {
      "id": "sm5-e-success-12",
      "class": "env_success",
-     "input": "我走进控制室，把安全事件记录单翻开，再把广播话筒推到桌角。",
+     "input": "我走进演习观察席，把安全事件记录单翻开，再把广播话筒推到桌角。",
      "purpose": "两次环境操作"
     }
    ]
@@ -863,7 +863,7 @@
     {
      "id": "sm6-e-success-3",
      "class": "env_success",
-     "input": "我走进控制室，把记录单翻开，再把话筒推到桌角。",
+     "input": "我走进演习观察席，把记录单翻开，再把话筒推到桌角。",
      "purpose": "两次环境操作"
     },
     {
@@ -875,7 +875,7 @@
     {
      "id": "sm6-e-failure-1",
      "class": "env_failure",
-     "input": "我推控制室的门，门锁着，推不开。",
+     "input": "我推演习观察席的门，门锁着，推不开。",
      "purpose": "推门失败"
     },
     {
@@ -995,7 +995,7 @@
     {
      "id": "sm7-e-success-12",
      "class": "env_success",
-     "input": "我走进控制室，把记录单合上，再把话筒拉回桌中。",
+     "input": "我走进演习观察席，把记录单合上，再把话筒拉回桌中。",
      "purpose": "两次环境操作"
     }
    ]
@@ -1307,7 +1307,7 @@
     {
      "id": "sm8-e-success-12",
      "class": "env_success",
-     "input": "我走进控制室，把记录单翻开，再把话筒推到桌角。",
+     "input": "我走进演习观察席，把记录单翻开，再把话筒推到桌角。",
      "purpose": "两次环境操作"
     }
    ]
@@ -1349,7 +1349,7 @@
     {
      "id": "sm9-i-new-6",
      "class": "info_new",
-     "input": "我走进控制室，读记分面板上的比分。",
+     "input": "我走进演习观察席，读记分面板上的比分。",
      "purpose": "读比分"
     },
     {
@@ -1486,7 +1486,7 @@
     {
      "id": "sm10-i-read-5",
      "class": "info_new",
-     "input": "我走进控制室，读旗台状态面板上的停赛时间。",
+     "input": "我走进演习观察席，读旗台状态面板上的停赛时间。",
      "purpose": "移动+读面板"
     },
     {
@@ -1633,7 +1633,7 @@
     {
      "id": "sm13-i-r1",
      "class": "info_new",
-     "input": "我走进控制室，读安全广播话筒上通话键的说明。",
+     "input": "我走进演习观察席，读安全广播话筒上通话键的说明。",
      "purpose": "复合移动+话筒"
     },
     {
@@ -1887,6 +1887,140 @@
      "class": "info_new",
      "input": "我读备用蓝色识别带上的领用人。",
      "purpose": "备用蓝带"
+    }
+   ]
+  },
+  {
+   "id": "info-20",
+   "turns": [
+    {
+     "id": "sm20-i-r1",
+     "class": "info_new",
+     "input": "我走进器材棚，读芬格尔的相机上的存储卡。",
+     "purpose": "复合移动+相机"
+    },
+    {
+     "id": "sm20-i-r2",
+     "class": "info_new",
+     "input": "我查看芬格尔的饭票夹的夹口。",
+     "purpose": "饭票夹"
+    },
+    {
+     "id": "sm20-i-r3",
+     "class": "info_new",
+     "input": "我查看相机备用电池的触点形状。",
+     "purpose": "备用电池"
+    },
+    {
+     "id": "sm20-i-r4",
+     "class": "info_new",
+     "input": "我查看器材领用台下放备用护具的位置。",
+     "purpose": "领用台"
+    }
+   ]
+  },
+  {
+   "id": "info-21",
+   "turns": [
+    {
+     "id": "sm21-i-r1",
+     "class": "info_new",
+     "input": "我走进演习观察席，读安全广播话筒的扩音线路。",
+     "purpose": "复合移动+话筒"
+    },
+    {
+     "id": "sm21-i-r2",
+     "class": "info_new",
+     "input": "我读安全事件记录单上有没有预先认定责任人。",
+     "purpose": "记录单"
+    },
+    {
+     "id": "sm21-i-r3",
+     "class": "info_new",
+     "input": "我读旗台状态面板上关于最终占领的说明。",
+     "purpose": "面板"
+    },
+    {
+     "id": "sm21-i-r4",
+     "class": "info_new",
+     "input": "我走进值钟间，读检修图上关于护栏外横拉的说明。",
+     "purpose": "复合移动+检修图"
+    },
+    {
+     "id": "sm21-i-r5",
+     "class": "info_new",
+     "input": "我查看值钟间工作台下方的暗门。",
+     "purpose": "工作台"
+    }
+   ]
+  },
+  {
+   "id": "info-22",
+   "turns": [
+    {
+     "id": "sm22-i-r1",
+     "class": "info_new",
+     "input": "我走进钟楼门厅，查看门厅翻倒长桌留下的空隙。",
+     "purpose": "复合移动+长桌"
+    },
+    {
+     "id": "sm22-i-r2",
+     "class": "info_new",
+     "input": "我查看钟楼地下检修门外的把手。",
+     "purpose": "检修门"
+    },
+    {
+     "id": "sm22-i-r3",
+     "class": "info_new",
+     "input": "我走进服务巷检修口，查看服务巷检修盖的盖沿。",
+     "purpose": "复合移动+检修盖"
+    },
+    {
+     "id": "sm22-i-r4",
+     "class": "info_new",
+     "input": "我查看绝缘手电的腕绳。",
+     "purpose": "手电"
+    },
+    {
+     "id": "sm22-i-r5",
+     "class": "info_new",
+     "input": "我走进跨溪小桥，读医护通道标牌上的医护附楼方向。",
+     "purpose": "复合移动+标牌"
+    },
+    {
+     "id": "sm22-i-r6",
+     "class": "info_new",
+     "input": "我查看小桥松动护栏的桥面。",
+     "purpose": "护栏"
+    }
+   ]
+  },
+  {
+   "id": "info-23",
+   "turns": [
+    {
+     "id": "sm23-i-r1",
+     "class": "info_new",
+     "input": "我走上钟楼旗台外廊，查看中立白旗的杆脚。",
+     "purpose": "复合移动+白旗"
+    },
+    {
+     "id": "sm23-i-r2",
+     "class": "info_new",
+     "input": "我查看钟楼旗台底座的锁扣。",
+     "purpose": "底座"
+    },
+    {
+     "id": "sm23-i-r3",
+     "class": "info_new",
+     "input": "我查看旗台短安全绳搭在周映腰带边的一端。",
+     "purpose": "安全绳"
+    },
+    {
+     "id": "sm23-i-r4",
+     "class": "info_new",
+     "input": "我走进钟楼顶层，查看顶层玻璃门通向的外廊。",
+     "purpose": "复合移动+玻璃门"
     }
    ]
   }

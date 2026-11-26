@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sm22-i-r1",
+  "class": "info_new",
+  "input": "我走进钟楼门厅，查看门厅翻倒长桌留下的空隙。",
+  "purpose": "复合移动+长桌"
+ },
+ {
+  "id": "sm22-i-r2",
+  "class": "info_new",
+  "input": "我查看钟楼地下检修门外的把手。",
+  "purpose": "检修门"
+ },
+ {
+  "id": "sm22-i-r3",
+  "class": "info_new",
+  "input": "我走进服务巷检修口，查看服务巷检修盖的盖沿。",
+  "purpose": "复合移动+检修盖"
+ },
+ {
+  "id": "sm22-i-r4",
+  "class": "info_new",
+  "input": "我查看绝缘手电的腕绳。",
+  "purpose": "手电"
+ },
+ {
+  "id": "sm22-i-r5",
+  "class": "info_new",
+  "input": "我走进跨溪小桥，读医护通道标牌上的医护附楼方向。",
+  "purpose": "复合移动+标牌"
+ },
+ {
+  "id": "sm22-i-r6",
+  "class": "info_new",
+  "input": "我查看小桥松动护栏的桥面。",
+  "purpose": "护栏"
+ }
+]

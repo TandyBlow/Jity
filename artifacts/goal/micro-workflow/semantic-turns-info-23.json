@@ -1,0 +1,26 @@
+[
+ {
+  "id": "sm23-i-r1",
+  "class": "info_new",
+  "input": "我走上钟楼旗台外廊，查看中立白旗的杆脚。",
+  "purpose": "复合移动+白旗"
+ },
+ {
+  "id": "sm23-i-r2",
+  "class": "info_new",
+  "input": "我查看钟楼旗台底座的锁扣。",
+  "purpose": "底座"
+ },
+ {
+  "id": "sm23-i-r3",
+  "class": "info_new",
+  "input": "我查看旗台短安全绳搭在周映腰带边的一端。",
+  "purpose": "安全绳"
+ },
+ {
+  "id": "sm23-i-r4",
+  "class": "info_new",
+  "input": "我走进钟楼顶层，查看顶层玻璃门通向的外廊。",
+  "purpose": "复合移动+玻璃门"
+ }
+]

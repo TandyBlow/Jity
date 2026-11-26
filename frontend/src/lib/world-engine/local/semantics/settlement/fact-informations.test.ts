@@ -13,6 +13,7 @@ const state = {
       rules: { name: '演习规则牌', initialAppearance: '牌面写明：使用弗里嘉演习弹；护目镜必须戴好；医护白线禁射；15:45停赛。' },
       map: { name: '赛区路线图', initialAppearance: '图上画出庭院、东西回廊；地下检修通道用虚线标注。' },
       camera: { name: '芬格尔的相机', initialAppearance: '镜头盖已经取下；电池图标只剩一格。' },
+      chart: { name: '旗台机械检修图', initialAppearance: '图上画明：先向内压释放杆；更换时另一人需控制杆身。' },
     },
     locations: { lane: { name: '服务巷', slots: [] }, shed: { name: '器材棚', slots: [] } },
   },
@@ -25,6 +26,7 @@ const state = {
     rules: { position: { containerId: 'lane' } },
     map: { position: { containerId: 'shed' } },
     camera: { position: { containerId: 'shed' } },
+    chart: { position: { containerId: 'lane' } },
   },
   locations: { lane: {}, shed: {} },
 } as unknown as WorldState;
@@ -54,6 +56,17 @@ describe('information hints', () => {
   it('uses the sub-action destination of a move-and-read action', () => {
     const hint = informationHint('我走进服务巷，读规则牌上关于医护白线的条款', ['rules'], state, 'achieved', 'nono', 'shed', { containerId: 'lane' });
     expect(hint?.text).toBe('医护白线禁射');
+  });
+  it('uses the 关于 topic instead of an incidental locative gram', () => {
+    const hint = informationHint('我读检修图上关于杆身的说明', ['chart'], state, 'achieved', 'lu');
+    expect(hint?.text).toBe('更换时另一人需控制杆身');
+  });
+  it('matches a paraphrased 关于 topic by overlap', () => {
+    const hint = informationHint('我读演习规则牌上关于停赛时间的条款', ['rules'], state, 'achieved', 'lu');
+    expect(hint?.text).toBe('15:45停赛');
+  });
+  it('abstains on a generic look with no topic', () => {
+    expect(informationHint('我查看检修图', ['chart'], state, 'achieved', 'lu')).toBeNull();
   });
   it('reads a character appearance clause the same way', () => {
     const hint = informationHint('我查看唐骁左臂识别带的颜色', ['tang'], state, 'achieved', 'lu');

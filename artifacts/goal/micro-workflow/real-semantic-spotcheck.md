@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 91, "env:insufficient": 23, "info:insufficient": 94, "env:absent": 102, "env:conflict": 20, "env:present": 52, "info:present": 12}
+Counts: {"info:absent": 92, "env:insufficient": 23, "info:insufficient": 100, "env:absent": 111, "env:conflict": 23, "env:present": 52, "info:present": 17}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -1065,6 +1065,78 @@ Counts: {"info:absent": 91, "env:insufficient": 23, "info:insufficient": 94, "en
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: insufficient proposed=True content='路明非读出芬格尔饭票夹里的食堂饭票数量' support='读出里面的食堂饭票数量' evidence=narrative
 - env: absent proposed=False content='' support='' evidence=state
+
+## sm12-i-r1 (train, cache, info_new)
+- action: 我走进医护处置室，读医护箱里冷敷袋的位置。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "aid", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks"
+- info: insufficient proposed=True content='路明非在医护箱里找到冷敷袋位置' support='在医护箱里找到了那个位置' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm12-i-r2 (train, cache, info_new)
+- action: 我查看未启用冷敷袋的制冷层。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:nono", "before": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "pending", "task_nono_lu": "pending", "task_nono_battery": "pending", "task_nono_wounded": "pending", "task_nono_signal": "pending"}}, "after": {"position": {"containerId": "lane", "slotId": "slot_entry", "relativeTo": null}, "appearance": {}, "tasks": {"task_nono_squad": "achieved",
+- info: insufficient proposed=True content='制冷层内没有冷敷袋' support='里面没有冷敷袋' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm12-i-r3 (train, cache, info_new)
+- action: 我读弹力绷带是否用于固定脚踝。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得绷带用途信息' support='路明非读弹力绷带是否用于固定脚踝。（没有变化）' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=state
+
+## sm12-i-r4 (train, cache, info_new)
+- action: 我查看检查手套的纸套。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='一副检查手套装在纸套中' support='一副检查手套装在纸套中' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm12-i-r5 (train, cache, info_new)
+- action: 我查看医护空床的制动轮。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='制动轮已锁' support='制动轮已锁' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm12-i-r6 (train, cache, info_new)
+- action: 我读伤情登记夹上林亦舟的登记。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='林亦舟尚未登记' support='林亦舟尚未登记' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm13-i-r1 (train, cache, info_new)
+- action: 我走进控制室，读安全广播话筒上通话键的说明。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得通话键说明' support='只完成一部分' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm13-i-r2 (train, cache, info_new)
+- action: 我读旗台状态面板上的停赛时间。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得停赛时间信息' support='路明非读旗台状态面板上的停赛时间。（只完成一部分）' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm13-i-r3 (train, cache, info_new)
+- action: 我读旗台状态面板上的指示灯。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得有效信息' support='没有找到合适的词' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm13-i-r4 (train, cache, info_new)
+- action: 我读安全事件记录单上关于证人的栏目。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='证人栏目只读了一半，未获得完整信息' support='路明非读安全事件记录单上关于证人的栏目。（只完成一部分）' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm13-i-r5 (train, cache, info_new)
+- action: 我走进值钟间，读检修图上关于释放杆的说明。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "
+- info: present proposed=True content='图上画明：先向内压释放杆' support='图上画明：先向内压释放杆' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=settled
+
+## sm13-i-r6 (train, cache, info_new)
+- action: 我读检修图上关于杆身的说明。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "bell_room", "slotId": null, "relativeTo": null}, "appearance": {}, "ta
+- info: present proposed=True content='图上画明：先向内压释放杆' support='图上画明：先向内压释放杆' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=settled
 
 ## s01-act-move (train, cache, 20-input)
 - action: 我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。

@@ -50,6 +50,17 @@ export function informationHint(
   const arrival = destination?.containerId ? roomOf(state, destination.containerId) : null;
   if (memberId && roomOf(state, entityId) !== (arrival ?? actorRoom ?? roomOf(state, memberId))) return null;
   const clauses = item.initialAppearance.split(/[；。，,]/u).map((clause) => clause.trim()).filter(Boolean);
+  // 「关于X的说明」直接给出话题；只按 X 与外形的重叠挑分句
+  const about = /关于(.{2,6}?)的/u.exec(text)?.[1] ?? null;
+  if (about) {
+    let best: { clause: string; overlap: number } | null = null;
+    for (const clause of clauses) {
+      if (item.name.includes(about)) continue;
+      const overlap = longestShared(about, clause);
+      if (overlap >= 2 && (!best || overlap > best.overlap)) best = { clause, overlap };
+    }
+    return best ? { entityId, text: best.clause } : null;
+  }
   let best: { clause: string; length: number; at: number } | null = null;
   for (const clause of clauses) {
     let hit: { length: number; at: number } | null = null;
@@ -57,6 +68,8 @@ export function informationHint(
       for (let start = 0; start + size <= clause.length; start += 1) {
         const gram = clause.slice(start, start + size);
         if (onlyStopChars(gram) || item.name.includes(gram)) continue;
+        // 「图上」「桌上」是位置词，不是话题
+        if (size === 2 && /[上下里中内外旁边]$/u.test(gram)) continue;
         const at = text.indexOf(gram);
         if (at >= 0) { hit = { length: size, at }; break; }
       }
@@ -69,4 +82,15 @@ export function informationHint(
   }
   if (!best) return null;
   return { entityId, text: best.clause };
+}
+
+/** Longest common substring length (both strings are short clauses). */
+function longestShared(left: string, right: string): number {
+  let best = 0;
+  for (let size = Math.min(left.length, right.length); size > best; size -= 1) {
+    for (let start = 0; start + size <= left.length; start += 1) {
+      if (right.includes(left.slice(start, start + size))) return size;
+    }
+  }
+  return best;
 }

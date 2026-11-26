@@ -39,13 +39,22 @@ describe('action structure', () => {
     expect(s.category).toBe('move');
     expect(s.destination).toEqual({ entityId: 'lu', containerId: 'yard', slotId: null });
   });
-  it('reads a control-room walk inside a compound action', () => {
+  it('reads an observation-seat walk inside a compound action', () => {
     const withControl = {
       ...state,
-      initial: { ...state.initial, locations: { ...state.initial.locations, control: { name: '控制室' } } },
+      initial: { ...state.initial, locations: { ...state.initial.locations, control: { name: '演习观察席' } } },
+    } as unknown as WorldState;
+    const s = buildActionStructure('我走进演习观察席，把记录单翻开', scene, withControl, 2);
+    expect(s.subActions[0].destination?.containerId).toBe('control');
+  });
+  it('does not invent an unregistered room name', () => {
+    // 世界登记的是「演习观察席」，不是「控制室」；真实回合曾因此走不进去
+    const withControl = {
+      ...state,
+      initial: { ...state.initial, locations: { ...state.initial.locations, control: { name: '演习观察席' } } },
     } as unknown as WorldState;
     const s = buildActionStructure('我走进控制室，把记录单翻开', scene, withControl, 2);
-    expect(s.subActions[0].destination?.containerId).toBe('control');
+    expect(s.subActions[0].destination).toBeNull();
   });
   it('matches a slot label fragment', () => {
     const s = buildActionStructure('路明非走进庭院，站到第三根柱子旁。', scene, state, 2);
