@@ -171,3 +171,5 @@ G1 之后新增：
 - 环境状态补丁与语义场景（2026-11-26）：新增 `环境=实体:状态` 通道，micro results 动词表生成、updates 在 appearance 前写 add 记录、projection 纳入标签实体；真实回合 hatch_cover 记录「已被部分提开」，fact 与快照一致，驱动无报错。叙事草稿剥离结果台账（`（达到目的）`、行首冒号）与结构化标记。语义场景 32 回合（info-1/env-1 train、mix-1 test），labeler 从 updates prompt 取事实、用初始快照补首回合 diff，env 负例按明确失败/无环境动词判定，info 重复/已知按先前文本判定。决策 D-056。报告 `docs/tasks/semantic-env-channel-2026-11-26.md`。
 
 - 语义数据首轮（2026-11-26）：env-1 + info-1 完成，验收门 pass=true，raw 52 / train 28 / test 8；字段计数 info 16 pos / 2 neg、env 3 pos / 19 neg，trainingReady=false。事件级 env 导出 151 条（3 正/148 负）。env 正例仍是瓶颈；新增 env-4/env-5 复合操作路线与 info-4 观察、info-5 重复/失败路线。决策 D-056/D-058。
+
+- 冻结八场景（2026-11-26，scenarios-8）：状态 48/48、任务 14/14、唯一任务 1/1、false 0、missed 0、prose 问题 1 回合、均值 63.5 s、max 83.0 s。sc06 检修盖与 sc08 长桌环境外观均通过；6b 的 46/48 与 3 回合 prose 问题已改善。决策 D-061。
