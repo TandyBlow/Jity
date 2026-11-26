@@ -117,6 +117,16 @@ def initial_snapshot():
     return {'transport': {'state': state}}
 
 
+def world_identity():
+    path = ROOT / 'frontend/public/worlds/dragon-raja-free-day.world.json'
+    if not path.exists():
+        return None, ''
+    world = json.loads(path.read_text(encoding='utf8'))
+    identity = (world.get('initial') or {}).get('protagonistId') or world.get('protagonistId')
+    name = (((world.get('initial') or {}).get('characters') or {}).get(identity) or {}).get('name', '')
+    return identity, name
+
+
 def world_knowledge_text():
     path = ROOT / 'frontend/public/worlds/dragon-raja-free-day.world.json'
     if not path.exists():
@@ -145,13 +155,13 @@ def prompt_facts(turn):
     seen = set()
     for text in texts:
         for chunk in re.split(r'(?=\bf\d+ \[[^\]]+\] )', text):
-            match = re.match(r'f\d+ \[[^\]]+\] (.+)', chunk, re.S)
+            match = re.match(r'f\d+ \[([^\]\s]+)[^\]]*\] (.+)', chunk, re.S)
             if not match:
                 continue
-            fact = match.group(1).split('\n', 1)[0].strip()
+            fact = match.group(2).split('\n', 1)[0].strip()
             if fact and fact not in seen:
                 seen.add(fact)
-                facts.append(fact)
+                facts.append({'memberId': match.group(1), 'text': fact})
     return facts
 
 
@@ -159,9 +169,10 @@ def load_turn(turn, source, previous, checks=None, prior_text=''):
     settled_rows = settled(turn)
     known = {row.get('text') for row in settled_rows if row.get('text')}
     for fact in prompt_facts(turn):
-        if fact not in known:
-            settled_rows.append({'task': 'results', 'key': None, 'kind': 'text', 'text': fact, 'targets': None})
-            known.add(fact)
+        if fact['text'] not in known:
+            settled_rows.append({'task': 'results', 'key': fact['memberId'], 'kind': 'text',
+                                 'text': fact['text'], 'targets': None})
+            known.add(fact['text'])
     return {'id': turn['id'], 'source': source, 'input': turn.get('input') or '',
             'text': turn.get('text') or '', 'before': turn.get('before') or {},
             'after': turn.get('after') or {}, 'snapshotBefore': previous,
@@ -406,12 +417,23 @@ def classify(field, item, row, diff, support, content, source, settled_text):
     # info
     prior = row.get('priorText') or ''
     known = bool(prior and content and len(content) >= 4 and content in prior)
+    protagonist = row.get('protagonistName') or ''
+    player_source = source
+    if protagonist:
+        player_facts = [str(item.get('text') or '') for item in row.get('settled') or []
+                        if item.get('task') == 'results'
+                        and (item.get('key') == row.get('protagonistId') or protagonist in str(item.get('text') or ''))]
+        player_narration = ''.join(sentence for sentence in re.split(r'(?<=[。！？\n])', row.get('text') or '')
+                                   if protagonist in sentence)
+        player_source = player_narration + '\n' + '\n'.join(player_facts)
     if present:
         if not support_ok or not content:
             return 'insufficient'
         if ACTION_VERBS.search(content):
             return 'insufficient'
-        if support not in settled_text and support not in source:
+        if protagonist and support not in player_source:
+            return 'insufficient'
+        if not protagonist and support not in settled_text and support not in source:
             return 'insufficient'
         if known:
             return 'absent'
@@ -463,7 +485,8 @@ def export_training(rows):
     train, test = [], []
     for row in rows:
         labels = {field: item for field, item in (row.get('label') or {}).items() if item.get('trainable')}
-        item = {'id': row['id'], 'split': row['split'], 'input': row['input'], 'text': row['text'],
+        item = {'id': row['id'], 'split': row['split'], 'class': row.get('class'),
+                'input': row['input'], 'text': row['text'],
                 'settled': row['settled'], 'stateDiff': row['stateDiff'], 'labels': labels}
         if row['split'] == 'train' and labels:
             train.append(item)
@@ -486,6 +509,10 @@ def write_manifest(rows, train, test):
 
 def main():
     rows = load_scenarios() + load_semantic_routes() + load_run41()
+    protagonist_id, protagonist_name = world_identity()
+    for row in rows:
+        row['protagonistId'] = protagonist_id
+        row['protagonistName'] = protagonist_name
     cache_only = os.environ.get('CACHE_ONLY', '').lower() in ('1', 'true')
     output = []
     for index, row in enumerate(rows):
