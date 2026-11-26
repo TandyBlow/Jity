@@ -199,20 +199,25 @@ export function createMicroTaskProposer(options: MicroTaskProposerOptions = {}):
       keyword: options.threshold?.keyword ?? 0.5,
     };
     const rows: Array<{ condition: TaskCondition; factId: string; text: string; taskId: Id; goal: string }> = [];
+    // A fact need not belong to the task owner: another character's answer,
+    // gift or action can satisfy the condition. Judge every pending task.
+    const pendingTasks = Object.entries(request.state.characters).flatMap(([ownerId, current]) => {
+      const owner = request.state.initial.characters[ownerId];
+      return Object.values(current.tasks)
+        .filter((task) => task.status === 'pending')
+        .map((task) => ({ ownerId, owner, task }));
+    });
     for (const fact of request.facts) {
       const key = `${fact.memberId}:${fact.text}`;
       if (seenFacts.has(key)) continue;
       seenFacts.add(key);
-      const current = request.state.characters[fact.memberId];
-      const initial = request.state.initial.characters[fact.memberId];
-      if (!current || !initial) continue;
-      for (const task of Object.values(current.tasks)) {
-        if (task.status !== 'pending') continue;
+      for (const { ownerId, owner, task } of pendingTasks) {
+        if (!owner) continue;
         let entry = ledger.get(task.id);
         if (!entry) {
-          const conditions = taskConditions(task.goal, request.state, initial.name);
+          const conditions = taskConditions(task.goal, request.state, owner.name);
           if (!conditions.length) continue;
-          entry = { ownerId: fact.memberId, conditions, status: {}, active: {}, evidence: {}, invalidatedAt: {} };
+          entry = { ownerId, conditions, status: {}, active: {}, evidence: {}, invalidatedAt: {} };
           for (const condition of conditions) {
             entry.status[condition.id] = 'none';
             entry.active[condition.id] = false;

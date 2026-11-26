@@ -112,6 +112,26 @@ describe('task proposer', () => {
     expect(again?.supports).toEqual([expect.objectContaining({ taskId: 'task_hero_key' })]);
   });
 
+  it('credits another character\'s answer to the task owner', async () => {
+    const world = state();
+    const ask = { id: 'task_hero_ask', ownerId: 'hero', parentTaskId: null, goal: '向阿宁问清门后有没有人', status: 'pending' as const };
+    world.characters.hero.tasks.task_hero_ask = { ...ask };
+    world.initial.characters.hero.tasks.task_hero_ask = { ...ask };
+    const proposer = createMicroTaskProposer({
+      scoring: (rows) => rows.map((row) => {
+        if (row.condition.kind === 'target') return { label: row.text.includes('阿宁') ? 'satisfied' as const : 'none' as const, confidence: 0.95 };
+        if (row.condition.kind === 'confirmation') return { label: row.text.includes('回答') ? 'satisfied' as const : 'none' as const, confidence: 0.95 };
+        return { label: 'none' as const, confidence: 0.95 };
+      }),
+    });
+    const asked = await proposer({ state: world, facts: [{ id: 'f1', memberId: 'hero', text: '路明非问阿宁门后有没有人。' }] });
+    expect(asked?.pending.find((row) => row.taskId === 'task_hero_ask')).toMatchObject({ matched: 1, total: 2 });
+    expect(asked?.supports).toEqual([]);
+
+    const answered = await proposer({ state: world, facts: [{ id: 'f2', memberId: 'ally', text: '阿宁回答路明非，门后没有人。' }] });
+    expect(answered?.supports).toEqual([expect.objectContaining({ characterId: 'hero', taskId: 'task_hero_ask' })]);
+  });
+
   it('does not count keyword or attempt as a satisfied condition', async () => {
     const proposer = createMicroTaskProposer({
       scoring: (rows) => rows.map(() => ({ label: 'keyword' as const, confidence: 0.9 })),
