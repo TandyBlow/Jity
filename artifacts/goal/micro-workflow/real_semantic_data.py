@@ -35,6 +35,9 @@ CACHE_VERSION = 'v2'
 PROMPT_VERSION = 'v2'
 NEG_INFO = re.compile('没有答|没答|未答|拒绝回答|没有说|没说|未能|问不出|没有回应')
 NEG_ENV = re.compile('没有动|没有打开|没有移动|未打开|未移动|保持原样|没有变化')
+ENV_HINT = re.compile(r'环境[=＝]([^:：；\s]+)[:：]([^；。\n]+)')
+ENV_FAIL = re.compile('拉不开|打不开|推不开|掀不开|纹丝不动|卡住|卡死|锁着|锁上|被阻止|无法|不能|失败|没有成功|没能|未能')
+INFO_WORDS = re.compile('问|打听|询问|请教|读|看|查看|观察|检查|确认|核对|发现|听见|听到|告诉|回答|说明|报告|念|搜索|翻找')
 
 
 def load_env():
@@ -64,12 +67,88 @@ def settled(row):
     return results
 
 
-def load_turn(turn, source, previous, checks=None):
+def structured_actions(turn):
+    rows = []
+    for action in turn.get('actions') or []:
+        if not isinstance(action, dict) or action.get('recordKind') != 'result' or action.get('task') != 'action':
+            continue
+        value = action.get('value')
+        if not isinstance(value, dict):
+            continue
+        structure = value.get('structured')
+        if not isinstance(structure, dict):
+            continue
+        rows.append({'key': action.get('key'), 'text': value.get('text') or '',
+                     'category': structure.get('category'),
+                     'itemIds': structure.get('itemIds') or [],
+                     'destination': structure.get('destination')})
+    return rows
+
+
+def read_env_hints(texts):
+    hints = []
+    for text in texts:
+        if not isinstance(text, str):
+            continue
+        for match in ENV_HINT.finditer(text):
+            entity = match.group(1).strip().strip('<>')
+            body = match.group(2).strip()
+            if entity and body:
+                hints.append({'entityId': entity, 'text': body})
+    return hints
+
+
+def world_knowledge_text():
+    path = ROOT / 'frontend/public/worlds/dragon-raja-free-day.world.json'
+    if not path.exists():
+        return ''
+    world = json.loads(path.read_text(encoding='utf8'))
+    initial = world.get('initial') or {}
+    parts = []
+    for group in ('locations', 'items', 'characters'):
+        for entity in (initial.get(group) or {}).values():
+            parts.append(str(entity.get('name') or ''))
+            parts.append(str(entity.get('description') or ''))
+            parts.append(str(entity.get('initialAppearance') or ''))
+    return '\n'.join(part for part in parts if part)
+
+
+def prompt_facts(turn):
+    texts = []
+    product = turn.get('product') or {}
+    for row in product.get('semanticPrompts') or []:
+        if isinstance(row, dict) and isinstance(row.get('prompt'), str):
+            texts.append(row['prompt'])
+    for call in (product.get('submission') or {}).get('calls') or []:
+        if isinstance(call, dict) and isinstance(call.get('prompt'), str):
+            texts.append(call['prompt'])
+    facts = []
+    seen = set()
+    for text in texts:
+        for chunk in re.split(r'(?=\bf\d+ \[[^\]]+\] )', text):
+            match = re.match(r'f\d+ \[[^\]]+\] (.+)', chunk, re.S)
+            if not match:
+                continue
+            fact = match.group(1).split('\n', 1)[0].strip()
+            if fact and fact not in seen:
+                seen.add(fact)
+                facts.append(fact)
+    return facts
+
+
+def load_turn(turn, source, previous, checks=None, prior_text=''):
+    settled_rows = settled(turn)
+    known = {row.get('text') for row in settled_rows if row.get('text')}
+    for fact in prompt_facts(turn):
+        if fact not in known:
+            settled_rows.append({'task': 'results', 'key': None, 'kind': 'text', 'text': fact, 'targets': None})
+            known.add(fact)
     return {'id': turn['id'], 'source': source, 'input': turn.get('input') or '',
             'text': turn.get('text') or '', 'before': turn.get('before') or {},
             'after': turn.get('after') or {}, 'snapshotBefore': previous,
             'snapshot': turn.get('snapshotAfterTurn') or {},
-            'settled': settled(turn), 'checks': checks or []}
+            'settled': settled_rows, 'structured': structured_actions(turn),
+            'priorText': prior_text, 'checks': checks or []}
 
 
 def load_run41():
@@ -100,6 +179,32 @@ def load_scenarios():
                               (checks.get(turn['id']) or {}).get('checks') or []))
         previous = turn.get('snapshotAfterTurn') or {}
     return rows
+
+
+def load_semantic_routes():
+    definition = json.loads((HERE / 'semantic-scenarios.json').read_text(encoding='utf8'))
+    meta = {}
+    for route in definition.get('routes') or []:
+        for turn in route.get('turns') or []:
+            meta[turn['id']] = {'class': turn.get('class'), 'split': route.get('split', 'train')}
+    rows = {}
+    for path in sorted(HERE.glob('evidence-semantic-*.json'), key=lambda item: item.stat().st_mtime):
+        data = json.loads(path.read_text(encoding='utf8'))
+        if data.get('status') not in ('COMPLETED', 'FAILED', 'PREFLIGHT'):
+            continue
+        previous = None
+        prior = world_knowledge_text()
+        for turn in data.get('turns') or []:
+            row = load_turn(turn, 'semantic', previous, prior_text=prior)
+            info = meta.get(turn['id']) or {}
+            row['class'] = info.get('class')
+            row['split'] = info.get('split', 'train')
+            row['evidenceFile'] = path.name
+            rows[row['id']] = row
+            previous = turn.get('snapshotAfterTurn') or {}
+            prior += '\n' + (turn.get('text') or '') + '\n' + ' '.join(
+                str(item.get('text') or '') for item in settled(turn))
+    return list(rows.values())
 
 
 def active_appearance(records):
@@ -180,6 +285,7 @@ def prompt(row, diff):
 - 只标已结算行动/状态差分支持的事实；意图、计划、别人未完成的行为不算。
 - info：本回合实际获得的新信息；被拒绝/没答出 = present=false。
 - env：环境或物品状态实际改变；移动、拿起、转移不算 env。
+- 已结算事实带 环境=<实体>:<状态> 时，表示该实体本轮被判定发生了环境变化；核验器会对照状态差分。
 - support 必须来自已结算行动、叙事或状态差分；玩家意图只是意图，不能当事实支持。
 - 如果行动说 env 改变但状态差分没有对应变化，不要改成 false；保留候选，核验器会标 conflict。"""
 
@@ -236,12 +342,19 @@ def classify(field, item, row, diff, support, content, source, settled_text):
     support_ok = bool(support and support in source)
     if field == 'env':
         env_keys = diff.get('env') or []
+        hints = read_env_hints([settled_text, row.get('text') or ''])
+        hint_keys = {hint['entityId'] for hint in hints}
+        structured = row.get('structured') or []
+        capable = bool(ENV_ACTION.search(settled_text)) or any(
+            ENV_ACTION.search(str(action.get('text') or '')) for action in structured)
         if present:
-            if not support_ok or not content:
+            if not content:
                 return 'insufficient'
             if not diff['known']:
                 return 'insufficient'
             if env_keys:
+                if hint_keys & {key.split(':', 1)[-1] for key in env_keys}:
+                    return 'present'
                 values = []
                 for key in env_keys:
                     for bucket in ('changed', 'added'):
@@ -252,29 +365,45 @@ def classify(field, item, row, diff, support, content, source, settled_text):
                        (support and support in value) for value in values):
                     return 'present'
                 return 'conflict'
-            if ENV_ACTION.search(settled_text + source):
+            if hints:
+                return 'conflict'
+            if capable:
                 return 'conflict'
             return 'insufficient'
         if not diff['known']:
             return 'insufficient'
         if env_keys:
             return 'conflict'
-        if ENV_ACTION.search(settled_text):
+        if hints:
             return 'conflict'
-        if NEG_ENV.search(settled_text):
+        partial = '只完成一部分' in settled_text or '部分' in settled_text
+        if not partial and (NEG_ENV.search(settled_text + source) or ENV_FAIL.search(settled_text + source)):
             return 'absent'
-        return 'insufficient'
+        if capable:
+            return 'conflict'
+        if not structured:
+            return 'insufficient'
+        return 'absent'
     # info
+    prior = row.get('priorText') or ''
+    known = bool(prior and content and len(content) >= 4 and content in prior)
     if present:
         if not support_ok or not content:
             return 'insufficient'
         if ACTION_VERBS.search(content):
             return 'insufficient'
-        return 'present' if (support in settled_text or support in source) else 'insufficient'
+        if support not in settled_text and support not in source:
+            return 'insufficient'
+        if known:
+            return 'absent'
+        return 'present'
     if NEG_INFO.search(settled_text + source):
         return 'absent'
     if re.search('告诉|回答|说明|报告|问清|核实', settled_text) and not ACTION_VERBS.search(settled_text):
         return 'conflict'
+    structured = row.get('structured') or []
+    if structured and not any(INFO_WORDS.search(str(action.get('text') or '')) for action in structured):
+        return 'absent'
     return 'insufficient'
 
 
@@ -337,7 +466,7 @@ def write_manifest(rows, train, test):
 
 
 def main():
-    rows = load_scenarios() + load_run41()
+    rows = load_scenarios() + load_semantic_routes() + load_run41()
     cache_only = os.environ.get('CACHE_ONLY', '').lower() in ('1', 'true')
     output = []
     for index, row in enumerate(rows):
@@ -351,7 +480,8 @@ def main():
                        'before': row['before'], 'after': row['after'],
                        'stateDiff': verified['stateDiff'], 'label': verified['fields'],
                        'labelSource': source, 'labelMeta': cache_meta(row),
-                       'split': 'test' if row['id'] in SCENARIO_IDS else 'train'})
+                       'split': 'test' if (row['id'] in SCENARIO_IDS or row.get('split') == 'test') else 'train',
+                       'class': row.get('class'), 'evidenceFile': row.get('evidenceFile')})
         print(index + 1, row['id'], source,
               {field: verified['fields'][field]['status'] for field in ('info', 'env')}, file=sys.stderr)
         time.sleep(0.2)
@@ -366,7 +496,7 @@ def main():
              'insufficient and conflict are not negative samples.', '',
              f'Counts: {json.dumps(counts, ensure_ascii=False)}', '']
     for row in output:
-        lines.append(f"## {row['id']} ({row['split']}, {row['labelSource']})")
+        lines.append(f"## {row['id']} ({row['split']}, {row['labelSource']}, {row.get('class') or row['source']})")
         lines.append(f"- action: {row['input']}")
         lines.append(f"- state diff: {json.dumps(row['stateDiff'], ensure_ascii=False)[:500]}")
         for field in ('info', 'env'):

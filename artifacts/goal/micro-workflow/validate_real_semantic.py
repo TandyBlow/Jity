@@ -6,8 +6,8 @@ Exit 1 on any violation. The six conditions:
    conflict fields;
 2. every used label has a v2 cache record with a matching input hash, model and
    evidence (model-generated labels included, not only cache hits);
-3. the 20 product rows are train and the 8 frozen scenarios are test; no
-   scenario in train;
+3. the 20 product rows and semantic train routes are train; the 8 frozen
+   scenarios and semantic test routes are test; no scenario in train;
 4. no settled action echo / player-intent support;
 5. every cache record used has the required metadata;
 6. test rows are scenario-only and never enter train or threshold fitting.
@@ -42,6 +42,11 @@ def expected_ids():
     spec.loader.exec_module(module)
     train_ids = {row['id'] for row in module.load_run41()}
     test_ids = {row['id'] for row in module.load_scenarios()}
+    for row in module.load_semantic_routes():
+        if row.get('split') == 'test':
+            test_ids.add(row['id'])
+        else:
+            train_ids.add(row['id'])
     return train_ids, test_ids
 
 

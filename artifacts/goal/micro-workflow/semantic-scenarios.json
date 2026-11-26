@@ -1,0 +1,217 @@
+{
+ "version": 1,
+ "world": "dragon-raja-free-day",
+ "note": "Real-game semantic scenarios; the checks are evaluation-only.",
+ "routes": [
+  {
+   "id": "info-1",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm-i-new-1",
+     "class": "info_new",
+     "input": "我压低声音问诺诺：红方的人现在都控制着哪些方向？",
+     "purpose": "问一个诺诺可能知道、场景描述里没有的局势信息"
+    },
+    {
+     "id": "sm-i-repeat-1",
+     "class": "info_repeat",
+     "input": "我把同一个问题再问诺诺一遍：红方都控制着哪些方向？",
+     "purpose": "重复上一回合已经得到回答的问题"
+    },
+    {
+     "id": "sm-i-fail-1",
+     "class": "info_failure",
+     "input": "我问诺诺：这次演习的口令是什么？",
+     "purpose": "问一个诺诺不可能知道的口令，期待明确没有答案"
+    },
+    {
+     "id": "sm-i-partial-1",
+     "class": "info_partial",
+     "input": "我问诺诺两件事：蓝方集结点在哪，口令是什么；她只答了蓝方集结点。",
+     "purpose": "两个问题只得到一个回答"
+    },
+    {
+     "id": "sm-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我把胸前的护目镜拿起来，翻看镜带有没有松。",
+     "purpose": "查看已知物品状态，不构成新信息"
+    },
+    {
+     "id": "sm-i-new-2",
+     "class": "info_new",
+     "input": "我沿服务巷走进器材棚，到领用台前问芬格尔：器材笼的钥匙在谁手里？",
+     "purpose": "移动后询问钥匙归属，场景描述未给出答案"
+    },
+    {
+     "id": "sm-i-fail-2",
+     "class": "info_failure",
+     "input": "我问芬格尔：地下检修通道里有没有埋伏？",
+     "purpose": "问一个对方无法确认的问题"
+    },
+    {
+     "id": "sm-i-irrelevant-2",
+     "class": "info_irrelevant_known",
+     "input": "我低头核对演习背心胸袋里那只弹匣的位置。",
+     "purpose": "核对已知装备，不构成新信息"
+    },
+    {
+     "id": "sm-i-partial-2",
+     "class": "info_partial",
+     "input": "我问秦越：器材笼里还有几副担架，笼门什么时候开；他只答了担架数量。",
+     "purpose": "两个问题只得到一个回答"
+    },
+    {
+     "id": "sm-i-new-3",
+     "class": "info_new",
+     "input": "我问秦越：演习结束后器材要怎么归还？",
+     "purpose": "询问流程信息，场景描述未给出答案"
+    },
+    {
+     "id": "sm-i-repeat-2",
+     "class": "info_repeat",
+     "input": "我再次问秦越：演习结束后器材要怎么归还？",
+     "purpose": "重复刚问过的流程问题"
+    },
+    {
+     "id": "sm-i-irrelevant-3",
+     "class": "info_irrelevant_known",
+     "input": "我靠着领用台站了一会儿，听棚外的枪声。",
+     "purpose": "等待并听声音，不获取具体信息"
+    }
+   ]
+  },
+  {
+   "id": "env-1",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm-e-success-1",
+     "class": "env_success",
+     "input": "我抓住检修盖的拉环，把服务巷检修盖提开，露出下面的短梯。",
+     "purpose": "检修盖实际被提开，环境状态改变"
+    },
+    {
+     "id": "sm-e-move-1",
+     "class": "env_irrelevant_move",
+     "input": "我走进中央庭院。",
+     "purpose": "纯移动，环境不变"
+    },
+    {
+     "id": "sm-e-success-2",
+     "class": "env_success",
+     "input": "我把庭院南端倒放的长椅拖开，让出石花槽后的通道。",
+     "purpose": "长椅被移开，环境状态改变"
+    },
+    {
+     "id": "sm-e-transfer-1",
+     "class": "env_item_transfer",
+     "input": "我把护目镜从胸前取下来，塞进背心的胸袋。",
+     "purpose": "物品换容器，环境不变"
+    },
+    {
+     "id": "sm-e-failure-1",
+     "class": "env_failure",
+     "input": "我走进器材棚，用力推器材笼的挂锁，锁纹丝不动。",
+     "purpose": "尝试改变器材笼状态但失败"
+    },
+    {
+     "id": "sm-e-success-3",
+     "class": "env_success",
+     "input": "我穿过庭院走进钟楼门厅，把虚掩的正门完全推开。",
+     "purpose": "门厅正门被推开，地点外观改变"
+    },
+    {
+     "id": "sm-e-success-4",
+     "class": "env_success",
+     "input": "我抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口。",
+     "purpose": "长桌被拖开，楼梯口恢复通行"
+    },
+    {
+     "id": "sm-e-partial-1",
+     "class": "env_partial",
+     "input": "我抬起长桌的一端，只挪开一条能侧身过的缝，担架还是过不去。",
+     "purpose": "长桌只移动一点，环境部分改变"
+    },
+    {
+     "id": "sm-e-fail-2",
+     "class": "env_failure",
+     "input": "我回身去拉钟楼地下检修门，门从里面插着门闩，拉不开。",
+     "purpose": "尝试打开检修门但被门闩挡住"
+    },
+    {
+     "id": "sm-e-move-2",
+     "class": "env_irrelevant_move",
+     "input": "我沿楼梯走上钟楼顶层。",
+     "purpose": "纯移动，环境不变"
+    },
+    {
+     "id": "sm-e-success-5",
+     "class": "env_success",
+     "input": "我推开顶层玻璃门，走到旗台外廊。",
+     "purpose": "玻璃门被推开，地点状态改变"
+    },
+    {
+     "id": "sm-e-transfer-2",
+     "class": "env_item_transfer",
+     "input": "我把中立白旗从旗座的插槽里取下来，卷好。",
+     "purpose": "物品转移，环境不变"
+    }
+   ]
+  },
+  {
+   "id": "mix-1",
+   "split": "test",
+   "turns": [
+    {
+     "id": "sm-m-1",
+     "class": "mixed",
+     "input": "我向诺诺问清红方控制方向，然后戴上护目镜。",
+     "purpose": "同一回合包含信息获取与装备操作"
+    },
+    {
+     "id": "sm-m-2",
+     "class": "mixed",
+     "input": "我把护目镜递给诺诺，然后走进庭院。",
+     "purpose": "物品转移加移动"
+    },
+    {
+     "id": "sm-m-3",
+     "class": "mixed",
+     "input": "我走进器材棚，问秦越笼门什么时候开。",
+     "purpose": "移动加询问"
+    },
+    {
+     "id": "sm-m-4",
+     "class": "mixed",
+     "input": "我把弹药箱的盖子完全掀开，取出一只弹匣。",
+     "purpose": "环境变化加物品转移"
+    },
+    {
+     "id": "sm-m-5",
+     "class": "mixed",
+     "input": "我走到服务巷检修口，把盖子提开，朝下面喊有没有人。",
+     "purpose": "环境变化加喊话"
+    },
+    {
+     "id": "sm-m-6",
+     "class": "mixed",
+     "input": "我走进钟楼门厅，把长桌拖到侧墙，然后查看楼梯口是否畅通。",
+     "purpose": "环境变化加观察"
+    },
+    {
+     "id": "sm-m-7",
+     "class": "mixed",
+     "input": "我推开顶层玻璃门，把白旗从旗座取下来。",
+     "purpose": "环境变化加物品转移"
+    },
+    {
+     "id": "sm-m-8",
+     "class": "mixed",
+     "input": "我把白旗插回旗座，然后退回楼梯。",
+     "purpose": "环境变化加移动"
+    }
+   ]
+  }
+ ]
+}
