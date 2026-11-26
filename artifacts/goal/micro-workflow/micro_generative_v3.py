@@ -25,6 +25,9 @@ HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('v2', HERE / 'micro_generative_v2.py')
 v2 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v2)
+from hand_train import FROST, ROWS as HAND_TRAIN  # noqa: E402
+
+v2.WORLDS['frost'] = FROST
 
 ENTITY = {'loc', 'item', 'target', 'dest'}
 CAND_TOKEN = re.compile(r'[A-Za-z_][A-Za-z0-9_]*|[一-鿿]')
@@ -358,7 +361,7 @@ def main():
     random.seed(20261126)
     torch.manual_seed(20261126)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    train_rows = v2.training_rows()
+    train_rows = v2.training_rows() + [v2.row_from_hand(row) for row in HAND_TRAIN]
     test_rows = [v2.row_from_hand(row) for row in v2.HAND_ROWS]
     for row in train_rows + test_rows:
         continuation, gold, fields = candidate_continuation(row)
@@ -388,11 +391,16 @@ def main():
     scratch_metrics['eTokenInVocab'] = '<e>' in vocab.stoi
     scratch_metrics['candVocab'] = len(CAND_VOCAB.itos)
     report = {'trainRows': len(train_rows), 'testRows': len(test_rows),
+              'handTrainRows': len(HAND_TRAIN), 'handTestRows': len(v2.HAND_ROWS),
               'arms': {'bert_candidate_pointer': bert_metrics, 'scratch_candidate_pointer': scratch_metrics}}
+    train_events = [row for row in train_rows if row['kind'] == 'events']
+    test_events = [row for row in test_rows if row['kind'] == 'events']
+    random.Random(20261126).shuffle(train_events)
+    classifier, labels = v2.train_result(train_events, tokenizer, device)
+    report['resultClassifier'] = v2.eval_result(classifier, labels, tokenizer, test_events, device)
     v2_path = v2.OUT / 'v2-report.json'
     if v2_path.exists():
         v2_report = json.loads(v2_path.read_text(encoding='utf8'))
-        report['resultClassifier'] = v2_report.get('resultClassifier')
         report['v2Comparison'] = {arm: {key: v2_report['arms'][arm].get(key)
                                         for key in ('fieldRecall', 'entityFieldRecall', 'byWorld')}
                                   for arm in v2_report.get('arms', {})}

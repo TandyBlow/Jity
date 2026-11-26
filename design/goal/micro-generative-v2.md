@@ -33,28 +33,40 @@ to select unseen candidates.
 
 ## v3: candidate-scoring pointer
 
-| arm | field R | entity R | open R | dragon entity | mistport entity | result | params | p50 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| BERT candidate | 0.244 | 0.333 | 0.196 | 0.364 | 0.200 | 0.583 | 14.80M | 47.1 ms |
-| scratch candidate | 0.205 | 0.296 | 0.157 | 0.364 | 0.000 | 0.500 | 7.82M | 41.8 ms |
+Without hand-authored training rows (95 rule rows), then with 28 hand-authored
+training rows added (123 train; the 24-row hand test is unchanged):
+
+| train | arm | field R | entity R | open R | dragon entity | mistport entity | result | params | p50 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 95 rule | BERT candidate | 0.244 | 0.333 | 0.196 | 0.364 | 0.200 | 0.583 | 14.80M | 47.1 ms |
+| 95 rule | scratch candidate | 0.205 | 0.296 | 0.157 | 0.364 | 0.000 | 0.500 | 7.82M | 41.8 ms |
+| +28 hand | BERT candidate | 0.346 | 0.481 | 0.275 | 0.500 | 0.400 | 0.500 | 14.83M | 93.7 ms |
+| +28 hand | scratch candidate | 0.295 | 0.333 | 0.275 | 0.364 | 0.200 | 0.750 | 7.86M | 85.7 ms |
 
 The candidate head is the first arm to beat free IDs overall (0.244 vs 0.231)
 and the only arm to select unseen-world entities (mistport 0.200 vs 0). The
-gain is small and the mistport subset is four rows. The frozen BERT encoder is
-required: the scratch candidate head gets seen-world entities but 0 on
-mistport.
+28 hand rows raise the BERT candidate field recall 0.244→0.346, entity
+0.333→0.481 and mistport entity 0.200→0.400; the scratch arm also gains
+(0.205→0.295, mistport 0→0.2). The mistport subset is four rows; this is a
+data-scaling signal, not a final number.
 
-The open-field recall (0.196) is still mostly `result`/`conf`; `info`, `env`,
-`promise`, `decision`, `cause` and `time` remain 0.
+The `open R` is still `result`/`conf`/`act`/`decision`/`time`; `info`, `env`,
+`promise`, `cause` and `neg` remain 0 even after the hand rows that contain
+them. The open-text generation needs much more data and a different decoding
+target, not only more pointer rows.
+
+The p50 rose from ~47 to ~94 ms because the hand-trained model emits longer
+outputs (more fields); this is generation length, not a larger model.
 
 ## Result classifier vs generative result
 
 The BERT + linear classifier scores 0.583 on 12 hand events; it predicts
-`completed` for every row. The BERT candidate model's generated `result` is also
-0.583; the scratch candidate is 0.500. The classifier is a proxy, not the
-product results head, and the classes are imbalanced (7/12 `completed`). The
-data does not show a generation advantage for this finite field; keep it as a
-classifier until a larger balanced set says otherwise.
+`completed` for every row. With 95 rule rows, the BERT candidate generated
+`result` was also 0.583 and scratch 0.500. With the 28 hand rows, BERT drops to
+0.500 and scratch rises to 0.750. The classifier is a proxy, not the product
+results head, and the test has 7/12 `completed`. Across the two runs there is no
+stable generation advantage; a class-weighted classifier is the safer baseline
+and must be compared on a larger balanced set.
 
 ## Findings
 
@@ -62,16 +74,21 @@ classifier until a larger balanced set says otherwise.
    Emitting an index token is not a pointer: it did not beat free IDs. Scoring
    candidate states from the decoder is the first representation that selects
    unseen entities.
-2. The pretrained encoder is necessary for unseen entities. BERT candidate
-   mistport entity 0.200 vs scratch 0.000; BERT free overall 0.231 vs scratch
-   0.064. The cost is 14.8M params and ~47 ms p50 GPU.
-3. Data remains the bottleneck. 95 training rows, 24 hand test rows; the open
-   fields have too few examples and score 0. The result class is balanced poorly.
-   This is a seed, not a scale comparison.
-4. Finite categories should stay classifiers. The result classifier ties the
-   generative result; the classifier is cheaper and easier to calibrate.
-5. Browser cost is not measured. The v2/v3 numbers are PyTorch GPU; the pilot's
-   independent ONNX/CPU measurements cover the v1 models only.
+2. The pretrained encoder is necessary for unseen entities. With hand train,
+   BERT candidate mistport entity 0.400 vs scratch 0.200; BERT free overall
+   0.231 vs scratch 0.064 without hand train. The cost is 14.8M params and
+   ~47–94 ms p50 GPU depending on output length.
+3. Data remains the bottleneck, but it responds. 28 hand rows raised the BERT
+   candidate field recall 0.244→0.346 and entity 0.333→0.481. The open fields
+   (`info/env/promise/cause/neg`) still score 0 even when the hand rows contain
+   them; the decoder needs many more open-field examples and a different target.
+4. Finite categories should stay classifiers. The result classifier (0.583)
+   beats BERT generation (0.500) and loses to scratch generation (0.750) on 12
+   rows; no stable generation advantage. Use a class-weighted classifier
+   baseline, not generation, for `result`.
+5. Browser cost is not measured. The v2/v3 numbers are PyTorch GPU; the v1
+   ONNX graphs are fixed-shape at their traced lengths, so they cannot be used
+   as dynamic browser models. See the v1 shape caveat.
 
 ## Decision
 
@@ -80,13 +97,17 @@ classifier until a larger balanced set says otherwise.
   outside the model.
 - Keep `result` as a classifier. Do not use generation for finite labels.
 - Use generation only for open fields after hand-authored training data covers
-  `info/env/promise/decision/cause`, and for composite task conditions.
-- Expand hand-authored training data next (not only the test set), with
-  separate test sets by world, task type and event type. The current test set
-  is 24 rows and cannot support a five-arm claim.
+  `info/env/promise/decision/cause`, and for composite task conditions. The
+  28-row hand train seed did not move those fields off 0; the next batch must be
+  several hundred rows with balanced open-field targets, not more prefixes.
+- Continue hand-authored training data (the 28 rows are an agent-authored seed,
+  not user-verified), with separate test sets by world, task type and event
+  type. The current 24-row test cannot support a five-arm claim.
 - Then wire the hybrid into `/world-local`, run the frozen
   `scenarios-independent.json` five-arm comparison, and measure
-  `onnxruntime-web` latency and product benefit.
+  `onnxruntime-web` latency and product benefit. Re-export with fixed padding
+  and separate encoder/decoder-step graphs (or dynamo) before claiming browser
+  numbers; the current ONNX graphs are fixed at their traced lengths.
 
 ## Reproduce
 

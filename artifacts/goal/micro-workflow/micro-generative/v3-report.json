@@ -1,30 +1,32 @@
 {
- "trainRows": 95,
+ "trainRows": 123,
  "testRows": 24,
+ "handTrainRows": 28,
+ "handTestRows": 24,
  "arms": {
   "bert_candidate_pointer": {
    "rows": 24,
-   "exact": 0.042,
-   "fieldRecall": 0.244,
+   "exact": 0.083,
+   "fieldRecall": 0.346,
    "perField": {
-    "act": 0.0,
+    "act": 0.333,
     "cause": 0.0,
-    "conf": 0.3,
-    "decision": 0.0,
-    "dest": 0.5,
+    "conf": 0.571,
+    "decision": 0.286,
+    "dest": 0.333,
     "env": 0.0,
     "info": 0.0,
-    "item": 0.333,
+    "item": 0.5,
     "loc": 0.0,
     "neg": 0.0,
     "promise": 0.0,
-    "result": 0.583,
-    "target": 0.333,
-    "time": 0.0
+    "result": 0.5,
+    "target": 0.4,
+    "time": 0.333
    },
-   "resultAccuracy": 0.583,
-   "p50Ms": 47.1,
-   "p95Ms": 62.5,
+   "resultAccuracy": 0.5,
+   "p50Ms": 93.7,
+   "p95Ms": 145.5,
    "predictions": [
     {
      "id": "hc1",
@@ -32,7 +34,8 @@
      "type": "item",
      "got": {
       "item": "goggles_lu",
-      "conf": "确认"
+      "conf": "确认",
+      "act": "戴好"
      },
      "want": {
       "time": "进交火区之前",
@@ -46,8 +49,7 @@
      "world": "dragon",
      "type": "route",
      "got": {
-      "loc": "west_arcade",
-      "conf": "核实"
+      "decision": "选一条能避开巡夜人的路"
      },
      "want": {
       "decision": "挑一条有掩体的路"
@@ -58,9 +60,9 @@
      "world": "dragon",
      "type": "information",
      "got": {
-      "loc": "east_arcade",
       "target": "caesar",
-      "conf": "说明"
+      "conf": "问清",
+      "info": "小桥通行人数"
      },
      "want": {
       "target": "nono",
@@ -82,8 +84,8 @@
      "world": "dragon",
      "type": "environment",
      "got": {
-      "loc": "aid",
-      "item": "hatch_cover",
+      "loc": "foyer",
+      "item": "broken_blue_band",
       "conf": "检查"
      },
      "want": {
@@ -99,7 +101,9 @@
      "type": "composite",
      "got": {
       "target": "caesar",
-      "conf": "问清"
+      "conf": "问清",
+      "info": "离开",
+      "decision": "决定何时离开服务巷"
      },
      "want": {
       "loc": "lane",
@@ -115,8 +119,7 @@
      "world": "dragon",
      "type": "negation",
      "got": {
-      "item": "jacket_lu",
-      "conf": "核对"
+      "item": "jacket_lu"
      },
      "want": {
       "neg": "1",
@@ -129,9 +132,10 @@
      "world": "dragon",
      "type": "composite",
      "got": {
+      "time": "15:45",
       "target": "lu",
       "conf": "确认",
-      "act": "恢复"
+      "promise": "蓝方退出路线"
      },
      "want": {
       "time": "15:45",
@@ -144,7 +148,9 @@
      "id": "hc9",
      "world": "dragon",
      "type": "route",
-     "got": {},
+     "got": {
+      "decision": "选择一条有掩护的路线"
+     },
      "want": {
       "decision": "选一条能过小队且避开松动护栏的路",
       "info": "松动护栏"
@@ -155,9 +161,9 @@
      "world": "dragon",
      "type": "transfer",
      "got": {
-      "item": "jacket_lu",
-      "target": "su",
-      "act": "恢复"
+      "target": "lu",
+      "conf": "确认",
+      "info": "戴好"
      },
      "want": {
       "item": "spare_mag2",
@@ -187,7 +193,7 @@
      "type": "dialogue",
      "got": {
       "result": "completed",
-      "target": "fingel",
+      "target": "lu",
       "info": "red_holds_bell"
      },
      "want": {
@@ -218,7 +224,7 @@
      "type": "promise",
      "got": {
       "result": "partial",
-      "cause": "fingel"
+      "item": "lu"
      },
      "want": {
       "result": "completed",
@@ -246,7 +252,9 @@
      "type": "multi",
      "got": {
       "result": "completed",
-      "target": "shen"
+      "target": "caesar",
+      "dest": "control",
+      "decision": "苏茜留东回廊"
      },
      "want": {
       "result": "partial",
@@ -260,7 +268,9 @@
      "world": "dragon",
      "type": "negative",
      "got": {
-      "result": "completed"
+      "result": "completed",
+      "target": "lu",
+      "promise": "停火后带回空弹匣"
      },
      "want": {
       "result": "failed",
@@ -275,7 +285,8 @@
      "got": {
       "result": "completed",
       "target": "lu",
-      "info": "red_holds_bell"
+      "item": "east_arcade",
+      "info": "长枪留在窗外"
      },
      "want": {
       "result": "completed",
@@ -289,8 +300,10 @@
      "type": "refusal",
      "got": {
       "result": "completed",
-      "target": "fingel",
-      "info": "red_holds_bell"
+      "target": "lu",
+      "item": "radio_nono",
+      "info": "短讯机恢复",
+      "cause": "凯撒未回应"
      },
      "want": {
       "result": "blocked",
@@ -306,7 +319,8 @@
      "got": {
       "result": "completed",
       "item": "bench_cover",
-      "env": "stairs_clear"
+      "dest": "foyer",
+      "env": "楼梯口让出"
      },
      "want": {
       "result": "completed",
@@ -320,8 +334,10 @@
      "world": "mistport",
      "type": "item",
      "got": {
-      "item": "rope",
-      "conf": "确认"
+      "loc": "lighthouse",
+      "item": "lantern",
+      "conf": "确认",
+      "env": "交给"
      },
      "want": {
       "time": "天黑前",
@@ -335,8 +351,7 @@
      "world": "mistport",
      "type": "route",
      "got": {
-      "loc": "lighthouse",
-      "conf": "核对"
+      "decision": "选一条能避开巡夜人的路"
      },
      "want": {
       "decision": "选一条能避开巡夜人的路"
@@ -348,7 +363,9 @@
      "type": "transfer",
      "got": {
       "result": "completed",
-      "dest": "warehouse"
+      "item": "lantern",
+      "dest": "lighthouse",
+      "env": "地窖门打开"
      },
      "want": {
       "result": "completed",
@@ -362,8 +379,10 @@
      "world": "mistport",
      "type": "negative",
      "got": {
-      "result": "partial",
-      "item": "rope"
+      "result": "completed",
+      "item": "lantern",
+      "dest": "aria",
+      "env": "地窖门打开"
      },
      "want": {
       "result": "partial",
@@ -375,44 +394,44 @@
    "byWorld": {
     "dragon": {
      "rows": 20,
-     "fieldRecall": 0.227,
-     "entityFieldRecall": 0.364
+     "fieldRecall": 0.333,
+     "entityFieldRecall": 0.5
     },
     "mistport": {
      "rows": 4,
-     "fieldRecall": 0.333,
-     "entityFieldRecall": 0.2
+     "fieldRecall": 0.417,
+     "entityFieldRecall": 0.4
     }
    },
-   "entityFieldRecall": 0.333,
-   "openFieldRecall": 0.196,
-   "params": 14796214,
+   "entityFieldRecall": 0.481,
+   "openFieldRecall": 0.275,
+   "params": 14826926,
    "eTokenInVocab": true,
-   "candVocab": 320
+   "candVocab": 351
   },
   "scratch_candidate_pointer": {
    "rows": 24,
    "exact": 0.042,
-   "fieldRecall": 0.205,
+   "fieldRecall": 0.295,
    "perField": {
     "act": 0.0,
     "cause": 0.0,
-    "conf": 0.167,
-    "decision": 0.0,
-    "dest": 0.25,
+    "conf": 0.4,
+    "decision": 0.125,
+    "dest": 0.0,
     "env": 0.0,
     "info": 0.0,
-    "item": 0.385,
+    "item": 0.417,
     "loc": 0.0,
     "neg": 0.0,
     "promise": 0.0,
-    "result": 0.5,
-    "target": 0.143,
+    "result": 0.75,
+    "target": 0.333,
     "time": 0.0
    },
-   "resultAccuracy": 0.5,
-   "p50Ms": 41.8,
-   "p95Ms": 71.8,
+   "resultAccuracy": 0.75,
+   "p50Ms": 85.7,
+   "p95Ms": 134.9,
    "predictions": [
     {
      "id": "hc1",
@@ -420,6 +439,7 @@
      "type": "item",
      "got": {
       "item": "goggles_lu",
+      "act": "交给",
       "conf": "确认"
      },
      "want": {
@@ -434,8 +454,9 @@
      "world": "dragon",
      "type": "route",
      "got": {
-      "target": "west_arcade",
-      "conf": "核实"
+      "target": "east_arcade",
+      "conf": "west_arcade",
+      "info": ""
      },
      "want": {
       "decision": "挑一条有掩体的路"
@@ -446,10 +467,9 @@
      "world": "dragon",
      "type": "information",
      "got": {
-      "loc": "east_arcade",
-      "target": "caesar",
-      "conf": "east_arcade",
-      "info": "red_holds_bell"
+      "target": "nono",
+      "conf": "tower",
+      "info": "信标缺失"
      },
      "want": {
       "target": "nono",
@@ -461,7 +481,11 @@
      "id": "hc4",
      "world": "dragon",
      "type": "promise",
-     "got": {},
+     "got": {
+      "decision": "员",
+      "conf": "确认",
+      "info": "决路"
+     },
      "want": {
       "promise": "在场者亲口答应配合"
      }
@@ -472,8 +496,8 @@
      "type": "environment",
      "got": {
       "loc": "foyer",
-      "conf": "foyer",
-      "env": "foyer"
+      "conf": "确认",
+      "act": "楼梯口通"
      },
      "want": {
       "loc": "hatch",
@@ -487,9 +511,8 @@
      "world": "dragon",
      "type": "composite",
      "got": {
-      "target": "caesar",
-      "conf": "shed",
-      "info": "three_blue_loose_rail"
+      "target": "su",
+      "conf": "blocked"
      },
      "want": {
       "loc": "lane",
@@ -505,8 +528,8 @@
      "world": "dragon",
      "type": "negation",
      "got": {
-      "item": "rules",
-      "conf": "核实"
+      "item": "jacket_lu",
+      "act": "交给"
      },
      "want": {
       "neg": "1",
@@ -519,8 +542,9 @@
      "world": "dragon",
      "type": "composite",
      "got": {
-      "target": "lu",
-      "conf": "说明"
+      "target": "nono",
+      "conf": "核实",
+      "act": "继"
      },
      "want": {
       "time": "15:45",
@@ -534,7 +558,7 @@
      "world": "dragon",
      "type": "route",
      "got": {
-      "conf": "核对"
+      "decision": "选一条能避开巡夜人的路"
      },
      "want": {
       "decision": "选一条能过小队且避开松动护栏的路",
@@ -546,9 +570,10 @@
      "world": "dragon",
      "type": "transfer",
      "got": {
-      "item": "jacket_lu",
-      "conf": "lu",
-      "info": "lu"
+      "item": "spare_mag2",
+      "target": "su",
+      "conf": "确认",
+      "act": "扣释放"
      },
      "want": {
       "item": "spare_mag2",
@@ -564,7 +589,7 @@
      "got": {
       "result": "completed",
       "item": "spare_mag2",
-      "dest": "jacket_lu/slot_chest"
+      "env": "进"
      },
      "want": {
       "result": "completed",
@@ -578,8 +603,9 @@
      "type": "dialogue",
      "got": {
       "result": "partial",
-      "target": "lu",
-      "info": "red_holds_bell"
+      "target": "caesar",
+      "dest": "tower",
+      "info": "楼护栏松动"
      },
      "want": {
       "result": "partial",
@@ -593,9 +619,9 @@
      "world": "dragon",
      "type": "environment",
      "got": {
-      "result": "medical_case",
+      "result": "completed",
       "item": "hatch_cover",
-      "info": "hatch_cover"
+      "env": "地窖门打开"
      },
      "want": {
       "result": "completed",
@@ -608,8 +634,11 @@
      "world": "dragon",
      "type": "promise",
      "got": {
-      "result": "partial",
-      "item": "lu"
+      "result": "completed",
+      "target": "lu",
+      "env": "zhou",
+      "cause": "lu",
+      "info": "lu"
      },
      "want": {
       "result": "completed",
@@ -623,7 +652,10 @@
      "type": "decision",
      "got": {
       "result": "completed",
-      "decision": "tunnel"
+      "decision": "tunnel",
+      "item": "tunnel",
+      "env": "短讯机恢复",
+      "conf": "凯"
      },
      "want": {
       "result": "completed",
@@ -636,8 +668,10 @@
      "world": "dragon",
      "type": "multi",
      "got": {
-      "result": "partial",
-      "conf": "west_arcade"
+      "result": "completed",
+      "target": "caesar",
+      "dest": "shed",
+      "info": "担架留在窗外"
      },
      "want": {
       "result": "partial",
@@ -651,8 +685,10 @@
      "world": "dragon",
      "type": "negative",
      "got": {
-      "result": "lu",
-      "target": "lu"
+      "result": "completed",
+      "target": "lu",
+      "info": "短讯机恢复",
+      "cause": "凯撒未回应"
      },
      "want": {
       "result": "failed",
@@ -665,8 +701,10 @@
      "world": "dragon",
      "type": "information",
      "got": {
-      "result": "east_arcade",
-      "item": "east_arcade"
+      "result": "completed",
+      "target": "su",
+      "dest": "shed",
+      "info": "苏茜留在窗外"
      },
      "want": {
       "result": "completed",
@@ -679,9 +717,7 @@
      "world": "dragon",
      "type": "refusal",
      "got": {
-      "result": "partial",
-      "item": "canvas_blind",
-      "info": "lu"
+      "result": "blocked"
      },
      "want": {
       "result": "blocked",
@@ -696,8 +732,11 @@
      "type": "environment",
      "got": {
       "result": "completed",
-      "item": "bench_cover",
-      "dest": "tower"
+      "item": "rifle_caesar",
+      "dest": "tower",
+      "env": "短讯机=tower",
+      "cause": "tower",
+      "loc": "tower"
      },
      "want": {
       "result": "completed",
@@ -711,8 +750,10 @@
      "world": "mistport",
      "type": "item",
      "got": {
-      "target": "lighthouse",
-      "conf": "确认"
+      "item": "rope",
+      "conf": "确认",
+      "env": "lighthouse",
+      "act": "巡"
      },
      "want": {
       "time": "天黑前",
@@ -726,8 +767,7 @@
      "world": "mistport",
      "type": "route",
      "got": {
-      "target": "lighthouse",
-      "conf": "核对"
+      "decision": "选一条能避开巡夜人的路"
      },
      "want": {
       "decision": "选一条能避开巡夜人的路"
@@ -739,7 +779,8 @@
      "type": "transfer",
      "got": {
       "result": "completed",
-      "target": "borin"
+      "target": "borin",
+      "info": "长枪留在窗"
      },
      "want": {
       "result": "completed",
@@ -754,7 +795,9 @@
      "type": "negative",
      "got": {
       "result": "completed",
-      "item": "rope"
+      "item": "lantern",
+      "info": "aria",
+      "env": "地窖门打开"
      },
      "want": {
       "result": "partial",
@@ -766,20 +809,20 @@
    "byWorld": {
     "dragon": {
      "rows": 20,
-     "fieldRecall": 0.212,
+     "fieldRecall": 0.288,
      "entityFieldRecall": 0.364
     },
     "mistport": {
      "rows": 4,
-     "fieldRecall": 0.167,
-     "entityFieldRecall": 0.0
+     "fieldRecall": 0.333,
+     "entityFieldRecall": 0.2
     }
    },
-   "entityFieldRecall": 0.296,
-   "openFieldRecall": 0.157,
-   "params": 7818934,
+   "entityFieldRecall": 0.333,
+   "openFieldRecall": 0.275,
+   "params": 7859374,
    "eTokenInVocab": true,
-   "candVocab": 320
+   "candVocab": 351
   }
  },
  "resultClassifier": {
@@ -790,11 +833,7 @@
    "partial->completed": 3,
    "failed->completed": 1,
    "blocked->completed": 1
-  },
-  "scratch_pointer": 0.583,
-  "bert_pointer": 0.5,
-  "scratch_free": 0.333,
-  "bert_free": 0.5
+  }
  },
  "v2Comparison": {
   "scratch_pointer": {

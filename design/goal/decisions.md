@@ -503,3 +503,11 @@
 - 事实：独立模型的 ONNX 声明 `src_len/tgt_len` 为动态，但 legacy exporter 把 dummy 长度写死。`indep_5M_conditions-int8.onnx` 只在 `src=55,tgt=18` 可跑，54/56/96×64 都在 `Reshape` 失败；其余独立图同类。该缺陷来自 D-045 的导出配方；`onnxscript` 未安装，dynamo 导出未跑。已复现并记入 `independent-report.json:shapeCheck`。
 - 固定长度回退：96×64 导出可跑并量化，5M int8 7.86 MB，CPU p50 3.3 ms（单次 teacher-forcing forward，不是逐 token 解码，也不是浏览器）。证据 `fixed-onnx-report.json`、`check_fixed_onnx.py`。
 - 决定：当前 ONNX 不作为可部署动态模型；浏览器混合臂必须用固定 padding 并分别导出 encoder/decoder-step 图，或先安装 `onnxscript` 走 dynamo；在完成前不宣称浏览器延迟/内存通过。D-045/D-046 的 int8 MB 只作权重体积，不当作运行时形状能力。下一步仍按 D-046：手写训练数据 + 候选指针 + 分类器 result，然后五臂。
+
+## D-048 手写训练种子：数据有响应（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 数据：`hand_train.py` 28 条手写训练（12 条件 + 12 事件 + 4 条第三世界 `frost`），与 24 条 `hand_test.py` 不重叠；v3 训练 123 行（95 规则 + 28 手写），测试仍 24 行（20 dragon + 4 mistport）。种子由执行 agent 手写，不是用户核验标注。
+- v3 复跑：BERT 候选指针字段 0.346、实体 0.481、开放 0.275、新世界实体 0.400、整串精确 0.083；对比 95 行时 0.244/0.333/0.196/0.200/0.042。从头候选 0.295/0.333/0.275/0.200，对比 0.205/0.296/0.157/0.000。28 条手写训练带来明显提升，预训练编码器仍在新世界更好。
+- 未解决：`info/env/promise/cause/neg` 仍为 0（手写训练里有这些字段，模型没有生成对）；`loc` 0；`result` 在 BERT 0.500、从头 0.750、分类器 0.583 之间不稳定；p50 从约 47 升到约 94 ms（输出更长）。12 条事件测试和 4 条 mistport 不足以做显著性结论。
+- 决定：继续扩手写训练（目标数百条，按世界/任务/事件类型分测试），优先开放字段与复合条件；实体用候选指针 + MiniRBT，`result` 用类别加权分类器；不在 28 条种子上接产品，不宣称浏览器通过。证据 `design/goal/micro-generative-v2.md`、`v3-report.json`、`hand_train.py`。
