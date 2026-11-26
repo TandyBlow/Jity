@@ -657,3 +657,10 @@
 - 状态：`signed`（2026-11-26）。
 - 上一版局部性只比较「回合前」行动者房间，导致「走进器材棚，把弹药箱掀开」这类移动+操作复合动作不再生成 `环境=`（ammo/canvas 记录消失）。现在按子动作顺序维护 actorRoom：有目的地时按到达房间判断，无目的地时用前一子动作更新后的房间；`programEnvAllowed` 同样接收 actorRoom。
 - 单测覆盖到达房间与后续子动作；env-2/env-4 重跑验证。
+
+## D-064 环境正例接近试训门槛与事件级样本（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- env-8 复合路线实跑记录：spare_goggles、cage_lock、checkout_book、ammo_box、empty_magazine、bench_cover、window_pad、canvas_blind、foyer_table、hatch_door、blue_flag、balcony_door 等；预计 env 正例越过 50。
+- 长路线性能退化明显：info-6 前五回合 104/124/213/262 s，env-8 中段 184–242 s；8 回合冻结场景仍 63.5 s 均值。数据采集继续，但整回合性能是下一阶段首要产品问题。
+- 训练准备：`semantic-events.jsonl` 事件级 env 样本（正例=带 `环境=` 的事实，负例=无环境动词的事实）；`train_existence_heads.py --data semantic-events.jsonl --field env --holdout sm6-` 支持按路线留出。事件级负例充足，正例随 env-8 达标后先训 env 存在性头，info 继续采集。
