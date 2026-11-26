@@ -1155,6 +1155,84 @@
      "purpose": "听声音"
     }
    ]
+  },
+  {
+   "id": "info-8",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm8-i-transfer-1",
+     "class": "info_irrelevant_known",
+     "input": "我把护目镜递给诺诺。",
+     "purpose": "物品转移"
+    },
+    {
+     "id": "sm8-i-transfer-2",
+     "class": "info_irrelevant_known",
+     "input": "我把弹匣塞进胸袋。",
+     "purpose": "物品转移"
+    },
+    {
+     "id": "sm8-i-transfer-3",
+     "class": "info_irrelevant_known",
+     "input": "我拿起领用台上的领用簿。",
+     "purpose": "物品拿取"
+    },
+    {
+     "id": "sm8-i-transfer-4",
+     "class": "info_irrelevant_known",
+     "input": "我把水杯放到台面。",
+     "purpose": "物品放置"
+    },
+    {
+     "id": "sm8-i-irrelevant-1",
+     "class": "info_irrelevant_known",
+     "input": "我整理背心的胸袋。",
+     "purpose": "整理装备"
+    },
+    {
+     "id": "sm8-i-transfer-5",
+     "class": "info_irrelevant_known",
+     "input": "我戴上护目镜。",
+     "purpose": "装备穿戴"
+    },
+    {
+     "id": "sm8-i-transfer-6",
+     "class": "info_irrelevant_known",
+     "input": "我把红色识别带缠到手臂上。",
+     "purpose": "装备穿戴"
+    },
+    {
+     "id": "sm8-i-transfer-7",
+     "class": "info_irrelevant_known",
+     "input": "我把空弹匣踢到墙角。",
+     "purpose": "物品移动"
+    },
+    {
+     "id": "sm8-i-irrelevant-2",
+     "class": "info_irrelevant_known",
+     "input": "我靠着墙站着。",
+     "purpose": "等待"
+    },
+    {
+     "id": "sm8-i-irrelevant-3",
+     "class": "info_irrelevant_known",
+     "input": "我蹲在掩体后等待。",
+     "purpose": "等待"
+    },
+    {
+     "id": "sm8-i-irrelevant-4",
+     "class": "info_irrelevant_known",
+     "input": "我把长椅扶正。",
+     "purpose": "环境操作"
+    },
+    {
+     "id": "sm8-i-transfer-8",
+     "class": "info_irrelevant_known",
+     "input": "我把保温毯叠好。",
+     "purpose": "物品整理"
+    }
+   ]
   }
  ]
 }
