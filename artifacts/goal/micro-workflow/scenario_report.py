@@ -27,6 +27,11 @@ def active_changes(changes):
     return [change for change in changes if isinstance(change, dict) and change.get('id') not in superseded]
 
 
+def task_id_of(check):
+    match = re.search(r'\.tasks\.([^.]+)\.status$', check.get('path') or '')
+    return match.group(1) if match else None
+
+
 def evaluate_check(state, check):
     if 'anyOf' in check:
         return any(evaluate_check(state, row) for row in check['anyOf'])
@@ -59,10 +64,21 @@ def main():
         failed = [check for check in checks if check not in passed]
         task_checks = [check for check in checks if '.tasks.' in (check.get('path') or '')]
         task_passed = [check for check in task_checks if check in passed]
+        expected_achieved = [check for check in task_checks if check.get('equals') == 'achieved']
+        expected_pending = [check for check in task_checks if check.get('equals') == 'pending']
+        achieved = [check for check in expected_achieved if check in passed]
+        missed = [check for check in expected_achieved if check not in passed]
+        false_achieved = [check for check in expected_pending if check not in passed]
         problems = turn.get('problems') or []
         rows.append({
             'turn': turn.get('turn'), 'id': turn.get('id'), 'waitMs': (turn.get('timings') or {}).get('doneMs'),
             'checks': len(checks), 'passed': len(passed), 'taskChecks': len(task_checks), 'taskPassed': len(task_passed),
+            'expectedAchieved': len(expected_achieved), 'achieved': len(achieved), 'missed': len(missed),
+            'falseAchieved': len(false_achieved),
+            'expectedTaskIds': {task_id_of(check) for check in expected_achieved if task_id_of(check)},
+            'achievedTaskIds': {task_id_of(check) for check in achieved if task_id_of(check)},
+            'missedTaskIds': {task_id_of(check) for check in missed if task_id_of(check)},
+            'falseTaskIds': {task_id_of(check) for check in false_achieved if task_id_of(check)},
             'failed': [check.get('path') or 'anyOf' for check in failed],
             'problems': problems,
         })
@@ -71,6 +87,14 @@ def main():
     passed = sum(row['passed'] for row in rows)
     task_checks = sum(row['taskChecks'] for row in rows)
     task_passed = sum(row['taskPassed'] for row in rows)
+    expected_achieved = sum(row['expectedAchieved'] for row in rows)
+    achieved = sum(row['achieved'] for row in rows)
+    missed = sum(row['missed'] for row in rows)
+    false_achieved = sum(row['falseAchieved'] for row in rows)
+    expected_tasks = set().union(*(row['expectedTaskIds'] for row in rows)) if rows else set()
+    achieved_tasks = set().union(*(row['achievedTaskIds'] for row in rows)) if rows else set()
+    missed_tasks = set().union(*(row['missedTaskIds'] for row in rows)) if rows else set()
+    false_tasks = set().union(*(row['falseTaskIds'] for row in rows)) if rows else set()
     prose_issues = sum(1 for row in rows for problem in row['problems']
                        if problem in ('prose_not_identical_to_record', 'program_text_not_model', 'source_program'))
     summary = {
@@ -82,6 +106,15 @@ def main():
         'stateAssertionRate': round(passed / checks, 3) if checks else None,
         'taskAssertions': f'{task_passed}/{task_checks}',
         'taskAccuracy': round(task_passed / task_checks, 3) if task_checks else None,
+        'achievementChecks': f'{achieved}/{expected_achieved}',
+        'achievementRate': round(achieved / expected_achieved, 3) if expected_achieved else None,
+        'missedAchievements': missed,
+        'falseAchievements': false_achieved,
+        'uniqueExpectedTasks': sorted(expected_tasks),
+        'uniqueAchievedTasks': sorted(achieved_tasks),
+        'uniqueMissedTasks': sorted(missed_tasks),
+        'uniqueFalseTasks': sorted(false_tasks),
+        'uniqueAchievementRate': round(len(achieved_tasks) / len(expected_tasks), 3) if expected_tasks else None,
         'proseIssueTurns': sum(1 for row in rows if set(row['problems']) & {'prose_not_identical_to_record', 'program_text_not_model', 'source_program'}),
         'proseIssues': prose_issues,
         'meanWaitS': round(statistics.mean(waits) / 1000, 1) if waits else None,
@@ -90,7 +123,8 @@ def main():
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     for row in rows:
         print(f"turn {row['turn']} {row['id']}: state {row['passed']}/{row['checks']} "
-              f"task {row['taskPassed']}/{row['taskChecks']} wait={round((row['waitMs'] or 0)/1000,1)}s "
+              f"task {row['taskPassed']}/{row['taskChecks']} achieved {row['achieved']}/{row['expectedAchieved']} "
+              f"false={row['falseAchieved']} missed={row['missed']} wait={round((row['waitMs'] or 0)/1000,1)}s "
               f"problems={','.join(row['problems']) or '-'}")
         if row['failed']:
             print('  failed: ' + '; '.join(row['failed']))

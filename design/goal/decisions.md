@@ -470,3 +470,12 @@
 - 追加（稳定性）：第一人称主角事实「我向诺诺问清…」中「我」即组成员，mentioned 补入主角，避免被严格规则当成只写了诺诺而整点失败；跨人物任务证据只允许在事实点名任务主人或事实人物正是任务 target 时进入，避免宽场景事实把大量无关任务带进 verifier/personality。scenario-4 因这两点分别出现 turn1 results 失败和 290-330s 回合，修复后用 scenario-5 复验。
 
 - 语义回归（scenarios-5，2026-11-26）：COMPLETED、0 failures；状态断言 42/48（87.5%）、任务断言 14/14（100%）、叙事问题 3 回合；均值 76.8 s（max 95.1）。相比 scenarios-2：状态 39→42、任务 11→14；路线 decision 与跨人物回答生效，对话在无回答时保持 pending。剩余失败：spare_mag2 嵌套物品（sc04/5/7）与环境外观（sc06/8 的 anyOf）。之后给 micro results 的 transfer guard 增加物品容器目的地与同房间开放来源；scenarios-6 回归中。
+
+## D-044 微型生成模型与结构化事件（2026-11-26，用户指令）
+
+- 状态：`signed`（2026-11-26）。
+- 事实：任务断言 14/14 里只有 1 个唯一任务（路线）真正达成，其余 11 项是 pending 检查、2 项是该达成状态的持续检查；`scenario_report.py` 现分开统计唯一任务达成、false achievement、missed achievement。scenarios-5：状态 42/48、唯一任务 1/1、false 0、missed 0、叙事问题 3、均值 76.8 s。14/14 不等于多类任务理解。
+- 决定：下一阶段正式探索微型生成模型，不再主要增加分类头/关键词规则。统一结构化事件表达：意图、实际结果、获得信息、环境变化、人物承诺、决策、因果关系；事件提取与任务条件分解交给短序列生成模型（微型生成），现有分类头做相关性/条件门控，LLM 保留对照与核验。训练/评价数据覆盖不同世界设定、人物、物品、任务类型、同义/否定/隐含结果、他人信息、多事件共同满足、同词不同结果反例；对比纯规则、分类、生成、混合、LLM 五臂；冻结独立测试集与评价标准，分别统计真实达成、错误达成、遗漏达成、跨回合状态正确性。继续修环境变化、嵌套物品容器、叙事一致性；资源允许时复跑 scenarios-6。
+- 当前：`scenarios-independent.json` 已冻结 sha256 `8a52c6aeb8abea71ad0d4d25c338c46b9ae038bbb2d96d161ffaf33ce5235805`；`scenario_report.py` 已加唯一任务/false/missed 指标。下一步：结构化事件 schema + 生成端口 + 数据集/五臂评测。
+
+- scenarios-6b（2026-11-26）：嵌套物品 transfer guard 修复后，8 场景 COMPLETED、0 failures；状态断言 46/48（95.8%）、唯一任务 1/1（task_lu_route）、false 0、missed 0、叙事问题 3 回合；均值 76.3 s（max 88.2），turn1 58.0 s。剩余仅检修盖/长桌两个环境外貌 anyOf 与 3 个 prose provenance 标记。该证据不改变 D-044：1 个唯一任务仍不足以证明多类任务理解。

@@ -364,3 +364,8 @@
 - 8 场景 COMPLETED、0 failures；状态断言 42/48（87.5%）、任务断言 14/14（100%）、3 回合叙事问题；均值 76.8 s（max 95.1），turn1 59.4 s。
 - 生效：路线 decision（不再要求到达选项地点）、跨人物回答（他人 fact 支持任务主人）、第一人称主角事实、目标回应归因、否定回答不算确认、对话无回答保持 pending。
 - 剩余：spare_mag2 嵌套物品（sc04/5/7）与环境外观（sc06/8 anyOf）。micro transfer guard 已支持物品容器/同房间开放来源并加单测；scenarios-6 真机回归被宿主内存保护停止，按通知未重启，因此该修复尚无完整页面证据。
+
+## 物品容器修复回归（2026-11-26，scenarios-6b）
+
+- 8 场景 COMPLETED、0 failures；状态断言 46/48（95.8%）、唯一任务 1/1、false 0、missed 0、叙事问题 3 回合；均值 76.3 s（max 88.2），turn1 58.0 s。spare_mag2 的 4 个容器/槽位检查全部通过；剩 sc06/08 的环境外貌 anyOf 与 3 个 prose provenance 标记。
+- 14/14 task 检查仍是 11 个 pending + 3 个 route 检查（1 个唯一任务）；不能当作多类任务理解。
