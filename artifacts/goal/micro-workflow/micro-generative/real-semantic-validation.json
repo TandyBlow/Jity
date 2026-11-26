@@ -1,18 +1,18 @@
 {
  "version": "v2",
  "pass": true,
- "rawRows": 132,
- "trainRows": 97,
+ "rawRows": 144,
+ "trainRows": 108,
  "testRows": 8,
- "expectedTrain": 124,
+ "expectedTrain": 136,
  "expectedTest": 8,
  "fieldCounts": {
   "info": {
    "pos": 35,
-   "neg": 7
+   "neg": 8
   },
   "env": {
-   "pos": 40,
+   "pos": 50,
    "neg": 48
   }
  },
