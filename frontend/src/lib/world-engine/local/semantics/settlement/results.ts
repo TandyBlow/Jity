@@ -923,6 +923,12 @@ function readResultsAnswer(
       cleaned.text = restored;
     }
     let mentioned = mentionedCharacterIds(state, cleaned.text);
+    // A first-person protagonist fact names its target too; the “我” is the
+    // group member, not a reason to treat the sentence as another character's.
+    if (mentioned.length && mentioned.every((id) => !recipientIds.includes(id))
+      && recipientIds.includes(state.protagonistId) && /[我咱]/u.test(cleaned.text)) {
+      mentioned = [state.protagonistId, ...mentioned];
+    }
     // “路明非的红色识别带” when the band belongs to 诺诺 is an item-ownership
     // flip: d531 turn 2 wrote exactly that. Only an explicit possessive whose
     // item resolves in the frozen state is checked, so ordinary prose is not
