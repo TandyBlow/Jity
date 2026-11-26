@@ -84,6 +84,7 @@ describe('program env gate', () => {
   const base = { text: '我把领用台推到墙边。', itemIds: ['counter'], memberId: 'lu', state };
   it('confirms a local physical manipulation', () => {
     expect(programEnvAllowed(base)).toBe(true);
+    expect(programEnvAllowed({ ...base, text: '我把遮光帘拉下一半，挡住半边窗口。' })).toBe(true);
   });
   it('declines a remote item, an obstruction and a non-env verb', () => {
     expect(programEnvAllowed({ ...base, text: '我把庭院里的领用台推到墙边。', state: { ...state, characters: { lu: { position: { containerId: 'yard' } } } } as unknown as WorldState })).toBe(false);
