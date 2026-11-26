@@ -19,7 +19,7 @@ describe('action evidence at the product callback', () => {
     };
     type Detail = Parameters<NonNullable<GameModelOptions['onTask']>>[2];
     const records: Detail[] = [];
-    const model = new LocalGameModel(engine, { onTask: (task, _key, detail) => {
+    const model = new LocalGameModel(engine, { templateFallback: false, onTask: (task, _key, detail) => {
       if (task === 'action') records.push(detail);
     } });
     await model.generate('action', 'friend', { workingState: state } as unknown as Json);

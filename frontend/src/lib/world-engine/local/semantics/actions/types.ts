@@ -141,6 +141,10 @@ export interface ActionHandlerOptions {
   /** Experimental NPC behavior arm: the head picks a routine category and the
    * template writes the text; null/other falls back to the LLM. */
   behavior?: (request: { input: string }) => Promise<string | null> | string | null;
+  /** A task-goal copy from the LLM accepts a checked template candidate
+   * instead of spending the repair calls. Default on; false keeps the repair
+   * path for prompt experiments. */
+  templateFallback?: boolean;
   /** Three candidate judges (task/personality/scene); null falls back. */
   judge?: (pairs: Array<{ context: string; text: string }>) => Promise<Array<{ task: number; personality: number; scene: number }> | null> | Array<{ task: number; personality: number; scene: number }> | null;
   /** When the protagonist is the admitted reaction target, the player's own

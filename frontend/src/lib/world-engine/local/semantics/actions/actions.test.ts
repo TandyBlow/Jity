@@ -345,14 +345,13 @@ describe('action: autonomous, named and failed judgement', () => {
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('ally', actInput(state, 'ally', '我靠在墙边喘口气。'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '阿宁走到门后，把门闩扣上。' });
-    // The merged repair drops the task block instead of repeating the goal:
-    // repeating it under a 'do not copy' line was the 0b69 attractor.
-    expect(engine.prompts[1]).not.toContain(goal);
-    expect(engine.prompts[1]).toContain('不要写任何任务目标');
-    expect(engine.prompts[1]).not.toContain('【角色待办任务】');
+    // A goal copy is rejected, but a checked template candidate replaces it
+    // instead of paying a repair call for the same sentence.
+    expect(result.attempts).toBe(1);
+    expect(result.source).toBe('micro');
+    expect(codes(result)).toContain('template_action');
+    expect(codes(result)).not.toContain('action_is_task_goal');
+    expect(result.value).not.toEqual({ kind: 'act', text: goal });
     codecAccepts(result);
   });
 

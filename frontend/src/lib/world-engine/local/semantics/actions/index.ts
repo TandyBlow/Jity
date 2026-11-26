@@ -69,6 +69,8 @@ interface Generated<T> {
   calls: ActionCallEvidence[];
   lastRaw: string;
   lastIssues: ActionIssue[];
+  /** The accepted value came from a program/micro fallback, not the model. */
+  fallback?: boolean;
 }
 
 interface GenerateArgs<T> {
@@ -78,6 +80,9 @@ interface GenerateArgs<T> {
   /** Prompt for the retry after a rejection. A goal-copy rejection rebuilds it
    * without the task block so the copied sentence is not on the page again. */
   repairPrompt?: (issues: ActionIssue[]) => string | null;
+  /** Accept a deterministic fallback instead of spending two repair calls on
+   * an answer the model already failed (task-goal copies in real runs). */
+  fallback?: (issues: ActionIssue[]) => T | null;
   maxTokens: number;
   schema?: unknown;
   decode: (raw: string) => T;
@@ -146,6 +151,13 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
         lastIssues = checked.issues;
         if (!checked.issues.some((item) => item.severity === 'error')) {
           return { accepted: { value: checked.value, raw, issues: [...history, ...checked.issues] }, calls, lastRaw, lastIssues };
+        }
+        const replacement = args.fallback?.(checked.issues);
+        if (replacement) {
+          return {
+            accepted: { value: replacement, raw: '', issues: [...history, ...checked.issues] },
+            calls, lastRaw, lastIssues, fallback: true,
+          };
         }
         history.push(...checked.issues, {
           code: 'repair_requested', severity: 'warn',
@@ -331,11 +343,28 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
         // A failed behavior head is evidence, not a reason to fail the turn.
       }
     }
+    // A task-goal copy is the model's most common action failure. The scene
+    // already has checked template candidates; use one instead of paying two
+    // repair calls for a sentence the model cannot make concrete.
+    const templateFallback = options.templateFallback === false ? null : (() => {
+      for (const row of behaviorCandidates(scene, call.state)) {
+        const checked = checkActionText(row.text, scene, call.state, checkOptions);
+        if (checked.issues.some((item) => item.severity === 'error')) continue;
+        return {
+          kind: 'act' as const, text: checked.value,
+          ...(options.structuredActions
+            ? { structured: buildActionStructure(checked.value, scene, call.state, checkOptions.maxTargets) }
+            : {}),
+        };
+      }
+      return null;
+    })();
     const generated = await generate<{ kind: 'act'; text?: string; structured?: ActionStructure } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
       repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')
         ? actionPrompt(scene, { omitTasks: true })
         : null),
+      fallback: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal') ? templateFallback : null),
       schema: taskOutputSchema('action', asJson({})),
       decode: (raw) => decodeTaskOutput('action', raw) as unknown as { kind: 'act'; text?: string } | { kind: 'skip' },
       check: (value) => {
@@ -354,8 +383,12 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
     });
 
     if (generated.accepted) {
-      return evidence('action', key, asJson(generated.accepted.value), 'model', started,
-        [...issues, ...generated.accepted.issues], generated.calls, generated.accepted.raw);
+      const acceptedIssues = generated.fallback
+        ? [...generated.accepted.issues.filter((issue) => issue.code !== 'action_is_task_goal'),
+          { code: 'template_action' as const, severity: 'info' as const, message: `${scene.actorName}的任务目标句被拒，改用已校验的模板行动` }]
+        : generated.accepted.issues;
+      return evidence('action', key, asJson(generated.accepted.value), generated.fallback ? 'micro' : 'model', started,
+        [...issues, ...acceptedIssues], generated.calls, generated.accepted.raw);
     }
     issues.push(...generated.lastIssues, { code: 'repair_failed', severity: 'error', message: '行动判断没有可用输出，按不行动回退' });
     return evidence('action', key, { kind: 'skip' }, 'fallback', started, issues, generated.calls, generated.lastRaw);

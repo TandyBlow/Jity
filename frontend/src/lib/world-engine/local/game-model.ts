@@ -74,6 +74,9 @@ export interface GameModelOptions {
   /** Experimental structured-action arm: the action lane emits category,
    * target/item ids, destination and conditions for results to consume. */
   structuredActions?: boolean;
+  /** Default on: a task-goal action answer accepts a checked template instead
+   * of the repair calls. False keeps the repair prompt for experiments. */
+  templateFallback?: boolean;
   /** Experimental: facts with structured destinations drive the position
    * stage directly; uncertain scenes fall back to the LLM. */
   programScene?: boolean;
@@ -271,6 +274,7 @@ export class LocalGameModel implements WorldModelPort {
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       microTargets: this.options.microTargets,
       structuredActions: this.options.structuredActions,
+      templateFallback: this.options.templateFallback,
       behavior: this.options.behavior,
       judge: this.options.judge,
       microReaction: this.options.microReaction,

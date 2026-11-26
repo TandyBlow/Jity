@@ -106,9 +106,11 @@ describe('run-1 failures stay rejected', () => {
     const handlers = createActionHandlers({ engine, options: { offscreenPolicy: 'judge' } });
     const result = await handlers.action('fingel', action(base, 'fingel', '我靠在巷口墙边喘口气。'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '芬格尔把电池从口袋里摸出来，换上相机。' });
+    expect(result.attempts).toBe(1);
+    expect(result.source).toBe('micro');
+    expect(codes(result)).toContain('template_action');
+    expect(codes(result)).not.toContain('action_is_task_goal');
+    expect(result.value).not.toEqual({ kind: 'act', text: '换上相机备用电池，拍到有辨识度的争旗场面' });
   });
 
   it('A6: a consumed protagonist opportunity never reaches the model, so no goal can become one', async () => {
@@ -137,9 +139,11 @@ describe('run-1 failures stay rejected', () => {
     const handlers = createActionHandlers({ engine });
     const result = await handlers.action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
 
-    expect(result.attempts).toBe(2);
-    expect(codes(result)).toContain('action_is_task_goal');
-    expect(result.value).toEqual({ kind: 'act', text: '诺诺抬手指了指钟楼方向，没有接话。' });
+    expect(result.attempts).toBe(1);
+    expect(result.source).toBe('micro');
+    expect(codes(result)).toContain('template_action');
+    expect(codes(result)).not.toContain('action_is_task_goal');
+    expect(result.value).not.toEqual({ kind: 'act', text: '让红方的旗台行动有可执行的掩护，而不把路明非当诱饵' });
   });
 
   // Naming is the model's semantic call: a visible person selected without
@@ -216,7 +220,8 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
       JSON.stringify({ kind: 'act', text: goal }),
       '{"kind":"act","text":"诺诺走到廊柱边，抬手示意后面的人停下。"}',
     ]);
-    const result = await createActionHandlers({ engine }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
+    const result = await createActionHandlers({ engine, options: { templateFallback: false } })
+      .action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
     expect(result.attempts).toBe(2);
     expect(engine.prompts).toHaveLength(2);
     expect(engine.prompts[0]).toContain('【角色待办任务】');
@@ -240,8 +245,10 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
         '{"kind":"act","text":"诺诺抬手指了指钟楼方向，没有接话。"}',
       ]),
     }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
-    expect(rejected.attempts).toBe(2);
-    expect(codes(rejected)).toContain('action_is_task_goal');
+    expect(rejected.attempts).toBe(1);
+    expect(rejected.source).toBe('micro');
+    expect(codes(rejected)).toContain('template_action');
+    expect(codes(rejected)).not.toContain('action_is_task_goal');
 
     // The broad subsequence branch is back (the 20ee comparison showed the
     // remaining real rejections were exact copies, so removing it reduced
@@ -252,7 +259,9 @@ describe('run-5 prompt-experiment false accepts stay rejected', () => {
         '{"kind":"act","text":"诺诺抬手指了指钟楼方向，没有接话。"}',
       ]),
     }).action('nono', action(base, 'nono', '楚子航在钟楼吗？'));
-    expect(paraphrase.attempts).toBe(2);
-    expect(codes(paraphrase)).toContain('action_is_task_goal');
+    expect(paraphrase.attempts).toBe(1);
+    expect(paraphrase.source).toBe('micro');
+    expect(codes(paraphrase)).toContain('template_action');
+    expect(codes(paraphrase)).not.toContain('action_is_task_goal');
   });
 });
