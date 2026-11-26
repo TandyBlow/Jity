@@ -647,6 +647,15 @@ export class LocalGameModel implements WorldModelPort {
     let text = protocolText(raw);
     let consistency = this.stateConsistencyViolations(before, delta, after, view, playerInput, text);
     if (consistency.length) {
+      // Keep the model's supported sentences; only the contradicting ones go.
+      const pruned = dropViolatingSentences(text, consistency);
+      if (pruned.trim() && !this.stateConsistencyViolations(before, delta, after, view, playerInput, pruned).length) {
+        raw = pruned;
+        text = pruned;
+        consistency = [];
+      }
+    }
+    if (consistency.length) {
       // One repair call with the explicit contradiction. A program draft is
       // only the last resort; the product path prefers model prose.
       const draftForRepair = factualNarration(before, delta, after, view, playerInput, resultsText);
@@ -1095,6 +1104,17 @@ export function alignmentPacket(before: WorldState | null, delta: { timeAdvance?
     for (const change of d?.personalityChanges ?? []) if (change.text) facts.push({ id: `${id}:personality:${change.id}`, actorId: id, name, kind: 'personality_changed', changeId: change.id, text: change.text });
   }
   return { anchor: { worldId: after.worldId, pointId: `local_${Date.now()}`, version: 0, stateDigest: '', previousPointId: null }, facts };
+}
+
+/** Remove only the sentences an alignment violation points at. */
+function dropViolatingSentences(text: string, violations: Array<{ sentence: string }>): string {
+  const bad = violations.map((violation) => violation.sentence.trim()).filter(Boolean);
+  return text.split(/(?<=[。！？!?])/u)
+    .filter((sentence) => {
+      const value = sentence.trim();
+      return value && !bad.some((row) => row === value || row.includes(value) || value.includes(row));
+    })
+    .join('');
 }
 
 function factualNarration(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = ''): string {
