@@ -173,3 +173,5 @@ G1 之后新增：
 - 语义数据首轮（2026-11-26）：env-1 + info-1 完成，验收门 pass=true，raw 52 / train 28 / test 8；字段计数 info 16 pos / 2 neg、env 3 pos / 19 neg，trainingReady=false。事件级 env 导出 151 条（3 正/148 负）。env 正例仍是瓶颈；新增 env-4/env-5 复合操作路线与 info-4 观察、info-5 重复/失败路线。决策 D-056/D-058。
 
 - 冻结八场景（2026-11-26，scenarios-8）：状态 48/48、任务 14/14、唯一任务 1/1、false 0、missed 0、prose 问题 1 回合、均值 63.5 s、max 83.0 s。sc06 检修盖与 sc08 长桌环境外观均通过；6b 的 46/48 与 3 回合 prose 问题已改善。决策 D-061。
+
+- 语义数据第二轮（2026-11-26）：env-2（前 8 回合有效）+ env-4 完成并标注；验收门 pass，train 64 行；字段计数 info 25 pos / 3 neg、env 12 pos / 22 neg（trainingReady=false）。失败词改为只看带 `环境=` 的事实，避免 instant 叙事的「没有」污染；env-5/info-4/info-5 采集中。决策 D-056/D-058/D-061。
