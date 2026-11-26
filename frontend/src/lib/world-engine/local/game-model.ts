@@ -100,6 +100,9 @@ export interface GameModelOptions {
   /** Experimental micro workflow: task/fact verifier. A null or low-confidence
    * answer falls back to the LLM verifier. */
   microTaskVerifier?: import('./semantics/settlement/types').MicroTaskVerifierFn;
+  /** Experimental micro workflow: condition-level task proposer with a
+   * session ledger; it only proposes and the verifier commits. */
+  microTaskProposer?: import('./semantics/settlement/types').MicroTaskProposerFn;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -231,6 +234,7 @@ export class LocalGameModel implements WorldModelPort {
       microUpdates: this.options.microUpdates,
       microContinuation: this.options.microContinuation,
       microTaskVerifier: this.options.microTaskVerifier,
+      microTaskProposer: this.options.microTaskProposer,
       programScene: this.options.programScene,
       localPosition: this.options.localPosition,
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),

@@ -1100,6 +1100,59 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
+  let proposerEvidence: unknown = null;
+  if (ctx.options.microTaskProposer) {
+    try {
+      const proposal = await ctx.options.microTaskProposer({ state: ctx.state, facts: resultFacts(ctx.results) });
+      proposerEvidence = proposal;
+      if (proposal?.supports.length) {
+        const allowed = proposal.supports.filter((support) =>
+          affectedRows.some(({ task, ownerId }) => task.id === support.taskId && ownerId === support.characterId));
+        if (allowed.length) {
+          const checked = await verifyTaskAchievements({
+            engine: ctx.engine, state: ctx.state, results: ctx.results, options: ctx.options,
+          }, allowed);
+          const accepted = checked.judgments.filter((row) => row.satisfied === 'yes');
+          if (accepted.length) {
+            const changes: Record<Id, Partial<EntityDelta>> = {};
+            for (const row of accepted) {
+              changes[row.characterId] = {
+                tasksAchieved: [...(changes[row.characterId]?.tasksAchieved ?? []), row.taskId],
+              };
+            }
+            const newlyAchieved = [...achievedFromChanges(changes)].sort();
+            const achievedByCharacter = Object.entries(changes)
+              .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
+              .filter((row) => row.taskIds.length > 0);
+            return {
+              changes,
+              detail: {
+                taskCoverageIds: characters,
+                taskScope: {
+                  ...taskScope,
+                  assertedUnchanged: affectedRows.length - newlyAchieved.length,
+                  achievedByCharacter,
+                  emptyCharacters: taskScope.affectedCharacters - achievedByCharacter.length,
+                  rejectedTaskIds: allowed
+                    .filter((support) => !accepted.some((row) => row.characterId === support.characterId && row.taskId === support.taskId))
+                    .map((support) => ({ characterId: support.characterId, taskId: support.taskId, reason: 'verifier_rejected' })),
+                  supports: allowed,
+                  proposer: proposal,
+                  verifier: checked.judgments,
+                },
+                decidedTaskIds: decidedIds,
+                newlyAchievedTaskIds: newlyAchieved,
+              },
+              fallback: false,
+              calls: checked.calls,
+            };
+          }
+        }
+      }
+    } catch {
+      // A proposer failure is an abstain; the LLM tasks stage runs below.
+    }
+  }
   const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection, ctx.options.tasksContract ?? 'achieved');
   // Under the 'achieved' contract, a character the prompt listed but the model
   // did not name is unchanged by default; the roster contract still requires the
@@ -1195,9 +1248,11 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
           supports: acceptedSupports,
           verifier: verifier ?? undefined,
           defaultedUnchanged: read.defaultedUnchanged,
+          proposer: proposerEvidence,
         },
         decidedTaskIds: decidedIds,
         newlyAchievedTaskIds: newlyAchieved.sort(),
+        proposer: proposerEvidence,
       },
       fallback: false,
       calls: [...answer.calls, ...verifierCalls],
@@ -1337,6 +1392,12 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
   ]);
   const scanned = characters.filter((id) => affected.has(id));
   const echoFacts = resultFacts(ctx.results).map((fact) => fact.text);
+  // The 0.6B copies a fact id ("<f1>") or the schema placeholder ("<人物id>")
+  // into entityId; resolve it instead of aborting the point (which would drop
+  // task progress). A single trigger owner makes the placeholder unambiguous.
+  const factOwners = new Map(resultFacts(ctx.results).map((fact) => [fact.id, fact.memberId] as const));
+  const uniqueOwners = [...new Set(triggerIds.map((taskId) => index.get(taskId)?.ownerId).filter((id): id is Id => Boolean(id)))];
+  if (uniqueOwners.length === 1) factOwners.set('人物id', uniqueOwners[0]);
   const personalityLenient: { entityId: string; op: string; droppedText: string }[] = [];
   const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0, scanned);
   try {
@@ -1346,10 +1407,10 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
       timeoutMs: ctx.options.timeoutMs,
       maxPromptChars: ctx.options.maxPromptChars,
       jsonSchema: PERSONALITY_SCHEMA,
-      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, [], []),
+      validate: (value) => readDescriptionOperations(value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, [], [], factOwners),
     });
     const personalityRejections: { entityId: string; reason: string }[] = [];
-    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, personalityRejections, personalityLenient);
+    const changes = readDescriptionOperations(answer.value, ctx.state, 'personality', ctx.allocator, true, new Set(scanned), echoFacts, personalityRejections, personalityLenient, factOwners);
     return {
       changes,
       detail: {
@@ -1790,7 +1851,12 @@ function readDescriptionOperations(
   echoFacts: string[] = [],
   rejections?: { entityId: string; reason: string }[],
   lenient?: { entityId: string; op: string; droppedText: string }[],
+  factOwners?: Map<string, Id>,
 ): Record<Id, Partial<EntityDelta>> {
+  const resolvePersonalityId = (raw: string): Id | null => {
+    const bare = unwrapIdBrackets(raw);
+    return resolveCharacterId(state, bare) ?? factOwners?.get(bare) ?? null;
+  };
   const payload = asRecord(value);
   let rows = payload.operations;
   if (!Array.isArray(rows) && kind === 'personality' && !Array.isArray(payload.scanned) && Array.isArray(payload.changes)) {
@@ -1804,14 +1870,14 @@ function readDescriptionOperations(
     const changed = new Set<Id>();
     for (const raw of changesRaw) {
       if (!isRecord(raw)) throw new Error('changes entries must be objects');
-      const entityId = resolveCharacterId(state, asString(raw.entityId));
+      const entityId = resolvePersonalityId(asString(raw.entityId));
       if (!entityId) throw new Error(referenceError(state, asString(raw.entityId), 'character', roster(state)[0]));
       if (onlyIds && !onlyIds.has(entityId)) continue;
       changed.add(entityId);
     }
     const keep: Record<string, unknown>[] = [];
     for (const raw of scannedRaw) {
-      const entityId = resolveCharacterId(state, raw);
+      const entityId = resolvePersonalityId(raw);
       if (!entityId) throw new Error(referenceError(state, raw, 'character', roster(state)[0]));
       if (onlyIds && !onlyIds.has(entityId)) continue;
       if (changed.has(entityId)) continue;
@@ -1828,7 +1894,7 @@ function readDescriptionOperations(
     if (!isRecord(raw)) throw new Error('operation must be an object');
     const rawEntityId = asString(raw.entityId);
     const bareEntityId = unwrapIdBrackets(rawEntityId);
-    const entityId = kind === 'appearance' ? resolveEntityId(state, bareEntityId) : resolveCharacterId(state, bareEntityId);
+    const entityId = kind === 'appearance' ? resolveEntityId(state, bareEntityId) : resolvePersonalityId(rawEntityId);
     if (!entityId) throw new Error(referenceError(state, rawEntityId, kind === 'appearance' ? 'entity' : 'character', [...targets][0]));
     if (!targets.has(entityId)) continue;
     if (!allTargets.has(entityId)) throw new Error(`operation targets an unknown ${kind === 'appearance' ? 'entity' : 'character'}: ${rawEntityId}${entityId !== rawEntityId ? ` (${entityId})` : ''}`);
@@ -2378,6 +2444,7 @@ function buildPersonalityPrompt(ctx: StageContext, triggerIds: Id[], recovered: 
     '- changes 只写真的有变化的人物操作；每个有效记录必须被 remove/replace 覆盖一次，不能重复。',
     '- 新个性文本必须与旧文本有实际差异；没有实际变化就 keep。',
     '- 个性变化只由新达成任务触发；不要因为普通动作直接改个性。',
+    '- entityId 只能写人物 id（如 lu），不能写事实编号 f1/f2，也不要保留 <人物id> 占位符。',
     recovered ? '- 本次是恢复后的补判定：只考虑本轮结算结果能够支持的新达成任务，不要把以前达成的任务当成新触发。' : '',
     '触发任务：',
     ...triggerLines,

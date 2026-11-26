@@ -13,6 +13,11 @@ export interface TaskSupport {
   characterId: Id;
   taskId: Id;
   basis: string;
+  /** Cross-turn evidence: fact texts from earlier turns, resolved by the
+   * proposer's ledger because their local fact ids no longer exist. */
+  basisText?: string;
+  /** Proposer's per-condition model labels; replaces lexical coverage. */
+  conditions?: Array<{ label: string; state: 'none' | 'keyword' | 'attempt' | 'satisfied' }>;
 }
 
 export interface VerifierVerdict {
@@ -66,6 +71,12 @@ export async function verifyTaskAchievements(
   const facts = resultFacts(ctx.results);
   const byFact = new Map(facts.map((fact) => [fact.id, fact]));
   const index = taskIndex(ctx.state);
+  const basisText = (support: TaskSupport): string => {
+    if (support.basisText) return support.basisText;
+    if (support.basis === 'time') return `当前世界时间是 ${ctx.state.time.dateTime}`;
+    const ids = support.basis.split('+').map((id) => id.trim()).filter(Boolean);
+    return ids.map((id) => byFact.get(id)?.text ?? '（引用不存在）').join('；');
+  };
   if (ctx.options.microTaskVerifier && supports.length) {
     try {
       const micro = await ctx.options.microTaskVerifier({
@@ -74,9 +85,8 @@ export async function verifyTaskAchievements(
           taskId: support.taskId,
           goal: index.get(support.taskId)?.task.goal ?? support.taskId,
           ownerName: ctx.state.initial.characters[support.characterId]?.name ?? support.characterId,
-          factText: support.basis === 'time'
-            ? `当前世界时间是 ${ctx.state.time.dateTime}`
-            : (byFact.get(support.basis)?.text ?? support.basis),
+          factText: basisText(support),
+          ...(support.conditions ? { conditions: support.conditions } : {}),
         })),
         state: ctx.state,
       });
@@ -91,9 +101,7 @@ export async function verifyTaskAchievements(
     const row = index.get(support.taskId);
     const goal = row?.task.goal ?? support.taskId;
     const owner = ctx.state.initial.characters[support.characterId]?.name ?? support.characterId;
-    const fact = support.basis === 'time'
-      ? `依据：当前世界时间是 ${ctx.state.time.dateTime}`
-      : `依据 ${support.basis}：${byFact.get(support.basis)?.text ?? '（引用不存在）'}`;
+    const fact = `依据：${basisText(support)}`;
     return `- ${owner}（${support.characterId}）任务 ${support.taskId}：${goal}\n  ${fact}`;
   });
   const prompt = [

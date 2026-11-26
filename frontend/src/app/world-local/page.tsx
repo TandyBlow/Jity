@@ -17,6 +17,7 @@ import { createBehaviorJudge, judgeContext } from '@/lib/world-engine/local/micr
 import { createMicroContinuation } from '@/lib/world-engine/local/micro/continuation';
 import { createMicroReaction } from '@/lib/world-engine/local/micro/reaction';
 import { createMicroTaskVerifier } from '@/lib/world-engine/local/micro/task-progress';
+import { createMicroTaskProposer } from '@/lib/world-engine/local/micro/task-proposer';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -596,6 +597,8 @@ export default function WorldLocalPage() {
   // satisfaction accuracy is still too low to replace the LLM verifier.
   const [taskVerifierMicro] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('taskVerifier') === 'micro');
+  const [taskProposerMicro] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('taskProposer') === 'micro');
   const [rollSeed] = useState(() => {
     if (typeof window === 'undefined') return null;
     const raw = new URLSearchParams(window.location.search).get('seed');
@@ -989,12 +992,16 @@ export default function WorldLocalPage() {
         const microTaskVerifier = microEnabled && taskVerifierMicro
           ? createMicroTaskVerifier({ onStats: (record) => recordMicro('task-verifier', record) })
           : undefined;
+        const microTaskProposer = taskProposerMicro
+          ? createMicroTaskProposer({ onStats: (record) => recordMicro('task-proposer', record) })
+          : undefined;
         {
           const armInfo = (window as unknown as { __worldArm?: Record<string, unknown> }).__worldArm;
           if (armInfo) {
             armInfo.microReaction = Boolean(microReaction);
             armInfo.microTaskVerifier = Boolean(microTaskVerifier);
             armInfo.taskVerifier = taskVerifierMicro ? 'micro' : 'llm';
+            armInfo.taskProposer = taskProposerMicro ? 'micro' : 'llm';
           }
         }
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
@@ -1026,6 +1033,7 @@ export default function WorldLocalPage() {
           ...(microContinuation ? { microContinuation } : {}),
           ...(microReaction ? { microReaction } : {}),
           ...(microTaskVerifier ? { microTaskVerifier } : {}),
+          ...(microTaskProposer ? { microTaskProposer } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of

@@ -1423,6 +1423,40 @@ describe('six-stage updates', () => {
     expect((ran.evidence.detail as { skipped?: string }).skipped).toBeUndefined();
   });
 
+  it('applies a condition-proposer support through the verifier without the tasks LLM call', async () => {
+    const engine = new ScriptedEngine([]);
+    const handlers = createSettlementHandlers({
+      engine,
+      options: {
+        microTaskProposer: () => ({
+          supports: [{ characterId: 'b', taskId: 'b1', basis: 'f1' }], updates: [], pending: [],
+        }),
+        microTaskVerifier: () => [{
+          characterId: 'b', taskId: 'b1', satisfied: 'yes', confidence: 0.9, reason: '条件满足',
+        }],
+      },
+    });
+    const outcome = await handlers.updates('g_task', {
+      groupId: 'g_task', stage: 'tasks', results: { b: '乙协助了甲。' }, workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).toMatchObject({ stage: 'tasks', changes: { b: { tasksAchieved: ['b1'] } } });
+    expect(engine.prompts).toHaveLength(0);
+  });
+
+  it('applies a structured item destination in the program scene stage', async () => {
+    const engine = new ScriptedEngine([]);
+    const handlers = createSettlementHandlers({ engine, options: { programScene: true } });
+    const outcome = await handlers.updates('g_transfer', {
+      groupId: 'g_transfer', stage: 'position',
+      results: { a: '甲把工具递给乙（达到目的）；去向=tool:b；涉及=b' }, workingState: world(),
+    } as unknown as Json);
+    expect(outcome.value).toMatchObject({
+      stage: 'position',
+      changes: { tool: { positionSet: { containerId: 'b' } } },
+    });
+    expect(engine.prompts).toHaveLength(0);
+  });
+
   it('rejects a subtask that restates its parent goal', async () => {
     const engine = new ScriptedEngine([JSON.stringify({ subtasks: [{ parentTaskId: 'a1', goal: '拿到工具' }] })]);
     const handlers = createSettlementHandlers({ engine });
@@ -1534,6 +1568,42 @@ describe('six-stage updates', () => {
       JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
       JSON.stringify({ subtasks: [] }),
       JSON.stringify({ changes: [{ entityId: '<a>', op: 'add', recordIds: [], text: '更愿意先动手。' }] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'personality')!.changes.a?.personalityChanges?.[0]?.text).toBe('更愿意先动手。');
+  });
+
+  it('resolves a fact id in personality entityId to the fact actor', async () => {
+    // Real 2026-11-26 turn: the model wrote entityId "<f1>" and the whole
+    // point aborted, dropping the task achievements settled in the same batch.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: '<f1>', op: 'add', recordIds: [], text: '更愿意先动手。' }] }),
+      JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
+    ]);
+    const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })
+      .updates('g1', updatesInput());
+    const calls = outcome.value as UpdatesCall[];
+    expect(calls.find((call) => call.stage === 'personality')!.changes.a?.personalityChanges?.[0]?.text).toBe('更愿意先动手。');
+  });
+
+  it('resolves the schema placeholder to the only trigger owner', async () => {
+    // Real 2026-11-26 turn 3: the model copied "<人物id>" and the point aborted
+    // after the task verifier had accepted the goggles achievement.
+    const engine = new ScriptedEngine([
+      JSON.stringify({ changes: [] }),
+      JSON.stringify({ operations: [] }),
+      JSON.stringify({ achieved: [{ characterId: 'a', tasks: [{ taskId: 't1', basis: 'f1' }] }], subtasks: [] }),
+      JSON.stringify({ judgments: [{ characterId: 'a', taskId: 'a1', satisfied: 'yes', reason: '目标已达成。' }] }),
+      JSON.stringify({ subtasks: [] }),
+      JSON.stringify({ changes: [{ entityId: '<人物id>', op: 'add', recordIds: [], text: '更愿意先动手。' }] }),
       JSON.stringify({ sanity: [{ characterId: 'a', value: 61 }] }),
     ]);
     const outcome = await createSettlementHandlers({ engine, options: { requireTaskSupport: true } })

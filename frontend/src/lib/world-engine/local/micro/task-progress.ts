@@ -13,10 +13,11 @@ import { matchItems } from '../semantics/actions/structure';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
-const CONFIRM = ['确认', '报告', '说明', '告知', '问清', '核实', '看见', '检查', '证明', '登记', '回答', '听清'];
+export const CONFIRM = ['确认', '报告', '说明', '告知', '问清', '核实', '看见', '检查', '证明', '登记', '回答', '听清', '核对'];
 const TIME = /\d{1,2}:\d{2}|停赛前|结束前|午夜|天亮|天黑|明天|次日|黄昏|清晨|小时后|分钟后|入夜/u;
 const ACTION = ['前往', '走向', '走进', '进入', '赶到', '回到', '退到', '离开', '登上', '走到',
-  '守住', '护住', '挡住', '拦住', '守', '递给', '交给', '报告', '说明', '询问', '问清', '检查', '确认'];
+  '守住', '护住', '挡住', '拦住', '守', '递给', '交给', '戴上', '戴好', '拿起', '开笼', '放出',
+  '发布', '扣好', '恢复', '更换', '换上', '打开', '使用', '到达'];
 
 export interface TaskConditions {
   goal: string;
@@ -29,9 +30,55 @@ export interface TaskConditions {
   conditions: string[];
 }
 
+/** Lexical relevance prefilter, not a satisfaction decision: if the fact does
+ * not mention the condition's entity/verb at all, the model is not asked. */
+export function conditionRelevant(condition: TaskCondition, text: string): boolean {
+  const core = condition.value.replace(/^.+?的/u, '');
+  if (condition.kind === 'item') return text.includes(core) || text.includes(condition.value);
+  if (condition.kind === 'location' || condition.kind === 'target') {
+    return text.includes(condition.value) || (condition.value.length > 4 && text.includes(condition.value.slice(-4)));
+  }
+  if (condition.kind === 'time') return text.includes(condition.value);
+  if (condition.kind === 'confirmation') return CONFIRM.some((word) => text.includes(word));
+  if (condition.kind === 'action') {
+    return text.includes(condition.value) || ACTION.some((word) => text.includes(word))
+      || /戴|穿|拿|打|开|关|放|递|接|检查|确认|报告|问|说/u.test(text);
+  }
+  return true;
+}
+
+export interface TaskCondition {
+  id: string;
+  kind: 'time' | 'location' | 'item' | 'target' | 'confirmation' | 'action';
+  value: string;
+  label: string;
+}
+
+/** Per-condition rows for the proposer; same decomposition as decomposeTask. */
+export function taskConditions(goal: string, state: WorldState, ownerName: string): TaskCondition[] {
+  const conditions = decomposeTask(goal, state, ownerName);
+  const rows: TaskCondition[] = [];
+  const push = (kind: TaskCondition['kind'], value: string) => {
+    rows.push({ id: `c${rows.length + 1}`, kind, value, label: `${kind}：${value}` });
+  };
+  if (conditions.time) push('time', conditions.time);
+  if (conditions.location) push('location', conditions.location);
+  if (conditions.item) push('item', conditions.item);
+  if (conditions.target) push('target', conditions.target);
+  if (conditions.confirmation) push('confirmation', conditions.confirmation);
+  if (conditions.action) push('action', conditions.action);
+  return rows;
+}
+
 export function decomposeTask(goal: string, state: WorldState, ownerName: string): TaskConditions {
   const items = Object.entries(state.initial.items).map(([id, item]) => ({ id, name: item.name ?? id }));
-  const itemId = matchItems(goal, items, ownerName)[0];
+  // The generic matcher accepts a 2-char overlap; a task condition needs the
+  // item itself (or its core name) in the goal, not a shared faction word.
+  const itemId = matchItems(goal, items, ownerName).find((id) => {
+    const name = state.initial.items[id]?.name ?? id;
+    const core = name.replace(/^.+?的/u, '');
+    return goal.includes(core) && (core.length >= 3 || goal.includes(name));
+  });
   const item = itemId ? (state.initial.items[itemId]?.name ?? itemId) : null;
   const target = Object.values(state.initial.characters).find((character) => character.name && goal.includes(character.name))?.name ?? null;
   const location = matchLocation(state, goal)?.name ?? null;
@@ -154,7 +201,13 @@ export function createMicroTaskVerifier(options: MicroTaskProgressOptions = {}):
       }
       const gate = outcomeGate(support.factText);
       const conditions = decomposeTask(support.goal, request.state, support.ownerName);
-      const coverage = conditionCoverage(conditions, support.factText);
+      const coverage = support.conditions?.length
+        ? {
+          matched: support.conditions.filter((condition) => condition.state === 'satisfied').length,
+          total: support.conditions.length,
+          missing: support.conditions.filter((condition) => condition.state !== 'satisfied').map((condition) => condition.label),
+        }
+        : conditionCoverage(conditions, support.factText);
       const probabilities = score.satisfaction;
       const best = probabilities.indexOf(Math.max(...probabilities));
       let label = gate ?? SAT[best];

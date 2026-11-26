@@ -63,6 +63,9 @@ export interface SettlementOptions {
   /** Experimental micro workflow: task/fact verifier. A null or low-confidence
    * answer falls back to the LLM verifier. */
   microTaskVerifier?: MicroTaskVerifierFn;
+  /** Experimental micro workflow: condition-level task proposer. It keeps a
+   * session ledger and proposes only tasks whose conditions are all supported. */
+  microTaskProposer?: MicroTaskProposerFn;
   /** Experimental structured scene arm: apply `去向=` facts directly and skip
    * the merged position prompt when nothing looks uncertain. */
   programScene?: boolean;
@@ -197,6 +200,9 @@ export interface MicroTaskSupport {
   goal: string;
   ownerName: string;
   factText: string;
+  /** Proposer's per-condition model labels; when present the verifier uses
+   * them instead of re-checking conditions lexically. */
+  conditions?: Array<{ label: string; state: 'none' | 'keyword' | 'attempt' | 'satisfied' }>;
 }
 
 export interface MicroTaskVerdict {
@@ -211,6 +217,32 @@ export type MicroTaskVerifierFn = (request: {
   supports: MicroTaskSupport[];
   state: WorldState;
 }) => Promise<MicroTaskVerdict[] | null> | MicroTaskVerdict[] | null;
+
+export interface MicroTaskProposerRequest {
+  state: WorldState;
+  facts: Array<{ id: string; memberId: Id; text: string }>;
+}
+
+export interface MicroTaskConditionUpdate {
+  taskId: Id;
+  conditionId: string;
+  label: 'none' | 'keyword' | 'attempt' | 'satisfied';
+  factId: string;
+  text: string;
+}
+
+export interface MicroTaskProposal {
+  supports: Array<{
+    characterId: Id; taskId: Id; basis: string; basisText?: string;
+    conditions?: Array<{ label: string; state: 'none' | 'keyword' | 'attempt' | 'satisfied' }>;
+  }>;
+  updates: MicroTaskConditionUpdate[];
+  pending: Array<{ taskId: Id; matched: number; total: number; missing: string[] }>;
+}
+
+export type MicroTaskProposerFn = (
+  request: MicroTaskProposerRequest,
+) => Promise<MicroTaskProposal | null> | MicroTaskProposal | null;
 
 export interface ModelCallEvidence {
   prompt: string;

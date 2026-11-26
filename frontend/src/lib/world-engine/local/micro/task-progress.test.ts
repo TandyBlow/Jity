@@ -38,6 +38,25 @@ describe('task-progress micro workflow', () => {
     expect(verdicts?.[0].reason).toContain('条件');
   });
 
+  it('trusts the proposer condition labels over lexical overlap', async () => {
+    const port = createMicroTaskVerifier({
+      scoring: () => [{ relevance: 0.9, satisfaction: [0.9, 0.05, 0.05] }],
+    });
+    const verdicts = await port({
+      supports: [{
+        characterId: 'hero', taskId: 'task_hero_key', goal: '把手电打开并确认电量',
+        ownerName: '路明非', factText: '路明非按了一下开关。',
+        conditions: [
+          { label: 'item：手电', state: 'satisfied' },
+          { label: 'action：打开', state: 'satisfied' },
+          { label: 'confirmation：确认', state: 'satisfied' },
+        ],
+      }],
+      state: buildTestWorld(),
+    });
+    expect(verdicts?.[0]).toMatchObject({ satisfied: 'yes' });
+  });
+
   it('covers the conditions named by a goal', () => {
     const state = buildTestWorld();
     const conditions = decomposeTask('把手电打开并确认电量', state, '路明非');
@@ -61,6 +80,27 @@ describe('task-progress micro workflow', () => {
       scoring: () => [{ relevance: 0.2, satisfaction: [0.9, 0.05, 0.05] }],
     });
     expect(await port({ supports: [support()], state: buildTestWorld() })).toBeNull();
+  });
+
+  it('shows cross-turn basis text to the LLM verifier', async () => {
+    let prompt = '';
+    const engine: InferenceEngine = {
+      info: { backend: 'scripted', modelId: 'task-progress-test' },
+      load: async () => undefined,
+      dispose: async () => undefined,
+      complete: async (text) => {
+        prompt = text;
+        return '{"judgments":[{"characterId":"hero","taskId":"task_hero_key","satisfied":"yes","reason":"跨回合满足"}]}';
+      },
+    };
+    const result = await verifyTaskAchievements({
+      engine,
+      state: buildTestWorld(),
+      results: {},
+      options: {},
+    }, [{ characterId: 'hero', taskId: 'task_hero_key', basis: 'cross_turn', basisText: '路明非打开手电；路明非确认电量。' }]);
+    expect(prompt).toContain('路明非打开手电；路明非确认电量。');
+    expect(result.judgments[0]).toMatchObject({ satisfied: 'yes' });
   });
 
   it('lets the micro verdict replace the LLM verifier call', async () => {
