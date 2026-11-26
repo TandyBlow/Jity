@@ -1882,6 +1882,23 @@ describe('six-stage updates', () => {
     expect((outcome.value as UpdatesCall).changes.box).toBeUndefined();
   });
 
+  it('keeps an existing appearance record when the answer adds another', async () => {
+    const state = world();
+    state.items.tool.appearanceChanges = [
+      { id: 'appear_old', text: '旧划痕。', supersedes: [], sourcePointId: 'p0', sourceSequence: 1, active: true },
+    ];
+    const engine = new ScriptedEngine([
+      JSON.stringify({ operations: [{ entityId: 'tool', op: 'add', recordIds: [], text: '新划痕。' }] }),
+    ]);
+    const input = {
+      ...(updatesInput(state, 'appearance') as Record<string, unknown>),
+      results: { a: '甲检查工具，发现了新划痕。' },
+    } as unknown as Json;
+    const outcome = await createSettlementHandlers({ engine }).updates('g1#appearance', input);
+    expect((outcome.value as UpdatesCall).changes.tool?.appearanceChanges?.[0]?.text).toBe('新划痕。');
+    expect(outcome.error).toBeUndefined();
+  });
+
   it('applies structured destinations without the position call', async () => {
     const engine = new ScriptedEngine([]);
     const input = {

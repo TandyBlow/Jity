@@ -2093,7 +2093,12 @@ function readDescriptionOperations(
         });
       }
       if (activeIds.size > 0 && covered.size !== activeIds.size) {
-        throw new Error(`${entityId} record operation coverage incomplete`);
+        // An add never supersedes a record; implicit keep keeps it visible.
+        if (kind === 'appearance') {
+          for (const id of activeIds) if (!covered.has(id)) covered.add(id);
+        } else {
+          throw new Error(`${entityId} record operation coverage incomplete`);
+        }
       }
       const remaining = active
         .filter((record) => !covered.has(record.id))
