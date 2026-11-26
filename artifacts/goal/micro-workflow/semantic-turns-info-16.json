@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sm16-i-r1",
+  "class": "info_new",
+  "input": "我走进红方集结点，查看红方地图桌的桌脚。",
+  "purpose": "复合移动+地图桌"
+ },
+ {
+  "id": "sm16-i-r2",
+  "class": "info_new",
+  "input": "我读红方地图桌下的电池盒空间。",
+  "purpose": "地图桌"
+ },
+ {
+  "id": "sm16-i-r3",
+  "class": "info_new",
+  "input": "我读凯撒的庭院平面图上的正门进攻线。",
+  "purpose": "平面图"
+ },
+ {
+  "id": "sm16-i-r4",
+  "class": "info_new",
+  "input": "我读凯撒的庭院平面图上的东回廊绕行线。",
+  "purpose": "平面图另一条"
+ },
+ {
+  "id": "sm16-i-r5",
+  "class": "info_new",
+  "input": "我查看短讯机电池盒的盒面。",
+  "purpose": "电池盒"
+ },
+ {
+  "id": "sm16-i-r6",
+  "class": "info_new",
+  "input": "我查看R型短讯电池甲的触点。",
+  "purpose": "电池甲"
+ }
+]

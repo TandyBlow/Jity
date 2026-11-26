@@ -1749,6 +1749,146 @@
      "purpose": "检修门"
     }
    ]
+  },
+  {
+   "id": "info-16",
+   "turns": [
+    {
+     "id": "sm16-i-r1",
+     "class": "info_new",
+     "input": "我走进红方集结点，查看红方地图桌的桌脚。",
+     "purpose": "复合移动+地图桌"
+    },
+    {
+     "id": "sm16-i-r2",
+     "class": "info_new",
+     "input": "我读红方地图桌下的电池盒空间。",
+     "purpose": "地图桌"
+    },
+    {
+     "id": "sm16-i-r3",
+     "class": "info_new",
+     "input": "我读凯撒的庭院平面图上的正门进攻线。",
+     "purpose": "平面图"
+    },
+    {
+     "id": "sm16-i-r4",
+     "class": "info_new",
+     "input": "我读凯撒的庭院平面图上的东回廊绕行线。",
+     "purpose": "平面图另一条"
+    },
+    {
+     "id": "sm16-i-r5",
+     "class": "info_new",
+     "input": "我查看短讯机电池盒的盒面。",
+     "purpose": "电池盒"
+    },
+    {
+     "id": "sm16-i-r6",
+     "class": "info_new",
+     "input": "我查看R型短讯电池甲的触点。",
+     "purpose": "电池甲"
+    }
+   ]
+  },
+  {
+   "id": "info-17",
+   "turns": [
+    {
+     "id": "sm17-i-r1",
+     "class": "info_new",
+     "input": "我走进钟楼顶层，读蓝方信号旗的底端接口。",
+     "purpose": "复合移动+蓝旗"
+    },
+    {
+     "id": "sm17-i-r2",
+     "class": "info_new",
+     "input": "我查看顶层玻璃门的门把。",
+     "purpose": "玻璃门"
+    },
+    {
+     "id": "sm17-i-r3",
+     "class": "info_new",
+     "input": "我走上钟楼旗台外廊，查看钟楼旗台底座的释放杆。",
+     "purpose": "复合移动+底座"
+    },
+    {
+     "id": "sm17-i-r4",
+     "class": "info_new",
+     "input": "我读中立白旗上的红蓝标记。",
+     "purpose": "白旗"
+    },
+    {
+     "id": "sm17-i-r5",
+     "class": "info_new",
+     "input": "我查看旗台短安全绳两头的锁扣。",
+     "purpose": "安全绳"
+    }
+   ]
+  },
+  {
+   "id": "info-18",
+   "turns": [
+    {
+     "id": "sm18-i-r1",
+     "class": "info_new",
+     "input": "我走进西回廊，查看林亦舟放下的演习枪的弹匣。",
+     "purpose": "复合移动+演习枪"
+    },
+    {
+     "id": "sm18-i-r2",
+     "class": "info_new",
+     "input": "我查看折断的蓝布带的断口。",
+     "purpose": "蓝布带"
+    },
+    {
+     "id": "sm18-i-r3",
+     "class": "info_new",
+     "input": "我走进医护休息区，读沈澄拆下的红色识别带上的登记。",
+     "purpose": "复合移动+识别带"
+    },
+    {
+     "id": "sm18-i-r4",
+     "class": "info_new",
+     "input": "我查看保温毯旁的长椅空位。",
+     "purpose": "保温毯"
+    }
+   ]
+  },
+  {
+   "id": "info-19",
+   "turns": [
+    {
+     "id": "sm19-i-r1",
+     "class": "info_new",
+     "input": "我走进器材棚，查看器材领用台上笔尖。",
+     "purpose": "复合移动+领用台"
+    },
+    {
+     "id": "sm19-i-r2",
+     "class": "info_new",
+     "input": "我查看通用短枪弹匣甲上的阵营标记。",
+     "purpose": "弹匣甲"
+    },
+    {
+     "id": "sm19-i-r3",
+     "class": "info_new",
+     "input": "我查看通用短枪弹匣乙的卡榫。",
+     "purpose": "弹匣乙"
+    },
+    {
+     "id": "sm19-i-r4",
+     "class": "info_new",
+     "input": "我读备用红色识别带上的领用人。",
+     "purpose": "备用红带"
+    },
+    {
+     "id": "sm19-i-r5",
+     "class": "info_new",
+     "input": "我读备用蓝色识别带上的领用人。",
+     "purpose": "备用蓝带"
+    }
+   ]
   }
  ]
 }

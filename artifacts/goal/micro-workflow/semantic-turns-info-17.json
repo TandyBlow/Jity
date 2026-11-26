@@ -1,0 +1,32 @@
+[
+ {
+  "id": "sm17-i-r1",
+  "class": "info_new",
+  "input": "我走进钟楼顶层，读蓝方信号旗的底端接口。",
+  "purpose": "复合移动+蓝旗"
+ },
+ {
+  "id": "sm17-i-r2",
+  "class": "info_new",
+  "input": "我查看顶层玻璃门的门把。",
+  "purpose": "玻璃门"
+ },
+ {
+  "id": "sm17-i-r3",
+  "class": "info_new",
+  "input": "我走上钟楼旗台外廊，查看钟楼旗台底座的释放杆。",
+  "purpose": "复合移动+底座"
+ },
+ {
+  "id": "sm17-i-r4",
+  "class": "info_new",
+  "input": "我读中立白旗上的红蓝标记。",
+  "purpose": "白旗"
+ },
+ {
+  "id": "sm17-i-r5",
+  "class": "info_new",
+  "input": "我查看旗台短安全绳两头的锁扣。",
+  "purpose": "安全绳"
+ }
+]

@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 91, "env:insufficient": 23, "info:insufficient": 91, "env:absent": 93, "env:conflict": 20, "env:present": 52, "info:present": 6}
+Counts: {"info:absent": 91, "env:insufficient": 23, "info:insufficient": 94, "env:absent": 102, "env:conflict": 20, "env:present": 52, "info:present": 12}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -1010,6 +1010,60 @@ Counts: {"info:absent": 91, "env:insufficient": 23, "info:insufficient": 91, "en
 - action: 我查看芬格尔的相机电池图标。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: insufficient proposed=True content='路明非查看了芬格尔相机电池图标' support='路明非成功查看了芬格尔的相机电池图标' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm11-i-r1 (train, cache, info_new)
+- action: 我读演习规则牌上关于医护白线的条款。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='医护白线禁射' support='医护白线禁射' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm11-i-r2 (train, cache, info_new)
+- action: 我读演习规则牌上关于停赛时间的条款。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='15:45停赛' support='15:45停赛' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm11-i-r3 (train, cache, info_new)
+- action: 我读赛区路线图上关于跨溪小桥的标注。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路' support='图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm11-i-r4 (train, cache, info_new)
+- action: 我走进器材棚，读器材领用簿上关于担架的领取栏。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "shed", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks
+- info: present proposed=True content='担架、安全绳和折叠梯的领取栏仍空' support='担架、安全绳和折叠梯的领取栏仍空' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm11-i-r5 (train, cache, info_new)
+- action: 我读开盖演习弹药箱上关于封套的说明。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='黄色封套上写明不得与实弹混用' support='黄色封套上写明不得与实弹混用' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm11-i-r6 (train, cache, info_new)
+- action: 我查看备用护目镜的弹力带。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: present proposed=True content='弹力带可以调节' support='弹力带可以调节' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm11-i-r7 (train, cache, info_new)
+- action: 我查看器材笼挂锁的锁梁。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='查看锁梁被阻止，未获得信息' support='路明非查看器材笼挂锁的锁梁。（被阻止）' evidence=settled
+- env: absent proposed=False content='锁梁状态未改变' support='锁没开' evidence=narrative
+
+## sm11-i-r8 (train, cache, info_new)
+- action: 我读芬格尔的相机上电池图标。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=True content='路明非读取芬格尔相机电池图标' support='路明非读对方的相机上电池图标' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm11-i-r9 (train, cache, info_new)
+- action: 我读芬格尔的饭票夹上的食堂饭票数量。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=True content='路明非读出芬格尔饭票夹里的食堂饭票数量' support='读出里面的食堂饭票数量' evidence=narrative
 - env: absent proposed=False content='' support='' evidence=state
 
 ## s01-act-move (train, cache, 20-input)
