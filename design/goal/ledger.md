@@ -177,3 +177,5 @@ G1 之后新增：
 - 语义数据第二轮（2026-11-26）：env-2（前 8 回合有效）+ env-4 完成并标注；验收门 pass，train 64 行；字段计数 info 25 pos / 3 neg、env 12 pos / 22 neg（trainingReady=false）。失败词改为只看带 `环境=` 的事实，避免 instant 叙事的「没有」污染；env-5/info-4/info-5 采集中。决策 D-056/D-058/D-061。
 
 - 第三轮数据（2026-11-26）：env-6 完成，记录检修图/工作台/医护箱/空床/保温毯/备用护目镜/领用簿/弹药箱/长椅/石花槽；标注后 info 35 pos/6 neg、env 29 pos/47 neg。门控 pass；控制室移动在真实回合未提交（结构 destination=null，单测同文本通过，待查）。env-7 与 info-6/7（LLM results 臂）采集中。D-061/D-062。
+
+- env-7（2026-11-26）：12 回合记录 16 类物品/地点；保存时 Windows EPERM rename 使 status=FAILED，但 12 回合数据完整并可用。标注后 info 35 pos/7 neg、env **40 pos/48 neg**。env-8（复合）与 info-9（读取观察）待跑；env 事件导出接近 50 正例后可训存在性头。D-062。
