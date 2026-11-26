@@ -409,3 +409,11 @@
 - 决定：先修「行动成功但状态不变」和「正文与已提交状态矛盾」两条独立故障，不换模型统一处理。状态侧用结构化 `去向=` 进入 projection 与 programScene；叙事侧用在场/物品归属守卫，失败时用已结算事实草稿重写一次，仍失败才回落程序草稿。任务核验移除「达到目的→任务完成」的直接映射，改为逐项条件覆盖；覆盖不足时 yes 降为 partial，零覆盖判 no。
 - 证据：`evidence-transfer-single9.json`（goggles_lu→nono、source=model、problems=0）、`evidence-multi-turn-micro2.json`、`projection.test.ts`、`results.test.ts`、`committed-narration.test.ts`、`task-progress.test.ts`。
 - 影响：不通过放宽校验或提前结束事件换性能；共享 tokenizer 已接入（七端口一次词表加载），共享 runtime/批量推理未做；仍待多回合台账泄漏、空移动与 program 回落。
+
+## D-036 task proposer：整轮 results + 条件台账 + 程序下限（2026-11-26，用户指令）
+
+- 状态：`signed`（2026-11-26）。
+- 决定：tasks 批只在最后一个 plan point 跑，但 `staged` 在点提交时清空，玩家点的 results 进不了 tasks 阶段；`ControllerMemory.roundResults` 按回合合并每个 `stage_unit` 的 results，point-rest 批读整轮，`pointPlan`/`round_conclusion_conclude`/`clearRoundWork` 重置。task proposer 继续只提案、核验器提交；每条条件由 4 类模型判断 none/keyword/attempt/satisfied，跨回合台账只在 satisfied 全齐时提案。`satisfied` 增加程序下限：action 必须在事实里出现动作词（或首字），confirmation 必须出现确认词且任务自身 item/target/location 之一出现在事实或跨回合依据里；这是上限约束，不是完成判定。proposer 的条件标签随 support 传给微型核验器，替代词面 `conditionCoverage`；LLM 核验器提示改为打印 `basisText`，跨回合依据不再显示“引用不存在”。personality 阶段把 `<f1>` 这类事实 id 解析为事实所属人物，避免一个 0.6B 格式错误让整点失败、丢掉同点任务达成。
+- 模型实验：带 `任务：<goal>\n条件：<label>` 输入的 v2 条件模型留出 73.7%，真实行上把护目镜确认从 satisfied 降为 keyword；不部署 v2，部署模型仍是 condition+fact 的 v1（留出 88.9%）。真实错误由程序下限兜住。
+- 证据：`evidence-task-accum-micro4.json`（玩家事实缺失，facts=12 全 NPC）、`evidence-task-accum-micro6.json`（跨回合护目镜 support 3/3，但 `task_lu_kit` 被“拿起护目镜”误判为 `进入`，且 personality `<f1>` 让整点取消）、`evidence-task-accum-micro7.json`（程序下限后 turn1 1/3、turn2 2/3、turn3 3/3 + verifier yes，kit 误判消失；personality 改写 `<人物id>` 仍使整点 turn_failed）。`<f1>`/`<人物id>` 到触发人物的映射已加单测；micro8 真机复跑在首回合前因宿主机内存低被停止，未重跑，占位符修复尚无真实页面证据。
+- 影响：不为了任务进度放宽六阶段原子提交；personality 失败仍记录，但已知事实 id 不再让点失败。仍待：proposer 台账跨刷新持久化、后续子任务提案、移动端与共享 runtime/批推理。

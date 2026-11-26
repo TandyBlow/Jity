@@ -11,7 +11,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-HEADS = {'results': 5, 'judge': 3, 'behavior': 7, 'updates': 2, 'targets': 1, 'continuation': 4, 'reaction': 3, 'task-verifier': 2}
+HEADS = {'results': 5, 'judge': 3, 'behavior': 7, 'updates': 2, 'targets': 1, 'continuation': 4, 'reaction': 3, 'task-verifier': 2, 'task-proposer': 1}
 
 
 def main():
@@ -36,6 +36,8 @@ def main():
                     count = int(row.get('inferences', 1) or 0)
                 elif port == 'updates':
                     count = int(row.get('inferences', row.get('entities', 0)) or 0)
+                elif port in ('task-verifier', 'task-proposer'):
+                    count = int(row.get('inferences', 0) or 0)
                 else:
                     count = int(row.get('calls', 0) or 0)
                 entry['inferences'] += count

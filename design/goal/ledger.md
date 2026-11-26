@@ -110,3 +110,5 @@ G1 之后新增：
 - tasks/subtasks 补充（2026-11-25）：条件分解 + 80 对 hand-authored pilot（relevance 18/20、satisfaction 9/15）已实现但**不作为默认**；`?taskVerifier=micro` 才启用，低置信回退 LLM。真实回合 tasks 阶段两次空 achieved，说明当前瓶颈是"不提出达成候选"而不是核验器。子任务新增父任务/现有任务同文拒绝。证据 `task-match-report.json`、`conclusion-20261125.md`；决策 D-034。
 
 - 状态/叙事一致性补充（2026-11-25）：单动作转移根因在 updates projection/programScene，不在 action structure；已修并加单测，transfer-single9 状态与正文一致。叙事新增在场/物品归属守卫与一次事实草稿重写；任务核验改为条件覆盖，不再把「达到目的」直接当任务完成。仍待多回合台账泄漏、空移动与 program 回落。证据 `conclusion-20261125.md`；决策 D-035。
+
+- task proposer 补充（2026-11-26）：tasks 批原先只读最后一个 plan point 的 `staged`，玩家点 results 在提交时被清空，护目镜任务永远没有输入（micro4 `facts=12` 全 NPC）。现按回合合并 `roundResults`；proposer 用条件台账跨回合累计，`satisfied` 前加 action/confirmation 程序下限，support 带条件标签给微型核验器；personality 把 `<f1>`/`<人物id>` 解析为事实人物或唯一触发人物，避免格式错误让整点失败。micro7：下限后 turn1 1/3、turn2 2/3、turn3 3/3 + verifier yes，kit 误判消失；personality 写 `<人物id>` 仍 turn_failed。占位符映射有单测；micro8 真机复跑在首回合前被宿主机内存低停止，未重跑。带 goal 输入的 v2 条件模型留出 73.7%、真实行确认召回失败，不部署。证据 `evidence-task-accum-micro4/6/7.json`、`task-condition-goal-report.json`；决策 D-036。

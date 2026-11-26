@@ -1,0 +1,5 @@
+[
+  {"id": "ta1", "input": "我拿起护目镜。", "purpose": "goggles task: item condition"},
+  {"id": "ta2", "input": "我把护目镜戴好。", "purpose": "goggles task: action condition"},
+  {"id": "ta3", "input": "我检查镜片有没有裂纹。", "purpose": "goggles task: confirmation condition; all three facts should satisfy the task"}
+]

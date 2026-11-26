@@ -1,0 +1,23 @@
+{
+ "rows": 82,
+ "train": 64,
+ "test": 18,
+ "held_tasks": [
+  "task_caesar_win",
+  "task_manstein_clock",
+  "task_tang_ammo"
+ ],
+ "test_confusion": {
+  "satisfied->satisfied": 4,
+  "attempt->attempt": 6,
+  "keyword->keyword": 6,
+  "satisfied->keyword": 1,
+  "satisfied->attempt": 1
+ },
+ "test_accuracy": 0.8888888888888888,
+ "input_tokens_median": 23,
+ "input_tokens_max": 34,
+ "bytes": 41237977,
+ "int8_bytes": 10550492,
+ "note": "deployed model (condition+fact input); task proposer adds a program floor for action/confirmation"
+}
