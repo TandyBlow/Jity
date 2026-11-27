@@ -747,6 +747,9 @@ export default function WorldLocalPage() {
     busyRef.current = busy;
     (window as unknown as { __worldBusy?: boolean }).__worldBusy = busy;
   }, [busy]);
+  useEffect(() => {
+    (window as unknown as { __worldPhase?: Phase }).__worldPhase = phase;
+  }, [phase]);
   const sessionRef = useRef<LocalGameSession | null>(null);
   /** Product cap: one submit may wait 300 s at most. Automatic follow-up rounds
    * are stopped at 295 s so the player gets the committed point back inside the
@@ -2022,7 +2025,11 @@ export default function WorldLocalPage() {
             <div className={styles.statusRow}>
               <span>{view?.time ?? '—'} · {view?.place ?? '—'}</span>
               <span>
-                {phase === 'thinking' ? (stage ? `结算中：${stage}` : '结算中…') : phase === 'streaming' ? '正在写正文…' : message}
+                {phase === 'thinking'
+                  ? `${stage ? `结算中：${stage}` : '结算中…'}${busy ? ` · 已等待 ${Math.round((performance.now() - submittedAtRef.current) / 1000)}s · 语义 ${turnRecordRef.current?.semanticPrompts?.length ?? 0} 次 · 微模型 ${turnRecordRef.current?.microStats?.length ?? 0} 行` : ''}`
+                  : phase === 'streaming'
+                    ? `正在写正文…${busy ? ` · 已等待 ${Math.round((performance.now() - submittedAtRef.current) / 1000)}s` : ''}`
+                    : phase === 'loading' ? `${message} · 已等待 ${loadSeconds}s` : message}
                 {busy && <button onClick={() => void cancelTurn()} className={`${styles.ghostButton} ${styles.inlineButton}`}>{'取消本轮'}</button>}
                 {phase === 'loading' && <button onClick={() => void cancelTurn()} className={`${styles.ghostButton} ${styles.inlineButton}`}>{'取消加载'}</button>}
               </span>
