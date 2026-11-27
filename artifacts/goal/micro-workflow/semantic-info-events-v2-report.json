@@ -1,0 +1,221 @@
+{
+ "turns": 229,
+ "agreement": {
+  "v2_items|old_absent": 85,
+  "v2_none|old_absent": 87,
+  "v2_items|old_present": 17,
+  "v2_none|old_present": 40
+ },
+ "modes": {
+  "multi": 76,
+  "open": 43,
+  "specified": 29
+ },
+ "sources": {
+  "observation": 130,
+  "location": 7,
+  "dialogue": 4,
+  "question": 7
+ },
+ "perClass": {
+  "env_failure|none": 6,
+  "env_irrelevant_move|items": 6,
+  "env_irrelevant_move|none": 1,
+  "env_item_transfer|items": 2,
+  "env_item_transfer|none": 4,
+  "env_partial|none": 1,
+  "env_success|items": 49,
+  "env_success|none": 16,
+  "info_failure|items": 4,
+  "info_failure|none": 3,
+  "info_irrelevant_known|items": 8,
+  "info_irrelevant_known|none": 18,
+  "info_new|items": 29,
+  "info_new|none": 75,
+  "info_partial|items": 2,
+  "info_repeat|items": 2,
+  "info_repeat|none": 3
+ },
+ "examples": [
+  {
+   "id": "sm-e-success-1",
+   "action": "我抓住检修盖的拉环，把服务巷检修盖提开，露出下面的短梯。",
+   "why": "v2_items_old_absent",
+   "first": "诺诺在西侧服务巷里，左臂缠着红色识别带，短枪枪口压向地面。"
+  },
+  {
+   "id": "sm-e-move-1",
+   "action": "我走进中央庭院。",
+   "why": "v2_items_old_absent",
+   "first": "中央庭院里蓝布带挂在西回廊口，钟楼正门朝北。"
+  },
+  {
+   "id": "sm-e-success-2",
+   "action": "我把庭院南端倒放的长椅拖开，让出石花槽后的通道。",
+   "why": "v2_items_old_absent",
+   "first": "长椅一端仍压着石花槽，只能挪开一部分，通道未完全让出"
+  },
+  {
+   "id": "sm-e-success-3",
+   "action": "我穿过庭院走进钟楼门厅，把虚掩的正门完全推开。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼门厅里没有别人。"
+  },
+  {
+   "id": "sm-e-move-2",
+   "action": "我沿楼梯走上钟楼顶层。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼门厅的正门半开，木门背后留有弹着痕。"
+  },
+  {
+   "id": "sm-e-success-5",
+   "action": "我推开顶层玻璃门，走到旗台外廊。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼旗台外廊里，中立白旗卡在底座锁扣里，侧面的手动释放杆可见。"
+  },
+  {
+   "id": "sm-e-transfer-2",
+   "action": "我把中立白旗从旗座的插槽里取下来，卷好。",
+   "why": "v2_items_old_absent",
+   "first": "中立白旗卡在旗台底座的锁扣里，侧面有手动释放杆。"
+  },
+  {
+   "id": "sm-i-new-1",
+   "action": "我压低声音问诺诺：红方的人现在都控制着哪些方向？",
+   "why": "v2_items_old_absent",
+   "first": "诺诺左臂缠着红色识别带，短枪枪口压向地面"
+  },
+  {
+   "id": "sm-i-repeat-1",
+   "action": "我把同一个问题再问诺诺一遍：红方都控制着哪些方向？",
+   "why": "v2_items_old_absent",
+   "first": "诺诺没有回答路明非关于红方控制方向的问题。"
+  },
+  {
+   "id": "sm-i-fail-1",
+   "action": "我问诺诺：这次演习的口令是什么？",
+   "why": "v2_items_old_absent",
+   "first": "诺诺没有回答演习口令是什么"
+  },
+  {
+   "id": "sm-i-partial-1",
+   "action": "我问诺诺两件事：蓝方集结点在哪，口令是什么；她只答了蓝方集结点。",
+   "why": "v2_items_old_absent",
+   "first": "诺诺只回答了蓝方集结点，没有说出口令"
+  },
+  {
+   "id": "sm-i-partial-2",
+   "action": "我问秦越：器材笼里还有几副担架，笼门什么时候开；他只答了担架数量。",
+   "why": "v2_items_old_absent",
+   "first": "秦越没有回答器材笼门什么时候开"
+  },
+  {
+   "id": "sm-i-new-3",
+   "action": "我问秦越：演习结束后器材要怎么归还？",
+   "why": "v2_items_old_absent",
+   "first": "秦越没有回答路明非关于演习结束后器材如何归还的问题"
+  },
+  {
+   "id": "sm-i-repeat-2",
+   "action": "我再次问秦越：演习结束后器材要怎么归还？",
+   "why": "v2_items_old_absent",
+   "first": "器材棚里的器材被分成领用台和带锁的器材笼两处。"
+  },
+  {
+   "id": "sm-i-irrelevant-3",
+   "action": "我靠着领用台站了一会儿，听棚外的枪声。",
+   "why": "v2_items_old_absent",
+   "first": "棚外的枪声没有停。"
+  },
+  {
+   "id": "sm2-e-success-1",
+   "action": "我走进器材棚，把开盖演习弹药箱的盖子完全掀开。",
+   "why": "v2_items_old_absent",
+   "first": "芬格尔在器材棚里，头盔歪着，食指蹭了油。"
+  },
+  {
+   "id": "sm2-e-success-2",
+   "action": "我把器材领用台推到墙边，腾出中间的过道。",
+   "why": "v2_items_old_absent",
+   "first": "秦越和芬格尔都进了器材棚，各自查看情况"
+  },
+  {
+   "id": "sm2-e-success-3",
+   "action": "我走到东回廊，把遮光帘拉下一半，挡住半边窗口。",
+   "why": "v2_items_old_absent",
+   "first": "苏茜正在查看东回廊里的变化"
+  },
+  {
+   "id": "sm2-e-move-1",
+   "action": "我走过跨溪小桥，进入钟楼门厅。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼门厅的正门半开，木门背后有弹着痕。"
+  },
+  {
+   "id": "sm4-e-success-1",
+   "action": "我走进器材棚，把弹药箱的盖子掀开，再把领用台推到墙边。",
+   "why": "v2_items_old_absent",
+   "first": "芬格尔在器材棚里，头盔歪着，食指蹭了油"
+  },
+  {
+   "id": "sm4-e-success-2",
+   "action": "我走到东回廊，把遮光帘拉下，再把低窗软垫拖到墙根。",
+   "why": "v2_items_old_absent",
+   "first": "东回廊南边低窗的帆布遮光帘拉下后可以藏起身影，但会失去观察庭院的视线。"
+  },
+  {
+   "id": "sm4-e-success-3",
+   "action": "我穿过小桥走进钟楼门厅，把长桌推到侧墙，再把正门关上。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼正门半开，木门背后有弹着痕"
+  },
+  {
+   "id": "sm4-e-success-4",
+   "action": "我走上顶层，把玻璃门推开，再把白旗从旗座拔出来。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼顶层南窗下有一面蓝方信号旗，蓝布与短杆靠在一起，接口没插好。"
+  },
+  {
+   "id": "sm4-e-success-5",
+   "action": "我把白旗重新插回旗座，再把玻璃门关上。",
+   "why": "v2_items_old_absent",
+   "first": "白旗已被重新插回旗座，玻璃门已关上"
+  },
+  {
+   "id": "sm4-e-success-6",
+   "action": "我走下楼梯回到门厅，把正门重新打开。",
+   "why": "v2_items_old_absent",
+   "first": "钟楼门厅里只有路明非一个人"
+  },
+  {
+   "id": "sm4-e-move-1",
+   "action": "我戴上护目镜，沿着庭院西侧走回服务巷。",
+   "why": "v2_items_old_absent",
+   "first": "诺诺的红色识别带缠在左臂，右袖有红痕，枪口压向地面。"
+  },
+  {
+   "id": "sm4-e-success-9",
+   "action": "我把检修盖重新提开一条缝。",
+   "why": "v2_items_old_absent",
+   "first": "检修盖的拉环朝上，需要把盖子提起来才能拉好拉环"
+  },
+  {
+   "id": "sm5-e-success-1",
+   "action": "我走进器材棚，把弹药箱的盖子掀开，再把领用台推到墙边。",
+   "why": "v2_items_old_absent",
+   "first": "芬格尔和秦越查看器材棚里的变化都只完成了一部分"
+  },
+  {
+   "id": "sm5-e-success-2",
+   "action": "我把器材领用簿翻开。",
+   "why": "v2_items_old_absent",
+   "first": "器材领用簿已被翻开"
+  },
+  {
+   "id": "sm5-e-success-4",
+   "action": "我走进庭院，把倒放长椅扶正，再把石花槽搬到喷泉边。",
+   "why": "v2_items_old_absent",
+   "first": "庭院里没有别的动静"
+  }
+ ]
+}

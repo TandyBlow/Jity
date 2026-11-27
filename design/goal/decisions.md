@@ -826,3 +826,11 @@
 - 新增 `check_head_parity.py`：对每个已导出的头比较 torch 与公开 int8 ONNX 的 argmax 与正类概率；明确边界（torch 前两名差 ≥0.1）的翻转算失败，近平局允许 int8 翻转但须报告；提取头另比组内 top1。当前全部通过：存在性 env 206/206（最大概率差 0.0001）、info 149/149（0.0241）；提取 203/203、组 top1 55/55（最大差 0.099，阈值 0.15）；支持 env 106/106（0.0355）、info 151/152（0 硬翻转，1 个近平局）。
 - 该门暴露了第二个部署问题：提取头的 ONNX 是旧权重（重训后未重导）。已重导、更新 manifest（sha256 7444…）并复跑通过。以后每次重训/替换模型都必须跑这个门，页面验收另比控制台分数与期望。
 - 支持头导出 ONNX（env/info）也纳入此门；info 支持头质量仍不足（D-084），只作实验。
+
+## D-089 信息任务重构：独立事件标注与路线（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 任务定义改判：信息不是「从物品外观选一个分句」。新独立标注 `annotate_info_events.py`（prompt info-v1，deepseek-chat，温度 0）只读行动、去标记结算事实、正文与此前事实，输出 0..N 条 `{content, mode, source, evidence, novel}`；程序只校验证据原句、枚举、specified 的问项与 prior 新颖性，不选内容。229 回合：**102 回合有信息、127 无；148 条中 147 条 novel；模式 multi 76/open 43/specified 29/inference 0；来源 observation 130/location 7/question 7/dialogue 4**。与旧规则标签交叉：两者一致仅 104/229（45%）；规则标 present 而事件标注无信息的 40 回合，事件标注有观察信息而规则没标的 85 回合。
+- 限制：单标注模型、单遍、一个世界；证据逐字校验拒掉 108/256 条提案；没有 inference 条目，跨事件推断未测；novelty 只做精确文本，未接接受者知识账本。
+- 内核路线（只读设计，未实施）：信息事件 = `InformationEvent{pointId, receiverId, actorId, mode, items[], producer}`，条目带 source ref（item/character/location/dialogue/event 与 recordIds）与 novelty（new/known/conflict/unknown）；facts 通道先走 `Fact.information → SettledFact → PointNarrationSnapshot` 与 session 级知识账本（随快照保存、按保留点过滤），WorldState 暂不改（schemaVersion 1 与 stateDigest 固定）；提交时合并去重、失败点不写；只有 verbatim+new+阈值以上的条目可喂任务提议，verifier 仍是权威。叙述按 source 生成「看清了…」句。
+- 任务路线：指定问题、开放观察、多条、跨事件推断四种模式共用同一 draft 信封，五臂都填同一 `InformationItemDraft[]` 才可对比；下一步先补跨事件与对话来源的标注（当前 0/4 条），再加第二遍盲校验与人工抽查；不通过降低阈值掩盖能力不足。
