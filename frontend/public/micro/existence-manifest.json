@@ -1,47 +1,47 @@
 {
- "note": "Shadow existence heads (env/info) trained in this workspace from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder. The 2026-11-27 rebuild fixes the export state-dict mapping (only the named field head is copied); manifest holds the ONNX-measured holdout. Extraction ONNX re-exported after the appearance-holdout retrain; check_head_parity.py compares every head torch vs int8. Models retrained on HPC (RTX 4090 D, torch 2.5.1+cu124) in jobs 280873/280875; manifest reflects the HPC checkpoints. 2026-11-27 quantization switched to per-channel int8: worst decision drift 0.19 (near-tie, no decision change); torch-vs-fp32 ONNX is exact. Extraction retrained with cross-appearance negatives (job 281251): holdout top1 7/14 -> 9/14, decisions 8/9 correct after abstention.",
+ "note": "Shadow existence heads (env/info) trained from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder. 2026-11-28 round-2 rebuild (E26/D-135 data, job 282032): existence env 55/165 rows holdout 8/9, info 57/106 holdout 9/10 (same as shipped); extraction-head retrained on the round-2 extraction pairs: holdout top1 9/14 -> 12/14 (bigram baseline 12/14). check_head_parity.py: all heads torch-vs-int8 decision parity (exit 0). Support heads retrained in the same job but not shipped (support-info holdout 5/10, over-predicts positives); their numbers live in E27.",
  "encoder": "artifacts/benchmark/minirbt-h256-snapshot (MIT)",
  "files": {
   "existence-env-int8.onnx": {
-   "sha256": "ef8a43ddc29c115db220a49a16b0e666e12b3f20c3629a089ff1f29b72dbedbe",
+   "sha256": "ef4d16f120b693f8dc29e01db78b44c968220b1d0978c3b685e611ccf6b6ce1c",
    "bytes": 10619252,
    "field": "env",
    "trainingRows": {
-    "pos": 53,
-    "neg": 153
+    "pos": 55,
+    "neg": 165
    },
    "holdout": {
     "route": "sm6-",
     "correct": 8,
     "total": 9,
-    "source": "hpc-280873"
+    "source": "hpc-282032"
    }
   },
   "existence-info-int8.onnx": {
-   "sha256": "feab2deda903b7337bd4128f64759840761fb825e99d0e7de685b38708d5043e",
+   "sha256": "d571657f84cdaabb4ce5e5e24593fd7ae747f71bf5f622cea4dfc49d34a83b42",
    "bytes": 10619252,
    "field": "info",
    "trainingRows": {
     "pos": 57,
-    "neg": 92
+    "neg": 106
    },
    "holdout": {
     "route": "sm10-",
     "correct": 9,
     "total": 10,
-    "source": "hpc-280873"
+    "source": "hpc-282032"
    }
   },
   "extraction-head-int8.onnx": {
-   "sha256": "d670a27fadf9b3afbf4c1a43272dd8e7165451b646c7bb5633dcd3e6ff6e14cf",
+   "sha256": "1c14686ac584caa9a0d28b88c29553afdc12f216b2297bac3862542ade9e7f98",
    "bytes": 10619238,
    "field": "info-extraction",
    "trainingPairs": 55,
    "holdout": {
     "appearanceGroups": 14,
-    "top1": 9,
+    "top1": 12,
     "bigramBaseline": 12,
-    "source": "hpc-281251"
+    "source": "hpc-282032"
    }
   }
  }

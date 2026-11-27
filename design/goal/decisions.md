@@ -1185,3 +1185,11 @@
 - 缺陷：`environmentHint` 对含"卡住/拉不开/推不开/没有…"的文本一律返回 null，**包括 RESULT 分类器已判为 partial 的子动作**——"提到一半卡住"这类真实的部分环境变化因此永远发不出 `环境=` 标记，差分里没有环境键，标签落成 insufficient 或 conflict（E26 fix set）。
 - 修法：FAIL 门只在 `label !== 'partial'` 时生效；partial 照常产出 `已被部分X`。新增单测（拉门一条缝、门闩卡住 → `已被部分拉开`）；全量 vitest 1466 通过。
 - 影响：待用重跑的 env-11 证据复核（部分成功应从 insufficient/conflict 变为 present）；现有数据集仍是 b521f091 的 280 行状态（validator + 训练门通过）。
+
+## D-137 三任务重训结果与上新决定（2026-11-28）
+
+- 状态：`signed`（2026-11-28，HPC 282032）。
+- 数据：第二轮数据集（existence 383 样本 info 57/106、env 55/165；support 273 行；extraction 55 对）。
+- 结果：existence env holdout 8/9、info 9/10（均与现役持平，训练行更新）；extraction top1 9/14 → **12/14**（bigram 基线 12/14）；support env holdout 14/16，但 support info **5/10**（负例全判正），support 不上新。
+- parity：`check_head_parity.py` exit 0，五个头决策一致。
+- 上新：existence env/info + extraction 的 int8 ONNX 与 `existence-manifest.json` 已替换（source hpc-282032）；support 只留本地。5-seed 联合消融完成后补记 E27。
