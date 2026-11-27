@@ -63,7 +63,8 @@ def main():
         margin = best[0] - (scored[1][0] if len(scored) > 1 else 0.0)
         rows.append({'holdout': hashlib.sha1(pair['appearance'].encode('utf8')).hexdigest() in holdout_hashes,
                      'score': round(best[0], 3), 'margin': round(margin, 3),
-                     'correct': best[1] == pair['clause']})
+                     'correct': best[1] == pair['clause'], 'id': pair['id'],
+                     'action': pair['action'], 'target': pair['clause']})
 
     def evaluate(thresholds, subset):
         decided = [row for row in subset if row['score'] >= thresholds[0] and row['margin'] >= thresholds[1]]
@@ -84,7 +85,7 @@ def main():
         'trainChosen': {'thresholds': best_thresholds, 'train': evaluate(best_thresholds, train) if best_thresholds else None,
                         'holdout': evaluate(best_thresholds, holdout) if best_thresholds else None},
         'holdoutWrong': [row for row in holdout if row['correct'] is False and row['score'] >= 0.6 and row['margin'] >= 0.15],
-        'holdoutRows': holdout,
+        'holdoutRows': holdout, 'rows': rows,
     }
     print(json.dumps(report, ensure_ascii=False, indent=1))
 

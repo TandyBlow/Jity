@@ -1,0 +1,705 @@
+{
+ "deployed": {
+  "thresholds": [
+   0.6,
+   0.15
+  ],
+  "train": {
+   "decided": 40,
+   "correct": 39,
+   "wrong": 1,
+   "coverage": 0.976,
+   "precision": 0.975
+  },
+  "holdout": {
+   "decided": 8,
+   "correct": 4,
+   "wrong": 4,
+   "coverage": 0.571,
+   "precision": 0.5
+  }
+ },
+ "trainChosen": {
+  "thresholds": [
+   0.5,
+   0.05
+  ],
+  "train": {
+   "decided": 40,
+   "correct": 39,
+   "wrong": 1,
+   "coverage": 0.976,
+   "precision": 0.975
+  },
+  "holdout": {
+   "decided": 9,
+   "correct": 5,
+   "wrong": 4,
+   "coverage": 0.643,
+   "precision": 0.556
+  }
+ },
+ "holdoutWrong": [
+  {
+   "holdout": true,
+   "score": 0.974,
+   "margin": 0.359,
+   "correct": false,
+   "id": "sm13-i-r6#e14",
+   "action": "我读检修图上关于杆身的说明。",
+   "target": "更换时另一人需控制杆身"
+  },
+  {
+   "holdout": true,
+   "score": 0.865,
+   "margin": 0.526,
+   "correct": false,
+   "id": "sm14-i-r6#e15",
+   "action": "我读东回廊遮光帘的拉绳。",
+   "target": "拉绳垂到腰高"
+  },
+  {
+   "holdout": true,
+   "score": 0.995,
+   "margin": 0.975,
+   "correct": false,
+   "id": "sm15-i-r1#e14",
+   "action": "我走进跨溪小桥，查看小桥松动护栏的螺母。",
+   "target": "中段两枚固定螺母退松"
+  },
+  {
+   "holdout": true,
+   "score": 0.984,
+   "margin": 0.96,
+   "correct": false,
+   "id": "sm20-i-r1#e18",
+   "action": "我走进器材棚，读芬格尔的相机上的存储卡。",
+   "target": "存储卡仍在机内"
+  }
+ ],
+ "holdoutRows": [
+  {
+   "holdout": true,
+   "score": 0.99,
+   "margin": 0.014,
+   "correct": false,
+   "id": "sm10-i-read-2#e16",
+   "action": "我读赛区路线图上关于地下检修通道的标注。",
+   "target": "地下检修通道用虚线标注"
+  },
+  {
+   "holdout": true,
+   "score": 0.993,
+   "margin": 0.037,
+   "correct": true,
+   "id": "sm10-i-read-4#e14",
+   "action": "我走进值钟间，读检修图上关于释放杆的说明。",
+   "target": "图上画明：先向内压释放杆"
+  },
+  {
+   "holdout": true,
+   "score": 0.99,
+   "margin": 0.129,
+   "correct": true,
+   "id": "sm11-i-r3#e14",
+   "action": "我读赛区路线图上关于跨溪小桥的标注。",
+   "target": "图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路"
+  },
+  {
+   "holdout": true,
+   "score": 0.891,
+   "margin": 0.013,
+   "correct": true,
+   "id": "sm13-i-r1#e17",
+   "action": "我走进演习观察席，读安全广播话筒上通话键的说明。",
+   "target": "通话键未按"
+  },
+  {
+   "holdout": true,
+   "score": 0.974,
+   "margin": 0.359,
+   "correct": false,
+   "id": "sm13-i-r6#e14",
+   "action": "我读检修图上关于杆身的说明。",
+   "target": "更换时另一人需控制杆身"
+  },
+  {
+   "holdout": true,
+   "score": 0.865,
+   "margin": 0.526,
+   "correct": false,
+   "id": "sm14-i-r6#e15",
+   "action": "我读东回廊遮光帘的拉绳。",
+   "target": "拉绳垂到腰高"
+  },
+  {
+   "holdout": true,
+   "score": 0.995,
+   "margin": 0.975,
+   "correct": false,
+   "id": "sm15-i-r1#e14",
+   "action": "我走进跨溪小桥，查看小桥松动护栏的螺母。",
+   "target": "中段两枚固定螺母退松"
+  },
+  {
+   "holdout": true,
+   "score": 0.996,
+   "margin": 0.943,
+   "correct": true,
+   "id": "sm15-i-r3#e14",
+   "action": "我走进服务巷检修口，查看服务巷检修盖的拉环。",
+   "target": "拉环可握"
+  },
+  {
+   "holdout": true,
+   "score": 0.996,
+   "margin": 0.992,
+   "correct": true,
+   "id": "sm16-i-r3#e14",
+   "action": "我读凯撒的庭院平面图上的正门进攻线。",
+   "target": "图上标出正门进攻线与东回廊绕行线"
+  },
+  {
+   "holdout": true,
+   "score": 0.984,
+   "margin": 0.96,
+   "correct": false,
+   "id": "sm20-i-r1#e18",
+   "action": "我走进器材棚，读芬格尔的相机上的存储卡。",
+   "target": "存储卡仍在机内"
+  },
+  {
+   "holdout": true,
+   "score": 0.01,
+   "margin": 0.002,
+   "correct": false,
+   "id": "sm21-i-r1#e16",
+   "action": "我走进演习观察席，读安全广播话筒的扩音线路。",
+   "target": "连着只发布赛务与安全通知的扩音线路"
+  },
+  {
+   "holdout": true,
+   "score": 0.991,
+   "margin": 0.001,
+   "correct": false,
+   "id": "sm21-i-r4#e14",
+   "action": "我走进值钟间，读检修图上关于护栏外横拉的说明。",
+   "target": "禁止向护栏外横拉"
+  },
+  {
+   "holdout": true,
+   "score": 0.726,
+   "margin": 0.708,
+   "correct": true,
+   "id": "sm22-i-r3#e14",
+   "action": "我走进服务巷检修口，查看服务巷检修盖的盖沿。",
+   "target": "盖沿不宜放枪和松散弹匣"
+  },
+  {
+   "holdout": true,
+   "score": 0.997,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm22-i-r4#e14",
+   "action": "我查看绝缘手电的腕绳。",
+   "target": "附腕绳"
+  }
+ ],
+ "rows": [
+  {
+   "holdout": false,
+   "score": 0.996,
+   "margin": 0.959,
+   "correct": true,
+   "id": "sm9-i-new-1#e16",
+   "action": "我读服务巷规则牌上关于医护白线的条款。",
+   "target": "医护白线禁射"
+  },
+  {
+   "holdout": false,
+   "score": 0.994,
+   "margin": 0.24,
+   "correct": true,
+   "id": "sm10-i-read-1#e16",
+   "action": "我读演习规则牌上关于夺旗的条款。",
+   "target": "夺旗须取下中立白旗、把本队旗插入底座并由现场确认"
+  },
+  {
+   "holdout": true,
+   "score": 0.99,
+   "margin": 0.014,
+   "correct": false,
+   "id": "sm10-i-read-2#e16",
+   "action": "我读赛区路线图上关于地下检修通道的标注。",
+   "target": "地下检修通道用虚线标注"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.997,
+   "correct": true,
+   "id": "sm10-i-read-3#e14",
+   "action": "我查看诺诺左臂识别带的颜色。",
+   "target": "红色识别带缠在左臂"
+  },
+  {
+   "holdout": true,
+   "score": 0.993,
+   "margin": 0.037,
+   "correct": true,
+   "id": "sm10-i-read-4#e14",
+   "action": "我走进值钟间，读检修图上关于释放杆的说明。",
+   "target": "图上画明：先向内压释放杆"
+  },
+  {
+   "holdout": false,
+   "score": 0.996,
+   "margin": 0.994,
+   "correct": true,
+   "id": "sm10-i-read-9#e18",
+   "action": "我走进器材棚，读器材领用簿上关于担架的领取栏。",
+   "target": "担架、安全绳和折叠梯的领取栏仍空"
+  },
+  {
+   "holdout": false,
+   "score": 0.995,
+   "margin": 0.982,
+   "correct": true,
+   "id": "sm11-i-r1#e16",
+   "action": "我读演习规则牌上关于医护白线的条款。",
+   "target": "医护白线禁射"
+  },
+  {
+   "holdout": false,
+   "score": 0.995,
+   "margin": 0.025,
+   "correct": true,
+   "id": "sm11-i-r2#e16",
+   "action": "我读演习规则牌上关于停赛时间的条款。",
+   "target": "15:45停赛"
+  },
+  {
+   "holdout": true,
+   "score": 0.99,
+   "margin": 0.129,
+   "correct": true,
+   "id": "sm11-i-r3#e14",
+   "action": "我读赛区路线图上关于跨溪小桥的标注。",
+   "target": "图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm11-i-r5#e16",
+   "action": "我读开盖演习弹药箱上关于封套的说明。",
+   "target": "黄色封套上写明不得与实弹混用"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.997,
+   "correct": true,
+   "id": "sm11-i-r6#e14",
+   "action": "我查看备用护目镜的弹力带。",
+   "target": "弹力带可以调节"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.997,
+   "correct": true,
+   "id": "sm12-i-r4#e14",
+   "action": "我查看检查手套的纸套。",
+   "target": "一副检查手套装在纸套中"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm12-i-r5#e14",
+   "action": "我查看医护空床的制动轮。",
+   "target": "制动轮已锁"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm12-i-r6#e14",
+   "action": "我读伤情登记夹上林亦舟的登记。",
+   "target": "林亦舟尚未登记"
+  },
+  {
+   "holdout": true,
+   "score": 0.891,
+   "margin": 0.013,
+   "correct": true,
+   "id": "sm13-i-r1#e17",
+   "action": "我走进演习观察席，读安全广播话筒上通话键的说明。",
+   "target": "通话键未按"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm13-i-r2#e16",
+   "action": "我读旗台状态面板上的停赛时间。",
+   "target": "停赛时间显示15:45"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm13-i-r4#e15",
+   "action": "我读安全事件记录单上关于证人的栏目。",
+   "target": "列有时间、地点、证人和采取的安全措施"
+  },
+  {
+   "holdout": true,
+   "score": 0.974,
+   "margin": 0.359,
+   "correct": false,
+   "id": "sm13-i-r6#e14",
+   "action": "我读检修图上关于杆身的说明。",
+   "target": "更换时另一人需控制杆身"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.994,
+   "correct": true,
+   "id": "sm14-i-r1#e16",
+   "action": "我走进中央庭院，读庭院空弹匣上的红胶带。",
+   "target": "红胶带上有泥"
+  },
+  {
+   "holdout": false,
+   "score": 0.995,
+   "margin": 0.993,
+   "correct": true,
+   "id": "sm14-i-r2#e16",
+   "action": "我查看倒放长椅的木背板。",
+   "target": "木背板能挡住低处射线"
+  },
+  {
+   "holdout": false,
+   "score": 0.995,
+   "margin": 0.994,
+   "correct": true,
+   "id": "sm14-i-r3#e15",
+   "action": "我查看南端石花槽内侧可蹲下的位置。",
+   "target": "内侧有可蹲下的位置"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm14-i-r4#e18",
+   "action": "我走进东回廊，查看苏茜的备用弹匣上的蓝色胶带。",
+   "target": "蓝色胶带标着苏茜的名字"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.997,
+   "correct": true,
+   "id": "sm14-i-r5#e18",
+   "action": "我查看低窗软垫铺的石沿。",
+   "target": "软垫铺在窗内石沿"
+  },
+  {
+   "holdout": true,
+   "score": 0.865,
+   "margin": 0.526,
+   "correct": false,
+   "id": "sm14-i-r6#e15",
+   "action": "我读东回廊遮光帘的拉绳。",
+   "target": "拉绳垂到腰高"
+  },
+  {
+   "holdout": true,
+   "score": 0.995,
+   "margin": 0.975,
+   "correct": false,
+   "id": "sm15-i-r1#e14",
+   "action": "我走进跨溪小桥，查看小桥松动护栏的螺母。",
+   "target": "中段两枚固定螺母退松"
+  },
+  {
+   "holdout": true,
+   "score": 0.996,
+   "margin": 0.943,
+   "correct": true,
+   "id": "sm15-i-r3#e14",
+   "action": "我走进服务巷检修口，查看服务巷检修盖的拉环。",
+   "target": "拉环可握"
+  },
+  {
+   "holdout": false,
+   "score": 0.988,
+   "margin": 0.986,
+   "correct": true,
+   "id": "sm15-i-r5#e14",
+   "action": "我走进钟楼门厅，查看门厅翻倒长桌的桌腿。",
+   "target": "挪桌需要先腾开桌腿压住的位置"
+  },
+  {
+   "holdout": false,
+   "score": 0.646,
+   "margin": 0.289,
+   "correct": false,
+   "id": "sm15-i-r6#e14",
+   "action": "我查看钟楼地下检修门的门闩。",
+   "target": "内侧门闩插在槽里"
+  },
+  {
+   "holdout": false,
+   "score": 0.995,
+   "margin": 0.993,
+   "correct": true,
+   "id": "sm16-i-r1#e15",
+   "action": "我走进红方集结点，查看红方地图桌的桌脚。",
+   "target": "桌脚稳固"
+  },
+  {
+   "holdout": false,
+   "score": 0.995,
+   "margin": 0.992,
+   "correct": true,
+   "id": "sm16-i-r2#e14",
+   "action": "我读红方地图桌下的电池盒空间。",
+   "target": "桌下空间能容一只电池盒"
+  },
+  {
+   "holdout": true,
+   "score": 0.996,
+   "margin": 0.992,
+   "correct": true,
+   "id": "sm16-i-r3#e14",
+   "action": "我读凯撒的庭院平面图上的正门进攻线。",
+   "target": "图上标出正门进攻线与东回廊绕行线"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm16-i-r5#e14",
+   "action": "我查看短讯机电池盒的盒面。",
+   "target": "盒面写着短讯机专用"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm17-i-r1#e14",
+   "action": "我走进钟楼顶层，读蓝方信号旗的底端接口。",
+   "target": "底端接口与旗台相配"
+  },
+  {
+   "holdout": false,
+   "score": 0.996,
+   "margin": 0.994,
+   "correct": true,
+   "id": "sm17-i-r2#e14",
+   "action": "我查看顶层玻璃门的门把。",
+   "target": "门把缠一道蓝布"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm18-i-r1#e16",
+   "action": "我走进西回廊，查看林亦舟放下的演习枪的弹匣。",
+   "target": "弹匣内剩4发"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm18-i-r2#e15",
+   "action": "我查看折断的蓝布带的断口。",
+   "target": "断口散开"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.993,
+   "correct": true,
+   "id": "sm18-i-r3#e20",
+   "action": "我走进医护休息区，读沈澄拆下的红色识别带上的登记。",
+   "target": "和她退出演习的登记相符"
+  },
+  {
+   "holdout": false,
+   "score": 0.993,
+   "margin": 0.991,
+   "correct": true,
+   "id": "sm18-i-r4#e16",
+   "action": "我查看保温毯旁的长椅空位。",
+   "target": "毯子折在长椅空位旁"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.84,
+   "correct": true,
+   "id": "sm19-i-r1#e18",
+   "action": "我走进器材棚，查看器材领用台上笔尖。",
+   "target": "笔尖尚湿"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.997,
+   "correct": true,
+   "id": "sm19-i-r3#e14",
+   "action": "我查看通用短枪弹匣乙的卡榫。",
+   "target": "卡榫与诺诺的演习短枪相配"
+  },
+  {
+   "holdout": true,
+   "score": 0.984,
+   "margin": 0.96,
+   "correct": false,
+   "id": "sm20-i-r1#e18",
+   "action": "我走进器材棚，读芬格尔的相机上的存储卡。",
+   "target": "存储卡仍在机内"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.997,
+   "correct": true,
+   "id": "sm20-i-r2#e17",
+   "action": "我查看芬格尔的饭票夹的夹口。",
+   "target": "夹口扣紧"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm20-i-r3#e15",
+   "action": "我查看相机备用电池的触点形状。",
+   "target": "触点形状与R型短讯电池不同"
+  },
+  {
+   "holdout": false,
+   "score": 0.957,
+   "margin": 0.711,
+   "correct": true,
+   "id": "sm20-i-r4#e14",
+   "action": "我查看器材领用台下放备用护具的位置。",
+   "target": "台下留有放备用护具的位置"
+  },
+  {
+   "holdout": true,
+   "score": 0.01,
+   "margin": 0.002,
+   "correct": false,
+   "id": "sm21-i-r1#e16",
+   "action": "我走进演习观察席，读安全广播话筒的扩音线路。",
+   "target": "连着只发布赛务与安全通知的扩音线路"
+  },
+  {
+   "holdout": true,
+   "score": 0.991,
+   "margin": 0.001,
+   "correct": false,
+   "id": "sm21-i-r4#e14",
+   "action": "我走进值钟间，读检修图上关于护栏外横拉的说明。",
+   "target": "禁止向护栏外横拉"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm21-i-r5#e14",
+   "action": "我查看值钟间工作台下方的暗门。",
+   "target": "下方没有暗门或通道"
+  },
+  {
+   "holdout": false,
+   "score": 0.986,
+   "margin": 0.972,
+   "correct": true,
+   "id": "sm22-i-r1#e14",
+   "action": "我走进钟楼门厅，查看门厅翻倒长桌留下的空隙。",
+   "target": "现有空隙够一人侧身"
+  },
+  {
+   "holdout": false,
+   "score": 0.992,
+   "margin": 0.987,
+   "correct": true,
+   "id": "sm22-i-r2#e14",
+   "action": "我查看钟楼地下检修门外的把手。",
+   "target": "外面没有能直接开闩的把手"
+  },
+  {
+   "holdout": true,
+   "score": 0.726,
+   "margin": 0.708,
+   "correct": true,
+   "id": "sm22-i-r3#e14",
+   "action": "我走进服务巷检修口，查看服务巷检修盖的盖沿。",
+   "target": "盖沿不宜放枪和松散弹匣"
+  },
+  {
+   "holdout": true,
+   "score": 0.997,
+   "margin": 0.995,
+   "correct": true,
+   "id": "sm22-i-r4#e14",
+   "action": "我查看绝缘手电的腕绳。",
+   "target": "附腕绳"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm23-i-r1#e17",
+   "action": "我走上钟楼旗台外廊，查看中立白旗的杆脚。",
+   "target": "杆脚被锁扣卡住"
+  },
+  {
+   "holdout": false,
+   "score": 0.998,
+   "margin": 0.996,
+   "correct": true,
+   "id": "sm23-i-r2#e16",
+   "action": "我查看钟楼旗台底座的锁扣。",
+   "target": "锁扣夹着中立白旗的杆脚"
+  },
+  {
+   "holdout": false,
+   "score": 0.997,
+   "margin": 0.994,
+   "correct": true,
+   "id": "sm23-i-r3#e16",
+   "action": "我查看旗台短安全绳搭在周映腰带边的一端。",
+   "target": "一端搭在周映腰带边"
+  },
+  {
+   "holdout": false,
+   "score": 0.994,
+   "margin": 0.991,
+   "correct": true,
+   "id": "sm23-i-r4#e14",
+   "action": "我走进钟楼顶层，查看顶层玻璃门通向的外廊。",
+   "target": "向外推开可到外廊"
+  }
+ ]
+}
