@@ -21,24 +21,31 @@ state/task/achievement assertions (`scenario_report.py`).
 - Cross-turn bigram repetition: 0.217 vs 0.233 (Δ0.016, within noise at n=8).
 - Within-text repetition: 0.664 vs 0.658.
 - Latency: mean wait 67.0 s vs 76.6 s (max 93.8 / 97.0).
-- Verdict per the pre-registered rule: state assertions did not drop and both
-  arms are all-model, but the repetition difference is not meaningful — record
-  as **no conclusion** on representation direction.
+- Hard alignment (the project's existing dev gate,
+  `check-prose-facts.mjs`, run on both evidence files): prose-facts 0 flags in
+  8 turns; serialized 3 flags — 2 `unknown_entity_claim` (sc01, sc08) and 1
+  `input_echo` (sc02). This gate was missed in the first scoring pass; it is
+  the project's own hard-alignment measure, not the review runner.
+- Verdict per the pre-registered rule: state assertions did not drop, both
+  arms are all-model, and prose-facts has fewer hard-alignment flags
+  (0 vs 3) → **positive signal for prose-facts**. Direction only: one seed,
+  8 turns, and the gate's flags are heuristic (the sc01 flag quotes a clause
+  that also echoes the input; the name-introduction rule can fire on echoed
+  address forms).
 
-**Conditions.** One seed, 8 turns, one world, no blind judge; D1's "hard
-alignment + review fact contradiction" was not computed because no
-evidence-level runner wires `narration-quality/review.ts` over acceptance
-evidence yet — the scenario report only proves source/identity, not fact
-alignment. The serialized arm's first attempt crashed the renderer after two
-turns (turns 1-2 at 116 s and 217 s); the clean rerun on a fresh browser ran
-57-97 s per turn. Same build, so this is page stability under a long
-multi-point session, not an arm property.
+**Conditions.** One seed, 8 turns, one world, no blind judge; the D1 measure is
+the dev gate's heuristic flags, not `narration-quality/review.ts` (still no
+evidence-level runner for it). The serialized arm's first attempt crashed the
+renderer after two turns (turns 1-2 at 116 s and 217 s); the clean rerun on a
+fresh browser ran 57-97 s per turn. Same build, so this is page stability under
+a long multi-point session, not an arm property.
 
-**Principle.** The two representations are indistinguishable on what the
-scenario protocol can measure; the serialized shape buys 49% more text for
-~10 s more wait per turn. Before any representation claim, the review-based
-fact-alignment metric has to be wired to the evidence format — otherwise the
-A/B measures length and repetition only.
+**Principle.** The dev fact gate separates the arms (0 vs 3 flags) while
+length, repetition and scenario assertions do not; a representation claim needs
+a hard-alignment measure, and the project already had one — it just wasn't in
+the first scoring pass. The serialized shape buys 49% more text for ~10 s more
+wait and more flagged clauses; the review-based metric is still the better D1
+and needs an evidence-level runner.
 
 **Artifacts.** D-099/D-102, `scenarios-independent-turns.json`,
 `evidence-narr-prose-1.json`, `evidence-narr-serialized-2.json`,

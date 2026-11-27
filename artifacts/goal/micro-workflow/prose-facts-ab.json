@@ -1,0 +1,173 @@
+{
+  "kind": "jity-prose-facts-check",
+  "at": "2026-11-27T07:10:48.429Z",
+  "runs": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/micro-workflow/evidence-narr-prose-1.json",
+      "runId": "2026-11-27T0540-f2eb",
+      "arm": {
+        "candidate": "trained",
+        "mode": "scene",
+        "shape": "prose-facts",
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": null,
+        "settlementUnknownRule": null,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb",
+        "micro": true,
+        "microContinuation": "heads",
+        "microReaction": true,
+        "microTaskVerifier": false,
+        "taskVerifier": "llm",
+        "taskProposer": "micro"
+      },
+      "turns": [
+        {
+          "id": "sc01-dialogue-nono-neutrality",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc02-conflict-yard-cover",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc03-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc04-item-magazine",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc05-move-hatch",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc06-env-hatch-route",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc07-move-foyer",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc08-env-foyer-table",
+          "source": "model",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "file": "D:/others/Jity/artifacts/goal/micro-workflow/evidence-narr-serialized-2.json",
+      "runId": "2026-11-27T0638-b599",
+      "arm": {
+        "candidate": "trained",
+        "mode": "scene",
+        "shape": "serialized",
+        "offscreenPolicy": "judge",
+        "narrationModel": "qwen3-1.7b-narr-lora",
+        "narrationFile": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+        "narrationBytes": 1107408768,
+        "narrationSha256": "82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a",
+        "narrationTemperature": null,
+        "narrationFewShot": null,
+        "narrationProjection": null,
+        "schedHandback": null,
+        "settlementUnknownRule": null,
+        "compactSettlement": null,
+        "settlementUnknownExample": null,
+        "strictKnownEntities": true,
+        "runtime": "wllama",
+        "webllmModel": null,
+        "webllmLocal": false,
+        "webllmCache": "indexeddb",
+        "micro": true,
+        "microContinuation": "heads",
+        "microReaction": true,
+        "microTaskVerifier": false,
+        "taskVerifier": "llm",
+        "taskProposer": "micro"
+      },
+      "turns": [
+        {
+          "id": "sc01-dialogue-nono-neutrality",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "诺诺问起红蓝两方的局势，路明非在想"
+            }
+          ]
+        },
+        {
+          "id": "sc02-conflict-yard-cover",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "input_echo",
+              "quote": "朝倒放长椅后的唐骁举起空着的双手"
+            }
+          ]
+        },
+        {
+          "id": "sc03-move-shed",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc04-item-magazine",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc05-move-hatch",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc06-env-hatch-route",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc07-move-foyer",
+          "source": "model",
+          "flags": []
+        },
+        {
+          "id": "sc08-env-foyer-table",
+          "source": "model",
+          "flags": [
+            {
+              "kind": "unknown_entity_claim",
+              "quote": "路明非抬起桌腿压住的位置，把长桌拖到侧墙，腾出楼梯口"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "unknown_entity_claim": 2,
+    "input_echo": 1
+  }
+}

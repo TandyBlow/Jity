@@ -929,8 +929,9 @@
 - 状态：`signed`（2026-11-27）。
 - 两臂各 8 回合完成（prose-facts / serialized，同构建、seed 11）。状态断言都 48/48、任务 14/14、成就 3/3，正文来源全为模型，无 fallback。
 - 差异：serialized 正文长 49%（222.8 vs 149.4 字），平均等待 76.6 vs 67.0 秒；跨回合重复 0.233 vs 0.217（Δ0.016，8 回合内属噪声）。
-- 按预注册判据记为**无结论**：状态不降、来源全模型都满足，但重复差异不显著，方向不成立。
-- 缺口：D1 的硬对齐/事实矛盾没有跑到证据上——`narration-quality/review.ts` 还没有接验收证据的 runner；`scenario_report.py` 只证明来源与身份。下一轮 A/B 前先补这个 runner。
+- 更正（同日）：项目已有的硬对齐开发门 `check-prose-facts.mjs` 可以直接跑验收证据，首轮漏用。两臂结果：prose-facts 8 回合 0 个 flag；serialized 3 个（sc01/sc08 `unknown_entity_claim`，sc02 `input_echo`）。
+- 按预注册判据（状态不降 + 正文全模型 + 硬对齐违规更低）改记为 **prose-facts 方向的正面信号**；仅方向，单种子 8 回合，且该门的 flag 是启发式（sc01 那条同时是输入回显）。
+- 缺口：D1 更好的版本仍是 `narration-quality/review.ts`，尚无证据级 runner；下一轮 A/B 前补。
 - 稳定性记录：serialized 首轮在回合 2 后渲染进程崩溃（116/217 秒两回合），新浏览器重跑 57–97 秒正常；同构建，属长会话下的页面稳定性问题，不是臂属性。
 - 性能记录：该臂每回合 2–4 个自动推进点，语义阶段 LLM 调用（tasks/subtasks 4.1k/3.1k 字提示）是主要耗时；D-103 起对 tasks 阶段加短名单跳过。
 
