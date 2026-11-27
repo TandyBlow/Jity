@@ -20,12 +20,15 @@ overlap ≥0.2), MiniRBT-H256 binary head. HPC job 281136.
   positive cases all fall below the wording threshold.
 - head: accuracy 0.895, macro-F1 0.864 — 4/5 positives, 13/14 negatives, 1
   false positive. The one miss is a positive.
+- No-prior ablation (same rows, hyperparameters and seeds; the 上一回合 line is
+  stripped at train time, job 281140): head accuracy 0.842, macro-F1 0.782 —
+  3/5 positives, 13/14 negatives, 1 false positive. The prior line is worth
+  +0.05 accuracy / +0.08 macro-F1 and one extra held-out positive.
 
 **Conditions.** Five test positives — directional only. Same kernel-ledger
 provenance as E11; the "previous point" is the immediately preceding point of
-the same session, not the accumulated history. No comparison arm without the
-prior line was run, so the head's gain cannot yet be attributed to the prior
-context versus the encoder itself.
+the same session, not the accumulated history. The ablation difference is one
+held-out positive out of five: direction, not significance.
 
 **Principle.** Cross-turn context is present in the data and a small encoder
 recovers most held-out positives that the wording rule misses, without
