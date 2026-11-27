@@ -872,3 +872,9 @@
 - `build_relation_probes.py` 冻结两族（`relation-probes/` + manifest，含源/输出 sha256 与 route 留出 sm6/sm10/sm14/sm18/sm22）：outcome 275 条（231 训练/44 测试；金标=内核 marker：achieved 158/partial 84/not_achieved 25/blocked 4/no_change 4）；target 38 条（32/6；金标=`涉及` 程序 span）。
 - 词汇基线（outcome 测试集，输入已去 marker）：多数类与否定词基线都是 0.636 准确率、macro-F1 0.156——测试集只有 achieved 28/partial 13/not_achieved 3，否定词没有出现，`partial` 无法靠词面识别。分类器臂待消融训练结束后补；程序 marker 是标签来源，只能作上限对照，不是独立语义能力。
 - 其余三族（条件/因果/跨回合）按设计只需少量手写对照；当前数据因果 0、跨回合 7 条，先不冻结，等最小对照补齐。
+
+## D-095 训练投影下影子分数的首个复核（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 修复输入投影后（D-093）两回合实跑：主角环境成功回合 env 0.9845、info 0.0282；NPC 观察类事实 info 出现 0.85/0.96（新的「观察也是信息」定义下属合理），环境负例 env ≈0.007。影子行仍走 `world-local` 前缀，证据 `evidence-shadow-2.json`。
+- 旧影子分数（env/info 含标记输入）正式作废，不再引用为头能力；后续阈值复核用新投影重跑。
