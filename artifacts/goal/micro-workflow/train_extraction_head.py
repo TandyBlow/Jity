@@ -7,6 +7,7 @@ At inference the clause with the highest probability wins; a low score
 abstains instead of guessing."""
 import argparse
 import hashlib
+import os
 import json
 import random
 import re

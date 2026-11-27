@@ -892,3 +892,10 @@
 - 本机消融在 12/15 次运行时停止；训练统一走 HPC。集群探测：cpu/gpu/gpua100 分区可用，crf conda 环境 torch 2.5.1+cu124 + transformers 4.51.3，`IMPORT_OK`（`crf_env.ok` 缺失，属软门禁），srun 探测在 hpcgpu08 拿到 RTX 4090 D 并通过。
 - 提交：`micro_train` 工作目录（MiniRBT 快照 40 MB、数据与四个训练脚本），sbatch `micro_train`（gpu 1 卡、4 CPU、2h）：存在性 env/info、支持 env/info、抽取、5 种子消融全部重跑；日志在 `reports/`，模型与 `ablation-report-v2.json` 回取用 `frontend/scripts/_hpc_micro_fetch.py`（报告走脱敏闸，模型二进制直取）。作业号 **280873**，状态 RUNNING（hpcgpu08，日志确认 `cuda True`）。
 - 训练脚本改为 `JITY_ROOT` 环境变量（Windows 默认不变），同一份代码本地/HPC 通用。本地 `_hpc_micro_submit.py` / `_hpc_micro_fetch.py` 不入库，凭据仍只在外部根。
+
+## D-098 HPC 首作业结果与补交（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 作业 280873（gpu/4090D）完成前半段后因 `train_extraction_head.py` 缺少 `import os` 中止（本地 py_compile 不执行模块级代码，所以没抓到；已修）。已产出：存在性 env 留出 8/9、info 9/10；支持 env 15/16、info **6/10**（比本机 4/10 好，但仍是同一数据/种子下的不稳定结果，只作实验）；模型保存在集群 `micro_train/.local/micro-semantic/`。
+- 补交作业 **280875**（extraction 25 轮 + 5 种子消融）。本机那个 1 轮 smoke 把本地 `extraction-head.pt` 覆盖成欠训练版本，ONNX 未变；在回取 HPC 模型前不再跑 torch↔ONNX 一致性门（会误报）。
+- 训练统一走 HPC；作业日志经 `reports/`，模型与 `ablation-report-v2.json` 由 `_hpc_micro_fetch.py` 回取。
