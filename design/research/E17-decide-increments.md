@@ -33,5 +33,12 @@ let NPC reads reach the decider, and score both channels from the same run.
 That comparison, not another threshold sweep, decides whether the model
 channel earns a place in the product.
 
+**Implementation.** The guard is now scoped to the protagonist
+(`decideInformation` checks `memberId` against `state.protagonistId`); a unit
+test covers both sides — the protagonist's topicless read still abstains, an
+NPC's topicless read reaches the decider and takes the confident verbatim
+clause. Full suite 1460 passed. The page measurement (both channels in one
+run) still needs the acceptance lane.
+
 **Artifacts.** `evidence-decide-1.json`, `evidence-decide-2.json`,
-`score_decide_shadow.py`, D-115.
+`score_decide_shadow.py`, `fact-informations.ts`, D-115.
