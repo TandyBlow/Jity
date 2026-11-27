@@ -1,5 +1,5 @@
 {
- "note": "Shadow existence heads (env/info) trained in this workspace from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder. The 2026-11-27 rebuild fixes the export state-dict mapping (only the named field head is copied); manifest holds the ONNX-measured holdout.",
+ "note": "Shadow existence heads (env/info) trained in this workspace from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder. The 2026-11-27 rebuild fixes the export state-dict mapping (only the named field head is copied); manifest holds the ONNX-measured holdout. Extraction ONNX re-exported after the appearance-holdout retrain; check_head_parity.py compares every head torch vs int8.",
  "encoder": "artifacts/benchmark/minirbt-h256-snapshot (MIT)",
  "files": {
   "existence-env-int8.onnx": {
@@ -33,13 +33,14 @@
    }
   },
   "extraction-head-int8.onnx": {
-   "sha256": "75dda02442afa77d2f411828e89592325d9ad0a1dac86b9366ab54eebe5d8722",
+   "sha256": "7444f0ff5d0cd302caf7e6c39f1a512fa99f4314753203478dba48bc3b129acc",
    "bytes": 10549929,
    "field": "info-extraction",
    "trainingPairs": 55,
    "holdout": {
-    "groups": 11,
-    "top1": 6
+    "appearanceGroups": 14,
+    "top1": 9,
+    "bigramBaseline": 12
    }
   }
  }
