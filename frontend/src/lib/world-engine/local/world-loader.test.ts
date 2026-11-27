@@ -78,6 +78,19 @@ describe('free-day static world', () => {
     expect(loaded.state).toEqual(loaded.s0);
   });
 
+  it('loads the world without SubtleCrypto (plain HTTP phone)', async () => {
+    // 手机上用局域网 HTTP 打开时没有 crypto.subtle；纯 JS 回退必须得到同一摘要。
+    const subtle = globalThis.crypto.subtle;
+    Object.defineProperty(globalThis.crypto, 'subtle', { value: undefined, configurable: true });
+    try {
+      const loaded = await loadStaticWorld(worldText, registration());
+      expect(loaded.fileSha256Lf).toBe(fixture.source.world.textSha256Lf);
+      expect(loaded.stateDigest).toBe(fixture.source.world.stateDigest);
+    } finally {
+      Object.defineProperty(globalThis.crypto, 'subtle', { value: subtle, configurable: true });
+    }
+  });
+
   it('refuses a registered state digest mismatch', async () => {
     expect(await reasonOf(() => loadStaticWorld(worldText, { ...registration(), stateDigest: '0'.repeat(64) })))
       .toBe('digest');
