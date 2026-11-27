@@ -46,3 +46,4 @@ Artifacts     evidence files, manifests, commits
 | E20 | Five-arm end to end: the LLM arm | done (26/48 state, 264 s) |
 | E21 | Micro-generative arm: measured below its gate | done (0% event exact) |
 | E22 | Mobile-proxy timing: current build | done (218.6/252.8 s, still 4x) |
+| E23 | LLM fixed-event cell: direct four-state probe | done (7/19 vs heads 17/19) |

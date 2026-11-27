@@ -221,7 +221,32 @@
   },
   "existing-llm": {
    "kind": "llm",
-   "fixedEvent": null,
+   "fixedEvent": {
+    "task": "same frozen existence rows, direct four-state question to the in-page 0.6B",
+    "env": {
+     "correct": 1,
+     "total": 9,
+     "tp": 0,
+     "fn": 8,
+     "tn": 1,
+     "fp": 0
+    },
+    "info": {
+     "correct": 6,
+     "total": 10,
+     "tp": 1,
+     "fn": 3,
+     "tn": 5,
+     "fp": 1
+    },
+    "overall": {
+     "correct": 7,
+     "total": 19,
+     "positiveRecall": 0.083
+    },
+    "source": "semantic-llm-probe/page.tsx + probe-semantic-llm.mjs, evidence-semantic-llm-probe-1.json",
+    "notes": "single prompt, no few-shot, temperature 0; model defaults to absent; not the product lane prompt"
+   },
    "endToEnd": {
     "turns": 8,
     "stateAssertions": "26/48",
@@ -239,7 +264,7 @@
  "gaps": [
   "end-to-end for rules/classifier/generative/LLM arms: page runs with the same frozen scenarios",
   "hybrid-micro: page smoke after the extraction ONNX swap still owed (parity gate passes)",
-  "existing-llm arm: fixed-event fields still missing (page arm only end-to-end)",
-  "micro-generative: needs a model that clears the event exact-match gate (training/data, per E16) before page wiring; current 0% at all scales"
+  "micro-generative: needs a model that clears the event exact-match gate (training/data, per E16) before page wiring; current 0% at all scales",
+  "existing-llm: rules/classifier page arms and real mobile device remain; the LLM fixed-event prompt is a single-shot probe, not the lane prompt"
  ]
 }
