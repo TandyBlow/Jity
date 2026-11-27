@@ -1,0 +1,110 @@
+{
+ "shared": {
+  "info": {
+   "head": {
+    "pos": 4,
+    "neg": 6,
+    "precision": 0.6,
+    "recall": 0.75,
+    "f1": 0.667,
+    "accuracy": 0.7
+   },
+   "rules": {
+    "pos": 4,
+    "neg": 6,
+    "precision": 0.8,
+    "recall": 1.0,
+    "f1": 0.889,
+    "accuracy": 0.9
+   },
+   "hybrid": {
+    "pos": 4,
+    "neg": 6,
+    "precision": 0.667,
+    "recall": 1.0,
+    "f1": 0.8,
+    "accuracy": 0.8
+   }
+  },
+  "env": {
+   "head": {
+    "pos": 8,
+    "neg": 1,
+    "precision": 1.0,
+    "recall": 0.875,
+    "f1": 0.933,
+    "accuracy": 0.889
+   },
+   "rules": {
+    "pos": 8,
+    "neg": 1,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "accuracy": 1.0
+   },
+   "hybrid": {
+    "pos": 8,
+    "neg": 1,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "accuracy": 1.0
+   }
+  }
+ },
+ "split": {
+  "info": {
+   "head": {
+    "pos": 4,
+    "neg": 6,
+    "precision": 0.8,
+    "recall": 1.0,
+    "f1": 0.889,
+    "accuracy": 0.9
+   },
+   "rules": {
+    "pos": 4,
+    "neg": 6,
+    "precision": 0.8,
+    "recall": 1.0,
+    "f1": 0.889,
+    "accuracy": 0.9
+   },
+   "hybrid": {
+    "pos": 4,
+    "neg": 6,
+    "precision": 0.8,
+    "recall": 1.0,
+    "f1": 0.889,
+    "accuracy": 0.9
+   }
+  },
+  "env": {
+   "head": {
+    "pos": 8,
+    "neg": 1,
+    "precision": 1.0,
+    "recall": 0.875,
+    "f1": 0.933,
+    "accuracy": 0.889
+   },
+   "rules": {
+    "pos": 8,
+    "neg": 1,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "accuracy": 1.0
+   },
+   "hybrid": {
+    "pos": 8,
+    "neg": 1,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "accuracy": 1.0
+   }
+  }
+ }
+}
