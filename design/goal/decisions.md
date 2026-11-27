@@ -1118,3 +1118,10 @@
 - 现象：手机 Chrome 打开 `http://10.250.11.141:3177/world-local`，页面报 `StaticWorldError: file_hash: SubtleCrypto unavailable`，模型请求 0 个——`crypto.subtle` 只在安全上下文可用，局域网明文 HTTP 不是安全上下文，静态世界哈希校验直接失败。
 - 规避（已用于真机验收）：`adb reverse tcp:3177 tcp:3177`，手机开 `http://127.0.0.1:3177`——localhost 是可信源，`crypto.subtle` 可用。
 - 产品问题：真实手机用户不会用 localhost。要么部署 HTTPS，要么给 `file_hash` 加纯 JS SHA-256 回退并在失败时给出明确提示；当前默认在局域网 HTTP 下不可玩。
+
+## D-127 真机 HTTPS 前门（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- `scripts/phone-https-proxy.mjs`：本机 3443 HTTPS 反代到 127.0.0.1:3177，自签证书在 `.local/phone-tls/`（CN/SAN=10.250.11.141，30 天，不入库）。实测页面 200、模型 Range 请求 206。
+- 手机打开 `https://10.250.11.141:3443/world-local?phoneEvidence=1`：HTTPS 是安全上下文（`crypto.subtle` 可用），模型走 WiFi 全速，页面证据照常回传；只需首次接受自签证书警告。
+- 这台机器上手机访问的推荐路径：真机手动验收用 HTTPS 前门 + phoneEvidence 面板；自动化仍用无线 adb + CDP。
