@@ -1167,6 +1167,6 @@
 ## D-134 流式下载进度回退（2026-11-27）
 
 - 状态：`signed`（2026-11-27）。
-- 现象：为字节级进度条把模型下载改为读 `response.body` 手动拼 Blob；桌面 Edge 下刷新后的二次模型加载报 `NotReadableError`（wllama `fileReadResponse failed`），刷新恢复检查连续两次失败（`restored=false`、历史计数 0）；改为单块连续 buffer 拼 Blob 仍然失败；退回 `response.blob()` 后同一复现脚本恢复 `restored=true`、计数正常。电话证据 `evidence-phone-7??` 无——流式版只在 GPU 实验中观察到进度文本，随后回退。
+- 现象：为字节级进度条把模型下载改为读 `response.body` 手动拼 Blob；桌面 Edge 下刷新后的二次模型加载报 `NotReadableError`（wllama `fileReadResponse failed`），刷新恢复检查连续两次失败（`restored=false`、历史计数 0）；改为单块连续 buffer 拼 Blob 仍然失败；退回 `response.blob()` 后同一复现脚本恢复 `restored=true`、计数正常。流式版只在 GPU 实验中短暂观察到进度文本（E25），随后回退。
 - 结论：wllama 3.8.1 的 worker 读不了手动流式构造的 Blob；加载状态只显示模型名与已等待秒数，字节进度条暂缓（等 wllama 修复或改走 OPFS 缓存路径）。
 - 附带结论：冒烟里的"刷新恢复失败"不是独立的计数 bug，根因就是加载期抛错中断了恢复；`frontend/scripts/product-acceptance/accept-world-local.mjs` 的 refreshRestore 证据现在会带 `finalTextTail`，下次失败可直接看到页面原话。
