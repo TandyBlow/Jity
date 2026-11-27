@@ -21,6 +21,11 @@ build (`evidence-perf-taskskip-8.json`). The machine-readable scoreboard is
 - Hybrid micro workflow, end to end: 8/8 turns, 48/48 state, 14/14 task, 3/3
   achievement assertions, 0 prose-identity issues, mean turn 61.9 s (max
   85.1 s), narration accepted from the model on 8/8 turns (mean 12.5 s).
+- Hybrid micro workflow, candidate pointer at fixed events (deployed 0.6/0.15
+  thresholds, `score_pointer_abstain.py`): 48/55 decide, 43 correct, 5 wrong
+  (89.6% when decided). On the appearance-level holdout (14 pairs) it decides
+  only 8 and is right 4 — **at chance when it decides**; the confidence rule
+  does not protect unseen appearances.
 - Micro-generative: no fixed-event or end-to-end number — the v3 models are a
   runtime probe, not wired into the page.
 - Existing LLM: historical CAMP/DeepSeek stack, different schema/world — not
@@ -32,10 +37,13 @@ string recorded in the scoreboard. `meanTurnS` is submit-to-handback, not
 first-readable; first-readable was 7.3-20.7 s accepted narration per turn in
 the same evidence.
 
-**Principle.** Two of five arms have fixed-event numbers and one has an
-end-to-end number; the scoreboard's blank cells are the actual remaining work,
-not a formatting gap. The next product runs should target the blank cells in
-this order: hybrid fixed-event fields, micro-generative wiring, LLM arm.
+**Principle.** Two of five arms have fixed-event numbers, the hybrid arm has
+both an end-to-end number and a pointer cell, and two arms remain blank. The
+pointer cell changes the risk picture: its confidence rule abstains on half of
+the unseen appearances but is at chance on the ones it accepts, so the decide
+arm must stay experimental and the program channel stays the default until the
+pointer is calibrated on held-out appearances. Next: hybrid existence-gate
+cell, micro-generative wiring, LLM arm.
 
 **Artifacts.** `five-arm-scoreboard.json`, `score_fixed_arms.py`,
 `evidence-perf-taskskip-8.json`, D-108.

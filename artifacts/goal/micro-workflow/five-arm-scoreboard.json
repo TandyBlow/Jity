@@ -9,8 +9,20 @@
   "rules": {
    "kind": "program",
    "fixedEvent": {
-    "env": {"correct": 9, "total": 9, "precision": 1.0, "recall": 1.0, "f1": 1.0},
-    "info": {"correct": 9, "total": 10, "precision": 0.8, "recall": 1.0, "f1": 0.889}
+    "env": {
+     "correct": 9,
+     "total": 9,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0
+    },
+    "info": {
+     "correct": 9,
+     "total": 10,
+     "precision": 0.8,
+     "recall": 1.0,
+     "f1": 0.889
+    }
    },
    "endToEnd": null,
    "source": "score_fixed_arms.py, this run",
@@ -19,10 +31,25 @@
   "classifier": {
    "kind": "micro-heads",
    "fixedEvent": {
-    "env": {"correct": 8, "total": 9, "precision": 1.0, "recall": 0.875, "f1": 0.933},
-    "info": {"correct": 9, "total": 10, "precision": 0.8, "recall": 1.0, "f1": 0.889}
+    "env": {
+     "correct": 8,
+     "total": 9,
+     "precision": 1.0,
+     "recall": 0.875,
+     "f1": 0.933
+    },
+    "info": {
+     "correct": 9,
+     "total": 10,
+     "precision": 0.8,
+     "recall": 1.0,
+     "f1": 0.889
+    }
    },
-   "onnxParity": {"env": "9/9", "info": "10/10"},
+   "onnxParity": {
+    "env": "9/9",
+    "info": "10/10"
+   },
    "endToEnd": null,
    "source": "score_fixed_arms.py (torch + shipped int8 ONNX), this run",
    "notes": "HPC checkpoints; per-channel int8"
@@ -36,7 +63,26 @@
   },
   "hybrid-micro": {
    "kind": "page-end-to-end",
-   "fixedEvent": null,
+   "fixedEvent": {
+    "task": "candidate pointer on semantic-extraction.jsonl (55 pairs) with the deployed thresholds",
+    "all": {
+     "pairs": 55,
+     "decided": 48,
+     "correct": 43,
+     "wrong": 5,
+     "abstained": 7,
+     "accuracyWhenDecided": 0.896
+    },
+    "appearanceHoldout": {
+     "pairs": 14,
+     "decided": 8,
+     "correct": 4,
+     "wrong": 4,
+     "abstained": 6,
+     "accuracyWhenDecided": 0.5
+    },
+    "source": "score_pointer_abstain.py, this run"
+   },
    "endToEnd": {
     "turns": 8,
     "stateAssertions": "48/48",
@@ -49,7 +95,7 @@
     "narrationSources": "model 8/8"
    },
    "source": "evidence-perf-taskskip-8.json + scenario_report.py; query micro=1&microContinuation=heads&microReaction=1&taskProposer=micro&seed=11&narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts",
-   "notes": "fixed-event per-field P/R/F1 for the page arm not computed; shadow scores are not labeled offline"
+   "notes": "end-to-end as above; fixed-event cell is the candidate pointer only (existence gate not applied offline); on the appearance holdout the pointer is at chance when it decides"
   },
   "existing-llm": {
    "kind": "llm",
@@ -61,8 +107,8 @@
  },
  "gaps": [
   "micro-generative arm: wire v3 into a page arm and freeze per-field evaluation",
-  "hybrid-micro fixed-event P/R/F1: label the shadow scores offline or run the fixed-event probe through the decide arm",
   "existing-llm arm: a current-kernel LLM semantic arm (in-page 0.6B or an offline LLM labeler over the frozen holdouts)",
-  "end-to-end for rules/classifier/generative/LLM arms: page runs with the same frozen scenarios"
+  "end-to-end for rules/classifier/generative/LLM arms: page runs with the same frozen scenarios",
+  "hybrid-micro: existence gate not included in the offline fixed-event cell; pointer confidence is miscalibrated on unseen appearances (holdout 4/8 when decided)"
  ]
 }
