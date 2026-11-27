@@ -72,9 +72,14 @@ def score(rows, guesses):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--family', choices=['condition', 'cross_turn'], default=DATA_NAME)
+    parser.add_argument('--drop-prior', action='store_true')
     args = parser.parse_args()
     data = HERE / f'relation-probes/{args.family}.jsonl'
     rows = [json.loads(line) for line in data.read_text(encoding='utf8').splitlines() if line.strip()]
+    if args.drop_prior:
+        # 消融：去掉上一回合一整行，冻结文件不动
+        for row in rows:
+            row['input'] = '\n'.join(part for part in row['input'].split('\n') if not part.startswith('上一回合'))
     train = [r for r in rows if r['split'] == 'train']
     test = [r for r in rows if r['split'] == 'test']
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -105,9 +110,9 @@ def main():
             ids, mask = encode(tok, row['input'])
             guesses.append(int(model(ids.to(device), mask.to(device))[0].argmax().item()))
     OUT.mkdir(parents=True, exist_ok=True)
-    target = OUT / f'relation-{args.family}-head.pt'
+    target = OUT / f'relation-{args.family}{"-noprior" if args.drop_prior else ""}-head.pt'
     torch.save(model.cpu(), target)
-    print(json.dumps({'family': args.family, 'rows': len(rows), 'train': len(train), 'test': len(test),
+    print(json.dumps({'family': args.family, 'dropPrior': args.drop_prior, 'rows': len(rows), 'train': len(train), 'test': len(test),
                       'head': score(test, guesses),
                       'lexicalRule': score(test, [1 if overlap(r['input']) >= 0.2 else 0 for r in test]),
                       'majority': score(test, [Counter(r['gold'] for r in train).most_common(1)[0][0]] * len(test)),
