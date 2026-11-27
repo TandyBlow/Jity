@@ -35,3 +35,5 @@
 **Artifacts.** `evidence-semantic-env-11.json`、`evidence-semantic-info-24.json`
 （本地大文件，不入库）、`semantic-turns-{env-11,info-24}.json`、
 `real-semantic.jsonl`、`real-semantic-manifest.json`、D-135。
+
+**D-136 复核（2026-11-28）.** env-11 用修复后的构建重跑（12 回合、11 条新行）：`sm-e-success-10` 从 conflict 变 present（部分→完成的长桌转移现在会被记录）；`sm-e-partial-3/6` 仍 insufficient——RESULT 分类器没有把带"卡住"的部分成功判为 partial，短语不发；`sm-e-success-8/9` 仍 conflict（检修盖/长椅的补全转移未记录）。结论：短语规则放宽只解决了一类，剩下的瓶颈在结果分类与补全转移的补丁。数据集仍 280 行，门全过。

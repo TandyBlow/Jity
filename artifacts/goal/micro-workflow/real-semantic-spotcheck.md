@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 109, "env:insufficient": 26, "info:insufficient": 114, "env:absent": 170, "env:conflict": 29, "env:present": 55, "info:present": 57}
+Counts: {"info:absent": 110, "env:insufficient": 26, "info:insufficient": 113, "env:absent": 170, "env:conflict": 29, "env:present": 55, "info:present": 57}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -1444,70 +1444,70 @@ Counts: {"info:absent": 109, "env:insufficient": 26, "info:insufficient": 114, "
 - info: present proposed=True content='向外推开可到外廊' support='向外推开可到外廊' evidence=narrative
 - env: conflict proposed=False content='' support='' evidence=settled
 
-## sm-e-partial-3 (train, cache, env_partial)
+## sm-e-partial-3 (train, model, env_partial)
 - action: 我把服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='路明非把服务巷检修盖提到一半，铰链卡住，只留下刚够伸手的缝' support='路明非把服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝' evidence=settled
-- env: insufficient proposed=True content='服务巷检修盖铰链卡住，半开' support='铰链卡住，只留下一道刚够伸手的缝' evidence=settled
+- info: absent proposed=True content='服务巷检修盖提到一半，铰链卡住，只留下刚够伸手的缝' support='服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝' evidence=settled
+- env: insufficient proposed=True content='服务巷检修盖半开，铰链卡住，留缝' support='服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝' evidence=settled
 
-## sm-e-success-8 (train, cache, env_success)
+## sm-e-success-8 (train, model, env_success)
 - action: 我把检修盖完全掀开，短梯露了出来。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='检修盖完全掀开，短梯露了出来' support='路明非把检修盖完全掀开，短梯露了出来。' evidence=settled
-- env: conflict proposed=True content='检修盖掀开，短梯露出' support='路明非把检修盖完全掀开，短梯露了出来。' evidence=settled
+- info: absent proposed=True content='检修盖被完全掀开，短梯露了出来' support='路明非把检修盖完全掀开，短梯露了出来' evidence=settled
+- env: conflict proposed=True content='检修盖被完全掀开，短梯露出' support='路明非把检修盖完全掀开，短梯露了出来' evidence=settled
 
-## sm-e-move-3 (train, cache, env_irrelevant_move)
+## sm-e-move-3 (train, model, env_irrelevant_move)
 - action: 我顺着短梯下到地下检修通道。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='路明非顺着短梯下到地下检修通道（只完成一部分）' support='路明非顺着短梯下到地下检修通道。（只完成一部分）' evidence=settled
-- env: absent proposed=False content='' support='' evidence=settled
-
-## sm-e-fail-3 (train, cache, env_failure)
-- action: 我推地下检修通道尽头的防火门，门从另一侧锁着，推不开。
-- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='门从另一侧锁着，推不开' support='门从另一侧锁着，推不开' evidence=settled
-- env: conflict proposed=False content='' support='' evidence=state
-
-## sm-e-transfer-3 (train, cache, env_item_transfer)
-- action: 我把护目镜从胸前取下来，塞进背心的胸袋。
-- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: insufficient proposed=True content='路明非把护目镜从胸前取下来，塞进背心的胸袋，只完成一部分' support='路明非把护目镜从胸前取下来，塞进背心的胸袋。（只完成一部分）' evidence=settled
+- info: absent proposed=True content='路明非部分完成下到地下检修通道' support='路明非顺着短梯下到地下检修通道。（只完成一部分）' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
-## sm-e-success-9 (train, cache, env_success)
+## sm-e-fail-3 (train, model, env_failure)
+- action: 我推地下检修通道尽头的防火门，门从另一侧锁着，推不开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='地下检修通道尽头防火门从另一侧锁着，推不开。' support='门从另一侧锁着，推不开' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=state
+
+## sm-e-transfer-3 (train, model, env_item_transfer)
+- action: 我把护目镜从胸前取下来，塞进背心的胸袋。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='诺诺没有回答红方区域打听' support='诺诺没有回答' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-e-success-9 (train, model, env_success)
 - action: 我把长椅彻底拖到石花槽后侧，通道让出来了。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
 - info: absent proposed=True content='路明非把长椅彻底拖到石花槽后侧，通道让出来了。' support='路明非把长椅彻底拖到石花槽后侧，通道让出来了。' evidence=settled
-- env: conflict proposed=True content='bench_cover:已被拖开' support='环境=bench_cover:已被拖开' evidence=settled
+- env: conflict proposed=True content='长椅已被拖开，通道让出' support='环境=bench_cover:已被拖开' evidence=settled
 
-## sm-e-partial-5 (train, cache, env_partial)
+## sm-e-partial-5 (train, model, env_partial)
 - action: 我穿过庭院进钟楼门厅，抬起翻倒长桌的一角，只挪开一条能侧身过的缝。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "yard", "slotId": "slot_south_cover", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}
-- info: absent proposed=True content='路明非穿过庭院进钟楼门厅' support='路明非穿过庭院进钟楼门厅' evidence=settled
-- env: present proposed=True content='门厅长桌已被挪开' support='已被挪开' evidence=state
+- info: absent proposed=True content='路明非穿过庭院进钟楼门厅，只挪开长桌一条缝' support='路明非穿过庭院进钟楼门厅，抬起翻倒长桌的一角，只挪开一条能侧身过的缝。（达到目的）' evidence=settled
+- env: present proposed=True content='钟楼门厅翻倒长桌已被挪开' support='已被挪开' evidence=state
 
-## sm-e-success-10 (train, cache, env_success)
+## sm-e-success-10 (train, model, env_success)
 - action: 我把长桌拖到侧墙，楼梯口彻底让出来。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:foyer_table", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {"change_162": "已被挪开"}}, "after": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {"change_162": "已被挪开", "change_183": "已被拖开"}}}], "env": ["item:foyer_table"]}
-- info: absent proposed=True content='长桌被拖到侧墙，楼梯口让出' support='路明非把长桌拖到侧墙，楼梯口彻底让出来' evidence=settled
-- env: present proposed=True content='长桌状态：已被拖开' support='已被拖开' evidence=state
+- info: absent proposed=True content='路明非把长桌拖到侧墙，楼梯口让出来。' support='路明非把长桌拖到侧墙，楼梯口彻底让出来。（达到目的）' evidence=settled
+- env: present proposed=True content='长桌已被拖开' support='已被拖开' evidence=state
 
-## sm-e-partial-6 (train, cache, env_partial)
+## sm-e-partial-6 (train, model, env_partial)
 - action: 我把东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='东回廊遮光帘拉到一半卡住拉不动' support='东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动' evidence=settled
-- env: insufficient proposed=True content='东回廊遮光帘卡在滑轨中段拉不动' support='帘子卡在滑轨中段拉不动' evidence=settled
+- info: absent proposed=True content='东回廊遮光帘卡在滑轨中段拉不动' support='路明非把东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动。（没有成功）' evidence=settled
+- env: insufficient proposed=True content='东回廊遮光帘卡在滑轨中段' support='路明非把东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动。（没有成功）' evidence=settled
 
-## sm-e-success-11 (train, cache, env_success)
+## sm-e-success-11 (train, model, env_success)
 - action: 我把遮光帘拉到底，东回廊暗了下来。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='路明非把遮光帘拉到底，东回廊暗了下来' support='路明非把遮光帘拉到底，东回廊暗了下来' evidence=settled
-- env: insufficient proposed=True content='东回廊暗了下来' support='东回廊暗了下来' evidence=settled
+- info: absent proposed=True content='路明非把遮光帘拉到底，东回廊暗了下来。（只完成一部分）' support='路明非把遮光帘拉到底，东回廊暗了下来。（只完成一部分）' evidence=settled
+- env: insufficient proposed=True content='东回廊暗了下来。（只完成一部分）' support='东回廊暗了下来。（只完成一部分）' evidence=settled
 
-## sm-e-fail-4 (train, cache, env_failure)
+## sm-e-fail-4 (train, model, env_failure)
 - action: 我回身去拉钟楼地下检修门，门闩从里面插着，拉不开。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=True content='钟楼地下检修门门闩从里面插着，拉不开。' support='门闩从里面插着，拉不开' evidence=settled
+- info: absent proposed=True content='门闩从里面插着，拉不开' support='门闩从里面插着，拉不开' evidence=settled
 - env: absent proposed=False content='' support='' evidence=state
 
 ## sm-i-new-4 (train, cache, info_new)
