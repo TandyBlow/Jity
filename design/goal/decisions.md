@@ -915,3 +915,11 @@
 - 对拍判据改为**部署决定一致**：argmax 有实质边际的翻转、行跨过部署门槛（存在性 0.75；候选 0.6/边际 0.15；支持 0.5）即失败；门槛 ±0.02 内的刀口翻转单列 `boundaryFlips`；`maxProbDiff` 保留 0.25 作权重错配警报（错配会 0.5+ 大面积出现）。
 - 结果：env 存在性 206/206（0.007）、info 149/149（0.080）、extraction 组 top1 54/55 + 1 个两臂都弃权的近同分（top1 0.010、边际 0.002）、support env 106/106（0.067）、support info 151/152（1 个 0.4973/0.5031 刀口）。五门全过；manifest 哈希/字节已更新为新 int8。
 - 理由：门槛是产品里的实际决定面，概率数值本身不被浏览器消费；只盯 maxProbDiff 会把量化噪声当部署缺陷，也会漏掉真正的门槛穿越。
+
+## D-101 结果关系头（outcome）在 HPC 训练并胜出规则（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 作业 280969：`train_relation_outcome.py` 在 MiniRBT-H256 上训 5 类结果头，数据为冻结探针 `relation-probes/outcome.jsonl`（275 行，231 训练 / 44 测试，gold 为内核标记，输入已剥掉标记和结构化标签）。
+- 结果：头 accuracy 0.886 / macro-F1 0.488；多数类与否定词规则同为 0.636 / 0.156（测试集无行命中否定词模式，规则退化为多数类）。错误集中在 achieved↔partial 边界；blocked/no_change 无测试行。
+- 意义：info/env 之外第一个有正向模型证据的关系族；同时说明规则基线在这段文本上偏弱，+0.25 只是本世界的头对规则，不是通用结果理解。
+- 模型经 sftp 回取到 `.local/hpc-micro/relation-outcome-head.pt`；下一次训练统一走 `_hpc_relation_submit.py`。

@@ -31,3 +31,5 @@ Artifacts     evidence files, manifests, commits
 | E05 | Deployment parity: PyTorch vs int8 ONNX heads | done |
 | E06 | Information as events: independent annotation vs clause labels | done |
 | E07 | Negation/failure probes with verified golds | done |
+| E08 | Same-budget decomposition: shared vs split heads | done (criterion partly met) |
+| E10 | Outcome relation: model head vs rule on narration | done (HPC) |
