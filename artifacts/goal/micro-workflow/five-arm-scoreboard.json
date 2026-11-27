@@ -203,6 +203,20 @@
      "results": 1200
     },
     "source": "contribution_report.py + contribution-hybrid-8.json"
+   },
+   "mobileProxy": {
+    "turns": 2,
+    "waitsS": [
+     218.6,
+     252.8
+    ],
+    "baselineWaitsS": [
+     276.7,
+     278.1
+    ],
+    "protocol": "--cpu-throttle 4 --gpu-lite, llm2-turns.json, micro arm",
+    "note": "desktop Edge with forced iGPU, not a phone; still 3.6-4.2x the 60 s target",
+    "source": "evidence-mobile-proxy-2.json vs evidence-mobile-proxy-1.json (E04)"
    }
   },
   "existing-llm": {
