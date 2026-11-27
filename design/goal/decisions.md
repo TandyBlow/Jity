@@ -777,3 +777,9 @@
 - 原离线运行 212/231 s、生成 59/112 次：ONNX 微型头在断网后首次加载失败，逐成员退回 LLM，回合变慢约一倍。页面在模型就绪、断网之前用 `warmMicroSession` 建好共享 ORT 会话（results/targets/judge/behavior/movement/continuation/task-condition/pair-scorer，影子模式再加 existence 两个）并预热分词器。
 - 重跑 `--offline` 两回合：76.1/86.6 s、生成 25/55，与在线（76.7/87.0 s、25/55）一致；刷新恢复 overallRestored=true、任务快照稳定。证据 `evidence-offline-2.json`，`harness.offline=true`。
 - 代价：启动时把约 90 MB 的 int8 头装进内存（影子模式再加 21 MB）；这是离线可用的前提，后续可做按需驻留/释放。
+
+## D-082 预热构建的冻结场景回归（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- `evidence-independent-scenarios-12.json`（micro 臂 + existenceShadow，含离线预热改动）：8/8 完成，状态 48/48、任务 14/14、达成 3/3、false 0、missed 0、报告 prose 问题 0；均值 65.1 s、最大 89.9 s、ready 18.5 s（预热在就绪前完成，未拖慢）；影子分数 124 行。
+- 唯一新标记：sc07 叙事回落到程序稿（`program_fallback_labelled`），属于已知的叙事回退，不计入报告的三类 prose 问题，但记为质量项。
