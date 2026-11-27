@@ -55,8 +55,13 @@
     "env": "9/9",
     "info": "10/10"
    },
-   "endToEnd": null,
-   "source": "score_fixed_arms.py (torch + shipped int8 ONNX), this run",
+   "endToEnd": {
+    "turns": 2,
+    "turn1": "completed 5.8 s",
+    "turn2": "330 s timeout, no commit",
+    "note": "classified ports without the LLM complete only some turns; movement/settlement turns stall"
+   },
+   "source": "score_fixed_arms.py (torch + shipped int8 ONNX), this run; end-to-end evidence-classifier-arm-1.json",
    "notes": "HPC checkpoints; per-channel int8"
   },
   "micro-generative": {
