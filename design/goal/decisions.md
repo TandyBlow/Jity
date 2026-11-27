@@ -933,3 +933,11 @@
 - 缺口：D1 的硬对齐/事实矛盾没有跑到证据上——`narration-quality/review.ts` 还没有接验收证据的 runner；`scenario_report.py` 只证明来源与身份。下一轮 A/B 前先补这个 runner。
 - 稳定性记录：serialized 首轮在回合 2 后渲染进程崩溃（116/217 秒两回合），新浏览器重跑 57–97 秒正常；同构建，属长会话下的页面稳定性问题，不是臂属性。
 - 性能记录：该臂每回合 2–4 个自动推进点，语义阶段 LLM 调用（tasks/subtasks 4.1k/3.1k 字提示）是主要耗时；D-103 起对 tasks 阶段加短名单跳过。
+
+## D-103 tasks 阶段短名单跳过（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 改动：`stageTasks` 在 `achieved` 合约下，若受影响人物的待办任务与本点事实措辞零重叠且没有全局事实（新增 `isGlobalFact`），不再发 LLM 调用，记录 `skipped: 'no_shortlisted_task'`。micro 提议器在守卫之前运行；全局词（全城/广播/所有人…）仍把全部任务交给模型。
+- 同 8 场景回合（prose 形状，`evidence-narr-prose-1` → `evidence-perf-taskskip-8`）：平均等待 67.0 → 61.9 s（最长 93.8 → 85.2 s）；tasks+subtasks 模型时间 167.4 → 146.2 s。
+- 机制说明：被跳过的 tasks 调用原本也在同一答案里回答 subtasks，跳过把它移交给独立的 subtasks 调用，所以净省约 2.7 s/回合，不是整段 10 s；sc02 实测 tasks 25.0→9.9 s、subtasks 13.0→22.0 s。想再往下压，得做稳定前缀复用而不是继续删阶段。
+- 校验：新增单测（零重叠跳过、全局事实不跳过）；全量 vitest 1459 通过；8 场景断言仍 48/48 状态、14/14 任务、3/3 成就、0 正文身份问题。
