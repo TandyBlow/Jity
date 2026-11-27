@@ -35,3 +35,4 @@ Artifacts     evidence files, manifests, commits
 | E09 | Narration representation A/B: prose-facts vs serialized | done (prose-facts direction) |
 | E10 | Outcome relation: model head vs rule on narration | done (HPC) |
 | E11 | Condition relation: fact vs task goal | done (HPC, directional) |
+| E12 | Decide vs shadow on read turns: where the model's turn never comes | partial (turn 4 unmeasured) |

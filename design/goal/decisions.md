@@ -950,3 +950,12 @@
 - 作业 281000（同一 sbatch 复跑 outcome + 训练 condition）。condition 头（23 测试行，5 个正例）：accuracy 0.826 / macro-F1 0.697；措辞规则（goal/fact 二元组重叠 ≥0.2，即产品短名单规则）与多数类同为 0.783 / 0.439，且全部判负——留出正例的重叠都低于 0.2。头找回 2/5 正例、多 1 个假阳性。
 - 结论按方向记录：编码器能补上措辞规则漏掉的一部分条件关系，但 5 个正例不足以当结果声明；下一步扩数据而不是调参。
 - 产物：`build_relation_probes.py`、`train_relation_condition.py`、`.local/hpc-micro/relation-condition-head.pt`；E11。
+
+## D-105 决定臂在读取回合的可用范围与测量（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 新日志：结果口同时输出程序与模型的信息事件（`[world-local info] program` / `[world-local decide] info`），`decideInformation` 每个拒绝路径带原因码（`no_topic`/`entity_count:<ids>`/`existence:<p>`/`score:<p>/<margin>`/`not_verbatim` 等）。仅日志，未改判定。
+- 泛读 4 回合（decide 臂）：0 个模型决定；原因分布 label 12、`entity_count:none` 4、`no_topic` 15、`not_read` 25——决定器从未走到存在性/抽取两个模型。每回合那一条 `entity_count:none` 说明该读取子动作在 rules 动作分析下没有 item id。
+- 主题读取（shadow 臂）：程序通道 3/4 命中且逐字（rules 医护白线禁射、map 地下检修通道用虚线标注、radio_nono 电池盖扣牢）；第 4 回合（器材领用簿/折叠梯）程序未命中。
+- 主题读取（decide 臂）：4 回合里完成 2 回合，均与 shadow 相同（1 条程序事件、0 模型事件）；随后运行被宿主因系统内存过低终止（非产品失败），按要求未重启。**程序弃权、模型可发挥的第 4 回合未测到**。
+- 结论：决定臂的范围比“程序漏掉的读取”更窄——泛读拿不到实体，主题读取程序已覆盖 3/4；要做模型对程序的对照，需要“程序弃权且动作分析能解析读取物”的输入，这一格仍缺；`decide-turns-4.json` 的 4 条改写读取已冻结，待内存允许时再跑。
