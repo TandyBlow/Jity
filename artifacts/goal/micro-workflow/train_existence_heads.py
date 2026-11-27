@@ -5,6 +5,7 @@ Refuses to train unless every field has at least 50 positive and 50 negative
 examples, matching the trial gate. `--smoke` exists only for code checks."""
 import argparse
 import json
+import os
 import random
 from collections import Counter
 from pathlib import Path
@@ -13,7 +14,7 @@ import torch
 import torch.nn as nn
 from transformers import BertModel, BertTokenizer
 
-ROOT = Path('D:/others/Jity')
+ROOT = Path(os.environ.get('JITY_ROOT', 'D:/others/Jity'))
 HERE = ROOT / 'artifacts/goal/micro-workflow'
 SNAP = ROOT / 'artifacts/benchmark/minirbt-h256-snapshot'
 DATA = HERE / 'semantic-existence.jsonl'

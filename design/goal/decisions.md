@@ -885,3 +885,10 @@
 - v1 消融协议有三个缺陷（种子在建模后设置、前缀未先截断、缺字段嵌入对照），D-092 的 shared 0.667 数字撤回。修正协议（240 token 先截断、同源初始化、5 种子、加 shared-embed）后中间结果：shared-text info F1 0.855±0.054 / env 0.918±0.030（5 种子）；shared-embed info 0.678±0.088 / env 0.769±0.000（5 种子）；split info 0.889 / env 0.933（2/5 种子，全同向）。规则仍是 info 0.889 / env 1.000。
 - 预注册正面标准（split ≥ shared-text + 0.05 且 ≥ shared-embed + 0.05）对 shared-text 很可能不成立（差距 ~0.03/0.015）；字段嵌入显著更差。结论：同等规模与预算下，给单模型加字段名前缀已拿到拆分头的大部分收益；拆分不是自动更优，正面证据必须来自规则做不到的开放关系（D-092 的判据不变）。
 - split 剩余 3 个种子完成后会写 `ablation-report-v2.json` 并更新 E08；当前数字标注为中间结果。
+
+## D-097 训练任务迁到 HPC（280873）（2026-11-26）
+
+- 状态：`signed`（2026-11-26，用户指示：训练任务要提交到 HPC）。
+- 本机消融在 12/15 次运行时停止；训练统一走 HPC。集群探测：cpu/gpu/gpua100 分区可用，crf conda 环境 torch 2.5.1+cu124 + transformers 4.51.3，`IMPORT_OK`（`crf_env.ok` 缺失，属软门禁），srun 探测在 hpcgpu08 拿到 RTX 4090 D 并通过。
+- 提交：`micro_train` 工作目录（MiniRBT 快照 40 MB、数据与四个训练脚本），sbatch `micro_train`（gpu 1 卡、4 CPU、2h）：存在性 env/info、支持 env/info、抽取、5 种子消融全部重跑；日志在 `reports/`，模型与 `ablation-report-v2.json` 回取用 `frontend/scripts/_hpc_micro_fetch.py`（报告走脱敏闸，模型二进制直取）。作业号 **280873**，状态 RUNNING（hpcgpu08，日志确认 `cuda True`）。
+- 训练脚本改为 `JITY_ROOT` 环境变量（Windows 默认不变），同一份代码本地/HPC 通用。本地 `_hpc_micro_submit.py` / `_hpc_micro_fetch.py` 不入库，凭据仍只在外部根。

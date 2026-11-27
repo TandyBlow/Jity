@@ -7,6 +7,7 @@ holdout confusion and the subset where the claim is not a verbatim substring
 of the facts (the semantically interesting part)."""
 import argparse
 import json
+import os
 import random
 from collections import Counter
 from pathlib import Path
@@ -15,7 +16,7 @@ import torch
 import torch.nn as nn
 from transformers import BertModel, BertTokenizer
 
-ROOT = Path('D:/others/Jity')
+ROOT = Path(os.environ.get('JITY_ROOT', 'D:/others/Jity'))
 HERE = ROOT / 'artifacts/goal/micro-workflow'
 SNAP = ROOT / 'artifacts/benchmark/minirbt-h256-snapshot'
 DATA = HERE / 'semantic-support.jsonl'

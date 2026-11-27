@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 from transformers import BertModel, BertTokenizer
 
-ROOT = Path('D:/others/Jity')
+ROOT = Path(os.environ.get('JITY_ROOT', 'D:/others/Jity'))
 HERE = ROOT / 'artifacts/goal/micro-workflow'
 SNAP = ROOT / 'artifacts/benchmark/minirbt-h256-snapshot'
 DATA = HERE / 'semantic-extraction.jsonl'
