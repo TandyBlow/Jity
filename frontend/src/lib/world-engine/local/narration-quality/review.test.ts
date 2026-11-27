@@ -110,3 +110,28 @@ describe('independent review', () => {
     expect(report.findings.map((entry) => entry.kind)).toContain('fact.gender');
   });
 });
+
+describe('colour contradictions', () => {
+  const bandScene: DatasetInput = {
+    视角: '主角视角（路明非）；只表达已结算的世界事实',
+    上回合状态: {
+      人物: {
+        路明非: { 位置: '庭院', 精神值: 50, 外貌: ['校服领口松着'], 个性: ['谨慎'], 任务: { 小任务: [] } },
+        唐骁: { 位置: '庭院', 精神值: 50, 外貌: ['红色识别带勒在肩上，护目镜完好。'], 个性: ['警觉'], 任务: { 小任务: [] } },
+      },
+    },
+    本回合变化: {},
+    本回合状态: {},
+  };
+  it('flags a band colour the appearance does not support', () => {
+    const report = reviewNarration({ id: 'colour-bad', input: bandScene, text: '路明非看向唐骁。唐骁的识别带是黑色的，垂在肩头。' });
+    const hits = report.findings.filter((row) => row.kind === 'fact.color_mismatch');
+    expect(hits).toHaveLength(1);
+    expect(hits[0].sentence).toContain('黑色');
+    expect(hits[0].severity).toBe('fact');
+  });
+  it('accepts the committed colour and skips unattributed sentences', () => {
+    const report = reviewNarration({ id: 'colour-good', input: bandScene, text: '路明非看向唐骁。唐骁的红色识别带勒在肩上。那条识别带在风里晃了一下。' });
+    expect(report.findings.filter((row) => row.kind === 'fact.color_mismatch')).toHaveLength(0);
+  });
+});

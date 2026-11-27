@@ -33,6 +33,7 @@ export type FindingKind =
   | 'fact.sound_denied'
   | 'fact.gender'
   | 'fact.state_contradiction'
+  | 'fact.color_mismatch'
   | 'fact.body_mark_added'
   | 'fact.wrong_place'
   | 'fact.trait_misattribution'

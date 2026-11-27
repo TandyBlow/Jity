@@ -1982,6 +1982,38 @@ export function reviewNarration(args: {
       `${antecedent} is bound to both 他 and 她; at most one is right and the attribution needs reading`, []));
   }
 
+  // ------------------------------------------------------------- colour
+  // 外观写明的颜色不能被正文换成另一种；没有点名的句子不猜归属。
+  const COLOUR_NOUNS = ['识别带', '护目镜', '头盔', '袖口', '袖标', '布带', '旗杆', '信号旗', '外套', '背心', '手套', '短讯机', '电池', '绷带', '毯子', '鞋帮', '枪'];
+  const COLOUR_CHARS = '红蓝黑白灰绿';
+  const colourClaims = (line: string, noun: string): string[] => {
+    const found: string[] = [];
+    for (const match of line.matchAll(new RegExp(`[${COLOUR_CHARS}]色?${escapeRegExp(noun)}`, 'gu'))) found.push(match[0][0]);
+    for (const match of line.matchAll(new RegExp(`${escapeRegExp(noun)}[^，。；]{0,3}?[${COLOUR_CHARS}]色`, 'gu'))) {
+      const colour = match[0].match(new RegExp(`[${COLOUR_CHARS}]`, 'u'))?.[0];
+      if (colour) found.push(colour);
+    }
+    return [...new Set(found)];
+  };
+  const colourSeen = new Set<string>();
+  for (const person of Object.values(projection.people)) {
+    for (const noun of COLOUR_NOUNS) {
+      if (!person.appearanceAfter.some((line) => line.includes(noun))) continue;
+      const stated = [...new Set(person.appearanceAfter.flatMap((line) => colourClaims(line, noun)))];
+      if (stated.length !== 1) continue;
+      for (const sentence of sentences) {
+        if (!sentence.text.includes(person.name) || !sentence.text.includes(noun)) continue;
+        const wrong = colourClaims(sentence.text, noun).filter((colour) => colour !== stated[0]);
+        if (!wrong.length) continue;
+        const key = `${person.name}:${noun}:${sentence.text}`;
+        if (colourSeen.has(key)) continue;
+        colourSeen.add(key);
+        findings.push(finding(ctx, 'fact.color_mismatch', sentence.text,
+          `${person.name}的${noun}写的是${stated[0]}色，正文写成${wrong[0]}色`, person.appearanceAfter));
+      }
+    }
+  }
+
   // -------------------------------------------------------------- style
   const normalized = sentences.map((entry) => normalize(entry.text)).filter((entry) => entry.length >= 6);
   const sentenceCounts = new Map<string, number>();
