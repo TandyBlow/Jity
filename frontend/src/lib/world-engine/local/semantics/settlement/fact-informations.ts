@@ -133,7 +133,7 @@ export async function decideInformation(
     return null;
   };
   if (label !== 'achieved' && label !== 'partial') return reject('label');
-  if (entityIds.length !== 1) return reject('entity_count');
+  if (entityIds.length !== 1) return reject(`entity_count:${entityIds.join(',') || 'none'}`);
   if (!READ.test(text)) return reject('not_read');
   // 泛泛的「查看某物」没有问项，模型没有可判定的目标（审计实测会乱选分句）
   if (!/关于|想知道|有没有|能不能|是否|什么|哪|多少|几/u.test(text)) return reject('no_topic');
