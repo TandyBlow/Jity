@@ -282,17 +282,6 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(evidence[0]!.compileMs).toBeGreaterThanOrEqual(0);
   });
 
-  test('the direct-blob path streams download progress against content-length', async () => {
-    const fake = fakeWllama();
-    vi.stubGlobal('fetch', async () => new Response(new Blob([new Uint8Array(8)]), { headers: { 'content-length': '8' } }));
-    const seen: Array<[number, number | null]> = [];
-    const engine = new WllamaInferenceEngine({ modelUrl: '/models/p.gguf', directBlob: true,
-      onLoadProgress: (loaded, total) => seen.push([loaded, total]) }, async () => fake.instance);
-    await engine.load();
-    expect(seen.length).toBeGreaterThan(0);
-    expect(seen.at(-1)).toEqual([8, 8]);
-  });
-
   test('split GGUF shards load as one ordered multi-blob call', async () => {
     const fake = fakeWllama();
     const urls = ['/models/m.gguf-00001-of-00002.gguf', '/models/m.gguf-00002-of-00002.gguf'];

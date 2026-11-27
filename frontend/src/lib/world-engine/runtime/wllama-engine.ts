@@ -75,8 +75,6 @@ export interface WllamaEngineOptions {
    * the GGUF parser. The SHA-256 check belongs to the queue/host runner; this
    * is the cheap size check the page can do itself. */
   expectedBytes?: number | number[];
-  /** Download progress in bytes, called per streamed chunk. UI-only. */
-  onLoadProgress?: (loaded: number, total: number | null) => void;
   /** Evidence-only hook: the exact prompt handed to the model. */
   onPrompt?: (prompt: string) => void;
   /** Observability hook for load and generation evidence. Own structure:
@@ -416,24 +414,8 @@ export class WllamaInferenceEngine implements InferenceEngine {
             try {
               const response = await fetch(url, { signal: controller.signal });
               if (!response.ok) throw new Error(`HTTP ${response.status}`);
-              const header = Number(response.headers.get('content-length'));
-              const total = Number.isFinite(header) && header > 0 ? header : expected?.[index] ?? null;
-              let blob: Blob;
-              if (response.body) {
-                const reader = response.body.getReader();
-                const chunks: Uint8Array[] = [];
-                let loaded = 0;
-                for (;;) {
-                  const { done, value } = await reader.read();
-                  if (done) break;
-                  chunks.push(value);
-                  loaded += value.byteLength;
-                  this.options.onLoadProgress?.(loaded, total);
-                }
-                blob = new Blob(chunks as BlobPart[]);
-              } else {
-                blob = await response.blob();
-              }
+              // 手动读 response.body 拼 Blob 会让 wllama 二次加载 NotReadableError（D-134）
+              const blob = await response.blob();
               if (expected && expected[index] !== undefined && blob.size !== expected[index]) {
                 throw new Error(`size ${blob.size}, expected ${expected[index]}`);
               }

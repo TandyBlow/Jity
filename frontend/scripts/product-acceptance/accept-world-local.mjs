@@ -1302,6 +1302,9 @@ try {
     historyRestored,
     inputConsumptionRestored: historyRestored,
     entriesRestored,
+    // The exact post-reload text: an empty counter or a missing "restored"
+    // message is only diagnosable with the page's own words.
+    finalTextTail: restoredText2.slice(-800),
     // The product may only claim recovery when everything a player relies on
     // is actually back. A matching place/sanity is not enough.
     overallRestored: stateRestored && historyRestored && entriesRestored && tasksStable,

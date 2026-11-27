@@ -85,7 +85,6 @@ const NARRATION_MODELS = {
 type NarrationModelKey = keyof typeof NARRATION_MODELS;
 const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b-narr-lora';
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
-const formatBytes = (bytes: number): string => (bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB` : `${Math.max(0, Math.round(bytes / 1e6))} MB`);
 const isPhoneBrowser = (): boolean => typeof navigator !== 'undefined' && /Mobi|Android|iPhone/i.test(navigator.userAgent);
 
 /** Per-turn evidence record, mirrored on window.__worldTurns so an automated
@@ -302,7 +301,6 @@ async function loadEngine(
   onEngine?: (engine: WllamaInferenceEngine) => void,
   cacheTypes = false,
   onPrompt?: (prompt: string) => void,
-  onProgress?: (loaded: number, total: number | null) => void,
 ): Promise<WllamaInferenceEngine> {
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
@@ -347,7 +345,7 @@ async function loadEngine(
   const forceCpu = cpuParam === '1' || (cpuParam !== '0' && isPhoneBrowser());
   // Do not retain the fetched GGUF Blob: two resident engines otherwise hold
   // ~1.4 GiB of Blob quota. A hard-stop reload refetches instead (rare).
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: forceCpu ? 0 : 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}), ...(onProgress ? { onLoadProgress: onProgress } : {}) });
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: forceCpu ? 0 : 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     if (forceCpu) throw gpuError;
@@ -357,7 +355,7 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}), ...(onProgress ? { onLoadProgress: onProgress } : {}) });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
@@ -451,7 +449,7 @@ async function probeGpu(): Promise<Record<string, unknown>> {
   return out;
 }
 
-function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, cacheTypes = false, onPrompt?: (prompt: string) => void, onProgress?: (loaded: number, total: number | null) => void): ProductEnginePort {
+function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, cacheTypes = false, onPrompt?: (prompt: string) => void): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
@@ -467,7 +465,7 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
       loading = loadEngine(url, contextSize, expectedBytes, label, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
-      }, cacheTypes, onPrompt, onProgress).then((engine) => {
+      }, cacheTypes, onPrompt).then((engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); throw new DOMException('engine closed', 'AbortError'); }
         current = engine;
         loadingEngine = null;
@@ -736,7 +734,6 @@ export default function WorldLocalPage() {
   /** Seconds since the page opened while the cold load is still running, so a
    * 120 s bounded load never looks like a frozen page. */
   const [loadSeconds, setLoadSeconds] = useState(0);
-  const [modelProgress, setModelProgress] = useState<{ label: string; loaded: number; total: number | null } | null>(null);
   const loadStartedRef = useRef(0);
   const [view, setView] = useState<ViewState | null>(null);
   const [input, setInput] = useState('');
@@ -962,24 +959,16 @@ export default function WorldLocalPage() {
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
         const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
-        let lastProgressKey = '';
-        const reportProgress = (label: string) => (loaded: number, total: number | null) => {
-          const percent = total ? Math.floor((loaded / total) * 100) : -1;
-          const key = `${label}:${percent}`;
-          if (key === lastProgressKey) return;
-          lastProgressKey = key;
-          setModelProgress({ label, loaded, total });
-        };
         const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true, (prompt) => {
           const rec = turnRecordRef.current;
           if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
-        }, reportProgress('semantic'));
+        });
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
         // weights, at the cost of serialising narration against settlement.
         const narration = webllm ?? (narrationKey === 'semantic'
           ? semantic
-          : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes, false, undefined, reportProgress('narration')));
+          : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes));
         narrationRef.current = narration;
         const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
         // Arm identity is evidence: 09 records it next to every turn, including
@@ -2051,9 +2040,7 @@ export default function WorldLocalPage() {
                   ? `${stage ? `结算中：${stage}` : '结算中…'}${busy ? ` · 已等待 ${Math.round((performance.now() - submittedAtRef.current) / 1000)}s · 语义 ${turnRecordRef.current?.semanticPrompts?.length ?? 0} 次 · 微模型 ${turnRecordRef.current?.microStats?.length ?? 0} 行` : ''}`
                   : phase === 'streaming'
                     ? `正在写正文…${busy ? ` · 已等待 ${Math.round((performance.now() - submittedAtRef.current) / 1000)}s` : ''}`
-                    : phase === 'loading'
-                      ? `${message}${modelProgress ? ` · ${modelProgress.label} ${formatBytes(modelProgress.loaded)}${modelProgress.total ? ` / ${formatBytes(modelProgress.total)}（${Math.floor((modelProgress.loaded / modelProgress.total) * 100)}%）` : ''}` : ''} · 已等待 ${loadSeconds}s`
-                      : message}
+                    : phase === 'loading' ? `${message} · 已等待 ${loadSeconds}s` : message}
                 {busy && <button onClick={() => void cancelTurn()} className={`${styles.ghostButton} ${styles.inlineButton}`}>{'取消本轮'}</button>}
                 {phase === 'loading' && <button onClick={() => void cancelTurn()} className={`${styles.ghostButton} ${styles.inlineButton}`}>{'取消加载'}</button>}
               </span>
