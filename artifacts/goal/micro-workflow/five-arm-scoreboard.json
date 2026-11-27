@@ -173,15 +173,24 @@
   "existing-llm": {
    "kind": "llm",
    "fixedEvent": null,
-   "endToEnd": null,
-   "source": "backend CAMP/DeepSeek stack (historical)",
-   "notes": "different schema and world; not measurable in the current kernel; historical reference only"
+   "endToEnd": {
+    "turns": 8,
+    "stateAssertions": "26/48",
+    "taskAssertions": "11/14",
+    "achievementChecks": "0/3",
+    "meanTurnS": 264.4,
+    "maxTurnS": 289.8,
+    "proseIdentityIssues": 0,
+    "driverFailures": 0
+   },
+   "source": "evidence-llm-arm-scenarios-1.json + scenario_report.py; query seed=11&narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts (micro off)",
+   "notes": "in-page 0.6B semantic lane; movement and achievements left uncommitted; same narration model as the hybrid arm"
   }
  },
  "gaps": [
   "micro-generative arm: wire v3 into a page arm and freeze per-field evaluation",
-  "existing-llm arm: a current-kernel LLM semantic arm (in-page 0.6B or an offline LLM labeler over the frozen holdouts)",
   "end-to-end for rules/classifier/generative/LLM arms: page runs with the same frozen scenarios",
-  "hybrid-micro: page smoke after the extraction ONNX swap still owed (parity gate passes)"
+  "hybrid-micro: page smoke after the extraction ONNX swap still owed (parity gate passes)",
+  "existing-llm arm: fixed-event fields still missing (page arm only end-to-end)"
  ]
 }
