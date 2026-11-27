@@ -32,5 +32,12 @@ the protagonist keeps the guard that removed its wrong picks. This is the
 first page evidence where both channels contribute in the same run, which is
 what the decide-vs-program comparison needs.
 
-**Artifacts.** `evidence-decide-roles-1.json`, `fact-informations.ts`,
-D-117.
+**Frozen scenarios under the decide path.** The same build ran the 8 frozen
+scenarios with `semanticDecide=1`: 48/48 state, 14/14 task, 3/3 achievement
+assertions, 0 prose-identity issues, mean turn 64.8 s (max 81.3 s). The
+refresh-restore check passed completely — state/history/entries restored, 8/8
+entries, tasks stable, 39.2 s — so the swapped extraction ONNX and the per-role
+guard leave the product scenarios and local restore intact.
+
+**Artifacts.** `evidence-decide-roles-1.json`,
+`evidence-decide-scenarios-1.json`, `fact-informations.ts`, D-117.
