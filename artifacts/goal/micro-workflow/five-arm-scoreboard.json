@@ -24,8 +24,13 @@
      "f1": 0.889
     }
    },
-   "endToEnd": null,
-   "source": "score_fixed_arms.py, this run",
+   "endToEnd": {
+    "turns": 2,
+    "turn1": "submit refused at 0.3 s (settlement incomplete)",
+    "turn2": "330 s timeout",
+    "note": "pure-rules arm cannot complete a turn without the semantic LLM; run stopped after 2 turns"
+   },
+   "source": "score_fixed_arms.py, this run; end-to-end evidence-rules-arm-1.json",
    "notes": "rules tags only; info has one false positive"
   },
   "classifier": {
