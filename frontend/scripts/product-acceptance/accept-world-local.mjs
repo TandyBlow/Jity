@@ -178,9 +178,14 @@ const launchArgs = [
   '--ignore-gpu-blocklist',
 ];
 const profile = flag('--profile', '');
+// Real-device runs: drive Android Chrome over `adb forward` + CDP instead of
+// launching a local browser. The phone reaches the server via `adb reverse`.
+const cdp = flag('--cdp', '');
 // A persistent profile lifts the headless temp-profile storage cap (~1 GB on
 // this box); WebLLM needs it for the 2.2 GB 4B cache.
-const browser = profile
+const browser = cdp
+  ? await chromium.connectOverCDP(cdp)
+  : profile
   ? await chromium.launchPersistentContext(profile, {
     headless: !has('--headed'),
     channel: 'msedge',
@@ -194,14 +199,15 @@ const browser = profile
   });
 evidence.harness.launchArgs = launchArgs;
 evidence.harness.profile = profile || null;
+evidence.harness.cdp = cdp || null;
 evidence.harness.cpuThrottle = Number.isFinite(cpuThrottle) && cpuThrottle > 1 ? cpuThrottle : null;
 evidence.harness.blockApi = has('--block-api');
 evidence.harness.gpuLite = gpuLite;
 
 try {
-  evidence.harness.edgeVersion = profile ? (browser.browser()?.version() ?? null) : browser.version();
-  const context = profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
-  const page = await context.newPage();
+  evidence.harness.edgeVersion = (profile || cdp) ? (browser.browser()?.version() ?? null) : browser.version();
+  const context = cdp ? browser.contexts()[0] : profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = cdp ? (context.pages()[0] ?? await context.newPage()) : await context.newPage();
   if (evidence.harness.cpuThrottle) {
     const cdp = await context.newCDPSession(page);
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: evidence.harness.cpuThrottle });
