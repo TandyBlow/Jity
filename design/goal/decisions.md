@@ -834,3 +834,11 @@
 - 限制：单标注模型、单遍、一个世界；证据逐字校验拒掉 108/256 条提案；没有 inference 条目，跨事件推断未测；novelty 只做精确文本，未接接受者知识账本。
 - 内核路线（只读设计，未实施）：信息事件 = `InformationEvent{pointId, receiverId, actorId, mode, items[], producer}`，条目带 source ref（item/character/location/dialogue/event 与 recordIds）与 novelty（new/known/conflict/unknown）；facts 通道先走 `Fact.information → SettledFact → PointNarrationSnapshot` 与 session 级知识账本（随快照保存、按保留点过滤），WorldState 暂不改（schemaVersion 1 与 stateDigest 固定）；提交时合并去重、失败点不写；只有 verbatim+new+阈值以上的条目可喂任务提议，verifier 仍是权威。叙述按 source 生成「看清了…」句。
 - 任务路线：指定问题、开放观察、多条、跨事件推断四种模式共用同一 draft 信封，五臂都填同一 `InformationItemDraft[]` 才可对比；下一步先补跨事件与对话来源的标注（当前 0/4 条），再加第二遍盲校验与人工抽查；不通过降低阈值掩盖能力不足。
+
+## D-090 下一阶段研究计划：关系基准、叙事、性能（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。只读设计已产出，以下为待执行路线，不是结果。
+- 关系基准（语义难点）：错误归因（人物/物品对调）、否定与失败、部分支持、跨事件证据、别名与代词、隐含状态、多条答案。每个关系用现有行 + 新标注组成冻结探针；臂 = 规则/分类器/候选评分/短序列生成/混合；指标 = 条目精确匹配或集合 F1、弃权正确率、错误归因率；替换规则的验收线提前冻结。目标规模小，离线可跑，不依赖页面。
+- 叙事实验（第一步）：固定回合集，比较事实表示（序列化 vs 散文化）、上下文长度、输出预算；沿用页面已有的 narrationProjection/narrationShape/temperature/fewShot 臂；指标 = 4.2/4.3 硬错种类（颜色矛盾守卫已可用）、重复句、首段可读与整回合耗时、可读性；固定种子与输入，避免并发干扰。微调（数据格式差异、LoRA 范围）作为后续实验，不先训练。
+- 性能：六个阶段的提示共享稳定前缀（按「回合内不变 → 阶段间不变 → 阶段特有」排序）；tasks 全名册扫描分块（N 块，块间同一覆盖与合并规则，保持 R09 人物覆盖）；用 cacheN/prefill tokens/分阶段 ms 验收；不得以缩覆盖换速度。叙事 decode 占移动代理 24-33%，测更短输出预算或更小叙事模型。
+- 记录格式：`design/research/`（E01-E06 已建）按「问题/设置/数据/臂/指标/结果/条件/原则/产物」写，失败保留。
