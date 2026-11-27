@@ -844,7 +844,7 @@ describe('real product world task-truth regression', () => {
       async dispose() {},
       async complete() { return answer; },
     };
-    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true } });
+    const handlers = createSettlementHandlers({ engine, options: { requireTaskSupport: true, tasksContract: 'roster' } });
     const outcome = await handlers.updates('g1#tasks', {
       groupId: 'g1',
       mode: 'group',

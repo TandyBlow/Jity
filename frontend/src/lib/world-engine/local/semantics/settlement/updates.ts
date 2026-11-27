@@ -20,7 +20,7 @@ import {
   isPlaceholderId, isRecord, LocalIdAllocator, maxChangeSequence, movableIds, normalizeChangeText, personalityLine, personalityOwnersAbove,
   positionFromRow, projectStage, referenceError, repeatsText, resolveCharacterId, resolveEntityId, resultFacts, roster, sameChangeText, taskIndex, taskKeyIndex, taskLine, toJson, unwrapIdBrackets,
 } from './support';
-import { projectPoint, type PointProjection } from './projection';
+import { isGlobalFact, projectPoint, type PointProjection } from './projection';
 import { APPEARANCE_WORDS, FAILURE_WORDS, MOVEMENT_WORDS, matchLocation, readDestinations } from './fact-destinations';
 import { readEnvironments } from './fact-environments';
 import type { SettlementStage } from './support';
@@ -1227,6 +1227,25 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     } catch {
       // A proposer failure is an abstain; the LLM tasks stage runs below.
     }
+  }
+  // 事实与所有待办目标的措辞零重叠 = 不可能“明确达成”；新增目标由 subtasks 阶段独立判断。
+  // 与 time_scan 跳过同理：提示里一个任务编号都没有，调用只可能回“无变化”。
+  const factTexts = resultFacts(ctx.results).map((fact) => fact.text);
+  const shortlisted = affectedRows.some(({ task }) => task.status !== 'achieved'
+    && factTexts.some((text) => sharesGoalWording(text, task.goal)));
+  const globalFact = resultFacts(ctx.results).some((fact) => isGlobalFact(fact.text));
+  if ((ctx.options.tasksContract ?? 'achieved') === 'achieved' && factTexts.length && !shortlisted && !globalFact) {
+    return {
+      changes: {},
+      detail: {
+        taskCoverageIds: characters,
+        taskScope: { ...taskScope, assertedUnchanged: 0, achievedByCharacter: [], emptyCharacters: taskScope.affectedCharacters, rejectedTaskIds: [], supports: [] },
+        decidedTaskIds: [],
+        skipped: 'no_shortlisted_task',
+      },
+      fallback: false,
+      calls: [],
+    };
   }
   const prompt = buildTasksPrompt(ctx, projection.affectedTaskOwners, projection, ctx.options.tasksContract ?? 'achieved');
   // Under the 'achieved' contract, a character the prompt listed but the model

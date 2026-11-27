@@ -22,7 +22,7 @@ function settlementEngine(): InferenceEngine {
       if (prompt.includes('共同结算器')) {
         return JSON.stringify({
           judgments: [{ memberId: 'person_c', label: 'not_achieved', reason: '盒盖没有被打开。', effects: [] }],
-          facts: [{ text: '周宁试着打开盒盖，但没有成功。', memberIds: ['person_c'] }],
+          facts: [{ text: '周宁留在走廊，试着打开盒子，但没有成功。', memberIds: ['person_c'] }],
         });
       }
       if (prompt.includes('位置结算器')) return JSON.stringify({ changes: [] });

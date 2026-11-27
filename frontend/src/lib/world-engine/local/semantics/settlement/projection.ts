@@ -46,6 +46,11 @@ const TIME_WORDS = [
 ];
 const GLOBAL_WORDS = ['全城', '世界', '广播', '宣布', '所有人', '全场', '演习区', '演习结束', '整个'];
 
+/** 全局事实绕过任务措辞短名单：它点名的是所有人，不是某个目标。 */
+export function isGlobalFact(text: string): boolean {
+  return GLOBAL_WORDS.some((word) => text.includes(word));
+}
+
 function namesOf(state: WorldState): Map<Id, string> {
   const out = new Map<Id, string>();
   for (const [id, value] of Object.entries(state.initial.characters)) out.set(id, value.name);
@@ -111,7 +116,7 @@ export function projectPoint(
   const factEntities = new Set<Id>();
   let global = false;
   for (const fact of facts) {
-    if (GLOBAL_WORDS.some((word) => fact.text.includes(word))) global = true;
+    if (isGlobalFact(fact.text)) global = true;
     for (const id of names.keys()) {
       if (mentions(fact.text, id, names)) factEntities.add(id);
     }

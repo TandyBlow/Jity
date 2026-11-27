@@ -2081,6 +2081,19 @@ describe('six-stage updates', () => {
     expect(clockStages.find((row) => row.stage === 'tasks')?.skipped).toBeUndefined();
   });
 
+  it('does not ask the tasks stage when no pending goal shares wording with the facts', async () => {
+    // 4.1k 字提示、每次约 10 s；事实与所有待办目标零重叠时，提示里没有任何任务编号，
+    // 调用只可能回“无变化”。新增目标由 subtasks 阶段独立判断。
+    const engine = new ScriptedEngine([JSON.stringify({ subtasks: [] })]);
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: { microUpdates: () => ({ positions: [], appearances: [] }) },
+    }).updates('g1', { ...(updatesInput() as Record<string, unknown>), results: { a: '甲伸了个懒腰。' } } as unknown as Json);
+    const stages = (outcome.evidence.detail as { stages?: { stage: string; skipped?: string }[] }).stages ?? [];
+    expect(stages.find((row) => row.stage === 'tasks')?.skipped).toBe('no_shortlisted_task');
+    expect(engine.prompts.filter((prompt) => prompt.includes('任务判定器'))).toEqual([]);
+  });
+
   it('drops the redundant text on a keep/remove row instead of failing the point', async () => {
     // 09's open request: "keep cannot add text for spare_mag1" refused a turn
     // 88.5 s in. The op is unambiguous; the text is redundant and never applied.
