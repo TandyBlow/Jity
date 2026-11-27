@@ -47,3 +47,4 @@ Artifacts     evidence files, manifests, commits
 | E21 | Micro-generative arm: measured below its gate | done (0% event exact) |
 | E22 | Mobile-proxy timing: current build | done (218.6/252.8 s, still 4x) |
 | E23 | LLM fixed-event cell: direct four-state probe | done (7/19 vs heads 17/19) |
+| E24 | 20-input acceptance on the micro default | done (20/20 gates) |

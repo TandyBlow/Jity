@@ -1097,3 +1097,10 @@
   2. 语义引擎包装：页面加 `?semanticArm=rules|classifier`，把语义引擎包成对 `complete/chat` 直接抛 `semantic_arm_abstain` 的端口；叙事引擎不包。处理器已按 stageFailure/fallback 保守继续，回合不中断。
   3. 验收：每臂跑冻结 8 场景，记录状态/任务/成就断言、耗时、失败与回退；与混合臂、LLM 臂并列进记分板。
 - 为什么现在不做：端口改动跨 5 个模块且需要逐臂页面验证；在会话尾部做半套会被误读为完成。设计冻结在这里，下一步按 1→2→3 实现。
+
+## D-124 默认切到微型工作流后的 20 输入验收（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 默认配置（micro=1、taskProposer=micro、heads continuation、prose-facts）跑冻结 20 输入（5 chunk × 4）：正式门全部通过——首段可读 20/20 ≤60s（2.7–11.9s），回合 20/20 ≤300s（44.9–71.3s），0 超时、0 失败。
+- 对比 run41（LLM 默认，210–295s/回合）：默认切换后回合耗时约降至三分之一；仍有 4 个回合交还时钟 >60s，属 D-024 的交还口径问题，不是回归。
+- 证据：`evidence-20-default-20261127-chunk{1..5}.json`、`artifacts/goal/acceptance/summary-micro-default-20261127.json`；E24。
