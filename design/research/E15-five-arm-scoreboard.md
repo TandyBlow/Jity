@@ -42,13 +42,15 @@ string recorded in the scoreboard. `meanTurnS` is submit-to-handback, not
 first-readable; first-readable was 7.3-20.7 s accepted narration per turn in
 the same evidence.
 
-**Principle.** Two of five arms have fixed-event numbers, the hybrid arm has
-both an end-to-end number and a pointer cell, and two arms remain blank. The
-pointer cell changes the risk picture: its confidence rule abstains on half of
-the unseen appearances but is at chance on the ones it accepts, so the decide
-arm must stay experimental and the program channel stays the default until the
-pointer is calibrated on held-out appearances. Next: hybrid existence-gate
-cell, micro-generative wiring, LLM arm.
+**Principle.** Every arm now has at least one measured cell: rules and
+classifier at fixed events, generative at fixed events (failing its event
+gate), hybrid end to end plus pointer plus mobile proxy, and the LLM both end
+to end (E20) and at fixed events (E23, 7/19 vs the heads' 17/19). The blank
+cells are end-to-end for rules/classifier/generative and real-device mobile;
+the first two need arm definitions for what happens when rules or classifiers
+abstain (the game cannot stall), and mobile needs a phone. The pointer cell
+showed the confidence rule is at chance on unseen appearances until the
+cross-appearance fix (E16); the decide arm stays experimental.
 
 **Artifacts.** `five-arm-scoreboard.json`, `score_fixed_arms.py`,
 `evidence-perf-taskskip-8.json`, D-108.
