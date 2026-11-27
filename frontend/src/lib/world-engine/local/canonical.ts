@@ -1,8 +1,10 @@
 /** world-canonical-v1 byte encoder and SHA-256, ported from the Python kernel
  * so browser and Python digests can be compared byte-for-byte. Object keys are
  * ASCII and sorted by code point; numbers are safe integers; strings are
- * UTF-8. The digest is async because browsers expose SHA-256 only through
- * SubtleCrypto. */
+ * UTF-8. The digest is async and falls back to a pure-JS SHA-256 when the
+ * page is not a secure context (plain LAN HTTP on a phone). */
+
+import { sha256Hex } from './sha256';
 
 export const MAX_SAFE = 2 ** 53 - 1;
 
@@ -86,10 +88,7 @@ export function canonicalBytes(value: unknown): Uint8Array {
 }
 
 export async function canonicalDigest(value: unknown): Promise<string> {
-  const bytes = canonicalBytes(value);
-  if (!globalThis.crypto?.subtle) throw new Error('SubtleCrypto unavailable');
-  const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes.buffer as ArrayBuffer);
-  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return sha256Hex(canonicalBytes(value));
 }
 
 export function canonicalJson(value: unknown): string {

@@ -14,7 +14,8 @@ import { dirname, resolve } from 'node:path';
 
 import { createLocalProgressStore } from '../../src/lib/world-engine/local/persistence/store';
 import { MemoryProgressBackend } from '../../src/lib/world-engine/local/persistence/memory';
-import { LocalGameSession } from '../../src/lib/world-engine/local/session';
+import { LocalGameSession, type LocalGameSnapshot } from '../../src/lib/world-engine/local/session';
+import type { InitialTemplate } from '../../src/lib/world-engine/types';
 import { createProductSync } from '../../src/lib/world-engine/local/progress-sync/product';
 import { SHORT_STATE } from '../../src/lib/world-engine/runtime/b3-short-samples';
 
@@ -39,8 +40,8 @@ interface StoreLike {
   load(worldId: string): Promise<{ snapshot: unknown; metadata: { revision: number } } | null>;
 }
 
-function template() {
-  const initial = structuredClone(SHORT_STATE.initial) as Record<string, unknown>;
+function template(): InitialTemplate {
+  const initial = structuredClone(SHORT_STATE.initial) as unknown as InitialTemplate & { worldId?: string };
   delete initial.worldId;
   return initial;
 }
@@ -118,7 +119,7 @@ const adapter = (store: StoreLike) => ({
 
 // --- device A: one turn, uploaded ---
 const storeA = createLocalProgressStore(new MemoryProgressBackend());
-const sessionA = await LocalGameSession.create(template(), scriptedModel(), {
+const sessionA = await LocalGameSession.create(template(), scriptedModel() as never, {
   storage: storeA, sessionId: 'device_a', leaseHeartbeat: false,
 });
 await sessionA.start();
@@ -128,7 +129,7 @@ const syncA = createProductSync<unknown>({
   store: adapter(storeA), worldId: sessionA.worldId, baseUrl, token, storage: null,
   retry: { attempts: 2, baseDelayMs: 50 }, sleep: async () => undefined,
 });
-const uploaded = await syncA.save(sessionA.snapshot, { requestId: `two-device-a-${sessionA.worldId}` });
+const uploaded = await syncA.save(sessionA.snapshot as unknown as LocalGameSnapshot, { requestId: `two-device-a-${sessionA.worldId}` });
 if (uploaded.outcome?.status !== 'synced') throw new Error(`A upload failed: ${uploaded.outcome?.status}`);
 const aSnapshotId = uploaded.outcome.upload.snapshotId;
 
@@ -140,8 +141,8 @@ const syncB = createProductSync<unknown>({
 });
 const restored = await syncB.restore();
 if (restored.source !== 'remote' || !restored.snapshot) throw new Error('B did not restore from the remote head');
-const storedB = await storeB.save(sessionA.worldId, restored.snapshot);
-const opened = await LocalGameSession.open(storeB, { worldId: sessionA.worldId, initial: template() }, scriptedModel());
+const storedB = await storeB.save(sessionA.worldId, restored.snapshot as unknown as LocalGameSnapshot);
+const opened = await LocalGameSession.open(storeB, { worldId: sessionA.worldId, initial: template() }, scriptedModel() as never);
 const bHistory = history(opened.session.snapshot);
 
 const report = {
@@ -169,7 +170,7 @@ const bTurn = await (async () => {
   return s.submit('我关上盒盖。');
 })();
 if (bTurn.kind === 'error') throw new Error('B could not play a turn');
-const uploadedB = await syncB.save(opened.session.snapshot, { requestId: `two-device-b-${sessionA.worldId}` });
+const uploadedB = await syncB.save(opened.session.snapshot as unknown as LocalGameSnapshot, { requestId: `two-device-b-${sessionA.worldId}` });
 if (uploadedB.outcome?.status !== 'synced') throw new Error(`B upload failed: ${uploadedB.outcome?.status}`);
 if (!uploadedB.outcome.upload.parentSnapshotIds.includes(aSnapshotId)) {
   throw new Error(`B's upload is not a child of A: ${JSON.stringify(uploadedB.outcome.upload.parentSnapshotIds)}`);
@@ -188,14 +189,14 @@ const syncC = createProductSync<unknown>({
 });
 const latest = await syncC.restore();
 if (latest.source !== 'remote' || !latest.snapshot) throw new Error('C could not read the remote head');
-const sessionC = await LocalGameSession.restore(latest.snapshot, scriptedModel(), {
+const sessionC = await LocalGameSession.restore(latest.snapshot as unknown as LocalGameSnapshot, scriptedModel() as never, {
   storage: storeC, sessionId: 'device_c', leaseHeartbeat: false,
 });
 const cBefore = history(sessionC.snapshot);
 if (JSON.stringify(cBefore.prose) !== JSON.stringify(bAfter.prose)) {
   throw new Error('C opened a different prose history than the remote head');
 }
-const uploadedC = await syncC.save(sessionC.snapshot, { requestId: `two-device-c-${sessionA.worldId}` });
+const uploadedC = await syncC.save(sessionC.snapshot as unknown as LocalGameSnapshot, { requestId: `two-device-c-${sessionA.worldId}` });
 if (uploadedC.outcome?.status !== 'synced') throw new Error(`C upload failed: ${uploadedC.outcome?.status}`);
 const recordC = await storeC.load(sessionA.worldId);
 // C adds nothing, so the server may reuse the identical head (same content

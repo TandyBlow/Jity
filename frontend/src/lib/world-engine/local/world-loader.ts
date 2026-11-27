@@ -11,6 +11,7 @@
  * `fileSha256Lf` is the SHA-256 of the UTF-8 text after CRLF/CR is normalized
  * to LF. That matches the committed git blob independently of a Windows
  * working-tree checkout. */
+import { sha256Hex } from './sha256';
 import { canonicalDigest, canonicalJson } from './canonical';
 import {
   buildInitialState, KernelViolation, normalizeInitialState, normalizeWorldState, stateDigest,
@@ -61,10 +62,7 @@ export function normalizeWorldText(text: string): string {
 }
 
 async function sha256Text(text: string): Promise<string> {
-  const bytes = new TextEncoder().encode(text);
-  if (!globalThis.crypto?.subtle) throw new StaticWorldError('file_hash', 'SubtleCrypto unavailable');
-  const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes.buffer as ArrayBuffer);
-  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  return sha256Hex(new TextEncoder().encode(text));
 }
 
 function parseError(detail: string): never {

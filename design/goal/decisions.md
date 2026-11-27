@@ -1139,3 +1139,10 @@
 - 新增 `frontend/scripts/parallel-sync/two-device-current-check.ts`（把 06 时代脚本改为直接引用当前 `session`/`store`/`memory`/`product-sync`；脚本化模型，无 GPU）。同步服务用 `backend` 的 `/local-progress`（LOCAL_PROGRESS_TOKEN=secret，独立 sqlite）。
 - 结果（evidence `artifacts/goal/sync/two-device-current-20261127.json`）：A 打一回合上传；B 从远端头恢复、看到同一命令与正文、`bCreated=false`，B 的下一存档父代是 A 的快照；C 直开远端头，其上传父代包含 B（或复用同一头）。
 - 定位：这是存储与血统验收（不是页面质量声明），在当前默认构建上补齐“两设备分叉”证据；旧 11-21 证据不再是唯一来源。
+
+## D-130 静态世界/状态摘要的纯 JS SHA-256 回退（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 新增 `local/sha256.ts`：有 `crypto.subtle` 用原生，没有则用纯 JS SHA-256；`world-loader` 的文件哈希与 `canonicalDigest` 都改走它。标准向量（空串/abc/长串）与 random 对照 crypto.subtle 的单测通过。
+- 影响：手机用普通局域网 HTTP 打开 `/world-local` 不再因 `SubtleCrypto unavailable` 失败——真机验收不需要自签证书或 adb 隧道也能加载世界；完整性校验强度不变（同一算法）。
+- 校验：tsc 干净，vitest 1462 通过。
