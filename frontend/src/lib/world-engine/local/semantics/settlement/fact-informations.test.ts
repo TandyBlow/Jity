@@ -3,6 +3,7 @@ import type { WorldState } from '../../../types';
 import { decideInformation, informationHint, readInformations } from './fact-informations';
 
 const state = {
+  protagonistId: 'lu',
   initial: {
     characters: {
       lu: { name: '路明非' },
@@ -115,6 +116,12 @@ describe('model information decision', () => {
       { extraction: async () => [{ clause: '图上画着别的机关', score: 0.95 }], existence: existence(0.9) },
       '路明非查看检修图。', 'lu');
     expect(hint).toBeNull();
+  });
+  it('rejects a topicless read for the protagonist but lets an NPC decide', async () => {
+    const confident = decider({ '镜头盖已经取下': 0.2, '电池图标只剩一格': 0.9 });
+    expect(await decideInformation('我看看相机。', ['camera'], state, 'achieved', confident, '路明非查看相机。', 'lu')).toBeNull();
+    const npc = await decideInformation('诺诺看看相机。', ['camera'], state, 'achieved', confident, '诺诺查看相机。', 'nono');
+    expect(npc?.text).toBe('电池图标只剩一格');
   });
   it('requires an achieved or partial read with one entity', async () => {
     const confident = decider({ '图上画明：先向内压释放杆': 0.2, '更换时另一人需控制杆身': 0.9 });

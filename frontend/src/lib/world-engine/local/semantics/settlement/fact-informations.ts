@@ -135,8 +135,9 @@ export async function decideInformation(
   if (label !== 'achieved' && label !== 'partial') return reject('label');
   if (entityIds.length !== 1) return reject(`entity_count:${entityIds.join(',') || 'none'}`);
   if (!READ.test(text)) return reject('not_read');
-  // 泛泛的「查看某物」没有问项，模型没有可判定的目标（审计实测会乱选分句）
-  if (!/关于|想知道|有没有|能不能|是否|什么|哪|多少|几/u.test(text)) return reject('no_topic');
+  // 无话题的泛读只在主角侧拒绝（审计针对主角）；NPC 读取仍可逐字决定
+  const topicless = !/关于|想知道|有没有|能不能|是否|什么|哪|多少|几/u.test(text);
+  if (topicless && (memberId === undefined || memberId === state.protagonistId)) return reject('no_topic');
   const entityId = entityIds[0];
   const entity = state.initial.items[entityId] ?? state.initial.characters[entityId];
   if (!entity?.initialAppearance) return reject('no_appearance');
