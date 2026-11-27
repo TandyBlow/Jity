@@ -941,3 +941,11 @@
 - 同 8 场景回合（prose 形状，`evidence-narr-prose-1` → `evidence-perf-taskskip-8`）：平均等待 67.0 → 61.9 s（最长 93.8 → 85.2 s）；tasks+subtasks 模型时间 167.4 → 146.2 s。
 - 机制说明：被跳过的 tasks 调用原本也在同一答案里回答 subtasks，跳过把它移交给独立的 subtasks 调用，所以净省约 2.7 s/回合，不是整段 10 s；sc02 实测 tasks 25.0→9.9 s、subtasks 13.0→22.0 s。想再往下压，得做稳定前缀复用而不是继续删阶段。
 - 校验：新增单测（零重叠跳过、全局事实不跳过）；全量 vitest 1459 通过；8 场景断言仍 48/48 状态、14/14 任务、3/3 成就、0 正文身份问题。
+
+## D-104 条件关系族与结果/条件两头结果（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 冻结 `relation-probes/condition.jsonl`：131 行（108 训练 / 23 测试），gold 为 stateDiff 里 pending→achieved 的任务翻转，负例取同一人物措辞最近的在办任务。outcome/target 的冻结哈希未变。
+- 作业 281000（同一 sbatch 复跑 outcome + 训练 condition）。condition 头（23 测试行，5 个正例）：accuracy 0.826 / macro-F1 0.697；措辞规则（goal/fact 二元组重叠 ≥0.2，即产品短名单规则）与多数类同为 0.783 / 0.439，且全部判负——留出正例的重叠都低于 0.2。头找回 2/5 正例、多 1 个假阳性。
+- 结论按方向记录：编码器能补上措辞规则漏掉的一部分条件关系，但 5 个正例不足以当结果声明；下一步扩数据而不是调参。
+- 产物：`build_relation_probes.py`、`train_relation_condition.py`、`.local/hpc-micro/relation-condition-head.pt`；E11。

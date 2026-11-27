@@ -34,3 +34,4 @@ Artifacts     evidence files, manifests, commits
 | E08 | Same-budget decomposition: shared vs split heads | done (criterion partly met) |
 | E09 | Narration representation A/B: prose-facts vs serialized | done (no conclusion) |
 | E10 | Outcome relation: model head vs rule on narration | done (HPC) |
+| E11 | Condition relation: fact vs task goal | done (HPC, directional) |
