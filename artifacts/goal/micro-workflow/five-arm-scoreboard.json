@@ -170,7 +170,7 @@
     "narrationSources": "model 8/8"
    },
    "source": "evidence-perf-taskskip-8.json + scenario_report.py; query micro=1&microContinuation=heads&microReaction=1&taskProposer=micro&seed=11&narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts",
-   "notes": "end-to-end as above; fixed-event cell is the candidate pointer with the retrained head; holdout decisions 8/9 correct (torch) after abstention",
+   "notes": "end-to-end as above; fixed-event cell is the candidate pointer with the retrained head; holdout decisions 8/9 correct (torch) after abstention This arm is the product default since 2026-11-27 (D-121); ?micro=0 is the LLM lane.",
    "contributions": {
     "turns": 8,
     "microItems": 5131,
@@ -258,7 +258,7 @@
     "driverFailures": 0
    },
    "source": "evidence-llm-arm-scenarios-1.json + scenario_report.py; query seed=11&narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts (micro off)",
-   "notes": "in-page 0.6B semantic lane; movement and achievements left uncommitted; same narration model as the hybrid arm"
+   "notes": "in-page 0.6B semantic lane; now an opt-out eval arm (?micro=0); movement and achievements left uncommitted; same narration model as the hybrid arm"
   }
  },
  "gaps": [
