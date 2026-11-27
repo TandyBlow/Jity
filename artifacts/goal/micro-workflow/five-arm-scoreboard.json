@@ -56,10 +56,45 @@
   },
   "micro-generative": {
    "kind": "micro-generative",
-   "fixedEvent": null,
+   "fixedEvent": {
+    "v2HandTest": {
+     "rows": 24,
+     "exact": {
+      "scratch_pointer": 0.0,
+      "bert_pointer": 0.0,
+      "scratch_free": 0.0,
+      "bert_free": 0.042
+     },
+     "fieldRecall": {
+      "scratch_pointer": 0.179,
+      "bert_pointer": 0.179,
+      "scratch_free": 0.064,
+      "bert_free": 0.231
+     }
+    },
+    "independent": {
+     "rows": 72,
+     "conditionsExact": {
+      "5M": 0.067,
+      "15M": 0.25,
+      "30M": 0.2
+     },
+     "eventsExact": {
+      "5M": 0.0,
+      "15M": 0.0,
+      "30M": 0.0
+     },
+     "eventsRecall": {
+      "5M": 0.4,
+      "15M": 0.5,
+      "30M": 0.35
+     }
+    },
+    "source": "micro-generative/v2-report.json, micro-generative/independent-report.json"
+   },
    "endToEnd": null,
-   "source": "micro_generative_v3.py (training-time harness), frontend/public/micro/v3-*",
-   "notes": "not wired into the page; no fixed-event score on the frozen holdouts; runtime KV-cache probe only (ledger R14)"
+   "source": "micro-generative/*; browser-v3-fixed.json / browser-v3-kv.json runtime probes",
+   "notes": "not wired into the page by decision: 0% event exact match at every scale and ~half fields missing on held-out rows; runtime is fine (p30-58 ms, int8 6.6-44.7 MB) — quality gate, not speed gate"
   },
   "hybrid-micro": {
    "kind": "page-end-to-end",
@@ -188,9 +223,9 @@
   }
  },
  "gaps": [
-  "micro-generative arm: wire v3 into a page arm and freeze per-field evaluation",
   "end-to-end for rules/classifier/generative/LLM arms: page runs with the same frozen scenarios",
   "hybrid-micro: page smoke after the extraction ONNX swap still owed (parity gate passes)",
-  "existing-llm arm: fixed-event fields still missing (page arm only end-to-end)"
+  "existing-llm arm: fixed-event fields still missing (page arm only end-to-end)",
+  "micro-generative: needs a model that clears the event exact-match gate (training/data, per E16) before page wiring; current 0% at all scales"
  ]
 }

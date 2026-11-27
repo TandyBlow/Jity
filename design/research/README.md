@@ -44,3 +44,4 @@ Artifacts     evidence files, manifests, commits
 | E18 | Contribution accounting for the hybrid arm | done (5131 micro vs 133 LLM) |
 | E19 | Per-role guard: model channel measurable in the page | done (1 decision/turn) |
 | E20 | Five-arm end to end: the LLM arm | done (26/48 state, 264 s) |
+| E21 | Micro-generative arm: measured below its gate | done (0% event exact) |
