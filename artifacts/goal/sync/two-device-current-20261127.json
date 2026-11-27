@@ -1,0 +1,44 @@
+{
+ "kind": "two-device-current",
+ "at": "2026-11-27T11:28:06.692Z",
+ "report": {
+  "worldId": "world_local_mwywdssk_4n81",
+  "a": {
+   "commands": [
+    "我打开盒盖。"
+   ],
+   "points": 1,
+   "prose": [
+    "门厅里安静下来，盒盖开着。"
+   ],
+   "ready": 1
+  },
+  "aSnapshotId": "snap_f5ef152d422fc2a5dc0541483881fdbbf50d54ad08011007b73ce56a90cc19e2",
+  "bCreated": false,
+  "bStoreRevision": 1,
+  "b": {
+   "commands": [
+    "我打开盒盖。"
+   ],
+   "points": 1,
+   "prose": [
+    "门厅里安静下来，盒盖开着。"
+   ],
+   "ready": 1
+  },
+  "bCommandsPlayed": [
+   "我打开盒盖。"
+  ]
+ },
+ "c": {
+  "c": {
+   "revision": null,
+   "commands": [
+    "我打开盒盖。",
+    "我关上盒盖。"
+   ],
+   "reusedHead": false,
+   "parentIncludesB": true
+  }
+ }
+}

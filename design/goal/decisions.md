@@ -1132,3 +1132,10 @@
 - `?semanticArm=classifier`（跳过规则快路径、用 int8 分类器，语义 LLM 阻断）：回合 1（对话）5.8s 完成、正文 85 字；回合 2（庭院冲突/移动）330s 超时、无提交。证据 `evidence-classifier-arm-1.json`。
 - 结论：没有 LLM 兜底时，分类臂只在一部分回合可完成，移动/结算回合会被卡住——与 D-125 同一根因（内核等待语义答案，而臂把它阻断了）。两臂作为端到端测量目前都不可玩；若要让它们可完成，需要给内核显式的“弃权→保守无变化”提交语义（D-123 的后续）。
 - 记分板 classifier 端到端单元：1 回合完成、1 回合超时。
+
+## D-129 当前代码的双设备分叉检查通过（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 新增 `frontend/scripts/parallel-sync/two-device-current-check.ts`（把 06 时代脚本改为直接引用当前 `session`/`store`/`memory`/`product-sync`；脚本化模型，无 GPU）。同步服务用 `backend` 的 `/local-progress`（LOCAL_PROGRESS_TOKEN=secret，独立 sqlite）。
+- 结果（evidence `artifacts/goal/sync/two-device-current-20261127.json`）：A 打一回合上传；B 从远端头恢复、看到同一命令与正文、`bCreated=false`，B 的下一存档父代是 A 的快照；C 直开远端头，其上传父代包含 B（或复用同一头）。
+- 定位：这是存储与血统验收（不是页面质量声明），在当前默认构建上补齐“两设备分叉”证据；旧 11-21 证据不再是唯一来源。
