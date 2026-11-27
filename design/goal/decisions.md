@@ -1193,3 +1193,9 @@
 - 结果：existence env holdout 8/9、info 9/10（均与现役持平，训练行更新）；extraction top1 9/14 → **12/14**（bigram 基线 12/14）；support env holdout 14/16，但 support info **5/10**（负例全判正），support 不上新。
 - parity：`check_head_parity.py` exit 0，五个头决策一致。
 - 上新：existence env/info + extraction 的 int8 ONNX 与 `existence-manifest.json` 已替换（source hpc-282032）；support 只留本地。5-seed 联合消融完成后补记 E27。
+
+## D-138 世界范围：单世界内扩展（2026-11-28）
+
+- 状态：`signed`（2026-11-28，用户决定）。
+- 不新造静态世界，维持 goal.md 非目标（保留 dragon-raja-free-day）；目标文本里的"多世界"覆盖要求改由单世界内的人物、物品、地点、同义、否定与事件多样性承担。
+- 影响：新增采集继续在 env-*/info-* 路由上扩人物（周映/秦越/顾岚/沈澄/富山/曼施坦因）、物品（74 件）与地点（26 处）覆盖；跨世界泛化不再作为本轮数据或验收目标。
