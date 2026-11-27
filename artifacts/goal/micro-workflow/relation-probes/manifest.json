@@ -1,0 +1,53 @@
+{
+ "source": {
+  "file": "real-semantic.jsonl",
+  "sha256": "34a97c157f8bfe703b959834979090f366f8f1455f4ca6dba2929fe0be08d60b"
+ },
+ "holdoutRoutes": [
+  "sm10-",
+  "sm14-",
+  "sm18-",
+  "sm22-",
+  "sm6-"
+ ],
+ "files": {
+  "outcome": {
+   "rows": 275,
+   "sha256": "5a9ba1066a4bc6c57ce53be394fd44f974ef61005e324a6ac67625e6f44e92a3",
+   "split": {
+    "train": 231,
+    "test": 44
+   },
+   "gold": {
+    "partial": 84,
+    "not_achieved": 25,
+    "achieved": 158,
+    "no_change": 4,
+    "blocked": 4
+   }
+  },
+  "target": {
+   "rows": 38,
+   "sha256": "e9ffc40e3f656cad85093e3de3a21b887406af206e86699492815c97d1e8c974",
+   "split": {
+    "train": 32,
+    "test": 6
+   },
+   "gold": {
+    "['fingel']": 6,
+    "['shen']": 3,
+    "['qin']": 3,
+    "['lu']": 2,
+    "['nono']": 8,
+    "['su']": 3,
+    "['lin']": 5,
+    "['doctor']": 3,
+    "['tang']": 2,
+    "['manstein']": 1,
+    "['caesar']": 1,
+    "['zhou']": 1
+   }
+  }
+ },
+ "note": "Outcome gold is the kernel marker (not independent semantics); target gold is the program 涉及 span."
+}

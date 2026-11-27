@@ -267,7 +267,9 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           : null;
         const decidedInfo = !programInfo && !priorBlocked && options.decider
           ? await decideInformation(subAction.text, reading, request.state, label, options.decider,
-            subAction.text, member.memberId, actorRoom, destination)
+            `玩家：${subAction.text}
+事实：${normalized.replace(/；?(?:去向|环境|信息|涉及)=[^；。]*/gu, '')}`,
+            member.memberId, actorRoom, destination)
           : null;
         // 模型决定的行进控制台，验收驱动按 world-local 前缀采集
         if (decidedInfo) console.info(`[world-local decide] info ${decidedInfo.entityId}:${decidedInfo.text.slice(0, 40)}`);
@@ -282,9 +284,12 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
       const overall = labels.every((label) => label === labels[0]) ? labels[0] : 'partial';
       judgments.push({ memberId: member.memberId, label: overall, reason: PHRASE[overall] });
     }
-    const existence = options.existence
-      ? await options.existence(facts.map((fact) => fact.text).join(' '))
-      : undefined;
+    // 与训练投影一致：玩家动作 + 去结构化标记的结算事实（标记本身就是标签）
+    const protagonistAction = request.members.find((member) => member.memberId === request.state.protagonistId)?.actionText
+      ?? request.members[0]?.actionText ?? '';
+    const existenceText = `玩家：${protagonistAction}
+事实：${facts.map((fact) => fact.text.replace(/；?(?:去向|环境|信息|涉及)=[^；。]*/gu, '')).join(' ')}`;
+    const existence = options.existence ? await options.existence(existenceText) : undefined;
     // 影子分数走 world-local 前缀，验收驱动会采集这行
     if (existence) console.info(`[world-local existence] env=${existence.env.toFixed(4)} info=${existence.info.toFixed(4)}`);
     options.onStats?.({ members: request.members.length, inferences: judged, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro', existence });
