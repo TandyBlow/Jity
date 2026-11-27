@@ -29,3 +29,5 @@ Artifacts     evidence files, manifests, commits
 | E03 | Existence-gated decision arm for information reads | done (experimental) |
 | E04 | Mobile-proxy timing composition | done (proxy only) |
 | E05 | Deployment parity: PyTorch vs int8 ONNX heads | done |
+| E06 | Information as events: independent annotation vs clause labels | done |
+| E07 | Negation/failure probes with verified golds | done |
