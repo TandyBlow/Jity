@@ -272,7 +272,8 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
             member.memberId, actorRoom, destination,
             (reason) => console.info(`[world-local decide] abstain ${reason}`))
           : null;
-        // 模型决定的行进控制台，验收驱动按 world-local 前缀采集
+        // 程序与模型的信息事件都走同一前缀，验收驱动按 world-local 采集
+        if (programInfo) console.info(`[world-local info] program ${programInfo.entityId}:${programInfo.text.slice(0, 40)}`);
         if (decidedInfo) console.info(`[world-local decide] info ${decidedInfo.entityId}:${decidedInfo.text.slice(0, 40)}`);
         const info = programInfo ?? decidedInfo;
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
