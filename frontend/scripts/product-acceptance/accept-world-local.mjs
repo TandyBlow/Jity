@@ -205,7 +205,7 @@ evidence.harness.blockApi = has('--block-api');
 evidence.harness.gpuLite = gpuLite;
 
 try {
-  evidence.harness.edgeVersion = (profile || cdp) ? (browser.browser()?.version() ?? null) : browser.version();
+  evidence.harness.edgeVersion = cdp ? browser.version() : profile ? (browser.browser()?.version() ?? null) : browser.version();
   const context = cdp ? browser.contexts()[0] : profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = cdp ? (context.pages()[0] ?? await context.newPage()) : await context.newPage();
   if (evidence.harness.cpuThrottle) {
