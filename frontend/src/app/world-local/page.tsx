@@ -339,11 +339,14 @@ async function loadEngine(
     });
   };
   const cache = cacheTypes ? { cacheTypeK: 'q8_0' as const, cacheTypeV: 'q8_0' as const } : {};
+  // ?cpu=1：WebGPU 驱动崩（Mali）时全走 CPU
+  const forceCpu = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('cpu') === '1';
   // Do not retain the fetched GGUF Blob: two resident engines otherwise hold
   // ~1.4 GiB of Blob quota. A hard-stop reload refetches instead (rare).
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: forceCpu ? 0 : 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
+    if (forceCpu) throw gpuError;
     // A user cancel or dispose is not a GPU failure: retrying on CPU would
     // start a second load after the player already stopped.
     if (gpuError instanceof DOMException && gpuError.name === 'AbortError') throw gpuError;
