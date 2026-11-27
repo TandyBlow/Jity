@@ -32,9 +32,10 @@ held-out positive out of five: direction, not significance.
 
 **Principle.** Cross-turn context is present in the data and a small encoder
 recovers most held-out positives that the wording rule misses, without
-collapsing negatives. Whether the prior line is what carries the decision needs
-the no-prior ablation; until then this is a family with positive signal, not a
-cross-turn result.
+collapsing negatives; the no-prior ablation keeps most of that gain and the
+prior line adds a small margin (+0.05 accuracy, one positive). The effect of
+the prior context is real in direction but smaller than the encoder itself —
+scale the family before wiring cross-turn evidence into task conditions.
 
 **Artifacts.** `build_relation_probes.py`, `train_relation_condition.py
 --family cross_turn`, `relation-probes/cross_turn.jsonl` (+ manifest),
