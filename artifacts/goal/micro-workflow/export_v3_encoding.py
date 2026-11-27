@@ -39,6 +39,7 @@ def main():
         'out': {'itos': out_vocab.itos, 'stoi': out_vocab.stoi,
                 'pad': out_vocab.pad, 'bos': out_vocab.bos, 'eos': out_vocab.eos, 'unk': out_vocab.unk},
         'cand': {'itos': cand_vocab.itos, 'stoi': cand_vocab.stoi, 'pad': cand_vocab.pad, 'unk': cand_vocab.unk},
+        'typeId': v3.TYPE_ID,
     }
     text = json.dumps(payload, ensure_ascii=False, indent=1)
     OUT.write_text(text, encoding='utf8')

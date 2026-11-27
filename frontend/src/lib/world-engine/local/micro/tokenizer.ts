@@ -14,6 +14,11 @@ function isCjk(code: number): boolean {
 }
 
 function isPunctuation(ch: string): boolean {
+  // transformers 的 slow BertTokenizer 还切 ASCII 符号区（如 = + < >），
+  // 它们不是 Unicode P 类；漏掉会把「=word」并成一个词。
+  const code = ch.codePointAt(0) ?? 0;
+  if ((code >= 33 && code <= 47) || (code >= 58 && code <= 64)
+    || (code >= 91 && code <= 96) || (code >= 123 && code <= 126)) return true;
   return /\p{P}/u.test(ch);
 }
 
