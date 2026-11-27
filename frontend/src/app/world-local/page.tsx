@@ -36,6 +36,7 @@ import { stateDigest } from '@/lib/world-engine/local/state';
 import { STATIC_WORLD_ASSET, STATIC_WORLD_REGISTRATION } from '@/lib/world-engine/local/static-world-registration';
 import type { WorldState } from '@/lib/world-engine/types';
 import styles from './page.module.css';
+import PhoneEvidencePanel from './phone-evidence';
 
 const SAVE_KEY = 'jity.world.local.snapshot.v1';
 const SEMANTIC_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';
@@ -1993,6 +1994,7 @@ export default function WorldLocalPage() {
 
   return (
     <main className={styles.page}>
+      <PhoneEvidencePanel />
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>龙族 · 自由一日</h1>
