@@ -26,7 +26,11 @@ build (`evidence-perf-taskskip-8.json`). The machine-readable scoreboard is
   decide, 43 correct (89.6%); int8 49/55 decide, 44 correct (89.8%). On the
   appearance-level holdout (14 pairs) torch decides 8 and is right 4, int8
   decides 9 and is right 5 — **at chance when it decides** in both graphs; the
-  confidence rule does not protect unseen appearances.
+  confidence rule does not protect unseen appearances. A threshold sweep
+  (`score_pointer_calibration.py`) shows why: the four wrong holdout decisions
+  score 0.865-0.995 with margins 0.359-0.975, while train precision stays 0.975
+  at every reasonable threshold — they are confidently wrong, so no
+  train-chosen threshold removes them.
 - Micro-generative: no fixed-event or end-to-end number — the v3 models are a
   runtime probe, not wired into the page.
 - Existing LLM: historical CAMP/DeepSeek stack, different schema/world — not

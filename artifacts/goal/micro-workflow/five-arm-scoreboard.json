@@ -97,6 +97,30 @@
      "wrong": 4,
      "abstained": 5,
      "accuracyWhenDecided": 0.556
+    },
+    "thresholdSweep": {
+     "deployed": {
+      "thresholds": [
+       0.6,
+       0.15
+      ],
+      "trainPrecision": 0.975,
+      "trainCoverage": 0.976,
+      "holdoutPrecision": 0.5,
+      "holdoutCoverage": 0.571
+     },
+     "trainChosen": {
+      "thresholds": [
+       0.5,
+       0.05
+      ],
+      "trainPrecision": 0.975,
+      "trainCoverage": 0.976,
+      "holdoutPrecision": 0.556,
+      "holdoutCoverage": 0.643
+     },
+     "note": "the four wrong holdout decisions score 0.865-0.995 with margins 0.359-0.975; no train-chosen threshold removes them",
+     "source": "score_pointer_calibration.py, this run"
     }
    },
    "endToEnd": {
