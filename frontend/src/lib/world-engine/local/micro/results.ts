@@ -135,6 +135,11 @@ export interface MicroResultsOptions {
   vocabUrl?: string;
   modelUrl?: string;
   threshold?: number;
+  /** Evaluation arms: skipModel keeps only the program confirmations and
+   * abstains otherwise; skipRules bypasses every program fast-path and lets
+   * the int8 classifier label each sub-action. */
+  skipModel?: boolean;
+  skipRules?: boolean;
   /** Shadow existence heads; scores are evidence only, never a decision. */
   existence?: (text: string) => Promise<MicroExistenceScores | null>;
   /** Actual decision: existence gate + candidate pointer + verbatim support
@@ -154,8 +159,8 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
 
   return async (request) => {
     const started = performance.now();
-    const { tok, session } = await ensure();
-    const ort = await import('onnxruntime-web/wasm');
+    const model = options.skipModel ? null : await ensure();
+    const ort = options.skipModel ? null : await import('onnxruntime-web/wasm');
     const threshold = options.threshold ?? 0.45;
     const judgments: Array<{ memberId: string; label: string; reason: string }> = [];
     let judged = 0;
@@ -184,17 +189,17 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         // A free walk is program-confirmed only when nothing in the text
         // obstructs it, the destination is a registered location, and no prior
         // sub-action it depends on failed.
-        const programMove = !priorBlocked && programMoveAllowed({
+        const programMove = !options.skipRules && !priorBlocked && programMoveAllowed({
           text: subAction.text, category: subAction.category, destination,
           memberId: member.memberId, protagonistId: request.state.protagonistId,
           currentContainer: current?.containerId ?? null,
           isLocation: Boolean(destination?.containerId && request.state.initial.locations[destination.containerId]),
         });
-        const programTransfer = !priorBlocked && programTransferAllowed({
+        const programTransfer = !options.skipRules && !priorBlocked && programTransferAllowed({
           text: subAction.text, category: subAction.category, destination,
           memberId: member.memberId, state: request.state,
         });
-        const programEnv = !priorBlocked && programEnvAllowed({
+        const programEnv = !options.skipRules && !priorBlocked && programEnvAllowed({
           text: subAction.text, itemIds: subAction.itemIds ?? [],
           memberId: member.memberId, state: request.state, actorRoom,
         });
@@ -206,7 +211,12 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           label = 'blocked';
         } else if (programMove || programTransfer || programEnv) {
           label = 'achieved';
+        } else if (!model || !ort) {
+          // 规则臂：程序确认不了就整单弃权，不请模型
+          options.onStats?.({ members: request.members.length, inferences: judged, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain' });
+          return null;
         } else {
+          const { tok, session } = model;
           const input = `角色：${name}；子动作：${subAction.text.slice(0, 80)}；${prior}${rollText}`;
           const ids = tok.encode(input, 64);
           const data = BigInt64Array.from(ids, (value) => BigInt(value));
@@ -247,10 +257,10 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           () => destinationHint(normalized, request.state, member.memberId));
         // Physical manipulation of one registered item is the program half of
         // the env channel; semantic env judgment replaces it when trained.
-        let env = !priorBlocked
+        let env = !options.skipRules && !priorBlocked
           ? environmentHint(subAction.text, subAction.itemIds ?? [], request.state, destination, label, member.memberId, actorRoom)
           : null;
-        if (!env && !priorBlocked) {
+        if (!env && !options.skipRules && !priorBlocked) {
           const phrase = environmentPhrase(subAction.text, label);
           const location = phrase ? matchLocation(request.state, subAction.text) : null;
           if (phrase && location && actorRoom === location.id) {
@@ -262,7 +272,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         // 物品优先；只有没匹配到物品时才把人物当读取对象（观察别人）
         const reading = [...(subAction.itemIds ?? [])];
         if (!reading.length) reading.push(...((subAction as { targetIds?: string[] }).targetIds ?? []));
-        const programInfo = !priorBlocked
+        const programInfo = !options.skipRules && !priorBlocked
           ? informationHint(subAction.text, reading, request.state, label, member.memberId, actorRoom, destination)
           : null;
         const decidedInfo = !programInfo && !priorBlocked && options.decider

@@ -11,6 +11,11 @@ export interface MicroTargetsOptions {
   modelUrl?: string;
   threads?: number;
   threshold?: number;
+  /** Evaluation arms: rulesOnly trusts the rule names without the scorer;
+   * skipRules always asks the scorer over every visible name (threshold is
+   * then the probability cut, default 0.5). */
+  rulesOnly?: boolean;
+  skipRules?: boolean;
   onStats?: (record: {
     source: 'rules' | 'model' | 'abstain';
     buildMs: number;
@@ -61,14 +66,18 @@ export function createMicroTargets(options: MicroTargetsOptions = {}): MicroTarg
     const scene = buildScene(request.state, request.sourceId);
     const buildMs = performance.now() - buildStart;
     const actionText = request.actionText ?? '';
-    const rule = resolveRuleTargets(actionText, scene, request.maxTargets);
+    const rule = options.skipRules ? [] : resolveRuleTargets(actionText, scene, request.maxTargets);
     // Rule abstention (negation, absent name, ambiguous pronoun) goes to the
     // LLM: the 2026-11-24 probe showed the raw scorer over-fires exactly there.
     if (rule === null) {
       options.onStats?.({ source: 'abstain', buildMs, tokenizeMs: 0, inferMs: 0, loadMs: 0, calls: 0 });
       return null;
     }
-    if (!rule.length) {
+    if (options.rulesOnly) {
+      options.onStats?.({ source: 'rules', buildMs, tokenizeMs: 0, inferMs: 0, loadMs: 0, calls: 0 });
+      return { targets: rule.slice(0, request.maxTargets), source: 'rules' };
+    }
+    if (!rule.length && !options.skipRules) {
       options.onStats?.({ source: 'rules', buildMs, tokenizeMs: 0, inferMs: 0, loadMs: 0, calls: 0 });
       return { targets: [], source: 'rules' };
     }
@@ -83,8 +92,9 @@ export function createMicroTargets(options: MicroTargetsOptions = {}): MicroTarg
     const pairText = `行动：${normalized}\n在场：${scene.visible.map((character) => character.name).join('、')}`;
     let tokenizeMs = 0;
     let inferMs = 0;
-    let minScore = Number.POSITIVE_INFINITY;
-    for (const id of rule) {
+    const candidates = options.skipRules ? [...names.keys()] : rule;
+    const scored: Array<{ id: Id; score: number }> = [];
+    for (const id of candidates) {
       const name = names.get(id);
       if (!name) continue;
       const tokenStart = performance.now();
@@ -93,8 +103,18 @@ export function createMicroTargets(options: MicroTargetsOptions = {}): MicroTarg
       const inferStart = performance.now();
       const score = await scorePair(session, ids);
       inferMs += performance.now() - inferStart;
-      minScore = Math.min(minScore, score);
+      scored.push({ id, score });
     }
+    if (options.skipRules) {
+      // Classifier arm: every visible name above the probability cut.
+      const picked = scored.filter((row) => row.score >= (options.threshold ?? 0.5))
+        .sort((left, right) => right.score - left.score)
+        .slice(0, request.maxTargets)
+        .map((row) => row.id);
+      options.onStats?.({ source: 'model', buildMs, tokenizeMs, inferMs, loadMs, calls: scored.length });
+      return { targets: picked, source: 'model' };
+    }
+    const minScore = scored.reduce((min, row) => Math.min(min, row.score), Number.POSITIVE_INFINITY);
     const threshold = options.threshold ?? 0;
     if (minScore > threshold) {
       options.onStats?.({ source: 'rules', buildMs, tokenizeMs, inferMs, loadMs, calls: rule.length });

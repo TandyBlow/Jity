@@ -600,8 +600,10 @@ function seededD20(seed: number): () => number {
 
 export default function WorldLocalPage() {
   // Frozen at mount: the start flow may clean the URL before the model effect.
-  const [microParam] = useState(() => typeof window !== 'undefined'
-    && new URLSearchParams(window.location.search).get('micro') === '1');
+  // The micro hybrid workflow is the product default (user decision
+  // 2026-11-27, D-121); `?micro=0` opts out for the LLM lane.
+  const [microParam] = useState(() => typeof window === 'undefined'
+    || new URLSearchParams(window.location.search).get('micro') !== '0');
   // A/B arms: off keeps the earlier micro workflow; rule executes the label
   // rules directly (no encoder); heads is the micro model.
   const [microContinuationMode] = useState<'off' | 'rule' | 'heads'>(() => {
@@ -613,8 +615,15 @@ export default function WorldLocalPage() {
   // satisfaction accuracy is still too low to replace the LLM verifier.
   const [taskVerifierMicro] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('taskVerifier') === 'micro');
-  const [taskProposerMicro] = useState(() => typeof window !== 'undefined'
-    && new URLSearchParams(window.location.search).get('taskProposer') === 'micro');
+  const [taskProposerMicro] = useState(() => typeof window === 'undefined'
+    || new URLSearchParams(window.location.search).get('taskProposer') !== 'llm');
+  // Evaluation arms (D-123): rules = program ports only, no classifier and no
+  // semantic LLM; classifier = model ports, no program fast-path and no LLM.
+  const [semanticArm] = useState<'rules' | 'classifier' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const value = new URLSearchParams(window.location.search).get('semanticArm');
+    return value === 'rules' || value === 'classifier' ? value : null;
+  });
   // Shadow-only existence heads: scores are recorded, never applied.
   const [existenceShadow] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('existenceShadow') === '1');
@@ -989,7 +998,11 @@ export default function WorldLocalPage() {
           if (turn) (turn.microStats ??= []).push(row);
         };
         const microTargets = microEnabled
-          ? createMicroTargets({ onStats: (record) => recordMicro('targets', record) })
+          ? createMicroTargets({
+            rulesOnly: semanticArm === 'rules',
+            skipRules: semanticArm === 'classifier',
+            onStats: (record) => recordMicro('targets', record),
+          })
           : undefined;
         const existencePort = microEnabled && (existenceShadow || semanticDecide) ? createMicroExistence() : undefined;
         const extractionPort = microEnabled && semanticDecide ? createMicroExtraction() : undefined;
@@ -997,33 +1010,40 @@ export default function WorldLocalPage() {
           ? { extraction: extractionPort, existence: existencePort, minScore: 0.6, minMargin: 0.15, minExistence: 0.75 }
           : undefined;
         const microResults = microEnabled
-          ? createMicroResults({ existence: existencePort, decider, onStats: (record) => recordMicro('results', record) })
+          ? createMicroResults({
+            existence: semanticArm === 'rules' ? undefined : existencePort,
+            decider: semanticArm === 'rules' ? undefined : decider,
+            skipModel: semanticArm === 'rules',
+            skipRules: semanticArm === 'classifier',
+            onStats: (record) => recordMicro('results', record),
+          })
           : undefined;
-        const microUpdates = microEnabled
+        const useModelPorts = microEnabled && semanticArm !== 'rules';
+        const microUpdates = useModelPorts
           ? createMicroUpdates({ onStats: (record) => recordMicro('updates', record) })
           : undefined;
-        const microJudge = microEnabled
+        const microJudge = useModelPorts
           ? createBehaviorJudge({ onStats: (record) => recordMicro('judge', record) })
           : undefined;
-        const microBehavior = microEnabled
+        const microBehavior = useModelPorts
           ? createMicroBehavior({ onStats: (record) => recordMicro('behavior', record) })
           : undefined;
         const microContinuation = microEnabled && microContinuationMode !== 'off'
           ? createMicroContinuation({
-            ruleOnly: microContinuationMode === 'rule',
+            ruleOnly: microContinuationMode === 'rule' || semanticArm === 'rules',
             onStats: (record) => recordMicro('continuation', record),
           })
           : undefined;
-        const microReaction = microEnabled && microJudge
+        const microReaction = useModelPorts && microJudge
           ? createMicroReaction({
             judge: microJudge,
             onStats: (record) => recordMicro('reaction', record),
           })
           : undefined;
-        const microTaskVerifier = microEnabled && taskVerifierMicro
+        const microTaskVerifier = useModelPorts && taskVerifierMicro
           ? createMicroTaskVerifier({ onStats: (record) => recordMicro('task-verifier', record) })
           : undefined;
-        const microTaskProposer = taskProposerMicro
+        const microTaskProposer = taskProposerMicro && semanticArm !== 'rules'
           ? createMicroTaskProposer({ onStats: (record) => recordMicro('task-proposer', record) })
           : undefined;
         {
@@ -1033,6 +1053,7 @@ export default function WorldLocalPage() {
             armInfo.microTaskVerifier = Boolean(microTaskVerifier);
             armInfo.taskVerifier = taskVerifierMicro ? 'micro' : 'llm';
             armInfo.taskProposer = taskProposerMicro ? 'micro' : 'llm';
+            armInfo.semanticArm = semanticArm;
           }
         }
         // ?record=1 captures every semantic (prompt, raw) pair for task-model
@@ -1055,7 +1076,20 @@ export default function WorldLocalPage() {
             },
           })
           : engine);
-        const model = new LocalGameModel(recordEngine(semantic), {
+        // Evaluation arms never let the semantic LLM answer; the handlers
+        // catch the abort and continue conservatively (D-123).
+        const blockSemantic = <T extends object>(engine: T): T => (semanticArm
+          ? new Proxy(engine, {
+            get(target, prop, receiver) {
+              if (prop === 'complete' || prop === 'chat') {
+                return async () => { throw new Error('semantic_arm_abstain'); };
+              }
+              const value = Reflect.get(target, prop, receiver);
+              return typeof value === 'function' ? value.bind(target) : value;
+            },
+          })
+          : engine);
+        const model = new LocalGameModel(recordEngine(blockSemantic(semantic)), {
           ...(microTargets ? { microTargets } : {}),
           ...(microResults ? { microResults } : {}),
           ...(microUpdates ? { microUpdates } : {}),
