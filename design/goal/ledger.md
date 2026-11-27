@@ -247,3 +247,4 @@ G1 之后新增：
 - 训练迁 HPC（2026-11-26）：本机消融停止；作业 280873（gpu，RTX 4090 D）重跑存在性/支持/抽取与 5 种子消融；探测确认 cuda True。D-097。
 
 - HPC 首作业（2026-11-26）：280873 存在性 env 8/9/info 9/10、支持 env 15/16/info 6/10；extraction 脚本缺 import os 中止；补交 280875（extraction+5 种子消融）。本地 1 轮 smoke 覆盖了 extraction .pt，回取 HPC 模型前暂停一致性门。D-098。
+- 第 2 节 R16（2026-11-27 真机）：单 0.6B + CPU（`?cpu=1&narrationModel=semantic`）两回合 25.2/193.3 s（首段 10.3/91.8 s、295 s 时限停自动回合）；WebGPU（Mali Valhall）生成崩溃，移动 60 s 门槛仍不成立。E25/D-133。
