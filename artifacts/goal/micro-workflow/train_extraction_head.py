@@ -71,6 +71,24 @@ def main():
     holdout = [row for row in rows if hashlib.sha1(row['appearance'].encode('utf8')).hexdigest() in held_hashes
                or row['groupId'] in held_groups]
     train = [row for row in rows if row not in holdout]
+    # 跨外貌负例：同一动作配别的训练外貌的分句，逼模型按话题匹配而不是外貌内位置
+    train_groups = {}
+    for row in train:
+        train_groups.setdefault(row['groupId'], []).append(row)
+    pool = sorted({row['clause'] for row in train})
+    rng = random.Random(20261127)
+    extra = []
+    for group_id, group in train_groups.items():
+        first = group[0]
+        own = {row['clause'] for row in group}
+        choices = [clause for clause in pool if clause not in own and clause != first['target']]
+        rng.shuffle(choices)
+        for index, clause in enumerate(choices[:2]):
+            extra.append({'text': f"动作：{first['action']}\n分句：{clause}", 'label': 0,
+                          'groupId': f'{group_id}#xn{index}', 'rowId': first['rowId'],
+                          'clause': clause, 'target': first['target'],
+                          'appearance': first['appearance'], 'action': first['action']})
+    train = train + extra
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     tok = BertTokenizer.from_pretrained(SNAP)
     model = Head().to(device)
