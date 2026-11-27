@@ -1,0 +1,58 @@
+{
+ "evidence": "evidence-perf-taskskip-8.json",
+ "turns": 8,
+ "meanTurnS": 61.9,
+ "micro": {
+  "rowsByPort": {
+   "results": 578,
+   "judge": 542,
+   "behavior": 496,
+   "task-proposer": 36,
+   "continuation": 78
+  },
+  "inferencesByPort": {
+   "results": 550,
+   "judge": 3090,
+   "behavior": 496,
+   "task-proposer": 487,
+   "continuation": 508
+  },
+  "msByPort": {
+   "results": 5528,
+   "judge": 92356,
+   "behavior": 10642,
+   "task-proposer": 8046,
+   "continuation": 16381
+  },
+  "totalRows": 1730,
+  "totalInferences": 5131
+ },
+ "program": {
+  "rows": 224,
+  "abstainRows": 88
+ },
+ "llm": {
+  "generationsByEngine": {
+   "narration": 27,
+   "semantic": 106
+  },
+  "msByEngine": {
+   "narration": 175501,
+   "semantic": 333183
+  },
+  "promptTokens": 67924,
+  "cachedPromptTokens": 74114,
+  "retries": 0,
+  "fallbackRows": 0
+ },
+ "stageMs": {
+  "subtasks": 80704,
+  "tasks": 65519,
+  "personality": 12223,
+  "sanity": 7595,
+  "position": 4826,
+  "appearance": 3749,
+  "continuation": 1963,
+  "results": 1200
+ }
+}

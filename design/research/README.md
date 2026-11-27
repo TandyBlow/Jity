@@ -41,3 +41,4 @@ Artifacts     evidence files, manifests, commits
 | E15 | Five-arm scoreboard: measured cells and gaps | done (2/5 fixed, 1/5 end-to-end) |
 | E16 | Cross-appearance negatives fix the extraction pointer | done (holdout 8/9 when decided) |
 | E17 | Decide arm increments predate the topic guard | done (3 corroborated decisions) |
+| E18 | Contribution accounting for the hybrid arm | done (5131 micro vs 133 LLM) |
