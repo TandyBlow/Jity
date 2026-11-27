@@ -9,6 +9,8 @@ Families built now:
   condition task goal vs this point's facts; gold = the kernel task status flip
             (pending -> achieved). Negatives are the same owner's pending task
             whose goal wording overlaps the fact most (hard negative).
+  cross_turn the same flip, but the input also carries the previous point's
+            facts in the same session; gold and negatives as in condition.
 A manifest records source and output sha256, counts, and the route-family
 holdout. Model arms must read only the frozen files."""
 import hashlib
@@ -60,6 +62,55 @@ def main():
     outcome = {}
     target = {}
     condition = {}
+    cross = {}
+    sessions = {}
+    for row in rows:
+        sessions.setdefault(row.get('evidenceFile'), []).append(row)
+    for members in sessions.values():
+        members.sort(key=lambda r: int((r.get('before') or {}).get('historyCount') or 0))
+        for index, row in enumerate(members):
+            if index == 0:
+                continue
+            prior = members[index - 1]
+            route = row['id'].split('-')[0] + '-'
+            split = 'test' if str(row['id']).startswith('sc') or route in HOLDOUT_ROUTES else 'train'
+            prior_by_owner = {}
+            for fact in prior.get('settled') or []:
+                if fact.get('task') == 'results' and fact.get('text'):
+                    prior_by_owner.setdefault(fact.get('key'), []).append(str(fact['text']))
+            own_by_owner = {}
+            for fact in row.get('settled') or []:
+                if fact.get('task') == 'results' and fact.get('text'):
+                    own_by_owner.setdefault(fact.get('key'), []).append(str(fact['text']))
+            for change in (row.get('stateDiff') or {}).get('changed') or []:
+                key = str(change.get('key') or '')
+                if not key.startswith('char:'):
+                    continue
+                owner = key.split(':', 1)[1]
+                before_tasks = (change.get('before') or {}).get('tasks') or {}
+                after_tasks = (change.get('after') or {}).get('tasks') or {}
+                if not own_by_owner.get(owner):
+                    continue
+                prior_text = STRIP.sub('', '；'.join(prior_by_owner.get(owner) or []))
+                fact_text = STRIP.sub('', '；'.join(own_by_owner.get(owner) or []))
+                pending = [(tid, goals[(owner, tid)]) for tid, status in after_tasks.items()
+                           if status != 'achieved' and (owner, tid) in goals]
+                for tid, status in after_tasks.items():
+                    goal = goals.get((owner, tid))
+                    if not goal or status != 'achieved' or before_tasks.get(tid) == 'achieved':
+                        continue
+                    record = {'id': f"{row['id']}#x{tid}", 'rowId': row['id'], 'family': 'cross_turn',
+                              'input': f"任务：{goal}\n上一回合：{prior_text or '（无）'}\n本回合：{fact_text}",
+                              'goal': goal, 'gold': 1, 'split': split,
+                              'provenance': 'program_task_flip', 'class': row.get('class')}
+                    cross.setdefault((owner, tid, prior_text, fact_text), record)
+                if pending:
+                    hard = max(pending, key=lambda pair: overlap(f'{prior_text}；{fact_text}', pair[1]))
+                    record = {'id': f"{row['id']}#x{hard[0]}n", 'rowId': row['id'], 'family': 'cross_turn',
+                              'input': f"任务：{hard[1]}\n上一回合：{prior_text or '（无）'}\n本回合：{fact_text}",
+                              'goal': hard[1], 'gold': 0, 'split': split,
+                              'provenance': 'program_task_flip', 'class': row.get('class')}
+                    cross.setdefault((owner, hard[0], prior_text, fact_text), record)
     for row in rows:
         route = row['id'].split('-')[0] + '-'
         split = 'test' if str(row['id']).startswith('sc') or route in HOLDOUT_ROUTES else 'train'
@@ -123,7 +174,7 @@ def main():
     OUT.mkdir(exist_ok=True)
     files = {}
     for name, records in (('outcome', list(outcome.values())), ('target', list(target.values())),
-                          ('condition', list(condition.values()))):
+                          ('condition', list(condition.values())), ('cross_turn', list(cross.values()))):
         payload = ''.join(json.dumps(record, ensure_ascii=False) + '\n' for record in records)
         path = OUT / f'{name}.jsonl'
         path.write_text(payload, encoding='utf8')
@@ -132,7 +183,7 @@ def main():
                        'gold': dict(Counter(str(record['gold']) for record in records))}
     manifest = {'source': {'file': SOURCE.name, 'sha256': sha256_text(SOURCE.read_text(encoding='utf8'))},
                 'holdoutRoutes': sorted(HOLDOUT_ROUTES), 'files': files,
-                'note': 'Outcome gold is the kernel marker (not independent semantics); target gold is the program 涉及 span; condition gold is the kernel task flip (pending -> achieved) with hard negatives from the same owner.'}
+                'note': 'Outcome gold is the kernel marker (not independent semantics); target gold is the program 涉及 span; condition/cross_turn gold is the kernel task flip (pending -> achieved) with hard negatives from the same owner; cross_turn adds the previous point of the same session as 上一回合.'}
     (OUT / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding='utf8')
     print(json.dumps(manifest, ensure_ascii=False, indent=1))
 
