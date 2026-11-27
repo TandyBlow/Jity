@@ -71,6 +71,13 @@ describe('environment channel', () => {
     expect(environmentHint('我把钟楼地下检修门拉开，门闩插着，拉不开。', ['hatch_door'], door, null))
       .toBeNull();
   });
+  it('keeps a partial manipulation even when the text names the blocker', () => {
+    const door = {
+      initial: { locations: { foyer: { name: '钟楼门厅' } }, items: { hatch_door: { name: '钟楼地下检修门' } } },
+    } as unknown as WorldState;
+    expect(environmentHint('我把钟楼地下检修门拉开一条缝，门闩卡住。', ['hatch_door'], door, null, 'partial'))
+      .toEqual({ entityId: 'hatch_door', text: '已被部分拉开' });
+  });
   it('phrases a location manipulation without an item', () => {
     expect(environmentPhrase('我把门厅的正门推开。')).toBe('已被推开');
     expect(environmentPhrase('我把门厅的正门推开一点。', 'partial')).toBe('已被部分推开');

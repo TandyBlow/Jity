@@ -1178,3 +1178,10 @@
 - 标注：22 条新回合全部缓存未命中，21 条经 DeepSeek 缓存管线完成；`sm-e-partial-4` 连续三次 `Connection error`，标记 invalid（证据保留）。数据集 260→280 行、train 245；validator pass；字段计数 info 57/106、env 55/165；训练门与 21 个 gate 测试通过。
 - 新 fix set：补全部分改变（检修盖/长桌）的 env_success 出现 2 条 conflict，env_failure 5 条 conflict——部分→完成的状态转移未被差分记录；`info_new` 2 条 absent（问人但结算无信息事实）。下一轮环境补丁优先修该转移。E26。
 - 世界范围：仍只有 dragon-raja-free-day；目标文本要求"多世界"与 goal.md 非目标冲突，待用户决定是否新造世界。
+
+## D-136 部分成功不再被阻塞词整条否决（2026-11-28）
+
+- 状态：`signed`（代码与单测已落地；真机采集复核因主机内存不足被中断，待资源空闲重跑）。
+- 缺陷：`environmentHint` 对含"卡住/拉不开/推不开/没有…"的文本一律返回 null，**包括 RESULT 分类器已判为 partial 的子动作**——"提到一半卡住"这类真实的部分环境变化因此永远发不出 `环境=` 标记，差分里没有环境键，标签落成 insufficient 或 conflict（E26 fix set）。
+- 修法：FAIL 门只在 `label !== 'partial'` 时生效；partial 照常产出 `已被部分X`。新增单测（拉门一条缝、门闩卡住 → `已被部分拉开`）；全量 vitest 1466 通过。
+- 影响：待用重跑的 env-11 证据复核（部分成功应从 insufficient/conflict 变为 present）；现有数据集仍是 b521f091 的 280 行状态（validator + 训练门通过）。

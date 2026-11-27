@@ -77,7 +77,8 @@ export function environmentHint(
   actorRoom?: Id,
 ): { entityId: Id; text: string } | null {
   if (itemIds.length !== 1) return null;
-  if (FAIL.test(text)) return null;
+  // 部分成功常带卡住/拉不开等词：此时环境确实部分变化，不该整条否决
+  if (FAIL.test(text) && label !== 'partial') return null;
   const entityId = itemIds[0];
   const item = state.initial.items[entityId];
   if (!item) return null;
