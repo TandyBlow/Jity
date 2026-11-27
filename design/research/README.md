@@ -40,3 +40,4 @@ Artifacts     evidence files, manifests, commits
 | E14 | Relation heads: int8 export and decision parity | done (deployment-ready) |
 | E15 | Five-arm scoreboard: measured cells and gaps | done (2/5 fixed, 1/5 end-to-end) |
 | E16 | Cross-appearance negatives fix the extraction pointer | done (holdout 8/9 when decided) |
+| E17 | Decide arm increments predate the topic guard | done (3 corroborated decisions) |
