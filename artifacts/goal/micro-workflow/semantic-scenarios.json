@@ -2023,6 +2023,153 @@
      "purpose": "复合移动+玻璃门"
     }
    ]
+  },
+  {
+   "id": "env-11",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm-e-partial-3",
+     "class": "env_partial",
+     "input": "我把服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝。",
+     "purpose": "检修盖只被部分提开"
+    },
+    {
+     "id": "sm-e-success-8",
+     "class": "env_success",
+     "input": "我把检修盖完全掀开，短梯露了出来。",
+     "purpose": "把部分提开的检修盖完成到底，环境改变"
+    },
+    {
+     "id": "sm-e-move-3",
+     "class": "env_irrelevant_move",
+     "input": "我顺着短梯下到地下检修通道。",
+     "purpose": "纯移动，环境不变"
+    },
+    {
+     "id": "sm-e-fail-3",
+     "class": "env_failure",
+     "input": "我推地下检修通道尽头的防火门，门从另一侧锁着，推不开。",
+     "purpose": "尝试打开防火门但失败"
+    },
+    {
+     "id": "sm-e-transfer-3",
+     "class": "env_item_transfer",
+     "input": "我把护目镜从胸前取下来，塞进背心的胸袋。",
+     "purpose": "物品换容器，环境不变"
+    },
+    {
+     "id": "sm-e-partial-4",
+     "class": "env_partial",
+     "input": "我回到地面走进中央庭院，把倒放的长椅拖到一半，椅背卡在石花槽边。",
+     "purpose": "长椅只被移动一部分"
+    },
+    {
+     "id": "sm-e-success-9",
+     "class": "env_success",
+     "input": "我把长椅彻底拖到石花槽后侧，通道让出来了。",
+     "purpose": "把部分移动的长椅完成到底"
+    },
+    {
+     "id": "sm-e-partial-5",
+     "class": "env_partial",
+     "input": "我穿过庭院进钟楼门厅，抬起翻倒长桌的一角，只挪开一条能侧身过的缝。",
+     "purpose": "长桌只挪开一道缝"
+    },
+    {
+     "id": "sm-e-success-10",
+     "class": "env_success",
+     "input": "我把长桌拖到侧墙，楼梯口彻底让出来。",
+     "purpose": "把部分挪动的长桌完成到底"
+    },
+    {
+     "id": "sm-e-partial-6",
+     "class": "env_partial",
+     "input": "我把东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动。",
+     "purpose": "遮光帘只拉下一半"
+    },
+    {
+     "id": "sm-e-success-11",
+     "class": "env_success",
+     "input": "我把遮光帘拉到底，东回廊暗了下来。",
+     "purpose": "把部分拉下的遮光帘完成到底"
+    },
+    {
+     "id": "sm-e-fail-4",
+     "class": "env_failure",
+     "input": "我回身去拉钟楼地下检修门，门闩从里面插着，拉不开。",
+     "purpose": "尝试打开检修门但失败"
+    }
+   ],
+   "invalid": [
+    "sm-e-partial-4"
+   ]
+  },
+  {
+   "id": "info-24",
+   "split": "train",
+   "turns": [
+    {
+     "id": "sm-i-new-4",
+     "class": "info_new",
+     "input": "我问诺诺：红方现在把守着哪几个路口？",
+     "purpose": "问一个场景描述里没有的局势信息"
+    },
+    {
+     "id": "sm-i-repeat-3",
+     "class": "info_repeat",
+     "input": "我把刚才的问题原样再问诺诺一遍：红方把守着哪几个路口？",
+     "purpose": "重复上一回合已得到回答的问题"
+    },
+    {
+     "id": "sm-i-fail-3",
+     "class": "info_failure",
+     "input": "我问诺诺：蓝方今晚的备用口令是什么？",
+     "purpose": "问一个诺诺不可能知道的口令"
+    },
+    {
+     "id": "sm-i-partial-3",
+     "class": "info_partial",
+     "input": "我一连问诺诺两件事：蓝方集结点在哪，红方的口令是什么；她只回答了集结点。",
+     "purpose": "两个问题只得到一个回答"
+    },
+    {
+     "id": "sm-i-irrelevant-3",
+     "class": "info_irrelevant_known",
+     "input": "我低头检查自己的护目镜，确认镜片还挂在胸前。",
+     "purpose": "查看已知物品状态，不构成新信息"
+    },
+    {
+     "id": "sm-i-new-5",
+     "class": "info_new",
+     "input": "我走进器材棚问芬格尔：演习观察席上有哪些教官在场？",
+     "purpose": "询问场景描述外的人物位置信息"
+    },
+    {
+     "id": "sm-i-fail-4",
+     "class": "info_failure",
+     "input": "我问芬格尔：楚子航的短讯机现在调到哪个频道？",
+     "purpose": "问一个芬格尔无法确认的频道信息"
+    },
+    {
+     "id": "sm-i-new-6",
+     "class": "info_new",
+     "input": "我问芬格尔：器材笼的备用钥匙放在哪一格抽屉？",
+     "purpose": "询问钥匙存放位置，场景描述未给出"
+    },
+    {
+     "id": "sm-i-new-7",
+     "class": "info_new",
+     "input": "我走进医护附楼问顾岚：处置室里还剩几卷绷带？",
+     "purpose": "向新人物询问物资数量"
+    },
+    {
+     "id": "sm-i-partial-4",
+     "class": "info_partial",
+     "input": "我问顾岚两件事：处置室里还有几卷绷带，伤员一共几个；她只答了绷带数量。",
+     "purpose": "两个问题只得到一个回答"
+    }
+   ]
   }
  ]
 }

@@ -2,7 +2,7 @@
 
 Four states: present / absent / insufficient / conflict. conflict is the fix set; insufficient and conflict are not negative samples.
 
-Counts: {"info:absent": 95, "env:insufficient": 23, "info:insufficient": 108, "env:absent": 158, "env:conflict": 26, "env:present": 53, "info:present": 57}
+Counts: {"info:absent": 109, "env:insufficient": 26, "info:insufficient": 114, "env:absent": 170, "env:conflict": 29, "env:present": 55, "info:present": 57}
 
 ## sc01-dialogue-nono-neutrality (test, cache, scenario)
 - action: 我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。
@@ -191,10 +191,10 @@ Counts: {"info:absent": 95, "env:insufficient": 23, "info:insufficient": 108, "e
 - env: absent proposed=False content='无环境状态变化' support='"env": []' evidence=state
 
 ## sm-i-irrelevant-3 (train, cache, info_irrelevant_known)
-- action: 我靠着领用台站了一会儿，听棚外的枪声。
+- action: 我低头检查自己的护目镜，确认镜片还挂在胸前。
 - state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
-- info: absent proposed=False content='听棚外的枪声没有成功' support='听棚外的枪声。（没有成功）' evidence=settled
-- env: absent proposed=False content='无环境变化' support='"env": []' evidence=state
+- info: insufficient proposed=False content='路明非未成功确认护目镜镜片仍在胸前' support='路明非低头检查自己的护目镜，确认镜片还挂在胸前。（没有成功）' evidence=settled
+- env: absent proposed=False content='无环境或物品状态改变' support='"env": []' evidence=state
 
 ## sm2-e-success-1 (train, cache, env_success)
 - action: 我走进器材棚，把开盖演习弹药箱的盖子完全掀开。
@@ -1443,6 +1443,126 @@ Counts: {"info:absent": 95, "env:insufficient": 23, "info:insufficient": 108, "e
 - state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "balcony", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "top", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"
 - info: present proposed=True content='向外推开可到外廊' support='向外推开可到外廊' evidence=narrative
 - env: conflict proposed=False content='' support='' evidence=settled
+
+## sm-e-partial-3 (train, cache, env_partial)
+- action: 我把服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='路明非把服务巷检修盖提到一半，铰链卡住，只留下刚够伸手的缝' support='路明非把服务巷检修盖提到一半，铰链卡住，只留下一道刚够伸手的缝' evidence=settled
+- env: insufficient proposed=True content='服务巷检修盖铰链卡住，半开' support='铰链卡住，只留下一道刚够伸手的缝' evidence=settled
+
+## sm-e-success-8 (train, cache, env_success)
+- action: 我把检修盖完全掀开，短梯露了出来。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='检修盖完全掀开，短梯露了出来' support='路明非把检修盖完全掀开，短梯露了出来。' evidence=settled
+- env: conflict proposed=True content='检修盖掀开，短梯露出' support='路明非把检修盖完全掀开，短梯露了出来。' evidence=settled
+
+## sm-e-move-3 (train, cache, env_irrelevant_move)
+- action: 我顺着短梯下到地下检修通道。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='路明非顺着短梯下到地下检修通道（只完成一部分）' support='路明非顺着短梯下到地下检修通道。（只完成一部分）' evidence=settled
+- env: absent proposed=False content='' support='' evidence=settled
+
+## sm-e-fail-3 (train, cache, env_failure)
+- action: 我推地下检修通道尽头的防火门，门从另一侧锁着，推不开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='门从另一侧锁着，推不开' support='门从另一侧锁着，推不开' evidence=settled
+- env: conflict proposed=False content='' support='' evidence=state
+
+## sm-e-transfer-3 (train, cache, env_item_transfer)
+- action: 我把护目镜从胸前取下来，塞进背心的胸袋。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=True content='路明非把护目镜从胸前取下来，塞进背心的胸袋，只完成一部分' support='路明非把护目镜从胸前取下来，塞进背心的胸袋。（只完成一部分）' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-e-success-9 (train, cache, env_success)
+- action: 我把长椅彻底拖到石花槽后侧，通道让出来了。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='路明非把长椅彻底拖到石花槽后侧，通道让出来了。' support='路明非把长椅彻底拖到石花槽后侧，通道让出来了。' evidence=settled
+- env: conflict proposed=True content='bench_cover:已被拖开' support='环境=bench_cover:已被拖开' evidence=settled
+
+## sm-e-partial-5 (train, cache, env_partial)
+- action: 我穿过庭院进钟楼门厅，抬起翻倒长桌的一角，只挪开一条能侧身过的缝。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "yard", "slotId": "slot_south_cover", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {}
+- info: absent proposed=True content='路明非穿过庭院进钟楼门厅' support='路明非穿过庭院进钟楼门厅' evidence=settled
+- env: present proposed=True content='门厅长桌已被挪开' support='已被挪开' evidence=state
+
+## sm-e-success-10 (train, cache, env_success)
+- action: 我把长桌拖到侧墙，楼梯口彻底让出来。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "item:foyer_table", "before": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {"change_162": "已被挪开"}}, "after": {"position": {"containerId": "foyer", "slotId": null, "relativeTo": null}, "appearance": {"change_162": "已被挪开", "change_183": "已被拖开"}}}], "env": ["item:foyer_table"]}
+- info: absent proposed=True content='长桌被拖到侧墙，楼梯口让出' support='路明非把长桌拖到侧墙，楼梯口彻底让出来' evidence=settled
+- env: present proposed=True content='长桌状态：已被拖开' support='已被拖开' evidence=state
+
+## sm-e-partial-6 (train, cache, env_partial)
+- action: 我把东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='东回廊遮光帘拉到一半卡住拉不动' support='东回廊的遮光帘拉到一半，帘子卡在滑轨中段拉不动' evidence=settled
+- env: insufficient proposed=True content='东回廊遮光帘卡在滑轨中段拉不动' support='帘子卡在滑轨中段拉不动' evidence=settled
+
+## sm-e-success-11 (train, cache, env_success)
+- action: 我把遮光帘拉到底，东回廊暗了下来。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='路明非把遮光帘拉到底，东回廊暗了下来' support='路明非把遮光帘拉到底，东回廊暗了下来' evidence=settled
+- env: insufficient proposed=True content='东回廊暗了下来' support='东回廊暗了下来' evidence=settled
+
+## sm-e-fail-4 (train, cache, env_failure)
+- action: 我回身去拉钟楼地下检修门，门闩从里面插着，拉不开。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='钟楼地下检修门门闩从里面插着，拉不开。' support='门闩从里面插着，拉不开' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-i-new-4 (train, cache, info_new)
+- action: 我问诺诺：红方现在把守着哪几个路口？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='诺诺未答出红方把守的路口' support='诺诺没有答上来' evidence=narrative
+- env: absent proposed=False content='无环境或物品状态变化' support='"env": []' evidence=state
+
+## sm-i-repeat-3 (train, cache, info_repeat)
+- action: 我把刚才的问题原样再问诺诺一遍：红方把守着哪几个路口？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='诺诺没有回答红方把守路口的问题' support='诺诺没有回答' evidence=narrative
+- env: absent proposed=False content='无环境或物品状态变化' support='"env": []' evidence=state
+
+## sm-i-fail-3 (train, cache, info_failure)
+- action: 我问诺诺：蓝方今晚的备用口令是什么？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='诺诺没有答出蓝方今晚备用口令' support='诺诺没有答出' evidence=narrative
+- env: absent proposed=False content='无环境变化' support='"added": [], "removed": [], "changed": [], "env": []' evidence=state
+
+## sm-i-partial-3 (train, cache, info_partial)
+- action: 我一连问诺诺两件事：蓝方集结点在哪，红方的口令是什么；她只回答了集结点。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=True content='诺诺只回答了蓝方集结点，未答红方口令' support='她只回答了集结点' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-i-new-5 (train, cache, info_new)
+- action: 我走进器材棚问芬格尔：演习观察席上有哪些教官在场？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "lane", "slotId": "slot_wall", "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "control", "slotId": null, "relativeTo": null}, "appearance": {}, "ta
+- info: insufficient proposed=True content='路明非问到芬格尔观察席教官情况' support='路明非走进器材棚问对方：演习观察席上有哪些教官在场？（达到目的）' evidence=settled
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-i-fail-4 (train, cache, info_failure)
+- action: 我问芬格尔：楚子航的短讯机现在调到哪个频道？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: absent proposed=False content='路明非获知楚子航短讯机频道' support='路明非问了一遍，芬格尔没有答' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-i-new-6 (train, cache, info_new)
+- action: 我问芬格尔：器材笼的备用钥匙放在哪一格抽屉？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='未获得备用钥匙位置信息' support='路明非问对方：器材笼的备用钥匙放在哪一格抽屉？（达到目的）' evidence=settled
+- env: absent proposed=False content='无环境或物品状态改变' support='"env": []' evidence=state
+
+## sm-i-new-7 (train, cache, info_new)
+- action: 我走进医护附楼问顾岚：处置室里还剩几卷绷带？
+- state diff: {"known": true, "added": [], "removed": [], "changed": [{"key": "char:lu", "before": {"position": {"containerId": "control", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": {"task_lu_match": "pending", "task_lu_choice": "pending", "task_lu_kit": "pending", "task_lu_goggles": "pending", "task_lu_route": "pending", "task_lu_ally": "pending", "task_lu_rules": "achieved"}}, "after": {"position": {"containerId": "annex", "slotId": null, "relativeTo": null}, "appearance": {}, "tasks": 
+- info: absent proposed=False content='顾岚未回答处置室绷带数量' support='顾岚没有答话' evidence=narrative
+- env: absent proposed=False content='' support='' evidence=state
+
+## sm-i-partial-4 (train, cache, info_partial)
+- action: 我问顾岚两件事：处置室里还有几卷绷带，伤员一共几个；她只答了绷带数量。
+- state diff: {"known": true, "added": [], "removed": [], "changed": [], "env": []}
+- info: insufficient proposed=False content='顾岚只答绷带数量，未答伤员数' support='她只答了绷带数量。（没有成功）' evidence=settled
+- env: absent proposed=False content='无环境变化' support='' evidence=state
 
 ## s01-act-move (train, cache, 20-input)
 - action: 我沿着服务巷的墙根往器材棚方向走，脚步放轻，注意前面的门口。

@@ -248,3 +248,4 @@ G1 之后新增：
 
 - HPC 首作业（2026-11-26）：280873 存在性 env 8/9/info 9/10、支持 env 15/16/info 6/10；extraction 脚本缺 import os 中止；补交 280875（extraction+5 种子消融）。本地 1 轮 smoke 覆盖了 extraction .pt，回取 HPC 模型前暂停一致性门。D-098。
 - 第 2 节 R16（2026-11-27 真机）：单 0.6B + CPU（`?cpu=1&narrationModel=semantic`）两回合 25.2/193.3 s（首段 10.3/91.8 s、295 s 时限停自动回合）；WebGPU（Mali Valhall）生成崩溃，移动 60 s 门槛仍不成立。E25/D-133。
+- 第 2 节 R09（2026-11-28）：真实语义采集第二轮（env-11/info-24，22 回合）把 env_partial 从 0 提到 1 条可训练正例，train 字段计数 info 57/106、env 55/165，validator+训练门通过；"部分→完成"的 env 转移仍产生 conflict（fix set）。E26/D-135。

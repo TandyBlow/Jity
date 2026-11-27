@@ -1170,3 +1170,11 @@
 - 现象：为字节级进度条把模型下载改为读 `response.body` 手动拼 Blob；桌面 Edge 下刷新后的二次模型加载报 `NotReadableError`（wllama `fileReadResponse failed`），刷新恢复检查连续两次失败（`restored=false`、历史计数 0）；改为单块连续 buffer 拼 Blob 仍然失败；退回 `response.blob()` 后同一复现脚本恢复 `restored=true`、计数正常。流式版只在 GPU 实验中短暂观察到进度文本（E25），随后回退。
 - 结论：wllama 3.8.1 的 worker 读不了手动流式构造的 Blob；加载状态只显示模型名与已等待秒数，字节进度条暂缓（等 wllama 修复或改走 OPFS 缓存路径）。
 - 附带结论：冒烟里的"刷新恢复失败"不是独立的计数 bug，根因就是加载期抛错中断了恢复；`frontend/scripts/product-acceptance/accept-world-local.mjs` 的 refreshRestore 证据现在会带 `finalTextTail`，下次失败可直接看到页面原话。
+
+## D-135 真实事件采集第二轮：部分成功与重复/失败密度（2026-11-28）
+
+- 状态：`signed`（2026-11-28）。
+- 新增两条 train 路由：`env-11`（5 个部分成功 + 3 个补全 + 失败/移动/转移）、`info-24`（repeat/failure/partial 密度，覆盖诺诺/芬格尔/顾岚）。两路由均 COMPLETED。
+- 标注：22 条新回合全部缓存未命中，21 条经 DeepSeek 缓存管线完成；`sm-e-partial-4` 连续三次 `Connection error`，标记 invalid（证据保留）。数据集 260→280 行、train 245；validator pass；字段计数 info 57/106、env 55/165；训练门与 21 个 gate 测试通过。
+- 新 fix set：补全部分改变（检修盖/长桌）的 env_success 出现 2 条 conflict，env_failure 5 条 conflict——部分→完成的状态转移未被差分记录；`info_new` 2 条 absent（问人但结算无信息事实）。下一轮环境补丁优先修该转移。E26。
+- 世界范围：仍只有 dragon-raja-free-day；目标文本要求"多世界"与 goal.md 非目标冲突，待用户决定是否新造世界。
