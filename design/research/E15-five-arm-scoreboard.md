@@ -22,10 +22,11 @@ build (`evidence-perf-taskskip-8.json`). The machine-readable scoreboard is
   achievement assertions, 0 prose-identity issues, mean turn 61.9 s (max
   85.1 s), narration accepted from the model on 8/8 turns (mean 12.5 s).
 - Hybrid micro workflow, candidate pointer at fixed events (deployed 0.6/0.15
-  thresholds, `score_pointer_abstain.py`): 48/55 decide, 43 correct, 5 wrong
-  (89.6% when decided). On the appearance-level holdout (14 pairs) it decides
-  only 8 and is right 4 — **at chance when it decides**; the confidence rule
-  does not protect unseen appearances.
+  thresholds, `score_pointer_abstain.py`, torch and shipped int8): torch 48/55
+  decide, 43 correct (89.6%); int8 49/55 decide, 44 correct (89.8%). On the
+  appearance-level holdout (14 pairs) torch decides 8 and is right 4, int8
+  decides 9 and is right 5 — **at chance when it decides** in both graphs; the
+  confidence rule does not protect unseen appearances.
 - Micro-generative: no fixed-event or end-to-end number — the v3 models are a
   runtime probe, not wired into the page.
 - Existing LLM: historical CAMP/DeepSeek stack, different schema/world — not
