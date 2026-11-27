@@ -12,6 +12,7 @@ import { LocalGameModel } from '@/lib/world-engine/local/game-model';
 import { createMicroTargets } from '@/lib/world-engine/local/micro/targets';
 import { createMicroResults } from '@/lib/world-engine/local/micro/results';
 import { createMicroExistence } from '@/lib/world-engine/local/micro/existence';
+import { createMicroExtraction } from '@/lib/world-engine/local/micro/extraction';
 import { warmMicroSession } from '@/lib/world-engine/local/micro/runtime';
 import { getMicroTokenizer } from '@/lib/world-engine/local/micro/shared';
 import { createMicroUpdates } from '@/lib/world-engine/local/micro/updates';
@@ -617,6 +618,9 @@ export default function WorldLocalPage() {
   // Shadow-only existence heads: scores are recorded, never applied.
   const [existenceShadow] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('existenceShadow') === '1');
+  // Actual decision: existence gate + candidate pointer + verbatim support.
+  const [semanticDecide] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('semanticDecide') === '1');
   const [rollSeed] = useState(() => {
     if (typeof window === 'undefined') return null;
     const raw = new URLSearchParams(window.location.search).get('seed');
@@ -987,9 +991,13 @@ export default function WorldLocalPage() {
         const microTargets = microEnabled
           ? createMicroTargets({ onStats: (record) => recordMicro('targets', record) })
           : undefined;
-        const existencePort = microEnabled && existenceShadow ? createMicroExistence() : undefined;
+        const existencePort = microEnabled && (existenceShadow || semanticDecide) ? createMicroExistence() : undefined;
+        const extractionPort = microEnabled && semanticDecide ? createMicroExtraction() : undefined;
+        const decider = extractionPort
+          ? { extraction: extractionPort, existence: existencePort, minScore: 0.6, minMargin: 0.15, minExistence: 0.5 }
+          : undefined;
         const microResults = microEnabled
-          ? createMicroResults({ existence: existencePort, onStats: (record) => recordMicro('results', record) })
+          ? createMicroResults({ existence: existencePort, decider, onStats: (record) => recordMicro('results', record) })
           : undefined;
         const microUpdates = microEnabled
           ? createMicroUpdates({ onStats: (record) => recordMicro('updates', record) })
@@ -1444,7 +1452,8 @@ export default function WorldLocalPage() {
             '/micro/task-heads-int8.onnx', '/micro/task-match-int8.onnx',
             '/micro/judge-heads-int8.onnx', '/micro/behavior-head-int8.onnx', '/micro/movement-head-int8.onnx',
             '/micro/continuation-heads-int8.onnx', '/micro/task-condition-int8.onnx', '/micro/pair-scorer-int8.onnx',
-            ...(existenceShadow ? ['/micro/existence-env-int8.onnx', '/micro/existence-info-int8.onnx'] : []),
+            ...(existenceShadow || semanticDecide ? ['/micro/existence-env-int8.onnx', '/micro/existence-info-int8.onnx'] : []),
+            ...(semanticDecide ? ['/micro/extraction-head-int8.onnx'] : []),
           ];
           await Promise.allSettled(models.map((url) => warmMicroSession(url)));
           await getMicroTokenizer().catch(() => undefined);

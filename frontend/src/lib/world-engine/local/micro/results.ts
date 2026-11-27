@@ -4,7 +4,7 @@ import type { MicroResultsFn, MicroResultsRequest } from '../semantics/settlemen
 import type { WorldState } from '../../types';
 import { roomOf } from '../prompt';
 import { environmentHint, environmentPhrase } from '../semantics/settlement/fact-environments';
-import { informationHint } from '../semantics/settlement/fact-informations';
+import { decideInformation, informationHint, type InformationDecider } from '../semantics/settlement/fact-informations';
 import { matchLocation } from '../semantics/settlement/fact-destinations';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
@@ -137,6 +137,9 @@ export interface MicroResultsOptions {
   threshold?: number;
   /** Shadow existence heads; scores are evidence only, never a decision. */
   existence?: (text: string) => Promise<MicroExistenceScores | null>;
+  /** Actual decision: existence gate + candidate pointer + verbatim support
+   * for read actions the program had no topic for. */
+  decider?: InformationDecider;
   onStats?: (record: { members: number; inferences?: number; ms: number; loadMs: number; source: 'micro' | 'abstain'; existence?: MicroExistenceScores | null }) => void;
 }
 
@@ -259,9 +262,16 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
         // 物品优先；只有没匹配到物品时才把人物当读取对象（观察别人）
         const reading = [...(subAction.itemIds ?? [])];
         if (!reading.length) reading.push(...((subAction as { targetIds?: string[] }).targetIds ?? []));
-        const info = !priorBlocked
+        const programInfo = !priorBlocked
           ? informationHint(subAction.text, reading, request.state, label, member.memberId, actorRoom, destination)
           : null;
+        const decidedInfo = !programInfo && !priorBlocked && options.decider
+          ? await decideInformation(subAction.text, reading, request.state, label, options.decider,
+            normalized, member.memberId, actorRoom, destination)
+          : null;
+        // 模型决定的行进控制台，验收驱动按 world-local 前缀采集
+        if (decidedInfo) console.info(`[world-local decide] info ${decidedInfo.entityId}:${decidedInfo.text.slice(0, 40)}`);
+        const info = programInfo ?? decidedInfo;
         const involved = outsiderIds.length ? `；涉及=${outsiderIds.join(',')}` : '';
         facts.push({
           text: `${normalized}（${PHRASE[label]}）${hint ? `；去向=${hint}` : ''}${env ? `；环境=${env.entityId}:${env.text}` : ''}${info ? `；信息=${info.entityId}:${info.text}` : ''}${involved}`,

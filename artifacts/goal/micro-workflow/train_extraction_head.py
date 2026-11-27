@@ -6,6 +6,7 @@ Target: whether this clause is the content the read action asked for.
 At inference the clause with the highest probability wins; a low score
 abstains instead of guessing."""
 import argparse
+import hashlib
 import json
 import random
 import re
@@ -58,15 +59,17 @@ def main():
         for clause in candidates:
             rows.append({'text': f"动作：{pair['action']}\n分句：{clause}", 'label': int(clause == pair['clause']),
                          'groupId': pair['id'], 'rowId': pair['rowId'], 'clause': clause,
-                         'target': pair['clause']})
-    # 按组留出：同一动作的所有候选只出现在训练或留出一边
-    group_ids = sorted({row['groupId'] for row in rows})
-    if args.holdout:
-        held = {group for group in group_ids if str(group).startswith(args.holdout)}
-    else:
-        held = set(group_ids[::5])
-    holdout = [row for row in rows if row['groupId'] in held]
-    train = [row for row in rows if row['groupId'] not in held]
+                         'target': pair['clause'], 'appearance': pair['appearance'],
+                         'action': pair['action']})
+    # 按外貌留出：同一段外貌的所有动作/候选只出现在一边
+    appearances = sorted({hashlib.sha1(row['appearance'].encode('utf8')).hexdigest(): row['appearance']
+                          for row in rows}.items())
+    held_hashes = {digest for digest, _ in appearances[::5]}
+    held_groups = ({row['groupId'] for row in rows if str(row['rowId']).startswith(args.holdout)}
+                   if args.holdout else set())
+    holdout = [row for row in rows if hashlib.sha1(row['appearance'].encode('utf8')).hexdigest() in held_hashes
+               or row['groupId'] in held_groups]
+    train = [row for row in rows if row not in holdout]
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     tok = BertTokenizer.from_pretrained(SNAP)
     model = Head().to(device)
@@ -92,7 +95,13 @@ def main():
     groups = {}
     for row in (holdout or rows):
         groups.setdefault(row['groupId'], []).append(row)
-    hit = 0
+    def bigrams(text):
+        chars = re.sub('[^一-鿿A-Za-z0-9]', '', text)
+        return {chars[i:i + 2] for i in range(len(chars) - 1)}
+    def overlap(action, clause):
+        left, right = bigrams(action), bigrams(clause)
+        return len(left & right)
+    arms = {'head': 0, 'first': 0, 'longest': 0, 'bigram': 0}
     for group in groups.values():
         scores = []
         for row in group:
@@ -100,14 +109,16 @@ def main():
             with torch.no_grad():
                 logits = model(ids.to(device), mask.to(device))[0]
             scores.append((float(logits[1] - logits[0]), row['clause']))
-        best = max(scores)
         target = group[0]['target']
-        hit += int(best[1] == target)
+        arms['head'] += int(max(scores)[1] == target)
+        arms['first'] += int(group[0]['clause'] == target)
+        arms['longest'] += int(max(group, key=lambda row: len(row['clause']))['clause'] == target)
+        arms['bigram'] += int(max(group, key=lambda row: overlap(group[0]['action'], row['clause']))['clause'] == target)
     OUT.mkdir(parents=True, exist_ok=True)
     torch.save(model.cpu(), OUT / 'extraction-head.pt')
     print(json.dumps({'pairs': len(pairs), 'rows': len(rows), 'train': len(train), 'holdout': len(holdout),
-                      'groups': len(groups), 'top1': f'{hit}/{len(groups)}', 'model': str(OUT / 'extraction-head.pt')},
-                     ensure_ascii=False), flush=True)
+                      'groups': len(groups), 'top1': {arm: f'{hit}/{len(groups)}' for arm, hit in arms.items()},
+                      'model': str(OUT / 'extraction-head.pt')}, ensure_ascii=False), flush=True)
 
 
 if __name__ == '__main__':

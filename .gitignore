@@ -315,3 +315,4 @@ frontend/artifacts/
 
 # Browser-local int8 existence heads (rebuild via export_existence_onnx.py)
 frontend/public/micro/existence-*-int8.onnx
+frontend/public/micro/extraction-head-int8.onnx

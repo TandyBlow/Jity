@@ -28,6 +28,15 @@ function onlyStopChars(gram: string): boolean {
   return [...gram].every((char) => STOP.has(char));
 }
 
+/** Candidate clauses of one entity's appearance, split the same way the
+ * program has always split them (；。，,). */
+export function informationCandidates(state: WorldState, entityId: Id): string[] {
+  const entity = state.initial.items[entityId] ?? state.initial.characters[entityId];
+  const appearance = entity?.initialAppearance;
+  if (!appearance) return [];
+  return appearance.split(/[；。，,]/u).map((clause) => clause.trim()).filter(Boolean);
+}
+
 /** Read/inspect one registered item -> its appearance clause that shares the
  * action's longest topic term. Null when there is no such term. */
 export function informationHint(
@@ -49,7 +58,7 @@ export function informationHint(
   // 移动+读取的复合动作按子动作到达房间判断
   const arrival = destination?.containerId ? roomOf(state, destination.containerId) : null;
   if (memberId && roomOf(state, entityId) !== (arrival ?? actorRoom ?? roomOf(state, memberId))) return null;
-  const clauses = item.initialAppearance.split(/[；。，,]/u).map((clause) => clause.trim()).filter(Boolean);
+  const clauses = informationCandidates(state, entityId);
   // 「关于X的说明」直接给出话题；只按 X 与外形的重叠挑分句
   const about = /关于(.{2,6}?)的/u.exec(text)?.[1] ?? null;
   if (about) {
@@ -92,4 +101,54 @@ function longestShared(left: string, right: string): number {
     }
   }
   return 0;
+}
+
+export interface InformationDecider {
+  /** Scores each candidate clause for this action (higher = more likely). */
+  extraction: (action: string, clauses: string[]) => Promise<Array<{ clause: string; score: number }> | null>;
+  /** Existence gate; when absent the decision relies on extraction alone. */
+  existence?: (text: string) => Promise<{ env: number; info: number } | null>;
+  minScore?: number;
+  minMargin?: number;
+  minExistence?: number;
+}
+
+/** Model decision for a read action the program had no topic for: existence
+ * gate -> candidate pointer -> verbatim support. Abstains unless the pointer
+ * is confident and the chosen clause is one of the committed candidates. */
+export async function decideInformation(
+  text: string,
+  entityIds: Id[],
+  state: WorldState,
+  label: string,
+  decider: InformationDecider,
+  existenceText = '',
+  memberId?: Id,
+  actorRoom?: Id,
+  destination?: { containerId?: Id } | null,
+): Promise<{ entityId: Id; text: string } | null> {
+  if (label !== 'achieved' && label !== 'partial') return null;
+  if (entityIds.length !== 1) return null;
+  if (!READ.test(text)) return null;
+  const entityId = entityIds[0];
+  const entity = state.initial.items[entityId] ?? state.initial.characters[entityId];
+  if (!entity?.initialAppearance) return null;
+  const arrival = destination?.containerId ? roomOf(state, destination.containerId) : null;
+  if (memberId && roomOf(state, entityId) !== (arrival ?? actorRoom ?? roomOf(state, memberId))) return null;
+  const clauses = informationCandidates(state, entityId);
+  // 只有一个候选时没有「选择」可做，交给程序通道
+  if (clauses.length < 2) return null;
+  if (decider.existence) {
+    const scores = await decider.existence(existenceText || text);
+    if (!scores || scores.info < (decider.minExistence ?? 0.5)) return null;
+  }
+  const scored = await decider.extraction(text, clauses);
+  if (!scored?.length) return null;
+  const ranked = [...scored].sort((left, right) => right.score - left.score);
+  const best = ranked[0];
+  const margin = best.score - (ranked[1]?.score ?? 0);
+  if (best.score < (decider.minScore ?? 0.6) || margin < (decider.minMargin ?? 0.15)) return null;
+  // 支持核验：分句必须是已提交外貌的原句，程序不生成内容
+  if (!clauses.includes(best.clause)) return null;
+  return { entityId, text: best.clause };
 }
