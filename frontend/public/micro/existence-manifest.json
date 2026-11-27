@@ -1,10 +1,10 @@
 {
- "note": "Shadow existence heads (env/info) trained in this workspace from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder. The 2026-11-27 rebuild fixes the export state-dict mapping (only the named field head is copied); manifest holds the ONNX-measured holdout. Extraction ONNX re-exported after the appearance-holdout retrain; check_head_parity.py compares every head torch vs int8.",
+ "note": "Shadow existence heads (env/info) trained in this workspace from verified semantic routes; browser-local int8 ONNX, MiniRBT-H256 encoder. The 2026-11-27 rebuild fixes the export state-dict mapping (only the named field head is copied); manifest holds the ONNX-measured holdout. Extraction ONNX re-exported after the appearance-holdout retrain; check_head_parity.py compares every head torch vs int8. Models retrained on HPC (RTX 4090 D, torch 2.5.1+cu124) in jobs 280873/280875; manifest reflects the HPC checkpoints. 2026-11-27 quantization switched to per-channel int8: worst decision drift 0.19 (near-tie, no decision change); torch-vs-fp32 ONNX is exact.",
  "encoder": "artifacts/benchmark/minirbt-h256-snapshot (MIT)",
  "files": {
   "existence-env-int8.onnx": {
-   "sha256": "a091c0e90cbf713cfcdad8121b2cf8d64b2472421c6a8c589e921ceb579a5413",
-   "bytes": 10549943,
+   "sha256": "ef8a43ddc29c115db220a49a16b0e666e12b3f20c3629a089ff1f29b72dbedbe",
+   "bytes": 10619252,
    "field": "env",
    "trainingRows": {
     "pos": 53,
@@ -14,12 +14,12 @@
     "route": "sm6-",
     "correct": 8,
     "total": 9,
-    "parity": "9/9"
+    "source": "hpc-280873"
    }
   },
   "existence-info-int8.onnx": {
-   "sha256": "d822a0b12971ee52d58a2f51a69d543d5b8ca8a3f8839ec5c36ed8aa19b9c2b0",
-   "bytes": 10549943,
+   "sha256": "feab2deda903b7337bd4128f64759840761fb825e99d0e7de685b38708d5043e",
+   "bytes": 10619252,
    "field": "info",
    "trainingRows": {
     "pos": 57,
@@ -29,18 +29,19 @@
     "route": "sm10-",
     "correct": 9,
     "total": 10,
-    "parity": "10/10"
+    "source": "hpc-280873"
    }
   },
   "extraction-head-int8.onnx": {
-   "sha256": "7444f0ff5d0cd302caf7e6c39f1a512fa99f4314753203478dba48bc3b129acc",
-   "bytes": 10549929,
+   "sha256": "8646eb7db762d1616bae2a8a5f87619e3e3bca8a24700fc712f06d5bda6b42af",
+   "bytes": 10619238,
    "field": "info-extraction",
    "trainingPairs": 55,
    "holdout": {
     "appearanceGroups": 14,
-    "top1": 9,
-    "bigramBaseline": 12
+    "top1": 7,
+    "bigramBaseline": 12,
+    "source": "hpc-280875"
    }
   }
  }

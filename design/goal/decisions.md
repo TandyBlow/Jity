@@ -906,3 +906,12 @@
 - 问题：在同一个 1.7B 叙事 LoRA、同一世界与输入下，事实输入表示（`narrationShape=prose-facts` vs `serialized`）是否改变事实一致性与可读性？
 - 设计：冻结 8 场景回合集（`scenarios-independent-turns.json`，micro 臂、seed 11），两臂都 `narrationCandidate=trained&narrationMode=scene`，仅 shape 不同；同构建、同叙事权重（sha256 82e513db…）、同温度（0.45）、同输出预算（页面默认，未加预算参数）。指标：D1 硬对齐违规与 review fact 矛盾、D2 覆盖（本轮不宣称，alignmentPacket 不含外观）、D3 重复与 fallback（`score_narration_arms.py`）、场景状态/任务断言（`scenario_report.py`）、时延与正文来源。不做盲评（judge 可选、未启用）；一个种子，结论只作方向，不作显著性声明。
 - 预注册判据：若一臂在状态断言不降的前提下，硬对齐违规或跨回合重复更低且正文来源全部为模型，则记为表示方向的正面信号；若两臂无差异或另一臂明显更差，按无结论记录。
+
+## D-100 部署对拍改为决定一致 + per-channel int8（2026-11-27）
+
+- 状态：`signed`（2026-11-27）。
+- 诊断：HPC 检查点回装后对拍三门失败。逐行拆分后，torch 与 **fp32** ONNX 在全部行上差异恰为 0.0（导出无错），全部差异来自 **int8** 动态量化；顺带发现对拍脚本按 256 截断、浏览器与导出器都按 192，已对齐。对齐后漂移仍在，确认是量化误差而非输入不一致。最大一行：sm16-i-r5 长文本 fp32 0.540 → int8 0.209。
+- 修复：`quantize_dynamic(..., per_channel=True)`，最坏漂移 0.33 → 0.19，体积仍 10.6 MB；ORT-WASM 内核实测可跑（sm16-i-r5 浏览器 0.533 vs fp32 CPU 0.540）。
+- 对拍判据改为**部署决定一致**：argmax 有实质边际的翻转、行跨过部署门槛（存在性 0.75；候选 0.6/边际 0.15；支持 0.5）即失败；门槛 ±0.02 内的刀口翻转单列 `boundaryFlips`；`maxProbDiff` 保留 0.25 作权重错配警报（错配会 0.5+ 大面积出现）。
+- 结果：env 存在性 206/206（0.007）、info 149/149（0.080）、extraction 组 top1 54/55 + 1 个两臂都弃权的近同分（top1 0.010、边际 0.002）、support env 106/106（0.067）、support info 151/152（1 个 0.4973/0.5031 刀口）。五门全过；manifest 哈希/字节已更新为新 int8。
+- 理由：门槛是产品里的实际决定面，概率数值本身不被浏览器消费；只盯 maxProbDiff 会把量化噪声当部署缺陷，也会漏掉真正的门槛穿越。

@@ -43,7 +43,7 @@ def main():
                           opset_version=17)
         from onnxruntime.quantization import QuantType, quantize_dynamic
         int8 = OUT / f'support-{field}-int8.onnx'
-        quantize_dynamic(str(onnx_path), str(int8), weight_type=QuantType.QInt8)
+        quantize_dynamic(str(onnx_path), str(int8), weight_type=QuantType.QInt8, per_channel=True)  # per-channel 量化漂移更小
         report[field] = {'int8Mb': round(int8.stat().st_size / 1e6, 2), 'file': str(int8)}
     print(json.dumps(report, ensure_ascii=False))
 

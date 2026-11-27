@@ -70,7 +70,7 @@ def main():
                           opset_version=17)
         from onnxruntime.quantization import QuantType, quantize_dynamic
         int8 = OUT / f'existence-{field}-int8.onnx'
-        quantize_dynamic(str(onnx_path), str(int8), weight_type=QuantType.QInt8)
+        quantize_dynamic(str(onnx_path), str(int8), weight_type=QuantType.QInt8, per_channel=True)  # per-channel 量化漂移更小
         import onnxruntime as ort
         session = ort.InferenceSession(str(int8), providers=['CPUExecutionProvider'])
         inputs = {'input_ids': ids.numpy().astype(np.int64), 'attention_mask': mask.numpy().astype(np.int64)}

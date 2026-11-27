@@ -16,15 +16,18 @@ Arms: `shared-text` (one encoder + one head, `字段：<field>\n` prefix),
 `sm10-` (10 rows). Params: shared-text 15,797,778; split 15,798,292; the
 difference is 514 weights (0.0033%).
 
-**Results (mean ± sd over 5 seeds; split still running at 2 seeds).**
-- info F1: shared-text 0.855 ± 0.054; shared-embed 0.678 ± 0.088; split 0.889 ± 0.0 (n=2).
-- env F1: shared-text 0.918 ± 0.030; shared-embed 0.769 ± 0.000; split 0.933 ± 0.0 (n=2).
+**Results (mean ± sd over 5 seeds, HPC job 280875; final).**
+- info F1: shared-text 0.780 ± 0.117; shared-embed 0.636 ± 0.168; split 0.889 ± 0.000.
+- env F1: shared-text 0.916 ± 0.054; shared-embed 0.769 ± 0.000; split 0.946 ± 0.027.
 - The v1 numbers (shared 0.667) were an artifact of the seed and truncation
   defects and are withdrawn. `规则` remains at info 0.889 / env 1.000.
 The pre-registered positive bar (split ≥ shared-text + 0.05 AND ≥ shared-embed
-+ 0.05, CI lower bound > 0, ≥4/5 seeds same direction) is likely NOT met for
-shared-text: the observed gap is ~0.03 on info and ~0.015 on env with n=2.
-Field embedding actively hurts (−0.18 info, −0.15 env).
++ 0.05, CI lower bound > 0, ≥4/5 seeds same direction) is met on info only:
+split − shared-text = +0.109 (info), +0.030 (env); split − shared-embed =
++0.253 (info), +0.177 (env). Because env misses +0.05, the criterion as written
+is NOT met; decomposition has positive evidence on the harder field and none on
+the near-saturated one. Field embedding is worse than the text prefix on both
+fields.
 
 **Conditions.** Nine and ten holdout rows; rule-derived labels; one world;
 5 seeds but only 2 for split so far; no route-level 5-fold CV yet. `shared-text`
