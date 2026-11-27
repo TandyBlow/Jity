@@ -130,6 +130,8 @@ export async function decideInformation(
   if (label !== 'achieved' && label !== 'partial') return null;
   if (entityIds.length !== 1) return null;
   if (!READ.test(text)) return null;
+  // 泛泛的「查看某物」没有问项，模型没有可判定的目标（审计实测会乱选分句）
+  if (!/关于|想知道|有没有|能不能|是否|什么|哪|多少|几/u.test(text)) return null;
   const entityId = entityIds[0];
   const entity = state.initial.items[entityId] ?? state.initial.characters[entityId];
   if (!entity?.initialAppearance) return null;

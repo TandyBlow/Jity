@@ -267,7 +267,7 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           : null;
         const decidedInfo = !programInfo && !priorBlocked && options.decider
           ? await decideInformation(subAction.text, reading, request.state, label, options.decider,
-            normalized, member.memberId, actorRoom, destination)
+            subAction.text, member.memberId, actorRoom, destination)
           : null;
         // 模型决定的行进控制台，验收驱动按 world-local 前缀采集
         if (decidedInfo) console.info(`[world-local decide] info ${decidedInfo.entityId}:${decidedInfo.text.slice(0, 40)}`);

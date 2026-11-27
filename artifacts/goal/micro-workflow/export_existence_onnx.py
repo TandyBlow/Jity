@@ -54,8 +54,10 @@ def main():
     for field in ('env', 'info'):
         saved = torch.load(MODELS / f'semantic-heads-{field}.pt', map_location='cpu', weights_only=False)
         model = One(field)
-        state = {'bert.' + key.split('.', 1)[1] if key.startswith('bert.') else 'head.' + key.split('.', 1)[1]: value
-                 for key, value in saved.state_dict().items()}
+        saved_state = saved.state_dict()
+        state = {'bert.' + key.split('.', 1)[1]: value for key, value in saved_state.items() if key.startswith('bert.')}
+        state.update({'head.' + key.split('.', 1)[1]: value for key, value in saved_state.items()
+                      if key.startswith(field + '.')})
         model.load_state_dict(state)
         model.eval()
         enc = tok('路明非把盖子提开，锁梁完整。', truncation=True, max_length=LEN)

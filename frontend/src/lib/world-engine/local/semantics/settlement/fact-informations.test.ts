@@ -91,34 +91,34 @@ describe('model information decision', () => {
   const decider = (scores: Record<string, number>, info = 0.9) => ({ extraction: async () => pick(scores), existence: existence(info) });
 
   it('takes the top clause when the pointer is confident', async () => {
-    const hint = await decideInformation('我查看检修图', ['chart'], state, 'achieved',
+    const hint = await decideInformation('我想看看检修图上更换的要求是什么', ['chart'], state, 'achieved',
       decider({ '图上画明：先向内压释放杆': 0.2, '更换时另一人需控制杆身': 0.85 }), '路明非查看检修图。', 'lu');
     expect(hint?.text).toBe('更换时另一人需控制杆身');
   });
   it('abstains on a low score', async () => {
-    const hint = await decideInformation('我查看检修图', ['chart'], state, 'achieved',
+    const hint = await decideInformation('我想看看检修图上更换的要求是什么', ['chart'], state, 'achieved',
       decider({ '图上画明：先向内压释放杆': 0.3, '更换时另一人需控制杆身': 0.5 }), '路明非查看检修图。', 'lu');
     expect(hint).toBeNull();
   });
   it('abstains on a narrow margin', async () => {
-    const hint = await decideInformation('我查看检修图', ['chart'], state, 'achieved',
+    const hint = await decideInformation('我想看看检修图上更换的要求是什么', ['chart'], state, 'achieved',
       decider({ '图上画明：先向内压释放杆': 0.8, '更换时另一人需控制杆身': 0.75 }), '路明非查看检修图。', 'lu');
     expect(hint).toBeNull();
   });
   it('abstains when existence says no', async () => {
-    const hint = await decideInformation('我查看检修图', ['chart'], state, 'achieved',
+    const hint = await decideInformation('我想看看检修图上更换的要求是什么', ['chart'], state, 'achieved',
       decider({ '图上画明：先向内压释放杆': 0.2, '更换时另一人需控制杆身': 0.9 }, 0.2), '路明非查看检修图。', 'lu');
     expect(hint).toBeNull();
   });
   it('rejects a clause that is not a committed candidate', async () => {
-    const hint = await decideInformation('我查看检修图', ['chart'], state, 'achieved',
+    const hint = await decideInformation('我想看看检修图上更换的要求是什么', ['chart'], state, 'achieved',
       { extraction: async () => [{ clause: '图上画着别的机关', score: 0.95 }], existence: existence(0.9) },
       '路明非查看检修图。', 'lu');
     expect(hint).toBeNull();
   });
   it('requires an achieved or partial read with one entity', async () => {
     const confident = decider({ '图上画明：先向内压释放杆': 0.2, '更换时另一人需控制杆身': 0.9 });
-    expect(await decideInformation('我查看检修图', ['chart'], state, 'blocked', confident, 'x', 'lu')).toBeNull();
-    expect(await decideInformation('我查看检修图', ['chart', 'rules'], state, 'achieved', confident, 'x', 'lu')).toBeNull();
+    expect(await decideInformation('我想看看检修图上更换的要求是什么', ['chart'], state, 'blocked', confident, 'x', 'lu')).toBeNull();
+    expect(await decideInformation('我想看看检修图上更换的要求是什么', ['chart', 'rules'], state, 'achieved', confident, 'x', 'lu')).toBeNull();
   });
 });

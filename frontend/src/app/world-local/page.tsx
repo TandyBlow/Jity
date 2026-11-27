@@ -994,7 +994,7 @@ export default function WorldLocalPage() {
         const existencePort = microEnabled && (existenceShadow || semanticDecide) ? createMicroExistence() : undefined;
         const extractionPort = microEnabled && semanticDecide ? createMicroExtraction() : undefined;
         const decider = extractionPort
-          ? { extraction: extractionPort, existence: existencePort, minScore: 0.6, minMargin: 0.15, minExistence: 0.5 }
+          ? { extraction: extractionPort, existence: existencePort, minScore: 0.6, minMargin: 0.15, minExistence: 0.75 }
           : undefined;
         const microResults = microEnabled
           ? createMicroResults({ existence: existencePort, decider, onStats: (record) => recordMicro('results', record) })
