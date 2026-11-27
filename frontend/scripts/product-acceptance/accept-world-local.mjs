@@ -208,6 +208,16 @@ try {
   evidence.harness.edgeVersion = cdp ? browser.version() : profile ? (browser.browser()?.version() ?? null) : browser.version();
   const context = cdp ? browser.contexts()[0] : profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = cdp ? (context.pages()[0] ?? await context.newPage()) : await context.newPage();
+  if (cdp) {
+    // The phone tests run behind a self-signed HTTPS front; accept its cert
+    // inside the connected browser so navigation never shows the interstitial.
+    try {
+      const session = await context.newCDPSession(page);
+      await session.send('Security.setIgnoreCertificateErrors', { ignore: true });
+    } catch (error) {
+      console.warn('[cdp] could not set ignoreCertificateErrors:', String(error).slice(0, 120));
+    }
+  }
   if (evidence.harness.cpuThrottle) {
     const cdp = await context.newCDPSession(page);
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: evidence.harness.cpuThrottle });
@@ -587,6 +597,12 @@ try {
       const expectedRecordIndex = await page.evaluate(() => (Array.isArray(globalThis.__worldTurns) ? globalThis.__worldTurns.length : 0) + 1)
         .catch(() => null);
       await page.fill('textarea', turn.input);
+      // Mobile Chrome keeps the IME open over the submit control; blur it so
+      // the button is reachable (real-device runs only).
+      if (cdp) {
+        await page.evaluate(() => (document.activeElement instanceof HTMLElement ? document.activeElement.blur() : null)).catch(() => undefined);
+        await page.waitForTimeout(200);
+      }
       const submitAt = Date.now();
       // If the submit control is not actionable, record what the page shows
       // (label, disabled, status line) so a page-busy state is distinguishable
