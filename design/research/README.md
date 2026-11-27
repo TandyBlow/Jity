@@ -48,3 +48,4 @@ Artifacts     evidence files, manifests, commits
 | E22 | Mobile-proxy timing: current build | done (218.6/252.8 s, still 4x) |
 | E23 | LLM fixed-event cell: direct four-state probe | done (7/19 vs heads 17/19) |
 | E24 | 20-input acceptance on the micro default | done (20/20 gates) |
+| E25 | Phone real device: single 0.6B CPU arm, two turns | done (25.2/193.3 s; WebGPU still crashes) |
