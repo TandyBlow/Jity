@@ -37,9 +37,11 @@ registered appearance (`score_decide_shadow.py`).
 
 **Conditions.** Four inputs per set, one world, one seed. Correctness uses the
 registered initial appearance; active appearance changes are not in the check.
-The decide arm's abstains on these four turns are upstream of the models — the
-read action carries no item id under the rules action analysis — so the
-threshold calibration (0.75/0.6/0.15) is not exercised by this set at all.
+The decide arm's abstains on these four turns are structural (topic guard,
+other sub-actions), so the threshold calibration (0.75/0.6/0.15) is not
+exercised by this set at all. The offline `buildActionStructure` check ran on
+the same texts with the shipped world; the live page used the same rules path
+(`action lu 3ms`).
 
 **Principle.** The decide arm's operating range is narrower than "reads the
 program misses": on generic reads the topic guard rejects them before the
