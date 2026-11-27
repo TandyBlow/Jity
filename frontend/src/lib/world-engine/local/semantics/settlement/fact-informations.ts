@@ -126,31 +126,38 @@ export async function decideInformation(
   memberId?: Id,
   actorRoom?: Id,
   destination?: { containerId?: Id } | null,
+  onReject?: (reason: string) => void,
 ): Promise<{ entityId: Id; text: string } | null> {
-  if (label !== 'achieved' && label !== 'partial') return null;
-  if (entityIds.length !== 1) return null;
-  if (!READ.test(text)) return null;
+  const reject = (reason: string) => {
+    onReject?.(reason);
+    return null;
+  };
+  if (label !== 'achieved' && label !== 'partial') return reject('label');
+  if (entityIds.length !== 1) return reject('entity_count');
+  if (!READ.test(text)) return reject('not_read');
   // 泛泛的「查看某物」没有问项，模型没有可判定的目标（审计实测会乱选分句）
-  if (!/关于|想知道|有没有|能不能|是否|什么|哪|多少|几/u.test(text)) return null;
+  if (!/关于|想知道|有没有|能不能|是否|什么|哪|多少|几/u.test(text)) return reject('no_topic');
   const entityId = entityIds[0];
   const entity = state.initial.items[entityId] ?? state.initial.characters[entityId];
-  if (!entity?.initialAppearance) return null;
+  if (!entity?.initialAppearance) return reject('no_appearance');
   const arrival = destination?.containerId ? roomOf(state, destination.containerId) : null;
-  if (memberId && roomOf(state, entityId) !== (arrival ?? actorRoom ?? roomOf(state, memberId))) return null;
+  if (memberId && roomOf(state, entityId) !== (arrival ?? actorRoom ?? roomOf(state, memberId))) return reject('not_in_room');
   const clauses = informationCandidates(state, entityId);
   // 只有一个候选时没有「选择」可做，交给程序通道
-  if (clauses.length < 2) return null;
+  if (clauses.length < 2) return reject('too_few_candidates');
   if (decider.existence) {
     const scores = await decider.existence(existenceText || text);
-    if (!scores || scores.info < (decider.minExistence ?? 0.5)) return null;
+    if (!scores || scores.info < (decider.minExistence ?? 0.5)) return reject(`existence:${scores?.info.toFixed(4) ?? 'none'}`);
   }
   const scored = await decider.extraction(text, clauses);
-  if (!scored?.length) return null;
+  if (!scored?.length) return reject('extraction_empty');
   const ranked = [...scored].sort((left, right) => right.score - left.score);
   const best = ranked[0];
   const margin = best.score - (ranked[1]?.score ?? 0);
-  if (best.score < (decider.minScore ?? 0.6) || margin < (decider.minMargin ?? 0.15)) return null;
+  if (best.score < (decider.minScore ?? 0.6) || margin < (decider.minMargin ?? 0.15)) {
+    return reject(`score:${best.score.toFixed(3)}/${margin.toFixed(3)}`);
+  }
   // 支持核验：分句必须是已提交外貌的原句，程序不生成内容
-  if (!clauses.includes(best.clause)) return null;
+  if (!clauses.includes(best.clause)) return reject('not_verbatim');
   return { entityId, text: best.clause };
 }

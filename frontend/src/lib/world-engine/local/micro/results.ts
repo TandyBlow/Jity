@@ -269,7 +269,8 @@ export function createMicroResults(options: MicroResultsOptions = {}): MicroResu
           ? await decideInformation(subAction.text, reading, request.state, label, options.decider,
             `玩家：${subAction.text}
 事实：${normalized.replace(/；?(?:去向|环境|信息|涉及)=[^；。]*/gu, '')}`,
-            member.memberId, actorRoom, destination)
+            member.memberId, actorRoom, destination,
+            (reason) => console.info(`[world-local decide] abstain ${reason}`))
           : null;
         // 模型决定的行进控制台，验收驱动按 world-local 前缀采集
         if (decidedInfo) console.info(`[world-local decide] info ${decidedInfo.entityId}:${decidedInfo.text.slice(0, 40)}`);
