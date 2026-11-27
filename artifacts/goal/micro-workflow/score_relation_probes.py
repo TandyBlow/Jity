@@ -12,7 +12,8 @@ from pathlib import Path
 
 import torch
 import torch.nn as nn
-from transformers import BertModel, BertTokenizer
+from transformers import BertConfig, BertModel, BertTokenizer
+from head_io import load_head
 
 ROOT = Path('D:/others/Jity')
 HERE = ROOT / 'artifacts/goal/micro-workflow'
@@ -49,7 +50,7 @@ def main():
     tok = BertTokenizer.from_pretrained(SNAP)
     heads = {}
     for field, index in (('env', 1), ('info', 0)):
-        model = torch.load(MODELS / f'semantic-heads-{field}.pt', map_location='cpu', weights_only=False)
+        model = load_head(MODELS / f'semantic-heads-{field}.pt', SNAP)
         model.eval()
         heads[field] = (model, index)
     report = {}

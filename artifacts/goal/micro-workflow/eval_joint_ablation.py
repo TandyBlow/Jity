@@ -7,7 +7,8 @@ from pathlib import Path
 
 import torch
 import torch.nn as nn
-from transformers import BertModel, BertTokenizer
+from transformers import BertConfig, BertModel, BertTokenizer
+from head_io import load_head
 
 ROOT = Path('D:/others/Jity')
 HERE = ROOT / 'artifacts/goal/micro-workflow'
@@ -69,7 +70,7 @@ def main():
     tok = BertTokenizer.from_pretrained(SNAP)
     report = {}
     for arm in ('shared', 'split'):
-        model = torch.load(MODELS / f'joint-ablation-{arm}.pt', map_location='cpu', weights_only=False)
+        model = load_head(MODELS / f'joint-ablation-{arm}.pt', SNAP)
         model.eval()
         counts = {field: Counter() for field in FIELDS}
         rule_counts = {field: Counter() for field in FIELDS}
