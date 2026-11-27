@@ -1,0 +1,33 @@
+{
+ "kind": "phone-real-device-gpu-single-engine",
+ "cpuMode": false,
+ "narrationModel": "semantic",
+ "note": "single 0.6B engine on WebGPU (Mali Valhall, adapter 'arm valhall'). The worker no longer crashes, but generations fail: turn 1 stopped with fix_request:request_malformed, turn 2 with narration_failed at 13.3 s. Exact turn-1 stop time was not captured by the driver (its wait loop missed stop-only turns); the page probe showed the stop between 28 s and the diag read. Source: frontend/phone-play14.log, phone-play15.log.",
+ "date": "2026-11-27",
+ "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
+ "load": { "fromCache": false, "pageLoadingToReadyS": 61, "progressBarSeen": ["254 MB / 397 MB（64%）", "397 MB / 397 MB（100%）"] },
+ "results": [
+  {
+   "index": 1,
+   "input": "我抓住检修盖的拉环把盖子提开，看见下面的短梯。",
+   "elapsedS": null,
+   "source": null,
+   "failure": "fix_request:request_malformed",
+   "firstReadableMs": null,
+   "firstAcceptedMs": null,
+   "gpuLayersRequested": 99999,
+   "note": "semantic call made (语义 1 次), micro rows 2; fix_request retried and gave up"
+  },
+  {
+   "index": 2,
+   "input": "我向诺诺问清红蓝两方的局势，确认能不能保持中立。",
+   "elapsedS": 13.3,
+   "source": null,
+   "failure": "narration_failed",
+   "firstReadableMs": null,
+   "firstAcceptedMs": null,
+   "gpuLayersRequested": 99999,
+   "note": "submitted on the already-loaded engine; stopped 13.3 s after submit"
+  }
+ ]
+}

@@ -300,3 +300,9 @@
   border: 1px solid #444444;
   font: 11px monospace;
 }
+
+/* 手机：侧栏不显示（宽屏和验收 harness 不受影响） */
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .side { display: none; }
+}

@@ -38,3 +38,10 @@ HTTPS；每回合一次。不是五臂对比，不含质量评分。
 WebGPU 时移动档 60 s 门槛不成立；GPU 稳定性是下一道前置门槛（D-133）。
 
 **Artifacts.** `evidence-phone-5.json`、`phone-play12.log`、D-131..D-133。
+
+**GPU follow-up (same session).** 同一单引擎 0.6B 去掉 `?cpu=1`（Mali
+WebGPU，gpuLayers 99999，加载 61 s，进度条 64%→100% 正常）：worker 不再崩，
+但回合 1 以 `fix_request:request_malformed` 停止（语义输出连续两轮未过校验），
+回合 2 以 `narration_failed` 在 13.3 s 停止。证据
+`evidence-phone-6.json`。结论：Mali 的 WebGPU 计算路径不可信；手机默认改为
+CPU + 单 0.6B（`?cpu=0` 可强制 GPU 做实验），桌面默认不变。

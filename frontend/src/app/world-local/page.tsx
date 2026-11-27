@@ -86,6 +86,7 @@ type NarrationModelKey = keyof typeof NARRATION_MODELS;
 const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b-narr-lora';
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
 const formatBytes = (bytes: number): string => (bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB` : `${Math.max(0, Math.round(bytes / 1e6))} MB`);
+const isPhoneBrowser = (): boolean => typeof navigator !== 'undefined' && /Mobi|Android|iPhone/i.test(navigator.userAgent);
 
 /** Per-turn evidence record, mirrored on window.__worldTurns so an automated
  * acceptance run reads timings from the product instead of scraping DOM text. */
@@ -341,8 +342,9 @@ async function loadEngine(
     });
   };
   const cache = cacheTypes ? { cacheTypeK: 'q8_0' as const, cacheTypeV: 'q8_0' as const } : {};
-  // ?cpu=1：WebGPU 驱动崩（Mali）时全走 CPU
-  const forceCpu = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('cpu') === '1';
+  // 手机默认 CPU（Mali WebGPU 输出不可靠）；?cpu=0/1 可覆盖
+  const cpuParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('cpu') : null;
+  const forceCpu = cpuParam === '1' || (cpuParam !== '0' && isPhoneBrowser());
   // Do not retain the fetched GGUF Blob: two resident engines otherwise hold
   // ~1.4 GiB of Blob quota. A hard-stop reload refetches instead (rare).
   const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: forceCpu ? 0 : 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}), ...(onProgress ? { onLoadProgress: onProgress } : {}) });
@@ -942,7 +944,8 @@ export default function WorldLocalPage() {
         if (!assetResponse.ok) throw new StaticWorldError('file_hash', `world asset HTTP ${assetResponse.status}`);
         const world = await loadStaticWorld(await assetResponse.text(), STATIC_WORLD_REGISTRATION);
         const arm = narrationArm.current;
-        const narrationKey: NarrationModelKey = arm.model ?? DEFAULT_NARRATION_MODEL;
+        // 手机默认单引擎 0.6B 兼顾两角色（内存与稳定性）
+        const narrationKey: NarrationModelKey = arm.model ?? (isPhoneBrowser() ? 'semantic' : DEFAULT_NARRATION_MODEL);
         const narrationSpec = NARRATION_MODELS[narrationKey];
         // The engines are constructed first but NOT loaded yet: the local save
         // must restore and paint before a ~100 s cold load, otherwise a reload

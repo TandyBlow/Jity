@@ -1161,3 +1161,5 @@
 - 结果（`artifacts/goal/micro-workflow/evidence-phone-5.json`）：回合 1 总 25.2 s（首段 10.3 s、246 字）；回合 2 总 193.3 s（首段 91.8 s、131 字、23 行微模型、1 次语义调用），295 s 时限停掉后续自动回合。引擎加载 26.8 s（缓存未命中）。
 - WebGPU（Mali Valhall）：旧包双引擎加载成功（52.8/77.5 s）但生成崩溃 `wllama has crashed`（复现 2 次）；单引擎 0.6B 的 GPU 组合未测。移动 GPU 稳定性是 60 s 目标的前置门槛；0.6B 叙事质量低于 1.7B LoRA（评估臂，G6 不变）。
 - 基础设施：CDP 证书豁免随会话失效（驱动须整程持会话）；3177 为 `next start`，源码改动必须 rebuild+restart 才生效；首载上限抬到 600 s；页面新增实时状态行（已等待/语义调用/微模型行数）与 `__worldPhase` 探针。
+
+**D-133 补记（同日 GPU 对照）.** 同一单引擎 0.6B 去掉 `?cpu=1` 走 Mali WebGPU：worker 不再崩（旧包 1.7B 的 `wllama has crashed` 不再出现），但输出不可用——回合 1 `fix_request:request_malformed`（语义输出两轮未过校验），回合 2 `narration_failed`（13.3 s 内失败）。证据 `artifacts/goal/micro-workflow/evidence-phone-6.json`。结论：Mali 的 WebGPU 计算路径不可信，手机默认改为 CPU + 单 0.6B 引擎（`?cpu=0` 可强制 GPU 实验）；页面补 viewport meta，窄屏隐藏右侧栏。
