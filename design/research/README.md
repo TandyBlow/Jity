@@ -1,0 +1,31 @@
+# Research records (Chapter 8 material)
+
+One file per experiment. Each record answers a research question with measured
+numbers, states the conditions under which it holds, and ends with a design
+principle that can be cited. Records are written when the experiment runs, not
+after the fact; failures stay in.
+
+## Format
+
+```text
+# E<nn> <short title>
+Question      one sentence, the research question
+Setup         code paths, page/offline, model ids and hashes, driver hash
+Data          ids, counts, splits/holdouts, label provenance
+Arms          what is compared and how each arm decides
+Metrics       definitions and thresholds (frozen before the run)
+Results       tables with real numbers; failures included
+Conditions    what the numbers do and do not cover (proxy vs device, sample size)
+Principle     one or two sentences a paper can quote
+Artifacts     evidence files, manifests, commits
+```
+
+## Index
+
+| id | title | status |
+|---|---|---|
+| E01 | Information extraction: rule distillation vs appearance-level holdout | done |
+| E02 | Fact-support verification: claim vs settled record | done |
+| E03 | Existence-gated decision arm for information reads | done (experimental) |
+| E04 | Mobile-proxy timing composition | done (proxy only) |
+| E05 | Deployment parity: PyTorch vs int8 ONNX heads | done |
