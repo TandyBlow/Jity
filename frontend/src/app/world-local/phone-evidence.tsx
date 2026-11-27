@@ -3,7 +3,7 @@
 /** Phone evidence panel (`?phoneEvidence=1`): a compact, copyable JSON of the
  * turn records the page already mirrors on window.__worldTurns. It exists for
  * real-device runs where no CDP endpoint is available (WebView browsers). */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
 
 interface TurnLike {
@@ -22,6 +22,8 @@ export default function PhoneEvidencePanel() {
   const [enabled, setEnabled] = useState(false);
   const [text, setText] = useState('');
   const [copied, setCopied] = useState(false);
+  const [uploaded, setUploaded] = useState<string | null>(null);
+  const lastUploaded = useRef('');
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (new URLSearchParams(window.location.search).get('phoneEvidence') !== '1') return;
@@ -60,11 +62,21 @@ export default function PhoneEvidencePanel() {
     }, 2000);
     return () => clearInterval(timer);
   }, []);
+  useEffect(() => {
+    if (!enabled || !text || text === lastUploaded.current) return;
+    const timer = setTimeout(() => {
+      lastUploaded.current = text;
+      fetch('/api/phone-evidence', { method: 'POST', headers: { 'content-type': 'application/json' }, body: text })
+        .then((response) => setUploaded(response.ok ? new Date().toLocaleTimeString() : '失败'))
+        .catch(() => setUploaded('失败'));
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [enabled, text]);
   if (!enabled) return null;
   return (
     <div className={styles.phoneEvidence}>
       <div className={styles.phoneEvidenceHeader}>
-        <span>手机证据（复制后发我）</span>
+        <span>手机证据{uploaded ? ` · 已回传 ${uploaded}` : ''}</span>
         <button type="button" onClick={() => { void navigator.clipboard?.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
           {copied ? '已复制' : '复制'}
         </button>
