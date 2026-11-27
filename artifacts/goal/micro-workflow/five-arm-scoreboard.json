@@ -67,36 +67,36 @@
     "task": "candidate pointer on semantic-extraction.jsonl (55 pairs) with the deployed thresholds",
     "all": {
      "pairs": 55,
-     "decided": 48,
-     "correct": 43,
-     "wrong": 5,
-     "abstained": 7,
-     "accuracyWhenDecided": 0.896
+     "decided": 49,
+     "correct": 48,
+     "wrong": 1,
+     "abstained": 6,
+     "accuracyWhenDecided": 0.98
     },
     "appearanceHoldout": {
      "pairs": 14,
-     "decided": 8,
-     "correct": 4,
-     "wrong": 4,
-     "abstained": 6,
-     "accuracyWhenDecided": 0.5
+     "decided": 9,
+     "correct": 8,
+     "wrong": 1,
+     "abstained": 5,
+     "accuracyWhenDecided": 0.889
     },
-    "source": "score_pointer_abstain.py (torch + shipped int8), this run",
+    "source": "score_pointer_abstain.py (torch + shipped int8, head retrained with cross-appearance negatives, HPC 281251)",
     "onnxAll": {
      "pairs": 55,
-     "decided": 49,
-     "correct": 44,
-     "wrong": 5,
-     "abstained": 6,
-     "accuracyWhenDecided": 0.898
+     "decided": 50,
+     "correct": 48,
+     "wrong": 2,
+     "abstained": 5,
+     "accuracyWhenDecided": 0.96
     },
     "onnxAppearanceHoldout": {
      "pairs": 14,
-     "decided": 9,
-     "correct": 5,
-     "wrong": 4,
-     "abstained": 5,
-     "accuracyWhenDecided": 0.556
+     "decided": 10,
+     "correct": 8,
+     "wrong": 2,
+     "abstained": 4,
+     "accuracyWhenDecided": 0.8
     },
     "thresholdSweep": {
      "deployed": {
@@ -119,7 +119,7 @@
       "holdoutPrecision": 0.556,
       "holdoutCoverage": 0.643
      },
-     "note": "the four wrong holdout decisions score 0.865-0.995 with margins 0.359-0.975; no train-chosen threshold removes them",
+     "note": "post-fix head: the previous confidently-wrong holdout cases are gone; the remaining wrong decisions are fewer",
      "source": "score_pointer_calibration.py, this run"
     }
    },
@@ -135,7 +135,7 @@
     "narrationSources": "model 8/8"
    },
    "source": "evidence-perf-taskskip-8.json + scenario_report.py; query micro=1&microContinuation=heads&microReaction=1&taskProposer=micro&seed=11&narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts",
-   "notes": "end-to-end as above; fixed-event cell is the candidate pointer only (existence gate not applied offline); on the appearance holdout the pointer is at chance when it decides"
+   "notes": "end-to-end as above; fixed-event cell is the candidate pointer with the retrained head; holdout decisions 8/9 correct (torch) after abstention"
   },
   "existing-llm": {
    "kind": "llm",
@@ -149,6 +149,6 @@
   "micro-generative arm: wire v3 into a page arm and freeze per-field evaluation",
   "existing-llm arm: a current-kernel LLM semantic arm (in-page 0.6B or an offline LLM labeler over the frozen holdouts)",
   "end-to-end for rules/classifier/generative/LLM arms: page runs with the same frozen scenarios",
-  "hybrid-micro: existence gate not included in the offline fixed-event cell; pointer confidence is miscalibrated on unseen appearances (holdout 4/8 when decided)"
+  "hybrid-micro: page smoke after the extraction ONNX swap still owed (parity gate passes)"
  ]
 }
