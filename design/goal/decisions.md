@@ -1087,3 +1087,13 @@
 - 探针页 `semantic-llm-probe`（0.6B，temp 0，单提示、无 few-shot）在冻结存在性留出 19 行上直接问四态：env 1/9（0/8 正例）、info 6/10（1/4 正例、1 假阳性），合计 7/19、正例召回 1/12；同一批行上存在性头是 17/19（env 8/9、info 9/10）。
 - 模型几乎一律答 absent；行本身负例偏多，部分分数来自基率。这是“同一固定事件问题上的 LLM 臂”，不是产品 LLM 通道的回合行为（那个由 E20 端到端覆盖）。
 - 记分板 existing-LLM 的 fixedEvent 单元写入。剩余空白：规则/分类页面臂、真机移动端。
+
+## D-123（未决）规则/分类页面臂的实现设计（2026-11-27）
+
+- 状态：`open`（设计已定，未实现；等实现窗口）。
+- 现状：页面只有混合臂（rules→micro→LLM）与 LLM 臂（micro=0）。`createMicroContinuation` 已有 `ruleOnly`，其余端口没有 rules-only / skip-rules 选项；语义引擎是共享的，端口的弃权会落到 LLM，所以“纯规则/纯分类”目前无法用 URL 表达。
+- 设计（实现时照此做）：
+  1. 端口选项：`createMicroTargets/Results/Updates/Behavior/Judge` 增加 `rulesOnly`（只跑规则，规则未命中即弃权，不加载模型）与 `skipRules`（跳过规则快路径，直接模型）。
+  2. 语义引擎包装：页面加 `?semanticArm=rules|classifier`，把语义引擎包成对 `complete/chat` 直接抛 `semantic_arm_abstain` 的端口；叙事引擎不包。处理器已按 stageFailure/fallback 保守继续，回合不中断。
+  3. 验收：每臂跑冻结 8 场景，记录状态/任务/成就断言、耗时、失败与回退；与混合臂、LLM 臂并列进记分板。
+- 为什么现在不做：端口改动跨 5 个模块且需要逐臂页面验证；在会话尾部做半套会被误读为完成。设计冻结在这里，下一步按 1→2→3 实现。
