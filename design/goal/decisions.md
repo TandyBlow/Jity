@@ -899,3 +899,10 @@
 - 作业 280873（gpu/4090D）完成前半段后因 `train_extraction_head.py` 缺少 `import os` 中止（本地 py_compile 不执行模块级代码，所以没抓到；已修）。已产出：存在性 env 留出 8/9、info 9/10；支持 env 15/16、info **6/10**（比本机 4/10 好，但仍是同一数据/种子下的不稳定结果，只作实验）；模型保存在集群 `micro_train/.local/micro-semantic/`。
 - 补交作业 **280875**（extraction 25 轮 + 5 种子消融）。本机那个 1 轮 smoke 把本地 `extraction-head.pt` 覆盖成欠训练版本，ONNX 未变；在回取 HPC 模型前不再跑 torch↔ONNX 一致性门（会误报）。
 - 训练统一走 HPC；作业日志经 `reports/`，模型与 `ablation-report-v2.json` 由 `_hpc_micro_fetch.py` 回取。
+
+## D-099 叙事表示 A/B 预注册（2026-11-26）
+
+- 状态：`signed`（2026-11-26）。
+- 问题：在同一个 1.7B 叙事 LoRA、同一世界与输入下，事实输入表示（`narrationShape=prose-facts` vs `serialized`）是否改变事实一致性与可读性？
+- 设计：冻结 8 场景回合集（`scenarios-independent-turns.json`，micro 臂、seed 11），两臂都 `narrationCandidate=trained&narrationMode=scene`，仅 shape 不同；同构建、同叙事权重（sha256 82e513db…）、同温度（0.45）、同输出预算（页面默认，未加预算参数）。指标：D1 硬对齐违规与 review fact 矛盾、D2 覆盖（本轮不宣称，alignmentPacket 不含外观）、D3 重复与 fallback（`score_narration_arms.py`）、场景状态/任务断言（`scenario_report.py`）、时延与正文来源。不做盲评（judge 可选、未启用）；一个种子，结论只作方向，不作显著性声明。
+- 预注册判据：若一臂在状态断言不降的前提下，硬对齐违规或跨回合重复更低且正文来源全部为模型，则记为表示方向的正面信号；若两臂无差异或另一臂明显更差，按无结论记录。
