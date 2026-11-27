@@ -1201,3 +1201,5 @@
 - 影响：新增采集继续在 env-*/info-* 路由上扩人物（周映/秦越/顾岚/沈澄/富山/曼施坦因）、物品（74 件）与地点（26 处）覆盖；跨世界泛化不再作为本轮数据或验收目标。
 
 **D-136 复核（2026-11-28，`evidence-semantic-env-11-2026-11-27T1848-1519.json`）.** env-11 重跑 12 回合、11 条新行标注：修复把 `sm-e-success-10`（长桌补全）从 conflict 变为 **present**（+1 可训练正例）。残余：`sm-e-partial-3`/`sm-e-partial-6` 仍 insufficient——RESULT 分类器把"提到一半卡住/拉到一半卡住"判成非 partial（blocked/failed），环境短语因此不发；`sm-e-success-8`/`sm-e-success-9` 仍 conflict（检修盖/长椅的"补全"转移未被差分记录）。下一步是结果分类器对部分成功的识别与补全转移的补丁，而不是继续放宽短语规则。数据集 280 行、validator + 训练门通过（info 57/107、env 55/165）。
+
+**D-136 残余定位（同日）.** `sm-e-success-8` 的 `itemIds` 已解析到 `hatch_cover`、事实为 partial，但 `environmentHint` 的 locality 检查把它丢弃：物品在 `hatch` 容器（服务巷检修口），玩家在 `lane`（西侧服务巷），`roomOf` 判成不同房间。这是世界模型缺少子地点/相邻关系造成的，修法应在世界模型或 locality 判据层设计（例如地点包含关系），不是继续放宽短语或关键词。同一原因解释了 `sm-e-partial-3` 的部分 insufficient（该回合事实同样为 partial 且物品跨房间）。
