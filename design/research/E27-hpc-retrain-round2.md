@@ -23,8 +23,7 @@ CPU 试训（同脚本、无 holdout）作健全性对照。
   仅证明脚本对新数据可跑。
 - 部署 parity：`check_head_parity.py` exit 0，五个头 torch vs int8 决策一致
   （最大概率差 0.1005，无翻转）。
-- 5-seed 联合消融在记录时仍在跑（ablation-v2.log 已出 shared-text 两个 seed），
-  完成后补记。
+- 5-seed 联合消融（3 臂 × 5 seeds，第二轮数据）：shared-text info F1 0.853±0.044 / env 0.898±0.079；shared-embed info 0.734±0.142 / env 0.769±0.000；split info 0.911±0.044 / env 0.903±0.037。与上一轮相比 info 全面上升（0.78→0.853、0.636→0.734、0.889→0.911），env 基本持平（0.916→0.898、0.946→0.903、0.769 不变）；split 仍是 info 最优臂，env 三臂差距不大。
 
 **Ship decision（D-137）.** existence env/info（holdout 持平、训练行更新）与
 extraction（9/14 → 12/14）的 int8 ONNX 替换进 `frontend/public/micro/`，manifest
