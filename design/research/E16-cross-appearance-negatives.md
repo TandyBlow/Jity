@@ -23,7 +23,10 @@ same encoder/epochs/seed/optimizer.
   every head passes; manifest hash/bytes updated (`d670a27f…`).
 
 **Conditions.** Fourteen holdout groups; the improvement is two decisions on a
-small set. The head still trails the bigram rule on raw top1, so the rule stays
+small set. Every training and holdout pair comes from a settled `信息=` tag,
+i.e. a read the program already resolved (D-114), so these numbers measure
+distillation and cross-appearance generalisation — not added value over the
+rule. That needs a separately frozen set of program-missed reads. The head still trails the bigram rule on raw top1, so the rule stays
 the floor and the model arm the experimental one. The page was not re-run after
 the swap (acceptance lane paused); loading in ORT-WASM is covered by the same
 per-channel graph verified in E05, but a page smoke is still owed.
