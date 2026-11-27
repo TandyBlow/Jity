@@ -17,11 +17,18 @@ registered appearance (`score_decide_shadow.py`).
 **Results.**
 - Generic reads (4 turns): decide arm 0 model decisions. Abstain reasons over
   the four turns: `label` 12, `entity_count:none` 4, `no_topic` 15,
-  `not_read` 25 — the decider never reaches existence or extraction. The one
-  `entity_count:none` per turn is a read sub-action whose `itemIds` are empty.
+  `not_read` 25 — the decider never reaches existence or extraction.
+  Offline check (`buildActionStructure` on the same inputs): both reads do
+  resolve their item (`checkout_book`, `rules`), so the `entity_count:none`
+  lines are **not** attributable to the protagonist's read; they come from
+  other sub-actions without an item.
 - Topic reads (shadow arm, 4 turns): program channel fires 3/4 with exact
   clauses — `rules:医护白线禁射`, `map:地下检修通道用虚线标注`,
   `radio_nono:电池盖扣牢`; turn 4 (`器材领用簿`/折叠梯) has no program event.
+  Offline check explains it: the ledger sits in `supply_counter` and the
+  authored turn does not move the protagonist out of `lane`, so the room rule
+  rejects the read. The clause match itself works when the actor is in the
+  book's room (`longestShared('折叠梯', '担架、安全绳和折叠梯的领取栏仍空') = 3`).
 - Topic reads (decide arm): 2 of 4 turns completed before the run was stopped
   by the host for low system memory (not a product failure); both completed
   turns match the shadow arm (1 program event, 0 model events). **Turn 4, the
@@ -35,10 +42,12 @@ read action carries no item id under the rules action analysis — so the
 threshold calibration (0.75/0.6/0.15) is not exercised by this set at all.
 
 **Principle.** The decide arm's operating range is narrower than "reads the
-program misses": on generic reads it never gets an entity to decide about, and
-on topic reads the program channel already fills 3/4. A model-vs-program
-comparison needs inputs where the program abstains *and* the action analysis
-resolves the read item; that case remains unmeasured (turn 4 stopped, the four
+program misses": on generic reads the topic guard rejects them before the
+models, and on topic reads the program channel fills 3/4. The one program
+abstain on the topic set is the room rule, not a matching gap — a valid input
+for the decide arm only if the action actually walks there. A real
+model-vs-program comparison still needs inputs where the program abstains for
+a semantic reason; that case remains unmeasured (turn 4 stopped, the four
 frozen paraphrases in `decide-turns-4.json` not yet run).
 
 **Artifacts.** `evidence-decide-4.json` (generic decide), `evidence-info-topic-
