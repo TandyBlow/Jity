@@ -307,6 +307,20 @@ def test_task_gold_eval_commit_and_not_triggered():
     assert report['missing'] == []
 
 
+def test_soak_report_summarizes_heap_and_turns():
+    from tools.experiment_platform.soak_report import summarize
+
+    doc = {'status': 'COMPLETED', 'failures': [], 'turns': [
+        {'id': 'a', 'text': 'x' * 10, 'jsHeap': {'usedJSHeapSize': 100 * 1048576},
+         'timings': {'waitMs': 1000}, 'product': {'source': 'model', 'acceptedMs': 900, 'narrationModel': 'm'}},
+        {'id': 'b', 'text': 'y' * 20, 'jsHeap': {'usedJSHeapSize': 140 * 1048576},
+         'timings': {'waitMs': 2000}, 'product': {'source': 'model', 'acceptedMs': 1900, 'narrationModel': 'm'}},
+    ]}
+    report = summarize(doc, {'file': 'm.csv', 'peakEdgeMB': 100})
+    assert report['heapPeakMB'] == 140.0 and report['heapDriftMB'] == 40.0
+    assert report['waitMaxMs'] == 2000 and report['turns'] == 2
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate
