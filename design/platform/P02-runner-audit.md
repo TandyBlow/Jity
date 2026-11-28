@@ -37,9 +37,12 @@
    需要心跳字段或最大持有时间，同时保留"不杀用户浏览器"的约束。
 8. **调度器不查租约；验收驱动自己查。** `expctl.ps1` 只看空闲物理内存/提交上限，
    不 acquire `resource_lease.py`；但 `accept-world-local.mjs` 通过 `lease.mjs` 在启动时
-   acquire，所以两条验收任务之间有互斥。2026-11-28 21:55 我们的 holdout 重试被 lane
-   `09-ui` 的 smoke 拒绝（holderPid 17920），证明这道门有效。缺口在非驱动类 lab 任务
-   （纯探测、训练脚本）仍可能与验收并行；统一入口应让所有重型任务走同一个租约。
+   acquire，所以两条验收任务之间有互斥。注意 lane `09-ui` 是驱动的**固定 lane**，不是
+   某个 Agent 的标识；判断持有者要看 purpose 与 holderPid 的命令行。2026-11-28 21:55
+   的拒绝来自另一条 `smoke`（holderPid 17920）；22:40 卡住租约的 10-turn holder 56924
+   其实是平台自己的 holdout 驱动（被坏 chunk 卡死），已按 PID 停掉，不是别人的任务。
+   缺口在非驱动类 lab 任务（纯探测、训练脚本）仍可能与验收并行；统一入口应让所有重型
+   任务走同一个租约。
 9. **只治理内存，不治理 GPU/CPU。** 队列记录 `budgetMB`/`peakTreeMB`，没有 GPU 显存、
    利用率或 CPU 亲和性；WebGPU 实验的显存冲突不会被发现。
 10. **计时口径的三个缺口。**
