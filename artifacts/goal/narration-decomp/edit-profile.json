@@ -1,0 +1,8 @@
+{
+ "passages": 348,
+ "tokens": 49604,
+ "keep": 0.115,
+ "replace": 0.226,
+ "insert": 0.021,
+ "delete": 0.638
+}

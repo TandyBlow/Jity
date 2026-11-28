@@ -55,3 +55,4 @@ Artifacts     evidence files, manifests, commits
 | E31 | Program reconstruction baseline | done (program plan 0.21 / oracle plan 0.29 char F1) |
 | E32 | Clause selection model (0.1M logistic) | done (grouped CV F1 0.906; reconstruction 0.265) |
 | E33 | plan-to-prose v0 (0.84M char transformer) | negative (charF1 0.332 but degenerate/garbled samples) |
+| E34 | Word-level edit profile | done (delete 63.8%, replace 22.6%, keep 11.5%, insert 2.1%) |
