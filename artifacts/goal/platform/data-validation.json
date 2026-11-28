@@ -1,0 +1,2478 @@
+{
+ "schema": "jity-data-validation/1",
+ "headCommit": "cc91f1e5cd5b368a3c84c477285cad40b0695255",
+ "checks": {
+  "malformed": {
+   "level": "fail",
+   "findings": [
+    {
+     "path": "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-config.json",
+     "error": "Expecting value (line 1)",
+     "blocking": false
+    },
+    {
+     "path": "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-generation_config.json",
+     "error": "Expecting value (line 1)",
+     "blocking": false
+    },
+    {
+     "path": "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-tokenizer_config.json",
+     "error": "Expecting value (line 1)",
+     "blocking": false
+    },
+    {
+     "path": "experiments/narration-model-search/sources/hf/qwen35-2b/base-generation_config.json",
+     "error": "Expecting value (line 1)",
+     "blocking": false
+    }
+   ],
+   "count": 4,
+   "status": "warn"
+  },
+  "empty_dataset": {
+   "level": "warn",
+   "findings": [
+    {
+     "path": "experiments/narration-model-search/evidence/prompts-dev-v2-full15/whitespace-ledger.jsonl",
+     "role": "data"
+    },
+    {
+     "path": "experiments/narration-runtime-v2/data/result-fills.jsonl",
+     "role": "result"
+    },
+    {
+     "path": "experiments/world-components/parallel/fact_wording/artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/failures.jsonl",
+     "role": "data"
+    },
+    {
+     "path": "experiments/world-components/parallel/fact_wording/artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/failures.jsonl",
+     "role": "data"
+    }
+   ],
+   "count": 4,
+   "status": "warn"
+  },
+  "key_drift": {
+   "level": "warn",
+   "findings": [],
+   "count": 0,
+   "status": "pass"
+  },
+  "duplicate_content": {
+   "level": "warn",
+   "findings": [
+    {
+     "sha256": "9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59",
+     "bytes": 1655849,
+     "count": 2,
+     "paths": [
+      "experiments/action-dataset-v1/short_pairs/out-provisional/pairs-index.jsonl",
+      "experiments/action-dataset-v1/short_pairs/out/pairs-index.jsonl"
+     ]
+    },
+    {
+     "sha256": "919bfe201d7905968ddbb8e2cfbc6a3979d035228bd68dec52b002069310f764",
+     "bytes": 286264,
+     "count": 2,
+     "paths": [
+      "experiments/action-dataset-v1/short_pairs/out-provisional/rows-meta.jsonl",
+      "experiments/action-dataset-v1/short_pairs/out/rows-meta.jsonl"
+     ]
+    },
+    {
+     "sha256": "7a856670612e65e0c510eab54812ba7dc54cfa6620e76b7e321e2c4248e88e83",
+     "bytes": 112430,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r2/conformance.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/conformance.json"
+     ]
+    },
+    {
+     "sha256": "70475f913b2c20f02e0b7539c5fcd5d91dfc066ee1d9cae8a96589e5b21787cb",
+     "bytes": 33018,
+     "count": 2,
+     "paths": [
+      "experiments/narration-model-search/evidence/prompts-dev-v1/prompts.jsonl",
+      "experiments/narration-model-search/evidence/prompts-provisional/prompts.jsonl"
+     ]
+    },
+    {
+     "sha256": "b44894f93bdb348e89c700bd64fb0912e54eb54ebde8524bbe91f11aab684ad1",
+     "bytes": 27978,
+     "count": 3,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r1/downstream-inputs.jsonl",
+      "experiments/world-components/parallel/organize_plan/runs/r2/downstream-inputs.jsonl",
+      "experiments/world-components/parallel/organize_plan/runs/r4/downstream-inputs.jsonl"
+     ]
+    },
+    {
+     "sha256": "11beff0c82942269544c1146b138d21bc732dd30f833644eb254385a2bc8a048",
+     "bytes": 19731,
+     "count": 2,
+     "paths": [
+      "experiments/narration-quality/gate/demo-q3-new-rows.jsonl",
+      "experiments/narration-quality/review/batch-q3-new.jsonl"
+     ]
+    },
+    {
+     "sha256": "a1184e12c6925e95554b704d024007d8bd9ae33fc0467a50fe01db8f8d96db5b",
+     "bytes": 19724,
+     "count": 2,
+     "paths": [
+      "experiments/narration-best-of-n/data/b02-generalization-v2/expected.jsonl",
+      "experiments/narration-best-of-n/data/b02-generalization/expected.jsonl"
+     ]
+    },
+    {
+     "sha256": "6b2ee95b2e5eb7949dcd55a3b45335301c93a84fd73f26724db9cc29255e364d",
+     "bytes": 12984,
+     "count": 3,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r1/negatives.json",
+      "experiments/world-components/parallel/organize_plan/runs/r2/negatives.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/negatives.json"
+     ]
+    },
+    {
+     "sha256": "6dd991828fa33684c489b0e69e04077072e5344cbee8faa84fa1c213af78ff74",
+     "bytes": 8348,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r2/manual-review.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/manual-review.json"
+     ]
+    },
+    {
+     "sha256": "29e8e0180b71d81c15aadda0b370cec1991a486b354b6eaec25a5e28edcd858c",
+     "bytes": 7928,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0002-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0002-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "ade2432978689361ae946a45a70331206b516c4230296f6ae52b0ef548a3e224",
+     "bytes": 6811,
+     "count": 3,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r1/controls.json",
+      "experiments/world-components/parallel/organize_plan/runs/r2/controls.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/controls.json"
+     ]
+    },
+    {
+     "sha256": "7c9de4997d5653ac00e99ea39787d48c395c6bd9b0df232323d421f06fd00023",
+     "bytes": 6366,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0003-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0003-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2f7af5f6aa637570f5b4f061dc323ea70fc9c8a3a018d694cdb2256407d570b9",
+     "bytes": 6122,
+     "count": 3,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r1/legality.json",
+      "experiments/world-components/parallel/organize_plan/runs/r2/legality.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/legality.json"
+     ]
+    },
+    {
+     "sha256": "a8157aee9cf55477fcd9b2f1e964bdd95a34812d1179f24629a8230d079cbf3d",
+     "bytes": 5049,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0010-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0010-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "91413172324238a1947b8fe837c208782aefbe150f95c1d8fa4000d7f2f1ed67",
+     "bytes": 4632,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-scene-only.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-scene-only.jsonl"
+     ]
+    },
+    {
+     "sha256": "b5e5ff032c768e7bca1ff59111c4e22786539dd89dd4edc678504be28c5023c6",
+     "bytes": 4568,
+     "count": 2,
+     "paths": [
+      "experiments/action-dataset-v1/short_pairs/out-provisional/index-report.json",
+      "experiments/action-dataset-v1/short_pairs/out/index-report.json"
+     ]
+    },
+    {
+     "sha256": "c2ef39aa2c4bb86d2fb44cf0773d8cd37b445d403770008491d183bf6ec43d4f",
+     "bytes": 4487,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0002.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0002.txt"
+     ]
+    },
+    {
+     "sha256": "ede226a5467b99020b222540def570041327dc119773b8bdb4ba86bbb0fcbece",
+     "bytes": 4487,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0005-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0005-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2c57f3d5e0059c2b7d6c97d3adfe27529245afa22cf3f59c725f1a2bdf345645",
+     "bytes": 4326,
+     "count": 3,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r1/reference-output.jsonl",
+      "experiments/world-components/parallel/organize_plan/runs/r2/reference-output.jsonl",
+      "experiments/world-components/parallel/organize_plan/runs/r4/reference-output.jsonl"
+     ]
+    },
+    {
+     "sha256": "539e10a537602ca9cf54ca9fdda822c34fc63edb10b5f5f57ce5c28aad6df9db",
+     "bytes": 4222,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0007-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0007-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "e89d308bebf2c21c7b4c4a8f0cf8a464652e996694d4683dc220c022670baa15",
+     "bytes": 4218,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0011-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0011-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "6eed8d55e136ba970aa2085beb612b5dbf780891890303a624b7c79cf0cc20d3",
+     "bytes": 4202,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0009-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0009-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "9a7389074e6531b766a0d696c6ca9f7cc3f001355793270371606f30ac720a57",
+     "bytes": 4177,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0003.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0003.txt"
+     ]
+    },
+    {
+     "sha256": "e0f353a5f1ede5230c4a26d2cec7edefe8d3890dcf9f60af2243824c5e3624b5",
+     "bytes": 4165,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r2/tamper-probes.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/tamper-probes.json"
+     ]
+    },
+    {
+     "sha256": "43e5e8f9aa3dba4b64c965c2cec9bee6e7c0ed929b7e5365b22d1aa0efe2aae6",
+     "bytes": 4096,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0004-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0004-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "698b535ea745930f080e6fb6667db62a8d88b656f5827d5c72513caa7ed3233d",
+     "bytes": 4012,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0012-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0012-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+     "bytes": 3896,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/n2_selection/annotation/labels-d2-ai-a.jsonl",
+      "experiments/world-components/n2_selection/annotation/labels-d2-ai-b.jsonl"
+     ]
+    },
+    {
+     "sha256": "f029cc678f46813c56524cd84059018a62283297b62cc7246abdaeb99d0468d0",
+     "bytes": 3888,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0021-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0021-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "f0ce8aef4ebd3cc2a05e1f0ec51d27dafcd018a79229dc46f57d2975c9238f8a",
+     "bytes": 3845,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0006-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0006-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "ee95e3e97c57860e32a0455f311327c5506d816f1a491ce28bf155aec1df5355",
+     "bytes": 3739,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0018-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0018-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2dbfeb554cd9e54e4432467bf1ecd4e882a26cda555cf53424a5299fc67e0b2b",
+     "bytes": 3711,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0020-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0020-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "20a81307d958c9c7500b2a342306447eb9f202a9e557ee8b11da972d31b61f6d",
+     "bytes": 3643,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0013-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0013-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "bff602e28f7c09ce9a1d4f33e9851c647631caa3923d5d6342d2d59a35dc5809",
+     "bytes": 3593,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0043-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0043-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "8d7fe38a7fde773eda0bbac800596bedf33b36a614027f1785831d2811d3caa9",
+     "bytes": 3567,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0017-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0017-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "6940ae41e316e990c4443f608ded0efdb6034fe382510b7ba76ff1e21ce3f894",
+     "bytes": 3533,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0057-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0057-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "b0c018a3a00a4e81fa32d3154b658af8d33a5e7e66b585535841c9429ecfa060",
+     "bytes": 3440,
+     "count": 2,
+     "paths": [
+      "experiments/narration-best-of-n/data/b01-template-v2/expected.jsonl",
+      "experiments/narration-best-of-n/data/b01/expected.jsonl"
+     ]
+    },
+    {
+     "sha256": "a851911177625d4fc881c3eac241e7de2cabb70f7f2cedd021e46d2d65acb7d0",
+     "bytes": 3426,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0015-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0015-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "182effbef1606c113d559bbcb69dbdbb2b23f71694e15465ac5ce9cfdca314fe",
+     "bytes": 3422,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0016-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0016-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "7262ae0b3d47a93d3bb0224596d8e46a6d70ed806fc4073c7500572090acd729",
+     "bytes": 3387,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0104-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0104-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "8eb3d63367d8152b472e3363da86a24921cf0f0e8bf9659818b8a960969445a9",
+     "bytes": 3372,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0029-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0029-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "01f7a262f94c7640f4c33bbc5d4335234802db7f618d15e12694c17579443aae",
+     "bytes": 3359,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0026-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0026-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "01da885056640f7ea8d5e2833b1d24b7b994a89e94b853d9a1dc0a9f7648c2ba",
+     "bytes": 3354,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0033-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0033-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "477a701d2d4748d0e3798bee45bb3025206c26fc2f5605cbd5e07742440799dd",
+     "bytes": 3346,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0014-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0014-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "d12ae336711ae25b551ae55d7bde9b0ef6e81d146cd367965d656ff9e86de80d",
+     "bytes": 3300,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0079-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0079-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "18d8c547c748d2ddb0f9732e2acd30263b03d46039ebf09b9b897e031d010a42",
+     "bytes": 3286,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0023-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0023-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "624d57d7096179f6c9b7eaff583ebefc859b6b36d09e46dad0654a34a6e6219b",
+     "bytes": 3242,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0081-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0081-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "203ad8bc98b95ce441da72b10c96ef3a04874500c001150368421bfa7b2c7045",
+     "bytes": 3218,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0068-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0068-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "01eb908bbf47c9a74c96dfac228d2168e2345c7bc9754b3111e61b74b427b458",
+     "bytes": 3208,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0019-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0019-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "3517dd7782a498954ee17c012b076df1c34b96430b46e501a6b9a1d911b5f5b4",
+     "bytes": 3189,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0102-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0102-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "0fd32a21e091e05e8a83cb8165543f97f31393c5fb2a0911b99663c45d8e52cc",
+     "bytes": 3124,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0044-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0044-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "06d5a27d08868109c5c5e4c13f035b977a18ceeb435c3204a9f5d576a51172c1",
+     "bytes": 3124,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0096-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0096-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "bc1369c8fc39c77b83e7b9f362809d13a05eee4b442d3990f8af4cb6a8be60b3",
+     "bytes": 3070,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0039-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0039-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "24f70e9c7acb26997cdf2f5ac0f0050c1d9c26aeda12bf718c2eb77d07abc44b",
+     "bytes": 3068,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0055-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0055-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "f73279c9109c59f37d5415674d5c2be556bb16263fdb19df449cbf926012f3ad",
+     "bytes": 3044,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0025-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0025-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "691747a8dab26ad934c040a399f7b6fd981454943cfe31e5c1b57e31d49ec7a6",
+     "bytes": 3027,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0082-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0082-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "7af26691f82d95bfcf039f2145edc3f0c75af371687d033255320fde5dfc8686",
+     "bytes": 3012,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0064-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0064-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "4b8949605ffb53a12f04fbfce27cb88d33ace35697ff10e46b42aa2d22ae11af",
+     "bytes": 3012,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0066-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0066-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "611857d8e1c3d96a28497cbffc910d2ff05d0a609445360ef67928f1b2fe8b73",
+     "bytes": 2993,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0089-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0089-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "86345bea67b4ee5a61dac37f8328d09ac588c1531300b3e0bdf6c5b19da9bf3c",
+     "bytes": 2988,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0027-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0027-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "d5ad0811e8d8abb843cd47c9d2b4ba36fc83625c539091a3bef18c6699618d7e",
+     "bytes": 2976,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0069-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0069-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "52744f6802ab6943de61b50a614ef9f020db9e8b2cfa911564e65b88e1b84e35",
+     "bytes": 2939,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0059-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0059-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "fcd79e2b19d00ee0d33d3f223fe2dbd5a5abffa7b405ab9e6278d279761fbc41",
+     "bytes": 2919,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0090-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0090-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "296542360ba4adb8a787558ec2fd940030d21678676dc9f50d9838f275a95179",
+     "bytes": 2915,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0087-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0087-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "59cae869291a751dcdc83ce9edcb05d9940a1bbfb9874768cede231e9c7748fa",
+     "bytes": 2906,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0093-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0093-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "6c451b7e2c9aed8ae4b11be48ec9537b9ed01f22fc58afafcc7535e2b6591bb8",
+     "bytes": 2902,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0037-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0037-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "cf0ee290086cc9d440b8ec0766187396dc8988a37ca758916ba9fc1e92283e77",
+     "bytes": 2897,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0094-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0094-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "a433d3909a9a43561441a61e57aba98c3c7faac6991b42d9db295bf11ecfab73",
+     "bytes": 2893,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0056-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0056-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "768f0039d1ecb6a0ae30343e5c322c00d03bb342baf0200aff560d6ec8e31e79",
+     "bytes": 2883,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0083-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0083-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "3b12e12595ade039669ba675368c37eeda68c96baee312ad0ac0eb1a15b659bd",
+     "bytes": 2869,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0024-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0024-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "8e806299b1e7220522860d094f6b59821f63fbf4e6e5220bfeaf062d9934050a",
+     "bytes": 2869,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0041-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0041-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "a725b255e3d04983e191341dd3f0aafe38fe36aea5a6443d5f959c693c1af904",
+     "bytes": 2864,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0010.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0010.txt"
+     ]
+    },
+    {
+     "sha256": "379784d6c27eb3d2d5d441573e9a4b860c55fa804c325213f67bd52b3286d23a",
+     "bytes": 2845,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0086-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0086-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "eac35e1cccc2010dccb9c1e81544413b128489eae8833a366701012ef2a52e13",
+     "bytes": 2839,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0080-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0080-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "dd02d8ad8b5a26eaabaddb89f7e8bd12a4a3e3162d2f54900731ad9ea00b2fa3",
+     "bytes": 2823,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0100-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0100-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2975c5060bf1730f6093ed83f797bcbaf8899214252f34433c40a2d1b3f78023",
+     "bytes": 2814,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0035-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0035-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "3445a682bb5db9ff5f0bfc9dba517bf26a68e4cd367b308bb7f1258d76625ea2",
+     "bytes": 2812,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0030-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0030-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "ccdd865a4d44ef43149a1ae65f900da40a10cf26be81fd291a308d69c76aac3d",
+     "bytes": 2806,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0032-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0032-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "58e8486dc538298aa9086b4a57cf51ee37952ac3317936457d6c29c0551ad99f",
+     "bytes": 2805,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0072-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0072-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "be6d4ea38a3b9a4c721bc50557902101841ca14c62de6139d3a386df59a248f3",
+     "bytes": 2763,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0092-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0092-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "4c9c8514b99a4628cc45de21e1a63f15bbe0567ed90ef1eefcab9fe8fe7337c9",
+     "bytes": 2738,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0091-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0091-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "4efa9a58e5d11d8ccfac087db7796f4af2bcf7983ad87ae5f0252fc4d6a10d94",
+     "bytes": 2733,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0047-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0047-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "3cc76a9667fe12d9aef1e7266faf4b51dfabdde19508af43a434550a6fc2c704",
+     "bytes": 2717,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0071-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0071-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "aa0dd11d5c6f723b2bdba334ca542528e2311573ef37b8a71e402d9aa43771fb",
+     "bytes": 2694,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0054-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0054-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "0e9fea21fb721dc83dc59ff782bd887a52980e42ad1b77ade8b1adcc4cf9b0eb",
+     "bytes": 2684,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0076-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0076-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "1ca8b5bdef1242ae415c74afb23faa321e9b76387ec6c9933a8ef620a64d05e9",
+     "bytes": 2670,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0046-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0046-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "dc4e635f4e34f72dec78ddb1a1475e4c8b997328e40f7e8327ba4f86f87da93a",
+     "bytes": 2643,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0040-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0040-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "1ce731ec133393a1f54fcfd87a990b9f525ab81f51d8bd65c07536e3ca3cd89d",
+     "bytes": 2631,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0042-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0042-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "b8500141a48e434736163c1076ecd113c342252a68d728bf4ac22707b471a99e",
+     "bytes": 2627,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0034-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0034-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2bfd924f57a5031a58ef98b53c93f73a52a97f3a8bdcc65a4abc020fbb1d41c3",
+     "bytes": 2610,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0051-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0051-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "aa73bc1b3ad22d14c5b025350c47ee9d01d78e11173f5b2fe422cd05b97e387d",
+     "bytes": 2603,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0050-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0050-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "0e8f8ed377572971041c5b0c4d9d5508c66f98f3bc1b1872ae7179fd0454c09c",
+     "bytes": 2588,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0084-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0084-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "4174a5f801ffdd2b82e1c4c52a6007dbd87e756c88f44ebd87af60c55669a5c9",
+     "bytes": 2576,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0045-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0045-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "1e31b1dc1e263dc783f0f8dc98370401322a5484946e29e772a90a71e00b96d7",
+     "bytes": 2570,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0077-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0077-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "d7a226a0965880f84e452cd206f70d796a664b8a5d4dc162b118f81fb6a0db24",
+     "bytes": 2522,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0028-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0028-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "9a975c8b7151d6366d102888d7cec34e2d898bbf330eca32854f314bd9f7d89e",
+     "bytes": 2515,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0048-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0048-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "6c5f7390e19b18e4e4d4f76dbf596a260703d2ab6453115bd16a808608ab1422",
+     "bytes": 2505,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0005.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0005.txt"
+     ]
+    },
+    {
+     "sha256": "22fe189086dbe8a1616da66fabf1d7c1ae5c64dabeaf9b28eed6ffe711001510",
+     "bytes": 2504,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0053-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0053-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "49487df1972eb44756fd13c80083cd7b707be820f8c296c7118eae895acd0922",
+     "bytes": 2502,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0095-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0095-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "bb7f72ac041acd3102192b83475b00f4c05f73d994ccb11931afef0129ca0134",
+     "bytes": 2498,
+     "count": 4,
+     "paths": [
+      "experiments/narration-runtime-v2/data/splits-page-v1.json",
+      "experiments/narration-runtime-v2/data/splits-page-v2.json",
+      "experiments/narration-runtime-v2/data/splits-page-v3.json",
+      "experiments/narration-runtime-v2/data/splits-page-v5.json"
+     ]
+    },
+    {
+     "sha256": "f0602e8a3beb85388bd0f3a192eb04e308a237a0747a568fabcf175bdb4db3dc",
+     "bytes": 2429,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0067-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0067-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "f317e290f02424efd4689abb77431fc057b84ca727456fd05c9e4814dbb0657c",
+     "bytes": 2397,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0085-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0085-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "4a627eb0761a947e15c0bbc98249ced88f06632662e29299619cd014e72fe75f",
+     "bytes": 2394,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0103-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0103-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "97f876d9ef19f66221e44f2f18e6d74464b7c9641c451f11a62c6995a805c6bb",
+     "bytes": 2385,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0022-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0022-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "10b5c528aacc56c1f26427bacbceb511b1908cf873d27a498cea2471c80db4a1",
+     "bytes": 2369,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0074-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0074-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "fc1382a836b3adae0175321218d3e62b420a14b9245444c9f2c8d73f54a4d29d",
+     "bytes": 2348,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0038-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0038-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "225315cab4e5fea98c887a9fccba5b642105863bfd57220f8d982376d7d1650e",
+     "bytes": 2313,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0060-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0060-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "16a2d2f72513aadc67fa563d68c3f17d066ae3952a0d38f84567ba57554f6131",
+     "bytes": 2271,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0008-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0008-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "cfd082e7f282e298e8579ffa7c0f9a4d1fdbfbcaf6f73777fb1cfbf34ca8074e",
+     "bytes": 2212,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0049-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0049-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "a02bab224f1d9f172b59d51b7971137cde17695e00d909431712fc179ca72e12",
+     "bytes": 2190,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0009.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0009.txt"
+     ]
+    },
+    {
+     "sha256": "3171fb29c77d87abb270c2130107490bab470923805cc554bc8685bbd12c81c0",
+     "bytes": 2187,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0101-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0101-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "a5dc65d29b69b2eb8c3e0518ac7dee1240eac8a4fba51c28d9e5d2a65d04478c",
+     "bytes": 2182,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0078-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0078-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2ead6f8d76d3b3441d7d1ccda0e2a0f548beedfbab89a8c2f5270c9814b4faea",
+     "bytes": 2178,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0063-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0063-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "2d98d0b7833114e69a3d22e262c7d3de0bca8580314bec7e58b860cc3cf2c8ab",
+     "bytes": 2173,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0004.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0004.txt"
+     ]
+    },
+    {
+     "sha256": "220fe55e2ebbd4c0376bdf5f74c90d5806348140db7318b4c4fcc656d9503787",
+     "bytes": 2163,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0007.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0007.txt"
+     ]
+    },
+    {
+     "sha256": "8095d8e191aaab55334207c5e53dae9a101766e2341cbd60cd04e02504287677",
+     "bytes": 2124,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0073-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0073-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "437e4d1c31d98ddb0e07121c63ed84e299e58e1e0bbeca0e9a863a1dfecf7b43",
+     "bytes": 2110,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0011.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0011.txt"
+     ]
+    },
+    {
+     "sha256": "217798da96eabc93fbf415718b1874b33ffbd77914f20555f70f50c895c097ea",
+     "bytes": 2097,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0017.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0017.txt"
+     ]
+    },
+    {
+     "sha256": "9cedcdb6fcacad10aa11c62aeedef59092a7db2163b133075aeb1651e194af29",
+     "bytes": 2095,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0006.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0006.txt"
+     ]
+    },
+    {
+     "sha256": "a6d85cf05d3ea66515ba3765633dca0c49b247deed74af09bbcafd844e53178f",
+     "bytes": 2017,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0018.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0018.txt"
+     ]
+    },
+    {
+     "sha256": "d8aab984ea7499728566155e9d4b46c532381e413af4097e781add9571570a7f",
+     "bytes": 2006,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0058-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0058-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "9a9561023ada7f2d91f0b644149b04e72679f4a4450ea05facdc9c3718576b67",
+     "bytes": 2001,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0020.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0020.txt"
+     ]
+    },
+    {
+     "sha256": "c41e12494aa6439c44046319d2f661f436a51e0e8b6fdc29e9dbd62e95d83333",
+     "bytes": 2000,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0031-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0031-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "f49eba6dbf10d6dee8f8163fa27f9f4a9bde110e49cbbddf3e45345a5444061c",
+     "bytes": 1984,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0012.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0012.txt"
+     ]
+    },
+    {
+     "sha256": "49f8b63f67dde7cad54b41d20f69e23d1bd107eed9b324e411693cf32c0abfb5",
+     "bytes": 1984,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0065-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0065-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "d48f675c003ec4764185cd613b2b14ee804d79b1ecd266d2f76a2416defea13a",
+     "bytes": 1922,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0098-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0098-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "0e76563f421ad5abd78b3c7c0b744314abb3e9022fd60e689a6297574975716a",
+     "bytes": 1902,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0013.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0013.txt"
+     ]
+    },
+    {
+     "sha256": "05523ee46020e25b8d916d2f98c2d1905c329cfe8fe8203861bedb7cc3bd9e64",
+     "bytes": 1874,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0014.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0014.txt"
+     ]
+    },
+    {
+     "sha256": "1a6482bcaea25de91529ae576ece1f6b0561d4548b4e85044fb2493dc5986c47",
+     "bytes": 1865,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/row-0052-scene.jsonl",
+      "experiments/world-components/narration-dataset-v1/row-0052-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "28da7b7551cfd6b74e24cf7745fb5149818f519f19ab45e8b4f47bc17cfc7cbd",
+     "bytes": 1833,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0015.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0015.txt"
+     ]
+    },
+    {
+     "sha256": "0852176300f2539eb4c0a177f96187b05848d9dea0c74217becf06c8ce8cacf6",
+     "bytes": 1767,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0016.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0016.txt"
+     ]
+    },
+    {
+     "sha256": "e2609c7fe223fb7f46a046371e1bfe9e0fedd3cf7c720d9f89c51086f559db44",
+     "bytes": 1750,
+     "count": 2,
+     "paths": [
+      "experiments/narration-model-search/evidence/prompts-dev-v1/whitespace-ledger.jsonl",
+      "experiments/narration-model-search/evidence/prompts-provisional/whitespace-ledger.jsonl"
+     ]
+    },
+    {
+     "sha256": "484fc7e626ae051ac6d8ffecee1561daf387f922c09f7b0c1f3b8a85bbe80174",
+     "bytes": 1625,
+     "count": 3,
+     "paths": [
+      "experiments/world-components/parallel/organize_plan/runs/r1/legacy-plans.json",
+      "experiments/world-components/parallel/organize_plan/runs/r2/legacy-plans.json",
+      "experiments/world-components/parallel/organize_plan/runs/r4/legacy-plans.json"
+     ]
+    },
+    {
+     "sha256": "641aebc1f9b4d19e8a7aae1afd1c52df3dd2d32bc430491b9bf659b8ea573281",
+     "bytes": 1599,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0019.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0019.txt"
+     ]
+    },
+    {
+     "sha256": "951a33e7e9a7bf9e493c96d438fb40d342cdc11c126f5f6803625a7d6163424c",
+     "bytes": 1374,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0008.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0008.txt"
+     ]
+    },
+    {
+     "sha256": "393bc3d1e988a60c3d520498fdc5ba642379e3efd05b5e49c2412df17454a0b3",
+     "bytes": 1328,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0021.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0021.txt"
+     ]
+    },
+    {
+     "sha256": "8e27adc24eb004fbce25a7bcbdc64bcf23ca808d89a962988a0d1fe8874f20e3",
+     "bytes": 1275,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0086.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0086.txt"
+     ]
+    },
+    {
+     "sha256": "c75c2e1c6980c605b7e0c6c27ba9fc12a5f69f701d3f723f5011c0f31f78da90",
+     "bytes": 1268,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0092.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0092.txt"
+     ]
+    },
+    {
+     "sha256": "d4f60be9fbfe5ac7c8fb12798cdaf190e1967a0c70780bd0a1fccf693e3b2897",
+     "bytes": 1265,
+     "count": 2,
+     "paths": [
+      "artifacts/goal/narration-standalone/evaluate-narration.json",
+      "artifacts/goal/narration-standalone/inputs-eval.json"
+     ]
+    },
+    {
+     "sha256": "0f40e1e87df3e9446fd7ce37e3beca33a009715d039038457ccd127dc1ee58a4",
+     "bytes": 1256,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0029.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0029.txt"
+     ]
+    },
+    {
+     "sha256": "67ec347312220c17a43b77f05c7fd6cb5b115501d159cd37880f90dc48bfb4c3",
+     "bytes": 1246,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0093.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0093.txt"
+     ]
+    },
+    {
+     "sha256": "6bb8f19b46b8b1edf0b037d7c9ad865b92bf91f4e90d991b4e10683450910215",
+     "bytes": 1219,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0104.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0104.txt"
+     ]
+    },
+    {
+     "sha256": "849dff1bd20757e447da490eacca530038463368ad7f48890dfdcbb09bb97a0d",
+     "bytes": 1217,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0079.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0079.txt"
+     ]
+    },
+    {
+     "sha256": "2f4abb1aac93cb60925556e682e82685a5a60afa0f40e4dd50a79c2cc54955a6",
+     "bytes": 1210,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0087.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0087.txt"
+     ]
+    },
+    {
+     "sha256": "a0035b877826a85345373164478711d8430ce510a483bdf124f19cec9e21e570",
+     "bytes": 1194,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0091.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0091.txt"
+     ]
+    },
+    {
+     "sha256": "46549cd2a344baffd098f75e02fca28200806dcf7323547494936fe09bb046f5",
+     "bytes": 1192,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0044.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0044.txt"
+     ]
+    },
+    {
+     "sha256": "07fc9f21ca82b74e1378797a53bc9cf1b40e8f2046570e6af1c87b69d93d734a",
+     "bytes": 1183,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0072.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0072.txt"
+     ]
+    },
+    {
+     "sha256": "42a93bc4ea6fc21a45b5a2219c1d7a576ff2d581da36eab277449a3115d768c8",
+     "bytes": 1171,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0089.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0089.txt"
+     ]
+    },
+    {
+     "sha256": "d3d30f447d1e3d7e7620dfff1f99ca0466eb93a696ac331ef8a858c01b191b11",
+     "bytes": 1165,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0100.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0100.txt"
+     ]
+    },
+    {
+     "sha256": "8e8ec70d497f217eaa87e9a1e74103e9760f702c213eeaad8e2e93082c09a8d2",
+     "bytes": 1159,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0077.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0077.txt"
+     ]
+    },
+    {
+     "sha256": "d21070290cc73044094af99d83e8c593ee6c3503b190765dd6fdfc48222fa778",
+     "bytes": 1152,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0083.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0083.txt"
+     ]
+    },
+    {
+     "sha256": "c05809c2a00bfc03ff1ff6580630ffb54e84cb7d40e9df10b62efb228d25cf9e",
+     "bytes": 1149,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0034.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0034.txt"
+     ]
+    },
+    {
+     "sha256": "59655dd905a7076e490893e7a9f8428d707b3d7d805e634c15c7380526146abe",
+     "bytes": 1140,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0074.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0074.txt"
+     ]
+    },
+    {
+     "sha256": "3bd1d67fbbb484069cffea11d149b69eeea387b36b48df881da149d3b1c5a8a4",
+     "bytes": 1137,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0050.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0050.txt"
+     ]
+    },
+    {
+     "sha256": "7055f46e78dbd9ffc3b553776de9b2ba769d2a044c4b6d1496e7741fddf2335e",
+     "bytes": 1127,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0094.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0094.txt"
+     ]
+    },
+    {
+     "sha256": "6e176d796fcf62f24e4a40d460229a73524e9581bc03c919ec5aad5cbaeac0ce",
+     "bytes": 1126,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0033.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0033.txt"
+     ]
+    },
+    {
+     "sha256": "6c02a9248ce5ee5e2cabca9893b0cadfe49c6026772da2548fe4cf3daab73c03",
+     "bytes": 1114,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0032.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0032.txt"
+     ]
+    },
+    {
+     "sha256": "c53d506577942bef2155b9ed71ba163351915e7120dcb931e0fe6134bb04b48c",
+     "bytes": 1113,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0042.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0042.txt"
+     ]
+    },
+    {
+     "sha256": "5fb2289fe21b8bc88b1c87b9828e3a0b05c43f454a4dd743b6d85857fb841653",
+     "bytes": 1112,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0024.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0024.txt"
+     ]
+    },
+    {
+     "sha256": "4b30ed8e4c9fae0318923c9127b045bb444d012e818d63890a48423f5aa03259",
+     "bytes": 1110,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0030.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0030.txt"
+     ]
+    },
+    {
+     "sha256": "9e562759f05d456c4654a35be75f35728e6945a334951dbecdc23af9952985dc",
+     "bytes": 1109,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0055.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0055.txt"
+     ]
+    },
+    {
+     "sha256": "f557545423b07a95590f75a99cd1f6c3f395db171c33497f5f70053d80851c29",
+     "bytes": 1108,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0071.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0071.txt"
+     ]
+    },
+    {
+     "sha256": "ce9f73a5819c688cf7199ff19cddcae6b01f5d8db19e8c02d0109ccbe17848a8",
+     "bytes": 1105,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0084.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0084.txt"
+     ]
+    },
+    {
+     "sha256": "c603c9633a26b8c747467cba6e31accc4618915d4badc7bfd34df912724595fe",
+     "bytes": 1101,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0041.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0041.txt"
+     ]
+    },
+    {
+     "sha256": "b82755cd1058881d9f5e437fc0ab756da523a3f56bc670d356adfca7da202d99",
+     "bytes": 1100,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0051.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0051.txt"
+     ]
+    },
+    {
+     "sha256": "f8d6ca7442f05214a8085118aa4ef6d6cbd085695c04f0037dbf1e1c36b10aff",
+     "bytes": 1096,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0039.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0039.txt"
+     ]
+    },
+    {
+     "sha256": "031011bcde0391c1aabc8ec151c99acde803fa8bbf96b3013827e3e9e93d33e5",
+     "bytes": 1094,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0064.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0064.txt"
+     ]
+    },
+    {
+     "sha256": "4e8c9a593f7046477bea3f32981c54631a8a75c66bbc422043fee89354b338fb",
+     "bytes": 1094,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0081.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0081.txt"
+     ]
+    },
+    {
+     "sha256": "a0a35bee0b3840b1eedcb20a6c874e0e6e0986a9d2cfb68031bc0a8d39115b1e",
+     "bytes": 1092,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0037.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0037.txt"
+     ]
+    },
+    {
+     "sha256": "8755e5cf085121cc242e9791bbf3e6af96976c361c2d79dba667330c0c3fc0e7",
+     "bytes": 1091,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0069.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0069.txt"
+     ]
+    },
+    {
+     "sha256": "4eacd30fed6c25ec65db2be750b6da03bbdd023293decf4af40b4856888d5c6f",
+     "bytes": 1086,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0047.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0047.txt"
+     ]
+    },
+    {
+     "sha256": "ca8ac940508b30b63c43a9dd6e2b33db5f62b0355fa6eaaeaa6715a3bde230a5",
+     "bytes": 1084,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0043.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0043.txt"
+     ]
+    },
+    {
+     "sha256": "f6926c876947d7381cba00f6d97d3b6dcdf13a35f99217d578c631f88f2fb7b1",
+     "bytes": 1082,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0027.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0027.txt"
+     ]
+    },
+    {
+     "sha256": "22dbb7fd8315eea1a86f3c1df6c1f4040000e02e44b4d9d7bf60dd0fe93b9f5d",
+     "bytes": 1069,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0082.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0082.txt"
+     ]
+    },
+    {
+     "sha256": "6f390d5d1f988b5c10e484e0acead8fe49be2ac765009e0090bc04dc559a5ecb",
+     "bytes": 1067,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0059.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0059.txt"
+     ]
+    },
+    {
+     "sha256": "b939860f98e3a8cac2cfc403419e640bc5bc1f30cfe969e6b872b5ad28fbcaf2",
+     "bytes": 1065,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0046.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0046.txt"
+     ]
+    },
+    {
+     "sha256": "701429f45897826eda8c63d7f100d5d44e5e08246e0141309133a015dfaf5acd",
+     "bytes": 1063,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0060.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0060.txt"
+     ]
+    },
+    {
+     "sha256": "cabc2ae0f5055de15268b544fddd107082d4f715b25dda55501a0d7f1b425648",
+     "bytes": 1058,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0078.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0078.txt"
+     ]
+    },
+    {
+     "sha256": "052ead76695adf8b9198e7914b95280f8f2a71b6a78f94d0586b922854315f8a",
+     "bytes": 1057,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0101.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0101.txt"
+     ]
+    },
+    {
+     "sha256": "078ba9a1c91e7bac15c5229854b586382bafe5dd8f854e8a59d905afbe764bd3",
+     "bytes": 1055,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0040.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0040.txt"
+     ]
+    },
+    {
+     "sha256": "f03143d89e998bfcca14429892c0ff439477797eb52d671cefc952ac89a9dffa",
+     "bytes": 1052,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0023.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0023.txt"
+     ]
+    },
+    {
+     "sha256": "b7dbc59eae93263887ed023d97eaef65a739e441a798d3d6bbaa5177390b4fb9",
+     "bytes": 1050,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0056.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0056.txt"
+     ]
+    },
+    {
+     "sha256": "c0a9945d002310ff5ae3a70f4748495cafca5de0fef12c8cdbf1bd0bd7e149c7",
+     "bytes": 1048,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0066.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0066.txt"
+     ]
+    },
+    {
+     "sha256": "94b23eb3e32026db15b3f2c8aaacf977a4ad25f90d2590d39c9b4772f1fe5ef3",
+     "bytes": 1048,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0096.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0096.txt"
+     ]
+    },
+    {
+     "sha256": "a8340b68dc1c6fde5012b002addfc34abec5518f40ab0cb1a4f7aaf52c84f7ac",
+     "bytes": 1046,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0095.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0095.txt"
+     ]
+    },
+    {
+     "sha256": "8643c54a5990c61ce829412d8bc3b86a65f2730e360515674103ea38187543b5",
+     "bytes": 1033,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0068.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0068.txt"
+     ]
+    },
+    {
+     "sha256": "52e9a09483f46dec82eccf9e91d925f012b49b6d5b8cb3230e4adf8076dc227a",
+     "bytes": 1031,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0102.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0102.txt"
+     ]
+    },
+    {
+     "sha256": "d7b58f65301cbc0b715d043cf87b7d7c156ea04af23ab9a4e9ebe0995c51fcdf",
+     "bytes": 1026,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0026.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0026.txt"
+     ]
+    },
+    {
+     "sha256": "63708cd08f31ee3017cc25e0787a41805a46a77d58ed8f8be5dcde987f575fdd",
+     "bytes": 1019,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0076.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0076.txt"
+     ]
+    },
+    {
+     "sha256": "24d4bbe5fc8c3ff255868f95eb94d16a8a177db2ab0339f7c5b2cfd6c30ed521",
+     "bytes": 1012,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0080.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0080.txt"
+     ]
+    },
+    {
+     "sha256": "a2565746d43e8e06076899edfcde8a6ac0cc552ed6741d2168bc2d270e2299f6",
+     "bytes": 1007,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0090.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0090.txt"
+     ]
+    },
+    {
+     "sha256": "8045282b2baa150e5f326aef999051ea3c958b4c99fb75a6515f600e2cff7dc1",
+     "bytes": 1003,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0025.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0025.txt"
+     ]
+    },
+    {
+     "sha256": "31de57209acf3afcd33a2633163f25a2f3aa34027ba83285432343a980468358",
+     "bytes": 985,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0085.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0085.txt"
+     ]
+    },
+    {
+     "sha256": "4c1cbd01f86f39c725666caff3f7bb2bdf9034b67592e6018ea0150fc5b36cf8",
+     "bytes": 983,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0054.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0054.txt"
+     ]
+    },
+    {
+     "sha256": "1db27d8d0bf826547fa072152e1afbd4f178414d8ca4d2663139298de9198ae3",
+     "bytes": 971,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0028.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0028.txt"
+     ]
+    },
+    {
+     "sha256": "dd089771ba41cc58b8ec912b3b8c5e840f9f3817612d0629060b0885d9c850ac",
+     "bytes": 971,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0045.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0045.txt"
+     ]
+    },
+    {
+     "sha256": "2e0cb8ba967e60daf3c5dc91d0ab762b3597a0c8fee5051962fbbf66e13c437b",
+     "bytes": 967,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0103.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0103.txt"
+     ]
+    },
+    {
+     "sha256": "07d602ad6ae029826f0833e95c8cadaacb3f88f0a7309a706106d5f4f3449028",
+     "bytes": 964,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0035.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0035.txt"
+     ]
+    },
+    {
+     "sha256": "15d6ecfd2ed29c62869eada168b905f8c59bb20ffb6ff22eed3064ef2ab0cb48",
+     "bytes": 961,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0038.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0038.txt"
+     ]
+    },
+    {
+     "sha256": "cc1867c7d8474b00bbf88109d6a8112000398eaaccb14f0a167fb97daecf9d6f",
+     "bytes": 957,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0048.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0048.txt"
+     ]
+    },
+    {
+     "sha256": "97399fb25499ab95930e26f267fbbde13284765b7ad9f567b12569886225fa21",
+     "bytes": 952,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0057.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0057.txt"
+     ]
+    },
+    {
+     "sha256": "cd3ced2c331162e8187e282b99e06f6d840a9401e36918e7c6aac3832fff2e45",
+     "bytes": 924,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0053.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0053.txt"
+     ]
+    },
+    {
+     "sha256": "f140a0460080a4da8bfbd6ac70ee2170c80cf94e88397ce632ee3dc54902957e",
+     "bytes": 918,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0022.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0022.txt"
+     ]
+    },
+    {
+     "sha256": "4e92076d988996b26bbd638c08bb12581630e00a5c8716cebb1556ee45a2402f",
+     "bytes": 878,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0063.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0063.txt"
+     ]
+    },
+    {
+     "sha256": "9cc55eaeccb9e994c7e917fc0b431cd2e399f1f51adc3dc8fad71845655d256d",
+     "bytes": 870,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0031.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0031.txt"
+     ]
+    },
+    {
+     "sha256": "f75ae552a25f7648104d18cc92a696e045b2143e70e50919060c69e1e2c5b64a",
+     "bytes": 870,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0058.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0058.txt"
+     ]
+    },
+    {
+     "sha256": "43a9b7e6c4826db21e4faaff9f9199f72b67e553f4f71c815d23715faa710308",
+     "bytes": 852,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0073.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0073.txt"
+     ]
+    },
+    {
+     "sha256": "319bf5fd962070fc1be69c6d95b9dcc9fdd42e97219be1fe47dfa0b4862d4779",
+     "bytes": 847,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0049.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0049.txt"
+     ]
+    },
+    {
+     "sha256": "40c0a50ff28e1ff1677a887d1da81371b23099611279e152e9f9ed3578550f1d",
+     "bytes": 845,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0067.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0067.txt"
+     ]
+    },
+    {
+     "sha256": "fbb92f65942672a06209fca64b4e6156b35ab335ce7a35f92efcdf55ae8ff83e",
+     "bytes": 777,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0052.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0052.txt"
+     ]
+    },
+    {
+     "sha256": "00bd1dcdd4292cbe47e1b01d096d26631dc5272a0b19cc0898c5607634966488",
+     "bytes": 622,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0098.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0098.txt"
+     ]
+    },
+    {
+     "sha256": "3b32ab2f0a0f40e687f61c02910fe51118696ed530bba6d30f0c001fa1410871",
+     "bytes": 540,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/narration-dataset-v1/archive/104/narratives/row-0065.txt",
+      "experiments/world-components/narration-dataset-v1/narratives/row-0065.txt"
+     ]
+    },
+    {
+     "sha256": "44bd4629c909eaf16bd96cf968676b47ced33741b454a6152230488a4915d24a",
+     "bytes": 206,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/parallel/fact_wording/artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/env.json",
+      "experiments/world-components/parallel/fact_wording/artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/env.json"
+     ]
+    },
+    {
+     "sha256": "60851c894e1cb032e45d3bc982a55ee7923ebcd5e4fd097723d15b01cd44ab8d",
+     "bytes": 175,
+     "count": 2,
+     "paths": [
+      "artifacts/goal/narration-decomp/joint-summary-base.json",
+      "artifacts/goal/narration-decomp/joint-summary.json"
+     ]
+    },
+    {
+     "sha256": "7924a369f3e219e9739e7e0b181afd5b60564b6360a11eae2843650317ed2c1b",
+     "bytes": 155,
+     "count": 2,
+     "paths": [
+      "experiments/world-components/parallel/fact_wording/artifacts/fact-wording/diagnostic-r1/20261108T150002-a0ed91d4/blind-v2/index.json",
+      "experiments/world-components/parallel/fact_wording/artifacts/fact-wording/diagnostic-r2-cand-t1/20261108T152314-d8c16de6/blind-v2/index.json"
+     ]
+    },
+    {
+     "sha256": "596f05541dcbfbf6e733ce3700fa318d6ca26d9e6dc91cc4a697b27477821055",
+     "bytes": 128,
+     "count": 3,
+     "paths": [
+      "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-config.json",
+      "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-generation_config.json",
+      "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-tokenizer_config.json"
+     ]
+    }
+   ],
+   "count": 215,
+   "status": "warn"
+  },
+  "large_tracked": {
+   "level": "warn",
+   "findings": [
+    {
+     "path": "artifacts/goal/acceptance/g8-chunk1-20261121-partial.json",
+     "bytes": 5655399,
+     "sha256": "99aaada64aeae9cb1f030b40cd2eca26f3d05a7bf736ef9b9ef5baa2598eb745"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-chunk1-rerun-20261121-2026-11-21T1547-3450.json",
+     "bytes": 10775098,
+     "sha256": "9ea08806c4bcc7669a8d01a691c0a1f0a8d98fc79eb7066313bcea031d7d55ae"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-chunk2-20261121.json",
+     "bytes": 10851076,
+     "sha256": "aedd0cbc857aa1bccd59bfde5e9528751108d96af975f8de2561514bb9649167"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-chunk3-20261121-partial.json",
+     "bytes": 7350813,
+     "sha256": "9a855d5761d8e5d9ba9a2d330991dde087bb8674f79728fa1c3ba45ff4ff169d"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-chunk3b-20261121.json",
+     "bytes": 13743273,
+     "sha256": "c41c46f0e5597d0273039bf9396a5f8b0055958cb8860ad74c34db1f2d926c17"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-chunk5-20261121.json",
+     "bytes": 10398836,
+     "sha256": "04e2d43a2fcdc7f3ba3226014af655de9b4159e03c81bbd689ccba9e43c6add0"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-offline-20261121.json",
+     "bytes": 7747372,
+     "sha256": "f62b589790b5ddc3850d403db2066d1c21486949130bd5815d7fac5c4719a7d7"
+    },
+    {
+     "path": "artifacts/goal/acceptance/g8-offline-rerun-20261122.json",
+     "bytes": 5450785,
+     "sha256": "420ed6a44624d78fd29624a90af1469d94517ee0d2752d091bbe7b06a82a1e74"
+    },
+    {
+     "path": "artifacts/goal/acceptance/run41-turns-20-chunk1.json",
+     "bytes": 7418347,
+     "sha256": "dc137ef523f256dc974452bd56d86180bc33516d0f6c744381acdafc29315a03"
+    },
+    {
+     "path": "artifacts/goal/acceptance/run41-turns-20-chunk2.json",
+     "bytes": 7376355,
+     "sha256": "aad5606887851ba8a99e1a9e02cc350c8300ffc064c5fe88aec4bbadc861ff68"
+    },
+    {
+     "path": "artifacts/goal/acceptance/run41-turns-20-chunk3.json",
+     "bytes": 7454533,
+     "sha256": "264ff244e86ffd7220cff2351815b703fc13212e3996662630f9d4951741312c"
+    },
+    {
+     "path": "artifacts/goal/acceptance/run41-turns-20-chunk3b-r2.json",
+     "bytes": 10579281,
+     "sha256": "5394b80abc4b2ed808ab33615c642856b4a5ae4f89751217ae9d2813de06a204"
+    },
+    {
+     "path": "artifacts/goal/acceptance/run41-turns-20-chunk5-r3.json",
+     "bytes": 7404740,
+     "sha256": "28814b8eca3c15569ab20d3edb4fe2005b30c2d27657433cd357df9242b03df6"
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/evidence-independent-scenarios-7.json",
+     "bytes": 39961055,
+     "sha256": "40f7520f4d73e26bc8a4e1fc7ffd14afbc0f0a0895dcdebd942f871d51bb94e8"
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/evidence-independent-scenarios-8.json",
+     "bytes": 39961984,
+     "sha256": "63e41ac267f603ffac8952c1a9f5bd9c2c4beb3096a14a7acfdd676b5073a7f5"
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/evidence-multi-turn-micro.json",
+     "bytes": 10248483,
+     "sha256": "6ec779b29a8993107166618ea54a8248c656bad5c487c9fbcb6728da3eb6caba"
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/evidence-multi-turn-micro2.json",
+     "bytes": 10279309,
+     "sha256": "6fa33eff8231a50e0b73c0a30b309325aef2eb5e652a11eeb14dd169a962a092"
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/evidence-record-four.json",
+     "bytes": 5514523,
+     "sha256": "82620249487b2007b11265c9de2f8009123cd69f7d4a1af353ced99f6b57bbe5"
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/evidence-record-three.json",
+     "bytes": 6147974,
+     "sha256": "f23c435d6b0f0918506174db9daa0a4ead50abab5f80606e818d619652744e06"
+    },
+    {
+     "path": "artifacts/goal/narration/run100-17b-lora-v5-5turn.json",
+     "bytes": 10156094,
+     "sha256": "db9cc39db8c6e08f0e414767cd7df3e557598e13aa6db709f131fc87c9ce1e64"
+    },
+    {
+     "path": "artifacts/goal/narration/run101-17b-lora-v7-5turn.json",
+     "bytes": 10140383,
+     "sha256": "19182978e20a656d41bc72113be9176ee6ee4ca5e4aac7d481677479d4af26f1"
+    },
+    {
+     "path": "artifacts/goal/narration/run102-17b-lora-v7-10turn.json",
+     "bytes": 27118730,
+     "sha256": "a1359e6294c4f79fe96a049bce18df27e8d5db0f90c15247ed87cd1d8b122df7"
+    },
+    {
+     "path": "artifacts/goal/narration/run105-17b-lora-v8-5turn.json",
+     "bytes": 10010821,
+     "sha256": "b6f73f616b23652d5318dbe5f6d386de13bb9a481235ea7e20f93aea6fa99d8a"
+    },
+    {
+     "path": "artifacts/goal/narration/run106-17b-lora-v8-10turn.json",
+     "bytes": 27100277,
+     "sha256": "428e3bf56f6d44c229694e98d247bbf20f29a7ac8ff44cdefed48d97907adaf7"
+    },
+    {
+     "path": "artifacts/goal/narration/run107-17b-lora-v8-example-5turn.json",
+     "bytes": 10068118,
+     "sha256": "10e3cb062e9cdece5c2fa529fadad1b76984d8a4ad8310e5e8b15e5eb85158f0"
+    },
+    {
+     "path": "artifacts/goal/narration/run108-17b-lora-v8-rewrite-5turn.json",
+     "bytes": 10653626,
+     "sha256": "07824437a7074760347fcfc974c8b0dbe6655fa239ab2e5ce62553abb21c1768"
+    },
+    {
+     "path": "artifacts/goal/narration/run109-17b-lora-v8-rewrite-t02-5turn.json",
+     "bytes": 10650940,
+     "sha256": "fc2ec64461ce05dc32274b8c663b336232b2cbf222a5e1ef5ff787e1ba67541d"
+    },
+    {
+     "path": "artifacts/goal/narration/run110-17b-lora-v8-rewrite-t02-compact-5turn.json",
+     "bytes": 10649278,
+     "sha256": "c322d8816ff1d20f47f5fe209278489b92ace568e4dee60fb7fe4ccd6df60a91"
+    },
+    {
+     "path": "artifacts/goal/narration/run111-17b-lora-v9-5turn.json",
+     "bytes": 10546773,
+     "sha256": "e291dcaeffd7713fe1a92f7b0ca177d17496998c002951c389b08b7b1bf87204"
+    },
+    {
+     "path": "artifacts/goal/narration/run112-17b-lora-v11-5turn.json",
+     "bytes": 10658534,
+     "sha256": "b56eb94e7b9d57bd4aee71e251078747a7c78bbe00c68f52aa17375f0703a107"
+    },
+    {
+     "path": "artifacts/goal/narration/run113-17b-lora-v11-5turn-2026-11-23T1348-1d23.json",
+     "bytes": 10692874,
+     "sha256": "c918ef5da477d713e3b3238b4b2b45de98f38e9da2fd31069c475e580d0c59ce"
+    },
+    {
+     "path": "artifacts/goal/narration/run114-17b-lora-v11-5turn.json",
+     "bytes": 10696430,
+     "sha256": "091a9285776da14b7cf14276dd42edd0578c981189adb95258abb6170080f4ad"
+    },
+    {
+     "path": "artifacts/goal/narration/run115-17b-lora-v11-5turn.json",
+     "bytes": 10552576,
+     "sha256": "26272d0e24e69b11ac62e00e0629068567f2fbab007f094021b8cf80c327cddd"
+    },
+    {
+     "path": "artifacts/goal/narration/run116-17b-lora-v11-5turn.json",
+     "bytes": 10540290,
+     "sha256": "a4556ad180c53f132137dcec747cfbfc5eb58ac51e8db784615b318bef10f076"
+    },
+    {
+     "path": "artifacts/goal/narration/run117-17b-lora-v11-5turn-2026-11-23T1425-c9b8.json",
+     "bytes": 10689226,
+     "sha256": "c8924d97cd679e201bd6a362b5db8d83dbaa21d59fbfbf23db1967fc44e2d91a"
+    },
+    {
+     "path": "artifacts/goal/narration/run119-17b-lora-v11-q8kv-5turn-2026-11-23T1448-f003.json",
+     "bytes": 10627162,
+     "sha256": "42e1cac78a564fda10b6d76adad5a9b3ef9b3605f297cbc5d6508cd3d16d9a54"
+    },
+    {
+     "path": "artifacts/goal/narration/run120-17b-lora-v11-semq8-5turn.json",
+     "bytes": 10632081,
+     "sha256": "4eebc221e1b7715607d0223c64f2cdbb70e197d7b6fa2c07cbd360c50254d793"
+    },
+    {
+     "path": "artifacts/goal/narration/run121-20turn-chunk1.json",
+     "bytes": 7381613,
+     "sha256": "a8033571fb1fb148b27a413096925ec499c97488c7efb73e84ded8703a17a080"
+    },
+    {
+     "path": "artifacts/goal/narration/run121-20turn-chunk2.json",
+     "bytes": 7397887,
+     "sha256": "66122f53b792a186e119dd9da4ef43bd80a25d933193e3bd8064d62df8887de4"
+    },
+    {
+     "path": "artifacts/goal/narration/run121-20turn-chunk3.json",
+     "bytes": 7244774,
+     "sha256": "5ea71b4c75fdbbcc71f5392a54427d5c4d9f498ff4d5b9d890a6bf84026bad2c"
+    },
+    {
+     "path": "artifacts/goal/narration/run121-20turn-chunk4.json",
+     "bytes": 5392270,
+     "sha256": "4c36b70c711254cec2576ff9ee098b7ce4b4a487518dff5afee13d74795d8f48"
+    },
+    {
+     "path": "artifacts/goal/narration/run121-20turn-chunk5.json",
+     "bytes": 7413807,
+     "sha256": "afef8b80d5ceb730f5918de0008b12beabbc093cf43c66100e2c44a63971f415"
+    },
+    {
+     "path": "artifacts/goal/narration/run122-17b-lora-v12-5turn.json",
+     "bytes": 10689315,
+     "sha256": "4f8caaabeb703389fb95394558a7dd6b0e5421b72b3e1bf43fb8fbc74188912d"
+    },
+    {
+     "path": "artifacts/goal/narration/run124-17b-lora-v13-5turn.json",
+     "bytes": 10568134,
+     "sha256": "6c4c409c3fc51a4beec21460096b21a842e4fa3585b68eccd246317c5e1da5ba"
+    },
+    {
+     "path": "artifacts/goal/narration/run125-20turn-chunk1.json",
+     "bytes": 7345370,
+     "sha256": "9447cb4e72844a66473236dea55c05229cc1f4539206d6b6194046a6107af632"
+    },
+    {
+     "path": "artifacts/goal/narration/run125-20turn-chunk2.json",
+     "bytes": 5893227,
+     "sha256": "7f03f128b7501854b23e7d7d701eec41c76179cfa80556a60a9f6836ef8a8290"
+    },
+    {
+     "path": "artifacts/goal/narration/run125-20turn-chunk3.json",
+     "bytes": 7397867,
+     "sha256": "c484d5f87777f6c13f1bccd4d68d8091042ff56e825d86457c544f3ee22ab382"
+    },
+    {
+     "path": "artifacts/goal/narration/run125-20turn-chunk4.json",
+     "bytes": 7338331,
+     "sha256": "eb3b14accb4c19a0a3c8ce331786fac2e6f0578ae70b8872fd8974c0aee46612"
+    },
+    {
+     "path": "artifacts/goal/narration/run129-20turn-chunk1.json",
+     "bytes": 7352899,
+     "sha256": "3261a4c739a3c4523c3e0028bc81aa24df66151231c988a4247b5783eb4b3e95"
+    },
+    {
+     "path": "artifacts/goal/narration/run129-20turn-chunk2.json",
+     "bytes": 7391115,
+     "sha256": "ecf7572b7baec2810ce151044e765e626a6ffbb9b9177b5d788511d861681b8e"
+    },
+    {
+     "path": "artifacts/goal/narration/run129-20turn-chunk3.json",
+     "bytes": 7438698,
+     "sha256": "f5c0ef62b462cf932ca59dfb1c34c0c70a4c353bae8a762759238d36aa63a046"
+    },
+    {
+     "path": "artifacts/goal/narration/run129-20turn-chunk4.json",
+     "bytes": 7350878,
+     "sha256": "11a42e70bfcc31217d09d05dc1cef51f0a0cc57d0f4a5178e016b15aac0f62ed"
+    },
+    {
+     "path": "artifacts/goal/narration/run130-default-v13-5turn.json",
+     "bytes": 10634357,
+     "sha256": "4e484946109819fc460ac79a74bb13c4e49b5571d1aba0b3abfe2ec12d271c6a"
+    },
+    {
+     "path": "artifacts/goal/narration/run133-mobile-20turn-chunk1.json",
+     "bytes": 7476579,
+     "sha256": "93e0888ce673544cf1cf386a7e5de5e6e90a188331fd0087520ec49c072bafae"
+    },
+    {
+     "path": "artifacts/goal/narration/run134-mobile-20turn-chunk2.json",
+     "bytes": 7512679,
+     "sha256": "60c4341df17db20a50d77810669e765c448c41c41e7c65a3b6d730062bd45ead"
+    },
+    {
+     "path": "artifacts/goal/narration/run135-mobile-20turn-chunk3.json",
+     "bytes": 7402811,
+     "sha256": "29d045d8bce6b9dcab17165a5a4e25630fa933febef6eb5734a9fab51e940248"
+    },
+    {
+     "path": "artifacts/goal/narration/run136-mobile-20turn-chunk4.json",
+     "bytes": 7399870,
+     "sha256": "956eeb91803c5946aa0edac06762c46293d2c76c152284a903cb927e8e42ab9e"
+    },
+    {
+     "path": "artifacts/goal/narration/run137-mobile-20turn-chunk5.json",
+     "bytes": 7461734,
+     "sha256": "5d1b4befc7956351d74e05164524c001afe7214740390f54ac4c968ccf1ba82f"
+    },
+    {
+     "path": "artifacts/goal/narration/run90-17b-lora-v3-5turn.json",
+     "bytes": 10062085,
+     "sha256": "6866fe00a6f6c324deaa9b03486c79bc85314aeed14086d4a6583e6a28eed6b2"
+    },
+    {
+     "path": "artifacts/goal/narration/run91-17b-lora-v3-t02.json",
+     "bytes": 10085155,
+     "sha256": "4d70b899d301d4c1fe9b4e36de2bf6b4a6ac8679ef08915b8032cef55a9648f1"
+    },
+    {
+     "path": "artifacts/goal/narration/run92-17b-lora-v3-10turn.json",
+     "bytes": 27122772,
+     "sha256": "06885f73c2c7ebb26981d0486750a2c800533f97b83ebca46817ff9559b49e85"
+    },
+    {
+     "path": "artifacts/goal/narration/run93-webllm-4b-10turn.json",
+     "bytes": 7056844,
+     "sha256": "bffd8b72c3393a7a78d45168824d7708146b707e77d72b4d6598901f15388293"
+    },
+    {
+     "path": "artifacts/goal/narration/run96-17b-lora-v3-compact-10turn.json",
+     "bytes": 27124653,
+     "sha256": "caae6a63b54844b031d39340e5b790de6e9968cb87d7d8069f7becea7a01060d"
+    },
+    {
+     "path": "artifacts/goal/narration/run97-17b-lora-v4-10turn.json",
+     "bytes": 27109914,
+     "sha256": "444582aa232a62dec5eb83e0fba8d21e113f3330f83ee5e5d57be9768116e4dd"
+    },
+    {
+     "path": "artifacts/goal/narration/run98-17b-lora-v5-10turn.json",
+     "bytes": 27056809,
+     "sha256": "66f5fc2f585ba490bc4ba63ec2d19852aa0f63877aad600396c106af397d4ffc"
+    },
+    {
+     "path": "artifacts/goal/narration/run99-17b-lora-v6-10turn.json",
+     "bytes": 21684878,
+     "sha256": "285f884da4205556643db019796a8ee0f9783067d179c755745ed16c15032c31"
+    },
+    {
+     "path": "artifacts/goal/semantics/run-20261120.json",
+     "bytes": 21606912,
+     "sha256": "43032ff1609171ec4cb1e0c9359b64941456dea915b3e1af1c5c6a3db640f1e1"
+    },
+    {
+     "path": "artifacts/goal/semantics/run17-20261121-partial6-memory.json",
+     "bytes": 15133607,
+     "sha256": "9971275002300c65e776d1aacdd1f2e6b8dee3725f712b06677ceb5160770a60"
+    },
+    {
+     "path": "artifacts/goal/semantics/run18-20261121.json",
+     "bytes": 17887242,
+     "sha256": "8ce3400c2cb1851c2a803c3ea98e6786b6742f903db9c41b1283c1f48c80387b"
+    },
+    {
+     "path": "artifacts/goal/semantics/run19-20261121.json",
+     "bytes": 9300794,
+     "sha256": "73cf1c4d451ab7fcad96b9e9de6f441387a70eb661fdf36b05b1f82d8e91e751"
+    },
+    {
+     "path": "artifacts/goal/semantics/run2-20261120.json",
+     "bytes": 5405781,
+     "sha256": "fd484c9ee1bbfe18fa37dddea2fcbdcabea06f8e1eee9810f7a8d88e53dc4057"
+    },
+    {
+     "path": "artifacts/goal/semantics/run21-s02-s04-20261121.json",
+     "bytes": 8272312,
+     "sha256": "a97d9efe7cb93e464cbdea40e606d6a39b81c1db9d05ff8703a90d9e63141a73"
+    },
+    {
+     "path": "artifacts/goal/semantics/run4-20261120.json",
+     "bytes": 10448050,
+     "sha256": "1c075e91fdc7b2488dfb21cef7e80000db2502f88cfbf550c1671eaaf47350e3"
+    },
+    {
+     "path": "artifacts/goal/semantics/run7-20261120.json",
+     "bytes": 5746154,
+     "sha256": "97f3b81eb80170e2b131a4a1f3d9a29f565112724258b9d32d3ef550ed13d5b5"
+    },
+    {
+     "path": "artifacts/goal/sync/two-device-20261121.json",
+     "bytes": 5457055,
+     "sha256": "76b20bb13c432085c8bac7676935b21e445b1eb447e6703ac263afb21d7a5716"
+    },
+    {
+     "path": "artifacts/goal/timing-runs/points-10-aborted2.json",
+     "bytes": 8115662,
+     "sha256": "9bd728546e8eb4b4a2b6379d642d3c2653c243b99a9535b593312eb8ebf533b0"
+    },
+    {
+     "path": "artifacts/goal/timing-runs/points-10-aborted3.json",
+     "bytes": 6015676,
+     "sha256": "9c32964bdf2a0b86223816daac58d9bde17932e1539d2af535936d12a5d53ae6"
+    },
+    {
+     "path": "artifacts/goal/timing-runs/points-10-final4.json",
+     "bytes": 20411848,
+     "sha256": "14b1e43d04dd753c2c6c517b7c8bc70392410e501ed737eb9d43135b803f2516"
+    },
+    {
+     "path": "experiments/action-dataset-v1/short_pairs/out-provisional/pairs.jsonl",
+     "bytes": 6499168,
+     "sha256": "e2627fb11b21e88e638d4cdebabd21ee44bf3970b6958e73eda38775ba82816f"
+    },
+    {
+     "path": "experiments/action-dataset-v1/short_pairs/out/pairs.jsonl",
+     "bytes": 6647043,
+     "sha256": "124fc0ebadc1a31190d03132bf9e74c2480fb5973bddbe53c235d38d3f85e627"
+    },
+    {
+     "path": "experiments/action-pairs-train/pkg/data/pairs.jsonl",
+     "bytes": 6651268,
+     "sha256": "4de1ab226f2aae0d87407e9bbdaeb0747af76fbd7f64d4ffe8ce589660560b85"
+    }
+   ],
+   "count": 81,
+   "status": "warn"
+  },
+  "missing_ref": {
+   "level": "warn",
+   "findings": [],
+   "count": 0,
+   "status": "pass"
+  },
+  "sidecar_hash": {
+   "level": "fail",
+   "findings": [],
+   "count": 0,
+   "status": "pass"
+  },
+  "semantic_manifest": {
+   "level": "fail",
+   "findings": [],
+   "count": 0,
+   "status": "pass"
+  }
+ },
+ "summary": {
+  "malformed": {
+   "status": "warn",
+   "count": 4
+  },
+  "empty_dataset": {
+   "status": "warn",
+   "count": 4
+  },
+  "key_drift": {
+   "status": "pass",
+   "count": 0
+  },
+  "duplicate_content": {
+   "status": "warn",
+   "count": 215
+  },
+  "large_tracked": {
+   "status": "warn",
+   "count": 81
+  },
+  "missing_ref": {
+   "status": "pass",
+   "count": 0
+  },
+  "sidecar_hash": {
+   "status": "pass",
+   "count": 0
+  },
+  "semantic_manifest": {
+   "status": "pass",
+   "count": 0
+  }
+ },
+ "failed": false
+}
