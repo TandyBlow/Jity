@@ -1,0 +1,21 @@
+D:\software\Anaconda\Lib\site-packages\jieba\_compat.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Building prefix dict from the default dictionary ...
+Loading model from cache C:\Users\26494\AppData\Local\Temp\jieba.cache
+Loading model cost 0.537 seconds.
+Prefix dict has been built successfully.
+params 416065
+{"epoch": 0, "loss": 0.41}
+{"epoch": 10, "loss": 0.145}
+{"epoch": 20, "loss": 0.111}
+{"epoch": 30, "loss": 0.099}
+{"samples": 348, "train": 280, "test": 68, "params": 416065, "charF1Mean": 0.459, "wordRatioMean": 0.312, "coverageMean": 1.0, "inventionWordsMean": 0.0}
+KEPT: 路明非在等一会儿，听远处的间隔，过去了多久，在了远处的间隔，时间了多久，了，，路明非在，，没有，没有，器材在
+REF : 路明非靠着墙等了一会儿，听枪声的间隔，估时间。棚里没有别的动静。
+---
+KEPT: 路明非护目镜胸袋的，低头护目镜和胸袋里的确认都在，路明，
+REF : 路明非检查了护目镜和胸袋，东西都在。他停回墙边。
+---
+KEPT: 路明非电台，，看牌，路明非，器材，牌，芬格尔了，没有，，没有
+REF : 路明非拿起红色电台，想找阿豹转给裁判，棚里却没有阿豹。只有芬格尔和秦越。他放下手，转头看规则牌，看懂了。
+---
