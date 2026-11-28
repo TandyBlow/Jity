@@ -1,0 +1,36 @@
+<!doctype html><meta charset="utf-8"><title>lab static load</title>
+<script type="module">
+const q = new URLSearchParams(location.search);
+const mark = (n) => { window.__labStage = n; (window.__labTimings ??= {})[n] = Math.round(performance.now()); };
+mark('page');
+(async () => {
+  try {
+    const direct = q.get('direct') === '1';
+    const kv = q.get('kv') === 'q4_0' ? 'q4_0' : 'q8_0';
+    const url = '/models/Qwen3-0.6B-Q4_K_M.gguf';
+    let modelArg;
+    if (direct) {
+      modelArg = [url];
+    } else {
+      const resp = await fetch(url, { cache: 'force-cache' });
+      const blob = await resp.blob();
+      modelArg = [new File([blob], 'm.gguf')];
+    }
+    mark('fetched');
+    const mod = await import('/wllama/index.min.js');
+    const w = new mod.Wllama({ default: '/wasm/wllama.wasm' });
+    await w.loadModel(modelArg, {
+      n_ctx: Number(q.get('ctx') || 2048), n_gpu_layers: 0, n_batch: Number(q.get('nb') || 2048),
+      cache_type_k: kv, cache_type_v: kv,
+    });
+    mark('inited');
+    const len = Number(q.get('promptLen') || 0);
+    const base = '路明非站在器材棚门口，看着进出的人。他把各自身上的识别带颜色记下来。';
+    const prompt = len ? base.repeat(Math.ceil(len / base.length)).slice(0, len) : '你好';
+    await w.createCompletion({ prompt, max_tokens: 8 });
+    mark('inferred');
+    await w.exit();
+    mark('done');
+  } catch (e) { window.__labError = String(e); mark('error'); }
+})();
+</script>

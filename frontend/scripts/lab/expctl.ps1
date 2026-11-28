@@ -174,7 +174,7 @@ while ($true) {
     continue
   }
 
-  [pscustomobject]@{ id = $job.id; name = $job.name; pid = $proc.Id; status = 'running'; startedAt = $job.startedAt } | Out-File -Encoding utf8 $Active
+  WriteJson $Active ([pscustomobject]@{ id = $job.id; name = $job.name; pid = $proc.Id; status = 'running'; startedAt = $job.startedAt })
 
   $start = Get-Date; $peak = 0; $reason = 'exited'
   $seen = @{}

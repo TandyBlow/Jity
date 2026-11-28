@@ -188,15 +188,16 @@ const browser = cdp
   : profile
   ? await chromium.launchPersistentContext(profile, {
     headless: !has('--headed'),
-    channel: 'msedge',
+    channel: pwChannel,
     args: launchArgs,
     viewport: { width: 1280, height: 900 },
   })
   : await chromium.launch({
     headless: !has('--headed'),
-    channel: 'msedge',
+    channel: pwChannel,
     args: launchArgs,
   });
+const pwChannel = process.env.PW_CHANNEL === 'chromium' ? undefined : (process.env.PW_CHANNEL ?? 'msedge');
 evidence.harness.launchArgs = launchArgs;
 evidence.harness.profile = profile || null;
 evidence.harness.cdp = cdp || null;
