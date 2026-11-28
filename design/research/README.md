@@ -76,3 +76,4 @@ Artifacts     evidence files, manifests, commits
 | E52 | Structure model: 1.24M end-to-end pattern+span | negative (test .036 vs .107 majority; oracle 0.706) |
 | E53 | Semantic LLM call audit with per-task attribution | done (344 calls/20 turns; handoff) |
 | E54 | Role parse of settled facts: 44% subject-less, 12.5% recoverable | done |
+| E55 | Rule composer baseline: fidelity by construction, length 0.43x, still a log | done |
