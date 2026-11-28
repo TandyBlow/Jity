@@ -1,0 +1,10 @@
+{
+ "points": 51,
+ "fragments": 667,
+ "unaligned": 318,
+ "pairs": 267,
+ "boundary": 157,
+ "boundaryRate": 0.588,
+ "sentencesMean": 5.0,
+ "fragmentsMean": 13.08
+}

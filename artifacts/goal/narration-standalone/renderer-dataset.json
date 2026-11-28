@@ -1,0 +1,6324 @@
+[
+ {
+  "id": "09-turns20-ctx8192-gpu:s01-act-move:point_round_auto_mx024lh4_2_1",
+  "evidence": "09-turns20-ctx8192-gpu.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.607
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 0.958
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 5,
+    "score": 0.361
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-ctx8192-gpu:s02-act-observe:point_round_auto_mx026w0u_4_1",
+  "evidence": "09-turns20-ctx8192-gpu.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.536
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.083
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 3,
+    "score": 0.759
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.194
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-ctx8192-gpu:s03-act-talk:point_round_auto_mx029f3l_6_1",
+  "evidence": "09-turns20-ctx8192-gpu.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.536
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 4,
+    "score": 0.759
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 0.885
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 5,
+    "score": 0.694
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-ctx8192:s01-act-move:point_round_3_1",
+  "evidence": "09-turns20-ctx8192.json",
+  "sentences": 8,
+  "fragments": [
+   {
+    "kind": "action",
+    "text": "路明非脚步放轻，注意前面的门口",
+    "sentence": 0,
+    "score": 0.923
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 6,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 6,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 7,
+    "score": 0.577
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.056
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非脚步放轻，注意前面的门口",
+    "kindA": "action",
+    "textB": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s01-act-move:point_round_auto_mx08bk90_2_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.571
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 0.833
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 4,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.111
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s02-act-observe:point_round_auto_mx08dxvi_4_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.536
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 0.833
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.056
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s03-act-talk:point_round_45_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 7,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查相机备用电池并准备拍摄争旗场面",
+    "sentence": null,
+    "score": 0.083
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里",
+    "sentence": null,
+    "score": 0.033
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.429
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 0,
+    "score": 0.917
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 0.958
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 5,
+    "score": 0.611
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s04-act-wait:point_round_65_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在芬格尔的相机备用电池和检修门插闩的指引下，准备拍摄有辨识度的争旗场面并获取演习照片的拍摄机会，只完成了一部分",
+    "sentence": null,
+    "score": 0.019
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西",
+    "sentence": null,
+    "score": 0.25
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.5
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 0.917
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 4,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.333
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s05-act-inventory:point_round_85_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.051
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.429
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 0.917
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 0.966
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.9
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 3,
+    "score": 0.897
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 4,
+    "score": 0.417
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s06-legal-failure:point_round_105_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.026
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.393
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 2,
+    "score": 0.917
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 3,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 4,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.172
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 5,
+    "score": 0.556
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s07-partial:point_round_127_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.051
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.5
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.9
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 3,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 4,
+    "score": 0.667
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s08-joint-move:point_round_auto_mx08r0yv_6_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 0,
+    "score": 0.545
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": null,
+    "score": 0.267
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.062
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": null,
+    "score": 0.162
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 5,
+    "score": 0.36
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 5,
+    "score": 0.783
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "林亦舟查看西回廊里的变化",
+    "kindA": "result",
+    "textB": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s09-confront:point_round_auto_mx08t9ho_8_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 3,
+    "score": 0.364
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.73
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s10-strike:point_round_190_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查了相机备用电池和相关配件",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 3,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面板。（只",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 0.867
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.459
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.8
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s11-task-ask:point_round_211_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查了相机备用电池和检修门插闩事宜",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 3,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面板",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.405
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.85
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": 4,
+    "score": 0.778
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindA": "fact",
+    "textB": "说话正常，没法独自站稳",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s12-climb:point_round_232_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查相机备用电池和检修门插闩事宜，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 3,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 0.867
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.568
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.75
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": 3,
+    "score": 0.778
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindA": "fact",
+    "textB": "说话正常，没法独自站稳",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s13-already-acted:point_round_252_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查相机备用电池并准备拍摄争旗场面",
+    "sentence": null,
+    "score": 0.042
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面板，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "秦越向对方求助。（达",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.595
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 1,
+    "score": 0.75
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 2,
+    "score": 0.84
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 2,
+    "score": 0.696
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": null,
+    "score": 0.111
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s14-auto-chain:point_round_274_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 3,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查了相机备用电池和相关装备",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 2,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面板。（只",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.568
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 1,
+    "score": 0.75
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 2,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": 2,
+    "score": 0.778
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindA": "fact",
+    "textB": "说话正常，没法独自站稳",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s15-handback:point_round_294_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查相机备用电池和检修门插闩事宜，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 3,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 0.867
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.568
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.8
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": 4,
+    "score": 0.778
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindA": "fact",
+    "textB": "说话正常，没法独自站稳",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:s16-time-check:point_round_314_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查相机备用电池和检修门插闩事宜，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 2,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.405
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.138
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 1,
+    "score": 0.75
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": 3,
+    "score": 0.778
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindA": "fact",
+    "textB": "说话正常，没法独自站稳",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:g8-t1-look-lane:point_round_334_2",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.143
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在器材棚内检查了相机备用电池和相关配件",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 3,
+    "score": 0.364
+   },
+   {
+    "kind": "result",
+    "text": "曼施坦因查看旗台状态面板。（只",
+    "sentence": null,
+    "score": 0.083
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.214
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 0,
+    "score": 0.378
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.552
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 2,
+    "score": 0.4
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 3,
+    "score": 0.87
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": 4,
+    "score": 0.778
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindA": "fact",
+    "textB": "说话正常，没法独自站稳",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:g8-t2-move-shed:point_round_auto_mx09aokp_10_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 7,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "芬格尔查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.222
+   },
+   {
+    "kind": "result",
+    "text": "秦越查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.118
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": 0,
+    "score": 0.75
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": 4,
+    "score": 0.909
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": 6,
+    "score": 0.889
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": null,
+    "score": 0.174
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.28
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在器材棚，推拉门可回服务巷",
+    "kindA": "fact",
+    "textB": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "kindA": "fact",
+    "textB": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "kindA": "fact",
+    "textB": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindA": "fact",
+    "textB": "黄色封套上写明不得与实弹混用",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "黄色封套上写明不得与实弹混用",
+    "kindA": "fact",
+    "textB": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindA": "fact",
+    "textB": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindA": "fact",
+    "textB": "器材笼钥匙能开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "器材笼钥匙能开",
+    "kindA": "fact",
+    "textB": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindA": "fact",
+    "textB": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindA": "fact",
+    "textB": "护膝一边扣紧、一边还敞着",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:g8-t3-talk-lin:point_round_auto_mx09dtrs_11_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "秦越查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.235
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.222
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": null,
+    "score": 0.312
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": null,
+    "score": 0.2
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": 1,
+    "score": 0.733
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": null,
+    "score": 0.242
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": 3,
+    "score": 0.636
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": 5,
+    "score": 0.913
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": 5,
+    "score": 0.76
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindA": "fact",
+    "textB": "黄色封套上写明不得与实弹混用",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindA": "fact",
+    "textB": "器材笼钥匙能开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "器材笼钥匙能开",
+    "kindA": "fact",
+    "textB": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindA": "fact",
+    "textB": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindA": "fact",
+    "textB": "护膝一边扣紧、一边还敞着",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "护膝一边扣紧、一边还敞着",
+    "kindA": "fact",
+    "textB": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "kindA": "fact",
+    "textB": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "09-turns20-pi:g8-t4-joint-move:point_round_auto_mx09gn2f_13_1",
+  "evidence": "09-turns20-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "林亦舟查看西回廊里的变化",
+    "sentence": 0,
+    "score": 0.545
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西回廊，廊柱连接器材区与钟楼西门，腰高石栏可作掩体",
+    "sentence": null,
+    "score": 0.286
+   },
+   {
+    "kind": "fact",
+    "text": "第三根廊柱脚下有一条折断的蓝布带",
+    "sentence": 2,
+    "score": 0.6
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼方向的石板湿滑，不能直接奔跑过去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有折断的蓝布带，蓝布带一端压在第三根廊柱脚下，断口散开，不能证明佩戴者已被演习淘汰",
+    "sentence": 2,
+    "score": 0.676
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.345
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 0.7
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 0.812
+   },
+   {
+    "kind": "fact",
+    "text": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "sentence": 4,
+    "score": 0.8
+   },
+   {
+    "kind": "fact",
+    "text": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "sentence": 4,
+    "score": 0.696
+   },
+   {
+    "kind": "fact",
+    "text": "说话正常，没法独自站稳",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "林亦舟也在西回廊，蓝色识别带沾着灰，左脚踝在鞋帮上方肿起",
+    "kindA": "fact",
+    "textB": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "10-offline-pi:s05-act-inventory:point_round_auto_mx0au57y_2_1",
+  "evidence": "10-offline-pi.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.571
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.828
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 1,
+    "score": 0.95
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": null,
+    "score": 0.346
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 3,
+    "score": 0.694
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "10-offline-pi:s06-legal-failure:point_round_auto_mx0aw6o8_4_1",
+  "evidence": "10-offline-pi.json",
+  "sentences": 7,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.393
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 6,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.306
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc01-dialogue-nono-neutrality:point_round_auto_mx0a7c8r_2_1",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 7,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.429
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 2,
+    "score": 0.958
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 4,
+    "score": 0.95
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 6,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 6,
+    "score": 0.361
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc02-conflict-yard-cover:point_round_auto_mx0a95pd_4_1",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 7,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "唐骁向对方求助",
+    "sentence": null,
+    "score": 0.167
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在中央庭院，喷泉池沿把庭院分成东西两片射界",
+    "sentence": 0,
+    "score": 0.696
+   },
+   {
+    "kind": "fact",
+    "text": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼正门在北面",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "露天横穿最短，但要同时暴露给两边的窗口",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有倒放长椅，长椅倒扣，木背板能挡住低处射线，两端仍然暴露",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "一条腿折断，无法承受再站一个人",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有庭院空弹匣，弹匣已空，红胶带上有泥，落在东侧倒放长椅后",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有南端石花槽，石壁齐腰，内侧有可蹲下的位置",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "与喷泉之间隔着两步无遮挡石地",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "唐骁也在中央庭院，红色识别带勒在肩上，衣襟有上回演习未洗净的两处旧红斑，本场尚未被命中",
+    "sentence": 6,
+    "score": 0.513
+   },
+   {
+    "kind": "fact",
+    "text": "半蹲在倒放长椅后，空弹匣扔在脚边，护目镜完好",
+    "sentence": 5,
+    "score": 1.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在中央庭院，喷泉池沿把庭院分成东西两片射界",
+    "kindA": "fact",
+    "textB": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+    "kindA": "fact",
+    "textB": "钟楼正门在北面",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "钟楼正门在北面",
+    "kindA": "fact",
+    "textB": "露天横穿最短，但要同时暴露给两边的窗口",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "露天横穿最短，但要同时暴露给两边的窗口",
+    "kindA": "fact",
+    "textB": "屋里有倒放长椅，长椅倒扣，木背板能挡住低处射线，两端仍然暴露",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有倒放长椅，长椅倒扣，木背板能挡住低处射线，两端仍然暴露",
+    "kindA": "fact",
+    "textB": "一条腿折断，无法承受再站一个人",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "一条腿折断，无法承受再站一个人",
+    "kindA": "fact",
+    "textB": "屋里有庭院空弹匣，弹匣已空，红胶带上有泥，落在东侧倒放长椅后",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有庭院空弹匣，弹匣已空，红胶带上有泥，落在东侧倒放长椅后",
+    "kindA": "fact",
+    "textB": "屋里有南端石花槽，石壁齐腰，内侧有可蹲下的位置",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有南端石花槽，石壁齐腰，内侧有可蹲下的位置",
+    "kindA": "fact",
+    "textB": "与喷泉之间隔着两步无遮挡石地",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "与喷泉之间隔着两步无遮挡石地",
+    "kindA": "fact",
+    "textB": "唐骁也在中央庭院，红色识别带勒在肩上，衣襟有上回演习未洗净的两处旧红斑，本场尚未被命中",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "唐骁也在中央庭院，红色识别带勒在肩上，衣襟有上回演习未洗净的两处旧红斑，本场尚未被命中",
+    "kindA": "fact",
+    "textB": "半蹲在倒放长椅后，空弹匣扔在脚边，护目镜完好",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc03-move-shed:point_round_auto_mx0aclal_6_1",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "芬格尔查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.222
+   },
+   {
+    "kind": "result",
+    "text": "秦越查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.118
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": null,
+    "score": 0.312
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": 1,
+    "score": 0.833
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": 2,
+    "score": 0.933
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": 5,
+    "score": 0.529
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": null,
+    "score": 0.133
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": null,
+    "score": 0.174
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.28
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "kindA": "fact",
+    "textB": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "kindA": "fact",
+    "textB": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindA": "fact",
+    "textB": "黄色封套上写明不得与实弹混用",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "黄色封套上写明不得与实弹混用",
+    "kindA": "fact",
+    "textB": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindA": "fact",
+    "textB": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindA": "fact",
+    "textB": "器材笼钥匙能开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "器材笼钥匙能开",
+    "kindA": "fact",
+    "textB": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc04-item-magazine:point_round_auto_mx0ag8g4_8_1",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "芬格尔查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.222
+   },
+   {
+    "kind": "result",
+    "text": "秦越查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.176
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": null,
+    "score": 0.188
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": null,
+    "score": 0.2
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": 0,
+    "score": 0.933
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": 5,
+    "score": 0.522
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.28
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindA": "fact",
+    "textB": "黄色封套上写明不得与实弹混用",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "黄色封套上写明不得与实弹混用",
+    "kindA": "fact",
+    "textB": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindA": "fact",
+    "textB": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindA": "fact",
+    "textB": "器材笼钥匙能开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "器材笼钥匙能开",
+    "kindA": "fact",
+    "textB": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindA": "fact",
+    "textB": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindA": "fact",
+    "textB": "护膝一边扣紧、一边还敞着",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "护膝一边扣紧、一边还敞着",
+    "kindA": "fact",
+    "textB": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc05-move-hatch:point_round_86_2",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在服务巷检修口，方形检修盖虚掩，拉环朝上",
+    "sentence": 0,
+    "score": 0.857
+   },
+   {
+    "kind": "fact",
+    "text": "盖下短梯能到地下检修通道，携枪下行需腾出一只手",
+    "sentence": null,
+    "score": 0.048
+   },
+   {
+    "kind": "fact",
+    "text": "检修口边的器材筐有绝缘手电",
+    "sentence": null,
+    "score": 0.167
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "sentence": null,
+    "score": 0.111
+   },
+   {
+    "kind": "fact",
+    "text": "灯头绝缘圈完整，附腕绳",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "盖沿不宜放枪和松散弹匣",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": 4,
+    "score": 1.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "灯头绝缘圈完整，附腕绳",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindA": "fact",
+    "textB": "盖沿不宜放枪和松散弹匣",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "盖沿不宜放枪和松散弹匣",
+    "kindA": "fact",
+    "textB": "房间里没有别人",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc06-env-hatch-route:point_round_106_2",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在服务巷检修口，方形检修盖虚掩，拉环朝上",
+    "sentence": 0,
+    "score": 0.857
+   },
+   {
+    "kind": "fact",
+    "text": "盖下短梯能到地下检修通道，携枪下行需腾出一只手",
+    "sentence": null,
+    "score": 0.048
+   },
+   {
+    "kind": "fact",
+    "text": "检修口边的器材筐有绝缘手电",
+    "sentence": null,
+    "score": 0.333
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "灯头绝缘圈完整，附腕绳",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "盖沿不宜放枪和松散弹匣，已被提开",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": 4,
+    "score": 1.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "kindA": "fact",
+    "textB": "灯头绝缘圈完整，附腕绳",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "灯头绝缘圈完整，附腕绳",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindA": "fact",
+    "textB": "盖沿不宜放枪和松散弹匣，已被提开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "盖沿不宜放枪和松散弹匣，已被提开",
+    "kindA": "fact",
+    "textB": "房间里没有别人",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc07-move-foyer:point_round_127_2",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 3,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在钟楼门厅，正门半开，木门背后有弹着痕",
+    "sentence": null,
+    "score": 0.095
+   },
+   {
+    "kind": "fact",
+    "text": "西门向外推开，地下检修门则从里面插着门闩",
+    "sentence": null,
+    "score": 0.278
+   },
+   {
+    "kind": "fact",
+    "text": "下层楼梯入口被翻倒的长桌挡住一半",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "sentence": null,
+    "score": 0.071
+   },
+   {
+    "kind": "fact",
+    "text": "挪桌需要先腾开桌腿压住的位置",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "sentence": 1,
+    "score": 0.905
+   },
+   {
+    "kind": "fact",
+    "text": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": 2,
+    "score": 1.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindA": "fact",
+    "textB": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindA": "fact",
+    "textB": "房间里没有别人",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi-2026-11-28T1041-fbe4:sc08-env-foyer-table:point_round_147_2",
+  "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔在芬格尔的相机备用电池和检修门插闩的指引下，准备拍摄有辨识度的争旗场面并获取演习照片的拍摄机会，只完成了一部分",
+    "sentence": null,
+    "score": 0.058
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在钟楼门厅，正门半开，木门背后有弹着痕",
+    "sentence": null,
+    "score": 0.095
+   },
+   {
+    "kind": "fact",
+    "text": "西门向外推开，地下检修门则从里面插着门闩",
+    "sentence": null,
+    "score": 0.278
+   },
+   {
+    "kind": "fact",
+    "text": "下层楼梯入口被翻倒的长桌挡住一半",
+    "sentence": null,
+    "score": 0.2
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "挪桌需要先腾开桌腿压住的位置，已",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "sentence": 2,
+    "score": 0.857
+   },
+   {
+    "kind": "fact",
+    "text": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": 3,
+    "score": 1.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "kindA": "fact",
+    "textB": "挪桌需要先腾开桌腿压住的位置，已",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "挪桌需要先腾开桌腿压住的位置，已",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindA": "fact",
+    "textB": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindA": "fact",
+    "textB": "房间里没有别人",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc01-dialogue-nono-neutrality:point_round_auto_mx09lxn3_2_1",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.536
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": 1,
+    "score": 0.958
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": 3,
+    "score": 0.95
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": 5,
+    "score": 0.5
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "kindA": "fact",
+    "textB": "右墙贴着赛区图，器材棚门敞开",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "右墙贴着赛区图，器材棚门敞开",
+    "kindA": "fact",
+    "textB": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "kindA": "fact",
+    "textB": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "kindA": "fact",
+    "textB": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "kindA": "fact",
+    "textB": "地下检修通道用虚线标注，未标",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "地下检修通道用虚线标注，未标",
+    "kindA": "fact",
+    "textB": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "kindA": "fact",
+    "textB": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc02-conflict-yard-cover:point_round_auto_mx09ns7k_4_1",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "唐骁向对方求助",
+    "sentence": null,
+    "score": 0.167
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在中央庭院，喷泉池沿把庭院分成东西两片射界",
+    "sentence": 0,
+    "score": 0.565
+   },
+   {
+    "kind": "fact",
+    "text": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "钟楼正门在北面",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "露天横穿最短，但要同时暴露给两边的窗口",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有倒放长椅，长椅倒扣，木背板能挡住低处射线，两端仍然暴露",
+    "sentence": 2,
+    "score": 0.76
+   },
+   {
+    "kind": "fact",
+    "text": "一条腿折断，无法承受再站一个人",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有庭院空弹匣，弹匣已空，红胶带上有泥，落在东侧倒放长椅后",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有南端石花槽，石壁齐腰，内侧有可蹲下的位置",
+    "sentence": 4,
+    "score": 0.8
+   },
+   {
+    "kind": "fact",
+    "text": "与喷泉之间隔着两步无遮挡石地",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "唐骁也在中央庭院，红色识别带勒在肩上，衣襟有上回演习未洗净的两处旧红斑，本场尚未被命中",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "半蹲在倒放长椅后，空弹匣扔在脚边，护目镜完好",
+    "sentence": 5,
+    "score": 0.421
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非现在在中央庭院，喷泉池沿把庭院分成东西两片射界",
+    "kindA": "fact",
+    "textB": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+    "kindA": "fact",
+    "textB": "钟楼正门在北面",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "钟楼正门在北面",
+    "kindA": "fact",
+    "textB": "露天横穿最短，但要同时暴露给两边的窗口",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "露天横穿最短，但要同时暴露给两边的窗口",
+    "kindA": "fact",
+    "textB": "屋里有倒放长椅，长椅倒扣，木背板能挡住低处射线，两端仍然暴露",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有倒放长椅，长椅倒扣，木背板能挡住低处射线，两端仍然暴露",
+    "kindA": "fact",
+    "textB": "一条腿折断，无法承受再站一个人",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "一条腿折断，无法承受再站一个人",
+    "kindA": "fact",
+    "textB": "屋里有庭院空弹匣，弹匣已空，红胶带上有泥，落在东侧倒放长椅后",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有庭院空弹匣，弹匣已空，红胶带上有泥，落在东侧倒放长椅后",
+    "kindA": "fact",
+    "textB": "屋里有南端石花槽，石壁齐腰，内侧有可蹲下的位置",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有南端石花槽，石壁齐腰，内侧有可蹲下的位置",
+    "kindA": "fact",
+    "textB": "与喷泉之间隔着两步无遮挡石地",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "与喷泉之间隔着两步无遮挡石地",
+    "kindA": "fact",
+    "textB": "唐骁也在中央庭院，红色识别带勒在肩上，衣襟有上回演习未洗净的两处旧红斑，本场尚未被命中",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "唐骁也在中央庭院，红色识别带勒在肩上，衣襟有上回演习未洗净的两处旧红斑，本场尚未被命中",
+    "kindA": "fact",
+    "textB": "半蹲在倒放长椅后，空弹匣扔在脚边，护目镜完好",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc03-move-shed:point_round_auto_mx09qw0w_6_1",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "芬格尔查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.222
+   },
+   {
+    "kind": "result",
+    "text": "秦越查看器材棚里的变化，只完成了一部分",
+    "sentence": null,
+    "score": 0.176
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": null,
+    "score": 0.188
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": null,
+    "score": 0.083
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": null,
+    "score": 0.2
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": 0,
+    "score": 0.933
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": 0,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": 2,
+    "score": 0.909
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": 3,
+    "score": 0.824
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": 5,
+    "score": 0.435
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.28
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindA": "fact",
+    "textB": "黄色封套上写明不得与实弹混用",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "黄色封套上写明不得与实弹混用",
+    "kindA": "fact",
+    "textB": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindA": "fact",
+    "textB": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindA": "fact",
+    "textB": "器材笼钥匙能开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "器材笼钥匙能开",
+    "kindA": "fact",
+    "textB": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindA": "fact",
+    "textB": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "旧相机挂在脖子上，左臂没有阵营布带",
+    "kindA": "fact",
+    "textB": "护膝一边扣紧、一边还敞着",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "护膝一边扣紧、一边还敞着",
+    "kindA": "fact",
+    "textB": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc04-item-magazine:point_round_auto_mx09tswy_8_1",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 7,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "秦越查看器材棚里的变化，只完成了一部分",
+    "sentence": 0,
+    "score": 0.529
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看器材棚里的变化",
+    "sentence": 6,
+    "score": 0.364
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": 1,
+    "score": 0.438
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": 2,
+    "score": 0.917
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": 3,
+    "score": 0.933
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": 4,
+    "score": 0.939
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": 5,
+    "score": 0.909
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": 5,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": 6,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": null,
+    "score": 0.174
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.28
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "秦越查看器材棚里的变化，只完成了一部分",
+    "kindA": "result",
+    "textB": "芬格尔查看器材棚里的变化",
+    "kindB": "result",
+    "boundary": 1
+   },
+   {
+    "textA": "芬格尔查看器材棚里的变化",
+    "kindA": "result",
+    "textB": "路明非现在在器材棚，推拉门可回服务巷",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "路明非现在在器材棚，推拉门可回服务巷",
+    "kindA": "fact",
+    "textB": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "kindA": "fact",
+    "textB": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "kindA": "fact",
+    "textB": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "kindA": "fact",
+    "textB": "黄色封套上写明不得与实弹混用",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "黄色封套上写明不得与实弹混用",
+    "kindA": "fact",
+    "textB": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "kindA": "fact",
+    "textB": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "kindA": "fact",
+    "textB": "器材笼钥匙能开",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "器材笼钥匙能开",
+    "kindA": "fact",
+    "textB": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc05-move-hatch:point_round_86_2",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在服务巷检修口，方形检修盖虚掩，拉环朝上",
+    "sentence": 0,
+    "score": 0.857
+   },
+   {
+    "kind": "fact",
+    "text": "盖下短梯能到地下检修通道，携枪下行需腾出一只手",
+    "sentence": null,
+    "score": 0.048
+   },
+   {
+    "kind": "fact",
+    "text": "检修口边的器材筐有绝缘手电",
+    "sentence": null,
+    "score": 0.333
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "灯头绝缘圈完整，附腕绳",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "盖沿不宜放枪和松散弹匣",
+    "sentence": 3,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "kindA": "fact",
+    "textB": "灯头绝缘圈完整，附腕绳",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "灯头绝缘圈完整，附腕绳",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindA": "fact",
+    "textB": "盖沿不宜放枪和松散弹匣",
+    "kindB": "fact",
+    "boundary": 0
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc06-env-hatch-route:point_round_106_2",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 6,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在服务巷检修口，方形检修盖虚掩，拉环朝上",
+    "sentence": 0,
+    "score": 0.857
+   },
+   {
+    "kind": "fact",
+    "text": "盖下短梯能到地下检修通道，携枪下行需腾出一只手",
+    "sentence": null,
+    "score": 0.048
+   },
+   {
+    "kind": "fact",
+    "text": "检修口边的器材筐有绝缘手电",
+    "sentence": 1,
+    "score": 0.833
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "sentence": 1,
+    "score": 0.778
+   },
+   {
+    "kind": "fact",
+    "text": "灯头绝缘圈完整，附腕绳",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 2,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "sentence": 3,
+    "score": 0.917
+   },
+   {
+    "kind": "fact",
+    "text": "盖沿不宜放枪和松散弹匣，已被提开",
+    "sentence": 4,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": null,
+    "score": 0.333
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "检修口边的器材筐有绝缘手电",
+    "kindA": "fact",
+    "textB": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有绝缘手电，开关处于关闭，电量指示三格",
+    "kindA": "fact",
+    "textB": "灯头绝缘圈完整，附腕绳",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "灯头绝缘圈完整，附腕绳",
+    "kindA": "fact",
+    "textB": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有服务巷检修盖，铁盖虚掩，拉环可握，重量需要稳定提起",
+    "kindA": "fact",
+    "textB": "盖沿不宜放枪和松散弹匣，已被提开",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc07-move-foyer:point_round_127_2",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 4,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在钟楼门厅，正门半开，木门背后有弹着痕",
+    "sentence": null,
+    "score": 0.095
+   },
+   {
+    "kind": "fact",
+    "text": "西门向外推开，地下检修门则从里面插着门闩",
+    "sentence": null,
+    "score": 0.278
+   },
+   {
+    "kind": "fact",
+    "text": "下层楼梯入口被翻倒的长桌挡住一半",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "挪桌需要先腾开桌腿压住的位置",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 1,
+    "score": 0.931
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "sentence": 2,
+    "score": 0.857
+   },
+   {
+    "kind": "fact",
+    "text": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "sentence": 2,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": 3,
+    "score": 1.0
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindA": "fact",
+    "textB": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindB": "fact",
+    "boundary": 0
+   },
+   {
+    "textA": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindA": "fact",
+    "textB": "房间里没有别人",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "10-scenarios-pi:sc08-env-foyer-table:point_round_147_2",
+  "evidence": "10-scenarios-pi.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "凯撒留在红方集结点等待，却没有成功",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "result",
+    "text": "楚子航守住顶层",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "顾岚查看医护空床",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "芬格尔查看相机备用电池，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "林亦舟在西回廊的第三根柱子旁，向能听见的人说明是实际扭伤，不是弗里嘉弹造成的暂时失能",
+    "sentence": null,
+    "score": 0.026
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在钟楼门厅，正门半开，木门背后有弹着痕",
+    "sentence": null,
+    "score": 0.095
+   },
+   {
+    "kind": "fact",
+    "text": "西门向外推开，地下检修门则从里面插着门闩",
+    "sentence": null,
+    "score": 0.333
+   },
+   {
+    "kind": "fact",
+    "text": "下层楼梯入口被翻倒的长桌挡住一半",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "sentence": null,
+    "score": 0.071
+   },
+   {
+    "kind": "fact",
+    "text": "挪桌需要先腾开桌腿压住的位置，已",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": 3,
+    "score": 0.862
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "sentence": 0,
+    "score": 0.81
+   },
+   {
+    "kind": "fact",
+    "text": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "sentence": 1,
+    "score": 1.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": 4,
+    "score": 0.667
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "kindA": "fact",
+    "textB": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "kindA": "fact",
+    "textB": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindB": "fact",
+    "boundary": 1
+   },
+   {
+    "textA": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "kindA": "fact",
+    "textB": "房间里没有别人",
+    "kindB": "fact",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "11-smoke-default-ctx8192:s01-act-move:point_round_auto_mx0b3u81_2_1",
+  "evidence": "11-smoke-default-ctx8192.json",
+  "sentences": 1,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": null,
+    "score": 0.071
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": null,
+    "score": 0.1
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": null,
+    "score": 0.346
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.083
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-q4kv-2turns:s04-act-wait:point_round_auto_mx0c1yv6_2_1",
+  "evidence": "12-q4kv-2turns.json",
+  "sentences": 2,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": null,
+    "score": 0.071
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": null,
+    "score": 0.15
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": null,
+    "score": 0.346
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.056
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-q4kv-s03:s03-act-talk:point_round_auto_mx0cjw3j_2_1",
+  "evidence": "12-q4kv-s03.json",
+  "sentences": 2,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.464
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.042
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": null,
+    "score": 0.15
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": null,
+    "score": 0.188
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": null,
+    "score": 0.346
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.25
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-q8kv-s03-clean:s03-act-talk:point_round_auto_mx0cnthw_2_1",
+  "evidence": "12-q8kv-s03-clean.json",
+  "sentences": 2,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": 0,
+    "score": 0.429
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": null,
+    "score": 0.1
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": null,
+    "score": 0.125
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": null,
+    "score": 0.346
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.194
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-scenarios-q4kv:sc01-dialogue-nono-neutrality:point_round_3_1",
+  "evidence": "12-scenarios-q4kv.json",
+  "sentences": 8,
+  "fragments": [
+   {
+    "kind": "action",
+    "text": "路明非向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方",
+    "sentence": 2,
+    "score": 0.621
+   },
+   {
+    "kind": "result",
+    "text": "诺诺没有立刻回答，先看了看周围，却没有成功",
+    "sentence": 0,
+    "score": 0.471
+   },
+   {
+    "kind": "result",
+    "text": "路明非向诺诺问清：现在红蓝两方各控制到哪里，路明非能不能不加入任何一方，只完成了一部分",
+    "sentence": 2,
+    "score": 0.528
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在西侧服务巷，巷口的黄黑绳已放下，进入即算踏入演习区",
+    "sentence": null,
+    "score": 0.107
+   },
+   {
+    "kind": "fact",
+    "text": "右墙贴着赛区图，器材棚门敞开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "巷子尽头的低墙挡住庭院视线，墙角留下新鲜的演习弹红痕",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.069
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的演习背心，背心前襟完好，没有演习弹痕",
+    "sentence": null,
+    "score": 0.15
+   },
+   {
+    "kind": "fact",
+    "text": "胸袋能放一只弹匣，肩上没有阵营识别带",
+    "sentence": null,
+    "score": 0.062
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有赛区路线图，图上画出庭院、东西回廊、跨溪小桥、钟楼与白线撤离路",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "地下检修通道用虚线标注，未标",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "诺诺也在西侧服务巷，红发用发圈束在脑后，红色识别带缠在左臂",
+    "sentence": null,
+    "score": 0.038
+   },
+   {
+    "kind": "fact",
+    "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+    "sentence": null,
+    "score": 0.028
+   }
+  ],
+  "pairs": [
+   {
+    "textA": "路明非向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方",
+    "kindA": "action",
+    "textB": "诺诺没有立刻回答，先看了看周围，却没有成功",
+    "kindB": "result",
+    "boundary": 1
+   },
+   {
+    "textA": "诺诺没有立刻回答，先看了看周围，却没有成功",
+    "kindA": "result",
+    "textB": "路明非向诺诺问清：现在红蓝两方各控制到哪里，路明非能不能不加入任何一方，只完成了一部分",
+    "kindB": "result",
+    "boundary": 1
+   }
+  ]
+ },
+ {
+  "id": "12-scenarios-q4kv:sc04-item-magazine:point_round_auto_mx0d0jwl_7_1",
+  "evidence": "12-scenarios-q4kv.json",
+  "sentences": 2,
+  "fragments": [
+   {
+    "kind": "result",
+    "text": "芬格尔action，只完成了一部分",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-scenarios-q4kv:sc06-env-hatch-route:point_round_auto_mx0d4ldq_9_1",
+  "evidence": "12-scenarios-q4kv.json",
+  "sentences": 5,
+  "fragments": [
+   {
+    "kind": "fact",
+    "text": "路明非现在在器材棚，推拉门可回服务巷",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "领用台与带锁器材笼分处两侧，中间留有担架能通过的宽度",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "备用弹药箱已开盖，笼门的挂锁仍扣着",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有开盖演习弹药箱，箱内两只已装填的通用短枪弹匣各有8发弗里嘉演习弹",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "黄色封套上写明不得与实弹混用",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼钥匙，钥匙挂着与挂锁同号的金属牌，扣在秦越腰环上，并未交给芬格尔",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有器材笼挂锁，挂锁扣住笼门插销，锁眼朝外，锁梁完整",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "器材笼钥匙能开",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "芬格尔也在器材棚，头盔歪扣着，食指蹭了油",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "旧相机挂在脖子上，左臂没有阵营布带",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "护膝一边扣紧、一边还敞着",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "秦越也在器材棚，灰色器材背心套在校服外，胸前挂着领用牌",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-scenarios-q4kv:sc07-move-foyer:point_round_118_1",
+  "evidence": "12-scenarios-q4kv.json",
+  "sentences": 1,
+  "fragments": [
+   {
+    "kind": "action",
+    "text": "路明非离开检修口，沿服务巷绕到西侧，从西门进入门厅",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "路明非离开检修口，沿服务巷绕到西侧，从西门进入门厅",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "result",
+    "text": "去向=lufoyer",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非从器材棚走到了钟楼门厅",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在钟楼门厅，正门半开，木门背后有弹着痕",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "西门向外推开，地下检修门则从里面插着门闩",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "下层楼梯入口被翻倒的长桌挡住一半",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "挪桌需要先腾开桌腿压住的位置",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": []
+ },
+ {
+  "id": "12-scenarios-q4kv:sc08-env-foyer-table:point_round_138_1",
+  "evidence": "12-scenarios-q4kv.json",
+  "sentences": 1,
+  "fragments": [
+   {
+    "kind": "action",
+    "text": "路明非抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口",
+    "sentence": null,
+    "score": 0.036
+   },
+   {
+    "kind": "result",
+    "text": "路明非抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口",
+    "sentence": null,
+    "score": 0.036
+   },
+   {
+    "kind": "fact",
+    "text": "路明非现在在钟楼门厅，正门半开，木门背后有弹着痕",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "西门向外推开，地下检修门则从里面插着门闩",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "下层楼梯入口被翻倒的长桌挡住一半",
+    "sentence": null,
+    "score": 0.067
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有门厅翻倒长桌，长桌斜挡楼梯口，现有空隙够一人侧身，担架过不去",
+    "sentence": null,
+    "score": 0.036
+   },
+   {
+    "kind": "fact",
+    "text": "挪桌需要先腾开桌腿压住的位置，已",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有路明非的护目镜，镜片无裂纹，镜带松着，现挂在胸前而非戴在眼前",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "屋里有钟楼地下检修门，铁门关闭，内侧门闩插在槽里",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "门外是地下检修通道，外面没有能直接开闩的把手",
+    "sentence": null,
+    "score": 0.0
+   },
+   {
+    "kind": "fact",
+    "text": "房间里没有别人",
+    "sentence": null,
+    "score": 0.0
+   }
+  ],
+  "pairs": []
+ }
+]
