@@ -91,4 +91,5 @@ Artifacts     evidence files, manifests, commits
 | N11 | Acceptance: 8/8 scenarios clean, 17/20 inputs clean, restore 8->8, only the 0.6B requested | interrupted by memory guard at 17/20 |
 | N12 | Boundary model in the renderer: 13.08 -> 10.12 sentences/point, zero fragments lost (OOF 10.55) | done (offline prototype) |
 | N13 | Annotation schema pilot: selection+groups render deterministically; join punctuation and selection policy are the gaps | done (2 points) |
-| N14 | Boundary model asset: 31KB, 1,974 non-zero weights, independent recompute 267/267 | done |
+| N14 | Boundary model asset: 31KB, 1,974 non-zero weights, independent recompute 267/267 | done (not wired, per review) |
+| N15 | Naturalness gap: aspect, connectives, entity-attribute rewriting and ellipsis, not grouping | done (analysis) |
