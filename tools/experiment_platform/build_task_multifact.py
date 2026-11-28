@@ -215,7 +215,7 @@ def main(argv: list[str] | None = None) -> int:
         'usage': 'dev/regression; scenario evidence drove fixes, not independent',
         'runId': doc.get('runId'), 'arm': doc.get('arm'),
         'labelSource': 'raw taskLedger.seenFacts + state snapshot diff',
-        'turns': turn_table,
+        'turnTable': turn_table,
     }
     out.with_suffix('.summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     print(json.dumps(summary, ensure_ascii=False, indent=1))

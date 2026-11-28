@@ -1,47 +1,6 @@
 {
  "schema": "jity-task-multifact/2",
- "turns": [
-  {
-   "turnIndex": 1,
-   "turnId": "sc01-dialogue-nono-neutrality",
-   "time": "2009-10-17T15:23:00"
-  },
-  {
-   "turnIndex": 2,
-   "turnId": "sc02-conflict-yard-cover",
-   "time": "2009-10-17T15:26:00"
-  },
-  {
-   "turnIndex": 3,
-   "turnId": "sc03-move-shed",
-   "time": "2009-10-17T15:29:00"
-  },
-  {
-   "turnIndex": 4,
-   "turnId": "sc04-item-magazine",
-   "time": "2009-10-17T15:32:00"
-  },
-  {
-   "turnIndex": 5,
-   "turnId": "sc05-move-hatch",
-   "time": "2009-10-17T15:33:00"
-  },
-  {
-   "turnIndex": 6,
-   "turnId": "sc06-env-hatch-route",
-   "time": "2009-10-17T15:34:00"
-  },
-  {
-   "turnIndex": 7,
-   "turnId": "sc07-move-foyer",
-   "time": "2009-10-17T15:35:00"
-  },
-  {
-   "turnIndex": 8,
-   "turnId": "sc08-env-foyer-table",
-   "time": "2009-10-17T15:36:00"
-  }
- ],
+ "turns": 8,
  "cases": 584,
  "tasks": 73,
  "owners": 14,
@@ -86,5 +45,47 @@
   "taskProposer": "micro",
   "semanticArm": null
  },
- "labelSource": "raw taskLedger.seenFacts + state snapshot diff"
+ "labelSource": "raw taskLedger.seenFacts + state snapshot diff",
+ "turnTable": [
+  {
+   "turnIndex": 1,
+   "turnId": "sc01-dialogue-nono-neutrality",
+   "time": "2009-10-17T15:23:00"
+  },
+  {
+   "turnIndex": 2,
+   "turnId": "sc02-conflict-yard-cover",
+   "time": "2009-10-17T15:26:00"
+  },
+  {
+   "turnIndex": 3,
+   "turnId": "sc03-move-shed",
+   "time": "2009-10-17T15:29:00"
+  },
+  {
+   "turnIndex": 4,
+   "turnId": "sc04-item-magazine",
+   "time": "2009-10-17T15:32:00"
+  },
+  {
+   "turnIndex": 5,
+   "turnId": "sc05-move-hatch",
+   "time": "2009-10-17T15:33:00"
+  },
+  {
+   "turnIndex": 6,
+   "turnId": "sc06-env-hatch-route",
+   "time": "2009-10-17T15:34:00"
+  },
+  {
+   "turnIndex": 7,
+   "turnId": "sc07-move-foyer",
+   "time": "2009-10-17T15:35:00"
+  },
+  {
+   "turnIndex": 8,
+   "turnId": "sc08-env-foyer-table",
+   "time": "2009-10-17T15:36:00"
+  }
+ ]
 }
