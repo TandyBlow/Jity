@@ -16,11 +16,12 @@ const page = await context.newPage();
 const started = Date.now();
 await page.goto(url, { waitUntil: 'domcontentloaded' });
 while (Date.now() - started < durationMs) {
-  const sample = await page.evaluate(async () => {
+  const expensive = !globalThis.__lastDetail || Date.now() - globalThis.__lastDetail > 30000;
+  const sample = await page.evaluate(async (withDetail) => {
     const memory = performance.memory;
     const isolated = Boolean(globalThis.crossOriginIsolated);
     let detailed = null;
-    if (isolated && typeof performance.measureUserAgentSpecificMemory === 'function') {
+    if (withDetail && isolated && typeof performance.measureUserAgentSpecificMemory === 'function') {
       try {
         const result = await performance.measureUserAgentSpecificMemory();
         detailed = result.breakdown.reduce((sum, item) => sum + (item.bytes ?? 0), 0);
@@ -33,7 +34,8 @@ while (Date.now() - started < durationMs) {
       isolated,
       wasmEstimate: detailed,
     };
-  }).catch(() => null);
+  }, expensive).catch(() => null);
+  if (sample && sample.wasmEstimate != null) globalThis.__lastDetail = Date.now();
   log({ at: Date.now() - started, ...sample });
   await new Promise((resolve) => setTimeout(resolve, 2000));
 }

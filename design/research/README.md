@@ -50,3 +50,4 @@ Artifacts     evidence files, manifests, commits
 | E24 | 20-input acceptance on the micro default | done (20/20 gates) |
 | E25 | Phone real device: single 0.6B CPU arm, two turns | done (25.2/193.3 s; WebGPU still crashes) |
 | E28 | Narration reverse decomposition: six-operation taxonomy, open share | done (30-sample manual: open 3.6%) |
+| E29 | Memory baseline: single-engine arm on desktop | done (page 0.72 GB attribution; Edge RSS peak 4.65 GB; JS heap 58 MB) |
