@@ -1135,6 +1135,7 @@ export default function WorldLocalPage() {
           ...(arm.offscreenPolicy ? { offscreenPolicy: arm.offscreenPolicy } : {}),
           narrationMode: 'instruct',
           narrationCandidate: (candidate ?? 'builtin') as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin' | 'rules',
+          ...(new URLSearchParams(window.location.search).get('ruleDebug') === '1' ? { narrationDebug: true } : {}),
           ...(arm.mode ? { trainedMode: arm.mode } : {}),
           ...(arm.shape ? { trainedPromptShape: arm.shape } : {}),
           // The fact-structure candidate writes one verified beat per model
@@ -1279,7 +1280,7 @@ export default function WorldLocalPage() {
               if (index < 0) points.push({ pointId: progress.pointId, text, source: 'model' });
               else if (points[index].source !== 'program') points[index] = { ...points[index], text };
               points.splice(0, points.length, ...inPointOrder(points));
-              return { ...entry, points, text: points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10)), draftMs: entry.draftMs ?? draftMs };
+              return { ...entry, points, text: joinPointTexts(points), draftMs: entry.draftMs ?? draftMs };
             }));
           },
           onNarrationComplete: (progress) => {
@@ -1331,7 +1332,7 @@ export default function WorldLocalPage() {
               // Evidence: the turn record carries the same per-point prose the
               // article renders, so a driver can compare them verbatim.
               if (record) record.points = points.map((part) => ({ ...part }));
-              const joined = points.map((part) => part.text).filter((part) => part.trim()).join(String.fromCharCode(10, 10));
+              const joined = joinPointTexts(points);
               return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
             }));
             setPhase('ready');
@@ -2214,6 +2215,25 @@ function updateLast(list: TurnEntry[], update: (entry: TurnEntry) => TurnEntry):
   const copy = list.slice();
   copy[copy.length - 1] = update(copy[copy.length - 1]);
   return copy;
+}
+
+/** 规则正文的每个 point 都写完整场景；拼成一回合时同一句只保留一次。 */
+function joinPointTexts(points: Array<{ text: string; source?: string }>): string {
+  const seen = new Set<string>();
+  const kept: string[] = [];
+  for (const part of points) {
+    let text = part.text;
+    if (part.source === 'program') {
+      text = text.split(/(?<=[。！？])/u).filter((sentence) => {
+        const key = sentence.replace(/[\s。！？]/gu, '');
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).join('');
+    }
+    if (text.trim()) kept.push(text);
+  }
+  return kept.join(String.fromCharCode(10, 10));
 }
 
 

@@ -16,8 +16,7 @@ export interface RulesNarrationInput {
   /** instructNarrationInput 的 sentences：含行动行、时间行、世界事实与结算段。 */
   sentences: string[];
   resultsText: string;
-  /** 本会话已经叙述过的事实句；重复的事实不再写第二遍。 */
-  narrated?: Set<string>;
+
   names: string[];
   protagonist: string;
 }
@@ -84,21 +83,15 @@ function mergeSameHead(parts: string[], names: string[]): string[] {
 }
 
 export function rulesNarration(input: RulesNarrationInput): string {
+  // 每个 point 都写完整场景；跨 point 的重复句由页面在拼接时去掉。
   const facts = input.sentences.filter((part) => !part.startsWith('玩家这回合') && !TIME.test(part) && !part.startsWith(SETTLE));
-  const seen = input.narrated ?? new Set<string>();
-  const fresh = facts.filter((part) => !seen.has(part));
-  for (const part of fresh) seen.add(part);
-  const anchor = facts.find((part) => part.startsWith(input.protagonist) && part.includes('现在在'));
-  // 没有新事实时给一句位置锚点；已经说过的位置不再重复。
-  const kept = fresh.length ? fresh : (anchor && !seen.has(anchor) ? [anchor] : []);
-  if (!fresh.length && kept.length) seen.add(anchor as string);
   const results = input.resultsText.split(/[；]/u).map(resultLine).filter((line): line is string => Boolean(line));
   const time = input.sentences.find((part) => TIME.test(part)) ?? '';
   const declared = openingOf(input.sentences);
   const opening = declared && results.some((line) => covers(line, declared)) ? null : declared;
   const body: string[] = [];
   if (opening) body.push(opening);
-  body.push(...results, ...kept);
+  body.push(...results, ...facts);
   const merged = mergeSameHead(body.map((part) => part.replace(/。$/u, '')), input.names);
   const paragraphs: string[] = [];
   if (merged.length) paragraphs.push(`${merged.join('。')}。`);

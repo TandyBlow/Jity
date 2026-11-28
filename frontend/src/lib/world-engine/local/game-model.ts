@@ -112,6 +112,8 @@ export interface GameModelOptions {
    * nothing until one is accepted; the named routes exist for evaluation and
    * are never a player-visible setting. */
   narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin' | 'rules';
+  /** Rules arm only: append prev/fresh counters for diagnosis. */
+  narrationDebug?: boolean;
   /** Constrained route only: `program` never calls the model, `model` writes
    * one verified beat per call. Internal. */
 
@@ -202,10 +204,7 @@ export class LocalGameModel implements WorldModelPort {
   private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
   private readonly seenFactTexts = new Set<string>();
   private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
-  /** Rules arm: facts already narrated in this session, never repeated. */
-  private readonly narratedFacts = new Set<string>();
-  /** Facts each point contributed, so a retry of that point does not lose them. */
-  private readonly rulesPointFacts = new Map<Id, string[]>();
+
   /** Planned actors per point; the action line follows this, not the delta. */
   private readonly plannedActors = new Map<Id, Id[]>();
   private recentEvents: string[] = [];
@@ -616,16 +615,11 @@ export class LocalGameModel implements WorldModelPort {
     // Zero-parameter arm: the brief is the whole input, no engine is touched.
     if (this.options.narrationCandidate === 'rules') {
       const input = instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact');
-      // 同一 point 重试时，先收回它上次占用的事实，否则重试只会剩时间行。
-      const owned = this.rulesPointFacts.get(pointId);
-      if (owned) for (const fact of owned) this.narratedFacts.delete(fact);
-      const beforeFacts = new Set(this.narratedFacts);
       const text = rulesNarration({
-        sentences: input.sentences, resultsText, narrated: this.narratedFacts,
+        sentences: input.sentences, resultsText,
         names: Object.values(after.initial.characters).map((entry) => String(entry.name ?? '')),
         protagonist: after.initial.characters[view]?.name ?? view,
       });
-      this.rulesPointFacts.set(pointId, [...this.narratedFacts].filter((fact) => !beforeFacts.has(fact)));
       const ms = performance.now() - started;
       this.options.onNarrationDebug?.({ pointId, raw: text, text, rawAttempts: [], prompt: input.prompt });
       this.options.onTask?.('narration', key, { ms, fallback: false, raw: text, promptChars: input.prompt.length, source: 'rule' });
