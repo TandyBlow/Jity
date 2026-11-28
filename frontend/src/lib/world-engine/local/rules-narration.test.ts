@@ -5,12 +5,12 @@ import { instructNarrationInput } from './prompt';
 import { rulesNarration } from './rules-narration';
 import { buildInitialState } from './state';
 
-function narrate(previousSentences?: string[]) {
+function narrate(narrated?: Set<string>) {
   const state = buildInitialState(structuredClone(SHORT_STATE.initial) as unknown as InitialState);
   const resultsText = '周宁：把枪放在桌上。（没有成功）；林川：看了他一眼。（达到目的）';
   const { sentences } = instructNarrationInput(null, {}, state, 'person_c', '我把枪放在桌上', resultsText);
   const text = rulesNarration({
-    sentences, resultsText, previousSentences,
+    sentences, resultsText, ...(narrated ? { narrated } : {}),
     names: Object.values(state.initial.characters).map((entry) => String(entry.name ?? '')),
     protagonist: '周宁',
   });
@@ -26,16 +26,17 @@ describe('rules narration candidate', () => {
     expect(text).toContain('现在在走廊');
   });
 
-  it('drops facts the previous point already carried', () => {
+  it('never repeats a fact already narrated in this session', () => {
     const { sentences, text } = narrate();
+    const narrated = new Set(sentences);
     const second = rulesNarration({
       sentences, resultsText: '周宁：把枪放在桌上。（没有成功）',
-      previousSentences: sentences,
+      narrated,
       names: ['周宁', '林川'], protagonist: '周宁',
     });
-    // The anchor and the result survive; the repeated item sentence does not.
-    expect(second).toContain('现在在走廊');
+    // Only the new settlement result survives; every narratable fact is old.
     expect(second).toContain('却没有成功');
+    expect(second).not.toContain('现在在走廊');
     expect(second).not.toContain('屋里有');
     expect(second.length).toBeLessThan(text.length);
   });

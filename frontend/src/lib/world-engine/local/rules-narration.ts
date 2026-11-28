@@ -16,7 +16,8 @@ export interface RulesNarrationInput {
   /** instructNarrationInput 的 sentences：含行动行、时间行、世界事实与结算段。 */
   sentences: string[];
   resultsText: string;
-  previousSentences?: string[];
+  /** 本会话已经叙述过的事实句；重复的事实不再写第二遍。 */
+  narrated?: Set<string>;
   names: string[];
   protagonist: string;
 }
@@ -41,7 +42,7 @@ function openingOf(sentences: string[]): string | null {
   const match = ACTION.exec(line);
   if (!match) return null;
   const name = match[1];
-  const body = match[2].trim().replace(/[。；]+$/u, '');
+  const body = match[2].trim().replace(/[，,、；;。\s]+$/u, '');
   if (!body) return null;
   return body.startsWith(name) ? body : `${name}${body}`;
 }
@@ -84,10 +85,13 @@ function mergeSameHead(parts: string[], names: string[]): string[] {
 
 export function rulesNarration(input: RulesNarrationInput): string {
   const facts = input.sentences.filter((part) => !part.startsWith('玩家这回合') && !TIME.test(part) && !part.startsWith(SETTLE));
-  const seen = new Set(input.previousSentences ?? []);
+  const seen = input.narrated ?? new Set<string>();
   const fresh = facts.filter((part) => !seen.has(part));
+  for (const part of fresh) seen.add(part);
   const anchor = facts.find((part) => part.startsWith(input.protagonist) && part.includes('现在在'));
-  const kept = fresh.length ? fresh : (anchor ? [anchor] : []);
+  // 没有新事实时给一句位置锚点；已经说过的位置不再重复。
+  const kept = fresh.length ? fresh : (anchor && !seen.has(anchor) ? [anchor] : []);
+  if (!fresh.length && kept.length) seen.add(anchor as string);
   const results = input.resultsText.split(/[；]/u).map(resultLine).filter((line): line is string => Boolean(line));
   const time = input.sentences.find((part) => TIME.test(part)) ?? '';
   const declared = openingOf(input.sentences);

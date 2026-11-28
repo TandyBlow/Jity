@@ -202,8 +202,8 @@ export class LocalGameModel implements WorldModelPort {
   private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
   private readonly seenFactTexts = new Set<string>();
   private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
-  /** Rules arm: the fact sentences each point was narrated from, for the next delta. */
-  private readonly rulesBriefs: Array<{ pointId: Id; sentences: string[] }> = [];
+  /** Rules arm: facts already narrated in this session, never repeated. */
+  private readonly narratedFacts = new Set<string>();
   /** Planned actors per point; the action line follows this, not the delta. */
   private readonly plannedActors = new Map<Id, Id[]>();
   private recentEvents: string[] = [];
@@ -614,22 +614,11 @@ export class LocalGameModel implements WorldModelPort {
     // Zero-parameter arm: the brief is the whole input, no engine is touched.
     if (this.options.narrationCandidate === 'rules') {
       const input = instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact');
-      const { brief, sentences } = input;
-      const index = this.rulesBriefs.findIndex((entry) => entry.pointId === pointId);
-      // Regenerating a point uses the same predecessor; a new point uses the last one.
-      const previous = index > 0
-        ? this.rulesBriefs[index - 1].sentences
-        : index < 0 ? this.rulesBriefs[this.rulesBriefs.length - 1]?.sentences ?? [] : [];
       const text = rulesNarration({
-        sentences, resultsText, previousSentences: previous,
+        sentences: input.sentences, resultsText, narrated: this.narratedFacts,
         names: Object.values(after.initial.characters).map((entry) => String(entry.name ?? '')),
         protagonist: after.initial.characters[view]?.name ?? view,
       });
-      if (index >= 0) this.rulesBriefs[index].sentences = sentences;
-      else {
-        this.rulesBriefs.push({ pointId, sentences });
-        if (this.rulesBriefs.length > 400) this.rulesBriefs.shift();
-      }
       const ms = performance.now() - started;
       this.options.onNarrationDebug?.({ pointId, raw: text, text, rawAttempts: [], prompt: input.prompt });
       this.options.onTask?.('narration', key, { ms, fallback: false, raw: text, promptChars: input.prompt.length, source: 'rule' });
