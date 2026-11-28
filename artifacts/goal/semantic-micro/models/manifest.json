@@ -1,0 +1,22 @@
+[
+ {
+  "path": "frontend/public/micro/task-condition-int8.onnx",
+  "bytes": 10550492,
+  "sha256": "b5636366e7831d568435dc8a7934584a00bc8fdccfd75040596c8b99746831fc"
+ },
+ {
+  "path": "frontend/public/micro/task-match-int8.onnx",
+  "bytes": 10551953,
+  "sha256": "a3c115163e9239e66c90839d10554bb4bacda582e7cfd24cd58cd2c171cccd06"
+ },
+ {
+  "path": "frontend/public/micro/goal-verifier-v1-int8.onnx",
+  "bytes": 10549932,
+  "sha256": "cf3d0d1835185b8f5c2d7d01697d5ba0cef88cdc8f52206be6272321bda3f945"
+ },
+ {
+  "path": "artifacts/goal/semantic-micro/models/goal-verifier-v1-int8.onnx",
+  "bytes": 10549932,
+  "sha256": "cf3d0d1835185b8f5c2d7d01697d5ba0cef88cdc8f52206be6272321bda3f945"
+ }
+]
