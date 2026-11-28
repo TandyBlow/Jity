@@ -1375,6 +1375,55 @@ try {
   const turnFailures = evidence.turns.filter((turn) => (turn.problems ?? []).some((problem) => blockingPrefixes.some((key) => problem.startsWith(key))
     && !(allowProgram && (problem === 'source_program' || problem === 'program_text_not_model'))));
   evidence.programNarrationAccepted = allowProgram;
+  // 叙事重新生成：点“重新生成当前正文”，看它是否真的重跑叙事。
+  // 规则臂是确定性的，正文可以一模一样，所以以叙事事件数为准。
+  if (has('--regenerate-last') && !preflightOnly && evidence.turns.length) {
+    const readText = () => page.evaluate(() => {
+      const article = [...document.querySelectorAll('article')].at(-1);
+      return article ? (article.textContent ?? '').trim() : '';
+    });
+    const narrationCount = () => page.evaluate(() => {
+      const turns = globalThis.__worldTurns;
+      const last = Array.isArray(turns) ? turns.at(-1) : null;
+      return Array.isArray(last?.narrations) ? last.narrations.length : 0;
+    });
+    const before = await readText();
+    const beforeEvents = await narrationCount();
+    const startedAt = Date.now();
+    let clicked = false;
+    let after = before;
+    try {
+      const button = page.getByRole('button', { name: '重新生成当前正文' }).first();
+      if (await button.count()) {
+        await button.click();
+        clicked = true;
+        const deadline = Date.now() + 120000;
+        while (Date.now() < deadline) {
+          await page.waitForTimeout(500);
+          after = await readText();
+          const events = await narrationCount();
+          if (events > beforeEvents || (after && after !== before)) break;
+        }
+      }
+    } catch (error) {
+      evidence.regeneration = { clicked, error: error instanceof Error ? error.message : String(error) };
+    }
+    const afterEvents = await narrationCount();
+    evidence.regeneration = {
+      clicked,
+      narrationEventsBefore: beforeEvents,
+      narrationEventsAfter: afterEvents,
+      textChanged: Boolean(after && after !== before),
+      ms: Date.now() - startedAt,
+      before: before.slice(0, 2000),
+      after: after.slice(0, 2000),
+    };
+    if (!clicked) noteFailure('regeneration', 'no 重新生成当前正文 button');
+    else if (afterEvents <= beforeEvents && !evidence.regeneration.textChanged) {
+      noteFailure('regeneration', 'narration did not rerun and text did not change');
+    }
+    save();
+  }
   evidence.turnFailures = turnFailures.map((turn) => ({ id: turn.id, problems: turn.problems }));
   evidence.status = selfTest ? 'SELFTEST' : (evidence.failures.length || turnFailures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
   evidence.finishedAt = new Date().toISOString();
