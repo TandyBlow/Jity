@@ -112,8 +112,6 @@ export interface GameModelOptions {
    * nothing until one is accepted; the named routes exist for evaluation and
    * are never a player-visible setting. */
   narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin' | 'rules';
-  /** Rules arm only: append prev/fresh counters for diagnosis. */
-  narrationDebug?: boolean;
   /** Constrained route only: `program` never calls the model, `model` writes
    * one verified beat per call. Internal. */
 

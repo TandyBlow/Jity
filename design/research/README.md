@@ -86,3 +86,4 @@ Artifacts     evidence files, manifests, commits
 | N06 | Delta narration: 82% of fact clauses repeat; delta arm covers 100%/100% in 57% of current chars | done |
 | N07 | Zero-parameter candidate: action opening + delta + all results; 103 chars/point, 100%/100%, 0.069 ms | done |
 | N08 | Failure taxonomy: candidate has 0 misattribution and 100% outcome labels; current arm omits 99% | done |
+| N09 | Page integration: rules arm runs 3/3 turns, loads only the 0.6B, 554-593 chars/turn | done (3-turn smoke) |

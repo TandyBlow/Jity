@@ -1135,7 +1135,6 @@ export default function WorldLocalPage() {
           ...(arm.offscreenPolicy ? { offscreenPolicy: arm.offscreenPolicy } : {}),
           narrationMode: 'instruct',
           narrationCandidate: (candidate ?? 'builtin') as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin' | 'rules',
-          ...(new URLSearchParams(window.location.search).get('ruleDebug') === '1' ? { narrationDebug: true } : {}),
           ...(arm.mode ? { trainedMode: arm.mode } : {}),
           ...(arm.shape ? { trainedPromptShape: arm.shape } : {}),
           // The fact-structure candidate writes one verified beat per model
