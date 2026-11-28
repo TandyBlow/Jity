@@ -1,0 +1,55 @@
+{
+ "files": 312,
+ "narration": {
+  "calls": 11719,
+  "min": 1,
+  "p50": 282,
+  "p95": 462,
+  "p99": 721,
+  "max": 1477,
+  "over": {
+   "2048": 0,
+   "4096": 0,
+   "6144": 0,
+   "8192": 0,
+   "12288": 0
+  },
+  "ctxSizes": [
+   2048,
+   3072,
+   4096
+  ],
+  "maxCall": {
+   "tokens": 1477,
+   "ctx": 2048,
+   "maxTokens": 200,
+   "finish": "stop",
+   "file": "/goal/micro-workflow/evidence-narr-serialized-2.json"
+  }
+ },
+ "semantic": {
+  "calls": 64423,
+  "min": 1,
+  "p50": 441,
+  "p95": 1965,
+  "p99": 2821,
+  "max": 6797,
+  "over": {
+   "2048": 3176,
+   "4096": 207,
+   "6144": 111,
+   "8192": 0,
+   "12288": 0
+  },
+  "ctxSizes": [
+   12288
+  ],
+  "maxCall": {
+   "tokens": 6797,
+   "ctx": 12288,
+   "maxTokens": 620,
+   "finish": "stop",
+   "file": "/goal/semantics/run17-20261121-partial6-memory.json"
+  }
+ }
+}

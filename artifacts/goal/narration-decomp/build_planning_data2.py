@@ -3,6 +3,7 @@
 expression. v1 double-counted the player action (request line + settlement
 echo) and missed paraphrased clauses."""
 import json
+import os
 import re
 from collections import Counter
 from pathlib import Path
@@ -10,8 +11,8 @@ from pathlib import Path
 import jieba
 
 ROOT = Path('D:/others/Jity')
-SRC = ROOT / '.local/narr-train/sft-v13.jsonl'
-OUT = Path(__file__).resolve().parent / 'planning-examples-v2.jsonl'
+SRC = ROOT / '.local/narr-train' / os.environ.get('NARR_DATA', 'sft-v13.jsonl')
+OUT = Path(__file__).resolve().parent / os.environ.get('NARR_PLAN_OUT', 'planning-examples-v2.jsonl')
 STOP = set('的 了 着 过 地 得 是 在 把 被 将 让 给 向 从 对 与 和 及 而 却 便 就 都 也 还 很 更 最 又 再 才 只 分 他 她 它 他们 她们 它们 自己 对方 这 那 其 我 你 我们 你们 一个 一 二 三 两 之 于 为 以 所 但 然 后 里 上 下 中 前 后 边 面 头'.split())
 PUNCT = re.compile(r'^[，。！？；：、"' + "'" + r'（）\n…—\s]+$')
 TIME = re.compile(r'时间到了|过去\d|过去[一二三四五六七八九十]')
@@ -95,7 +96,7 @@ def main():
                           for kind in ('player_action', 'actor_result', 'location_state', 'appearance', 'scene', 'time')},
         'typeCounts': {kind: type_stats[kind] for kind in ('player_action', 'actor_result', 'location_state', 'appearance', 'scene', 'time')},
     }
-    (Path(__file__).resolve().parent / 'planning-summary-v2.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf8')
+    (Path(__file__).resolve().parent / os.environ.get('NARR_PLAN_SUMMARY', 'planning-summary-v2.json')).write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf8')
     print(json.dumps(summary, ensure_ascii=False))
 
 

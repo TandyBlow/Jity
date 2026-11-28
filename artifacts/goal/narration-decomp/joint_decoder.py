@@ -5,6 +5,7 @@ to the independent tagger + translator. Scored on charF1, order-sensitive
 wordRatio, plan coverage and invented words."""
 import hashlib
 import json
+import os
 import random
 import re
 from collections import Counter
@@ -16,8 +17,11 @@ import torch.nn as nn
 
 ROOT = Path('D:/others/Jity')
 HERE = Path(__file__).resolve().parent
-PLAN = HERE / 'planning-examples-v2.jsonl'
-SRC = ROOT / '.local/narr-train/sft-v13.jsonl'
+PLAN = HERE / os.environ.get('NARR_PLAN', 'planning-examples-v2.jsonl')
+SRC = ROOT / '.local/narr-train' / os.environ.get('NARR_DATA', 'sft-v13.jsonl')
+TAG = os.environ.get('NARR_TAG', '')
+HOLD_FROM = os.environ.get('NARR_HOLD_FROM', '')
+SKIP = set(json.loads(os.environ['NARR_SKIP'])) if os.environ.get('NARR_SKIP') else set()
 BOS, EOS, PAD = '<s>', '</s>', '<p>'
 
 
@@ -65,10 +69,14 @@ def main():
     n = len(words)
     group = [hashlib.sha256(' '.join(src).encode('utf8')).hexdigest()[:10] for _, src, _ in data]
     random.seed(20261128); torch.manual_seed(20261128)
-    keys = sorted(set(group))
-    hold = set(keys[-max(1, len(keys) // 5):])
-    train = [x for x, g in zip(data, group) if g not in hold]
-    test = [x for x, g in zip(data, group) if g in hold]
+    if HOLD_FROM:
+        hold = set(json.loads(Path(HOLD_FROM).read_text(encoding='utf8')))
+    else:
+        keys = sorted(set(group))
+        hold = set(keys[-max(1, len(keys) // 5):])
+    pairs = [(x, g) for x, g in zip(data, group) if x[0] not in SKIP]
+    train = [x for x, g in pairs if g not in hold]
+    test = [x for x, g in pairs if g in hold]
 
     d_model, heads = 128, 4
     max_src, max_dst = 140, 120
@@ -139,7 +147,7 @@ def main():
                'wordRatioMean': round(sum(word_s) / max(1, len(word_s)), 3),
                'coverageMean': round(sum(cov_s) / max(1, len(cov_s)), 3),
                'inventionWordsMean': round(sum(inv_s) / max(1, len(inv_s)), 1)}
-    (HERE / 'joint-summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf8')
+    (HERE / ('joint-summary%s.json' % TAG)).write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf8')
     print(json.dumps(summary, ensure_ascii=False))
     for gen, ref in examples:
         print('GEN:', gen); print('REF:', ref); print('---')

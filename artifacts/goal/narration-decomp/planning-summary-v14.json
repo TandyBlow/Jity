@@ -1,0 +1,22 @@
+{
+ "passages": 410,
+ "clauseCount": 5885,
+ "expressed": 3499,
+ "selectionRate": 0.595,
+ "typeSelection": {
+  "player_action": 1.0,
+  "actor_result": 0.624,
+  "location_state": 0.99,
+  "appearance": 0.534,
+  "scene": 0.583,
+  "time": 0.11
+ },
+ "typeCounts": {
+  "player_action": 410,
+  "actor_result": 178,
+  "location_state": 410,
+  "appearance": 1683,
+  "scene": 2794,
+  "time": 410
+ }
+}

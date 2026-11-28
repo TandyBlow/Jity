@@ -681,7 +681,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs' } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs'; semanticCtx?: number } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -692,6 +692,8 @@ export default function WorldLocalPage() {
     const offscreenParam = q.get('offscreenPolicy');
     const tempParam = Number(q.get('narrationTemperature'));
     const temperature = Number.isFinite(tempParam) && tempParam > 0 && tempParam <= 1.5 ? tempParam : undefined;
+    const ctxParam = Number(q.get('semanticCtx'));
+    const semanticCtx = Number.isInteger(ctxParam) && ctxParam >= 2048 && ctxParam <= 32768 ? ctxParam : undefined;
     const fewShot = q.get('narrationFewShot') === '1' ? true : undefined;
     const projection = q.get('narrationProjection') === 'compact' ? 'compact' as const : undefined;
     const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
@@ -726,6 +728,7 @@ export default function WorldLocalPage() {
       ...(webllmModel ? { webllmModel } : {}),
       ...(webllmLocal ? { webllmLocal } : {}),
       ...(webllmCache ? { webllmCache } : {}),
+      ...(semanticCtx ? { semanticCtx } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -959,7 +962,7 @@ export default function WorldLocalPage() {
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
         const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
-        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true, (prompt) => {
+        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true, (prompt) => {
           const rec = turnRecordRef.current;
           if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
         });
@@ -976,7 +979,7 @@ export default function WorldLocalPage() {
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
           offscreenPolicy: arm.offscreenPolicy ?? 'judge',
-          narrationModel: narrationKey, narrationFile: narrationSpec.url,
+          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? 12_288,
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
           narrationFewShot: arm.fewShot ?? null,

@@ -62,3 +62,5 @@ Artifacts     evidence files, manifests, commits
 | E38 | Joint edit decoder v1 + phase-3 synthesis | negative (mode collapse; data volume is the bottleneck) |
 | E39 | Corpus ceiling: all human-written targets sum to 362 passages | done (expansion needs new human writing) |
 | E40 | Snapshot growth: 200 KB/turn, dominated by per-point full states | done (pointStates 1.77 MB over 12 turns) |
+| E41 | Hand-written expansion: 62 targets, corpus 362 to 424, frozen holdout | done (410 SFT rows; curve run in E43) |
+| E42 | Semantic context sizing: 64k real calls, KV budget, page memory | done (max 6,797 tokens; 8192 is safe) |
