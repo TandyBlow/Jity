@@ -52,3 +52,4 @@ Artifacts     evidence files, manifests, commits
 | E28 | Narration reverse decomposition: six-operation taxonomy, open share | done (30-sample manual: open 3.6%) |
 | E29 | Memory baseline: single-engine arm on desktop | done (page 0.72 GB attribution; Edge RSS peak 4.65 GB; JS heap 58 MB) |
 | E30 | Planning dataset v0: fact-clause selection and order | done (58.8% clauses expressed) |
+| E31 | Program reconstruction baseline | done (program plan 0.21 / oracle plan 0.29 char F1) |

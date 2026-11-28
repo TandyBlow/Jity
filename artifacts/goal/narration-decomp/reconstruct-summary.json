@@ -1,0 +1,11 @@
+{
+ "passages": 348,
+ "programPlan": {
+  "ratioMean": 0.148,
+  "charF1Mean": 0.208
+ },
+ "oraclePlan": {
+  "ratioMean": 0.212,
+  "charF1Mean": 0.29
+ }
+}
