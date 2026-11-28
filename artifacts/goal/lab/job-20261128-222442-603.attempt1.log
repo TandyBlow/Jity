@@ -1,0 +1,10 @@
+[driver-error] page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3177/world-local?semanticCtx=4096&narrationModel=semantic
+Call log:
+[2m  - navigating to "http://127.0.0.1:3177/world-local?semanticCtx=4096&narrationModel=semantic", waiting until "domcontentloaded"[22m
+
+    at D:\others\Jity\frontend\scripts\product-acceptance\accept-world-local.mjs:339:14 {
+  log: [
+    '  - navigating to "http://127.0.0.1:3177/world-local?semanticCtx=4096&narrationModel=semantic", waiting until "domcontentloaded"'
+  ],
+  name: 'Error'
+}

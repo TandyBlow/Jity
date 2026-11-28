@@ -2,13 +2,13 @@
  "schema": "jity-run-verify/1",
  "reports": [
   {
-   "runId": "2026-11-28T1406-7ea7",
-   "status": "IN_PROGRESS",
+   "runId": "2026-11-28T1424-1c30",
+   "status": "FAILED",
    "turns": 1,
    "models": {
-    "requests": 1,
-    "ok": 1,
-    "failed": []
+    "requests": null,
+    "ok": null,
+    "failed": null
    },
    "engines": {
     "semantic": {
@@ -31,7 +31,7 @@
    "programTurns": 0,
    "failures": [
     "incomplete run: 1/4 turns recorded",
-    "run status IN_PROGRESS is not a completed acceptance"
+    "run status FAILED is not a completed acceptance"
    ],
    "pass": false,
    "file": "results/product/evidence/holdout-v1d-20261128.json"
