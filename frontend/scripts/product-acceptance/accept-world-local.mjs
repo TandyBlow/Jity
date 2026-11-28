@@ -183,6 +183,7 @@ const profile = flag('--profile', '');
 const cdp = flag('--cdp', '');
 // A persistent profile lifts the headless temp-profile storage cap (~1 GB on
 // this box); WebLLM needs it for the 2.2 GB 4B cache.
+const pwChannel = process.env.PW_CHANNEL === 'chromium' ? undefined : (process.env.PW_CHANNEL ?? 'msedge');
 const browser = cdp
   ? await chromium.connectOverCDP(cdp)
   : profile
@@ -197,7 +198,6 @@ const browser = cdp
     channel: pwChannel,
     args: launchArgs,
   });
-const pwChannel = process.env.PW_CHANNEL === 'chromium' ? undefined : (process.env.PW_CHANNEL ?? 'msedge');
 evidence.harness.launchArgs = launchArgs;
 evidence.harness.profile = profile || null;
 evidence.harness.cdp = cdp || null;
