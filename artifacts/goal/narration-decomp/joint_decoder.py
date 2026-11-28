@@ -20,6 +20,8 @@ HERE = Path(__file__).resolve().parent
 PLAN = HERE / os.environ.get('NARR_PLAN', 'planning-examples-v2.jsonl')
 SRC = Path(os.environ['NARR_SRC']) if os.environ.get('NARR_SRC') else ROOT / '.local/narr-train' / os.environ.get('NARR_DATA', 'sft-v13.jsonl')
 TAG = os.environ.get('NARR_TAG', '')
+BEAM = int(os.environ.get('NARR_BEAM', '1'))
+DUMP = os.environ.get('NARR_DUMP', '')
 HOLD_FROM = os.environ.get('NARR_HOLD_FROM', '')
 SKIP = set(json.loads(os.environ['NARR_SKIP'])) if os.environ.get('NARR_SKIP') else set()
 BOS, EOS, PAD = '<s>', '</s>', '<p>'
@@ -117,28 +119,56 @@ def main():
             print(json.dumps({'epoch': epoch, 'loss': round(total / max(1, len(train)), 3)}))
     net.eval()
     inv = {v: k for k, v in stoi.items()}
-    char_s, word_s, cov_s, inv_s = [], [], [], []
-    examples = []
-    with torch.no_grad():
-        for _, src, dst in test:
-            src_ids = torch.tensor([[stoi.get(w, stoi[PAD]) for w in src[:max_src]]])
-            memory = net.encoder(net.src_e(src_ids) + net.pos(torch.arange(src_ids.size(1)).unsqueeze(0)))
-            out = [stoi[BOS]]
-            for _ in range(max_dst):
-                tgt = torch.tensor([out])
+
+    def beam_decode(src_ids, width):
+        memory = net.encoder(net.src_e(src_ids) + net.pos(torch.arange(src_ids.size(1)).unsqueeze(0)))
+        beams, finished = [([stoi[BOS]], 0.0)], []
+        for _ in range(max_dst):
+            cand = []
+            for seq, score in beams:
+                tgt = torch.tensor([seq])
                 pos2 = torch.arange(tgt.size(1)).unsqueeze(0)
                 mask = torch.triu(torch.ones(tgt.size(1), tgt.size(1)), diagonal=1).bool()
                 logits = net.out(net.decoder(net.dst_e(tgt) + net.pos(pos2), memory, tgt_mask=mask))
-                nxt = int(logits[0, -1].argmax())
-                if nxt == stoi[EOS]:
-                    break
-                out.append(nxt)
-            gen = [inv.get(i, PAD) for i in out[1:]]
+                logp = torch.log_softmax(logits[0, -1], dim=-1)
+                top = torch.topk(logp, width)
+                for val, idx in zip(top.values.tolist(), top.indices.tolist()):
+                    cand.append((seq + [idx], score + val))
+            cand.sort(key=lambda item: item[1], reverse=True)
+            beams = []
+            for seq, score in cand[:width]:
+                (finished if seq[-1] == stoi[EOS] else beams).append((seq, score))
+            if not beams:
+                break
+        pool = finished or beams
+        best = max(pool, key=lambda item: item[1])
+        return [inv.get(i, PAD) for i in best[0][1:]]
+    char_s, word_s, cov_s, inv_s = [], [], [], []
+    examples, texts = [], []
+    with torch.no_grad():
+        for _, src, dst in test:
+            src_ids = torch.tensor([[stoi.get(w, stoi[PAD]) for w in src[:max_src]]])
+            if BEAM > 1:
+                gen = beam_decode(src_ids, BEAM)
+            else:
+                memory = net.encoder(net.src_e(src_ids) + net.pos(torch.arange(src_ids.size(1)).unsqueeze(0)))
+                out = [stoi[BOS]]
+                for _ in range(max_dst):
+                    tgt = torch.tensor([out])
+                    pos2 = torch.arange(tgt.size(1)).unsqueeze(0)
+                    mask = torch.triu(torch.ones(tgt.size(1), tgt.size(1)), diagonal=1).bool()
+                    logits = net.out(net.decoder(net.dst_e(tgt) + net.pos(pos2), memory, tgt_mask=mask))
+                    nxt = int(logits[0, -1].argmax())
+                    if nxt == stoi[EOS]:
+                        break
+                    out.append(nxt)
+                gen = [inv.get(i, PAD) for i in out[1:]]
             text = ''.join(gen)
             char_s.append(char_f1(text, ''.join(dst)))
             word_s.append(SequenceMatcher(None, gen, dst, autojunk=False).ratio())
             cov_s.append(sum(1 for w in set(gen) if w in src) / max(1, len(set(gen))))
             inv_s.append(sum(1 for w in gen if w not in src))
+            texts.append(text)
             if len(examples) < 3:
                 examples.append((text[:160], ''.join(dst)[:160]))
     summary = {'samples': len(data), 'train': len(train), 'test': len(test),
@@ -146,8 +176,12 @@ def main():
                'charF1Mean': round(sum(char_s) / max(1, len(char_s)), 3),
                'wordRatioMean': round(sum(word_s) / max(1, len(word_s)), 3),
                'coverageMean': round(sum(cov_s) / max(1, len(cov_s)), 3),
-               'inventionWordsMean': round(sum(inv_s) / max(1, len(inv_s)), 1)}
+               'inventionWordsMean': round(sum(inv_s) / max(1, len(inv_s)), 1),
+               'distinctRatio': round(len(set(texts)) / max(1, len(texts)), 3),
+               'beam': BEAM}
     (HERE / ('joint-summary%s.json' % TAG)).write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf8')
+    if DUMP:
+        Path(DUMP).write_text(''.join(json.dumps({'gen': g, 'ref': ''.join(d)}, ensure_ascii=False) + chr(10) for g, d in zip(texts, [x[2] for x in test])), encoding='utf8')
     print(json.dumps(summary, ensure_ascii=False))
     for gen, ref in examples:
         print('GEN:', gen); print('REF:', ref); print('---')
