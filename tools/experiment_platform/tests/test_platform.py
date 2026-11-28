@@ -119,6 +119,21 @@ def test_split_check_flags_overlap(tmp_path):
     assert report["failed"] is True
 
 
+def test_evidence_refs_flagged(tmp_path):
+    from tools.experiment_platform.data_index import build_index
+    from tools.experiment_platform.validate_data import validate
+
+    repo = tmp_path
+    _write(repo / "artifacts/goal/fam/e.json", "{}")
+    _write(repo / "artifacts/goal/fam/inputs.jsonl",
+           '{"id": "x", "evidence": "e.json"}\n{"id": "y", "evidence": "missing.json"}\n')
+    index = build_index(repo, ["artifacts/goal"], with_last_commit=False)
+    findings = validate(index, repo)["checks"]["evidence_ref"]["findings"]
+    statuses = {(f["evidence"], f["status"]) for f in findings}
+    assert ("e.json", "untracked") in statuses
+    assert ("missing.json", "missing") in statuses
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

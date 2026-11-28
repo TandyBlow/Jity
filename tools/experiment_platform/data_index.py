@@ -24,7 +24,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 SCHEMA = "jity-data-index/1"
-DEFAULT_ROOTS = ("artifacts/goal", "experiments", "data/worlds")
+DEFAULT_ROOTS = ("artifacts/goal", "experiments", "results", "data/worlds")
 
 SKIP_DIRS = {
     "__pycache__", ".git", "node_modules", ".next", ".next-dev",

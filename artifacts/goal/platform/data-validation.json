@@ -1,6 +1,6 @@
 {
  "schema": "jity-data-validation/1",
- "headCommit": "cc91f1e5cd5b368a3c84c477285cad40b0695255",
+ "headCommit": "29ead9f010e2a0aa4899e934b021d5b1693bb45e",
  "checks": {
   "malformed": {
    "level": "fail",
@@ -2416,9 +2416,24 @@
      "path": "experiments/action-pairs-train/pkg/data/pairs.jsonl",
      "bytes": 6651268,
      "sha256": "4de1ab226f2aae0d87407e9bbdaeb0747af76fbd7f64d4ffe8ce589660560b85"
+    },
+    {
+     "path": "results/product/evidence/09-turns20-ctx8192-gpu.json",
+     "bytes": 6734998,
+     "sha256": "6355bd775850b6ad44ff5ec3bead3989f24d97fea5d7884e81341a12eaf84eab"
+    },
+    {
+     "path": "results/product/evidence/09-turns20-pi.json",
+     "bytes": 54814587,
+     "sha256": "7fcead3b52db84b57cc53c643d484a998bc3e10b6ff0493c5206141d8bafb1c1"
+    },
+    {
+     "path": "results/product/evidence/12-scenarios-q4kv.json",
+     "bytes": 17367850,
+     "sha256": "290318a48d172a4d6ab5dea29f37318ebf872a31b6a0f317dba95ccc2393bf6f"
     }
    ],
-   "count": 81,
+   "count": 84,
    "status": "warn"
   },
   "missing_ref": {
@@ -2438,6 +2453,73 @@
    "findings": [],
    "count": 0,
    "status": "pass"
+  },
+  "evidence_ref": {
+   "level": "warn",
+   "findings": [
+    {
+     "path": "artifacts/goal/narration-standalone/inputs.jsonl",
+     "evidence": "09-turns20-ctx8192.json",
+     "status": "untracked",
+     "rows": 1
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/inputs.jsonl",
+     "evidence": "10-offline-pi.json",
+     "status": "untracked",
+     "rows": 8
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/inputs.jsonl",
+     "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+     "status": "untracked",
+     "rows": 24
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/inputs.jsonl",
+     "evidence": "10-scenarios-pi.json",
+     "status": "untracked",
+     "rows": 24
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/inputs.jsonl",
+     "evidence": "11-smoke-default-ctx8192.json",
+     "status": "untracked",
+     "rows": 4
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/pairs.jsonl",
+     "evidence": "09-turns20-ctx8192.json",
+     "status": "untracked",
+     "rows": 1
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/pairs.jsonl",
+     "evidence": "10-offline-pi.json",
+     "status": "untracked",
+     "rows": 2
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/pairs.jsonl",
+     "evidence": "10-scenarios-pi-2026-11-28T1041-fbe4.json",
+     "status": "untracked",
+     "rows": 8
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/pairs.jsonl",
+     "evidence": "10-scenarios-pi.json",
+     "status": "untracked",
+     "rows": 8
+    },
+    {
+     "path": "artifacts/goal/narration-standalone/pairs.jsonl",
+     "evidence": "11-smoke-default-ctx8192.json",
+     "status": "untracked",
+     "rows": 1
+    }
+   ],
+   "count": 10,
+   "status": "warn"
   }
  },
  "summary": {
@@ -2459,7 +2541,7 @@
   },
   "large_tracked": {
    "status": "warn",
-   "count": 81
+   "count": 84
   },
   "missing_ref": {
    "status": "pass",
@@ -2472,6 +2554,10 @@
   "semantic_manifest": {
    "status": "pass",
    "count": 0
+  },
+  "evidence_ref": {
+   "status": "warn",
+   "count": 10
   }
  },
  "failed": false

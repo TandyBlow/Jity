@@ -236,6 +236,37 @@ def check_semantic_manifests(files: list[dict], repo: Path) -> list[dict]:
     return out
 
 
+def check_referenced_evidence(files: list[dict], repo: Path) -> list[dict]:
+    """Rows that point at an evidence file must point at one present and tracked."""
+    tracked = {e["path"]: e["tracked"] for e in files}
+    out = []
+    for e in files:
+        if e["ext"] != ".jsonl" or "evidence" not in ((e.get("format") or {}).get("keys") or []):
+            continue
+        counts: dict[str, int] = defaultdict(int)
+        try:
+            with (repo / e["path"]).open(encoding="utf-8-sig", errors="replace") as fh:
+                for line in fh:
+                    if not line.strip():
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    name = rec.get("evidence") if isinstance(rec, dict) else None
+                    if isinstance(name, str) and name:
+                        counts[name] += 1
+        except OSError:
+            continue
+        for name, rows in counts.items():
+            matches = [p for p in tracked if p == name or p.endswith("/" + name)]
+            if not matches:
+                out.append({"path": e["path"], "evidence": name, "status": "missing", "rows": rows})
+            elif not any(tracked[p] for p in matches):
+                out.append({"path": e["path"], "evidence": name, "status": "untracked", "rows": rows})
+    return out
+
+
 def validate(index: dict, repo: Path, large_mb: float = 5.0) -> dict:
     repo = Path(repo).resolve()
     files = []
@@ -253,6 +284,7 @@ def validate(index: dict, repo: Path, large_mb: float = 5.0) -> dict:
         "missing_ref": {"level": "warn", "findings": check_missing_refs(files, repo)},
         "sidecar_hash": {"level": "fail", "findings": check_sidecar_hashes(files, repo)},
         "semantic_manifest": {"level": "fail", "findings": check_semantic_manifests(files, repo)},
+        "evidence_ref": {"level": "warn", "findings": check_referenced_evidence(files, repo)},
     }
     for check in checks.values():
         check["count"] = len(check["findings"])
