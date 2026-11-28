@@ -15,10 +15,10 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
-ROOT = Path('D:/others/Jity')
+ROOT = Path(os.environ.get('NARR_ROOT', 'D:/others/Jity'))
 HERE = Path(__file__).resolve().parent
 PLAN = HERE / os.environ.get('NARR_PLAN', 'planning-examples-v2.jsonl')
-SRC = ROOT / '.local/narr-train' / os.environ.get('NARR_DATA', 'sft-v13.jsonl')
+SRC = Path(os.environ['NARR_SRC']) if os.environ.get('NARR_SRC') else ROOT / '.local/narr-train' / os.environ.get('NARR_DATA', 'sft-v13.jsonl')
 TAG = os.environ.get('NARR_TAG', '')
 HOLD_FROM = os.environ.get('NARR_HOLD_FROM', '')
 SKIP = set(json.loads(os.environ['NARR_SKIP'])) if os.environ.get('NARR_SKIP') else set()

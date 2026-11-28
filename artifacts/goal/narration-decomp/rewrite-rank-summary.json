@@ -1,0 +1,24 @@
+{
+ "copy": {
+  "exact": 0.0,
+  "charF1": 0.048
+ },
+ "freq": {
+  "exact": 0.104,
+  "charF1": 0.315
+ },
+ "ctx": {
+  "exact": 0.092,
+  "charF1": 0.319
+ },
+ "rank": {
+  "exact": 0.116,
+  "charF1": 0.325
+ },
+ "pairs": {
+  "train": 6317,
+  "test": 1112,
+  "passages": 348
+ },
+ "coverage": 0.936
+}

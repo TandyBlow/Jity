@@ -64,3 +64,4 @@ Artifacts     evidence files, manifests, commits
 | E40 | Snapshot growth: 200 KB/turn, dominated by per-point full states | done (pointStates 1.77 MB over 12 turns) |
 | E41 | Hand-written expansion: 62 targets, corpus 362 to 424, frozen holdout | done (410 SFT rows; curve run in E43) |
 | E42 | Semantic context sizing: 64k real calls, KV budget, page memory | done (max 6,797 tokens; 8192 is safe) |
+| E44 | Context-aware rewrite choice: retrieval and a 10-feature ranker | done (rank 0.116 vs freq 0.104 exact) |
