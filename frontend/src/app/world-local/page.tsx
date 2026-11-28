@@ -1328,12 +1328,12 @@ export default function WorldLocalPage() {
               const segments = progress.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }));
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
               else points[index] = { ...points[index], pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
-              points.splice(0, points.length, ...inPointOrder(points));
+              const display = dedupeProgramPoints(inPointOrder(points));
               // Evidence: the turn record carries the same per-point prose the
               // article renders, so a driver can compare them verbatim.
-              if (record) record.points = points.map((part) => ({ ...part }));
-              const joined = joinPointTexts(points);
-              return { ...entry, points, text: joined, acceptedMs: atMs, ms: atMs };
+              if (record) record.points = display.map((part) => ({ ...part }));
+              const joined = joinPointTexts(display);
+              return { ...entry, points: display, text: joined, acceptedMs: atMs, ms: atMs };
             }));
             setPhase('ready');
           },
@@ -2217,23 +2217,24 @@ function updateLast(list: TurnEntry[], update: (entry: TurnEntry) => TurnEntry):
   return copy;
 }
 
-/** 规则正文的每个 point 都写完整场景；拼成一回合时同一句只保留一次。 */
-function joinPointTexts(points: Array<{ text: string; source?: string }>): string {
-  const seen = new Set<string>();
-  const kept: string[] = [];
-  for (const part of points) {
-    let text = part.text;
-    if (part.source === 'program') {
-      text = text.split(/(?<=[。！？])/u).filter((sentence) => {
-        const key = sentence.replace(/[\s。！？]/gu, '');
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      }).join('');
-    }
-    if (text.trim()) kept.push(text);
-  }
-  return kept.join(String.fromCharCode(10, 10));
+/** 规则正文的每个 point 都写完整场景；同一回合内同一句只保留一次。 */
+function dedupeProgramPoints<T extends { text: string; source?: string }>(points: T[]): T[] {
+  const seen: string[] = [];
+  return points.map((part) => {
+    if (part.source !== 'program') return part;
+    const text = part.text.split(/(?<=[。！？])/u).filter((sentence) => {
+      const key = sentence.replace(/[\s。！？]/gu, '');
+      // 整句已出现，或只是上一段长句的一部分（开场句把位置并进去了）都去掉。
+      if (!key || seen.some((kept) => kept.includes(key))) return false;
+      seen.push(key);
+      return true;
+    }).join('');
+    return { ...part, text };
+  });
+}
+
+function joinPointTexts(points: Array<{ text: string }>): string {
+  return points.map((part) => part.text).filter((text) => text.trim()).join(String.fromCharCode(10, 10));
 }
 
 
