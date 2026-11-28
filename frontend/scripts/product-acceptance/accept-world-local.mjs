@@ -55,6 +55,18 @@ const fresh = has('--fresh') || !has('--resume');
 const settleDelayMs = Number(flag('--settle-delay-ms', '120'));
 // 零参数叙事臂显示的是程序正文：它不是模型段，验收按程序臂单独记账。
 const allowProgram = has('--allow-program');
+// 移动端冒烟：视口 + 移动 UA，不是真机；证据里标注 emulated。
+const mobile = has('--mobile');
+const viewportFlag = flag('--viewport', '');
+const viewport = (() => {
+  const match = /^(\d{3,4})x(\d{3,4})$/.exec(viewportFlag);
+  if (match) return { width: Number(match[1]), height: Number(match[2]) };
+  return mobile ? { width: 390, height: 844 } : { width: 1280, height: 900 };
+})();
+const mobileContext = mobile ? {
+  userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+  isMobile: true, hasTouch: true, deviceScaleFactor: 3,
+} : {};
 
 if (!existsSync(turnsFile)) {
   console.error(`[fail] turns file missing: ${turnsFile}`);
@@ -206,7 +218,7 @@ const browser = cdp
     headless: !has('--headed'),
     channel: pwChannel,
     args: launchArgs,
-    viewport: { width: 1280, height: 900 },
+    viewport,
   })
   : await chromium.launch({
     headless: !has('--headed'),
@@ -217,12 +229,14 @@ evidence.harness.launchArgs = launchArgs;
 evidence.harness.profile = profile || null;
 evidence.harness.cdp = cdp || null;
 evidence.harness.cpuThrottle = Number.isFinite(cpuThrottle) && cpuThrottle > 1 ? cpuThrottle : null;
+evidence.harness.viewport = viewport;
+evidence.harness.mobileEmulated = mobile;
 evidence.harness.blockApi = has('--block-api');
 evidence.harness.gpuLite = gpuLite;
 
 try {
   evidence.harness.edgeVersion = cdp ? browser.version() : profile ? (browser.browser()?.version() ?? null) : browser.version();
-  const context = cdp ? browser.contexts()[0] : profile ? browser : await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const context = cdp ? browser.contexts()[0] : profile ? browser : await browser.newContext({ viewport, ...mobileContext });
   const page = cdp ? (context.pages()[0] ?? await context.newPage()) : await context.newPage();
   if (cdp) {
     // The phone tests run behind a self-signed HTTPS front; accept its cert
