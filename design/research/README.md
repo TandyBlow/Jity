@@ -93,4 +93,5 @@ Artifacts     evidence files, manifests, commits
 | N13 | Annotation schema pilot: selection+groups render deterministically; join punctuation and selection policy are the gaps | done (2 points) |
 | N14 | Boundary model asset: 31KB, 1,974 non-zero weights, independent recompute 267/267 | done (not wired, per review) |
 | N15 | Naturalness gap: aspect, connectives, entity-attribute rewriting and ellipsis, not grouping | done (analysis) |
-| N16 | Natural reference + grounding checks: 6 points, 46 clauses, 0 problems | done (6 scenes) |
+| N16 | Natural reference + grounding checks: 6 points, 46 clauses, 0 problems; per-result clause binding | done (6 scenes) |
+| N17 | Edit operations: all 25 single-source clauses edited, median 16.7% chars | done |

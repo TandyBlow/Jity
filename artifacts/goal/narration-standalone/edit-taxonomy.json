@@ -1,0 +1,48 @@
+{
+ "clauses": 55,
+ "singleSourceClauses": 25,
+ "insertedChars": {
+  "punct": 22,
+  "other": 98,
+  "aspect": 5,
+  "connective": 2
+ },
+ "deletedChars": 129,
+ "examples": [
+  {
+   "kind": "aspect",
+   "insert": "在",
+   "around": "林亦舟在西回廊里查看"
+  },
+  {
+   "kind": "aspect",
+   "insert": "着",
+   "around": "回廊，廊柱连着器材区与钟楼"
+  },
+  {
+   "kind": "aspect",
+   "insert": "了",
+   "around": "在鞋帮上方肿了起来。"
+  },
+  {
+   "kind": "aspect",
+   "insert": "着",
+   "around": "形检修盖虚掩着，拉环朝上。"
+  },
+  {
+   "kind": "aspect",
+   "insert": "着",
+   "around": "厅，正门半开着，木门背后留"
+  },
+  {
+   "kind": "connective",
+   "insert": "却",
+   "around": "，地下检修门却从里面插着门"
+  },
+  {
+   "kind": "connective",
+   "insert": "却",
+   "around": "天横穿最短，却要同时暴露给"
+  }
+ ]
+}
