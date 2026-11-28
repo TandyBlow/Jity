@@ -1,7 +1,7 @@
 {
  "schema": "jity-eval-set/1",
  "path": "artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl",
- "rows": 122,
- "sha256": "fb7101be4cb5db97a75bc338432d1b43978bd82bae19ef377bbc7067a1e967ae",
+ "rows": 130,
+ "sha256": "fbc4b1d2d752842cc68fb047d66e35a6b3553b145eed1e872dff234ee821b164",
  "hashMode": "canonical-json"
 }
