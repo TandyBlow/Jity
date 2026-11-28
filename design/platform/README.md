@@ -6,6 +6,7 @@
 |---|---|---|
 | P01 | 数据与工具审计：索引、完整性、分割与独立性现状 | done |
 | P02 | 实验调度与测量审计：竞态、残留锁、重试与计时口径 | done |
+| P03 | 研究结果复核：E58/E60/E61 与 rules 产品接线 | done |
 
 工具在 `tools/experiment_platform/`，运行产物在 `artifacts/goal/platform/`。
 
