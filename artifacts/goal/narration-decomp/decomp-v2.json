@@ -1,0 +1,6291 @@
+{
+ "summary": {
+  "passages": 240,
+  "targetChars": 12237,
+  "copyShare": 0.547,
+  "reorderShare": 0.256,
+  "paraphraseShare": 0.171,
+  "openShare": 0.042,
+  "functionShare": 0.212,
+  "omissionRate": 0.656
+ },
+ "rows": [
+  {
+   "targetChars": 97,
+   "copy": 42,
+   "reorder": 15,
+   "paraphrase": 25,
+   "open": 6,
+   "function": 22,
+   "copyRatio": 0.433,
+   "reorderRatio": 0.155,
+   "paraphraseRatio": 0.258,
+   "openRatio": 0.062,
+   "functionRatio": 0.227,
+   "factWords": 299,
+   "omittedFactWords": 203,
+   "openWords": [
+    "人",
+    "继续",
+    "身后",
+    "缝"
+   ],
+   "paraWords": [
+    "贴着",
+    "往前走",
+    "压得",
+    "轻",
+    "那边",
+    "轻巧",
+    "靠近",
+    "巷口",
+    "往前",
+    "巷进",
+    "留着",
+    "回",
+    "棚里"
+   ],
+   "id": 1
+  },
+  {
+   "targetChars": 58,
+   "copy": 30,
+   "reorder": 7,
+   "paraphrase": 14,
+   "open": 0,
+   "function": 12,
+   "copyRatio": 0.517,
+   "reorderRatio": 0.121,
+   "paraphraseRatio": 0.241,
+   "openRatio": 0.0,
+   "functionRatio": 0.207,
+   "factWords": 257,
+   "omittedFactWords": 173,
+   "openWords": [],
+   "paraWords": [
+    "贴着",
+    "走向",
+    "轻",
+    "棚里",
+    "完",
+    "侧身",
+    "开路",
+    "非进"
+   ],
+   "id": 10
+  },
+  {
+   "targetChars": 42,
+   "copy": 20,
+   "reorder": 3,
+   "paraphrase": 13,
+   "open": 0,
+   "function": 7,
+   "copyRatio": 0.476,
+   "reorderRatio": 0.071,
+   "paraphraseRatio": 0.31,
+   "openRatio": 0.0,
+   "functionRatio": 0.167,
+   "factWords": 257,
+   "omittedFactWords": 175,
+   "openWords": [],
+   "paraWords": [
+    "贴着",
+    "走向",
+    "棚里",
+    "完",
+    "侧身",
+    "开路",
+    "非进"
+   ],
+   "id": "10a"
+  },
+  {
+   "targetChars": 38,
+   "copy": 28,
+   "reorder": 16,
+   "paraphrase": 3,
+   "open": 0,
+   "function": 7,
+   "copyRatio": 0.737,
+   "reorderRatio": 0.421,
+   "paraphraseRatio": 0.079,
+   "openRatio": 0.0,
+   "functionRatio": 0.184,
+   "factWords": 257,
+   "omittedFactWords": 173,
+   "openWords": [],
+   "paraWords": [
+    "完",
+    "侧身"
+   ],
+   "id": "10b"
+  },
+  {
+   "targetChars": 52,
+   "copy": 37,
+   "reorder": 26,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 7,
+   "copyRatio": 0.712,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.115,
+   "openRatio": 0.0,
+   "functionRatio": 0.135,
+   "factWords": 259,
+   "omittedFactWords": 171,
+   "openWords": [],
+   "paraWords": [
+    "动作",
+    "非进",
+    "棚里"
+   ],
+   "id": 11
+  },
+  {
+   "targetChars": 50,
+   "copy": 36,
+   "reorder": 25,
+   "paraphrase": 5,
+   "open": 0,
+   "function": 7,
+   "copyRatio": 0.72,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.1,
+   "openRatio": 0.0,
+   "functionRatio": 0.14,
+   "factWords": 259,
+   "omittedFactWords": 172,
+   "openWords": [],
+   "paraWords": [
+    "动作",
+    "换",
+    "非进"
+   ],
+   "id": "11a"
+  },
+  {
+   "targetChars": 42,
+   "copy": 30,
+   "reorder": 16,
+   "paraphrase": 6,
+   "open": 1,
+   "function": 5,
+   "copyRatio": 0.714,
+   "reorderRatio": 0.381,
+   "paraphraseRatio": 0.143,
+   "openRatio": 0.024,
+   "functionRatio": 0.119,
+   "factWords": 259,
+   "omittedFactWords": 176,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "贴着",
+    "动",
+    "好",
+    "非进"
+   ],
+   "id": "11b"
+  },
+  {
+   "targetChars": 41,
+   "copy": 22,
+   "reorder": 5,
+   "paraphrase": 10,
+   "open": 0,
+   "function": 7,
+   "copyRatio": 0.537,
+   "reorderRatio": 0.122,
+   "paraphraseRatio": 0.244,
+   "openRatio": 0.0,
+   "functionRatio": 0.171,
+   "factWords": 249,
+   "omittedFactWords": 169,
+   "openWords": [],
+   "paraWords": [
+    "贴着",
+    "侧身",
+    "让开",
+    "门边",
+    "非进"
+   ],
+   "id": 12
+  },
+  {
+   "targetChars": 36,
+   "copy": 18,
+   "reorder": 5,
+   "paraphrase": 10,
+   "open": 0,
+   "function": 6,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.139,
+   "paraphraseRatio": 0.278,
+   "openRatio": 0.0,
+   "functionRatio": 0.167,
+   "factWords": 249,
+   "omittedFactWords": 170,
+   "openWords": [],
+   "paraWords": [
+    "贴着",
+    "侧身",
+    "让开",
+    "门边",
+    "非进"
+   ],
+   "id": "12a"
+  },
+  {
+   "targetChars": 31,
+   "copy": 14,
+   "reorder": 7,
+   "paraphrase": 13,
+   "open": 0,
+   "function": 4,
+   "copyRatio": 0.452,
+   "reorderRatio": 0.226,
+   "paraphraseRatio": 0.419,
+   "openRatio": 0.0,
+   "functionRatio": 0.129,
+   "factWords": 249,
+   "omittedFactWords": 169,
+   "openWords": [],
+   "paraWords": [
+    "沿",
+    "芬格尔往",
+    "旁边",
+    "让开",
+    "非进",
+    "棚里"
+   ],
+   "id": "12b"
+  },
+  {
+   "targetChars": 52,
+   "copy": 30,
+   "reorder": 24,
+   "paraphrase": 10,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.577,
+   "reorderRatio": 0.462,
+   "paraphraseRatio": 0.192,
+   "openRatio": 0.038,
+   "functionRatio": 0.154,
+   "factWords": 255,
+   "omittedFactWords": 168,
+   "openWords": [
+    "答案"
+   ],
+   "paraWords": [
+    "问起",
+    "两边",
+    "侧身",
+    "让开",
+    "得到"
+   ],
+   "id": 13
+  },
+  {
+   "targetChars": 52,
+   "copy": 32,
+   "reorder": 26,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.615,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.154,
+   "openRatio": 0.038,
+   "functionRatio": 0.154,
+   "factWords": 255,
+   "omittedFactWords": 167,
+   "openWords": [
+    "答案"
+   ],
+   "paraWords": [
+    "问起",
+    "侧身",
+    "让开",
+    "得到"
+   ],
+   "id": "13a"
+  },
+  {
+   "targetChars": 43,
+   "copy": 23,
+   "reorder": 19,
+   "paraphrase": 7,
+   "open": 6,
+   "function": 7,
+   "copyRatio": 0.535,
+   "reorderRatio": 0.442,
+   "paraphraseRatio": 0.163,
+   "openRatio": 0.14,
+   "functionRatio": 0.163,
+   "factWords": 255,
+   "omittedFactWords": 168,
+   "openWords": [
+    "走",
+    "打听",
+    "注意力"
+   ],
+   "paraWords": [
+    "牌上",
+    "让开",
+    "没",
+    "问出"
+   ],
+   "id": "13b"
+  },
+  {
+   "targetChars": 75,
+   "copy": 38,
+   "reorder": 34,
+   "paraphrase": 12,
+   "open": 4,
+   "function": 19,
+   "copyRatio": 0.507,
+   "reorderRatio": 0.453,
+   "paraphraseRatio": 0.16,
+   "openRatio": 0.053,
+   "functionRatio": 0.253,
+   "factWords": 306,
+   "omittedFactWords": 209,
+   "openWords": [
+    "目光",
+    "随即"
+   ],
+   "paraWords": [
+    "看着",
+    "各自",
+    "记下来",
+    "一下",
+    "转回",
+    "仍"
+   ],
+   "id": 14
+  },
+  {
+   "targetChars": 67,
+   "copy": 35,
+   "reorder": 15,
+   "paraphrase": 11,
+   "open": 4,
+   "function": 15,
+   "copyRatio": 0.522,
+   "reorderRatio": 0.224,
+   "paraphraseRatio": 0.164,
+   "openRatio": 0.06,
+   "functionRatio": 0.224,
+   "factWords": 306,
+   "omittedFactWords": 209,
+   "openWords": [
+    "目光",
+    "挪动"
+   ],
+   "paraWords": [
+    "看人",
+    "各人",
+    "记下来",
+    "一下",
+    "转回"
+   ],
+   "id": "14a"
+  },
+  {
+   "targetChars": 48,
+   "copy": 20,
+   "reorder": 1,
+   "paraphrase": 12,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.417,
+   "reorderRatio": 0.021,
+   "paraphraseRatio": 0.25,
+   "openRatio": 0.062,
+   "functionRatio": 0.271,
+   "factWords": 306,
+   "omittedFactWords": 213,
+   "openWords": [
+    "看",
+    "看",
+    "看"
+   ],
+   "paraWords": [
+    "非站",
+    "看着",
+    "一一",
+    "同样",
+    "一眼",
+    "低头"
+   ],
+   "id": "14b"
+  },
+  {
+   "targetChars": 101,
+   "copy": 50,
+   "reorder": 44,
+   "paraphrase": 20,
+   "open": 3,
+   "function": 24,
+   "copyRatio": 0.495,
+   "reorderRatio": 0.436,
+   "paraphraseRatio": 0.198,
+   "openRatio": 0.03,
+   "functionRatio": 0.238,
+   "factWords": 304,
+   "omittedFactWords": 188,
+   "openWords": [
+    "扇",
+    "讲清"
+   ],
+   "paraWords": [
+    "问起",
+    "各自",
+    "芬格尔望",
+    "说",
+    "扇门",
+    "通往",
+    "钟楼",
+    "地下",
+    "正好",
+    "说"
+   ],
+   "id": 15
+  },
+  {
+   "targetChars": 100,
+   "copy": 50,
+   "reorder": 44,
+   "paraphrase": 20,
+   "open": 3,
+   "function": 23,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.44,
+   "paraphraseRatio": 0.2,
+   "openRatio": 0.03,
+   "functionRatio": 0.23,
+   "factWords": 304,
+   "omittedFactWords": 188,
+   "openWords": [
+    "扇",
+    "讲清"
+   ],
+   "paraWords": [
+    "问起",
+    "各自",
+    "芬格尔望",
+    "说",
+    "扇门",
+    "通往",
+    "钟楼",
+    "地下",
+    "正好",
+    "说"
+   ],
+   "id": "15a"
+  },
+  {
+   "targetChars": 69,
+   "copy": 37,
+   "reorder": 31,
+   "paraphrase": 14,
+   "open": 2,
+   "function": 16,
+   "copyRatio": 0.536,
+   "reorderRatio": 0.449,
+   "paraphraseRatio": 0.203,
+   "openRatio": 0.029,
+   "functionRatio": 0.232,
+   "factWords": 304,
+   "omittedFactWords": 193,
+   "openWords": [
+    "打听"
+   ],
+   "paraWords": [
+    "说门",
+    "钟楼",
+    "地下",
+    "的话",
+    "给出",
+    "具体位置"
+   ],
+   "id": "15b"
+  },
+  {
+   "targetChars": 52,
+   "copy": 27,
+   "reorder": 2,
+   "paraphrase": 9,
+   "open": 3,
+   "function": 11,
+   "copyRatio": 0.519,
+   "reorderRatio": 0.038,
+   "paraphraseRatio": 0.173,
+   "openRatio": 0.058,
+   "functionRatio": 0.212,
+   "factWords": 261,
+   "omittedFactWords": 181,
+   "openWords": [
+    "站",
+    "动静"
+   ],
+   "paraWords": [
+    "估摸",
+    "棚里",
+    "别的",
+    "一分钟"
+   ],
+   "id": 16
+  },
+  {
+   "targetChars": 48,
+   "copy": 25,
+   "reorder": 2,
+   "paraphrase": 9,
+   "open": 3,
+   "function": 9,
+   "copyRatio": 0.521,
+   "reorderRatio": 0.042,
+   "paraphraseRatio": 0.188,
+   "openRatio": 0.062,
+   "functionRatio": 0.188,
+   "factWords": 261,
+   "omittedFactWords": 181,
+   "openWords": [
+    "站",
+    "动静"
+   ],
+   "paraWords": [
+    "估摸",
+    "棚里",
+    "别的",
+    "一分钟"
+   ],
+   "id": "16a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 16,
+   "reorder": 0,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 6,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.25,
+   "openRatio": 0.062,
+   "functionRatio": 0.188,
+   "factWords": 261,
+   "omittedFactWords": 181,
+   "openWords": [
+    "动静"
+   ],
+   "paraWords": [
+    "靠着",
+    "墙",
+    "估",
+    "棚里",
+    "别的"
+   ],
+   "id": "16b"
+  },
+  {
+   "targetChars": 43,
+   "copy": 16,
+   "reorder": 0,
+   "paraphrase": 8,
+   "open": 5,
+   "function": 12,
+   "copyRatio": 0.372,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.186,
+   "openRatio": 0.116,
+   "functionRatio": 0.279,
+   "factWords": 258,
+   "omittedFactWords": 175,
+   "openWords": [
+    "看",
+    "看",
+    "站",
+    "动作"
+   ],
+   "paraWords": [
+    "摸了摸",
+    "回",
+    "原处",
+    "别的"
+   ],
+   "id": 17
+  },
+  {
+   "targetChars": 38,
+   "copy": 16,
+   "reorder": 0,
+   "paraphrase": 7,
+   "open": 3,
+   "function": 10,
+   "copyRatio": 0.421,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.184,
+   "openRatio": 0.079,
+   "functionRatio": 0.263,
+   "factWords": 258,
+   "omittedFactWords": 175,
+   "openWords": [
+    "站",
+    "动作"
+   ],
+   "paraWords": [
+    "查看",
+    "回",
+    "原处",
+    "别的"
+   ],
+   "id": "17a"
+  },
+  {
+   "targetChars": 24,
+   "copy": 10,
+   "reorder": 0,
+   "paraphrase": 4,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.417,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.167,
+   "openRatio": 0.083,
+   "functionRatio": 0.333,
+   "factWords": 258,
+   "omittedFactWords": 175,
+   "openWords": [
+    "东西"
+   ],
+   "paraWords": [
+    "停回",
+    "墙边"
+   ],
+   "id": "17b"
+  },
+  {
+   "targetChars": 66,
+   "copy": 32,
+   "reorder": 13,
+   "paraphrase": 17,
+   "open": 3,
+   "function": 12,
+   "copyRatio": 0.485,
+   "reorderRatio": 0.197,
+   "paraphraseRatio": 0.258,
+   "openRatio": 0.045,
+   "functionRatio": 0.182,
+   "factWords": 247,
+   "omittedFactWords": 165,
+   "openWords": [
+    "拿",
+    "想",
+    "停"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "棚里",
+    "棚里",
+    "只有",
+    "住手",
+    "墙上",
+    "一遍"
+   ],
+   "id": 18
+  },
+  {
+   "targetChars": 66,
+   "copy": 32,
+   "reorder": 13,
+   "paraphrase": 17,
+   "open": 3,
+   "function": 12,
+   "copyRatio": 0.485,
+   "reorderRatio": 0.197,
+   "paraphraseRatio": 0.258,
+   "openRatio": 0.045,
+   "functionRatio": 0.182,
+   "factWords": 247,
+   "omittedFactWords": 165,
+   "openWords": [
+    "拿",
+    "想",
+    "停"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "棚里",
+    "棚里",
+    "只有",
+    "住手",
+    "墙上",
+    "一遍"
+   ],
+   "id": "18a"
+  },
+  {
+   "targetChars": 52,
+   "copy": 25,
+   "reorder": 13,
+   "paraphrase": 12,
+   "open": 4,
+   "function": 11,
+   "copyRatio": 0.481,
+   "reorderRatio": 0.25,
+   "paraphraseRatio": 0.231,
+   "openRatio": 0.077,
+   "functionRatio": 0.212,
+   "factWords": 247,
+   "omittedFactWords": 165,
+   "openWords": [
+    "想",
+    "找",
+    "放下"
+   ],
+   "paraWords": [
+    "非拿起",
+    "转给",
+    "棚里",
+    "只有",
+    "手",
+    "转头"
+   ],
+   "id": "18b"
+  },
+  {
+   "targetChars": 51,
+   "copy": 28,
+   "reorder": 24,
+   "paraphrase": 6,
+   "open": 3,
+   "function": 12,
+   "copyRatio": 0.549,
+   "reorderRatio": 0.471,
+   "paraphraseRatio": 0.118,
+   "openRatio": 0.059,
+   "functionRatio": 0.235,
+   "factWords": 321,
+   "omittedFactWords": 203,
+   "openWords": [
+    "弯腰",
+    "来"
+   ],
+   "paraWords": [
+    "去",
+    "推脚边",
+    "让开"
+   ],
+   "id": 19
+  },
+  {
+   "targetChars": 51,
+   "copy": 30,
+   "reorder": 13,
+   "paraphrase": 6,
+   "open": 2,
+   "function": 11,
+   "copyRatio": 0.588,
+   "reorderRatio": 0.255,
+   "paraphraseRatio": 0.118,
+   "openRatio": 0.039,
+   "functionRatio": 0.216,
+   "factWords": 321,
+   "omittedFactWords": 203,
+   "openWords": [
+    "弯腰"
+   ],
+   "paraWords": [
+    "去",
+    "推脚边",
+    "巷里"
+   ],
+   "id": "19a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 18,
+   "reorder": 2,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.562,
+   "reorderRatio": 0.062,
+   "paraphraseRatio": 0.188,
+   "openRatio": 0.0,
+   "functionRatio": 0.25,
+   "factWords": 321,
+   "omittedFactWords": 208,
+   "openWords": [],
+   "paraWords": [
+    "推",
+    "沉",
+    "挪开",
+    "压着"
+   ],
+   "id": "19b"
+  },
+  {
+   "targetChars": 60,
+   "copy": 24,
+   "reorder": 7,
+   "paraphrase": 20,
+   "open": 2,
+   "function": 12,
+   "copyRatio": 0.4,
+   "reorderRatio": 0.117,
+   "paraphraseRatio": 0.333,
+   "openRatio": 0.033,
+   "functionRatio": 0.2,
+   "factWords": 299,
+   "omittedFactWords": 206,
+   "openWords": [
+    "热",
+    "人"
+   ],
+   "paraWords": [
+    "贴着",
+    "挪到",
+    "压得",
+    "轻",
+    "那头",
+    "一下",
+    "靠近",
+    "巷口",
+    "推门进",
+    "棚里"
+   ],
+   "id": "1a"
+  },
+  {
+   "targetChars": 60,
+   "copy": 30,
+   "reorder": 12,
+   "paraphrase": 14,
+   "open": 0,
+   "function": 14,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.233,
+   "openRatio": 0.0,
+   "functionRatio": 0.233,
+   "factWords": 299,
+   "omittedFactWords": 205,
+   "openWords": [],
+   "paraWords": [
+    "往前走",
+    "留意",
+    "处发",
+    "烫",
+    "轻巧",
+    "巷口",
+    "非进"
+   ],
+   "id": "1b"
+  },
+  {
+   "targetChars": 57,
+   "copy": 25,
+   "reorder": 5,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 15,
+   "copyRatio": 0.439,
+   "reorderRatio": 0.088,
+   "paraphraseRatio": 0.228,
+   "openRatio": 0.035,
+   "functionRatio": 0.263,
+   "factWords": 236,
+   "omittedFactWords": 159,
+   "openWords": [
+    "挪动"
+   ],
+   "paraWords": [
+    "停",
+    "看着",
+    "各自",
+    "记",
+    "一遍",
+    "棚里",
+    "非记",
+    "完"
+   ],
+   "id": 2
+  },
+  {
+   "targetChars": 62,
+   "copy": 39,
+   "reorder": 2,
+   "paraphrase": 5,
+   "open": 2,
+   "function": 14,
+   "copyRatio": 0.629,
+   "reorderRatio": 0.032,
+   "paraphraseRatio": 0.081,
+   "openRatio": 0.032,
+   "functionRatio": 0.226,
+   "factWords": 162,
+   "omittedFactWords": 108,
+   "openWords": [
+    "自己"
+   ],
+   "paraWords": [
+    "先到",
+    "旁边",
+    "放"
+   ],
+   "id": 20
+  },
+  {
+   "targetChars": 62,
+   "copy": 39,
+   "reorder": 2,
+   "paraphrase": 5,
+   "open": 2,
+   "function": 14,
+   "copyRatio": 0.629,
+   "reorderRatio": 0.032,
+   "paraphraseRatio": 0.081,
+   "openRatio": 0.032,
+   "functionRatio": 0.226,
+   "factWords": 162,
+   "omittedFactWords": 108,
+   "openWords": [
+    "自己"
+   ],
+   "paraWords": [
+    "先到",
+    "旁边",
+    "放"
+   ],
+   "id": "20a"
+  },
+  {
+   "targetChars": 44,
+   "copy": 30,
+   "reorder": 14,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 10,
+   "copyRatio": 0.682,
+   "reorderRatio": 0.318,
+   "paraphraseRatio": 0.091,
+   "openRatio": 0.0,
+   "functionRatio": 0.227,
+   "factWords": 162,
+   "omittedFactWords": 111,
+   "openWords": [],
+   "paraWords": [
+    "先到",
+    "一把"
+   ],
+   "id": "20b"
+  },
+  {
+   "targetChars": 63,
+   "copy": 41,
+   "reorder": 10,
+   "paraphrase": 9,
+   "open": 2,
+   "function": 9,
+   "copyRatio": 0.651,
+   "reorderRatio": 0.159,
+   "paraphraseRatio": 0.143,
+   "openRatio": 0.032,
+   "functionRatio": 0.143,
+   "factWords": 178,
+   "omittedFactWords": 113,
+   "openWords": [
+    "停下"
+   ],
+   "paraWords": [
+    "脚步",
+    "这里",
+    "这边",
+    "通",
+    "区里"
+   ],
+   "id": 21
+  },
+  {
+   "targetChars": 63,
+   "copy": 41,
+   "reorder": 10,
+   "paraphrase": 9,
+   "open": 2,
+   "function": 9,
+   "copyRatio": 0.651,
+   "reorderRatio": 0.159,
+   "paraphraseRatio": 0.143,
+   "openRatio": 0.032,
+   "functionRatio": 0.143,
+   "factWords": 178,
+   "omittedFactWords": 113,
+   "openWords": [
+    "停下"
+   ],
+   "paraWords": [
+    "脚步",
+    "这里",
+    "这边",
+    "通",
+    "区里"
+   ],
+   "id": "21a"
+  },
+  {
+   "targetChars": 47,
+   "copy": 26,
+   "reorder": 9,
+   "paraphrase": 10,
+   "open": 3,
+   "function": 8,
+   "copyRatio": 0.553,
+   "reorderRatio": 0.191,
+   "paraphraseRatio": 0.213,
+   "openRatio": 0.064,
+   "functionRatio": 0.17,
+   "factWords": 178,
+   "omittedFactWords": 118,
+   "openWords": [
+    "站住",
+    "连"
+   ],
+   "paraWords": [
+    "这里",
+    "起",
+    "一直",
+    "通",
+    "区里",
+    "只有"
+   ],
+   "id": "21b"
+  },
+  {
+   "targetChars": 98,
+   "copy": 49,
+   "reorder": 9,
+   "paraphrase": 18,
+   "open": 3,
+   "function": 24,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.092,
+   "paraphraseRatio": 0.184,
+   "openRatio": 0.031,
+   "functionRatio": 0.245,
+   "factWords": 235,
+   "omittedFactWords": 154,
+   "openWords": [
+    "随后",
+    "够"
+   ],
+   "paraWords": [
+    "人挥",
+    "一拳",
+    "走到",
+    "停下",
+    "柱脚",
+    "下压",
+    "靠着",
+    "肿着",
+    "放在"
+   ],
+   "id": 22
+  },
+  {
+   "targetChars": 98,
+   "copy": 49,
+   "reorder": 9,
+   "paraphrase": 18,
+   "open": 3,
+   "function": 24,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.092,
+   "paraphraseRatio": 0.184,
+   "openRatio": 0.031,
+   "functionRatio": 0.245,
+   "factWords": 235,
+   "omittedFactWords": 154,
+   "openWords": [
+    "随后",
+    "够"
+   ],
+   "paraWords": [
+    "人挥",
+    "一拳",
+    "走到",
+    "停下",
+    "柱脚",
+    "下压",
+    "靠着",
+    "肿着",
+    "放在"
+   ],
+   "id": "22a"
+  },
+  {
+   "targetChars": 80,
+   "copy": 50,
+   "reorder": 11,
+   "paraphrase": 9,
+   "open": 6,
+   "function": 15,
+   "copyRatio": 0.625,
+   "reorderRatio": 0.138,
+   "paraphraseRatio": 0.113,
+   "openRatio": 0.075,
+   "functionRatio": 0.188,
+   "factWords": 235,
+   "omittedFactWords": 155,
+   "openWords": [
+    "朝",
+    "之后",
+    "停",
+    "旁",
+    "够"
+   ],
+   "paraWords": [
+    "对方",
+    "他进",
+    "柱",
+    "放在",
+    "地上"
+   ],
+   "id": "22b"
+  },
+  {
+   "targetChars": 65,
+   "copy": 26,
+   "reorder": 11,
+   "paraphrase": 17,
+   "open": 5,
+   "function": 15,
+   "copyRatio": 0.4,
+   "reorderRatio": 0.169,
+   "paraphraseRatio": 0.262,
+   "openRatio": 0.077,
+   "functionRatio": 0.231,
+   "factWords": 215,
+   "omittedFactWords": 143,
+   "openWords": [
+    "什么",
+    "想",
+    "转头"
+   ],
+   "paraWords": [
+    "非想",
+    "问",
+    "两方",
+    "问",
+    "自己",
+    "话",
+    "没",
+    "问",
+    "出口",
+    "廊",
+    "去",
+    "明白"
+   ],
+   "id": 23
+  },
+  {
+   "targetChars": 65,
+   "copy": 26,
+   "reorder": 11,
+   "paraphrase": 17,
+   "open": 5,
+   "function": 15,
+   "copyRatio": 0.4,
+   "reorderRatio": 0.169,
+   "paraphraseRatio": 0.262,
+   "openRatio": 0.077,
+   "functionRatio": 0.231,
+   "factWords": 215,
+   "omittedFactWords": 143,
+   "openWords": [
+    "什么",
+    "想",
+    "转头"
+   ],
+   "paraWords": [
+    "非想",
+    "问",
+    "两方",
+    "问",
+    "自己",
+    "话",
+    "没",
+    "问",
+    "出口",
+    "廊",
+    "去",
+    "明白"
+   ],
+   "id": "23a"
+  },
+  {
+   "targetChars": 46,
+   "copy": 20,
+   "reorder": 6,
+   "paraphrase": 11,
+   "open": 5,
+   "function": 10,
+   "copyRatio": 0.435,
+   "reorderRatio": 0.13,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.109,
+   "functionRatio": 0.217,
+   "factWords": 215,
+   "omittedFactWords": 146,
+   "openWords": [
+    "人",
+    "中立",
+    "转头"
+   ],
+   "paraWords": [
+    "非想",
+    "问清",
+    "廊",
+    "只有",
+    "开口",
+    "一遍"
+   ],
+   "id": "23b"
+  },
+  {
+   "targetChars": 71,
+   "copy": 35,
+   "reorder": 11,
+   "paraphrase": 12,
+   "open": 4,
+   "function": 18,
+   "copyRatio": 0.493,
+   "reorderRatio": 0.155,
+   "paraphraseRatio": 0.169,
+   "openRatio": 0.056,
+   "functionRatio": 0.254,
+   "factWords": 203,
+   "omittedFactWords": 139,
+   "openWords": [
+    "往",
+    "看",
+    "往",
+    "看"
+   ],
+   "paraWords": [
+    "压着",
+    "去",
+    "湿",
+    "跑",
+    "一会儿",
+    "看到",
+    "记下"
+   ],
+   "id": 24
+  },
+  {
+   "targetChars": 71,
+   "copy": 35,
+   "reorder": 11,
+   "paraphrase": 12,
+   "open": 4,
+   "function": 18,
+   "copyRatio": 0.493,
+   "reorderRatio": 0.155,
+   "paraphraseRatio": 0.169,
+   "openRatio": 0.056,
+   "functionRatio": 0.254,
+   "factWords": 203,
+   "omittedFactWords": 139,
+   "openWords": [
+    "往",
+    "看",
+    "往",
+    "看"
+   ],
+   "paraWords": [
+    "压着",
+    "去",
+    "湿",
+    "跑",
+    "一会儿",
+    "看到",
+    "记下"
+   ],
+   "id": "24a"
+  },
+  {
+   "targetChars": 56,
+   "copy": 32,
+   "reorder": 17,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 14,
+   "copyRatio": 0.571,
+   "reorderRatio": 0.304,
+   "paraphraseRatio": 0.143,
+   "openRatio": 0.036,
+   "functionRatio": 0.25,
+   "factWords": 203,
+   "omittedFactWords": 137,
+   "openWords": [
+    "往",
+    "看"
+   ],
+   "paraWords": [
+    "下有条",
+    "跑",
+    "记下",
+    "这些"
+   ],
+   "id": "24b"
+  },
+  {
+   "targetChars": 61,
+   "copy": 20,
+   "reorder": 13,
+   "paraphrase": 13,
+   "open": 7,
+   "function": 19,
+   "copyRatio": 0.328,
+   "reorderRatio": 0.213,
+   "paraphraseRatio": 0.213,
+   "openRatio": 0.115,
+   "functionRatio": 0.311,
+   "factWords": 224,
+   "omittedFactWords": 145,
+   "openWords": [
+    "立刻",
+    "动",
+    "想",
+    "站",
+    "动",
+    "落"
+   ],
+   "paraWords": [
+    "往前",
+    "一起",
+    "走",
+    "后面",
+    "目光",
+    "牌上",
+    "明白"
+   ],
+   "id": 25
+  },
+  {
+   "targetChars": 60,
+   "copy": 18,
+   "reorder": 13,
+   "paraphrase": 17,
+   "open": 5,
+   "function": 18,
+   "copyRatio": 0.3,
+   "reorderRatio": 0.217,
+   "paraphraseRatio": 0.283,
+   "openRatio": 0.083,
+   "functionRatio": 0.3,
+   "factWords": 224,
+   "omittedFactWords": 145,
+   "openWords": [
+    "立刻",
+    "动",
+    "想",
+    "站"
+   ],
+   "paraWords": [
+    "往前",
+    "一起",
+    "走",
+    "后面",
+    "没动",
+    "目光",
+    "落到",
+    "牌上",
+    "明白"
+   ],
+   "id": "25a"
+  },
+  {
+   "targetChars": 41,
+   "copy": 16,
+   "reorder": 12,
+   "paraphrase": 10,
+   "open": 2,
+   "function": 13,
+   "copyRatio": 0.39,
+   "reorderRatio": 0.293,
+   "paraphraseRatio": 0.244,
+   "openRatio": 0.049,
+   "functionRatio": 0.317,
+   "factWords": 224,
+   "omittedFactWords": 145,
+   "openWords": [
+    "原处"
+   ],
+   "paraWords": [
+    "非停",
+    "打算",
+    "往前",
+    "查看",
+    "迈步"
+   ],
+   "id": "25b"
+  },
+  {
+   "targetChars": 56,
+   "copy": 29,
+   "reorder": 11,
+   "paraphrase": 10,
+   "open": 2,
+   "function": 13,
+   "copyRatio": 0.518,
+   "reorderRatio": 0.196,
+   "paraphraseRatio": 0.179,
+   "openRatio": 0.036,
+   "functionRatio": 0.232,
+   "factWords": 199,
+   "omittedFactWords": 125,
+   "openWords": [
+    "看",
+    "动"
+   ],
+   "paraWords": [
+    "非想",
+    "一眼",
+    "脚下",
+    "巷里",
+    "仍压"
+   ],
+   "id": 26
+  },
+  {
+   "targetChars": 56,
+   "copy": 29,
+   "reorder": 11,
+   "paraphrase": 10,
+   "open": 2,
+   "function": 13,
+   "copyRatio": 0.518,
+   "reorderRatio": 0.196,
+   "paraphraseRatio": 0.179,
+   "openRatio": 0.036,
+   "functionRatio": 0.232,
+   "factWords": 199,
+   "omittedFactWords": 125,
+   "openWords": [
+    "看",
+    "动"
+   ],
+   "paraWords": [
+    "非想",
+    "一眼",
+    "脚下",
+    "巷里",
+    "仍压"
+   ],
+   "id": "26a"
+  },
+  {
+   "targetChars": 42,
+   "copy": 20,
+   "reorder": 5,
+   "paraphrase": 12,
+   "open": 1,
+   "function": 9,
+   "copyRatio": 0.476,
+   "reorderRatio": 0.119,
+   "paraphraseRatio": 0.286,
+   "openRatio": 0.024,
+   "functionRatio": 0.214,
+   "factWords": 199,
+   "omittedFactWords": 130,
+   "openWords": [
+    "趁"
+   ],
+   "paraWords": [
+    "有心",
+    "间隙",
+    "进巷",
+    "脚下",
+    "没动",
+    "压地"
+   ],
+   "id": "26b"
+  },
+  {
+   "targetChars": 58,
+   "copy": 30,
+   "reorder": 11,
+   "paraphrase": 9,
+   "open": 4,
+   "function": 13,
+   "copyRatio": 0.517,
+   "reorderRatio": 0.19,
+   "paraphraseRatio": 0.155,
+   "openRatio": 0.069,
+   "functionRatio": 0.224,
+   "factWords": 205,
+   "omittedFactWords": 132,
+   "openWords": [
+    "想",
+    "谁",
+    "会",
+    "停"
+   ],
+   "paraWords": [
+    "动",
+    "巷里",
+    "黄黑",
+    "绳落",
+    "地上"
+   ],
+   "id": 27
+  },
+  {
+   "targetChars": 56,
+   "copy": 28,
+   "reorder": 9,
+   "paraphrase": 10,
+   "open": 4,
+   "function": 12,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.161,
+   "paraphraseRatio": 0.179,
+   "openRatio": 0.071,
+   "functionRatio": 0.214,
+   "factWords": 205,
+   "omittedFactWords": 133,
+   "openWords": [
+    "想",
+    "谁",
+    "会",
+    "停"
+   ],
+   "paraWords": [
+    "动",
+    "看",
+    "巷里",
+    "黄黑",
+    "绳落",
+    "地上"
+   ],
+   "id": "27a"
+  },
+  {
+   "targetChars": 42,
+   "copy": 20,
+   "reorder": 9,
+   "paraphrase": 10,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.476,
+   "reorderRatio": 0.214,
+   "paraphraseRatio": 0.238,
+   "openRatio": 0.048,
+   "functionRatio": 0.238,
+   "factWords": 205,
+   "omittedFactWords": 135,
+   "openWords": [
+    "谁",
+    "停"
+   ],
+   "paraWords": [
+    "动",
+    "看",
+    "巷里",
+    "压地",
+    "黄黑",
+    "绳落"
+   ],
+   "id": "27b"
+  },
+  {
+   "targetChars": 44,
+   "copy": 20,
+   "reorder": 5,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 12,
+   "copyRatio": 0.455,
+   "reorderRatio": 0.114,
+   "paraphraseRatio": 0.182,
+   "openRatio": 0.045,
+   "functionRatio": 0.273,
+   "factWords": 224,
+   "omittedFactWords": 148,
+   "openWords": [
+    "仍",
+    "站"
+   ],
+   "paraWords": [
+    "一会儿",
+    "低头",
+    "准备",
+    "好"
+   ],
+   "id": 28
+  },
+  {
+   "targetChars": 44,
+   "copy": 20,
+   "reorder": 5,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 12,
+   "copyRatio": 0.455,
+   "reorderRatio": 0.114,
+   "paraphraseRatio": 0.182,
+   "openRatio": 0.045,
+   "functionRatio": 0.273,
+   "factWords": 224,
+   "omittedFactWords": 148,
+   "openWords": [
+    "仍",
+    "站"
+   ],
+   "paraWords": [
+    "一会儿",
+    "低头",
+    "准备",
+    "好"
+   ],
+   "id": "28a"
+  },
+  {
+   "targetChars": 33,
+   "copy": 16,
+   "reorder": 4,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.485,
+   "reorderRatio": 0.121,
+   "paraphraseRatio": 0.242,
+   "openRatio": 0.061,
+   "functionRatio": 0.212,
+   "factWords": 224,
+   "omittedFactWords": 151,
+   "openWords": [
+    "妥当"
+   ],
+   "paraWords": [
+    "检查",
+    "剩余时间",
+    "离开"
+   ],
+   "id": "28b"
+  },
+  {
+   "targetChars": 63,
+   "copy": 29,
+   "reorder": 3,
+   "paraphrase": 10,
+   "open": 6,
+   "function": 16,
+   "copyRatio": 0.46,
+   "reorderRatio": 0.048,
+   "paraphraseRatio": 0.159,
+   "openRatio": 0.095,
+   "functionRatio": 0.254,
+   "factWords": 222,
+   "omittedFactWords": 142,
+   "openWords": [
+    "自己",
+    "想",
+    "站",
+    "原处"
+   ],
+   "paraWords": [
+    "迈出",
+    "一步",
+    "一遍",
+    "巷里",
+    "压着"
+   ],
+   "id": 29
+  },
+  {
+   "targetChars": 63,
+   "copy": 29,
+   "reorder": 3,
+   "paraphrase": 10,
+   "open": 6,
+   "function": 16,
+   "copyRatio": 0.46,
+   "reorderRatio": 0.048,
+   "paraphraseRatio": 0.159,
+   "openRatio": 0.095,
+   "functionRatio": 0.254,
+   "factWords": 222,
+   "omittedFactWords": 142,
+   "openWords": [
+    "自己",
+    "想",
+    "站",
+    "原处"
+   ],
+   "paraWords": [
+    "迈出",
+    "一步",
+    "一遍",
+    "巷里",
+    "压着"
+   ],
+   "id": "29a"
+  },
+  {
+   "targetChars": 46,
+   "copy": 14,
+   "reorder": 5,
+   "paraphrase": 15,
+   "open": 4,
+   "function": 13,
+   "copyRatio": 0.304,
+   "reorderRatio": 0.109,
+   "paraphraseRatio": 0.326,
+   "openRatio": 0.087,
+   "functionRatio": 0.283,
+   "factWords": 222,
+   "omittedFactWords": 149,
+   "openWords": [
+    "最终",
+    "迈步"
+   ],
+   "paraWords": [
+    "抬手",
+    "表示",
+    "插手",
+    "打算",
+    "穿过",
+    "两个",
+    "人",
+    "压地"
+   ],
+   "id": "29b"
+  },
+  {
+   "targetChars": 54,
+   "copy": 26,
+   "reorder": 4,
+   "paraphrase": 8,
+   "open": 5,
+   "function": 13,
+   "copyRatio": 0.481,
+   "reorderRatio": 0.074,
+   "paraphraseRatio": 0.148,
+   "openRatio": 0.093,
+   "functionRatio": 0.241,
+   "factWords": 236,
+   "omittedFactWords": 158,
+   "openWords": [
+    "目光",
+    "挪",
+    "位置"
+   ],
+   "paraWords": [
+    "跟着",
+    "各人",
+    "一一",
+    "棚里"
+   ],
+   "id": "2a"
+  },
+  {
+   "targetChars": 44,
+   "copy": 19,
+   "reorder": 14,
+   "paraphrase": 15,
+   "open": 1,
+   "function": 9,
+   "copyRatio": 0.432,
+   "reorderRatio": 0.318,
+   "paraphraseRatio": 0.341,
+   "openRatio": 0.023,
+   "functionRatio": 0.205,
+   "factWords": 236,
+   "omittedFactWords": 160,
+   "openWords": [
+    "站"
+   ],
+   "paraWords": [
+    "往前走",
+    "看人",
+    "身影",
+    "记在",
+    "心里",
+    "棚里",
+    "还是"
+   ],
+   "id": "2b"
+  },
+  {
+   "targetChars": 112,
+   "copy": 63,
+   "reorder": 57,
+   "paraphrase": 20,
+   "open": 2,
+   "function": 23,
+   "copyRatio": 0.562,
+   "reorderRatio": 0.509,
+   "paraphraseRatio": 0.179,
+   "openRatio": 0.018,
+   "functionRatio": 0.205,
+   "factWords": 308,
+   "omittedFactWords": 183,
+   "openWords": [
+    "走",
+    "听"
+   ],
+   "paraWords": [
+    "问起",
+    "两边",
+    "分别",
+    "芬格尔站",
+    "一眼",
+    "说",
+    "完",
+    "得到",
+    "明确",
+    "划分"
+   ],
+   "id": 3
+  },
+  {
+   "targetChars": 55,
+   "copy": 25,
+   "reorder": 11,
+   "paraphrase": 7,
+   "open": 6,
+   "function": 15,
+   "copyRatio": 0.455,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.127,
+   "openRatio": 0.109,
+   "functionRatio": 0.273,
+   "factWords": 258,
+   "omittedFactWords": 171,
+   "openWords": [
+    "随后",
+    "转身",
+    "进",
+    "站"
+   ],
+   "paraWords": [
+    "棚里",
+    "牌前",
+    "一会儿"
+   ],
+   "id": 30
+  },
+  {
+   "targetChars": 55,
+   "copy": 25,
+   "reorder": 11,
+   "paraphrase": 7,
+   "open": 6,
+   "function": 15,
+   "copyRatio": 0.455,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.127,
+   "openRatio": 0.109,
+   "functionRatio": 0.273,
+   "factWords": 258,
+   "omittedFactWords": 171,
+   "openWords": [
+    "随后",
+    "转身",
+    "进",
+    "站"
+   ],
+   "paraWords": [
+    "棚里",
+    "牌前",
+    "一会儿"
+   ],
+   "id": "30a"
+  },
+  {
+   "targetChars": 46,
+   "copy": 21,
+   "reorder": 11,
+   "paraphrase": 11,
+   "open": 3,
+   "function": 11,
+   "copyRatio": 0.457,
+   "reorderRatio": 0.239,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.065,
+   "functionRatio": 0.239,
+   "factWords": 258,
+   "omittedFactWords": 174,
+   "openWords": [
+    "转身",
+    "进"
+   ],
+   "paraWords": [
+    "非朝",
+    "抬",
+    "棚里",
+    "有芬格尔",
+    "一遍"
+   ],
+   "id": "30b"
+  },
+  {
+   "targetChars": 58,
+   "copy": 32,
+   "reorder": 22,
+   "paraphrase": 12,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.552,
+   "reorderRatio": 0.379,
+   "paraphraseRatio": 0.207,
+   "openRatio": 0.034,
+   "functionRatio": 0.172,
+   "factWords": 275,
+   "omittedFactWords": 189,
+   "openWords": [
+    "人",
+    "进"
+   ],
+   "paraWords": [
+    "非想",
+    "看",
+    "一眼",
+    "离开",
+    "腰边",
+    "有些",
+    "紧"
+   ],
+   "id": 31
+  },
+  {
+   "targetChars": 58,
+   "copy": 32,
+   "reorder": 22,
+   "paraphrase": 12,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.552,
+   "reorderRatio": 0.379,
+   "paraphraseRatio": 0.207,
+   "openRatio": 0.034,
+   "functionRatio": 0.172,
+   "factWords": 275,
+   "omittedFactWords": 189,
+   "openWords": [
+    "人",
+    "进"
+   ],
+   "paraWords": [
+    "非想",
+    "看",
+    "一眼",
+    "离开",
+    "腰边",
+    "有些",
+    "紧"
+   ],
+   "id": "31a"
+  },
+  {
+   "targetChars": 46,
+   "copy": 25,
+   "reorder": 18,
+   "paraphrase": 10,
+   "open": 3,
+   "function": 8,
+   "copyRatio": 0.543,
+   "reorderRatio": 0.391,
+   "paraphraseRatio": 0.217,
+   "openRatio": 0.065,
+   "functionRatio": 0.174,
+   "factWords": 275,
+   "omittedFactWords": 190,
+   "openWords": [
+    "脚步",
+    "进"
+   ],
+   "paraWords": [
+    "有意",
+    "上楼",
+    "看",
+    "离开",
+    "腰间",
+    "紧"
+   ],
+   "id": "31b"
+  },
+  {
+   "targetChars": 57,
+   "copy": 34,
+   "reorder": 27,
+   "paraphrase": 10,
+   "open": 3,
+   "function": 8,
+   "copyRatio": 0.596,
+   "reorderRatio": 0.474,
+   "paraphraseRatio": 0.175,
+   "openRatio": 0.053,
+   "functionRatio": 0.14,
+   "factWords": 282,
+   "omittedFactWords": 178,
+   "openWords": [
+    "来",
+    "划分"
+   ],
+   "paraWords": [
+    "问起",
+    "放在",
+    "回答",
+    "得到",
+    "明确"
+   ],
+   "id": 32
+  },
+  {
+   "targetChars": 57,
+   "copy": 34,
+   "reorder": 27,
+   "paraphrase": 10,
+   "open": 3,
+   "function": 8,
+   "copyRatio": 0.596,
+   "reorderRatio": 0.474,
+   "paraphraseRatio": 0.175,
+   "openRatio": 0.053,
+   "functionRatio": 0.14,
+   "factWords": 282,
+   "omittedFactWords": 178,
+   "openWords": [
+    "来",
+    "划分"
+   ],
+   "paraWords": [
+    "问起",
+    "放在",
+    "回答",
+    "得到",
+    "明确"
+   ],
+   "id": "32a"
+  },
+  {
+   "targetChars": 41,
+   "copy": 24,
+   "reorder": 20,
+   "paraphrase": 10,
+   "open": 2,
+   "function": 5,
+   "copyRatio": 0.585,
+   "reorderRatio": 0.488,
+   "paraphraseRatio": 0.244,
+   "openRatio": 0.049,
+   "functionRatio": 0.122,
+   "factWords": 282,
+   "omittedFactWords": 182,
+   "openWords": [
+    "划分"
+   ],
+   "paraWords": [
+    "门口",
+    "打听",
+    "回",
+    "答话",
+    "没",
+    "问出"
+   ],
+   "id": "32b"
+  },
+  {
+   "targetChars": 58,
+   "copy": 38,
+   "reorder": 2,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 14,
+   "copyRatio": 0.655,
+   "reorderRatio": 0.034,
+   "paraphraseRatio": 0.069,
+   "openRatio": 0.0,
+   "functionRatio": 0.241,
+   "factWords": 209,
+   "omittedFactWords": 129,
+   "openWords": [],
+   "paraWords": [
+    "估着",
+    "巷里"
+   ],
+   "id": 33
+  },
+  {
+   "targetChars": 58,
+   "copy": 38,
+   "reorder": 2,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 14,
+   "copyRatio": 0.655,
+   "reorderRatio": 0.034,
+   "paraphraseRatio": 0.069,
+   "openRatio": 0.0,
+   "functionRatio": 0.241,
+   "factWords": 209,
+   "omittedFactWords": 129,
+   "openWords": [],
+   "paraWords": [
+    "估着",
+    "巷里"
+   ],
+   "id": "33a"
+  },
+  {
+   "targetChars": 38,
+   "copy": 22,
+   "reorder": 3,
+   "paraphrase": 8,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.579,
+   "reorderRatio": 0.079,
+   "paraphraseRatio": 0.211,
+   "openRatio": 0.0,
+   "functionRatio": 0.211,
+   "factWords": 209,
+   "omittedFactWords": 137,
+   "openWords": [],
+   "paraWords": [
+    "靠着",
+    "墙",
+    "一阵",
+    "估",
+    "压地"
+   ],
+   "id": "33b"
+  },
+  {
+   "targetChars": 64,
+   "copy": 26,
+   "reorder": 14,
+   "paraphrase": 16,
+   "open": 4,
+   "function": 16,
+   "copyRatio": 0.406,
+   "reorderRatio": 0.219,
+   "paraphraseRatio": 0.25,
+   "openRatio": 0.062,
+   "functionRatio": 0.25,
+   "factWords": 284,
+   "omittedFactWords": 185,
+   "openWords": [
+    "各自",
+    "挪动"
+   ],
+   "paraWords": [
+    "停",
+    "原处",
+    "看着",
+    "记下来",
+    "巷里",
+    "红发束",
+    "非记",
+    "完"
+   ],
+   "id": 34
+  },
+  {
+   "targetChars": 64,
+   "copy": 26,
+   "reorder": 14,
+   "paraphrase": 16,
+   "open": 4,
+   "function": 16,
+   "copyRatio": 0.406,
+   "reorderRatio": 0.219,
+   "paraphraseRatio": 0.25,
+   "openRatio": 0.062,
+   "functionRatio": 0.25,
+   "factWords": 284,
+   "omittedFactWords": 185,
+   "openWords": [
+    "各自",
+    "挪动"
+   ],
+   "paraWords": [
+    "停",
+    "原处",
+    "看着",
+    "记下来",
+    "巷里",
+    "红发束",
+    "非记",
+    "完"
+   ],
+   "id": "34a"
+  },
+  {
+   "targetChars": 46,
+   "copy": 20,
+   "reorder": 7,
+   "paraphrase": 9,
+   "open": 3,
+   "function": 14,
+   "copyRatio": 0.435,
+   "reorderRatio": 0.152,
+   "paraphraseRatio": 0.196,
+   "openRatio": 0.065,
+   "functionRatio": 0.304,
+   "factWords": 284,
+   "omittedFactWords": 187,
+   "openWords": [
+    "站",
+    "者",
+    "动"
+   ],
+   "paraWords": [
+    "原处",
+    "进出",
+    "一一",
+    "红发束"
+   ],
+   "id": "34b"
+  },
+  {
+   "targetChars": 56,
+   "copy": 32,
+   "reorder": 26,
+   "paraphrase": 9,
+   "open": 4,
+   "function": 9,
+   "copyRatio": 0.571,
+   "reorderRatio": 0.464,
+   "paraphraseRatio": 0.161,
+   "openRatio": 0.071,
+   "functionRatio": 0.161,
+   "factWords": 284,
+   "omittedFactWords": 182,
+   "openWords": [
+    "问起",
+    "答案"
+   ],
+   "paraWords": [
+    "拦",
+    "一下",
+    "侧身",
+    "开路",
+    "得到"
+   ],
+   "id": 35
+  },
+  {
+   "targetChars": 56,
+   "copy": 32,
+   "reorder": 26,
+   "paraphrase": 9,
+   "open": 4,
+   "function": 9,
+   "copyRatio": 0.571,
+   "reorderRatio": 0.464,
+   "paraphraseRatio": 0.161,
+   "openRatio": 0.071,
+   "functionRatio": 0.161,
+   "factWords": 284,
+   "omittedFactWords": 182,
+   "openWords": [
+    "问起",
+    "答案"
+   ],
+   "paraWords": [
+    "拦",
+    "一下",
+    "侧身",
+    "开路",
+    "得到"
+   ],
+   "id": "35a"
+  },
+  {
+   "targetChars": 47,
+   "copy": 27,
+   "reorder": 22,
+   "paraphrase": 12,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.574,
+   "reorderRatio": 0.468,
+   "paraphraseRatio": 0.255,
+   "openRatio": 0.0,
+   "functionRatio": 0.17,
+   "factWords": 284,
+   "omittedFactWords": 184,
+   "openWords": [],
+   "paraWords": [
+    "打听",
+    "看着",
+    "拦",
+    "一下",
+    "侧身",
+    "没",
+    "问出"
+   ],
+   "id": "35b"
+  },
+  {
+   "targetChars": 40,
+   "copy": 25,
+   "reorder": 4,
+   "paraphrase": 3,
+   "open": 0,
+   "function": 10,
+   "copyRatio": 0.625,
+   "reorderRatio": 0.1,
+   "paraphraseRatio": 0.075,
+   "openRatio": 0.0,
+   "functionRatio": 0.25,
+   "factWords": 295,
+   "omittedFactWords": 192,
+   "openWords": [],
+   "paraWords": [
+    "估",
+    "让开"
+   ],
+   "id": 36
+  },
+  {
+   "targetChars": 40,
+   "copy": 25,
+   "reorder": 4,
+   "paraphrase": 3,
+   "open": 0,
+   "function": 10,
+   "copyRatio": 0.625,
+   "reorderRatio": 0.1,
+   "paraphraseRatio": 0.075,
+   "openRatio": 0.0,
+   "functionRatio": 0.25,
+   "factWords": 295,
+   "omittedFactWords": 192,
+   "openWords": [],
+   "paraWords": [
+    "估",
+    "让开"
+   ],
+   "id": "36a"
+  },
+  {
+   "targetChars": 33,
+   "copy": 18,
+   "reorder": 5,
+   "paraphrase": 10,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.545,
+   "reorderRatio": 0.152,
+   "paraphraseRatio": 0.303,
+   "openRatio": 0.0,
+   "functionRatio": 0.152,
+   "factWords": 295,
+   "omittedFactWords": 196,
+   "openWords": [],
+   "paraWords": [
+    "靠着",
+    "墙",
+    "一阵",
+    "估",
+    "看着",
+    "侧身"
+   ],
+   "id": "36b"
+  },
+  {
+   "targetChars": 50,
+   "copy": 25,
+   "reorder": 7,
+   "paraphrase": 11,
+   "open": 1,
+   "function": 11,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.14,
+   "paraphraseRatio": 0.22,
+   "openRatio": 0.02,
+   "functionRatio": 0.22,
+   "factWords": 226,
+   "omittedFactWords": 149,
+   "openWords": [
+    "看"
+   ],
+   "paraWords": [
+    "去",
+    "手停",
+    "伸手",
+    "拦住",
+    "别的",
+    "动作"
+   ],
+   "id": 37
+  },
+  {
+   "targetChars": 50,
+   "copy": 25,
+   "reorder": 7,
+   "paraphrase": 11,
+   "open": 1,
+   "function": 11,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.14,
+   "paraphraseRatio": 0.22,
+   "openRatio": 0.02,
+   "functionRatio": 0.22,
+   "factWords": 226,
+   "omittedFactWords": 149,
+   "openWords": [
+    "看"
+   ],
+   "paraWords": [
+    "去",
+    "手停",
+    "伸手",
+    "拦住",
+    "别的",
+    "动作"
+   ],
+   "id": "37a"
+  },
+  {
+   "targetChars": 35,
+   "copy": 18,
+   "reorder": 2,
+   "paraphrase": 9,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.514,
+   "reorderRatio": 0.057,
+   "paraphraseRatio": 0.257,
+   "openRatio": 0.0,
+   "functionRatio": 0.229,
+   "factWords": 226,
+   "omittedFactWords": 151,
+   "openWords": [],
+   "paraWords": [
+    "查",
+    "手停",
+    "按住",
+    "非停",
+    "原地"
+   ],
+   "id": "37b"
+  },
+  {
+   "targetChars": 49,
+   "copy": 22,
+   "reorder": 4,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.449,
+   "reorderRatio": 0.082,
+   "paraphraseRatio": 0.265,
+   "openRatio": 0.041,
+   "functionRatio": 0.204,
+   "factWords": 227,
+   "omittedFactWords": 151,
+   "openWords": [
+    "看",
+    "摸"
+   ],
+   "paraWords": [
+    "去",
+    "伸手",
+    "按住",
+    "非停",
+    "原地",
+    "别的",
+    "动作"
+   ],
+   "id": 39
+  },
+  {
+   "targetChars": 49,
+   "copy": 22,
+   "reorder": 4,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.449,
+   "reorderRatio": 0.082,
+   "paraphraseRatio": 0.265,
+   "openRatio": 0.041,
+   "functionRatio": 0.204,
+   "factWords": 227,
+   "omittedFactWords": 151,
+   "openWords": [
+    "看",
+    "摸"
+   ],
+   "paraWords": [
+    "去",
+    "伸手",
+    "按住",
+    "非停",
+    "原地",
+    "别的",
+    "动作"
+   ],
+   "id": "39a"
+  },
+  {
+   "targetChars": 33,
+   "copy": 18,
+   "reorder": 5,
+   "paraphrase": 7,
+   "open": 2,
+   "function": 6,
+   "copyRatio": 0.545,
+   "reorderRatio": 0.152,
+   "paraphraseRatio": 0.212,
+   "openRatio": 0.061,
+   "functionRatio": 0.182,
+   "factWords": 227,
+   "omittedFactWords": 152,
+   "openWords": [
+    "摸",
+    "动"
+   ],
+   "paraWords": [
+    "非查",
+    "查",
+    "一下",
+    "按住"
+   ],
+   "id": "39b"
+  },
+  {
+   "targetChars": 81,
+   "copy": 40,
+   "reorder": 34,
+   "paraphrase": 22,
+   "open": 0,
+   "function": 17,
+   "copyRatio": 0.494,
+   "reorderRatio": 0.42,
+   "paraphraseRatio": 0.272,
+   "openRatio": 0.0,
+   "functionRatio": 0.21,
+   "factWords": 308,
+   "omittedFactWords": 192,
+   "openWords": [],
+   "paraWords": [
+    "问起",
+    "各自",
+    "芬格尔望",
+    "扇",
+    "压低",
+    "声音",
+    "说",
+    "门后",
+    "的话",
+    "得到",
+    "划分"
+   ],
+   "id": "3a"
+  },
+  {
+   "targetChars": 78,
+   "copy": 49,
+   "reorder": 43,
+   "paraphrase": 5,
+   "open": 6,
+   "function": 16,
+   "copyRatio": 0.628,
+   "reorderRatio": 0.551,
+   "paraphraseRatio": 0.064,
+   "openRatio": 0.077,
+   "functionRatio": 0.205,
+   "factWords": 308,
+   "omittedFactWords": 188,
+   "openWords": [
+    "打听",
+    "位置",
+    "听",
+    "出"
+   ],
+   "paraWords": [
+    "说",
+    "完",
+    "问",
+    "具体"
+   ],
+   "id": "3b"
+  },
+  {
+   "targetChars": 63,
+   "copy": 33,
+   "reorder": 25,
+   "paraphrase": 5,
+   "open": 8,
+   "function": 15,
+   "copyRatio": 0.524,
+   "reorderRatio": 0.397,
+   "paraphraseRatio": 0.079,
+   "openRatio": 0.127,
+   "functionRatio": 0.238,
+   "factWords": 277,
+   "omittedFactWords": 189,
+   "openWords": [
+    "定",
+    "望",
+    "传来",
+    "方向",
+    "挪窝"
+   ],
+   "paraWords": [
+    "估着",
+    "一分钟"
+   ],
+   "id": 4
+  },
+  {
+   "targetChars": 67,
+   "copy": 34,
+   "reorder": 13,
+   "paraphrase": 15,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.507,
+   "reorderRatio": 0.194,
+   "paraphraseRatio": 0.224,
+   "openRatio": 0.045,
+   "functionRatio": 0.194,
+   "factWords": 294,
+   "omittedFactWords": 187,
+   "openWords": [
+    "拿",
+    "想",
+    "站"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "不远处",
+    "压着",
+    "停下",
+    "手",
+    "一遍"
+   ],
+   "id": 40
+  },
+  {
+   "targetChars": 71,
+   "copy": 36,
+   "reorder": 13,
+   "paraphrase": 17,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.507,
+   "reorderRatio": 0.183,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.042,
+   "functionRatio": 0.183,
+   "factWords": 294,
+   "omittedFactWords": 186,
+   "openWords": [
+    "拿",
+    "想",
+    "站"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "巷里",
+    "不远处",
+    "压着",
+    "停下",
+    "手",
+    "一遍"
+   ],
+   "id": "40a"
+  },
+  {
+   "targetChars": 46,
+   "copy": 23,
+   "reorder": 11,
+   "paraphrase": 14,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.239,
+   "paraphraseRatio": 0.304,
+   "openRatio": 0.043,
+   "functionRatio": 0.152,
+   "factWords": 294,
+   "omittedFactWords": 192,
+   "openWords": [
+    "想",
+    "找"
+   ],
+   "paraWords": [
+    "非拿起",
+    "巷里",
+    "不远处",
+    "压地",
+    "收手",
+    "转头"
+   ],
+   "id": "40b"
+  },
+  {
+   "targetChars": 67,
+   "copy": 41,
+   "reorder": 22,
+   "paraphrase": 6,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.612,
+   "reorderRatio": 0.328,
+   "paraphraseRatio": 0.09,
+   "openRatio": 0.045,
+   "functionRatio": 0.194,
+   "factWords": 247,
+   "omittedFactWords": 155,
+   "openWords": [
+    "摸",
+    "答话"
+   ],
+   "paraWords": [
+    "去",
+    "机贴",
+    "耳边",
+    "问"
+   ],
+   "id": 41
+  },
+  {
+   "targetChars": 66,
+   "copy": 41,
+   "reorder": 22,
+   "paraphrase": 5,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.621,
+   "reorderRatio": 0.333,
+   "paraphraseRatio": 0.076,
+   "openRatio": 0.045,
+   "functionRatio": 0.197,
+   "factWords": 247,
+   "omittedFactWords": 155,
+   "openWords": [
+    "摸",
+    "答话"
+   ],
+   "paraWords": [
+    "机贴",
+    "耳边",
+    "问"
+   ],
+   "id": "41a"
+  },
+  {
+   "targetChars": 54,
+   "copy": 36,
+   "reorder": 8,
+   "paraphrase": 7,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.667,
+   "reorderRatio": 0.148,
+   "paraphraseRatio": 0.13,
+   "openRatio": 0.0,
+   "functionRatio": 0.204,
+   "factWords": 247,
+   "omittedFactWords": 156,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "耳边",
+    "问",
+    "回答"
+   ],
+   "id": "41b"
+  },
+  {
+   "targetChars": 73,
+   "copy": 42,
+   "reorder": 24,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 14,
+   "copyRatio": 0.575,
+   "reorderRatio": 0.329,
+   "paraphraseRatio": 0.178,
+   "openRatio": 0.027,
+   "functionRatio": 0.192,
+   "factWords": 246,
+   "omittedFactWords": 154,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "机贴",
+    "耳边",
+    "问",
+    "停住",
+    "手"
+   ],
+   "id": 42
+  },
+  {
+   "targetChars": 73,
+   "copy": 42,
+   "reorder": 24,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 14,
+   "copyRatio": 0.575,
+   "reorderRatio": 0.329,
+   "paraphraseRatio": 0.178,
+   "openRatio": 0.027,
+   "functionRatio": 0.192,
+   "factWords": 246,
+   "omittedFactWords": 154,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "机贴",
+    "耳边",
+    "问",
+    "停住",
+    "手"
+   ],
+   "id": "42a"
+  },
+  {
+   "targetChars": 58,
+   "copy": 41,
+   "reorder": 15,
+   "paraphrase": 5,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.707,
+   "reorderRatio": 0.259,
+   "paraphraseRatio": 0.086,
+   "openRatio": 0.034,
+   "functionRatio": 0.172,
+   "factWords": 246,
+   "omittedFactWords": 154,
+   "openWords": [
+    "拿",
+    "动"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "问"
+   ],
+   "id": "42b"
+  },
+  {
+   "targetChars": 70,
+   "copy": 46,
+   "reorder": 30,
+   "paraphrase": 9,
+   "open": 1,
+   "function": 12,
+   "copyRatio": 0.657,
+   "reorderRatio": 0.429,
+   "paraphraseRatio": 0.129,
+   "openRatio": 0.014,
+   "functionRatio": 0.171,
+   "factWords": 240,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "转交",
+    "巷里",
+    "耳边",
+    "问"
+   ],
+   "id": 43
+  },
+  {
+   "targetChars": 70,
+   "copy": 46,
+   "reorder": 30,
+   "paraphrase": 9,
+   "open": 1,
+   "function": 12,
+   "copyRatio": 0.657,
+   "reorderRatio": 0.429,
+   "paraphraseRatio": 0.129,
+   "openRatio": 0.014,
+   "functionRatio": 0.171,
+   "factWords": 240,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "转交",
+    "巷里",
+    "耳边",
+    "问"
+   ],
+   "id": "43a"
+  },
+  {
+   "targetChars": 56,
+   "copy": 39,
+   "reorder": 28,
+   "paraphrase": 4,
+   "open": 2,
+   "function": 11,
+   "copyRatio": 0.696,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.071,
+   "openRatio": 0.036,
+   "functionRatio": 0.196,
+   "factWords": 240,
+   "omittedFactWords": 150,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "问"
+   ],
+   "id": "43b"
+  },
+  {
+   "targetChars": 31,
+   "copy": 16,
+   "reorder": 9,
+   "paraphrase": 5,
+   "open": 1,
+   "function": 7,
+   "copyRatio": 0.516,
+   "reorderRatio": 0.29,
+   "paraphraseRatio": 0.161,
+   "openRatio": 0.032,
+   "functionRatio": 0.226,
+   "factWords": 222,
+   "omittedFactWords": 148,
+   "openWords": [
+    "落"
+   ],
+   "paraWords": [
+    "摸了摸",
+    "牌上"
+   ],
+   "id": 44
+  },
+  {
+   "targetChars": 31,
+   "copy": 16,
+   "reorder": 9,
+   "paraphrase": 5,
+   "open": 1,
+   "function": 7,
+   "copyRatio": 0.516,
+   "reorderRatio": 0.29,
+   "paraphraseRatio": 0.161,
+   "openRatio": 0.032,
+   "functionRatio": 0.226,
+   "factWords": 222,
+   "omittedFactWords": 148,
+   "openWords": [
+    "落"
+   ],
+   "paraWords": [
+    "摸了摸",
+    "牌上"
+   ],
+   "id": "44a"
+  },
+  {
+   "targetChars": 28,
+   "copy": 13,
+   "reorder": 0,
+   "paraphrase": 6,
+   "open": 1,
+   "function": 8,
+   "copyRatio": 0.464,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.214,
+   "openRatio": 0.036,
+   "functionRatio": 0.286,
+   "factWords": 222,
+   "omittedFactWords": 148,
+   "openWords": [
+    "按"
+   ],
+   "paraWords": [
+    "非查",
+    "查",
+    "手",
+    "一下"
+   ],
+   "id": "44b"
+  },
+  {
+   "targetChars": 37,
+   "copy": 14,
+   "reorder": 4,
+   "paraphrase": 8,
+   "open": 4,
+   "function": 9,
+   "copyRatio": 0.378,
+   "reorderRatio": 0.108,
+   "paraphraseRatio": 0.216,
+   "openRatio": 0.108,
+   "functionRatio": 0.243,
+   "factWords": 221,
+   "omittedFactWords": 150,
+   "openWords": [
+    "拿",
+    "停",
+    "人",
+    "站"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "一下",
+    "原地"
+   ],
+   "id": 45
+  },
+  {
+   "targetChars": 37,
+   "copy": 14,
+   "reorder": 4,
+   "paraphrase": 8,
+   "open": 4,
+   "function": 9,
+   "copyRatio": 0.378,
+   "reorderRatio": 0.108,
+   "paraphraseRatio": 0.216,
+   "openRatio": 0.108,
+   "functionRatio": 0.243,
+   "factWords": 221,
+   "omittedFactWords": 150,
+   "openWords": [
+    "拿",
+    "停",
+    "人",
+    "站"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "一下",
+    "原地"
+   ],
+   "id": "45a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 15,
+   "reorder": 4,
+   "paraphrase": 8,
+   "open": 3,
+   "function": 6,
+   "copyRatio": 0.469,
+   "reorderRatio": 0.125,
+   "paraphraseRatio": 0.25,
+   "openRatio": 0.094,
+   "functionRatio": 0.188,
+   "factWords": 221,
+   "omittedFactWords": 150,
+   "openWords": [
+    "拿",
+    "想",
+    "动"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "收回",
+    "手"
+   ],
+   "id": "45b"
+  },
+  {
+   "targetChars": 52,
+   "copy": 25,
+   "reorder": 12,
+   "paraphrase": 12,
+   "open": 5,
+   "function": 8,
+   "copyRatio": 0.481,
+   "reorderRatio": 0.231,
+   "paraphraseRatio": 0.231,
+   "openRatio": 0.096,
+   "functionRatio": 0.154,
+   "factWords": 220,
+   "omittedFactWords": 143,
+   "openWords": [
+    "拿",
+    "想",
+    "旁边",
+    "收"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "巷里",
+    "看",
+    "把手",
+    "回来"
+   ],
+   "id": 46
+  },
+  {
+   "targetChars": 52,
+   "copy": 25,
+   "reorder": 12,
+   "paraphrase": 12,
+   "open": 5,
+   "function": 8,
+   "copyRatio": 0.481,
+   "reorderRatio": 0.231,
+   "paraphraseRatio": 0.231,
+   "openRatio": 0.096,
+   "functionRatio": 0.154,
+   "factWords": 220,
+   "omittedFactWords": 143,
+   "openWords": [
+    "拿",
+    "想",
+    "旁边",
+    "收"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "巷里",
+    "看",
+    "把手",
+    "回来"
+   ],
+   "id": "46a"
+  },
+  {
+   "targetChars": 39,
+   "copy": 19,
+   "reorder": 10,
+   "paraphrase": 11,
+   "open": 3,
+   "function": 6,
+   "copyRatio": 0.487,
+   "reorderRatio": 0.256,
+   "paraphraseRatio": 0.282,
+   "openRatio": 0.077,
+   "functionRatio": 0.154,
+   "factWords": 220,
+   "omittedFactWords": 145,
+   "openWords": [
+    "拿",
+    "想",
+    "找"
+   ],
+   "paraWords": [
+    "去",
+    "转交",
+    "巷里",
+    "看着",
+    "收手",
+    "站住"
+   ],
+   "id": "46b"
+  },
+  {
+   "targetChars": 60,
+   "copy": 30,
+   "reorder": 12,
+   "paraphrase": 9,
+   "open": 6,
+   "function": 13,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.15,
+   "openRatio": 0.1,
+   "functionRatio": 0.217,
+   "factWords": 221,
+   "omittedFactWords": 143,
+   "openWords": [
+    "拿",
+    "起",
+    "想",
+    "拿",
+    "站",
+    "人"
+   ],
+   "paraWords": [
+    "巷里",
+    "一会儿",
+    "找到",
+    "转交"
+   ],
+   "id": 47
+  },
+  {
+   "targetChars": 60,
+   "copy": 30,
+   "reorder": 12,
+   "paraphrase": 9,
+   "open": 6,
+   "function": 13,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.15,
+   "openRatio": 0.1,
+   "functionRatio": 0.217,
+   "factWords": 221,
+   "omittedFactWords": 143,
+   "openWords": [
+    "拿",
+    "起",
+    "想",
+    "拿",
+    "站",
+    "人"
+   ],
+   "paraWords": [
+    "巷里",
+    "一会儿",
+    "找到",
+    "转交"
+   ],
+   "id": "47a"
+  },
+  {
+   "targetChars": 42,
+   "copy": 19,
+   "reorder": 9,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.452,
+   "reorderRatio": 0.214,
+   "paraphraseRatio": 0.31,
+   "openRatio": 0.048,
+   "functionRatio": 0.19,
+   "factWords": 221,
+   "omittedFactWords": 148,
+   "openWords": [
+    "想",
+    "人"
+   ],
+   "paraWords": [
+    "非拿起",
+    "巷里",
+    "看着",
+    "他握",
+    "找到",
+    "接手"
+   ],
+   "id": "47b"
+  },
+  {
+   "targetChars": 34,
+   "copy": 18,
+   "reorder": 11,
+   "paraphrase": 9,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.529,
+   "reorderRatio": 0.324,
+   "paraphraseRatio": 0.265,
+   "openRatio": 0.0,
+   "functionRatio": 0.147,
+   "factWords": 295,
+   "omittedFactWords": 188,
+   "openWords": [],
+   "paraWords": [
+    "手指",
+    "外面",
+    "一下",
+    "靠着",
+    "墙"
+   ],
+   "id": 48
+  },
+  {
+   "targetChars": 34,
+   "copy": 18,
+   "reorder": 11,
+   "paraphrase": 9,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.529,
+   "reorderRatio": 0.324,
+   "paraphraseRatio": 0.265,
+   "openRatio": 0.0,
+   "functionRatio": 0.147,
+   "factWords": 295,
+   "omittedFactWords": 188,
+   "openWords": [],
+   "paraWords": [
+    "手指",
+    "外面",
+    "一下",
+    "靠着",
+    "墙"
+   ],
+   "id": "48a"
+  },
+  {
+   "targetChars": 25,
+   "copy": 15,
+   "reorder": 8,
+   "paraphrase": 5,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.6,
+   "reorderRatio": 0.32,
+   "paraphraseRatio": 0.2,
+   "openRatio": 0.0,
+   "functionRatio": 0.2,
+   "factWords": 295,
+   "omittedFactWords": 189,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "查",
+    "靠墙"
+   ],
+   "id": "48b"
+  },
+  {
+   "targetChars": 50,
+   "copy": 23,
+   "reorder": 6,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.46,
+   "reorderRatio": 0.12,
+   "paraphraseRatio": 0.26,
+   "openRatio": 0.04,
+   "functionRatio": 0.2,
+   "factWords": 300,
+   "omittedFactWords": 195,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "伸手",
+    "拦住",
+    "非停",
+    "原地"
+   ],
+   "id": 49
+  },
+  {
+   "targetChars": 50,
+   "copy": 23,
+   "reorder": 6,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.46,
+   "reorderRatio": 0.12,
+   "paraphraseRatio": 0.26,
+   "openRatio": 0.04,
+   "functionRatio": 0.2,
+   "factWords": 300,
+   "omittedFactWords": 195,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "伸手",
+    "拦住",
+    "非停",
+    "原地"
+   ],
+   "id": "49a"
+  },
+  {
+   "targetChars": 34,
+   "copy": 18,
+   "reorder": 5,
+   "paraphrase": 7,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.529,
+   "reorderRatio": 0.147,
+   "paraphraseRatio": 0.206,
+   "openRatio": 0.059,
+   "functionRatio": 0.206,
+   "factWords": 300,
+   "omittedFactWords": 196,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "拦住",
+    "站住"
+   ],
+   "id": "49b"
+  },
+  {
+   "targetChars": 55,
+   "copy": 29,
+   "reorder": 6,
+   "paraphrase": 8,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.527,
+   "reorderRatio": 0.109,
+   "paraphraseRatio": 0.145,
+   "openRatio": 0.055,
+   "functionRatio": 0.236,
+   "factWords": 277,
+   "omittedFactWords": 190,
+   "openWords": [
+    "望",
+    "方向"
+   ],
+   "paraWords": [
+    "靠着",
+    "墙",
+    "估摸",
+    "一分钟"
+   ],
+   "id": "4a"
+  },
+  {
+   "targetChars": 41,
+   "copy": 26,
+   "reorder": 12,
+   "paraphrase": 4,
+   "open": 3,
+   "function": 8,
+   "copyRatio": 0.634,
+   "reorderRatio": 0.293,
+   "paraphraseRatio": 0.098,
+   "openRatio": 0.073,
+   "functionRatio": 0.195,
+   "factWords": 277,
+   "omittedFactWords": 186,
+   "openWords": [
+    "定",
+    "望",
+    "动"
+   ],
+   "paraWords": [
+    "数着",
+    "同样"
+   ],
+   "id": "4b"
+  },
+  {
+   "targetChars": 59,
+   "copy": 26,
+   "reorder": 9,
+   "paraphrase": 14,
+   "open": 2,
+   "function": 15,
+   "copyRatio": 0.441,
+   "reorderRatio": 0.153,
+   "paraphraseRatio": 0.237,
+   "openRatio": 0.034,
+   "functionRatio": 0.254,
+   "factWords": 257,
+   "omittedFactWords": 171,
+   "openWords": [
+    "看",
+    "神"
+   ],
+   "paraWords": [
+    "摸了摸",
+    "棚里",
+    "秦",
+    "越慢",
+    "回过",
+    "把手",
+    "上移"
+   ],
+   "id": 5
+  },
+  {
+   "targetChars": 32,
+   "copy": 18,
+   "reorder": 7,
+   "paraphrase": 4,
+   "open": 1,
+   "function": 7,
+   "copyRatio": 0.562,
+   "reorderRatio": 0.219,
+   "paraphraseRatio": 0.125,
+   "openRatio": 0.031,
+   "functionRatio": 0.219,
+   "factWords": 222,
+   "omittedFactWords": 147,
+   "openWords": [
+    "站"
+   ],
+   "paraWords": [
+    "看过",
+    "一旁"
+   ],
+   "id": 50
+  },
+  {
+   "targetChars": 32,
+   "copy": 18,
+   "reorder": 7,
+   "paraphrase": 4,
+   "open": 1,
+   "function": 7,
+   "copyRatio": 0.562,
+   "reorderRatio": 0.219,
+   "paraphraseRatio": 0.125,
+   "openRatio": 0.031,
+   "functionRatio": 0.219,
+   "factWords": 222,
+   "omittedFactWords": 147,
+   "openWords": [
+    "站"
+   ],
+   "paraWords": [
+    "看过",
+    "一旁"
+   ],
+   "id": "50a"
+  },
+  {
+   "targetChars": 24,
+   "copy": 13,
+   "reorder": 0,
+   "paraphrase": 5,
+   "open": 1,
+   "function": 5,
+   "copyRatio": 0.542,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.208,
+   "openRatio": 0.042,
+   "functionRatio": 0.208,
+   "factWords": 222,
+   "omittedFactWords": 148,
+   "openWords": [
+    "站"
+   ],
+   "paraWords": [
+    "非查",
+    "完",
+    "一边"
+   ],
+   "id": "50b"
+  },
+  {
+   "targetChars": 39,
+   "copy": 22,
+   "reorder": 10,
+   "paraphrase": 6,
+   "open": 3,
+   "function": 6,
+   "copyRatio": 0.564,
+   "reorderRatio": 0.256,
+   "paraphraseRatio": 0.154,
+   "openRatio": 0.077,
+   "functionRatio": 0.154,
+   "factWords": 221,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿",
+    "旁边"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "回头"
+   ],
+   "id": 51
+  },
+  {
+   "targetChars": 39,
+   "copy": 22,
+   "reorder": 10,
+   "paraphrase": 6,
+   "open": 3,
+   "function": 6,
+   "copyRatio": 0.564,
+   "reorderRatio": 0.256,
+   "paraphraseRatio": 0.154,
+   "openRatio": 0.077,
+   "functionRatio": 0.154,
+   "factWords": 221,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿",
+    "旁边"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "回头"
+   ],
+   "id": "51a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 18,
+   "reorder": 7,
+   "paraphrase": 7,
+   "open": 3,
+   "function": 4,
+   "copyRatio": 0.562,
+   "reorderRatio": 0.219,
+   "paraphraseRatio": 0.219,
+   "openRatio": 0.094,
+   "functionRatio": 0.125,
+   "factWords": 221,
+   "omittedFactWords": 148,
+   "openWords": [
+    "拿",
+    "想",
+    "找"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "看着",
+    "回头"
+   ],
+   "id": "51b"
+  },
+  {
+   "targetChars": 30,
+   "copy": 19,
+   "reorder": 0,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.633,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.133,
+   "openRatio": 0.0,
+   "functionRatio": 0.167,
+   "factWords": 222,
+   "omittedFactWords": 148,
+   "openWords": [],
+   "paraWords": [
+    "去",
+    "看",
+    "看过"
+   ],
+   "id": 52
+  },
+  {
+   "targetChars": 30,
+   "copy": 19,
+   "reorder": 0,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.633,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.133,
+   "openRatio": 0.0,
+   "functionRatio": 0.167,
+   "factWords": 222,
+   "omittedFactWords": 148,
+   "openWords": [],
+   "paraWords": [
+    "去",
+    "看",
+    "看过"
+   ],
+   "id": "52a"
+  },
+  {
+   "targetChars": 23,
+   "copy": 14,
+   "reorder": 0,
+   "paraphrase": 5,
+   "open": 0,
+   "function": 4,
+   "copyRatio": 0.609,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.217,
+   "openRatio": 0.0,
+   "functionRatio": 0.174,
+   "factWords": 222,
+   "omittedFactWords": 149,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "查",
+    "看",
+    "完"
+   ],
+   "id": "52b"
+  },
+  {
+   "targetChars": 45,
+   "copy": 24,
+   "reorder": 9,
+   "paraphrase": 9,
+   "open": 4,
+   "function": 6,
+   "copyRatio": 0.533,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.2,
+   "openRatio": 0.089,
+   "functionRatio": 0.133,
+   "factWords": 221,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿",
+    "想",
+    "作",
+    "声"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "巷里",
+    "看",
+    "完"
+   ],
+   "id": 53
+  },
+  {
+   "targetChars": 45,
+   "copy": 24,
+   "reorder": 9,
+   "paraphrase": 9,
+   "open": 4,
+   "function": 6,
+   "copyRatio": 0.533,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.2,
+   "openRatio": 0.089,
+   "functionRatio": 0.133,
+   "factWords": 221,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿",
+    "想",
+    "作",
+    "声"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "转交",
+    "巷里",
+    "看",
+    "完"
+   ],
+   "id": "53a"
+  },
+  {
+   "targetChars": 34,
+   "copy": 18,
+   "reorder": 7,
+   "paraphrase": 8,
+   "open": 3,
+   "function": 5,
+   "copyRatio": 0.529,
+   "reorderRatio": 0.206,
+   "paraphraseRatio": 0.235,
+   "openRatio": 0.088,
+   "functionRatio": 0.147,
+   "factWords": 221,
+   "omittedFactWords": 148,
+   "openWords": [
+    "拿",
+    "想",
+    "声"
+   ],
+   "paraWords": [
+    "去",
+    "转交",
+    "巷里",
+    "看",
+    "完",
+    "出"
+   ],
+   "id": "53b"
+  },
+  {
+   "targetChars": 68,
+   "copy": 43,
+   "reorder": 28,
+   "paraphrase": 5,
+   "open": 4,
+   "function": 14,
+   "copyRatio": 0.632,
+   "reorderRatio": 0.412,
+   "paraphraseRatio": 0.074,
+   "openRatio": 0.059,
+   "functionRatio": 0.206,
+   "factWords": 254,
+   "omittedFactWords": 159,
+   "openWords": [
+    "看",
+    "看",
+    "故障"
+   ],
+   "paraWords": [
+    "机贴",
+    "耳边",
+    "问"
+   ],
+   "id": 54
+  },
+  {
+   "targetChars": 66,
+   "copy": 43,
+   "reorder": 28,
+   "paraphrase": 5,
+   "open": 3,
+   "function": 13,
+   "copyRatio": 0.652,
+   "reorderRatio": 0.424,
+   "paraphraseRatio": 0.076,
+   "openRatio": 0.045,
+   "functionRatio": 0.197,
+   "factWords": 254,
+   "omittedFactWords": 159,
+   "openWords": [
+    "看",
+    "故障"
+   ],
+   "paraWords": [
+    "机贴",
+    "耳边",
+    "问"
+   ],
+   "id": "54a"
+  },
+  {
+   "targetChars": 55,
+   "copy": 40,
+   "reorder": 15,
+   "paraphrase": 3,
+   "open": 0,
+   "function": 12,
+   "copyRatio": 0.727,
+   "reorderRatio": 0.273,
+   "paraphraseRatio": 0.055,
+   "openRatio": 0.0,
+   "functionRatio": 0.218,
+   "factWords": 254,
+   "omittedFactWords": 160,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "问"
+   ],
+   "id": "54b"
+  },
+  {
+   "targetChars": 61,
+   "copy": 40,
+   "reorder": 30,
+   "paraphrase": 7,
+   "open": 1,
+   "function": 11,
+   "copyRatio": 0.656,
+   "reorderRatio": 0.492,
+   "paraphraseRatio": 0.115,
+   "openRatio": 0.016,
+   "functionRatio": 0.18,
+   "factWords": 240,
+   "omittedFactWords": 149,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "耳边",
+    "问"
+   ],
+   "id": 55
+  },
+  {
+   "targetChars": 61,
+   "copy": 40,
+   "reorder": 30,
+   "paraphrase": 7,
+   "open": 1,
+   "function": 11,
+   "copyRatio": 0.656,
+   "reorderRatio": 0.492,
+   "paraphraseRatio": 0.115,
+   "openRatio": 0.016,
+   "functionRatio": 0.18,
+   "factWords": 240,
+   "omittedFactWords": 149,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "耳边",
+    "问"
+   ],
+   "id": "55a"
+  },
+  {
+   "targetChars": 51,
+   "copy": 35,
+   "reorder": 26,
+   "paraphrase": 4,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.686,
+   "reorderRatio": 0.51,
+   "paraphraseRatio": 0.078,
+   "openRatio": 0.039,
+   "functionRatio": 0.196,
+   "factWords": 240,
+   "omittedFactWords": 151,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "问"
+   ],
+   "id": "55b"
+  },
+  {
+   "targetChars": 48,
+   "copy": 24,
+   "reorder": 4,
+   "paraphrase": 10,
+   "open": 1,
+   "function": 11,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.083,
+   "paraphraseRatio": 0.208,
+   "openRatio": 0.021,
+   "functionRatio": 0.229,
+   "factWords": 239,
+   "omittedFactWords": 159,
+   "openWords": [
+    "人"
+   ],
+   "paraWords": [
+    "停",
+    "进出",
+    "记下来",
+    "带亮",
+    "一下"
+   ],
+   "id": 56
+  },
+  {
+   "targetChars": 48,
+   "copy": 24,
+   "reorder": 4,
+   "paraphrase": 10,
+   "open": 1,
+   "function": 11,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.083,
+   "paraphraseRatio": 0.208,
+   "openRatio": 0.021,
+   "functionRatio": 0.229,
+   "factWords": 239,
+   "omittedFactWords": 159,
+   "openWords": [
+    "人"
+   ],
+   "paraWords": [
+    "停",
+    "进出",
+    "记下来",
+    "带亮",
+    "一下"
+   ],
+   "id": "56a"
+  },
+  {
+   "targetChars": 39,
+   "copy": 17,
+   "reorder": 4,
+   "paraphrase": 11,
+   "open": 2,
+   "function": 9,
+   "copyRatio": 0.436,
+   "reorderRatio": 0.103,
+   "paraphraseRatio": 0.282,
+   "openRatio": 0.051,
+   "functionRatio": 0.231,
+   "factWords": 239,
+   "omittedFactWords": 161,
+   "openWords": [
+    "站",
+    "者"
+   ],
+   "paraWords": [
+    "原处",
+    "进出",
+    "机",
+    "收回",
+    "带亮",
+    "一下"
+   ],
+   "id": "56b"
+  },
+  {
+   "targetChars": 54,
+   "copy": 33,
+   "reorder": 27,
+   "paraphrase": 8,
+   "open": 4,
+   "function": 7,
+   "copyRatio": 0.611,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.148,
+   "openRatio": 0.074,
+   "functionRatio": 0.13,
+   "factWords": 224,
+   "omittedFactWords": 144,
+   "openWords": [
+    "问起",
+    "答案"
+   ],
+   "paraWords": [
+    "带亮",
+    "一下",
+    "得到",
+    "明确"
+   ],
+   "id": 57
+  },
+  {
+   "targetChars": 54,
+   "copy": 33,
+   "reorder": 27,
+   "paraphrase": 8,
+   "open": 4,
+   "function": 7,
+   "copyRatio": 0.611,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.148,
+   "openRatio": 0.074,
+   "functionRatio": 0.13,
+   "factWords": 224,
+   "omittedFactWords": 144,
+   "openWords": [
+    "问起",
+    "答案"
+   ],
+   "paraWords": [
+    "带亮",
+    "一下",
+    "得到",
+    "明确"
+   ],
+   "id": "57a"
+  },
+  {
+   "targetChars": 37,
+   "copy": 18,
+   "reorder": 14,
+   "paraphrase": 8,
+   "open": 6,
+   "function": 5,
+   "copyRatio": 0.486,
+   "reorderRatio": 0.378,
+   "paraphraseRatio": 0.216,
+   "openRatio": 0.162,
+   "functionRatio": 0.135,
+   "factWords": 224,
+   "omittedFactWords": 150,
+   "openWords": [
+    "打听",
+    "收起",
+    "答案"
+   ],
+   "paraWords": [
+    "机",
+    "带亮",
+    "一下",
+    "没",
+    "问出"
+   ],
+   "id": "57b"
+  },
+  {
+   "targetChars": 69,
+   "copy": 49,
+   "reorder": 3,
+   "paraphrase": 1,
+   "open": 0,
+   "function": 17,
+   "copyRatio": 0.71,
+   "reorderRatio": 0.043,
+   "paraphraseRatio": 0.014,
+   "openRatio": 0.0,
+   "functionRatio": 0.246,
+   "factWords": 292,
+   "omittedFactWords": 186,
+   "openWords": [],
+   "paraWords": [
+    "说"
+   ],
+   "id": 58
+  },
+  {
+   "targetChars": 69,
+   "copy": 49,
+   "reorder": 3,
+   "paraphrase": 1,
+   "open": 0,
+   "function": 17,
+   "copyRatio": 0.71,
+   "reorderRatio": 0.043,
+   "paraphraseRatio": 0.014,
+   "openRatio": 0.0,
+   "functionRatio": 0.246,
+   "factWords": 292,
+   "omittedFactWords": 186,
+   "openWords": [],
+   "paraWords": [
+    "说"
+   ],
+   "id": "58a"
+  },
+  {
+   "targetChars": 53,
+   "copy": 37,
+   "reorder": 6,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 12,
+   "copyRatio": 0.698,
+   "reorderRatio": 0.113,
+   "paraphraseRatio": 0.075,
+   "openRatio": 0.0,
+   "functionRatio": 0.226,
+   "factWords": 292,
+   "omittedFactWords": 188,
+   "openWords": [],
+   "paraWords": [
+    "靠着",
+    "墙",
+    "说"
+   ],
+   "id": "58b"
+  },
+  {
+   "targetChars": 44,
+   "copy": 17,
+   "reorder": 4,
+   "paraphrase": 12,
+   "open": 5,
+   "function": 8,
+   "copyRatio": 0.386,
+   "reorderRatio": 0.091,
+   "paraphraseRatio": 0.273,
+   "openRatio": 0.114,
+   "functionRatio": 0.182,
+   "factWords": 219,
+   "omittedFactWords": 148,
+   "openWords": [
+    "拿",
+    "想",
+    "站",
+    "动作"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "收回",
+    "手",
+    "原地",
+    "别的"
+   ],
+   "id": 59
+  },
+  {
+   "targetChars": 44,
+   "copy": 17,
+   "reorder": 4,
+   "paraphrase": 12,
+   "open": 5,
+   "function": 8,
+   "copyRatio": 0.386,
+   "reorderRatio": 0.091,
+   "paraphraseRatio": 0.273,
+   "openRatio": 0.114,
+   "functionRatio": 0.182,
+   "factWords": 219,
+   "omittedFactWords": 148,
+   "openWords": [
+    "拿",
+    "想",
+    "站",
+    "动作"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "收回",
+    "手",
+    "原地",
+    "别的"
+   ],
+   "id": "59a"
+  },
+  {
+   "targetChars": 28,
+   "copy": 11,
+   "reorder": 2,
+   "paraphrase": 7,
+   "open": 3,
+   "function": 7,
+   "copyRatio": 0.393,
+   "reorderRatio": 0.071,
+   "paraphraseRatio": 0.25,
+   "openRatio": 0.107,
+   "functionRatio": 0.25,
+   "factWords": 219,
+   "omittedFactWords": 149,
+   "openWords": [
+    "拿",
+    "想",
+    "动"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "收手",
+    "站住"
+   ],
+   "id": "59b"
+  },
+  {
+   "targetChars": 37,
+   "copy": 18,
+   "reorder": 2,
+   "paraphrase": 8,
+   "open": 1,
+   "function": 10,
+   "copyRatio": 0.486,
+   "reorderRatio": 0.054,
+   "paraphraseRatio": 0.216,
+   "openRatio": 0.027,
+   "functionRatio": 0.27,
+   "factWords": 257,
+   "omittedFactWords": 172,
+   "openWords": [
+    "看"
+   ],
+   "paraWords": [
+    "摸了摸",
+    "棚里",
+    "秦",
+    "越慢"
+   ],
+   "id": "5a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 19,
+   "reorder": 0,
+   "paraphrase": 0,
+   "open": 2,
+   "function": 11,
+   "copyRatio": 0.594,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.0,
+   "openRatio": 0.062,
+   "functionRatio": 0.344,
+   "factWords": 257,
+   "omittedFactWords": 171,
+   "openWords": [
+    "东西"
+   ],
+   "paraWords": [],
+   "id": "5b"
+  },
+  {
+   "targetChars": 40,
+   "copy": 25,
+   "reorder": 20,
+   "paraphrase": 3,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.625,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.075,
+   "openRatio": 0.05,
+   "functionRatio": 0.2,
+   "factWords": 253,
+   "omittedFactWords": 169,
+   "openWords": [
+    "往",
+    "人"
+   ],
+   "paraWords": [
+    "去",
+    "微微"
+   ],
+   "id": 60
+  },
+  {
+   "targetChars": 40,
+   "copy": 25,
+   "reorder": 20,
+   "paraphrase": 3,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.625,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.075,
+   "openRatio": 0.05,
+   "functionRatio": 0.2,
+   "factWords": 253,
+   "omittedFactWords": 169,
+   "openWords": [
+    "往",
+    "人"
+   ],
+   "paraWords": [
+    "去",
+    "微微"
+   ],
+   "id": "60a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 21,
+   "reorder": 11,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.656,
+   "reorderRatio": 0.344,
+   "paraphraseRatio": 0.188,
+   "openRatio": 0.0,
+   "functionRatio": 0.156,
+   "factWords": 253,
+   "omittedFactWords": 170,
+   "openWords": [],
+   "paraWords": [
+    "留在",
+    "动身",
+    "抬头"
+   ],
+   "id": "60b"
+  },
+  {
+   "targetChars": 72,
+   "copy": 41,
+   "reorder": 34,
+   "paraphrase": 6,
+   "open": 1,
+   "function": 22,
+   "copyRatio": 0.569,
+   "reorderRatio": 0.472,
+   "paraphraseRatio": 0.083,
+   "openRatio": 0.014,
+   "functionRatio": 0.306,
+   "factWords": 317,
+   "omittedFactWords": 201,
+   "openWords": [
+    "迈"
+   ],
+   "paraWords": [
+    "往前",
+    "抓住",
+    "很尖"
+   ],
+   "id": 61
+  },
+  {
+   "targetChars": 72,
+   "copy": 41,
+   "reorder": 34,
+   "paraphrase": 6,
+   "open": 1,
+   "function": 22,
+   "copyRatio": 0.569,
+   "reorderRatio": 0.472,
+   "paraphraseRatio": 0.083,
+   "openRatio": 0.014,
+   "functionRatio": 0.306,
+   "factWords": 317,
+   "omittedFactWords": 201,
+   "openWords": [
+    "迈"
+   ],
+   "paraWords": [
+    "往前",
+    "抓住",
+    "很尖"
+   ],
+   "id": "61a"
+  },
+  {
+   "targetChars": 50,
+   "copy": 24,
+   "reorder": 19,
+   "paraphrase": 8,
+   "open": 1,
+   "function": 17,
+   "copyRatio": 0.48,
+   "reorderRatio": 0.38,
+   "paraphraseRatio": 0.16,
+   "openRatio": 0.02,
+   "functionRatio": 0.34,
+   "factWords": 317,
+   "omittedFactWords": 203,
+   "openWords": [
+    "问"
+   ],
+   "paraWords": [
+    "非往",
+    "查看",
+    "抓住",
+    "尖声"
+   ],
+   "id": "61b"
+  },
+  {
+   "targetChars": 77,
+   "copy": 54,
+   "reorder": 32,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 15,
+   "copyRatio": 0.701,
+   "reorderRatio": 0.416,
+   "paraphraseRatio": 0.078,
+   "openRatio": 0.0,
+   "functionRatio": 0.195,
+   "factWords": 175,
+   "omittedFactWords": 106,
+   "openWords": [],
+   "paraWords": [
+    "赶在",
+    "前冲",
+    "进去"
+   ],
+   "id": 62
+  },
+  {
+   "targetChars": 77,
+   "copy": 54,
+   "reorder": 32,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 15,
+   "copyRatio": 0.701,
+   "reorderRatio": 0.416,
+   "paraphraseRatio": 0.078,
+   "openRatio": 0.0,
+   "functionRatio": 0.195,
+   "factWords": 175,
+   "omittedFactWords": 106,
+   "openWords": [],
+   "paraWords": [
+    "赶在",
+    "前冲",
+    "进去"
+   ],
+   "id": "62a"
+  },
+  {
+   "targetChars": 59,
+   "copy": 38,
+   "reorder": 31,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 15,
+   "copyRatio": 0.644,
+   "reorderRatio": 0.525,
+   "paraphraseRatio": 0.102,
+   "openRatio": 0.0,
+   "functionRatio": 0.254,
+   "factWords": 175,
+   "omittedFactWords": 112,
+   "openWords": [],
+   "paraWords": [
+    "楼",
+    "芬格尔慢",
+    "楼"
+   ],
+   "id": "62b"
+  },
+  {
+   "targetChars": 46,
+   "copy": 28,
+   "reorder": 22,
+   "paraphrase": 5,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.609,
+   "reorderRatio": 0.478,
+   "paraphraseRatio": 0.109,
+   "openRatio": 0.0,
+   "functionRatio": 0.239,
+   "factWords": 146,
+   "omittedFactWords": 92,
+   "openWords": [],
+   "paraWords": [
+    "非站",
+    "不动",
+    "楼"
+   ],
+   "id": 63
+  },
+  {
+   "targetChars": 46,
+   "copy": 28,
+   "reorder": 22,
+   "paraphrase": 5,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.609,
+   "reorderRatio": 0.478,
+   "paraphraseRatio": 0.109,
+   "openRatio": 0.0,
+   "functionRatio": 0.239,
+   "factWords": 146,
+   "omittedFactWords": 92,
+   "openWords": [],
+   "paraWords": [
+    "非站",
+    "不动",
+    "楼"
+   ],
+   "id": "63a"
+  },
+  {
+   "targetChars": 31,
+   "copy": 11,
+   "reorder": 5,
+   "paraphrase": 10,
+   "open": 0,
+   "function": 10,
+   "copyRatio": 0.355,
+   "reorderRatio": 0.161,
+   "paraphraseRatio": 0.323,
+   "openRatio": 0.0,
+   "functionRatio": 0.323,
+   "factWords": 146,
+   "omittedFactWords": 99,
+   "openWords": [],
+   "paraWords": [
+    "非停",
+    "楼",
+    "其他人",
+    "精神",
+    "还好"
+   ],
+   "id": "63b"
+  },
+  {
+   "targetChars": 42,
+   "copy": 28,
+   "reorder": 2,
+   "paraphrase": 1,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.667,
+   "reorderRatio": 0.048,
+   "paraphraseRatio": 0.024,
+   "openRatio": 0.0,
+   "functionRatio": 0.262,
+   "factWords": 150,
+   "omittedFactWords": 97,
+   "openWords": [],
+   "paraWords": [
+    "好"
+   ],
+   "id": 64
+  },
+  {
+   "targetChars": 42,
+   "copy": 28,
+   "reorder": 2,
+   "paraphrase": 1,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.667,
+   "reorderRatio": 0.048,
+   "paraphraseRatio": 0.024,
+   "openRatio": 0.0,
+   "functionRatio": 0.262,
+   "factWords": 150,
+   "omittedFactWords": 97,
+   "openWords": [],
+   "paraWords": [
+    "好"
+   ],
+   "id": "64a"
+  },
+  {
+   "targetChars": 33,
+   "copy": 16,
+   "reorder": 2,
+   "paraphrase": 7,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.485,
+   "reorderRatio": 0.061,
+   "paraphraseRatio": 0.212,
+   "openRatio": 0.061,
+   "functionRatio": 0.242,
+   "factWords": 150,
+   "omittedFactWords": 101,
+   "openWords": [
+    "妥当"
+   ],
+   "paraWords": [
+    "检查",
+    "剩余时间",
+    "楼"
+   ],
+   "id": "64b"
+  },
+  {
+   "targetChars": 37,
+   "copy": 24,
+   "reorder": 3,
+   "paraphrase": 2,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.649,
+   "reorderRatio": 0.081,
+   "paraphraseRatio": 0.054,
+   "openRatio": 0.054,
+   "functionRatio": 0.189,
+   "factWords": 222,
+   "omittedFactWords": 146,
+   "openWords": [
+    "挪动"
+   ],
+   "paraWords": [
+    "看",
+    "看"
+   ],
+   "id": 65
+  },
+  {
+   "targetChars": 37,
+   "copy": 24,
+   "reorder": 3,
+   "paraphrase": 2,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.649,
+   "reorderRatio": 0.081,
+   "paraphraseRatio": 0.054,
+   "openRatio": 0.054,
+   "functionRatio": 0.189,
+   "factWords": 222,
+   "omittedFactWords": 146,
+   "openWords": [
+    "挪动"
+   ],
+   "paraWords": [
+    "看",
+    "看"
+   ],
+   "id": "65a"
+  },
+  {
+   "targetChars": 31,
+   "copy": 17,
+   "reorder": 3,
+   "paraphrase": 8,
+   "open": 1,
+   "function": 5,
+   "copyRatio": 0.548,
+   "reorderRatio": 0.097,
+   "paraphraseRatio": 0.258,
+   "openRatio": 0.032,
+   "functionRatio": 0.161,
+   "factWords": 222,
+   "omittedFactWords": 147,
+   "openWords": [
+    "动"
+   ],
+   "paraWords": [
+    "非查",
+    "查",
+    "看着",
+    "站住",
+    "没"
+   ],
+   "id": "65b"
+  },
+  {
+   "targetChars": 40,
+   "copy": 23,
+   "reorder": 13,
+   "paraphrase": 7,
+   "open": 1,
+   "function": 7,
+   "copyRatio": 0.575,
+   "reorderRatio": 0.325,
+   "paraphraseRatio": 0.175,
+   "openRatio": 0.025,
+   "functionRatio": 0.175,
+   "factWords": 221,
+   "omittedFactWords": 144,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "停住",
+    "手"
+   ],
+   "id": 66
+  },
+  {
+   "targetChars": 40,
+   "copy": 23,
+   "reorder": 13,
+   "paraphrase": 7,
+   "open": 1,
+   "function": 7,
+   "copyRatio": 0.575,
+   "reorderRatio": 0.325,
+   "paraphraseRatio": 0.175,
+   "openRatio": 0.025,
+   "functionRatio": 0.175,
+   "factWords": 221,
+   "omittedFactWords": 144,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "停住",
+    "手"
+   ],
+   "id": "66a"
+  },
+  {
+   "targetChars": 33,
+   "copy": 19,
+   "reorder": 10,
+   "paraphrase": 7,
+   "open": 2,
+   "function": 5,
+   "copyRatio": 0.576,
+   "reorderRatio": 0.303,
+   "paraphraseRatio": 0.212,
+   "openRatio": 0.061,
+   "functionRatio": 0.152,
+   "factWords": 221,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "看着",
+    "收手"
+   ],
+   "id": "66b"
+  },
+  {
+   "targetChars": 44,
+   "copy": 22,
+   "reorder": 9,
+   "paraphrase": 7,
+   "open": 5,
+   "function": 8,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.205,
+   "paraphraseRatio": 0.159,
+   "openRatio": 0.114,
+   "functionRatio": 0.182,
+   "factWords": 224,
+   "omittedFactWords": 151,
+   "openWords": [
+    "拿",
+    "想",
+    "动作",
+    "停"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "原地"
+   ],
+   "id": 67
+  },
+  {
+   "targetChars": 44,
+   "copy": 22,
+   "reorder": 9,
+   "paraphrase": 7,
+   "open": 5,
+   "function": 8,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.205,
+   "paraphraseRatio": 0.159,
+   "openRatio": 0.114,
+   "functionRatio": 0.182,
+   "factWords": 224,
+   "omittedFactWords": 151,
+   "openWords": [
+    "拿",
+    "想",
+    "动作",
+    "停"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "原地"
+   ],
+   "id": "67a"
+  },
+  {
+   "targetChars": 33,
+   "copy": 18,
+   "reorder": 7,
+   "paraphrase": 5,
+   "open": 4,
+   "function": 6,
+   "copyRatio": 0.545,
+   "reorderRatio": 0.212,
+   "paraphraseRatio": 0.152,
+   "openRatio": 0.121,
+   "functionRatio": 0.182,
+   "factWords": 224,
+   "omittedFactWords": 152,
+   "openWords": [
+    "拿",
+    "想",
+    "找",
+    "动"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "站住"
+   ],
+   "id": "67b"
+  },
+  {
+   "targetChars": 53,
+   "copy": 28,
+   "reorder": 14,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.528,
+   "reorderRatio": 0.264,
+   "paraphraseRatio": 0.245,
+   "openRatio": 0.038,
+   "functionRatio": 0.151,
+   "factWords": 221,
+   "omittedFactWords": 144,
+   "openWords": [
+    "拿",
+    "站"
+   ],
+   "paraWords": [
+    "非想",
+    "转交",
+    "巷里",
+    "看",
+    "完",
+    "一旁",
+    "送出去"
+   ],
+   "id": 68
+  },
+  {
+   "targetChars": 53,
+   "copy": 28,
+   "reorder": 14,
+   "paraphrase": 13,
+   "open": 2,
+   "function": 8,
+   "copyRatio": 0.528,
+   "reorderRatio": 0.264,
+   "paraphraseRatio": 0.245,
+   "openRatio": 0.038,
+   "functionRatio": 0.151,
+   "factWords": 221,
+   "omittedFactWords": 144,
+   "openWords": [
+    "拿",
+    "站"
+   ],
+   "paraWords": [
+    "非想",
+    "转交",
+    "巷里",
+    "看",
+    "完",
+    "一旁",
+    "送出去"
+   ],
+   "id": "68a"
+  },
+  {
+   "targetChars": 44,
+   "copy": 23,
+   "reorder": 12,
+   "paraphrase": 10,
+   "open": 5,
+   "function": 6,
+   "copyRatio": 0.523,
+   "reorderRatio": 0.273,
+   "paraphraseRatio": 0.227,
+   "openRatio": 0.114,
+   "functionRatio": 0.136,
+   "factWords": 221,
+   "omittedFactWords": 146,
+   "openWords": [
+    "拿",
+    "想",
+    "找",
+    "站",
+    "送"
+   ],
+   "paraWords": [
+    "去",
+    "转交",
+    "巷里",
+    "看",
+    "完",
+    "一边",
+    "出"
+   ],
+   "id": "68b"
+  },
+  {
+   "targetChars": 45,
+   "copy": 31,
+   "reorder": 2,
+   "paraphrase": 4,
+   "open": 2,
+   "function": 6,
+   "copyRatio": 0.689,
+   "reorderRatio": 0.044,
+   "paraphraseRatio": 0.089,
+   "openRatio": 0.044,
+   "functionRatio": 0.133,
+   "factWords": 236,
+   "omittedFactWords": 153,
+   "openWords": [
+    "看",
+    "看"
+   ],
+   "paraWords": [
+    "耳边",
+    "问路"
+   ],
+   "id": 69
+  },
+  {
+   "targetChars": 43,
+   "copy": 31,
+   "reorder": 2,
+   "paraphrase": 4,
+   "open": 1,
+   "function": 5,
+   "copyRatio": 0.721,
+   "reorderRatio": 0.047,
+   "paraphraseRatio": 0.093,
+   "openRatio": 0.023,
+   "functionRatio": 0.116,
+   "factWords": 236,
+   "omittedFactWords": 153,
+   "openWords": [
+    "看"
+   ],
+   "paraWords": [
+    "耳边",
+    "问路"
+   ],
+   "id": "69a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 24,
+   "reorder": 3,
+   "paraphrase": 3,
+   "open": 0,
+   "function": 5,
+   "copyRatio": 0.75,
+   "reorderRatio": 0.094,
+   "paraphraseRatio": 0.094,
+   "openRatio": 0.0,
+   "functionRatio": 0.156,
+   "factWords": 236,
+   "omittedFactWords": 155,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "问"
+   ],
+   "id": "69b"
+  },
+  {
+   "targetChars": 58,
+   "copy": 31,
+   "reorder": 26,
+   "paraphrase": 14,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.534,
+   "reorderRatio": 0.448,
+   "paraphraseRatio": 0.241,
+   "openRatio": 0.0,
+   "functionRatio": 0.19,
+   "factWords": 274,
+   "omittedFactWords": 182,
+   "openWords": [],
+   "paraWords": [
+    "弯腰",
+    "去",
+    "推脚边",
+    "有些",
+    "紧",
+    "箱离",
+    "差得远"
+   ],
+   "id": 7
+  },
+  {
+   "targetChars": 44,
+   "copy": 25,
+   "reorder": 15,
+   "paraphrase": 3,
+   "open": 3,
+   "function": 11,
+   "copyRatio": 0.568,
+   "reorderRatio": 0.341,
+   "paraphraseRatio": 0.068,
+   "openRatio": 0.068,
+   "functionRatio": 0.25,
+   "factWords": 231,
+   "omittedFactWords": 152,
+   "openWords": [
+    "摸",
+    "旁边"
+   ],
+   "paraWords": [
+    "去",
+    "一遍"
+   ],
+   "id": 70
+  },
+  {
+   "targetChars": 44,
+   "copy": 25,
+   "reorder": 15,
+   "paraphrase": 3,
+   "open": 3,
+   "function": 11,
+   "copyRatio": 0.568,
+   "reorderRatio": 0.341,
+   "paraphraseRatio": 0.068,
+   "openRatio": 0.068,
+   "functionRatio": 0.25,
+   "factWords": 231,
+   "omittedFactWords": 152,
+   "openWords": [
+    "摸",
+    "旁边"
+   ],
+   "paraWords": [
+    "去",
+    "一遍"
+   ],
+   "id": "70a"
+  },
+  {
+   "targetChars": 30,
+   "copy": 18,
+   "reorder": 6,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 6,
+   "copyRatio": 0.6,
+   "reorderRatio": 0.2,
+   "paraphraseRatio": 0.2,
+   "openRatio": 0.0,
+   "functionRatio": 0.2,
+   "factWords": 231,
+   "omittedFactWords": 155,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "看着",
+    "一遍"
+   ],
+   "id": "70b"
+  },
+  {
+   "targetChars": 46,
+   "copy": 21,
+   "reorder": 10,
+   "paraphrase": 11,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.457,
+   "reorderRatio": 0.217,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.043,
+   "functionRatio": 0.217,
+   "factWords": 230,
+   "omittedFactWords": 153,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "回到",
+    "牌前",
+    "一遍"
+   ],
+   "id": 71
+  },
+  {
+   "targetChars": 46,
+   "copy": 21,
+   "reorder": 10,
+   "paraphrase": 11,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.457,
+   "reorderRatio": 0.217,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.043,
+   "functionRatio": 0.217,
+   "factWords": 230,
+   "omittedFactWords": 153,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "伸手",
+    "去",
+    "巷里",
+    "回到",
+    "牌前",
+    "一遍"
+   ],
+   "id": "71a"
+  },
+  {
+   "targetChars": 35,
+   "copy": 21,
+   "reorder": 12,
+   "paraphrase": 5,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.6,
+   "reorderRatio": 0.343,
+   "paraphraseRatio": 0.143,
+   "openRatio": 0.057,
+   "functionRatio": 0.2,
+   "factWords": 230,
+   "omittedFactWords": 154,
+   "openWords": [
+    "拿",
+    "想"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "转而"
+   ],
+   "id": "71b"
+  },
+  {
+   "targetChars": 43,
+   "copy": 25,
+   "reorder": 15,
+   "paraphrase": 6,
+   "open": 1,
+   "function": 9,
+   "copyRatio": 0.581,
+   "reorderRatio": 0.349,
+   "paraphraseRatio": 0.14,
+   "openRatio": 0.023,
+   "functionRatio": 0.209,
+   "factWords": 226,
+   "omittedFactWords": 149,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "一遍"
+   ],
+   "id": 73
+  },
+  {
+   "targetChars": 43,
+   "copy": 25,
+   "reorder": 15,
+   "paraphrase": 6,
+   "open": 1,
+   "function": 9,
+   "copyRatio": 0.581,
+   "reorderRatio": 0.349,
+   "paraphraseRatio": 0.14,
+   "openRatio": 0.023,
+   "functionRatio": 0.209,
+   "factWords": 226,
+   "omittedFactWords": 149,
+   "openWords": [
+    "拿"
+   ],
+   "paraWords": [
+    "非想",
+    "巷里",
+    "一遍"
+   ],
+   "id": "73a"
+  },
+  {
+   "targetChars": 37,
+   "copy": 22,
+   "reorder": 13,
+   "paraphrase": 5,
+   "open": 3,
+   "function": 7,
+   "copyRatio": 0.595,
+   "reorderRatio": 0.351,
+   "paraphraseRatio": 0.135,
+   "openRatio": 0.081,
+   "functionRatio": 0.189,
+   "factWords": 226,
+   "omittedFactWords": 150,
+   "openWords": [
+    "拿",
+    "想",
+    "找"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "一遍"
+   ],
+   "id": "73b"
+  },
+  {
+   "targetChars": 42,
+   "copy": 22,
+   "reorder": 0,
+   "paraphrase": 8,
+   "open": 0,
+   "function": 10,
+   "copyRatio": 0.524,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.19,
+   "openRatio": 0.0,
+   "functionRatio": 0.238,
+   "factWords": 208,
+   "omittedFactWords": 136,
+   "openWords": [],
+   "paraWords": [
+    "去",
+    "巷里",
+    "红发束",
+    "压着"
+   ],
+   "id": 74
+  },
+  {
+   "targetChars": 41,
+   "copy": 20,
+   "reorder": 0,
+   "paraphrase": 8,
+   "open": 1,
+   "function": 10,
+   "copyRatio": 0.488,
+   "reorderRatio": 0.0,
+   "paraphraseRatio": 0.195,
+   "openRatio": 0.024,
+   "functionRatio": 0.244,
+   "factWords": 208,
+   "omittedFactWords": 137,
+   "openWords": [
+    "看"
+   ],
+   "paraWords": [
+    "去",
+    "巷里",
+    "红发束",
+    "压着"
+   ],
+   "id": "74a"
+  },
+  {
+   "targetChars": 27,
+   "copy": 12,
+   "reorder": 1,
+   "paraphrase": 7,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.444,
+   "reorderRatio": 0.037,
+   "paraphraseRatio": 0.259,
+   "openRatio": 0.0,
+   "functionRatio": 0.296,
+   "factWords": 208,
+   "omittedFactWords": 140,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "红发束",
+    "压地"
+   ],
+   "id": "74b"
+  },
+  {
+   "targetChars": 55,
+   "copy": 35,
+   "reorder": 23,
+   "paraphrase": 7,
+   "open": 2,
+   "function": 9,
+   "copyRatio": 0.636,
+   "reorderRatio": 0.418,
+   "paraphraseRatio": 0.127,
+   "openRatio": 0.036,
+   "functionRatio": 0.164,
+   "factWords": 234,
+   "omittedFactWords": 151,
+   "openWords": [
+    "拿",
+    "收"
+   ],
+   "paraWords": [
+    "非想",
+    "转交",
+    "巷里",
+    "好"
+   ],
+   "id": 75
+  },
+  {
+   "targetChars": 55,
+   "copy": 35,
+   "reorder": 23,
+   "paraphrase": 7,
+   "open": 2,
+   "function": 9,
+   "copyRatio": 0.636,
+   "reorderRatio": 0.418,
+   "paraphraseRatio": 0.127,
+   "openRatio": 0.036,
+   "functionRatio": 0.164,
+   "factWords": 234,
+   "omittedFactWords": 151,
+   "openWords": [
+    "拿",
+    "收"
+   ],
+   "paraWords": [
+    "非想",
+    "转交",
+    "巷里",
+    "好"
+   ],
+   "id": "75a"
+  },
+  {
+   "targetChars": 44,
+   "copy": 26,
+   "reorder": 17,
+   "paraphrase": 6,
+   "open": 3,
+   "function": 9,
+   "copyRatio": 0.591,
+   "reorderRatio": 0.386,
+   "paraphraseRatio": 0.136,
+   "openRatio": 0.068,
+   "functionRatio": 0.205,
+   "factWords": 234,
+   "omittedFactWords": 155,
+   "openWords": [
+    "拿",
+    "想",
+    "收"
+   ],
+   "paraWords": [
+    "去",
+    "转交",
+    "巷里",
+    "进"
+   ],
+   "id": "75b"
+  },
+  {
+   "targetChars": 46,
+   "copy": 27,
+   "reorder": 14,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.587,
+   "reorderRatio": 0.304,
+   "paraphraseRatio": 0.13,
+   "openRatio": 0.0,
+   "functionRatio": 0.239,
+   "factWords": 263,
+   "omittedFactWords": 182,
+   "openWords": [],
+   "paraWords": [
+    "贴着",
+    "棚里",
+    "一遍"
+   ],
+   "id": 76
+  },
+  {
+   "targetChars": 46,
+   "copy": 27,
+   "reorder": 14,
+   "paraphrase": 6,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.587,
+   "reorderRatio": 0.304,
+   "paraphraseRatio": 0.13,
+   "openRatio": 0.0,
+   "functionRatio": 0.239,
+   "factWords": 263,
+   "omittedFactWords": 182,
+   "openWords": [],
+   "paraWords": [
+    "贴着",
+    "棚里",
+    "一遍"
+   ],
+   "id": "76a"
+  },
+  {
+   "targetChars": 37,
+   "copy": 19,
+   "reorder": 9,
+   "paraphrase": 9,
+   "open": 1,
+   "function": 8,
+   "copyRatio": 0.514,
+   "reorderRatio": 0.243,
+   "paraphraseRatio": 0.243,
+   "openRatio": 0.027,
+   "functionRatio": 0.216,
+   "factWords": 263,
+   "omittedFactWords": 182,
+   "openWords": [
+    "进"
+   ],
+   "paraWords": [
+    "沿",
+    "棚里",
+    "有芬格尔",
+    "一遍"
+   ],
+   "id": "76b"
+  },
+  {
+   "targetChars": 58,
+   "copy": 33,
+   "reorder": 25,
+   "paraphrase": 12,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.569,
+   "reorderRatio": 0.431,
+   "paraphraseRatio": 0.207,
+   "openRatio": 0.0,
+   "functionRatio": 0.19,
+   "factWords": 249,
+   "omittedFactWords": 163,
+   "openWords": [],
+   "paraWords": [
+    "问起",
+    "棚里",
+    "给出",
+    "明确",
+    "划分",
+    "一遍"
+   ],
+   "id": 77
+  },
+  {
+   "targetChars": 58,
+   "copy": 33,
+   "reorder": 25,
+   "paraphrase": 12,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.569,
+   "reorderRatio": 0.431,
+   "paraphraseRatio": 0.207,
+   "openRatio": 0.0,
+   "functionRatio": 0.19,
+   "factWords": 249,
+   "omittedFactWords": 163,
+   "openWords": [],
+   "paraWords": [
+    "问起",
+    "棚里",
+    "给出",
+    "明确",
+    "划分",
+    "一遍"
+   ],
+   "id": "77a"
+  },
+  {
+   "targetChars": 36,
+   "copy": 19,
+   "reorder": 13,
+   "paraphrase": 8,
+   "open": 2,
+   "function": 7,
+   "copyRatio": 0.528,
+   "reorderRatio": 0.361,
+   "paraphraseRatio": 0.222,
+   "openRatio": 0.056,
+   "functionRatio": 0.194,
+   "factWords": 249,
+   "omittedFactWords": 169,
+   "openWords": [
+    "打听"
+   ],
+   "paraWords": [
+    "棚里",
+    "没答",
+    "上来",
+    "一遍"
+   ],
+   "id": "77b"
+  },
+  {
+   "targetChars": 51,
+   "copy": 27,
+   "reorder": 9,
+   "paraphrase": 8,
+   "open": 1,
+   "function": 13,
+   "copyRatio": 0.529,
+   "reorderRatio": 0.176,
+   "paraphraseRatio": 0.157,
+   "openRatio": 0.02,
+   "functionRatio": 0.255,
+   "factWords": 203,
+   "omittedFactWords": 131,
+   "openWords": [
+    "人"
+   ],
+   "paraWords": [
+    "停",
+    "进出",
+    "记下来",
+    "巷里"
+   ],
+   "id": 78
+  },
+  {
+   "targetChars": 49,
+   "copy": 29,
+   "reorder": 11,
+   "paraphrase": 5,
+   "open": 1,
+   "function": 12,
+   "copyRatio": 0.592,
+   "reorderRatio": 0.224,
+   "paraphraseRatio": 0.102,
+   "openRatio": 0.02,
+   "functionRatio": 0.245,
+   "factWords": 203,
+   "omittedFactWords": 130,
+   "openWords": [
+    "人"
+   ],
+   "paraWords": [
+    "停",
+    "进出",
+    "巷里"
+   ],
+   "id": "78a"
+  },
+  {
+   "targetChars": 37,
+   "copy": 20,
+   "reorder": 10,
+   "paraphrase": 4,
+   "open": 2,
+   "function": 11,
+   "copyRatio": 0.541,
+   "reorderRatio": 0.27,
+   "paraphraseRatio": 0.108,
+   "openRatio": 0.054,
+   "functionRatio": 0.297,
+   "factWords": 203,
+   "omittedFactWords": 134,
+   "openWords": [
+    "站",
+    "者"
+   ],
+   "paraWords": [
+    "进出",
+    "压地"
+   ],
+   "id": "78b"
+  },
+  {
+   "targetChars": 62,
+   "copy": 33,
+   "reorder": 31,
+   "paraphrase": 9,
+   "open": 2,
+   "function": 16,
+   "copyRatio": 0.532,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.145,
+   "openRatio": 0.032,
+   "functionRatio": 0.258,
+   "factWords": 305,
+   "omittedFactWords": 207,
+   "openWords": [
+    "目光"
+   ],
+   "paraWords": [
+    "记下来",
+    "看人",
+    "一下",
+    "转回"
+   ],
+   "id": 79
+  },
+  {
+   "targetChars": 62,
+   "copy": 33,
+   "reorder": 31,
+   "paraphrase": 9,
+   "open": 2,
+   "function": 16,
+   "copyRatio": 0.532,
+   "reorderRatio": 0.5,
+   "paraphraseRatio": 0.145,
+   "openRatio": 0.032,
+   "functionRatio": 0.258,
+   "factWords": 305,
+   "omittedFactWords": 207,
+   "openWords": [
+    "目光"
+   ],
+   "paraWords": [
+    "记下来",
+    "看人",
+    "一下",
+    "转回"
+   ],
+   "id": "79a"
+  },
+  {
+   "targetChars": 43,
+   "copy": 21,
+   "reorder": 18,
+   "paraphrase": 6,
+   "open": 5,
+   "function": 11,
+   "copyRatio": 0.488,
+   "reorderRatio": 0.419,
+   "paraphraseRatio": 0.14,
+   "openRatio": 0.116,
+   "functionRatio": 0.256,
+   "factWords": 305,
+   "omittedFactWords": 211,
+   "openWords": [
+    "看",
+    "视线",
+    "顿",
+    "顿"
+   ],
+   "paraWords": [
+    "看人",
+    "同样",
+    "落回"
+   ],
+   "id": "79b"
+  },
+  {
+   "targetChars": 42,
+   "copy": 21,
+   "reorder": 18,
+   "paraphrase": 11,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.429,
+   "paraphraseRatio": 0.262,
+   "openRatio": 0.0,
+   "functionRatio": 0.19,
+   "factWords": 274,
+   "omittedFactWords": 184,
+   "openWords": [],
+   "paraWords": [
+    "弯腰",
+    "去",
+    "推脚边",
+    "沉",
+    "看",
+    "有些",
+    "紧"
+   ],
+   "id": "7a"
+  },
+  {
+   "targetChars": 40,
+   "copy": 18,
+   "reorder": 2,
+   "paraphrase": 8,
+   "open": 5,
+   "function": 9,
+   "copyRatio": 0.45,
+   "reorderRatio": 0.05,
+   "paraphraseRatio": 0.2,
+   "openRatio": 0.125,
+   "functionRatio": 0.225,
+   "factWords": 274,
+   "omittedFactWords": 184,
+   "openWords": [
+    "太重",
+    "盯",
+    "放松"
+   ],
+   "paraWords": [
+    "推动",
+    "挪开",
+    "神色",
+    "不太"
+   ],
+   "id": "7b"
+  },
+  {
+   "targetChars": 106,
+   "copy": 71,
+   "reorder": 8,
+   "paraphrase": 11,
+   "open": 3,
+   "function": 19,
+   "copyRatio": 0.67,
+   "reorderRatio": 0.075,
+   "paraphraseRatio": 0.104,
+   "openRatio": 0.028,
+   "functionRatio": 0.179,
+   "factWords": 248,
+   "omittedFactWords": 149,
+   "openWords": [
+    "自己",
+    "穿"
+   ],
+   "paraWords": [
+    "有些",
+    "紧",
+    "一路",
+    "已经",
+    "巷里",
+    "压着"
+   ],
+   "id": 8
+  },
+  {
+   "targetChars": 54,
+   "copy": 31,
+   "reorder": 23,
+   "paraphrase": 10,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.574,
+   "reorderRatio": 0.426,
+   "paraphraseRatio": 0.185,
+   "openRatio": 0.0,
+   "functionRatio": 0.204,
+   "factWords": 249,
+   "omittedFactWords": 165,
+   "openWords": [],
+   "paraWords": [
+    "问起",
+    "棚里",
+    "人答",
+    "上来",
+    "一遍"
+   ],
+   "id": 80
+  },
+  {
+   "targetChars": 54,
+   "copy": 31,
+   "reorder": 23,
+   "paraphrase": 10,
+   "open": 0,
+   "function": 11,
+   "copyRatio": 0.574,
+   "reorderRatio": 0.426,
+   "paraphraseRatio": 0.185,
+   "openRatio": 0.0,
+   "functionRatio": 0.204,
+   "factWords": 249,
+   "omittedFactWords": 165,
+   "openWords": [],
+   "paraWords": [
+    "问起",
+    "棚里",
+    "人答",
+    "上来",
+    "一遍"
+   ],
+   "id": "80a"
+  },
+  {
+   "targetChars": 40,
+   "copy": 22,
+   "reorder": 16,
+   "paraphrase": 6,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.55,
+   "reorderRatio": 0.4,
+   "paraphraseRatio": 0.15,
+   "openRatio": 0.05,
+   "functionRatio": 0.25,
+   "factWords": 249,
+   "omittedFactWords": 167,
+   "openWords": [
+    "打听"
+   ],
+   "paraWords": [
+    "棚里",
+    "没答",
+    "一遍"
+   ],
+   "id": "80b"
+  },
+  {
+   "targetChars": 60,
+   "copy": 30,
+   "reorder": 26,
+   "paraphrase": 8,
+   "open": 4,
+   "function": 16,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.433,
+   "paraphraseRatio": 0.133,
+   "openRatio": 0.067,
+   "functionRatio": 0.267,
+   "factWords": 305,
+   "omittedFactWords": 211,
+   "openWords": [
+    "视线",
+    "随即"
+   ],
+   "paraWords": [
+    "看着",
+    "各自",
+    "一下",
+    "落回"
+   ],
+   "id": 81
+  },
+  {
+   "targetChars": 60,
+   "copy": 30,
+   "reorder": 26,
+   "paraphrase": 8,
+   "open": 4,
+   "function": 16,
+   "copyRatio": 0.5,
+   "reorderRatio": 0.433,
+   "paraphraseRatio": 0.133,
+   "openRatio": 0.067,
+   "functionRatio": 0.267,
+   "factWords": 305,
+   "omittedFactWords": 211,
+   "openWords": [
+    "视线",
+    "随即"
+   ],
+   "paraWords": [
+    "看着",
+    "各自",
+    "一下",
+    "落回"
+   ],
+   "id": "81a"
+  },
+  {
+   "targetChars": 40,
+   "copy": 21,
+   "reorder": 16,
+   "paraphrase": 4,
+   "open": 3,
+   "function": 12,
+   "copyRatio": 0.525,
+   "reorderRatio": 0.4,
+   "paraphraseRatio": 0.1,
+   "openRatio": 0.075,
+   "functionRatio": 0.3,
+   "factWords": 305,
+   "omittedFactWords": 212,
+   "openWords": [
+    "看",
+    "目光"
+   ],
+   "paraWords": [
+    "看人",
+    "回到"
+   ],
+   "id": "81b"
+  },
+  {
+   "targetChars": 97,
+   "copy": 52,
+   "reorder": 46,
+   "paraphrase": 12,
+   "open": 2,
+   "function": 27,
+   "copyRatio": 0.536,
+   "reorderRatio": 0.474,
+   "paraphraseRatio": 0.124,
+   "openRatio": 0.021,
+   "functionRatio": 0.278,
+   "factWords": 308,
+   "omittedFactWords": 183,
+   "openWords": [
+    "走",
+    "听"
+   ],
+   "paraWords": [
+    "问起",
+    "芬格尔望",
+    "扇",
+    "说",
+    "问出",
+    "别的"
+   ],
+   "id": 82
+  },
+  {
+   "targetChars": 97,
+   "copy": 52,
+   "reorder": 46,
+   "paraphrase": 12,
+   "open": 2,
+   "function": 27,
+   "copyRatio": 0.536,
+   "reorderRatio": 0.474,
+   "paraphraseRatio": 0.124,
+   "openRatio": 0.021,
+   "functionRatio": 0.278,
+   "factWords": 308,
+   "omittedFactWords": 183,
+   "openWords": [
+    "走",
+    "听"
+   ],
+   "paraWords": [
+    "问起",
+    "芬格尔望",
+    "扇",
+    "说",
+    "问出",
+    "别的"
+   ],
+   "id": "82a"
+  },
+  {
+   "targetChars": 75,
+   "copy": 50,
+   "reorder": 44,
+   "paraphrase": 3,
+   "open": 2,
+   "function": 20,
+   "copyRatio": 0.667,
+   "reorderRatio": 0.587,
+   "paraphraseRatio": 0.04,
+   "openRatio": 0.027,
+   "functionRatio": 0.267,
+   "factWords": 308,
+   "omittedFactWords": 186,
+   "openWords": [
+    "打听"
+   ],
+   "paraWords": [
+    "说",
+    "追问"
+   ],
+   "id": "82b"
+  },
+  {
+   "targetChars": 46,
+   "copy": 25,
+   "reorder": 11,
+   "paraphrase": 11,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.543,
+   "reorderRatio": 0.239,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.0,
+   "functionRatio": 0.174,
+   "factWords": 224,
+   "omittedFactWords": 146,
+   "openWords": [],
+   "paraWords": [
+    "非想",
+    "问",
+    "各自",
+    "巷里",
+    "回答",
+    "一遍"
+   ],
+   "id": 83
+  },
+  {
+   "targetChars": 46,
+   "copy": 25,
+   "reorder": 11,
+   "paraphrase": 11,
+   "open": 0,
+   "function": 8,
+   "copyRatio": 0.543,
+   "reorderRatio": 0.239,
+   "paraphraseRatio": 0.239,
+   "openRatio": 0.0,
+   "functionRatio": 0.174,
+   "factWords": 224,
+   "omittedFactWords": 146,
+   "openWords": [],
+   "paraWords": [
+    "非想",
+    "问",
+    "各自",
+    "巷里",
+    "回答",
+    "一遍"
+   ],
+   "id": "83a"
+  },
+  {
+   "targetChars": 32,
+   "copy": 19,
+   "reorder": 13,
+   "paraphrase": 4,
+   "open": 4,
+   "function": 5,
+   "copyRatio": 0.594,
+   "reorderRatio": 0.406,
+   "paraphraseRatio": 0.125,
+   "openRatio": 0.125,
+   "functionRatio": 0.156,
+   "factWords": 224,
+   "omittedFactWords": 150,
+   "openWords": [
+    "打听",
+    "答话"
+   ],
+   "paraWords": [
+    "非想",
+    "一遍"
+   ],
+   "id": "83b"
+  },
+  {
+   "targetChars": 44,
+   "copy": 28,
+   "reorder": 2,
+   "paraphrase": 2,
+   "open": 2,
+   "function": 10,
+   "copyRatio": 0.636,
+   "reorderRatio": 0.045,
+   "paraphraseRatio": 0.045,
+   "openRatio": 0.045,
+   "functionRatio": 0.227,
+   "factWords": 208,
+   "omittedFactWords": 134,
+   "openWords": [
+    "看",
+    "看"
+   ],
+   "paraWords": [
+    "巷里"
+   ],
+   "id": 84
+  },
+  {
+   "targetChars": 44,
+   "copy": 26,
+   "reorder": 2,
+   "paraphrase": 5,
+   "open": 2,
+   "function": 9,
+   "copyRatio": 0.591,
+   "reorderRatio": 0.045,
+   "paraphraseRatio": 0.114,
+   "openRatio": 0.045,
+   "functionRatio": 0.205,
+   "factWords": 208,
+   "omittedFactWords": 134,
+   "openWords": [
+    "看",
+    "看"
+   ],
+   "paraWords": [
+    "摸了摸",
+    "巷里"
+   ],
+   "id": "84a"
+  },
+  {
+   "targetChars": 29,
+   "copy": 18,
+   "reorder": 3,
+   "paraphrase": 4,
+   "open": 0,
+   "function": 7,
+   "copyRatio": 0.621,
+   "reorderRatio": 0.103,
+   "paraphraseRatio": 0.138,
+   "openRatio": 0.0,
+   "functionRatio": 0.241,
+   "factWords": 208,
+   "omittedFactWords": 138,
+   "openWords": [],
+   "paraWords": [
+    "非查",
+    "压地"
+   ],
+   "id": "84b"
+  },
+  {
+   "targetChars": 81,
+   "copy": 53,
+   "reorder": 6,
+   "paraphrase": 10,
+   "open": 1,
+   "function": 15,
+   "copyRatio": 0.654,
+   "reorderRatio": 0.074,
+   "paraphraseRatio": 0.123,
+   "openRatio": 0.012,
+   "functionRatio": 0.185,
+   "factWords": 248,
+   "omittedFactWords": 158,
+   "openWords": [
+    "穿"
+   ],
+   "paraWords": [
+    "抬手",
+    "看",
+    "紧",
+    "已经",
+    "巷里",
+    "压地"
+   ],
+   "id": "8a"
+  },
+  {
+   "targetChars": 77,
+   "copy": 44,
+   "reorder": 7,
+   "paraphrase": 16,
+   "open": 0,
+   "function": 15,
+   "copyRatio": 0.571,
+   "reorderRatio": 0.091,
+   "paraphraseRatio": 0.208,
+   "openRatio": 0.0,
+   "functionRatio": 0.195,
+   "factWords": 248,
+   "omittedFactWords": 159,
+   "openWords": [],
+   "paraWords": [
+    "没",
+    "打算",
+    "插手",
+    "穿过",
+    "两个",
+    "人",
+    "有些",
+    "一路",
+    "压着"
+   ],
+   "id": "8b"
+  }
+ ]
+}

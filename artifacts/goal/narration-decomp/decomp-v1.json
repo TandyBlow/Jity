@@ -1,0 +1,8716 @@
+{
+ "summary": {
+  "passages": 240,
+  "targetChars": 12237,
+  "coverage": 0.577,
+  "openRatio": 0.237,
+  "operationCounts": {
+   "punctuation": 166,
+   "pronoun": 113,
+   "connective": 14,
+   "glue": 118,
+   "short_edit": 345,
+   "open": 515
+  },
+  "coverageMean": 0.566,
+  "openRatioMean": 0.249
+ },
+ "rows": [
+  {
+   "targetChars": 97,
+   "matchedChars": 57,
+   "coverage": 0.588,
+   "openChars": 27,
+   "openRatio": 0.278,
+   "kinds": {
+    "short_edit": 5,
+    "open": 5,
+    "pronoun": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "贴",
+     "kind": "short_edit"
+    },
+    {
+     "text": "前",
+     "kind": "short_edit"
+    },
+    {
+     "text": "压得很轻。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "那边",
+     "kind": "pronoun"
+    },
+    {
+     "text": "人也轻巧地靠",
+     "kind": "open"
+    },
+    {
+     "text": "巷口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "继续往前，从",
+     "kind": "open"
+    },
+    {
+     "text": "进了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在身后留着",
+     "kind": "open"
+    },
+    {
+     "text": "的缝",
+     "kind": "short_edit"
+    },
+    {
+     "text": "和",
+     "kind": "glue"
+    },
+    {
+     "text": "都在棚里。",
+     "kind": "open"
+    }
+   ],
+   "id": 1
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 36,
+   "coverage": 0.621,
+   "openChars": 11,
+   "openRatio": 0.19,
+   "kinds": {
+    "short_edit": 4,
+    "open": 3,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "贴",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走向",
+     "kind": "short_edit"
+    },
+    {
+     "text": "很轻。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在棚里看完",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "侧身",
+     "kind": "short_edit"
+    },
+    {
+     "text": "让开路",
+     "kind": "open"
+    },
+    {
+     "text": "进了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 10
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 20,
+   "coverage": 0.476,
+   "openChars": 14,
+   "openRatio": 0.333,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 2,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "贴着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走向",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在棚里看完",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "侧身让开路",
+     "kind": "open"
+    },
+    {
+     "text": "进了棚。",
+     "kind": "open"
+    }
+   ],
+   "id": "10a"
+  },
+  {
+   "targetChars": 38,
+   "matchedChars": 29,
+   "coverage": 0.763,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "侧身给他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "10b"
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 32,
+   "coverage": 0.615,
+   "openChars": 13,
+   "openRatio": 0.25,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "门口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "没有动作。",
+     "kind": "open"
+    },
+    {
+     "text": "给相机",
+     "kind": "open"
+    },
+    {
+     "text": "进了棚里。",
+     "kind": "open"
+    }
+   ],
+   "id": 11
+  },
+  {
+   "targetChars": 50,
+   "matchedChars": 31,
+   "coverage": 0.62,
+   "openChars": 12,
+   "openRatio": 0.24,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "门口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "没有动作",
+     "kind": "open"
+    },
+    {
+     "text": "给相机换",
+     "kind": "open"
+    },
+    {
+     "text": "进了棚。",
+     "kind": "open"
+    }
+   ],
+   "id": "11a"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 26,
+   "coverage": 0.619,
+   "openChars": 9,
+   "openRatio": 0.214,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "贴着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走。",
+     "kind": "short_edit"
+    },
+    {
+     "text": "没有动",
+     "kind": "open"
+    },
+    {
+     "text": "拿好备用电池",
+     "kind": "open"
+    },
+    {
+     "text": "进了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "11b"
+  },
+  {
+   "targetChars": 41,
+   "matchedChars": 24,
+   "coverage": 0.585,
+   "openChars": 9,
+   "openRatio": 0.22,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "贴",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走。\n\n",
+     "kind": "short_edit"
+    },
+    {
+     "text": "侧身让开了门边的路",
+     "kind": "open"
+    },
+    {
+     "text": "进了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 12
+  },
+  {
+   "targetChars": 36,
+   "matchedChars": 20,
+   "coverage": 0.556,
+   "openChars": 8,
+   "openRatio": 0.222,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "贴",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走。\n\n",
+     "kind": "short_edit"
+    },
+    {
+     "text": "侧身让开门边的路",
+     "kind": "open"
+    },
+    {
+     "text": "进了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "12a"
+  },
+  {
+   "targetChars": 31,
+   "matchedChars": 19,
+   "coverage": 0.613,
+   "openChars": 10,
+   "openRatio": 0.323,
+   "kinds": {
+    "short_edit": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "往旁边让开",
+     "kind": "open"
+    },
+    {
+     "text": "进了棚里。",
+     "kind": "open"
+    }
+   ],
+   "id": "12b"
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 29,
+   "coverage": 0.558,
+   "openChars": 13,
+   "openRatio": 0.25,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 2,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "边的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "还在看",
+     "kind": "connective"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "侧身让开",
+     "kind": "open"
+    },
+    {
+     "text": "得到答案。",
+     "kind": "open"
+    }
+   ],
+   "id": 13
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 30,
+   "coverage": 0.577,
+   "openChars": 12,
+   "openRatio": 0.231,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 2,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "还在看",
+     "kind": "connective"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "侧身让开",
+     "kind": "open"
+    },
+    {
+     "text": "得到答案。",
+     "kind": "open"
+    }
+   ],
+   "id": "13a"
+  },
+  {
+   "targetChars": 43,
+   "matchedChars": 21,
+   "coverage": 0.488,
+   "openChars": 15,
+   "openRatio": 0.349,
+   "kinds": {
+    "short_edit": 3,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "打听",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的注意力在",
+     "kind": "open"
+    },
+    {
+     "text": "上，",
+     "kind": "short_edit"
+    },
+    {
+     "text": "让开了路",
+     "kind": "open"
+    },
+    {
+     "text": "没问出结果。",
+     "kind": "open"
+    }
+   ],
+   "id": "13b"
+  },
+  {
+   "targetChars": 75,
+   "matchedChars": 29,
+   "coverage": 0.387,
+   "openChars": 16,
+   "openRatio": 0.213,
+   "kinds": {
+    "pronoun": 2,
+    "open": 3,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，看着",
+     "kind": "open"
+    },
+    {
+     "text": "把各自",
+     "kind": "open"
+    },
+    {
+     "text": "来。\n\n",
+     "kind": "short_edit"
+    },
+    {
+     "text": "门口观察，目光在他身上停了一下，随即转回自己胸前的",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。路明非仍站在原地。",
+     "kind": "open"
+    }
+   ],
+   "id": 14
+  },
+  {
+   "targetChars": 67,
+   "matchedChars": 29,
+   "coverage": 0.433,
+   "openChars": 10,
+   "openRatio": 0.149,
+   "kinds": {
+    "short_edit": 2,
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "把各人",
+     "kind": "open"
+    },
+    {
+     "text": "来。\n\n",
+     "kind": "short_edit"
+    },
+    {
+     "text": "门口观察，目光在他身上停了一下，很快转回自己的",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。路明非",
+     "kind": "open"
+    },
+    {
+     "text": "挪动。",
+     "kind": "open"
+    }
+   ],
+   "id": "14a"
+  },
+  {
+   "targetChars": 48,
+   "matchedChars": 23,
+   "coverage": 0.479,
+   "openChars": 3,
+   "openRatio": 0.062,
+   "kinds": {
+    "short_edit": 2,
+    "open": 1,
+    "glue": 1,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "站在",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，看着",
+     "kind": "open"
+    },
+    {
+     "text": "一一",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "同样在看人，看了他一眼，又低头看",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "14b"
+  },
+  {
+   "targetChars": 101,
+   "matchedChars": 55,
+   "coverage": 0.545,
+   "openChars": 4,
+   "openRatio": 0.04,
+   "kinds": {
+    "pronoun": 2,
+    "punctuation": 1,
+    "short_edit": 2,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "问起红蓝两方今天各自的区域。\n\n芬格尔望着那扇",
+     "kind": "pronoun"
+    },
+    {
+     "text": "那扇门通往钟楼地下门，她正好",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "只说",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "没有讲清",
+     "kind": "open"
+    }
+   ],
+   "id": 15
+  },
+  {
+   "targetChars": 100,
+   "matchedChars": 54,
+   "coverage": 0.54,
+   "openChars": 4,
+   "openRatio": 0.04,
+   "kinds": {
+    "pronoun": 2,
+    "punctuation": 1,
+    "short_edit": 2,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "问起红蓝两方今天各自的区域。\n\n芬格尔望着那扇",
+     "kind": "pronoun"
+    },
+    {
+     "text": "那扇门通往钟楼地下门，她正好",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "只说",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "没有讲清",
+     "kind": "open"
+    }
+   ],
+   "id": "15a"
+  },
+  {
+   "targetChars": 69,
+   "matchedChars": 46,
+   "coverage": 0.667,
+   "openChars": 16,
+   "openRatio": 0.232,
+   "kinds": {
+    "glue": 2,
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "向",
+     "kind": "glue"
+    },
+    {
+     "text": "打听",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "，说门后是钟楼地下",
+     "kind": "open"
+    },
+    {
+     "text": "的话",
+     "kind": "short_edit"
+    },
+    {
+     "text": "没有给出",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "位置。",
+     "kind": "open"
+    }
+   ],
+   "id": "15b"
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 30,
+   "coverage": 0.577,
+   "openChars": 14,
+   "openRatio": 0.269,
+   "kinds": {
+    "short_edit": 2,
+    "glue": 2,
+    "open": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "站了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "摸",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n器材棚里没有别的动静，一分钟",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 16
+  },
+  {
+   "targetChars": 48,
+   "matchedChars": 30,
+   "coverage": 0.625,
+   "openChars": 11,
+   "openRatio": 0.229,
+   "kinds": {
+    "short_edit": 3,
+    "glue": 2,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "站",
+     "kind": "short_edit"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "摸",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "别的动静，一分钟过去。",
+     "kind": "open"
+    }
+   ],
+   "id": "16a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 20,
+   "coverage": 0.625,
+   "openChars": 11,
+   "openRatio": 0.344,
+   "kinds": {
+    "open": 3,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "靠着墙",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "。棚里",
+     "kind": "open"
+    },
+    {
+     "text": "别的动静。",
+     "kind": "open"
+    }
+   ],
+   "id": "16b"
+  },
+  {
+   "targetChars": 43,
+   "matchedChars": 22,
+   "coverage": 0.512,
+   "openChars": 13,
+   "openRatio": 0.302,
+   "kinds": {
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "，又摸了摸",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n他站回原处，",
+     "kind": "pronoun"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": 17
+  },
+  {
+   "targetChars": 38,
+   "matchedChars": 23,
+   "coverage": 0.605,
+   "openChars": 5,
+   "openRatio": 0.132,
+   "kinds": {
+    "short_edit": 1,
+    "pronoun": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "查看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n他站回原处，",
+     "kind": "pronoun"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": "17a"
+  },
+  {
+   "targetChars": 24,
+   "matchedChars": 14,
+   "coverage": 0.583,
+   "openChars": 3,
+   "openRatio": 0.125,
+   "kinds": {
+    "glue": 1,
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "，东西",
+     "kind": "open"
+    },
+    {
+     "text": "他停回墙边。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "17b"
+  },
+  {
+   "targetChars": 66,
+   "matchedChars": 22,
+   "coverage": 0.333,
+   "openChars": 12,
+   "openRatio": 0.182,
+   "kinds": {
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "，器材棚里没有阿豹。\n\n棚里只有芬格尔和秦越。他停住手，把墙上的",
+     "kind": "pronoun"
+    },
+    {
+     "text": "看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": 18
+  },
+  {
+   "targetChars": 66,
+   "matchedChars": 22,
+   "coverage": 0.333,
+   "openChars": 12,
+   "openRatio": 0.182,
+   "kinds": {
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "，器材棚里没有阿豹。\n\n棚里只有芬格尔和秦越。他停住手，把墙上的",
+     "kind": "pronoun"
+    },
+    {
+     "text": "看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "18a"
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 15,
+   "coverage": 0.288,
+   "openChars": 3,
+   "openRatio": 0.058,
+   "kinds": {
+    "short_edit": 2,
+    "open": 1,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "拿起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，想找",
+     "kind": "open"
+    },
+    {
+     "text": "转",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，棚里却没有阿豹。只有芬格尔和秦越。他放下手，转头看规则牌，",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "18b"
+  },
+  {
+   "targetChars": 51,
+   "matchedChars": 36,
+   "coverage": 0.706,
+   "openChars": 9,
+   "openRatio": 0.176,
+   "kinds": {
+    "open": 2,
+    "punctuation": 2,
+    "glue": 1,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "弯腰去推",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "来，",
+     "kind": "short_edit"
+    },
+    {
+     "text": "让开了路。",
+     "kind": "open"
+    }
+   ],
+   "id": 19
+  },
+  {
+   "targetChars": 51,
+   "matchedChars": 40,
+   "coverage": 0.784,
+   "openChars": 7,
+   "openRatio": 0.137,
+   "kinds": {
+    "open": 2,
+    "punctuation": 3
+   },
+   "spans": [
+    {
+     "text": "弯腰去推",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "19a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 22,
+   "coverage": 0.688,
+   "openChars": 6,
+   "openRatio": 0.188,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "推",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，箱子",
+     "kind": "open"
+    },
+    {
+     "text": "开",
+     "kind": "short_edit"
+    },
+    {
+     "text": "诺诺在",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": "19b"
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 28,
+   "coverage": 0.467,
+   "openChars": 12,
+   "openRatio": 0.2,
+   "kinds": {
+    "short_edit": 4,
+    "open": 2,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "贴着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "挪到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "门口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "压得很轻。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "那头热了一下，人也靠",
+     "kind": "pronoun"
+    },
+    {
+     "text": "巷口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "推门进了棚里。",
+     "kind": "open"
+    }
+   ],
+   "id": "1a"
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 38,
+   "coverage": 0.633,
+   "openChars": 14,
+   "openRatio": 0.233,
+   "kinds": {
+    "open": 2,
+    "punctuation": 1,
+    "pronoun": 1,
+    "short_edit": 2
+   },
+   "spans": [
+    {
+     "text": "下，路明非放轻脚步往前",
+     "kind": "open"
+    },
+    {
+     "text": "留意着",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "她轻巧",
+     "kind": "pronoun"
+    },
+    {
+     "text": "巷口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "进",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "1b"
+  },
+  {
+   "targetChars": 57,
+   "matchedChars": 26,
+   "coverage": 0.456,
+   "openChars": 13,
+   "openRatio": 0.228,
+   "kinds": {
+    "pronoun": 1,
+    "open": 4,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，看着",
+     "kind": "open"
+    },
+    {
+     "text": "把各自",
+     "kind": "open"
+    },
+    {
+     "text": "记了一遍。\n\n芬格尔和秦越还在棚里",
+     "kind": "connective"
+    },
+    {
+     "text": "记完，人",
+     "kind": "open"
+    },
+    {
+     "text": "挪动。",
+     "kind": "open"
+    }
+   ],
+   "id": 2
+  },
+  {
+   "targetChars": 62,
+   "matchedChars": 51,
+   "coverage": 0.823,
+   "openChars": 3,
+   "openRatio": 0.048,
+   "kinds": {
+    "glue": 2,
+    "pronoun": 1,
+    "punctuation": 1,
+    "short_edit": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "自己先",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "旁",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里放着",
+     "kind": "open"
+    }
+   ],
+   "id": 20
+  },
+  {
+   "targetChars": 62,
+   "matchedChars": 51,
+   "coverage": 0.823,
+   "openChars": 3,
+   "openRatio": 0.048,
+   "kinds": {
+    "glue": 2,
+    "pronoun": 1,
+    "punctuation": 1,
+    "short_edit": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "自己先",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "旁",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里放着",
+     "kind": "open"
+    }
+   ],
+   "id": "20a"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 33,
+   "coverage": 0.75,
+   "openChars": 4,
+   "openRatio": 0.091,
+   "kinds": {
+    "short_edit": 3,
+    "punctuation": 1,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "说过",
+     "kind": "short_edit"
+    },
+    {
+     "text": "先",
+     "kind": "short_edit"
+    },
+    {
+     "text": "铁",
+     "kind": "short_edit"
+    },
+    {
+     "text": "；",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里有一把",
+     "kind": "open"
+    },
+    {
+     "text": "在。",
+     "kind": "glue"
+    }
+   ],
+   "id": "20b"
+  },
+  {
+   "targetChars": 63,
+   "matchedChars": 44,
+   "coverage": 0.698,
+   "openChars": 9,
+   "openRatio": 0.143,
+   "kinds": {
+    "open": 2,
+    "pronoun": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "停下脚步。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在这里",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "从这边通",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。器材区",
+     "kind": "open"
+    }
+   ],
+   "id": 21
+  },
+  {
+   "targetChars": 63,
+   "matchedChars": 44,
+   "coverage": 0.698,
+   "openChars": 9,
+   "openRatio": 0.143,
+   "kinds": {
+    "open": 2,
+    "pronoun": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "停下脚步。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在这里",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "从这边通",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。器材区",
+     "kind": "open"
+    }
+   ],
+   "id": "21a"
+  },
+  {
+   "targetChars": 47,
+   "matchedChars": 22,
+   "coverage": 0.468,
+   "openChars": 3,
+   "openRatio": 0.064,
+   "kinds": {
+    "pronoun": 2,
+    "glue": 1,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "站住。后勤线从这里连起",
+     "kind": "pronoun"
+    },
+    {
+     "text": "与",
+     "kind": "glue"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "一直通",
+     "kind": "open"
+    },
+    {
+     "text": "。器材区里只有他。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "21b"
+  },
+  {
+   "targetChars": 98,
+   "matchedChars": 65,
+   "coverage": 0.663,
+   "openChars": 11,
+   "openRatio": 0.112,
+   "kinds": {
+    "punctuation": 2,
+    "short_edit": 5,
+    "pronoun": 2,
+    "glue": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "了一",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n他随后",
+     "kind": "pronoun"
+    },
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "边停下。柱",
+     "kind": "open"
+    },
+    {
+     "text": "压着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "靠着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "左脚踝肿着，",
+     "kind": "open"
+    },
+    {
+     "text": "放在他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "够",
+     "kind": "short_edit"
+    },
+    {
+     "text": "上。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 22
+  },
+  {
+   "targetChars": 98,
+   "matchedChars": 65,
+   "coverage": 0.663,
+   "openChars": 11,
+   "openRatio": 0.112,
+   "kinds": {
+    "punctuation": 2,
+    "short_edit": 5,
+    "pronoun": 2,
+    "glue": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "了一",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n他随后",
+     "kind": "pronoun"
+    },
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "边停下。柱",
+     "kind": "open"
+    },
+    {
+     "text": "压着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "靠着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "左脚踝肿着，",
+     "kind": "open"
+    },
+    {
+     "text": "放在他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "够",
+     "kind": "short_edit"
+    },
+    {
+     "text": "上。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "22a"
+  },
+  {
+   "targetChars": 80,
+   "matchedChars": 54,
+   "coverage": 0.675,
+   "openChars": 12,
+   "openRatio": 0.15,
+   "kinds": {
+    "short_edit": 4,
+    "pronoun": 1,
+    "open": 3,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "朝",
+     "kind": "short_edit"
+    },
+    {
+     "text": "对方。之后他进",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，停在",
+     "kind": "open"
+    },
+    {
+     "text": "旁。柱",
+     "kind": "open"
+    },
+    {
+     "text": "是",
+     "kind": "glue"
+    },
+    {
+     "text": "左脚踝肿起，",
+     "kind": "open"
+    },
+    {
+     "text": "放在",
+     "kind": "short_edit"
+    },
+    {
+     "text": "够",
+     "kind": "short_edit"
+    },
+    {
+     "text": "上。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "22b"
+  },
+  {
+   "targetChars": 65,
+   "matchedChars": 24,
+   "coverage": 0.369,
+   "openChars": 17,
+   "openRatio": 0.262,
+   "kinds": {
+    "open": 4,
+    "pronoun": 2
+   },
+   "spans": [
+    {
+     "text": "想问红蓝两方",
+     "kind": "open"
+    },
+    {
+     "text": "是什么",
+     "kind": "open"
+    },
+    {
+     "text": "也想问自己",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n话没问出口",
+     "kind": "open"
+    },
+    {
+     "text": "里坐着",
+     "kind": "open"
+    },
+    {
+     "text": "。他转头去看规则，把规则看明白了。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": 23
+  },
+  {
+   "targetChars": 65,
+   "matchedChars": 24,
+   "coverage": 0.369,
+   "openChars": 17,
+   "openRatio": 0.262,
+   "kinds": {
+    "open": 4,
+    "pronoun": 2
+   },
+   "spans": [
+    {
+     "text": "想问红蓝两方",
+     "kind": "open"
+    },
+    {
+     "text": "是什么",
+     "kind": "open"
+    },
+    {
+     "text": "也想问自己",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n话没问出口",
+     "kind": "open"
+    },
+    {
+     "text": "里坐着",
+     "kind": "open"
+    },
+    {
+     "text": "。他转头去看规则，把规则看明白了。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "23a"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 16,
+   "coverage": 0.348,
+   "openChars": 13,
+   "openRatio": 0.283,
+   "kinds": {
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "想向人问清",
+     "kind": "open"
+    },
+    {
+     "text": "和中立",
+     "kind": "open"
+    },
+    {
+     "text": "廊里只有林亦舟。他没有开口，转头把",
+     "kind": "pronoun"
+    },
+    {
+     "text": "看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "23b"
+  },
+  {
+   "targetChars": 71,
+   "matchedChars": 45,
+   "coverage": 0.634,
+   "openChars": 6,
+   "openRatio": 0.085,
+   "kinds": {
+    "short_edit": 4,
+    "open": 2,
+    "connective": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "，往",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里看。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "压着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "往",
+     "kind": "short_edit"
+    },
+    {
+     "text": "去",
+     "kind": "short_edit"
+    },
+    {
+     "text": "还湿着",
+     "kind": "connective"
+    },
+    {
+     "text": "他看了一会儿，把看",
+     "kind": "pronoun"
+    },
+    {
+     "text": "记下。",
+     "kind": "open"
+    }
+   ],
+   "id": 24
+  },
+  {
+   "targetChars": 71,
+   "matchedChars": 45,
+   "coverage": 0.634,
+   "openChars": 6,
+   "openRatio": 0.085,
+   "kinds": {
+    "short_edit": 4,
+    "open": 2,
+    "connective": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "，往",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里看。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "压着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "往",
+     "kind": "short_edit"
+    },
+    {
+     "text": "去",
+     "kind": "short_edit"
+    },
+    {
+     "text": "还湿着",
+     "kind": "connective"
+    },
+    {
+     "text": "他看了一会儿，把看",
+     "kind": "pronoun"
+    },
+    {
+     "text": "记下。",
+     "kind": "open"
+    }
+   ],
+   "id": "24a"
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 39,
+   "coverage": 0.696,
+   "openChars": 5,
+   "openRatio": 0.089,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "，往",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，断口散开",
+     "kind": "open"
+    },
+    {
+     "text": "跑不",
+     "kind": "short_edit"
+    },
+    {
+     "text": "他记下这些。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "24b"
+  },
+  {
+   "targetChars": 61,
+   "matchedChars": 24,
+   "coverage": 0.393,
+   "openChars": 16,
+   "openRatio": 0.262,
+   "kinds": {
+    "pronoun": 2,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "没有立刻动。他想",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "一起走",
+     "kind": "open"
+    },
+    {
+     "text": "还在不在后面。\n\n他站着",
+     "kind": "pronoun"
+    },
+    {
+     "text": "动，目光落在",
+     "kind": "open"
+    },
+    {
+     "text": "上，看明白了。",
+     "kind": "open"
+    }
+   ],
+   "id": 25
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 22,
+   "coverage": 0.367,
+   "openChars": 10,
+   "openRatio": 0.167,
+   "kinds": {
+    "pronoun": 2,
+    "punctuation": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "没有立刻动。他想",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "一起走",
+     "kind": "open"
+    },
+    {
+     "text": "还在不在后面。\n\n他站着没动，目光落到",
+     "kind": "pronoun"
+    },
+    {
+     "text": "上，看明白了。",
+     "kind": "open"
+    }
+   ],
+   "id": "25a"
+  },
+  {
+   "targetChars": 41,
+   "matchedChars": 21,
+   "coverage": 0.512,
+   "openChars": 15,
+   "openRatio": 0.366,
+   "kinds": {
+    "open": 2,
+    "short_edit": 1,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "停在原处，打算",
+     "kind": "open"
+    },
+    {
+     "text": "查看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "迈步，只把规则牌",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "25b"
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 37,
+   "coverage": 0.661,
+   "openChars": 6,
+   "openRatio": 0.107,
+   "kinds": {
+    "pronoun": 1,
+    "open": 2,
+    "short_edit": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "巷子。\n\n他看了一眼",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，脚下",
+     "kind": "open"
+    },
+    {
+     "text": "动",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "仍",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 26
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 37,
+   "coverage": 0.661,
+   "openChars": 6,
+   "openRatio": 0.107,
+   "kinds": {
+    "pronoun": 1,
+    "open": 2,
+    "short_edit": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "巷子。\n\n他看了一眼",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，脚下",
+     "kind": "open"
+    },
+    {
+     "text": "动",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "仍",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "26a"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 24,
+   "coverage": 0.571,
+   "openChars": 14,
+   "openRatio": 0.333,
+   "kinds": {
+    "open": 4,
+    "glue": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "有心趁",
+     "kind": "open"
+    },
+    {
+     "text": "间隙进",
+     "kind": "open"
+    },
+    {
+     "text": "脚下却没动",
+     "kind": "open"
+    },
+    {
+     "text": "在巷中",
+     "kind": "open"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "26b"
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 31,
+   "coverage": 0.534,
+   "openChars": 18,
+   "openRatio": 0.31,
+   "kinds": {
+    "short_edit": 3,
+    "glue": 1,
+    "open": 3,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "没有",
+     "kind": "short_edit"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "过去，想",
+     "kind": "open"
+    },
+    {
+     "text": "谁会",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里，",
+     "kind": "short_edit"
+    },
+    {
+     "text": "停着，",
+     "kind": "open"
+    },
+    {
+     "text": "巷口的黄黑绳落在地上。",
+     "kind": "open"
+    }
+   ],
+   "id": 27
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 30,
+   "coverage": 0.536,
+   "openChars": 18,
+   "openRatio": 0.321,
+   "kinds": {
+    "short_edit": 3,
+    "open": 3,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "没有",
+     "kind": "short_edit"
+    },
+    {
+     "text": "过去，想",
+     "kind": "open"
+    },
+    {
+     "text": "谁会",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里，",
+     "kind": "short_edit"
+    },
+    {
+     "text": "停着，",
+     "kind": "open"
+    },
+    {
+     "text": "巷口的黄黑绳落在地上。",
+     "kind": "open"
+    }
+   ],
+   "id": "27a"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 21,
+   "coverage": 0.5,
+   "openChars": 18,
+   "openRatio": 0.429,
+   "kinds": {
+    "short_edit": 2,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "没有",
+     "kind": "short_edit"
+    },
+    {
+     "text": "过去，",
+     "kind": "open"
+    },
+    {
+     "text": "谁",
+     "kind": "short_edit"
+    },
+    {
+     "text": "停在巷里，",
+     "kind": "open"
+    },
+    {
+     "text": "地；黄黑绳落在巷口。",
+     "kind": "open"
+    }
+   ],
+   "id": "27b"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 18,
+   "coverage": 0.409,
+   "openChars": 13,
+   "openRatio": 0.295,
+   "kinds": {
+    "open": 2,
+    "pronoun": 1,
+    "glue": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "又等了一会儿，低头",
+     "kind": "open"
+    },
+    {
+     "text": "，确认准备好了。\n\n他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "，仍站在",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 28
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 18,
+   "coverage": 0.409,
+   "openChars": 13,
+   "openRatio": 0.295,
+   "kinds": {
+    "open": 2,
+    "pronoun": 1,
+    "glue": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "又等了一会儿，低头",
+     "kind": "open"
+    },
+    {
+     "text": "，确认准备好了。\n\n他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "，仍站在",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "28a"
+  },
+  {
+   "targetChars": 33,
+   "matchedChars": 10,
+   "coverage": 0.303,
+   "openChars": 11,
+   "openRatio": 0.333,
+   "kinds": {
+    "open": 2,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "等了等，检查",
+     "kind": "open"
+    },
+    {
+     "text": "确认妥当。他记下剩余时间",
+     "kind": "pronoun"
+    },
+    {
+     "text": "离开巷口。",
+     "kind": "open"
+    }
+   ],
+   "id": "28b"
+  },
+  {
+   "targetChars": 63,
+   "matchedChars": 34,
+   "coverage": 0.54,
+   "openChars": 8,
+   "openRatio": 0.127,
+   "kinds": {
+    "punctuation": 1,
+    "pronoun": 2,
+    "short_edit": 1,
+    "open": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "自己",
+     "kind": "pronoun"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n他没有迈出那一步，站在原处把",
+     "kind": "pronoun"
+    },
+    {
+     "text": "看了一遍",
+     "kind": "open"
+    },
+    {
+     "text": "在巷里，",
+     "kind": "open"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": 29
+  },
+  {
+   "targetChars": 63,
+   "matchedChars": 34,
+   "coverage": 0.54,
+   "openChars": 8,
+   "openRatio": 0.127,
+   "kinds": {
+    "punctuation": 1,
+    "pronoun": 2,
+    "short_edit": 1,
+    "open": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "自己",
+     "kind": "pronoun"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n他没有迈出那一步，站在原处把",
+     "kind": "pronoun"
+    },
+    {
+     "text": "看了一遍",
+     "kind": "open"
+    },
+    {
+     "text": "在巷里，",
+     "kind": "open"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": "29a"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 11,
+   "coverage": 0.239,
+   "openChars": 4,
+   "openRatio": 0.087,
+   "kinds": {
+    "pronoun": 1,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "抬手表示不插手，打算穿过那两个人。他最终没有迈步，只把规则",
+     "kind": "pronoun"
+    },
+    {
+     "text": "在巷中，",
+     "kind": "open"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "29b"
+  },
+  {
+   "targetChars": 54,
+   "matchedChars": 26,
+   "coverage": 0.481,
+   "openChars": 17,
+   "openRatio": 0.315,
+   "kinds": {
+    "open": 4,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "，目光跟着",
+     "kind": "open"
+    },
+    {
+     "text": "把各人",
+     "kind": "open"
+    },
+    {
+     "text": "一一记下。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "和秦越还在棚里。他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "挪位置。",
+     "kind": "open"
+    }
+   ],
+   "id": "2a"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 18,
+   "coverage": 0.409,
+   "openChars": 15,
+   "openRatio": 0.341,
+   "kinds": {
+    "open": 3,
+    "connective": 1,
+    "glue": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "没有往前走，站在",
+     "kind": "open"
+    },
+    {
+     "text": "看人，把",
+     "kind": "open"
+    },
+    {
+     "text": "身影和",
+     "kind": "open"
+    },
+    {
+     "text": "记在心里。棚里还是",
+     "kind": "connective"
+    },
+    {
+     "text": "和",
+     "kind": "glue"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "2b"
+  },
+  {
+   "targetChars": 112,
+   "matchedChars": 82,
+   "coverage": 0.732,
+   "openChars": 22,
+   "openRatio": 0.196,
+   "kinds": {
+    "short_edit": 1,
+    "open": 5,
+    "punctuation": 2,
+    "pronoun": 2
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，问起",
+     "kind": "open"
+    },
+    {
+     "text": "边分别",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "了一眼",
+     "kind": "open"
+    },
+    {
+     "text": "她",
+     "kind": "pronoun"
+    },
+    {
+     "text": "她",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "听完，",
+     "kind": "open"
+    },
+    {
+     "text": "得到明确的区域划分。",
+     "kind": "open"
+    }
+   ],
+   "id": 3
+  },
+  {
+   "targetChars": 55,
+   "matchedChars": 19,
+   "coverage": 0.345,
+   "openChars": 3,
+   "openRatio": 0.055,
+   "kinds": {
+    "open": 1,
+    "connective": 1,
+    "punctuation": 1,
+    "glue": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "想逼退",
+     "kind": "open"
+    },
+    {
+     "text": "，随后转身进",
+     "kind": "connective"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "和",
+     "kind": "glue"
+    },
+    {
+     "text": "都在棚里。他在规则牌前站了一会儿，把规则看懂了。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": 30
+  },
+  {
+   "targetChars": 55,
+   "matchedChars": 19,
+   "coverage": 0.345,
+   "openChars": 3,
+   "openRatio": 0.055,
+   "kinds": {
+    "open": 1,
+    "connective": 1,
+    "punctuation": 1,
+    "glue": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "想逼退",
+     "kind": "open"
+    },
+    {
+     "text": "，随后转身进",
+     "kind": "connective"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "和",
+     "kind": "glue"
+    },
+    {
+     "text": "都在棚里。他在规则牌前站了一会儿，把规则看懂了。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "30a"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 17,
+   "coverage": 0.37,
+   "openChars": 28,
+   "openRatio": 0.609,
+   "kinds": {
+    "short_edit": 1,
+    "open": 4
+   },
+   "spans": [
+    {
+     "text": "朝",
+     "kind": "short_edit"
+    },
+    {
+     "text": "抬了抬手，转身进",
+     "kind": "open"
+    },
+    {
+     "text": "棚里有芬格尔和秦越。",
+     "kind": "open"
+    },
+    {
+     "text": "看了一遍规则",
+     "kind": "open"
+    },
+    {
+     "text": "看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": "30b"
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 34,
+   "coverage": 0.586,
+   "openChars": 17,
+   "openRatio": 0.293,
+   "kinds": {
+    "short_edit": 3,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想上",
+     "kind": "short_edit"
+    },
+    {
+     "text": "看一眼",
+     "kind": "open"
+    },
+    {
+     "text": "，人却没有离开器材棚。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "腰边",
+     "kind": "short_edit"
+    },
+    {
+     "text": "有些紧",
+     "kind": "open"
+    },
+    {
+     "text": "进",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 31
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 34,
+   "coverage": 0.586,
+   "openChars": 17,
+   "openRatio": 0.293,
+   "kinds": {
+    "short_edit": 3,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想上",
+     "kind": "short_edit"
+    },
+    {
+     "text": "看一眼",
+     "kind": "open"
+    },
+    {
+     "text": "，人却没有离开器材棚。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "腰边",
+     "kind": "short_edit"
+    },
+    {
+     "text": "有些紧",
+     "kind": "open"
+    },
+    {
+     "text": "进",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "31a"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 24,
+   "coverage": 0.522,
+   "openChars": 16,
+   "openRatio": 0.348,
+   "kinds": {
+    "open": 2,
+    "short_edit": 3
+   },
+   "spans": [
+    {
+     "text": "有意上楼看",
+     "kind": "open"
+    },
+    {
+     "text": "，脚步没有离开器材棚。",
+     "kind": "open"
+    },
+    {
+     "text": "腰间",
+     "kind": "short_edit"
+    },
+    {
+     "text": "紧；",
+     "kind": "short_edit"
+    },
+    {
+     "text": "进了",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "31b"
+  },
+  {
+   "targetChars": 57,
+   "matchedChars": 37,
+   "coverage": 0.649,
+   "openChars": 13,
+   "openRatio": 0.228,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "glue": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "来放",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，没有回答",
+     "kind": "open"
+    },
+    {
+     "text": "得到明确的划分。",
+     "kind": "open"
+    }
+   ],
+   "id": 32
+  },
+  {
+   "targetChars": 57,
+   "matchedChars": 37,
+   "coverage": 0.649,
+   "openChars": 13,
+   "openRatio": 0.228,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "glue": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "来放",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，没有回答",
+     "kind": "open"
+    },
+    {
+     "text": "得到明确的划分。",
+     "kind": "open"
+    }
+   ],
+   "id": "32a"
+  },
+  {
+   "targetChars": 41,
+   "matchedChars": 20,
+   "coverage": 0.488,
+   "openChars": 16,
+   "openRatio": 0.39,
+   "kinds": {
+    "open": 3,
+    "punctuation": 1,
+    "short_edit": 2
+   },
+   "spans": [
+    {
+     "text": "在门口打听",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "取出",
+     "kind": "short_edit"
+    },
+    {
+     "text": "放回",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，没有答话",
+     "kind": "open"
+    },
+    {
+     "text": "没问出划分。",
+     "kind": "open"
+    }
+   ],
+   "id": "32b"
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 47,
+   "coverage": 0.81,
+   "openChars": 3,
+   "openRatio": 0.052,
+   "kinds": {
+    "glue": 5,
+    "punctuation": 2,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    }
+   ],
+   "id": 33
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 47,
+   "coverage": 0.81,
+   "openChars": 3,
+   "openRatio": 0.052,
+   "kinds": {
+    "glue": 5,
+    "punctuation": 2,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    }
+   ],
+   "id": "33a"
+  },
+  {
+   "targetChars": 38,
+   "matchedChars": 23,
+   "coverage": 0.605,
+   "openChars": 11,
+   "openRatio": 0.289,
+   "kinds": {
+    "open": 2,
+    "short_edit": 1,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "靠着墙等了一阵",
+     "kind": "open"
+    },
+    {
+     "text": "估",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在巷中，",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "33b"
+  },
+  {
+   "targetChars": 64,
+   "matchedChars": 32,
+   "coverage": 0.5,
+   "openChars": 29,
+   "openRatio": 0.453,
+   "kinds": {
+    "pronoun": 1,
+    "open": 5
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "处，看着巷口的人，把各自",
+     "kind": "open"
+    },
+    {
+     "text": "记下来。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "。路明非记完，",
+     "kind": "open"
+    },
+    {
+     "text": "挪动。",
+     "kind": "open"
+    }
+   ],
+   "id": 34
+  },
+  {
+   "targetChars": 64,
+   "matchedChars": 32,
+   "coverage": 0.5,
+   "openChars": 29,
+   "openRatio": 0.453,
+   "kinds": {
+    "pronoun": 1,
+    "open": 5
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "处，看着巷口的人，把各自",
+     "kind": "open"
+    },
+    {
+     "text": "记下来。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "。路明非记完，",
+     "kind": "open"
+    },
+    {
+     "text": "挪动。",
+     "kind": "open"
+    }
+   ],
+   "id": "34a"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 25,
+   "coverage": 0.543,
+   "openChars": 13,
+   "openRatio": 0.283,
+   "kinds": {
+    "pronoun": 2,
+    "open": 3,
+    "short_edit": 2
+   },
+   "spans": [
+    {
+     "text": "他站",
+     "kind": "pronoun"
+    },
+    {
+     "text": "处，把进出者",
+     "kind": "open"
+    },
+    {
+     "text": "一一记下",
+     "kind": "open"
+    },
+    {
+     "text": "在巷中",
+     "kind": "open"
+    },
+    {
+     "text": "束着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "动。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "34b"
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 33,
+   "coverage": 0.589,
+   "openChars": 15,
+   "openRatio": 0.268,
+   "kinds": {
+    "short_edit": 3,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "今天",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "拦了一下",
+     "kind": "open"
+    },
+    {
+     "text": "，侧身让开路",
+     "kind": "open"
+    },
+    {
+     "text": "得到答案。",
+     "kind": "open"
+    }
+   ],
+   "id": 35
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 33,
+   "coverage": 0.589,
+   "openChars": 15,
+   "openRatio": 0.268,
+   "kinds": {
+    "short_edit": 3,
+    "punctuation": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "今天",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "拦了一下",
+     "kind": "open"
+    },
+    {
+     "text": "，侧身让开路",
+     "kind": "open"
+    },
+    {
+     "text": "得到答案。",
+     "kind": "open"
+    }
+   ],
+   "id": "35a"
+  },
+  {
+   "targetChars": 47,
+   "matchedChars": 25,
+   "coverage": 0.532,
+   "openChars": 18,
+   "openRatio": 0.383,
+   "kinds": {
+    "open": 3,
+    "punctuation": 1,
+    "short_edit": 2
+   },
+   "spans": [
+    {
+     "text": "向巷口的人打听",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "拦",
+     "kind": "short_edit"
+    },
+    {
+     "text": "一下，侧身",
+     "kind": "open"
+    },
+    {
+     "text": "没问出结果。",
+     "kind": "open"
+    }
+   ],
+   "id": "35b"
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 26,
+   "coverage": 0.65,
+   "openChars": 5,
+   "openRatio": 0.125,
+   "kinds": {
+    "glue": 3,
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "估",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "让开了路。",
+     "kind": "open"
+    }
+   ],
+   "id": 36
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 26,
+   "coverage": 0.65,
+   "openChars": 5,
+   "openRatio": 0.125,
+   "kinds": {
+    "glue": 3,
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "估",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "让开了路。",
+     "kind": "open"
+    }
+   ],
+   "id": "36a"
+  },
+  {
+   "targetChars": 33,
+   "matchedChars": 16,
+   "coverage": 0.485,
+   "openChars": 12,
+   "openRatio": 0.364,
+   "kinds": {
+    "open": 2,
+    "short_edit": 2,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "靠着墙等了一阵",
+     "kind": "open"
+    },
+    {
+     "text": "估",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。诺诺看着",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "侧身",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "36b"
+  },
+  {
+   "targetChars": 50,
+   "matchedChars": 28,
+   "coverage": 0.56,
+   "openChars": 17,
+   "openRatio": 0.34,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "去看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "手停在胸袋上。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "伸手拦住了",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": 37
+  },
+  {
+   "targetChars": 50,
+   "matchedChars": 28,
+   "coverage": 0.56,
+   "openChars": 17,
+   "openRatio": 0.34,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "去看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "手停在胸袋上。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "伸手拦住了",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": "37a"
+  },
+  {
+   "targetChars": 35,
+   "matchedChars": 21,
+   "coverage": 0.6,
+   "openChars": 9,
+   "openRatio": 0.257,
+   "kinds": {
+    "open": 2,
+    "short_edit": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "，手停在",
+     "kind": "open"
+    },
+    {
+     "text": "边。",
+     "kind": "short_edit"
+    },
+    {
+     "text": "按住",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "停在原地。",
+     "kind": "open"
+    }
+   ],
+   "id": "37b"
+  },
+  {
+   "targetChars": 49,
+   "matchedChars": 27,
+   "coverage": 0.551,
+   "openChars": 17,
+   "openRatio": 0.347,
+   "kinds": {
+    "short_edit": 1,
+    "open": 4,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，又去摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "伸手按住",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "停在原地",
+     "kind": "open"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": 39
+  },
+  {
+   "targetChars": 49,
+   "matchedChars": 27,
+   "coverage": 0.551,
+   "openChars": 17,
+   "openRatio": 0.347,
+   "kinds": {
+    "short_edit": 1,
+    "open": 4,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，又去摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "伸手按住",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "停在原地",
+     "kind": "open"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": "39a"
+  },
+  {
+   "targetChars": 33,
+   "matchedChars": 20,
+   "coverage": 0.606,
+   "openChars": 5,
+   "openRatio": 0.152,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "查了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，摸了一下",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "按住",
+     "kind": "short_edit"
+    },
+    {
+     "text": "；",
+     "kind": "punctuation"
+    },
+    {
+     "text": "动。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "39b"
+  },
+  {
+   "targetChars": 81,
+   "matchedChars": 52,
+   "coverage": 0.642,
+   "openChars": 17,
+   "openRatio": 0.21,
+   "kinds": {
+    "short_edit": 3,
+    "open": 3,
+    "punctuation": 1,
+    "pronoun": 2
+   },
+   "spans": [
+    {
+     "text": "起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "自的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "望着那扇",
+     "kind": "pronoun"
+    },
+    {
+     "text": "压",
+     "kind": "short_edit"
+    },
+    {
+     "text": "音说，门后是",
+     "kind": "open"
+    },
+    {
+     "text": "她",
+     "kind": "pronoun"
+    },
+    {
+     "text": "的话",
+     "kind": "short_edit"
+    },
+    {
+     "text": "得到区域划分。",
+     "kind": "open"
+    }
+   ],
+   "id": "3a"
+  },
+  {
+   "targetChars": 78,
+   "matchedChars": 57,
+   "coverage": 0.731,
+   "openChars": 14,
+   "openRatio": 0.179,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "打听",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的位置。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "她",
+     "kind": "pronoun"
+    },
+    {
+     "text": "听完，",
+     "kind": "open"
+    },
+    {
+     "text": "问出具体区域。",
+     "kind": "open"
+    }
+   ],
+   "id": "3b"
+  },
+  {
+   "targetChars": 63,
+   "matchedChars": 31,
+   "coverage": 0.492,
+   "openChars": 26,
+   "openRatio": 0.413,
+   "kinds": {
+    "short_edit": 1,
+    "glue": 2,
+    "punctuation": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "站定",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "墙边，望着枪声传来的方向。一分钟过去了，路明非",
+     "kind": "open"
+    },
+    {
+     "text": "挪窝。",
+     "kind": "open"
+    }
+   ],
+   "id": 4
+  },
+  {
+   "targetChars": 67,
+   "matchedChars": 22,
+   "coverage": 0.328,
+   "openChars": 43,
+   "openRatio": 0.642,
+   "kinds": {
+    "open": 5
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "站在不远处，短枪的枪口压着地面",
+     "kind": "open"
+    },
+    {
+     "text": "停下手，把规则牌看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": 40
+  },
+  {
+   "targetChars": 71,
+   "matchedChars": 25,
+   "coverage": 0.352,
+   "openChars": 44,
+   "openRatio": 0.62,
+   "kinds": {
+    "open": 5
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "站在不远处，短枪的枪口压着地面",
+     "kind": "open"
+    },
+    {
+     "text": "停下手，把规则牌看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "40a"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 16,
+   "coverage": 0.348,
+   "openChars": 26,
+   "openRatio": 0.565,
+   "kinds": {
+    "short_edit": 2,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "拿起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想找",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "在不远处，枪口压地",
+     "kind": "open"
+    },
+    {
+     "text": "收手，转头看规则牌。",
+     "kind": "open"
+    }
+   ],
+   "id": "40b"
+  },
+  {
+   "targetChars": 67,
+   "matchedChars": 53,
+   "coverage": 0.791,
+   "openChars": 6,
+   "openRatio": 0.09,
+   "kinds": {
+    "short_edit": 1,
+    "punctuation": 2,
+    "glue": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "去摸",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "到耳边",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "答话。",
+     "kind": "open"
+    }
+   ],
+   "id": 41
+  },
+  {
+   "targetChars": 66,
+   "matchedChars": 53,
+   "coverage": 0.803,
+   "openChars": 6,
+   "openRatio": 0.091,
+   "kinds": {
+    "short_edit": 1,
+    "punctuation": 2,
+    "glue": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "摸",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "到耳边",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "答话。",
+     "kind": "open"
+    }
+   ],
+   "id": "41a"
+  },
+  {
+   "targetChars": 54,
+   "matchedChars": 48,
+   "coverage": 0.889,
+   "openChars": 3,
+   "openRatio": 0.056,
+   "kinds": {
+    "punctuation": 1,
+    "glue": 1,
+    "short_edit": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    },
+    {
+     "text": "回答。",
+     "kind": "open"
+    }
+   ],
+   "id": "41b"
+  },
+  {
+   "targetChars": 73,
+   "matchedChars": 49,
+   "coverage": 0.671,
+   "openChars": 21,
+   "openRatio": 0.288,
+   "kinds": {
+    "open": 6,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "到耳边",
+     "kind": "open"
+    },
+    {
+     "text": "停住了手。",
+     "kind": "open"
+    }
+   ],
+   "id": 42
+  },
+  {
+   "targetChars": 73,
+   "matchedChars": 49,
+   "coverage": 0.671,
+   "openChars": 21,
+   "openRatio": 0.288,
+   "kinds": {
+    "open": 6,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "到耳边",
+     "kind": "open"
+    },
+    {
+     "text": "停住了手。",
+     "kind": "open"
+    }
+   ],
+   "id": "42a"
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 46,
+   "coverage": 0.793,
+   "openChars": 3,
+   "openRatio": 0.052,
+   "kinds": {
+    "short_edit": 5,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "贴近",
+     "kind": "short_edit"
+    },
+    {
+     "text": "动。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "42b"
+  },
+  {
+   "targetChars": 70,
+   "matchedChars": 53,
+   "coverage": 0.757,
+   "openChars": 9,
+   "openRatio": 0.129,
+   "kinds": {
+    "short_edit": 4,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "想从",
+     "kind": "short_edit"
+    },
+    {
+     "text": "拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 43
+  },
+  {
+   "targetChars": 70,
+   "matchedChars": 53,
+   "coverage": 0.757,
+   "openChars": 9,
+   "openRatio": 0.129,
+   "kinds": {
+    "short_edit": 4,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "想从",
+     "kind": "short_edit"
+    },
+    {
+     "text": "拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "43a"
+  },
+  {
+   "targetChars": 56,
+   "matchedChars": 41,
+   "coverage": 0.732,
+   "openChars": 11,
+   "openRatio": 0.196,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "贴近",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "43b"
+  },
+  {
+   "targetChars": 31,
+   "matchedChars": 11,
+   "coverage": 0.355,
+   "openChars": 17,
+   "openRatio": 0.548,
+   "kinds": {
+    "open": 3,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "又摸了摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的视线落在规则牌上。",
+     "kind": "open"
+    }
+   ],
+   "id": 44
+  },
+  {
+   "targetChars": 31,
+   "matchedChars": 11,
+   "coverage": 0.355,
+   "openChars": 17,
+   "openRatio": 0.548,
+   "kinds": {
+    "open": 3,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "又摸了摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的视线落在规则牌上。",
+     "kind": "open"
+    }
+   ],
+   "id": "44a"
+  },
+  {
+   "targetChars": 28,
+   "matchedChars": 15,
+   "coverage": 0.536,
+   "openChars": 9,
+   "openRatio": 0.321,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "查了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，手在",
+     "kind": "open"
+    },
+    {
+     "text": "上按了一下。",
+     "kind": "open"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "44b"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 15,
+   "coverage": 0.405,
+   "openChars": 3,
+   "openRatio": 0.081,
+   "kinds": {
+    "short_edit": 2,
+    "open": 1,
+    "pronoun": 1,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n他停了一",
+     "kind": "pronoun"
+    },
+    {
+     "text": "人还站在原地。",
+     "kind": "connective"
+    }
+   ],
+   "id": 45
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 15,
+   "coverage": 0.405,
+   "openChars": 3,
+   "openRatio": 0.081,
+   "kinds": {
+    "short_edit": 2,
+    "open": 1,
+    "pronoun": 1,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n他停了一",
+     "kind": "pronoun"
+    },
+    {
+     "text": "人还站在原地。",
+     "kind": "connective"
+    }
+   ],
+   "id": "45a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 14,
+   "coverage": 0.438,
+   "openChars": 7,
+   "openRatio": 0.219,
+   "kinds": {
+    "open": 2,
+    "short_edit": 2,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "阿豹。他收回手",
+     "kind": "pronoun"
+    },
+    {
+     "text": "动。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "45b"
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 7,
+   "coverage": 0.135,
+   "openChars": 45,
+   "openRatio": 0.865,
+   "kinds": {
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "伸手去拿红色电台，想交给阿豹转交裁判，巷里却没有阿豹。\n\n诺诺在旁边看规则牌。",
+     "kind": "open"
+    },
+    {
+     "text": "手收了回来。",
+     "kind": "open"
+    }
+   ],
+   "id": 46
+  },
+  {
+   "targetChars": 52,
+   "matchedChars": 7,
+   "coverage": 0.135,
+   "openChars": 45,
+   "openRatio": 0.865,
+   "kinds": {
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "伸手去拿红色电台，想交给阿豹转交裁判，巷里却没有阿豹。\n\n诺诺在旁边看规则牌。",
+     "kind": "open"
+    },
+    {
+     "text": "手收了回来。",
+     "kind": "open"
+    }
+   ],
+   "id": "46a"
+  },
+  {
+   "targetChars": 39,
+   "matchedChars": 18,
+   "coverage": 0.462,
+   "openChars": 17,
+   "openRatio": 0.436,
+   "kinds": {
+    "short_edit": 2,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，想找",
+     "kind": "open"
+    },
+    {
+     "text": "，巷里却没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "收手站住。",
+     "kind": "open"
+    }
+   ],
+   "id": "46b"
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 24,
+   "coverage": 0.4,
+   "openChars": 19,
+   "openRatio": 0.317,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 2,
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "从",
+     "kind": "glue"
+    },
+    {
+     "text": "拿起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "他拿着电台站了一会儿",
+     "kind": "pronoun"
+    },
+    {
+     "text": "找到能转交的人。",
+     "kind": "open"
+    }
+   ],
+   "id": 47
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 24,
+   "coverage": 0.4,
+   "openChars": 19,
+   "openRatio": 0.317,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 2,
+    "open": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "从",
+     "kind": "glue"
+    },
+    {
+     "text": "拿起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "他拿着电台站了一会儿",
+     "kind": "pronoun"
+    },
+    {
+     "text": "找到能转交的人。",
+     "kind": "open"
+    }
+   ],
+   "id": "47a"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 17,
+   "coverage": 0.405,
+   "openChars": 14,
+   "openRatio": 0.333,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "拿起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "；他握着电台",
+     "kind": "pronoun"
+    },
+    {
+     "text": "找到接手的人。",
+     "kind": "open"
+    }
+   ],
+   "id": "47b"
+  },
+  {
+   "targetChars": 34,
+   "matchedChars": 16,
+   "coverage": 0.471,
+   "openChars": 15,
+   "openRatio": 0.441,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，手指在",
+     "kind": "open"
+    },
+    {
+     "text": "外面按了一下。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "靠着墙看",
+     "kind": "open"
+    }
+   ],
+   "id": 48
+  },
+  {
+   "targetChars": 34,
+   "matchedChars": 16,
+   "coverage": 0.471,
+   "openChars": 15,
+   "openRatio": 0.441,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，手指在",
+     "kind": "open"
+    },
+    {
+     "text": "外面按了一下。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "靠着墙看",
+     "kind": "open"
+    }
+   ],
+   "id": "48a"
+  },
+  {
+   "targetChars": 25,
+   "matchedChars": 15,
+   "coverage": 0.6,
+   "openChars": 7,
+   "openRatio": 0.28,
+   "kinds": {
+    "short_edit": 1,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "查了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，按了按",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "靠墙看",
+     "kind": "open"
+    }
+   ],
+   "id": "48b"
+  },
+  {
+   "targetChars": 50,
+   "matchedChars": 24,
+   "coverage": 0.48,
+   "openChars": 18,
+   "openRatio": 0.36,
+   "kinds": {
+    "open": 5,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "伸手拦住了他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "停在原地。",
+     "kind": "open"
+    }
+   ],
+   "id": 49
+  },
+  {
+   "targetChars": 50,
+   "matchedChars": 24,
+   "coverage": 0.48,
+   "openChars": 18,
+   "openRatio": 0.36,
+   "kinds": {
+    "open": 5,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "伸手拦住了他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "停在原地。",
+     "kind": "open"
+    }
+   ],
+   "id": "49a"
+  },
+  {
+   "targetChars": 34,
+   "matchedChars": 12,
+   "coverage": 0.353,
+   "openChars": 3,
+   "openRatio": 0.088,
+   "kinds": {
+    "short_edit": 2,
+    "pronoun": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。诺诺拦住他的背心；",
+     "kind": "pronoun"
+    },
+    {
+     "text": "站住。",
+     "kind": "open"
+    }
+   ],
+   "id": "49b"
+  },
+  {
+   "targetChars": 55,
+   "matchedChars": 31,
+   "coverage": 0.564,
+   "openChars": 20,
+   "openRatio": 0.364,
+   "kinds": {
+    "open": 2,
+    "glue": 1,
+    "short_edit": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "靠着墙",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "摸",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "墙边，望着枪声的方向。一分钟过去。",
+     "kind": "open"
+    }
+   ],
+   "id": "4a"
+  },
+  {
+   "targetChars": 41,
+   "matchedChars": 29,
+   "coverage": 0.707,
+   "openChars": 8,
+   "openRatio": 0.195,
+   "kinds": {
+    "open": 2,
+    "glue": 1,
+    "punctuation": 1,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "站定，数着",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "同样望",
+     "kind": "open"
+    },
+    {
+     "text": "动。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "4b"
+  },
+  {
+   "targetChars": 59,
+   "matchedChars": 29,
+   "coverage": 0.492,
+   "openChars": 16,
+   "openRatio": 0.271,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，又摸了摸",
+     "kind": "open"
+    },
+    {
+     "text": "弹匣还在胸袋里。\n\n棚里的",
+     "kind": "connective"
+    },
+    {
+     "text": "才回过神",
+     "kind": "open"
+    },
+    {
+     "text": "把手从胸袋上移",
+     "kind": "open"
+    }
+   ],
+   "id": 5
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 13,
+   "coverage": 0.406,
+   "openChars": 15,
+   "openRatio": 0.469,
+   "kinds": {
+    "short_edit": 1,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "又看了看",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看过规则牌，站在一旁。",
+     "kind": "open"
+    }
+   ],
+   "id": 50
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 13,
+   "coverage": 0.406,
+   "openChars": 15,
+   "openRatio": 0.469,
+   "kinds": {
+    "short_edit": 1,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "又看了看",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看过规则牌，站在一旁。",
+     "kind": "open"
+    }
+   ],
+   "id": "50a"
+  },
+  {
+   "targetChars": 24,
+   "matchedChars": 15,
+   "coverage": 0.625,
+   "openChars": 6,
+   "openRatio": 0.25,
+   "kinds": {
+    "punctuation": 1,
+    "short_edit": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，站在一边。",
+     "kind": "open"
+    }
+   ],
+   "id": "50b"
+  },
+  {
+   "targetChars": 39,
+   "matchedChars": 19,
+   "coverage": 0.487,
+   "openChars": 15,
+   "openRatio": 0.385,
+   "kinds": {
+    "short_edit": 2,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在旁边看",
+     "kind": "open"
+    },
+    {
+     "text": "回头。",
+     "kind": "open"
+    }
+   ],
+   "id": 51
+  },
+  {
+   "targetChars": 39,
+   "matchedChars": 19,
+   "coverage": 0.487,
+   "openChars": 15,
+   "openRatio": 0.385,
+   "kinds": {
+    "short_edit": 2,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在旁边看",
+     "kind": "open"
+    },
+    {
+     "text": "回头。",
+     "kind": "open"
+    }
+   ],
+   "id": "51a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 16,
+   "coverage": 0.5,
+   "openChars": 10,
+   "openRatio": 0.312,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想找",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "回头。",
+     "kind": "open"
+    }
+   ],
+   "id": "51b"
+  },
+  {
+   "targetChars": 30,
+   "matchedChars": 23,
+   "coverage": 0.767,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "去看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看过",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 52
+  },
+  {
+   "targetChars": 30,
+   "matchedChars": 23,
+   "coverage": 0.767,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "去看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看过",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "52a"
+  },
+  {
+   "targetChars": 23,
+   "matchedChars": 18,
+   "coverage": 0.783,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "查了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "52b"
+  },
+  {
+   "targetChars": 45,
+   "matchedChars": 22,
+   "coverage": 0.489,
+   "openChars": 19,
+   "openRatio": 0.422,
+   "kinds": {
+    "open": 4,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "作声。",
+     "kind": "open"
+    }
+   ],
+   "id": 53
+  },
+  {
+   "targetChars": 45,
+   "matchedChars": 22,
+   "coverage": 0.489,
+   "openChars": 19,
+   "openRatio": 0.422,
+   "kinds": {
+    "open": 4,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "作声。",
+     "kind": "open"
+    }
+   ],
+   "id": "53a"
+  },
+  {
+   "targetChars": 34,
+   "matchedChars": 18,
+   "coverage": 0.529,
+   "openChars": 11,
+   "openRatio": 0.324,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "出声。",
+     "kind": "open"
+    }
+   ],
+   "id": "53b"
+  },
+  {
+   "targetChars": 68,
+   "matchedChars": 51,
+   "coverage": 0.75,
+   "openChars": 14,
+   "openRatio": 0.206,
+   "kinds": {
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把故障短讯机贴到耳边，",
+     "kind": "open"
+    }
+   ],
+   "id": 54
+  },
+  {
+   "targetChars": 66,
+   "matchedChars": 51,
+   "coverage": 0.773,
+   "openChars": 11,
+   "openRatio": 0.167,
+   "kinds": {
+    "short_edit": 1,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把故障短讯机贴到耳边，",
+     "kind": "open"
+    }
+   ],
+   "id": "54a"
+  },
+  {
+   "targetChars": 55,
+   "matchedChars": 45,
+   "coverage": 0.818,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "punctuation": 1,
+    "short_edit": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "贴近",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在她胸前发烫。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "54b"
+  },
+  {
+   "targetChars": 61,
+   "matchedChars": 46,
+   "coverage": 0.754,
+   "openChars": 8,
+   "openRatio": 0.131,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 55
+  },
+  {
+   "targetChars": 61,
+   "matchedChars": 46,
+   "coverage": 0.754,
+   "openChars": 8,
+   "openRatio": 0.131,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "55a"
+  },
+  {
+   "targetChars": 51,
+   "matchedChars": 39,
+   "coverage": 0.765,
+   "openChars": 7,
+   "openRatio": 0.137,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "贴近",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "55b"
+  },
+  {
+   "targetChars": 48,
+   "matchedChars": 30,
+   "coverage": 0.625,
+   "openChars": 14,
+   "openRatio": 0.292,
+   "kinds": {
+    "pronoun": 1,
+    "open": 3,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "把进出的人",
+     "kind": "open"
+    },
+    {
+     "text": "记下来。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "亮了一下。",
+     "kind": "open"
+    }
+   ],
+   "id": 56
+  },
+  {
+   "targetChars": 48,
+   "matchedChars": 30,
+   "coverage": 0.625,
+   "openChars": 14,
+   "openRatio": 0.292,
+   "kinds": {
+    "pronoun": 1,
+    "open": 3,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "把进出的人",
+     "kind": "open"
+    },
+    {
+     "text": "记下来。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "亮了一下。",
+     "kind": "open"
+    }
+   ],
+   "id": "56a"
+  },
+  {
+   "targetChars": 39,
+   "matchedChars": 26,
+   "coverage": 0.667,
+   "openChars": 8,
+   "openRatio": 0.205,
+   "kinds": {
+    "pronoun": 1,
+    "short_edit": 2,
+    "open": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他站",
+     "kind": "pronoun"
+    },
+    {
+     "text": "处",
+     "kind": "short_edit"
+    },
+    {
+     "text": "进出者",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "收",
+     "kind": "short_edit"
+    },
+    {
+     "text": "亮了一下。",
+     "kind": "open"
+    }
+   ],
+   "id": "56b"
+  },
+  {
+   "targetChars": 54,
+   "matchedChars": 32,
+   "coverage": 0.593,
+   "openChars": 16,
+   "openRatio": 0.296,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "今天的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "亮了一下",
+     "kind": "open"
+    },
+    {
+     "text": "得到明确答案。",
+     "kind": "open"
+    }
+   ],
+   "id": 57
+  },
+  {
+   "targetChars": 54,
+   "matchedChars": 32,
+   "coverage": 0.593,
+   "openChars": 16,
+   "openRatio": 0.296,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "问起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "今天的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "亮了一下",
+     "kind": "open"
+    },
+    {
+     "text": "得到明确答案。",
+     "kind": "open"
+    }
+   ],
+   "id": "57a"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 21,
+   "coverage": 0.568,
+   "openChars": 11,
+   "openRatio": 0.297,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "打听",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "收起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "亮了一下；",
+     "kind": "open"
+    },
+    {
+     "text": "没问出答案。",
+     "kind": "open"
+    }
+   ],
+   "id": "57b"
+  },
+  {
+   "targetChars": 69,
+   "matchedChars": 62,
+   "coverage": 0.899,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "glue": 4,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    }
+   ],
+   "id": 58
+  },
+  {
+   "targetChars": 69,
+   "matchedChars": 62,
+   "coverage": 0.899,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "glue": 4,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    }
+   ],
+   "id": "58a"
+  },
+  {
+   "targetChars": 53,
+   "matchedChars": 47,
+   "coverage": 0.887,
+   "openChars": 3,
+   "openRatio": 0.057,
+   "kinds": {
+    "open": 1,
+    "punctuation": 1,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "靠着墙",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "贴近",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "58b"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 15,
+   "coverage": 0.341,
+   "openChars": 15,
+   "openRatio": 0.341,
+   "kinds": {
+    "open": 4,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n他收回手，站在原地",
+     "kind": "pronoun"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": 59
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 15,
+   "coverage": 0.341,
+   "openChars": 15,
+   "openRatio": 0.341,
+   "kinds": {
+    "open": 4,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却",
+     "kind": "open"
+    },
+    {
+     "text": "阿豹。\n\n他收回手，站在原地",
+     "kind": "pronoun"
+    },
+    {
+     "text": "别的动作。",
+     "kind": "open"
+    }
+   ],
+   "id": "59a"
+  },
+  {
+   "targetChars": 28,
+   "matchedChars": 11,
+   "coverage": 0.393,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 3,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "阿豹。他收手，站住不动。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "59b"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 25,
+   "coverage": 0.676,
+   "openChars": 8,
+   "openRatio": 0.216,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，又摸了摸",
+     "kind": "open"
+    },
+    {
+     "text": "弹匣",
+     "kind": "short_edit"
+    },
+    {
+     "text": "棚里的",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "5a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 28,
+   "coverage": 0.875,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "了",
+     "kind": "glue"
+    },
+    {
+     "text": "东西",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "5b"
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 17,
+   "coverage": 0.425,
+   "openChars": 7,
+   "openRatio": 0.175,
+   "kinds": {
+    "open": 2,
+    "connective": 1,
+    "short_edit": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "没有往",
+     "kind": "open"
+    },
+    {
+     "text": "去，人还在西侧服务巷。\n\n",
+     "kind": "connective"
+    },
+    {
+     "text": "抬起头，",
+     "kind": "open"
+    },
+    {
+     "text": "胸前",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 60
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 17,
+   "coverage": 0.425,
+   "openChars": 7,
+   "openRatio": 0.175,
+   "kinds": {
+    "open": 2,
+    "connective": 1,
+    "short_edit": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "没有往",
+     "kind": "open"
+    },
+    {
+     "text": "去，人还在西侧服务巷。\n\n",
+     "kind": "connective"
+    },
+    {
+     "text": "抬起头，",
+     "kind": "open"
+    },
+    {
+     "text": "胸前",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "60a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 21,
+   "coverage": 0.656,
+   "openChars": 6,
+   "openRatio": 0.188,
+   "kinds": {
+    "short_edit": 3,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "留",
+     "kind": "short_edit"
+    },
+    {
+     "text": "动身",
+     "kind": "short_edit"
+    },
+    {
+     "text": "抬头",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在胸前发烫。",
+     "kind": "open"
+    }
+   ],
+   "id": "60b"
+  },
+  {
+   "targetChars": 72,
+   "matchedChars": 53,
+   "coverage": 0.736,
+   "openChars": 9,
+   "openRatio": 0.125,
+   "kinds": {
+    "punctuation": 1,
+    "short_edit": 2,
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "迈了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，人也到了器材棚。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "抓住他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "很尖",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 61
+  },
+  {
+   "targetChars": 72,
+   "matchedChars": 53,
+   "coverage": 0.736,
+   "openChars": 9,
+   "openRatio": 0.125,
+   "kinds": {
+    "punctuation": 1,
+    "short_edit": 2,
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "迈了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，人也到了器材棚。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "抓住他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "很尖",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "61a"
+  },
+  {
+   "targetChars": 50,
+   "matchedChars": 35,
+   "coverage": 0.7,
+   "openChars": 9,
+   "openRatio": 0.18,
+   "kinds": {
+    "open": 2,
+    "short_edit": 1,
+    "punctuation": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "往器材棚走了",
+     "kind": "open"
+    },
+    {
+     "text": "查看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "抓住他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "尖声问",
+     "kind": "open"
+    }
+   ],
+   "id": "61b"
+  },
+  {
+   "targetChars": 77,
+   "matchedChars": 65,
+   "coverage": 0.844,
+   "openChars": 5,
+   "openRatio": 0.065,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 2,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "跑",
+     "kind": "short_edit"
+    },
+    {
+     "text": "冲了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里没有别人",
+     "kind": "open"
+    },
+    {
+     "text": "在",
+     "kind": "glue"
+    }
+   ],
+   "id": 62
+  },
+  {
+   "targetChars": 77,
+   "matchedChars": 65,
+   "coverage": 0.844,
+   "openChars": 5,
+   "openRatio": 0.065,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 2,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "跑",
+     "kind": "short_edit"
+    },
+    {
+     "text": "冲了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里没有别人",
+     "kind": "open"
+    },
+    {
+     "text": "在",
+     "kind": "glue"
+    }
+   ],
+   "id": "62a"
+  },
+  {
+   "targetChars": 59,
+   "matchedChars": 44,
+   "coverage": 0.746,
+   "openChars": 9,
+   "openRatio": 0.153,
+   "kinds": {
+    "short_edit": 1,
+    "glue": 2,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "跑向",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，在",
+     "kind": "glue"
+    },
+    {
+     "text": "了楼。",
+     "kind": "open"
+    },
+    {
+     "text": "里没有别人；",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在",
+     "kind": "glue"
+    }
+   ],
+   "id": "62b"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 31,
+   "coverage": 0.674,
+   "openChars": 4,
+   "openRatio": 0.087,
+   "kinds": {
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "在钟楼里",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n楼里没有别人。他的",
+     "kind": "pronoun"
+    }
+   ],
+   "id": 63
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 31,
+   "coverage": 0.674,
+   "openChars": 4,
+   "openRatio": 0.087,
+   "kinds": {
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "在钟楼里",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n楼里没有别人。他的",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "63a"
+  },
+  {
+   "targetChars": 31,
+   "matchedChars": 15,
+   "coverage": 0.484,
+   "openChars": 5,
+   "openRatio": 0.161,
+   "kinds": {
+    "open": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "停在钟楼中",
+     "kind": "open"
+    },
+    {
+     "text": "其他人，他的精神还好。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "63b"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 30,
+   "coverage": 0.714,
+   "openChars": 3,
+   "openRatio": 0.071,
+   "kinds": {
+    "open": 1,
+    "punctuation": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "又等了",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "，他准备好了。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": 64
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 30,
+   "coverage": 0.714,
+   "openChars": 3,
+   "openRatio": 0.071,
+   "kinds": {
+    "open": 1,
+    "punctuation": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "又等了",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "，他准备好了。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "64a"
+  },
+  {
+   "targetChars": 33,
+   "matchedChars": 14,
+   "coverage": 0.424,
+   "openChars": 11,
+   "openRatio": 0.333,
+   "kinds": {
+    "open": 2,
+    "short_edit": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "等了等",
+     "kind": "open"
+    },
+    {
+     "text": "查",
+     "kind": "short_edit"
+    },
+    {
+     "text": "记下剩余时间。楼",
+     "kind": "open"
+    },
+    {
+     "text": "，他准备妥当。",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "64b"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 28,
+   "coverage": 0.757,
+   "openChars": 3,
+   "openRatio": 0.081,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "挪动。",
+     "kind": "open"
+    }
+   ],
+   "id": 65
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 28,
+   "coverage": 0.757,
+   "openChars": 3,
+   "openRatio": 0.081,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "挪动。",
+     "kind": "open"
+    }
+   ],
+   "id": "65a"
+  },
+  {
+   "targetChars": 31,
+   "matchedChars": 20,
+   "coverage": 0.645,
+   "openChars": 5,
+   "openRatio": 0.161,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 2,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "查了",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "；",
+     "kind": "punctuation"
+    },
+    {
+     "text": "站住没动。",
+     "kind": "open"
+    }
+   ],
+   "id": "65b"
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 20,
+   "coverage": 0.5,
+   "openChars": 13,
+   "openRatio": 0.325,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "停住了手。",
+     "kind": "open"
+    }
+   ],
+   "id": 66
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 20,
+   "coverage": 0.5,
+   "openChars": 13,
+   "openRatio": 0.325,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "停住了手。",
+     "kind": "open"
+    }
+   ],
+   "id": "66a"
+  },
+  {
+   "targetChars": 33,
+   "matchedChars": 17,
+   "coverage": 0.515,
+   "openChars": 10,
+   "openRatio": 0.303,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "；",
+     "kind": "punctuation"
+    },
+    {
+     "text": "收手。",
+     "kind": "open"
+    }
+   ],
+   "id": "66b"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 18,
+   "coverage": 0.409,
+   "openChars": 24,
+   "openRatio": 0.545,
+   "kinds": {
+    "open": 5
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "动作，",
+     "kind": "open"
+    },
+    {
+     "text": "也停在原地。",
+     "kind": "open"
+    }
+   ],
+   "id": 67
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 18,
+   "coverage": 0.409,
+   "openChars": 24,
+   "openRatio": 0.545,
+   "kinds": {
+    "open": 5
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "动作，",
+     "kind": "open"
+    },
+    {
+     "text": "也停在原地。",
+     "kind": "open"
+    }
+   ],
+   "id": "67a"
+  },
+  {
+   "targetChars": 33,
+   "matchedChars": 6,
+   "coverage": 0.182,
+   "openChars": 27,
+   "openRatio": 0.818,
+   "kinds": {
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "去拿电台想找阿豹，巷里没有阿豹。诺诺没有动，",
+     "kind": "open"
+    },
+    {
+     "text": "也站住了。",
+     "kind": "open"
+    }
+   ],
+   "id": "67b"
+  },
+  {
+   "targetChars": 53,
+   "matchedChars": 25,
+   "coverage": 0.472,
+   "openChars": 21,
+   "openRatio": 0.396,
+   "kinds": {
+    "short_edit": 3,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，站在一旁",
+     "kind": "open"
+    },
+    {
+     "text": "把电台送出去。",
+     "kind": "open"
+    }
+   ],
+   "id": 68
+  },
+  {
+   "targetChars": 53,
+   "matchedChars": 25,
+   "coverage": 0.472,
+   "openChars": 21,
+   "openRatio": 0.396,
+   "kinds": {
+    "short_edit": 3,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "看完",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，站在一旁",
+     "kind": "open"
+    },
+    {
+     "text": "把电台送出去。",
+     "kind": "open"
+    }
+   ],
+   "id": "68a"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 8,
+   "coverage": 0.182,
+   "openChars": 35,
+   "openRatio": 0.795,
+   "kinds": {
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "去拿电台想找阿豹转交，巷里没有阿豹。诺诺看完规则牌，站在一边；",
+     "kind": "open"
+    },
+    {
+     "text": "没有送出",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "68b"
+  },
+  {
+   "targetChars": 45,
+   "matchedChars": 37,
+   "coverage": 0.822,
+   "openChars": 3,
+   "openRatio": 0.067,
+   "kinds": {
+    "open": 1,
+    "punctuation": 1,
+    "glue": 1,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 69
+  },
+  {
+   "targetChars": 43,
+   "matchedChars": 37,
+   "coverage": 0.86,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "边",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "69a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 25,
+   "coverage": 0.781,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "punctuation": 1,
+    "short_edit": 2,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "贴近",
+     "kind": "short_edit"
+    },
+    {
+     "text": "问他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "下。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "69b"
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 40,
+   "coverage": 0.69,
+   "openChars": 8,
+   "openRatio": 0.138,
+   "kinds": {
+    "open": 2,
+    "punctuation": 2,
+    "short_edit": 2,
+    "connective": 1
+   },
+   "spans": [
+    {
+     "text": "弯腰去推",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "有些紧。",
+     "kind": "open"
+    },
+    {
+     "text": "离",
+     "kind": "short_edit"
+    },
+    {
+     "text": "还差得远。",
+     "kind": "connective"
+    }
+   ],
+   "id": 7
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 24,
+   "coverage": 0.545,
+   "openChars": 13,
+   "openRatio": 0.295,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，又去摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在旁边看",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "也把",
+     "kind": "glue"
+    },
+    {
+     "text": "看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": 70
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 24,
+   "coverage": 0.545,
+   "openChars": 13,
+   "openRatio": 0.295,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3,
+    "punctuation": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，又去摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在旁边看",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "也把",
+     "kind": "glue"
+    },
+    {
+     "text": "看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "70a"
+  },
+  {
+   "targetChars": 30,
+   "matchedChars": 21,
+   "coverage": 0.7,
+   "openChars": 5,
+   "openRatio": 0.167,
+   "kinds": {
+    "punctuation": 2,
+    "short_edit": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "看着",
+     "kind": "short_edit"
+    },
+    {
+     "text": "也看了一遍",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "70b"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 18,
+   "coverage": 0.391,
+   "openChars": 13,
+   "openRatio": 0.283,
+   "kinds": {
+    "open": 3,
+    "pronoun": 1,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n他回到",
+     "kind": "pronoun"
+    },
+    {
+     "text": "前看了一遍；",
+     "kind": "open"
+    },
+    {
+     "text": "看。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": 71
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 18,
+   "coverage": 0.391,
+   "openChars": 13,
+   "openRatio": 0.283,
+   "kinds": {
+    "open": 3,
+    "pronoun": 1,
+    "short_edit": 1
+   },
+   "spans": [
+    {
+     "text": "伸手去拿",
+     "kind": "open"
+    },
+    {
+     "text": "，想交",
+     "kind": "open"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n他回到",
+     "kind": "pronoun"
+    },
+    {
+     "text": "前看了一遍；",
+     "kind": "open"
+    },
+    {
+     "text": "看。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "71a"
+  },
+  {
+   "targetChars": 35,
+   "matchedChars": 17,
+   "coverage": 0.486,
+   "openChars": 13,
+   "openRatio": 0.371,
+   "kinds": {
+    "short_edit": 3,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹",
+     "kind": "open"
+    },
+    {
+     "text": "转而看规则牌，",
+     "kind": "open"
+    },
+    {
+     "text": "看。",
+     "kind": "short_edit"
+    }
+   ],
+   "id": "71b"
+  },
+  {
+   "targetChars": 43,
+   "matchedChars": 23,
+   "coverage": 0.535,
+   "openChars": 14,
+   "openRatio": 0.326,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "也看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": 73
+  },
+  {
+   "targetChars": 43,
+   "matchedChars": 23,
+   "coverage": 0.535,
+   "openChars": 14,
+   "openRatio": 0.326,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里却没有阿豹。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "把",
+     "kind": "glue"
+    },
+    {
+     "text": "也看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "73a"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 19,
+   "coverage": 0.514,
+   "openChars": 13,
+   "openRatio": 0.351,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想找",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里没有阿豹。",
+     "kind": "open"
+    },
+    {
+     "text": "；",
+     "kind": "punctuation"
+    },
+    {
+     "text": "也看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "73b"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 30,
+   "coverage": 0.714,
+   "openChars": 6,
+   "openRatio": 0.143,
+   "kinds": {
+    "short_edit": 1,
+    "punctuation": 1,
+    "open": 2,
+    "glue": 2
+   },
+   "spans": [
+    {
+     "text": "去",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "束着，",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": 74
+  },
+  {
+   "targetChars": 41,
+   "matchedChars": 28,
+   "coverage": 0.683,
+   "openChars": 6,
+   "openRatio": 0.146,
+   "kinds": {
+    "short_edit": 1,
+    "punctuation": 1,
+    "open": 2,
+    "glue": 2
+   },
+   "spans": [
+    {
+     "text": "去看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "束着，",
+     "kind": "open"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": "74a"
+  },
+  {
+   "targetChars": 27,
+   "matchedChars": 19,
+   "coverage": 0.704,
+   "openChars": 6,
+   "openRatio": 0.222,
+   "kinds": {
+    "open": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "在巷中",
+     "kind": "open"
+    },
+    {
+     "text": "束着，",
+     "kind": "open"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "74b"
+  },
+  {
+   "targetChars": 55,
+   "matchedChars": 29,
+   "coverage": 0.527,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n他把电台塞进腰间收好。",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 75
+  },
+  {
+   "targetChars": 55,
+   "matchedChars": 29,
+   "coverage": 0.527,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "想拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "交",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里却没有阿豹。\n\n他把电台塞进腰间收好。",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "75a"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 23,
+   "coverage": 0.523,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "short_edit": 2,
+    "pronoun": 1,
+    "punctuation": 1
+   },
+   "spans": [
+    {
+     "text": "去拿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "想",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，巷里没有阿豹。他把电台收进腰间；",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "75b"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 17,
+   "coverage": 0.37,
+   "openChars": 26,
+   "openRatio": 0.565,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "贴",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n芬格尔和秦越都在棚里",
+     "kind": "open"
+    },
+    {
+     "text": "把规则牌看了一遍，看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": 76
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 17,
+   "coverage": 0.37,
+   "openChars": 26,
+   "openRatio": 0.565,
+   "kinds": {
+    "short_edit": 2,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "贴",
+     "kind": "short_edit"
+    },
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。\n\n芬格尔和秦越都在棚里",
+     "kind": "open"
+    },
+    {
+     "text": "把规则牌看了一遍，看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": "76a"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 16,
+   "coverage": 0.432,
+   "openChars": 20,
+   "openRatio": 0.541,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "进",
+     "kind": "short_edit"
+    },
+    {
+     "text": "棚里有芬格尔和秦越；",
+     "kind": "open"
+    },
+    {
+     "text": "看了一遍规则",
+     "kind": "open"
+    },
+    {
+     "text": "看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": "76b"
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 23,
+   "coverage": 0.397,
+   "openChars": 32,
+   "openRatio": 0.552,
+   "kinds": {
+    "short_edit": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n芬格尔和秦越都在器材棚里，没有人给出明确的划分",
+     "kind": "open"
+    },
+    {
+     "text": "把规则牌看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": 77
+  },
+  {
+   "targetChars": 58,
+   "matchedChars": 23,
+   "coverage": 0.397,
+   "openChars": 32,
+   "openRatio": 0.552,
+   "kinds": {
+    "short_edit": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n芬格尔和秦越都在器材棚里，没有人给出明确的划分",
+     "kind": "open"
+    },
+    {
+     "text": "把规则牌看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "77a"
+  },
+  {
+   "targetChars": 36,
+   "matchedChars": 10,
+   "coverage": 0.278,
+   "openChars": 26,
+   "openRatio": 0.722,
+   "kinds": {
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "打听红蓝区域。棚里的芬格尔和秦越都没答上来；",
+     "kind": "open"
+    },
+    {
+     "text": "看了一遍",
+     "kind": "open"
+    }
+   ],
+   "id": "77b"
+  },
+  {
+   "targetChars": 51,
+   "matchedChars": 31,
+   "coverage": 0.608,
+   "openChars": 15,
+   "openRatio": 0.294,
+   "kinds": {
+    "pronoun": 1,
+    "open": 3,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "巷口，把进出的人",
+     "kind": "open"
+    },
+    {
+     "text": "记下来。\n\n",
+     "kind": "open"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    }
+   ],
+   "id": 78
+  },
+  {
+   "targetChars": 49,
+   "matchedChars": 35,
+   "coverage": 0.714,
+   "openChars": 7,
+   "openRatio": 0.143,
+   "kinds": {
+    "pronoun": 1,
+    "short_edit": 1,
+    "open": 2,
+    "punctuation": 2,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "巷口",
+     "kind": "short_edit"
+    },
+    {
+     "text": "进出的人",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    }
+   ],
+   "id": "78a"
+  },
+  {
+   "targetChars": 37,
+   "matchedChars": 18,
+   "coverage": 0.486,
+   "openChars": 4,
+   "openRatio": 0.108,
+   "kinds": {
+    "pronoun": 1,
+    "short_edit": 1,
+    "open": 1,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他站在巷口，把进出者",
+     "kind": "pronoun"
+    },
+    {
+     "text": "记下",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在巷中，",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "78b"
+  },
+  {
+   "targetChars": 62,
+   "matchedChars": 25,
+   "coverage": 0.403,
+   "openChars": 32,
+   "openRatio": 0.516,
+   "kinds": {
+    "pronoun": 1,
+    "open": 2,
+    "short_edit": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他停",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，把识别带的颜色记下来。\n\n芬格尔也在门口看人，目光在",
+     "kind": "open"
+    },
+    {
+     "text": "停了一下，",
+     "kind": "open"
+    },
+    {
+     "text": "转回",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    }
+   ],
+   "id": 79
+  },
+  {
+   "targetChars": 62,
+   "matchedChars": 25,
+   "coverage": 0.403,
+   "openChars": 32,
+   "openRatio": 0.516,
+   "kinds": {
+    "pronoun": 1,
+    "open": 2,
+    "short_edit": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "他停",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，把识别带的颜色记下来。\n\n芬格尔也在门口看人，目光在",
+     "kind": "open"
+    },
+    {
+     "text": "停了一下，",
+     "kind": "open"
+    },
+    {
+     "text": "转回",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    }
+   ],
+   "id": "79a"
+  },
+  {
+   "targetChars": 43,
+   "matchedChars": 24,
+   "coverage": 0.558,
+   "openChars": 7,
+   "openRatio": 0.163,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "pronoun": 1,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "同样在看人，视线在他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "顿了顿，又落回",
+     "kind": "open"
+    }
+   ],
+   "id": "79b"
+  },
+  {
+   "targetChars": 42,
+   "matchedChars": 31,
+   "coverage": 0.738,
+   "openChars": 8,
+   "openRatio": 0.19,
+   "kinds": {
+    "open": 2,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "弯腰去推",
+     "kind": "open"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "有些紧。",
+     "kind": "open"
+    }
+   ],
+   "id": "7a"
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 23,
+   "coverage": 0.575,
+   "openChars": 12,
+   "openRatio": 0.3,
+   "kinds": {
+    "short_edit": 3,
+    "punctuation": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "推动",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "太重，才挪开",
+     "kind": "open"
+    },
+    {
+     "text": "盯",
+     "kind": "short_edit"
+    },
+    {
+     "text": "里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "色不太放松。",
+     "kind": "open"
+    }
+   ],
+   "id": "7b"
+  },
+  {
+   "targetChars": 106,
+   "matchedChars": 87,
+   "coverage": 0.821,
+   "openChars": 6,
+   "openRatio": 0.057,
+   "kinds": {
+    "punctuation": 3,
+    "pronoun": 1,
+    "open": 2,
+    "short_edit": 3,
+    "glue": 2
+   },
+   "spans": [
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "自己",
+     "kind": "pronoun"
+    },
+    {
+     "text": "慢慢穿",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "有些紧",
+     "kind": "open"
+    },
+    {
+     "text": "一路",
+     "kind": "short_edit"
+    },
+    {
+     "text": "经",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷里",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": 8
+  },
+  {
+   "targetChars": 54,
+   "matchedChars": 18,
+   "coverage": 0.333,
+   "openChars": 35,
+   "openRatio": 0.648,
+   "kinds": {
+    "short_edit": 1,
+    "open": 4
+   },
+   "spans": [
+    {
+     "text": "起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n器材棚里芬格尔和秦越都在，没有人答上来",
+     "kind": "open"
+    },
+    {
+     "text": "看了一遍规则",
+     "kind": "open"
+    },
+    {
+     "text": "看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": 80
+  },
+  {
+   "targetChars": 54,
+   "matchedChars": 18,
+   "coverage": 0.333,
+   "openChars": 35,
+   "openRatio": 0.648,
+   "kinds": {
+    "short_edit": 1,
+    "open": 4
+   },
+   "spans": [
+    {
+     "text": "起",
+     "kind": "short_edit"
+    },
+    {
+     "text": "的活动",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n器材棚里芬格尔和秦越都在，没有人答上来",
+     "kind": "open"
+    },
+    {
+     "text": "看了一遍规则",
+     "kind": "open"
+    },
+    {
+     "text": "看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": "80a"
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 15,
+   "coverage": 0.375,
+   "openChars": 22,
+   "openRatio": 0.55,
+   "kinds": {
+    "open": 2,
+    "short_edit": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "向棚里",
+     "kind": "open"
+    },
+    {
+     "text": "打听",
+     "kind": "short_edit"
+    },
+    {
+     "text": "和",
+     "kind": "glue"
+    },
+    {
+     "text": "都没答；路明非看了一遍规则牌，看懂了。",
+     "kind": "open"
+    }
+   ],
+   "id": "80b"
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 30,
+   "coverage": 0.5,
+   "openChars": 3,
+   "openRatio": 0.05,
+   "kinds": {
+    "pronoun": 2,
+    "open": 1,
+    "short_edit": 1,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，看着",
+     "kind": "open"
+    },
+    {
+     "text": "各自",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "观察，视线在他身上停了一下，随即落回胸前的",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 81
+  },
+  {
+   "targetChars": 60,
+   "matchedChars": 30,
+   "coverage": 0.5,
+   "openChars": 3,
+   "openRatio": 0.05,
+   "kinds": {
+    "pronoun": 2,
+    "open": 1,
+    "short_edit": 1,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "他",
+     "kind": "pronoun"
+    },
+    {
+     "text": "，看着",
+     "kind": "open"
+    },
+    {
+     "text": "各自",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "观察，视线在他身上停了一下，随即落回胸前的",
+     "kind": "pronoun"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "81a"
+  },
+  {
+   "targetChars": 40,
+   "matchedChars": 24,
+   "coverage": 0.6,
+   "openChars": 0,
+   "openRatio": 0.0,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "pronoun": 1
+   },
+   "spans": [
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "看",
+     "kind": "short_edit"
+    },
+    {
+     "text": "看，目光在他身上停了停，回到",
+     "kind": "pronoun"
+    }
+   ],
+   "id": "81b"
+  },
+  {
+   "targetChars": 97,
+   "matchedChars": 65,
+   "coverage": 0.67,
+   "openChars": 9,
+   "openRatio": 0.093,
+   "kinds": {
+    "short_edit": 1,
+    "pronoun": 1,
+    "punctuation": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "问起今天的红蓝区域。\n\n芬格尔望着那扇",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "听下，",
+     "kind": "open"
+    },
+    {
+     "text": "再问出别的。",
+     "kind": "open"
+    }
+   ],
+   "id": 82
+  },
+  {
+   "targetChars": 97,
+   "matchedChars": 65,
+   "coverage": 0.67,
+   "openChars": 9,
+   "openRatio": 0.093,
+   "kinds": {
+    "short_edit": 1,
+    "pronoun": 1,
+    "punctuation": 1,
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "走到",
+     "kind": "short_edit"
+    },
+    {
+     "text": "问起今天的红蓝区域。\n\n芬格尔望着那扇",
+     "kind": "pronoun"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "听下，",
+     "kind": "open"
+    },
+    {
+     "text": "再问出别的。",
+     "kind": "open"
+    }
+   ],
+   "id": "82a"
+  },
+  {
+   "targetChars": 75,
+   "matchedChars": 67,
+   "coverage": 0.893,
+   "openChars": 3,
+   "openRatio": 0.04,
+   "kinds": {
+    "glue": 1,
+    "short_edit": 1,
+    "punctuation": 2,
+    "open": 1
+   },
+   "spans": [
+    {
+     "text": "在",
+     "kind": "glue"
+    },
+    {
+     "text": "打听",
+     "kind": "short_edit"
+    },
+    {
+     "text": "。",
+     "kind": "punctuation"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "追问。",
+     "kind": "open"
+    }
+   ],
+   "id": "82b"
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 19,
+   "coverage": 0.413,
+   "openChars": 23,
+   "openRatio": 0.5,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想问",
+     "kind": "short_edit"
+    },
+    {
+     "text": "今天各自",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n诺诺在巷里，没有回答",
+     "kind": "open"
+    },
+    {
+     "text": "把规则牌看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": 83
+  },
+  {
+   "targetChars": 46,
+   "matchedChars": 19,
+   "coverage": 0.413,
+   "openChars": 23,
+   "openRatio": 0.5,
+   "kinds": {
+    "short_edit": 1,
+    "open": 3
+   },
+   "spans": [
+    {
+     "text": "想问",
+     "kind": "short_edit"
+    },
+    {
+     "text": "今天各自",
+     "kind": "open"
+    },
+    {
+     "text": "\n\n诺诺在巷里，没有回答",
+     "kind": "open"
+    },
+    {
+     "text": "把规则牌看了一遍。",
+     "kind": "open"
+    }
+   ],
+   "id": "83a"
+  },
+  {
+   "targetChars": 32,
+   "matchedChars": 10,
+   "coverage": 0.312,
+   "openChars": 22,
+   "openRatio": 0.688,
+   "kinds": {
+    "open": 2
+   },
+   "spans": [
+    {
+     "text": "想向诺诺打听红蓝区域。诺诺没有答话；",
+     "kind": "open"
+    },
+    {
+     "text": "看了一遍",
+     "kind": "open"
+    }
+   ],
+   "id": "83b"
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 34,
+   "coverage": 0.773,
+   "openChars": 6,
+   "openRatio": 0.136,
+   "kinds": {
+    "open": 2,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    }
+   ],
+   "id": 84
+  },
+  {
+   "targetChars": 44,
+   "matchedChars": 30,
+   "coverage": 0.682,
+   "openChars": 10,
+   "openRatio": 0.227,
+   "kinds": {
+    "open": 3,
+    "punctuation": 2
+   },
+   "spans": [
+    {
+     "text": "看了看",
+     "kind": "open"
+    },
+    {
+     "text": "又摸了摸",
+     "kind": "open"
+    },
+    {
+     "text": "。\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    }
+   ],
+   "id": "84a"
+  },
+  {
+   "targetChars": 29,
+   "matchedChars": 22,
+   "coverage": 0.759,
+   "openChars": 4,
+   "openRatio": 0.138,
+   "kinds": {
+    "open": 1,
+    "punctuation": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "在巷中，",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "84b"
+  },
+  {
+   "targetChars": 81,
+   "matchedChars": 69,
+   "coverage": 0.852,
+   "openChars": 3,
+   "openRatio": 0.037,
+   "kinds": {
+    "short_edit": 4,
+    "punctuation": 2,
+    "open": 1,
+    "glue": 1
+   },
+   "spans": [
+    {
+     "text": "抬",
+     "kind": "short_edit"
+    },
+    {
+     "text": "穿",
+     "kind": "short_edit"
+    },
+    {
+     "text": "\n\n",
+     "kind": "punctuation"
+    },
+    {
+     "text": "紧",
+     "kind": "short_edit"
+    },
+    {
+     "text": "经",
+     "kind": "short_edit"
+    },
+    {
+     "text": "在巷里",
+     "kind": "open"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "地。",
+     "kind": "glue"
+    }
+   ],
+   "id": "8a"
+  },
+  {
+   "targetChars": 77,
+   "matchedChars": 53,
+   "coverage": 0.688,
+   "openChars": 6,
+   "openRatio": 0.078,
+   "kinds": {
+    "open": 1,
+    "pronoun": 1,
+    "short_edit": 3,
+    "punctuation": 1,
+    "glue": 2
+   },
+   "spans": [
+    {
+     "text": "，没打算插手",
+     "kind": "open"
+    },
+    {
+     "text": "穿过那两个人。\n\n",
+     "kind": "pronoun"
+    },
+    {
+     "text": "有些",
+     "kind": "short_edit"
+    },
+    {
+     "text": "一路",
+     "kind": "short_edit"
+    },
+    {
+     "text": "巷中",
+     "kind": "short_edit"
+    },
+    {
+     "text": "，",
+     "kind": "punctuation"
+    },
+    {
+     "text": "的",
+     "kind": "glue"
+    },
+    {
+     "text": "着",
+     "kind": "glue"
+    }
+   ],
+   "id": "8b"
+  }
+ ]
+}

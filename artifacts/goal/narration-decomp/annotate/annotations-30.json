@@ -1,0 +1,342 @@
+{
+ "annotations": [
+  {
+   "copy": 44,
+   "function": 27,
+   "id": "passage 1",
+   "notes": "Walk and Nono's band restate facts almost verbatim; door being behind him is derivable from entering the shed, the crack left ajar is not.",
+   "open": 3,
+   "openExamples": [
+    "留着回服务巷的缝"
+   ],
+   "paraphrase": 21,
+   "targetChars": 95
+  },
+  {
+   "copy": 31,
+   "function": 11,
+   "id": "passage 13a",
+   "notes": "The question is near-verbatim from the request; '答案' is the only referent absent from the facts.",
+   "open": 2,
+   "openExamples": [
+    "没有得到答案"
+   ],
+   "paraphrase": 6,
+   "targetChars": 50
+  },
+  {
+   "copy": 16,
+   "function": 13,
+   "id": "passage 17",
+   "notes": "The check sequence copies '低头/护目镜/胸袋/弹匣/确认都在'; the following posture and position are invented stage direction.",
+   "open": 6,
+   "openExamples": [
+    "站回原处",
+    "别的动作"
+   ],
+   "paraphrase": 6,
+   "targetChars": 41
+  },
+  {
+   "copy": 26,
+   "function": 20,
+   "id": "passage 2",
+   "notes": "Observation loop copies '停/器材棚门口/进出/识别带/颜色/记'; '没有挪动' is derivable from staying put, so no invented content.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 9,
+   "targetChars": 55
+  },
+  {
+   "copy": 34,
+   "function": 22,
+   "id": "passage 23a",
+   "notes": "Both questions are verbatim from the request, including '两边都不帮算不算违规'; '转头' is an unstated gesture, and '看明白了' restates the fact '看懂了规则牌'.",
+   "open": 2,
+   "openExamples": [
+    "转头去看规则"
+   ],
+   "paraphrase": 5,
+   "targetChars": 63
+  },
+  {
+   "copy": 32,
+   "function": 18,
+   "id": "passage 27",
+   "notes": "Waiting and Nono's lowered muzzle copy facts; '停着' attributes stillness to Nono, which the facts do not state.",
+   "open": 1,
+   "openExamples": [
+    "诺诺也停着"
+   ],
+   "paraphrase": 5,
+   "targetChars": 56
+  },
+  {
+   "copy": 75,
+   "function": 16,
+   "id": "passage 3",
+   "notes": "Line 1 is almost fully fact-anchored; 走到 and 分别 are the only restatements. Line 2 quotes the 芬格尔 fact with 望了一眼 substituted for 望向 and 线索 dropped from 我所要的线索 (omissions cost nothing). Line 3's 听完/没有得到...划分 is an inference from what she answered, so paraphrase rather than open.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 17,
+   "targetChars": 108
+  },
+  {
+   "copy": 43,
+   "function": 12,
+   "id": "passage 33a",
+   "notes": "Target is near-verbatim from the player action (在墙边等一会儿，听远处的枪声间隔，估算时间过去了多久); only 估→估着, 的, and 着/了 aspect markers differ. 巷里 reduces 西侧服务巷 to 巷 + 里.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 1,
+   "targetChars": 56
+  },
+  {
+   "copy": 28,
+   "function": 10,
+   "id": "passage 37",
+   "notes": "去看护目镜 restates 检查护目镜 (看 for 检查 → paraphrase, 去 connective). 手停在胸袋上 and 伸手 are body-detail restatements of the check/block facts, held at paraphrase per the derivable-means-paraphrase rule. 没有别的动作 restates 没有作出反应.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 10,
+   "targetChars": 48
+  },
+  {
+   "copy": 23,
+   "function": 7,
+   "id": "passage 40b",
+   "notes": "Facts only say he hands the red radio to 阿豹 to pass on; the search intent, the absence of 阿豹 from the alley, and 收手/转头 are new events, not derivable, so open. 拿 for 递给 is the generic-verb paraphrase case; 压地 abbreviates 枪口压向地面.",
+   "open": 6,
+   "openExamples": [
+    "想找阿豹",
+    "巷里没有阿豹",
+    "收手"
+   ],
+   "paraphrase": 10,
+   "targetChars": 46
+  },
+  {
+   "copy": 13,
+   "function": 9,
+   "id": "passage 44a",
+   "notes": "看了看/摸了摸 restate 低头检查 (generic verbs → paraphrase, 了 aspect markers → function). 诺诺的视线落在规则牌上 is a nominalized restatement of 诺诺：看懂了规则牌, so no open.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 7,
+   "targetChars": 29
+  },
+  {
+   "copy": 17,
+   "function": 5,
+   "id": "passage 48",
+   "notes": "手指在胸袋外面按了一下 is a body-level restatement of the chest-pocket check; kept at paraphrase (new detail is minimal, not a new event). 靠着墙 for 在西侧服务巷 is a generic-verb paraphrase, 墙 is copy from 右墙/墙角.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 10,
+   "targetChars": 32
+  },
+  {
+   "copy": 15,
+   "function": 5,
+   "id": "50b",
+   "notes": "路明非/查/护目镜/胸袋/诺诺/看/规则牌 are verbatim in facts (查 inside 检查, 看 inside 看懂了). 完 and 站 (for being there) restate fact content. 和 counted as connective; 一边 ('to one side') is a spatial detail not stated.",
+   "open": 2,
+   "openExamples": [
+    "一边"
+   ],
+   "paraphrase": 2,
+   "targetChars": 24
+  },
+  {
+   "copy": 44,
+   "function": 16,
+   "id": "54a",
+   "notes": "Second paragraph copies the fact quote almost verbatim: the whole dialogue and 红色识别带在胸前微微发烫/短讯机/贴/耳/低声/问 are copy. Differences: 故障 (new attribute), 到 (complement), 耳畔→耳边 (边 paraphrase), 问道→问, 她/你/把/在/ellipsis and punctuation are function. First paragraph: 看 for 检查 is paraphrase.",
+   "open": 2,
+   "openExamples": [
+    "故障"
+   ],
+   "paraphrase": 2,
+   "targetChars": 64
+  },
+  {
+   "copy": 48,
+   "function": 19,
+   "id": "58",
+   "notes": "Both sentences track the fact text with no substitute wording; 故障 is in these facts. Only insertions/deletions of particles: 了, 着, 的, 把, 在, 得, pronouns 你, punctuation. 说 matches 说道 verbatim.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 0,
+   "targetChars": 67
+  },
+  {
+   "copy": 43,
+   "function": 25,
+   "id": "61",
+   "notes": "迈 for 走 and 抓 for 拉 are the only reworded verbs (paraphrase). Everything else is lifted from the facts or is grammatical: 这一轮, commas, 了, 人 (stand-in subject), 也, 住 (resultative), 他/的/你/我 pronouns, 很, ellipsis and punctuation. Dialogue is verbatim.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 2,
+   "targetChars": 70
+  },
+  {
+   "copy": 18,
+   "function": 8,
+   "id": "64b",
+   "notes": "检查 rewrites 核对 and 剩余 rewrites 还剩 (paraphrase), 楼 rewrites 房间; copy spans are 路明非, 等, 护目镜, 记下, 时间, 没有, 别人, 准备. 妥当 adds a completion judgment not in the facts; 里/他/了/punctuation are function.",
+   "open": 2,
+   "openExamples": [
+    "妥当"
+   ],
+   "paraphrase": 5,
+   "targetChars": 33
+  },
+  {
+   "copy": 26,
+   "function": 8,
+   "id": "68a",
+   "notes": "想/拿/交给/巷里/没有/完/站/送出去 restate the commanded action and the facts with different wording (交给 vs 递给). 巷里却没有阿豹 is inferred from the settlement listing only 路明非 and 诺诺 in the alley, so the negation is paraphrase; 却 is a connective. 一旁 is an unstated positional detail.",
+   "open": 2,
+   "openExamples": [
+    "一旁"
+   ],
+   "paraphrase": 15,
+   "targetChars": 51
+  },
+  {
+   "copy": 17,
+   "function": 8,
+   "id": "71b",
+   "notes": "拿/去 restate 递给 as generic verbs; 巷里 paraphrases 西侧服务巷; 转而 is a connective; 想 is added interiority; 巷里没有阿豹 adds a new absence that the facts never state.",
+   "open": 3,
+   "openExamples": [
+    "想",
+    "巷里没有阿豹"
+   ],
+   "paraphrase": 7,
+   "targetChars": 35
+  },
+  {
+   "copy": 26,
+   "function": 10,
+   "id": "76a",
+   "notes": "贴着 restates 沿着; 棚里 and the locative verb 在 restate the fact that both are 在器材棚; 一遍 restates the completed reading; everything else is verbatim.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 8,
+   "targetChars": 44
+  },
+  {
+   "copy": 27,
+   "function": 7,
+   "id": "7a",
+   "notes": "弯腰/去 are posture-and-motion gloss on 尝试推; 有些/紧 restate 略显紧张; the box-weight clause is verbatim from the facts.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 6,
+   "targetChars": 40
+  },
+  {
+   "copy": 58,
+   "function": 11,
+   "id": "82b",
+   "notes": "The quoted line echoes 芬格尔's fact quote nearly verbatim; 打听 is a synonym of 问; 没有追问 is an invented negative beat absent from the facts.",
+   "open": 4,
+   "openExamples": [
+    "没有追问"
+   ],
+   "paraphrase": 2,
+   "targetChars": 75
+  },
+  {
+   "copy": 27,
+   "function": 9,
+   "id": "9b",
+   "notes": "贴着/前行/留意/换好/拍下/进了 all restate fact actions with different wording; no new content.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 11,
+   "targetChars": 47
+  },
+  {
+   "copy": 22,
+   "function": 6,
+   "id": "TarcadeA#2",
+   "notes": "看完 restates 看懂了; 打听 is a synonym of 问起; both failure beats (林亦舟's silence and the unanswered division) are invented outcomes the facts do not contain.",
+   "open": 9,
+   "openExamples": [
+    "没有答话",
+    "没有问出划分"
+   ],
+   "paraphrase": 5,
+   "targetChars": 42
+  },
+  {
+   "copy": 15,
+   "function": 7,
+   "id": "TarcadeI#1",
+   "notes": "Target restates the question verbatim (路明非/问起/红蓝/区域 copy). No settlement entry resolves the question, so 回答 and 得到/答案 are ungrounded; negation 没有 counted function.",
+   "open": 6,
+   "openExamples": [
+    "没有回答",
+    "没有得到答案"
+   ],
+   "paraphrase": 0,
+   "targetChars": 28
+  },
+  {
+   "copy": 19,
+   "function": 4,
+   "id": "TarcadeM#2",
+   "notes": "打听 restates 问起; 到 replaces 往...挪了挪 (directional added); all clause content traces to FACTS.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 3,
+   "targetChars": 26
+  },
+  {
+   "copy": 20,
+   "function": 8,
+   "id": "TlaneE#1",
+   "notes": "看了看 restates 检查 (generic verb); 一遍 is a minor restatement of the rules-card read, kept paraphrase per tie-break rule; 胸袋里的弹匣 is a verbatim substring.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 4,
+   "targetChars": 32
+  },
+  {
+   "copy": 23,
+   "function": 12,
+   "id": "TlaneJ#4",
+   "notes": "Facts have the radio handed to 阿豹; the failure to find him and the not-sent outcome are new events (open), with negation markers counted function. 交给/送出去 paraphrase 递给; 一遍 paraphrase as in TlaneE#1.",
+   "open": 3,
+   "openExamples": [
+    "想",
+    "没找到阿豹",
+    "没有把电台送出去"
+   ],
+   "paraphrase": 7,
+   "targetChars": 45
+  },
+  {
+   "copy": 33,
+   "function": 6,
+   "id": "TlaneQ#1",
+   "notes": "Both sentences are nearly verbatim from the player action and settlement lines; only punctuation, 把/往 and the aspect 了 counted function.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 0,
+   "targetChars": 39
+  },
+  {
+   "copy": 14,
+   "function": 6,
+   "id": "TshedE#2",
+   "notes": "看了看/摸了摸 restate 检查 (generic verbs); 看完 restates 看懂; 又 and aspect 了, punctuation function; no new events.",
+   "open": 0,
+   "openExamples": [],
+   "paraphrase": 6,
+   "targetChars": 26
+  }
+ ]
+}
