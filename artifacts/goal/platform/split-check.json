@@ -1,0 +1,110 @@
+{
+ "sets": {
+  "semantic-train": {
+   "usage": "train",
+   "independent": false,
+   "uniqueKeys": 245,
+   "path": "artifacts/goal/micro-workflow/real-semantic-train.jsonl"
+  },
+  "semantic-test": {
+   "usage": "regression-only",
+   "independent": false,
+   "uniqueKeys": 8,
+   "path": "artifacts/goal/micro-workflow/real-semantic-test.jsonl"
+  },
+  "scenario-ids": {
+   "usage": "regression-only",
+   "independent": false,
+   "uniqueKeys": 8,
+   "path": "artifacts/goal/micro-workflow/scenarios-independent.json"
+  },
+  "narration-corpus": {
+   "usage": "reference-pool",
+   "independent": false,
+   "uniqueKeys": 422,
+   "path": "artifacts/goal/narration-decomp/narration-corpus.jsonl"
+  },
+  "narration-holdout58": {
+   "usage": "eval",
+   "independent": true,
+   "uniqueKeys": 58,
+   "path": "artifacts/goal/narration-decomp/curve-test-ids.json"
+  },
+  "planning-v14": {
+   "usage": "train-pool",
+   "independent": false,
+   "uniqueKeys": 410,
+   "path": "artifacts/goal/narration-decomp/planning-examples-v14.jsonl"
+  },
+  "narration-bundle161": {
+   "usage": "dev-regression",
+   "independent": false,
+   "uniqueKeys": 161,
+   "path": "artifacts/goal/narration-standalone/inputs.jsonl"
+  }
+ },
+ "pairs": [
+  {
+   "pair": [
+    "semantic-train",
+    "semantic-test"
+   ],
+   "expect": "disjoint",
+   "overlap": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "pair": [
+    "semantic-train",
+    "scenario-ids"
+   ],
+   "expect": "disjoint",
+   "overlap": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "pair": [
+    "narration-bundle161",
+    "narration-corpus"
+   ],
+   "expect": "disjoint",
+   "overlap": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "pair": [
+    "narration-bundle161",
+    "narration-holdout58"
+   ],
+   "expect": "disjoint",
+   "overlap": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "pair": [
+    "narration-holdout58",
+    "planning-v14"
+   ],
+   "expect": "subset",
+   "overlap": 58,
+   "ok": true,
+   "note": "holdout is carved from the planning pool by design"
+  },
+  {
+   "pair": [
+    "narration-holdout58",
+    "narration-corpus"
+   ],
+   "expect": "report",
+   "overlap": 50,
+   "ok": true,
+   "note": "50 of the 58 holdout ids reappear in the corpus as alternate/version targets; corpus is a reference pool, not the E46 training set. Training on the corpus must exclude holdout prompts."
+  }
+ ],
+ "findings": [],
+ "failed": false
+}

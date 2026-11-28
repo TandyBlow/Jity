@@ -93,6 +93,32 @@ def test_integrity_sidecar_and_manifest(tmp_path):
     assert report["checks"]["semantic_manifest"]["findings"][0]["key"] == "train"
 
 
+def test_split_check_flags_overlap(tmp_path):
+    from tools.experiment_platform.split_sets import check
+
+    repo = tmp_path
+    _write(repo / "data/train.jsonl", '{"id": "a"}\n{"id": "b"}\n')
+    _write(repo / "data/eval.jsonl", '{"id": "b"}\n{"id": "c"}\n')
+    _write(repo / "data/hold.json", '["a", "b", "x"]\n')
+    registry = {
+        "sets": [
+            {"name": "train", "path": "data/train.jsonl", "key": "id"},
+            {"name": "eval", "path": "data/eval.jsonl", "key": "id"},
+            {"name": "hold", "path": "data/hold.json", "key": "list"},
+        ],
+        "pairs": [
+            {"left": "train", "right": "eval", "expect": "disjoint"},
+            {"left": "hold", "right": "train", "expect": "subset"},
+            {"left": "hold", "right": "eval", "expect": "report"},
+        ],
+    }
+    report = check(repo, registry)
+    assert report["pairs"][0]["overlap"] == 1 and report["pairs"][0]["ok"] is False
+    assert report["pairs"][1]["ok"] is False  # x is not in train
+    assert report["pairs"][2]["ok"] is True
+    assert report["failed"] is True
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

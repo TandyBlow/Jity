@@ -1,0 +1,69 @@
+{
+ "comment": "Declared experiment splits. independent=false means the set has been used for development; keep it as regression only and never call it a generalization test. Verified 2026-11-28.",
+ "sets": [
+  {
+   "name": "semantic-train",
+   "path": "artifacts/goal/micro-workflow/real-semantic-train.jsonl",
+   "key": "id",
+   "usage": "train",
+   "independent": false,
+   "note": "245 rows from the 20-input runs and semantic routes; train per D-051."
+  },
+  {
+   "name": "semantic-test",
+   "path": "artifacts/goal/micro-workflow/real-semantic-test.jsonl",
+   "key": "id",
+   "usage": "regression-only",
+   "independent": false,
+   "note": "8 frozen scenarios. They drove fixes D-061..D-074 and later rounds, so treat as regression, not generalization."
+  },
+  {
+   "name": "scenario-ids",
+   "path": "artifacts/goal/micro-workflow/scenarios-independent.json",
+   "key": "id",
+   "usage": "regression-only",
+   "independent": false
+  },
+  {
+   "name": "narration-corpus",
+   "path": "artifacts/goal/narration-decomp/narration-corpus.jsonl",
+   "key": "id",
+   "usage": "reference-pool",
+   "independent": false,
+   "note": "424 rows but only 241 unique prompts; 183 alternate/version targets, 2 duplicated ids. Any prompt-level split must dedupe first."
+  },
+  {
+   "name": "narration-holdout58",
+   "path": "artifacts/goal/narration-decomp/curve-test-ids.json",
+   "key": "list",
+   "usage": "eval",
+   "independent": true,
+   "note": "E38 32-group hash holdout, used by E43/E45/E46. Exclusion from training rows is manual, not gate-enforced."
+  },
+  {
+   "name": "planning-v14",
+   "path": "artifacts/goal/narration-decomp/planning-examples-v14.jsonl",
+   "key": "id",
+   "usage": "train-pool",
+   "independent": false
+  },
+  {
+   "name": "narration-bundle161",
+   "path": "artifacts/goal/narration-standalone/inputs.jsonl",
+   "key": "id",
+   "usage": "dev-regression",
+   "independent": false,
+   "note": "The 161 points used to design E55-E60 rules; not an independent evaluation set."
+  }
+ ],
+ "pairs": [
+  {"left": "semantic-train", "right": "semantic-test", "expect": "disjoint"},
+  {"left": "semantic-train", "right": "scenario-ids", "expect": "disjoint"},
+  {"left": "narration-bundle161", "right": "narration-corpus", "expect": "disjoint"},
+  {"left": "narration-bundle161", "right": "narration-holdout58", "expect": "disjoint"},
+  {"left": "narration-holdout58", "right": "planning-v14", "expect": "subset",
+   "note": "holdout is carved from the planning pool by design"},
+  {"left": "narration-holdout58", "right": "narration-corpus", "expect": "report",
+   "note": "50 of the 58 holdout ids reappear in the corpus as alternate/version targets; corpus is a reference pool, not the E46 training set. Training on the corpus must exclude holdout prompts."}
+ ]
+}
