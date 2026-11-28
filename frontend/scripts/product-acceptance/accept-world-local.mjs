@@ -820,6 +820,9 @@ try {
         const newEntry = sample.count > beforeCount;
         const stopLine = sample.doneText ?? '';
         if (stopLine && /本轮停止/.test(stopLine) && (newEntry || !beforeBody.includes(stopLine))) break;
+        // 回合把世界打完结时页面显示“本轮已交还”，但不会新增条目；继续等只会
+        // 撞上回合超时。只认本回合新出现的这一行，避免上一回合的旧行误判。
+        if (!newEntry && /本轮已交还/.test(stopLine) && !beforeBody.includes(stopLine)) break;
         // A recoverable settlement failure is a stopped turn too: the page keeps
         // the history and asks for a retry, so waiting 330 s would misreport it
         // as a timeout and as empty prose.
