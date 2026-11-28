@@ -42,6 +42,10 @@
    `source_program`/`program_text_not_model` 从阻断项里排除，并把
    `programNarrationAccepted` 写进证据。产品验收仍应加
    `verify_run.py --forbid-program`，防止程序臂被当成模型正文。
+   2026-11-28 22:51 的 `artifacts/goal/narration-rules/scenarios8-rules.json` 实测：
+   `arm.narrationFile=null`、`narrationBytes=0`、`narrationModel=rules`，已记录回合
+   `source=program`、`textSource=program`；因为带 `--allow-program`，`problems` 为空。
+   这条证据只能记“程序臂运行”，不能记模型叙事通过。
 
 5. **E61 检查器的名字表缺 5 个世界人物，多了 3 个非本世界名字。**
    `role_parse.py:10` 的 `NAMES` 有 12 个；世界文件 14 人，缺
