@@ -64,3 +64,15 @@
 - 任务台账仍是 `createMicroGoalTasks` 内存 Map：刷新会丢未完成累计，历史回退可能保留失效证据（下一工作包：持久化/回滚）。
 - 累计证据最终仍由行为克隆模型裁决（S01 控制臂），严格多事实金标模型未训练；本结果证明“可运行、零 0.6B”，不证明“任务语义正确”。
 - 叙事仍用 1.7B，符合 S06 范围。
+
+## 台账持久化（用户复核后补）
+
+`createMicroGoalTasks` 现在提供 `exportLedger/importLedger/resetLedger`；`LocalGameSnapshot` 新增可选 `goalTaskLedger`，`session.ts` 在每次保存时写入、恢复时调用 `onRestoreGoalTaskLedger`。页面在创建会话时把两个回调接到 goal 端口上。测试覆盖：
+
+- `goal-verifier.test.ts`：累计一条条件 → 导出 → 新端口导入 → 另一条条件到达后以 `cross_turn` 达成；
+- `session-recovery.test.ts`：`goalTaskLedger` 随快照保存并在 restore 时回灌；
+- 旧存档没有该字段时按空台账处理。
+
+仍未做：历史回退（history 选中）时的台账回滚——当前台账只随 head 保存，不会在只读历史里变化；如果将来允许从历史分叉，需要按分叉点重建台账，已记入开放项。
+
+**语义裁决的边界**：台账解决的是“证据是否齐全”，最终仍由行为克隆模型对累计证据打分；它不是严格多事实金标模型。下一步训练严格金标裁决器前，所有 micro-only 结论只声明“能跑、零 0.6B”，不声明“任务语义正确”。
