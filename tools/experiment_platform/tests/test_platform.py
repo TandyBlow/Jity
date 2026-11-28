@@ -271,6 +271,20 @@ def test_anonymize_is_deterministic(tmp_path):
                                                   if r['id'] == row['id'] and r['arm'] == arm)
 
 
+def test_narration_metrics_sensitivity():
+    from tools.experiment_platform.narration_metrics import evaluate
+
+    row = {'factsText': '路明非拿起了护目镜。诺诺没有成功打开门。',
+           'settlementText': '诺诺：打开门（没有成功）',
+           'resultLines': ['诺诺：打开门（没有成功）']}
+    good = '路明非拿起了护目镜。诺诺打开门，却没有成功。'
+    bad = '路明非打开了门，却没有成功。'
+    good_metrics, bad_metrics = evaluate(row, good), evaluate(row, bad)
+    assert good_metrics['coverRate'] > bad_metrics['coverRate']
+    assert good_metrics['outHit'] == 1
+    assert bad_metrics['outHit'] == 0
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

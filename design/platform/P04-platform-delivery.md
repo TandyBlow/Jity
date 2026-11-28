@@ -93,7 +93,7 @@
 未测项补进驱动；把 `verify_run.py --max-llm-semantic 0` 作为"语义无 LLM"阶段的准入
 门；盲评用 `anonymize.py` 出 A/B/C 表。
 
-**Artifacts.** `tools/experiment_platform/`（13 个模块 + 13 个测试 + `splits.json`）、
+**Artifacts.** `tools/experiment_platform/`（13 个模块 + 14 个测试 + `splits.json`）、
 `artifacts/goal/platform/eval/`（87 条叙事留出集、29 条语义探针、4 条新输入、失败运行
 与重试脚本）、`artifacts/goal/platform/{verify-12-q8kv.json,verify-turns20-pi.json,
 perf-report.json}`。P04。
