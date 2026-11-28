@@ -81,13 +81,13 @@
   "narration-org-dev": {
    "usage": "dev",
    "independent": false,
-   "uniqueKeys": 40,
+   "uniqueKeys": 32,
    "path": "artifacts/goal/platform/eval/narration-selection-org-v1.dev.jsonl"
   },
   "narration-org-test": {
    "usage": "test",
    "independent": true,
-   "uniqueKeys": 122,
+   "uniqueKeys": 130,
    "path": "artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl"
   }
  },

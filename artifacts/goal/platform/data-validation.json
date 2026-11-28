@@ -1,12 +1,17 @@
 {
  "schema": "jity-data-validation/1",
- "headCommit": "ab882ce36c058084b9280ebb91578f741fed5a0f",
+ "headCommit": "541d153290a45a839f562a47dc42285e2f85c3c5",
  "checks": {
   "malformed": {
    "level": "fail",
    "findings": [
     {
      "path": "artifacts/goal/platform/eval/rules8-scenario-report.json",
+     "error": "Extra data (line 28)",
+     "blocking": true
+    },
+    {
+     "path": "artifacts/goal/platform/eval/scenarios11-micro-report.json",
      "error": "Extra data (line 28)",
      "blocking": true
     },
@@ -31,7 +36,7 @@
      "blocking": false
     }
    ],
-   "count": 5,
+   "count": 6,
    "status": "fail"
   },
   "empty_dataset": {
@@ -66,6 +71,15 @@
   "duplicate_content": {
    "level": "warn",
    "findings": [
+    {
+     "sha256": "8bee03516eeb99bc9aefd198f2f358fbbf2a4f9172bf01596e9ffb5d2a6c7923",
+     "bytes": 6697873,
+     "count": 2,
+     "paths": [
+      "artifacts/goal/narration-rules/offline-rules-attempt1.json",
+      "artifacts/goal/narration-rules/offline-rules.json"
+     ]
+    },
     {
      "sha256": "9bce7ca41c5b800775562536cef22daa0361e1347fba813bfef5cccb0a847c59",
      "bytes": 1655849,
@@ -2043,7 +2057,7 @@
      ]
     }
    ],
-   "count": 218,
+   "count": 219,
    "status": "warn"
   },
   "large_tracked": {
@@ -3770,7 +3784,7 @@
  "summary": {
   "malformed": {
    "status": "fail",
-   "count": 5
+   "count": 6
   },
   "empty_dataset": {
    "status": "warn",
@@ -3782,7 +3796,7 @@
   },
   "duplicate_content": {
    "status": "warn",
-   "count": 218
+   "count": 219
   },
   "large_tracked": {
    "status": "warn",

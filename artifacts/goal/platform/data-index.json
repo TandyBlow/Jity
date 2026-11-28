@@ -1,7 +1,7 @@
 {
  "schema": "jity-data-index/1",
- "generatedAt": "2026-11-28T15:10:12.803630+00:00",
- "headCommit": "ab882ce36c058084b9280ebb91578f741fed5a0f",
+ "generatedAt": "2026-11-28T16:14:19.613898+00:00",
+ "headCommit": "541d153290a45a839f562a47dc42285e2f85c3c5",
  "roots": [
   "artifacts/goal",
   "experiments",
@@ -13,28 +13,28 @@
   "maxHashMB": 64
  },
  "summary": {
-  "fileCount": 5112,
-  "totalBytes": 6784349986,
-  "tracked": 3494,
-  "dirty": 10,
-  "hashed": 5086,
-  "parseErrors": 5,
+  "fileCount": 5160,
+  "totalBytes": 6861607390,
+  "tracked": 3530,
+  "dirty": 13,
+  "hashed": 5134,
+  "parseErrors": 6,
   "byExt": {
-   ".json": 1408,
+   ".json": 1436,
    "(none)": 1089,
-   ".py": 848,
-   ".jsonl": 631,
+   ".py": 856,
+   ".jsonl": 636,
    ".txt": 350,
-   ".md": 242,
-   ".log": 187,
+   ".md": 243,
+   ".log": 189,
    ".old": 79,
    ".ts": 33,
    ".js": 25,
    ".onnx": 21,
    ".mjs": 21,
-   ".err": 16,
+   ".err": 17,
+   ".out": 16,
    ".db": 16,
-   ".out": 15,
    ".sh": 15,
    ".ldb": 11,
    ".html": 10,
@@ -47,21 +47,21 @@
    ".body": 8
   },
   "byRole": {
-   "data": 2824,
-   "code": 946,
+   "data": 2844,
+   "code": 954,
    "run-record": 429,
-   "report": 242,
-   "log": 218,
-   "result": 187,
-   "manifest": 83,
-   "test": 55,
+   "report": 243,
+   "log": 222,
+   "result": 194,
+   "manifest": 84,
+   "test": 57,
    "train": 29,
    "input": 23,
    "weights": 22,
-   "labels": 17,
-   "dev": 17,
-   "cache": 10,
-   "fixture": 10
+   "dev": 19,
+   "labels": 18,
+   "fixture": 12,
+   "cache": 10
   },
   "byFamily": {
    "micro-workflow": {
@@ -69,12 +69,12 @@
     "bytes": 3428350220
    },
    "lab": {
-    "files": 1045,
-    "bytes": 1367090887
+    "files": 1046,
+    "bytes": 1367091034
    },
    "platform": {
-    "files": 393,
-    "bytes": 607460502
+    "files": 415,
+    "bytes": 614061988
    },
    "narration": {
     "files": 199,
@@ -84,6 +84,10 @@
     "files": 108,
     "bytes": 264416324
    },
+   "narration-rules": {
+    "files": 29,
+    "bytes": 157456185
+   },
    "acceptance": {
     "files": 26,
     "bytes": 157164397
@@ -91,10 +95,6 @@
    "product": {
     "files": 32,
     "bytes": 133290116
-   },
-   "narration-rules": {
-    "files": 19,
-    "bytes": 86882893
    },
    "timing-runs": {
     "files": 12,
@@ -145,8 +145,8 @@
     "bytes": 1639531
    },
    "narration-standalone": {
-    "files": 32,
-    "bytes": 1133003
+    "files": 47,
+    "bytes": 1215482
    },
    "page": {
     "files": 3,
@@ -18110,6 +18110,22 @@
      "exitCode"
     ]
    }
+  },
+  {
+   "path": "artifacts/goal/lab/server-3177-pi.log",
+   "family": "lab",
+   "role": "log",
+   "ext": ".log",
+   "bytes": 147,
+   "mtime": "2026-11-28T15:45:20.322217+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "b07b2794fe74cedc24bf8ba3a68643c2088da5cb8f9b68f91104ba0a023fbb90",
+   "format": {}
   },
   {
    "path": "artifacts/goal/lab/server-3177.log",
@@ -37805,6 +37821,22 @@
    "format": {}
   },
   {
+   "path": "artifacts/goal/narration-rules/PI-TASK.md",
+   "family": "narration-rules",
+   "role": "report",
+   "ext": ".md",
+   "bytes": 2714,
+   "mtime": "2026-11-28T15:44:18.879008+00:00",
+   "tracked": true,
+   "gitBlob": "082cbad84984d3f20a63c0f6b20b4eab9b1e4c73",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "a596d0462d653598deca8ca5f65e4bb13dcff168",
+   "sha256": "c09e912f6f74f7586294eec8ae5d4bf93d033954e75f48406917d329f9ccf136",
+   "format": {}
+  },
+  {
    "path": "artifacts/goal/narration-rules/briefs-t1.json",
    "family": "narration-rules",
    "role": "data",
@@ -38004,6 +38036,66 @@
    }
   },
   {
+   "path": "artifacts/goal/narration-rules/mobile-rules.json",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 6064014,
+   "mtime": "2026-11-28T16:07:08.387996+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "1e817ade3c79c448a5bab576ae72972ca0f0f9d97c07dd1112791cec90b4eeb4",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "runId",
+     "outFile",
+     "kind",
+     "intent",
+     "harness",
+     "status",
+     "startedAt",
+     "base",
+     "turnsFile",
+     "integration",
+     "productState",
+     "environment",
+     "modelRequests",
+     "readyMs",
+     "readyText",
+     "turns",
+     "failures",
+     "finishes",
+     "lease",
+     "freshReset",
+     "updatedAt",
+     "pageHttp",
+     "textareaVisible",
+     "productIdentity",
+     "jsHeapAtReady",
+     "arm",
+     "restored",
+     "models",
+     "priorProseLeaks",
+     "reload"
+    ],
+    "listLengths": {
+     "modelRequests": 6,
+     "turns": 3,
+     "submissions": 3,
+     "failures": 0,
+     "finishes": 0
+    },
+    "runId": "2026-11-28T1553-93d6",
+    "kind": "09-product-acceptance",
+    "intent": "smoke"
+   }
+  },
+  {
    "path": "artifacts/goal/narration-rules/n09-evidence-slim.json",
    "family": "narration-rules",
    "role": "run-record",
@@ -38044,6 +38136,218 @@
    }
   },
   {
+   "path": "artifacts/goal/narration-rules/offline-rules-2026-11-28T1607-2132.json",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 6461117,
+   "mtime": "2026-11-28T16:12:28.060769+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "9207379471f08e9d29f1918c69f208d244cfe98a1055797ba02e0f5c8896a13d",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "runId",
+     "outFile",
+     "kind",
+     "intent",
+     "harness",
+     "status",
+     "startedAt",
+     "base",
+     "turnsFile",
+     "integration",
+     "productState",
+     "environment",
+     "modelRequests",
+     "readyMs",
+     "readyText",
+     "turns",
+     "failures",
+     "finishes",
+     "lease",
+     "freshReset",
+     "updatedAt",
+     "pageHttp",
+     "textareaVisible",
+     "productIdentity",
+     "jsHeapAtReady",
+     "arm",
+     "restored",
+     "models",
+     "priorProseLeaks",
+     "reload"
+    ],
+    "listLengths": {
+     "turns": 3,
+     "submissions": 3,
+     "modelRequests": 2,
+     "failures": 1,
+     "finishes": 0
+    },
+    "runId": "2026-11-28T1607-2132",
+    "kind": "09-product-acceptance",
+    "intent": "smoke"
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-rules/offline-rules-attempt1.json",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 6697873,
+   "mtime": "2026-11-28T16:07:32.540269+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "8bee03516eeb99bc9aefd198f2f358fbbf2a4f9172bf01596e9ffb5d2a6c7923",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "runId",
+     "outFile",
+     "kind",
+     "intent",
+     "harness",
+     "status",
+     "startedAt",
+     "base",
+     "turnsFile",
+     "integration",
+     "productState",
+     "environment",
+     "modelRequests",
+     "readyMs",
+     "readyText",
+     "turns",
+     "failures",
+     "finishes",
+     "lease",
+     "freshReset",
+     "updatedAt",
+     "pageHttp",
+     "textareaVisible",
+     "productIdentity",
+     "jsHeapAtReady",
+     "arm",
+     "restored",
+     "models",
+     "priorProseLeaks",
+     "reload"
+    ],
+    "listLengths": {
+     "turns": 3,
+     "submissions": 3,
+     "modelRequests": 2,
+     "failures": 1,
+     "finishes": 0
+    },
+    "runId": "2026-11-28T1545-a98a",
+    "kind": "09-product-acceptance",
+    "intent": "smoke"
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-rules/offline-rules.json",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 6697873,
+   "mtime": "2026-11-28T15:51:08.798541+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "8bee03516eeb99bc9aefd198f2f358fbbf2a4f9172bf01596e9ffb5d2a6c7923",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "runId",
+     "outFile",
+     "kind",
+     "intent",
+     "harness",
+     "status",
+     "startedAt",
+     "base",
+     "turnsFile",
+     "integration",
+     "productState",
+     "environment",
+     "modelRequests",
+     "readyMs",
+     "readyText",
+     "turns",
+     "failures",
+     "finishes",
+     "lease",
+     "freshReset",
+     "updatedAt",
+     "pageHttp",
+     "textareaVisible",
+     "productIdentity",
+     "jsHeapAtReady",
+     "arm",
+     "restored",
+     "models",
+     "priorProseLeaks",
+     "reload"
+    ],
+    "listLengths": {
+     "turns": 3,
+     "submissions": 3,
+     "modelRequests": 2,
+     "failures": 1,
+     "finishes": 0
+    },
+    "runId": "2026-11-28T1545-a98a",
+    "kind": "09-product-acceptance",
+    "intent": "smoke"
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-rules/pi-run.cmd",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".cmd",
+   "bytes": 192,
+   "mtime": "2026-11-28T15:44:31.795650+00:00",
+   "tracked": true,
+   "gitBlob": "62b0ba0fd7dc7319d035eb3452efd2861878a893",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "a596d0462d653598deca8ca5f65e4bb13dcff168",
+   "sha256": "9be710d5432c9e3bac9c6ac434ea59971249231134e986f73effd37bd25153bd",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-rules/pi.out",
+   "family": "narration-rules",
+   "role": "log",
+   "ext": ".out",
+   "bytes": 312,
+   "mtime": "2026-11-28T15:45:04.460033+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "45c9bccbcfa4c4810bf0884afb51156577cc0f94d19a6d7db3928a642bdb6347",
+   "format": {}
+  },
+  {
    "path": "artifacts/goal/narration-rules/repro-out.txt",
    "family": "narration-rules",
    "role": "data",
@@ -38058,6 +38362,50 @@
    "lastCommit": null,
    "sha256": "dbf9dfc2d97b5f2098f0a118d5b7f4eb179fe505afc688531ba6b2442edb22bf",
    "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-rules/scenarios8-rules-b-slim.json",
+   "family": "narration-rules",
+   "role": "fixture",
+   "ext": ".json",
+   "bytes": 19125,
+   "mtime": "2026-11-28T15:10:03.736455+00:00",
+   "tracked": true,
+   "gitBlob": "a75b818665ddf3f5b070be25d1c89a86a7f60a43",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "3fa7ba9a5b76b3b0fd8ae97982e235d87790040b",
+   "sha256": "83afa7625c830ddb85dc40ddd0923a83bd41f8b7ea36aead76c2a8b4ef37ddb8",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "runId",
+     "status",
+     "intent",
+     "base",
+     "turnsFile",
+     "startedAt",
+     "finishedAt",
+     "readyMs",
+     "models",
+     "programNarrationAccepted",
+     "failures",
+     "turnFailures",
+     "refreshRestore",
+     "regeneration",
+     "network",
+     "harness",
+     "turns"
+    ],
+    "listLengths": {
+     "turns": 8,
+     "failures": 0,
+     "turnFailures": 0
+    },
+    "runId": "2026-11-28T1501-c3e2",
+    "intent": "10-turn"
+   }
   },
   {
    "path": "artifacts/goal/narration-rules/scenarios8-rules-b.json",
@@ -38611,19 +38959,19 @@
    }
   },
   {
-   "path": "artifacts/goal/narration-rules/turns20-rules.json",
+   "path": "artifacts/goal/narration-rules/turns20-rules-full.json",
    "family": "narration-rules",
    "role": "data",
    "ext": ".json",
-   "bytes": 1681455,
-   "mtime": "2026-11-28T15:09:18.859198+00:00",
+   "bytes": 1680939,
+   "mtime": "2026-11-28T16:13:55.152052+00:00",
    "tracked": false,
    "gitBlob": null,
    "dirty": false,
    "untracked": true,
    "ignored": false,
    "lastCommit": null,
-   "sha256": "bd96b40d142d59603b5bb0bebd1a344a28a3f4a4daa243c98f498fa1eea8aae4",
+   "sha256": "edc4b64b9fd0ed3eea802972c36382f6e1ea6216fcc8f90be1e09c300bf28c36",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -38662,9 +39010,120 @@
      "failures": 0,
      "finishes": 0
     },
-    "runId": "2026-11-28T1508-e142",
+    "runId": "2026-11-28T1613-1846",
     "kind": "09-product-acceptance",
     "intent": "20-turn"
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-rules/turns20-rules-slim.json",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 37620,
+   "mtime": "2026-11-28T15:23:42.190366+00:00",
+   "tracked": true,
+   "gitBlob": "b2db7a927a0e40209390de0545f83ee44f01de10",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "b4cf052d1f6cd6e9e91861d2ee201f5dd0184cf5",
+   "sha256": "24899eef57764c06e9e6df9e1e123a0292ca10d9723cda965ef36668f73bec5d",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "runId",
+     "status",
+     "intent",
+     "base",
+     "turnsFile",
+     "startedAt",
+     "finishedAt",
+     "readyMs",
+     "models",
+     "programNarrationAccepted",
+     "failures",
+     "turnFailures",
+     "refreshRestore",
+     "regeneration",
+     "network",
+     "harness",
+     "turns"
+    ],
+    "listLengths": {
+     "turns": 17,
+     "failures": 0
+    },
+    "runId": "2026-11-28T1508-e142",
+    "intent": "20-turn"
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-rules/turns20-rules.json",
+   "family": "narration-rules",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 44592968,
+   "mtime": "2026-11-28T15:22:18.122510+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "f5e2a276423e0358e51fca6b91f1b4f42a926d06fa7790f1c19203f76850d52a",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/annotation-pilot.json",
+   "family": "narration-standalone",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 12002,
+   "mtime": "2026-11-28T15:29:17.241972+00:00",
+   "tracked": true,
+   "gitBlob": "a889bfd3f5efcae78f8c206ea11b293a19c8aa4b",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "b768478800daf53e2688d9ba4d15a908e3d0ab00",
+   "sha256": "1116e22bc5cd0c4274a72551cd458a8d00f453889f25d5b9c977353b2c8b9f48",
+   "format": {
+    "topType": "list",
+    "entryCount": 5,
+    "itemKeys": [
+     "id",
+     "policy",
+     "fragments",
+     "selection",
+     "sentences",
+     "subjects",
+     "connectives"
+    ]
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/annotation-render.json",
+   "family": "narration-standalone",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 1372,
+   "mtime": "2026-11-28T15:29:44.713598+00:00",
+   "tracked": true,
+   "gitBlob": "82dadd0232a8fa9434c38c6bf7c289e9dd914080",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "b768478800daf53e2688d9ba4d15a908e3d0ab00",
+   "sha256": "e7c8898ca3197402197ac930d0a4e56e7c5c5a8f5119f16c0d03ed0ad0c5001d",
+   "format": {
+    "topType": "list",
+    "entryCount": 2,
+    "itemKeys": [
+     "id",
+     "problems",
+     "text"
+    ]
    }
   },
   {
@@ -38719,6 +39178,38 @@
    "ignored": false,
    "lastCommit": "26bab3aaf7271ac3b6fec1f2543048e256611ce2",
    "sha256": "2f82dedf9a99897c2a4c32f38696287532e81e4fe8d02ef02826ce162922fb88",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/check_natural.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 4784,
+   "mtime": "2026-11-28T16:06:26.861852+00:00",
+   "tracked": true,
+   "gitBlob": "85479492da36773e0e2710d9da3641e8a763e97a",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "d8c9798374eb7827c1e4a065d73e88244b46f076",
+   "sha256": "48612846eef8793ce4a9d0a42d6c6f79359733641cc500a5201bfa328866401b",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/check_natural_negative.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 1713,
+   "mtime": "2026-11-28T16:06:06.271521+00:00",
+   "tracked": true,
+   "gitBlob": "680a4330308b2ecd30698866830dd56e99d25dd5",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "d8c9798374eb7827c1e4a065d73e88244b46f076",
+   "sha256": "1af7bdfdb01ac7f5e516e1e715d24660350531e80b0ec9a5fc72130d910ce3cd",
    "format": {}
   },
   {
@@ -39044,6 +39535,97 @@
    "format": {}
   },
   {
+   "path": "artifacts/goal/narration-standalone/edit-taxonomy.json",
+   "family": "narration-standalone",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 945,
+   "mtime": "2026-11-28T15:59:12.944967+00:00",
+   "tracked": true,
+   "gitBlob": "8c96a48f8164b38998f277039a5e34fc6169ddb8",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c9f7c028de3670e40ee2654c11e81bd6ba7e36be",
+   "sha256": "3fe6a675ec1bfb622cfe5fe3b809fd2a592cc5df388fef9a561053ab8c54928f",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "clauses",
+     "singleSourceClauses",
+     "insertedChars",
+     "deletedChars",
+     "examples"
+    ],
+    "listLengths": {
+     "examples": 7
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/edit_taxonomy.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 2784,
+   "mtime": "2026-11-28T15:58:56.951753+00:00",
+   "tracked": true,
+   "gitBlob": "41ec12db34f58c8da0453d80b5f5540dcf95b4dd",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c9f7c028de3670e40ee2654c11e81bd6ba7e36be",
+   "sha256": "b6b4e73c4acb8bb9d4385e082fb4a32f51b8875a6a1026af0a14b69ede073bee",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/entity-projection-summary.json",
+   "family": "narration-standalone",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 886,
+   "mtime": "2026-11-28T16:14:00.347814+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "b6412b29f2993f794222f3e91ba17b54e9b0b431bcbfa11e4195db6ca9c7fbde",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "factFragments",
+     "exist",
+     "also",
+     "now",
+     "atomic",
+     "structuredRate",
+     "meanAttrs",
+     "samples"
+    ],
+    "listLengths": {
+     "samples": 3
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/entity_projection.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 2326,
+   "mtime": "2026-11-28T16:13:44.048571+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "d2bcef267f33e1db7c81fe97d1d1e07503dcf5c53e489474e63a20f7efc958e5",
+   "format": {}
+  },
+  {
    "path": "artifacts/goal/narration-standalone/evaluate-arms.json",
    "family": "narration-standalone",
    "role": "data",
@@ -39120,6 +39702,22 @@
    "ignored": false,
    "lastCommit": "26bab3aaf7271ac3b6fec1f2543048e256611ce2",
    "sha256": "2bc69aa03d5422fb3617b2c11b7cb59c0cfb3507bf75d703553de9056420a1d8",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/export_boundary_model.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 2408,
+   "mtime": "2026-11-28T15:32:44.889489+00:00",
+   "tracked": true,
+   "gitBlob": "525fc6f270d001802954299dae824062bba88810",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "4a23f56556bd7e4d459512b829ad0f635bf366b0",
+   "sha256": "a6723d47995b03b40356f2bcda8ef1cccc1871e4608d8fca908def4cd1401cca",
    "format": {}
   },
   {
@@ -39204,6 +39802,30 @@
    }
   },
   {
+   "path": "artifacts/goal/narration-standalone/natural-reference.json",
+   "family": "narration-standalone",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 11270,
+   "mtime": "2026-11-28T16:07:05.457507+00:00",
+   "tracked": true,
+   "gitBlob": "2849cf92bda537e26d0fb05e8e56852d630f9eff",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "d8c9798374eb7827c1e4a065d73e88244b46f076",
+   "sha256": "95af08fe16cece214068dd521f119f2220d8d89596f4ce15789b7d3aa02f9e32",
+   "format": {
+    "topType": "list",
+    "entryCount": 7,
+    "itemKeys": [
+     "id",
+     "note",
+     "clauses"
+    ]
+   }
+  },
+  {
    "path": "artifacts/goal/narration-standalone/pairs-eval.json",
    "family": "narration-standalone",
    "role": "data",
@@ -39256,6 +39878,51 @@
      "turnId"
     ],
     "recordsWithId": 51
+   }
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/render_annotation.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 1673,
+   "mtime": "2026-11-28T15:29:29.864643+00:00",
+   "tracked": true,
+   "gitBlob": "19f4396fce835b3e8e5edda4eacf242003f6a6eb",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "b768478800daf53e2688d9ba4d15a908e3d0ab00",
+   "sha256": "dd66862a1eebbf352a99b57f7c854eabf4f110533f5202a2e048e8d259773726",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/renderer-boundary-model.json",
+   "family": "narration-standalone",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 31274,
+   "mtime": "2026-11-28T15:32:46.746892+00:00",
+   "tracked": true,
+   "gitBlob": "69ea08619eab43dda782d639fe43e2b9fa6c2973",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "4a23f56556bd7e4d459512b829ad0f635bf366b0",
+   "sha256": "5d012d2a26e19e92289d070aa594d2d60bb9d7b7924611076faf7a2e9a25392c",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "version",
+     "hashDim",
+     "intercept",
+     "weights",
+     "features",
+     "trainedPairs"
+    ],
+    "listLengths": {
+     "weights": 4096
+    }
    }
   },
   {
@@ -39343,6 +40010,35 @@
    }
   },
   {
+   "path": "artifacts/goal/narration-standalone/renderer-prototype-summary.json",
+   "family": "narration-standalone",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 2590,
+   "mtime": "2026-11-28T15:28:10.363599+00:00",
+   "tracked": true,
+   "gitBlob": "86822d604ded557577f2dcd78211bd8825fcbe4d",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "1f04d3fdb97911ee32e1be670e2e3d70e3237ddf",
+   "sha256": "44b21a6797c524b2b9892c265f22293421c2af30dfd3975325bd8a11509538dc",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "points",
+     "fragments",
+     "missingFragments",
+     "sentencesPerPoint",
+     "charsPerPoint",
+     "samples"
+    ],
+    "listLengths": {
+     "samples": 2
+    }
+   }
+  },
+  {
    "path": "artifacts/goal/narration-standalone/renderer_dataset.py",
    "family": "narration-standalone",
    "role": "code",
@@ -39356,6 +40052,22 @@
    "ignored": false,
    "lastCommit": "7627b0fa2a8ab25d64131f8805aafad44009a0d2",
    "sha256": "92550a9cafdfcb65adf7b388d315a8534d20f86d2b6688021a3cb65afac548c6",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/renderer_prototype.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 3669,
+   "mtime": "2026-11-28T15:28:08.379069+00:00",
+   "tracked": true,
+   "gitBlob": "61bb7e27322fe0a466ad203248ba081ff3de52c2",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "1f04d3fdb97911ee32e1be670e2e3d70e3237ddf",
+   "sha256": "d8f8870e825e3aa75150f388e5aa64e5a7f290665b3d4668ccd7ab5e8a21db64",
    "format": {}
   },
   {
@@ -39402,6 +40114,22 @@
    "ignored": false,
    "lastCommit": "26bab3aaf7271ac3b6fec1f2543048e256611ce2",
    "sha256": "d8c345bd1e35a25c9f8bd04620955429b29bb451792a6d712e4f704e5bc61e04",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/narration-standalone/slim_evidence.py",
+   "family": "narration-standalone",
+   "role": "code",
+   "ext": ".py",
+   "bytes": 2783,
+   "mtime": "2026-11-28T15:09:47.062278+00:00",
+   "tracked": true,
+   "gitBlob": "c0643ea04a3bb44aa4c3b9314e5dd2bfbc24c2cd",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "3fa7ba9a5b76b3b0fd8ae97982e235d87790040b",
+   "sha256": "9744db2e24b349082ac8b69152777f9eabf29076ee5c938efbba51e7b6e92590",
    "format": {}
   },
   {
@@ -45280,15 +46008,15 @@
    "family": "platform",
    "role": "data",
    "ext": ".json",
-   "bytes": 3025780,
-   "mtime": "2026-11-28T14:14:19.768331+00:00",
+   "bytes": 3263234,
+   "mtime": "2026-11-28T16:13:12.749966+00:00",
    "tracked": true,
-   "gitBlob": "32e2faec12e58581e526b8d3bf4f1accb1c185db",
-   "dirty": false,
+   "gitBlob": "425106fade625f87713b9ccc44b5ee249c7b8a50",
+   "dirty": true,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "4160862b1a897d54be561757990c913ea8f09b02",
-   "sha256": "22193ed56dadeac531c70ae80350419dbb55b8e4948dbc1601b3eadc69a2b954",
+   "lastCommit": "4e428d93592be13ff492931275c17add5361e3f3",
+   "sha256": "e1592b15575e7737502dd8c97256241fe2da90344d1e845fa8c67edbdd9665bc",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -45301,7 +46029,7 @@
      "files"
     ],
     "listLengths": {
-     "files": 4707,
+     "files": 5157,
      "roots": 4
     }
    }
@@ -45311,15 +46039,15 @@
    "family": "platform",
    "role": "data",
    "ext": ".json",
-   "bytes": 126782,
-   "mtime": "2026-11-28T14:14:20.469746+00:00",
+   "bytes": 127580,
+   "mtime": "2026-11-28T16:13:13.442453+00:00",
    "tracked": true,
-   "gitBlob": "4c17fdc86c9522c7de636bf694ea87e63b00b1ce",
-   "dirty": false,
+   "gitBlob": "37b1129567b38d9b12d5f1748902743815b5e0e5",
+   "dirty": true,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "4160862b1a897d54be561757990c913ea8f09b02",
-   "sha256": "5e03fa3d82d2c4dee052299faa57869d6e26665aefee193d315e2367b3ae7702",
+   "lastCommit": "4e428d93592be13ff492931275c17add5361e3f3",
+   "sha256": "6e67e60cc347b4e0774d3ad61d7bebff0a499d3b3e4174e31f67b5a891f6bc33",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -45433,6 +46161,56 @@
    "lastCommit": "98bd8c0c2f6a0079c14caa264f187fa48f548720",
    "sha256": "ad03aea27057b0961e7319d686cd568e2e285ce908a8c74af67b2998d84ca648",
    "format": {}
+  },
+  {
+   "path": "artifacts/goal/platform/eval/mobile-defaults-refresh-summary.json",
+   "family": "platform",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 1253,
+   "mtime": "2026-11-28T15:21:49.364425+00:00",
+   "tracked": true,
+   "gitBlob": "347279151193d44af0410ca8a3fb62cb36053e1b",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "9444528c01e3d36a58973c870403d0bf899e0119",
+   "sha256": "bc8b9ef221f0efae4ab8a39e2f9639b181958fbdf9e03dd313ac540ea6d6bd14",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "items"
+    ],
+    "listLengths": {
+     "items": 2
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/mobile-proxy-summary.json",
+   "family": "platform",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 1277,
+   "mtime": "2026-11-28T15:21:49.553933+00:00",
+   "tracked": true,
+   "gitBlob": "6aa342e4c716c0c5a4c548132d5d5dc477a9ad8d",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "9444528c01e3d36a58973c870403d0bf899e0119",
+   "sha256": "0c5e243053ebc8c2f2c9ef17c1f18ec6de00d65bb6ab97d36d073f8a7dd9a62b",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "items"
+    ],
+    "listLengths": {
+     "items": 2
+    }
+   }
   },
   {
    "path": "artifacts/goal/platform/eval/narration-holdout-v1-eval.json",
@@ -45654,6 +46432,221 @@
    }
   },
   {
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.dev.jsonl",
+   "family": "platform",
+   "role": "dev",
+   "ext": ".jsonl",
+   "bytes": 207289,
+   "mtime": "2026-11-28T16:12:03.651057+00:00",
+   "tracked": true,
+   "gitBlob": "b49c7648344e39d5253e39c04fef24397743805a",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c65895d7152d5e603b44577b9f7cec6b3449d217",
+   "sha256": "6d72a4d330bfcba8c419fa1ae322b8bb313a372f95ead00a4a4f2509e9ecbcf2",
+   "format": {
+    "lineCount": 32,
+    "keys": [
+     "constraints",
+     "expected",
+     "forbidden",
+     "id",
+     "input",
+     "modality",
+     "provenance",
+     "selectionApplicable",
+     "split",
+     "world"
+    ],
+    "recordsWithId": 32
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.dev.jsonl.manifest.json",
+   "family": "platform",
+   "role": "dev",
+   "ext": ".json",
+   "bytes": 241,
+   "mtime": "2026-11-28T16:12:03.652285+00:00",
+   "tracked": true,
+   "gitBlob": "f8a8c8bc009eb86bd7f621ac4196fc9bca71e6f8",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c65895d7152d5e603b44577b9f7cec6b3449d217",
+   "sha256": "882a5e8b101229a582fb132f6a3cdd121661959805d25f40cac99c33332f71d9",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "path",
+     "rows",
+     "sha256",
+     "hashMode"
+    ]
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.recorded-eval.json",
+   "family": "platform",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 6401,
+   "mtime": "2026-11-28T16:03:45.751819+00:00",
+   "tracked": true,
+   "gitBlob": "033dce7743e201691141593adf8ca5d8573c0f7e",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c65895d7152d5e603b44577b9f7cec6b3449d217",
+   "sha256": "b20965e9bd258143cb326876379c2574f0fa17a730575c7d23bf69cd547696c5",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "cases",
+     "selectionCases",
+     "selectionRate",
+     "optionalRate",
+     "avoidRepeatRate",
+     "attributionMismatches",
+     "negationLost",
+     "outcomeRate",
+     "inventedNames",
+     "inventedNums",
+     "sameHeadPairs",
+     "repetition8Mean",
+     "orderViolations",
+     "charsPerCase",
+     "sentencesPerCase",
+     "negativeDetection",
+     "negativeMisses",
+     "worstCases",
+     "missing"
+    ],
+    "listLengths": {
+     "worstCases": 10,
+     "negativeMisses": 0,
+     "missing": 0
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.summary.json",
+   "family": "platform",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 1063,
+   "mtime": "2026-11-28T16:12:03.682422+00:00",
+   "tracked": true,
+   "gitBlob": "a16f22cd793fee080e1723b0310a1baf3428bfeb",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c65895d7152d5e603b44577b9f7cec6b3449d217",
+   "sha256": "5357713ff71c2c2b1bc1535dfed0724bd7879aab06c4d62502e007a43b151b65",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "source",
+     "cases",
+     "dev",
+     "test",
+     "devRuns",
+     "eventsApplicable",
+     "avgMustSelect",
+     "avgOptional",
+     "avgAvoidRepeat",
+     "casesWithAvoidRepeat",
+     "negatives",
+     "testOverlapVsDev",
+     "manifests"
+    ]
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl",
+   "family": "platform",
+   "role": "test",
+   "ext": ".jsonl",
+   "bytes": 805997,
+   "mtime": "2026-11-28T16:12:03.659195+00:00",
+   "tracked": true,
+   "gitBlob": "b3109a89316d460eaeb497b2cb16f55a69d7aa27",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c65895d7152d5e603b44577b9f7cec6b3449d217",
+   "sha256": "afa2a2968441689eea44ef327377e92353342daea7447593f4e11748d8f28804",
+   "format": {
+    "lineCount": 130,
+    "keys": [
+     "constraints",
+     "expected",
+     "forbidden",
+     "id",
+     "input",
+     "modality",
+     "provenance",
+     "selectionApplicable",
+     "split",
+     "world"
+    ],
+    "recordsWithId": 130
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl.manifest.json",
+   "family": "platform",
+   "role": "test",
+   "ext": ".json",
+   "bytes": 243,
+   "mtime": "2026-11-28T16:12:03.662374+00:00",
+   "tracked": true,
+   "gitBlob": "59dc9d41c8ff723249c1e2e21c0e68383fb3fa02",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "c65895d7152d5e603b44577b9f7cec6b3449d217",
+   "sha256": "8243dfa1bf4d6a17385838e8c67f334e2f6a245f20331ca927ae8b5b459c97fd",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "path",
+     "rows",
+     "sha256",
+     "hashMode"
+    ]
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/phone-failures-summary.json",
+   "family": "platform",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 4063,
+   "mtime": "2026-11-28T15:21:49.587388+00:00",
+   "tracked": true,
+   "gitBlob": "c0ec84146a6cf443dacba48cf14537c873a0db47",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "9444528c01e3d36a58973c870403d0bf899e0119",
+   "sha256": "dfefb729b6af92eb88e29e00bf17f8e0144ea19895bce7f218c7affd594b4aee",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "items"
+    ],
+    "listLengths": {
+     "items": 7
+    }
+   }
+  },
+  {
    "path": "artifacts/goal/platform/eval/retry-holdout.ps1",
    "family": "platform",
    "role": "code",
@@ -45768,6 +46761,40 @@
      "coldStarts": 0
     },
     "kind": "jity-goal-timing-baseline"
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/scenarios11-micro-report.err",
+   "family": "platform",
+   "role": "log",
+   "ext": ".err",
+   "bytes": 0,
+   "mtime": "2026-11-28T15:19:15.127151+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/platform/eval/scenarios11-micro-report.json",
+   "family": "platform",
+   "role": "fixture",
+   "ext": ".json",
+   "bytes": 1417,
+   "mtime": "2026-11-28T15:19:15.786574+00:00",
+   "tracked": true,
+   "gitBlob": "a61df52aa6935a40b9eb35762625b06528f163a8",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "9444528c01e3d36a58973c870403d0bf899e0119",
+   "sha256": "f8163367b56460243299d67faf607d616de9f42876b3fce38ad35d6befbf1f73",
+   "format": {
+    "parseError": "Extra data (line 28)"
    }
   },
   {
@@ -46099,6 +47126,109 @@
    }
   },
   {
+   "path": "artifacts/goal/platform/eval/turns20-gates-v2.json",
+   "family": "platform",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 6434,
+   "mtime": "2026-11-28T16:08:12.475852+00:00",
+   "tracked": true,
+   "gitBlob": "4041b46fa31d7110d76b5a6ad35ba61246ad6cb7",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "d5a23e2cc1ec2167e059c7e355e4eeefb9c8c2ea",
+   "sha256": "ff495964790a17c2229387c1edf9de27d950c7f0cc39560898fe65b222fdd20b",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "points",
+     "expectedTurns",
+     "observedTurns",
+     "turnCountPass",
+     "missingTurnNumbers",
+     "incompleteTurns",
+     "firstReadable",
+     "pointText",
+     "controlReturned",
+     "firstEqualsNarrationStart",
+     "overallPass",
+     "status",
+     "rows"
+    ],
+    "listLengths": {
+     "rows": 20,
+     "missingTurnNumbers": 0,
+     "incompleteTurns": 0
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/turns20-gates.json",
+   "family": "platform",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 5479,
+   "mtime": "2026-11-28T15:34:24.629419+00:00",
+   "tracked": true,
+   "gitBlob": "db01436cd97f1f618fc929c298fb9cb1327874ac",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "e4690c04e291a10d8910ea235e3b4775df8acaf5",
+   "sha256": "c703e9fe26f6dc1d591c9672526956d9e862b7649c47077bac6baaaa8b0882b4",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "points",
+     "firstReadable",
+     "pointText",
+     "controlReturned",
+     "firstEqualsNarrationStart",
+     "overallPass",
+     "rows"
+    ],
+    "listLengths": {
+     "rows": 20
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/eval/turns20-pi-timing.json",
+   "family": "platform",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 362259,
+   "mtime": "2026-11-28T15:18:52.746321+00:00",
+   "tracked": true,
+   "gitBlob": "e04ec65537070e7613b4e7caa06a6bbf2e50ffba",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "9444528c01e3d36a58973c870403d0bf899e0119",
+   "sha256": "ee758cdeed7428b51c4a6d89de195e2b2a32779dd1598b9a3f0661f4b7c570ef",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "kind",
+     "generatedAt",
+     "thresholds",
+     "sources",
+     "coldStarts",
+     "points",
+     "gates"
+    ],
+    "listLengths": {
+     "points": 20,
+     "sources": 1,
+     "coldStarts": 0
+    },
+    "kind": "jity-goal-timing-baseline"
+   }
+  },
+  {
    "path": "artifacts/goal/platform/lab-ab-run.ps1",
    "family": "platform",
    "role": "code",
@@ -46145,15 +47275,15 @@
    "family": "platform",
    "role": "data",
    "ext": ".json",
-   "bytes": 1535,
-   "mtime": "2026-11-28T15:07:14.316139+00:00",
+   "bytes": 1967,
+   "mtime": "2026-11-28T15:17:10.253979+00:00",
    "tracked": true,
-   "gitBlob": "ef23440481a7350e9598cbe222f5c9af878cf242",
+   "gitBlob": "ace83eaa646b54dc89d9e67d72d1055ab8193369",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "54be3f6a1f4ac9ac4a984662ed45fa32dd655cf5",
-   "sha256": "bd0a604042bcbde7712b77744659620ad09d5b82998485d0d2e4413677aa852c",
+   "lastCommit": "45c36c5d2f042b2ad7769cad446089043ab41ad1",
+   "sha256": "60f5bdee157fde555588fc754c0a6f4cd4d064dcdafcddea8cf51063c9bdc3c4",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -46162,7 +47292,7 @@
      "candidateAudit"
     ],
     "listLengths": {
-     "attempts": 3
+     "attempts": 4
     }
    }
   },
@@ -46225,6 +47355,38 @@
    "ignored": false,
    "lastCommit": "608e22b2035175d7958545b595939176535b1115",
    "sha256": "56df40746107cfb72c9a80c9be0c714d19d1362147048397fd04c5017b416f0f",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/platform/lab/pi-acceptance.log",
+   "family": "platform",
+   "role": "log",
+   "ext": ".log",
+   "bytes": 1937,
+   "mtime": "2026-11-28T15:54:00.742223+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "edc960e396660c2c58f1fd4693bc9a17e875989cd68934a890f627ae4086433d",
+   "format": {}
+  },
+  {
+   "path": "artifacts/goal/platform/lab/pi-task-acceptance.cmd",
+   "family": "platform",
+   "role": "data",
+   "ext": ".cmd",
+   "bytes": 642,
+   "mtime": "2026-11-28T15:53:31.302642+00:00",
+   "tracked": false,
+   "gitBlob": null,
+   "dirty": false,
+   "untracked": true,
+   "ignored": false,
+   "lastCommit": null,
+   "sha256": "37c5c1e7be399a486133c7cac0fec56d12da27f2d736336e03080096dc60dc17",
    "format": {}
   },
   {
@@ -51746,15 +52908,15 @@
    "family": "platform",
    "role": "data",
    "ext": ".json",
-   "bytes": 3350,
-   "mtime": "2026-11-28T14:36:58.338662+00:00",
+   "bytes": 3886,
+   "mtime": "2026-11-28T16:13:13.655733+00:00",
    "tracked": true,
-   "gitBlob": "6678277cd8c1dbf478f27c989fd31bb14ce2c7ea",
-   "dirty": false,
+   "gitBlob": "710fedbf14bf43f258d96e7ba1953542e3b55bb8",
+   "dirty": true,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "744c52ea2b4afadd582346e3e161ee6fbafbec69",
-   "sha256": "bcbf2bc382d985c9165d578928598b452b9a724a64f9a21bf9e5f5384c131bf5",
+   "lastCommit": "968ff97cd60e30b004600df761a469e79930328b",
+   "sha256": "a1124206b5f4f0aba2e2d2b50304f9a02a4ef26647973d0d607aeef0b5b70a83",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -51801,19 +52963,105 @@
    }
   },
   {
+   "path": "artifacts/goal/platform/task-gold/blind-agreement-v1.json",
+   "family": "platform",
+   "role": "data",
+   "ext": ".json",
+   "bytes": 696,
+   "mtime": "2026-11-28T15:41:37.915771+00:00",
+   "tracked": true,
+   "gitBlob": "e3a63421de42cee3e5c469a6f133936b3c137024",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "8654f7136f4d9229a00399f6c190291e224fdacf",
+   "sha256": "2a2dda441a8a430344bed968e8ec5843a5f76eee187f59555983be7b4572a9f6",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "cases",
+     "lenses",
+     "perLensAgreement",
+     "majorityAgreement",
+     "majorityDistribution",
+     "benchDistribution",
+     "disagreements"
+    ],
+    "listLengths": {
+     "disagreements": 11,
+     "lenses": 3
+    }
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/task-gold/blind-cases-v1.jsonl",
+   "family": "platform",
+   "role": "data",
+   "ext": ".jsonl",
+   "bytes": 20887,
+   "mtime": "2026-11-28T15:33:39.415504+00:00",
+   "tracked": true,
+   "gitBlob": "c4cd094c0f4e62fc0aedc97aed3b93d8bd7e63dd",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "8654f7136f4d9229a00399f6c190291e224fdacf",
+   "sha256": "4ace57a88539d878e42e0d91829dc3fab5b1b1c261279f98976e2b7f3e747a54",
+   "format": {
+    "lineCount": 78,
+    "keys": [
+     "fact",
+     "goal",
+     "id",
+     "taskId"
+    ],
+    "recordsWithId": 78
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/task-gold/independent-labels-v1.jsonl",
+   "family": "platform",
+   "role": "labels",
+   "ext": ".jsonl",
+   "bytes": 65210,
+   "mtime": "2026-11-28T15:41:37.921762+00:00",
+   "tracked": true,
+   "gitBlob": "1caf44d4b70896e3d59076a7b20a00400c1b493c",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "8654f7136f4d9229a00399f6c190291e224fdacf",
+   "sha256": "579dddd070cb84775eb5aae5756d0ccb59ae5ce52c6945a5afa7b4d57cc937e9",
+   "format": {
+    "lineCount": 78,
+    "keys": [
+     "agrees",
+     "benchVerdict",
+     "fact",
+     "goal",
+     "id",
+     "labels",
+     "majority",
+     "taskId"
+    ],
+    "recordsWithId": 78
+   }
+  },
+  {
    "path": "artifacts/goal/platform/task-gold/old-commit-eval.json",
    "family": "platform",
    "role": "data",
    "ext": ".json",
-   "bytes": 4059,
-   "mtime": "2026-11-28T14:56:22.753001+00:00",
+   "bytes": 4109,
+   "mtime": "2026-11-28T15:55:54.545496+00:00",
    "tracked": true,
-   "gitBlob": "faa532874765ae35a1ac11e5da8c0d30b5a90c8d",
+   "gitBlob": "e5801cf5d7083884ea1a6c1cc634c9f3c01e2f6c",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "9fb5196bfc62bd1536249e31104c313f92de22b3",
-   "sha256": "f8e55fb2a6473ff93e1dd90acf68fc128627eff74439b4aad2016b922798d02f",
+   "lastCommit": "c0f1117ac6e2570844666550130c1f52b1cc49ad",
+   "sha256": "a6b3da3ef11a164c16965451d594e1ad883af59f9d83df7cd1b90baf38b1bf78",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -51890,20 +53138,26 @@
    "family": "platform",
    "role": "data",
    "ext": ".jsonl",
-   "bytes": 55689,
-   "mtime": "2026-11-28T14:40:01.608022+00:00",
+   "bytes": 103082,
+   "mtime": "2026-11-28T15:55:54.388480+00:00",
    "tracked": true,
-   "gitBlob": "085705b32e17aa36d20890e9c568697ea05fbac3",
+   "gitBlob": "92ac83e5f6ca95d121320b821a376f7058c08fff",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "744c52ea2b4afadd582346e3e161ee6fbafbec69",
-   "sha256": "f590751453e0b5a9faf18b4bf43339b26fd7d79d5566a42a48fe5db9b9a370d3",
+   "lastCommit": "c0f1117ac6e2570844666550130c1f52b1cc49ad",
+   "sha256": "9ddeff242bbe1347a42c756580c67d96e16e786d48a8a9277744285800ed4034",
    "format": {
     "lineCount": 78,
     "keys": [
+     "agreesWithBench",
      "benchVerdict",
+     "blindLabels",
+     "blindReasons",
      "committed",
+     "completionReason",
+     "completionVerdict",
+     "evidenceStatus",
      "fact",
      "goal",
      "hasNegation",
@@ -51915,6 +53169,8 @@
      "requiredIds",
      "sheet",
      "source",
+     "supportDisagreement",
+     "supportVerdict",
      "taskId",
      "verdict",
      "world"
@@ -51928,14 +53184,14 @@
    "role": "manifest",
    "ext": ".json",
    "bytes": 234,
-   "mtime": "2026-11-28T14:40:01.610830+00:00",
+   "mtime": "2026-11-28T15:55:54.390003+00:00",
    "tracked": true,
-   "gitBlob": "3b0abfebb9b8a62849f6697f82aaf5282a88c9cd",
+   "gitBlob": "43d937c82655c824346f3cce00e70bc22d349471",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "744c52ea2b4afadd582346e3e161ee6fbafbec69",
-   "sha256": "68ad17039d8b3655a898d81725712988f29c4246a59cb9a6262da6480566cfa6",
+   "lastCommit": "c0f1117ac6e2570844666550130c1f52b1cc49ad",
+   "sha256": "adbd5ceb8823e0052fd101b56ed9251851e947c045c4c9eeec2030d09bb7f848",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -51952,44 +53208,43 @@
    "family": "platform",
    "role": "result",
    "ext": ".json",
-   "bytes": 1725,
-   "mtime": "2026-11-28T14:40:01.610830+00:00",
+   "bytes": 4451,
+   "mtime": "2026-11-28T15:55:54.390704+00:00",
    "tracked": true,
-   "gitBlob": "408add287b586bf87a175a7f5d190c81f750e123",
+   "gitBlob": "51acdb13d7dafb03e36d1abcb7c57088205383e4",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "3fbc08d524a475ce18e2621f35041b4660303453",
-   "sha256": "9ba9d73d35f2dacbd3148b545906011cfabc87c6bb6cda0f79a6b0a44fa9c4de",
+   "lastCommit": "c0f1117ac6e2570844666550130c1f52b1cc49ad",
+   "sha256": "5aac4c02ae2b22824f5b8aa698e18032d579228ff4c6bf59a14b95bf58e70f52",
    "format": {
     "topType": "dict",
     "topKeys": [
      "schema",
      "generatedAt",
      "benchRows",
-     "verdictCounts",
+     "verdictCountsBench",
      "judgedRows",
      "uniqueTaskGoalFact",
      "withinTaskDuplicates",
      "emptyGoalRows",
-     "tasksInBench",
-     "tasksInSpec",
-     "missingGoalTasks",
+     "reviewMethod",
+     "blindAgreement",
+     "verdictCountsBlind",
+     "completionCounts",
+     "benchCountsUnique",
+     "insufficientCount",
      "crossTab",
      "committedAchieved",
      "committedAchievedNotYes",
      "committedAchievedNotYesRate",
-     "labelAgreement",
      "selectionBias",
      "singleFactLimitation",
      "reportN",
      "reportNReproducibleFromCommittedBench",
      "reportNNote",
      "standard"
-    ],
-    "listLengths": {
-     "missingGoalTasks": 2
-    }
+    ]
    }
   },
   {
@@ -52021,6 +53276,120 @@
      "tasks": 17,
      "missingGoalTasks": 2
     }
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/task-gold/task-multifact-v1.jsonl",
+   "family": "platform",
+   "role": "data",
+   "ext": ".jsonl",
+   "bytes": 4816172,
+   "mtime": "2026-11-28T16:13:37.622174+00:00",
+   "tracked": true,
+   "gitBlob": "4bd0811c03e3f5ec6cb382848e6df7855e7b5329",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "e415433126f5349ad1a8aee70caccd0bf988d8cf",
+   "sha256": "ca29f02cd641972cb6214f39f95880fef5eb9a25ab6579369a1d41c701eb52a1",
+   "format": {
+    "lineCount": 584,
+    "keys": [
+     "axis",
+     "completion",
+     "eventCount",
+     "events",
+     "goal",
+     "id",
+     "ledgerDelta",
+     "modality",
+     "needsReview",
+     "oldStatus",
+     "oldStatusBefore",
+     "ownerId",
+     "ownerName",
+     "provenance",
+     "repeatTurns",
+     "spec",
+     "split",
+     "stateChanges",
+     "support",
+     "supportLinks",
+     "taskId",
+     "taskLedger",
+     "taskStatusHistory",
+     "time",
+     "turnId",
+     "turnIndex",
+     "world"
+    ],
+    "recordsWithId": 584
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/task-gold/task-multifact-v1.jsonl.manifest.json",
+   "family": "platform",
+   "role": "manifest",
+   "ext": ".json",
+   "bytes": 234,
+   "mtime": "2026-11-28T16:13:37.654657+00:00",
+   "tracked": true,
+   "gitBlob": "2e3b3f4555be7847f1c6b16a98b243a4605b7056",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "e415433126f5349ad1a8aee70caccd0bf988d8cf",
+   "sha256": "27eb626811245da83cde1065b1417aa3e28fb64ad548244f86ce072a0dc33b8f",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "path",
+     "rows",
+     "sha256",
+     "hashMode"
+    ]
+   }
+  },
+  {
+   "path": "artifacts/goal/platform/task-gold/task-multifact-v1.summary.json",
+   "family": "platform",
+   "role": "result",
+   "ext": ".json",
+   "bytes": 2102,
+   "mtime": "2026-11-28T16:13:37.655928+00:00",
+   "tracked": true,
+   "gitBlob": "0c2de1659115594ac01aacc75ff4fe4ac02d22eb",
+   "dirty": false,
+   "untracked": false,
+   "ignored": false,
+   "lastCommit": "541d153290a45a839f562a47dc42285e2f85c3c5",
+   "sha256": "6fcd4e34fff538fce3945628422df51861cc2707c5607aa0e6f26e604caecd46",
+   "format": {
+    "topType": "dict",
+    "topKeys": [
+     "schema",
+     "turns",
+     "cases",
+     "tasks",
+     "owners",
+     "avgEvents",
+     "maxEvents",
+     "turnsSpannedMean",
+     "casesWithSupportLinks",
+     "specCovered",
+     "oldAchieved",
+     "repeatDeduped",
+     "usage",
+     "runId",
+     "arm",
+     "labelSource",
+     "turnTable"
+    ],
+    "listLengths": {
+     "turnTable": 8
+    },
+    "runId": "2026-11-28T1449-bc37"
    }
   },
   {
@@ -52087,15 +53456,15 @@
    "family": "platform",
    "role": "run-record",
    "ext": ".json",
-   "bytes": 12838,
-   "mtime": "2026-11-28T14:14:21.741735+00:00",
+   "bytes": 13639,
+   "mtime": "2026-11-28T15:10:14.963685+00:00",
    "tracked": true,
-   "gitBlob": "3b22eb1a35405f206496c458ad035458eae79116",
+   "gitBlob": "76808e2a8ceb58e5398ddcd81f9a8205a0b72883",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "4160862b1a897d54be561757990c913ea8f09b02",
-   "sha256": "8568093173cb806947a20701ea0948a5c8a237e56d8b32deea1ca5ff97d51aae",
+   "lastCommit": "4e428d93592be13ff492931275c17add5361e3f3",
+   "sha256": "0a5bee3d2501fea9d45a97c589040f3466e5a8e719ad8f03890af1ca32004593",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -52104,7 +53473,7 @@
      "failed"
     ],
     "listLengths": {
-     "reports": 26
+     "reports": 28
     }
    }
   },
