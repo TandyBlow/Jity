@@ -38,6 +38,10 @@
    `candidate ?? 'builtin'`（`page.tsx:1137`）。因此不违反"运行期原样显示非空模型正文"的
    默认路径，但**任何正式验收证据必须写明是否带了该 flag**；rules 臂按 D-004 只能作对照臂，
    不能算模型能力。`rules-narration.test.ts` 已存在。
+   后续 `f03c6d53` 给驱动加了 `--allow-program`：默认关闭，只在显式程序臂时把
+   `source_program`/`program_text_not_model` 从阻断项里排除，并把
+   `programNarrationAccepted` 写进证据。产品验收仍应加
+   `verify_run.py --forbid-program`，防止程序臂被当成模型正文。
 
 **Verdicts.** E58：数字成立，评价集降级为 dev。E60：数字成立，意图开场与输入污染是
 两个未闭合风险。E61：数字成立，产物字段有重复计数陷阱。rules 接线：可接受，仅限显式

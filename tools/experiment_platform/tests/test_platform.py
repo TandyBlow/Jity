@@ -220,6 +220,11 @@ def test_semantic_score_and_verify_run(tmp_path):
     assert ok['pass'] is True and ok['llmSemanticPrompts'] == 0
     bad = check({**doc, 'models': {'failed': ['x']}}, None, ['narration'], 0, False)
     assert bad['pass'] is False
+    program = {**doc, 'programNarrationAccepted': True,
+               'turns': [{'product': {'narrationModel': 'rules', 'source': 'program',
+                                      'microEnabled': True, 'semanticPrompts': [],
+                                      'engines': [{'label': 'narration', 'loadCount': 0, 'generations': 0}]}}]}
+    assert check(program, None, None, None, False, True)['pass'] is False
 
 
 def test_resource_monitor_samples_child(tmp_path):

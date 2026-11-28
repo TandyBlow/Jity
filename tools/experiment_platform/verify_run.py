@@ -22,7 +22,7 @@ from pathlib import Path
 
 def check(doc: dict, allowed_models: dict[str, list[str]] | None = None,
           require_engines: list[str] | None = None, max_llm_semantic: int | None = None,
-          require_micro: bool = False) -> dict:
+          require_micro: bool = False, forbid_program: bool = False) -> dict:
     failures = []
     models = doc.get('models') or {}
     if models.get('failed'):
@@ -40,9 +40,12 @@ def check(doc: dict, allowed_models: dict[str, list[str]] | None = None,
         if label not in engines or engines[label]['generations'] <= 0:
             failures.append(f'engine {label} missing or never generated')
     llm_semantic = 0
+    program_turns = 0
     for index, turn in enumerate(doc.get('turns') or []):
         product = turn.get('product') or {}
         llm_semantic += len(product.get('semanticPrompts') or [])
+        if product.get('source') == 'program' or product.get('narrationModel') == 'rules':
+            program_turns += 1
         if allowed_models:
             for role in ('narration',):
                 allowed = allowed_models.get(role)
@@ -53,12 +56,16 @@ def check(doc: dict, allowed_models: dict[str, list[str]] | None = None,
             failures.append(f'turn {index} micro disabled')
     if max_llm_semantic is not None and llm_semantic > max_llm_semantic:
         failures.append(f'LLM semantic prompts {llm_semantic} > cap {max_llm_semantic}')
+    if forbid_program and (doc.get('programNarrationAccepted') or program_turns):
+        failures.append(f'program narration accepted or present in {program_turns} turns')
     return {
         'runId': doc.get('runId'), 'status': doc.get('status'), 'turns': len(doc.get('turns') or []),
         'models': {'requests': models.get('requests'), 'ok': models.get('ok'), 'failed': models.get('failed')},
         'engines': {k: {'loads': v['loads'], 'generations': v['generations'],
                         'contextSize': sorted(v['contextSize'])} for k, v in engines.items()},
         'llmSemanticPrompts': llm_semantic,
+        'programNarrationAccepted': bool(doc.get('programNarrationAccepted')),
+        'programTurns': program_turns,
         'failures': failures, 'pass': not failures,
     }
 
@@ -71,6 +78,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--require-engine', default='')
     parser.add_argument('--max-llm-semantic', type=int, default=None)
     parser.add_argument('--require-micro', action='store_true')
+    parser.add_argument('--forbid-program', action='store_true',
+                        help='fail if the run accepted program narration (rules arm)')
     parser.add_argument('--out', default=None)
     args = parser.parse_args(argv)
     allowed: dict[str, list[str]] = {}
@@ -90,7 +99,8 @@ def main(argv: list[str] | None = None) -> int:
             reports.append({'file': str(path).replace('\\', '/'), 'pass': False,
                             'failures': [f'unreadable: {exc}']})
             continue
-        report = check(doc, allowed, engines, args.max_llm_semantic, args.require_micro)
+        report = check(doc, allowed, engines, args.max_llm_semantic, args.require_micro,
+                       args.forbid_program)
         report['file'] = str(path).replace('\\', '/')
         reports.append(report)
     payload = {'schema': 'jity-run-verify/1', 'reports': reports,
