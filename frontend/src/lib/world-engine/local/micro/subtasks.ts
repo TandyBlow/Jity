@@ -59,15 +59,6 @@ function related(state: WorldState, candidate: string, parentGoal: string): bool
   return false;
 }
 
-/** A pending parent that already names a check ("查明X是否…") can host the
- * matching confirmation subgoal when this point's fact names X. */
-function parentCandidates(parentGoal: string, factText: string): string[] {
-  const probe = /(?:查明|确认|核实)([^，。；]{2,12}?)((?:是否|能否)[^，。；]*)/u.exec(parentGoal);
-  if (!probe) return [];
-  const entity = probe[1].replace(/^.+?的/u, '');
-  return entity && factText.includes(entity) ? [`确认${probe[1]}${probe[2]}`] : [];
-}
-
 export const createProgramSubtasks: MicroSubtasksFn = (request) => {
   const owners = new Set(request.ownerIds);
   const pending = Object.entries(request.state.characters).flatMap(([ownerId, current]) => {
@@ -83,8 +74,7 @@ export const createProgramSubtasks: MicroSubtasksFn = (request) => {
   for (const fact of request.facts) {
     for (const row of pending) {
       if (fact.memberId !== row.ownerId && !fact.text.includes(row.name)) continue;
-      const candidates = [...candidatesFor(request.state, fact.memberId, fact.text),
-        ...parentCandidates(row.task.goal, fact.text)];
+      const candidates = candidatesFor(request.state, fact.memberId, fact.text);
       for (const candidate of candidates) {
         if (!related(request.state, candidate, row.task.goal)) continue;
         const key = normalize(candidate);

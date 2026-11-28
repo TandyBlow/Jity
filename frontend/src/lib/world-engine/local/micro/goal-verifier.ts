@@ -1,18 +1,23 @@
 /** Goal-level task verifier: MiniRBT + 2-class head trained on real turns
- * (E57). Scores whether a settled fact completes the task goal. */
+ * (E57). Scores whether a settled fact supports the task goal.
+ *
+ * Strict mode (S01/S06) accumulates condition evidence across facts and turns:
+ * each decomposed condition may be satisfied by a different fact. A task is
+ * achieved only when every condition has a completed fact whose model score is
+ * above threshold. */
 import type { Id, WorldState } from '../../types';
 import { sharesGoalWording } from '../semantics/settlement/updates';
-import { conditionCoverage, decomposeTask } from './task-progress';
+import { conditionHits, decomposeTask, taskConditionLabels, type TaskConditions } from './task-progress';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
 export interface GoalVerifierOptions {
   vocabUrl?: string;
   modelUrl?: string;
-  /** p(yes) needed to treat a fact as completing the goal. */
+  /** p(yes) needed to treat a fact as supporting the goal/condition. */
   threshold?: number;
-  /** Strict mode (S01): the decomposed goal conditions must all be covered and
-   * the fact outcome completed before the model is asked. */
+  /** Strict mode (S01): accumulate decomposed condition evidence across facts
+   * and turns instead of requiring one fact to cover the whole goal. */
   requireProgramCoverage?: boolean;
   /** Test/embedded scorer; the default runs the int8 ONNX graph. */
   scoring?: (rows: Array<{ goal: string; fact: string }>) => Promise<number[] | null> | number[] | null;
@@ -22,9 +27,25 @@ export interface GoalVerifierOptions {
   }) => void;
 }
 
+export interface GoalConditionEvidence {
+  condition: string;
+  factId: string;
+  factText: string;
+  score: number;
+}
+
+export interface GoalAchievement {
+  characterId: Id;
+  taskId: Id;
+  basis: string;
+  score: number;
+  /** Present in strict mode: the condition -> fact map behind the achievement. */
+  covered?: GoalConditionEvidence[];
+}
+
 export interface GoalVerifierPort {
   (request: { state: WorldState; ownerIds: Id[]; facts: Array<{ id: string; memberId: Id; text: string }> }): Promise<{
-    achieved: Array<{ characterId: Id; taskId: Id; basis: string; score: number }>;
+    achieved: GoalAchievement[];
     scored: Array<{ characterId: Id; taskId: Id; basis: string; score: number }>;
     source: 'micro';
   } | null>;
@@ -59,14 +80,18 @@ function outcomeCompleted(text: string): boolean {
   return text.includes('达到目的') && !/只完成一部分|没有成功|被阻止|没有变化/u.test(text);
 }
 
-function programCovered(state: WorldState, ownerName: string, goal: string, fact: string): boolean {
-  const conditions = decomposeTask(goal, state, ownerName);
-  const coverage = conditionCoverage(conditions, fact);
-  return coverage.total > 0 && coverage.matched === coverage.total && outcomeCompleted(fact);
+interface LedgerEntry {
+  ownerId: Id;
+  goal: string;
+  labels: string[];
+  covered: Map<string, GoalConditionEvidence>;
 }
 
 export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVerifierPort {
   const runtime = createMicroRuntime({ threads: 1 });
+  const ledger = new Map<Id, LedgerEntry>();
+  let worldId: string | null = null;
+
   async function scoreDefault(rows: Array<{ goal: string; fact: string }>): Promise<number[] | null> {
     const tok = await getMicroTokenizer(options.vocabUrl);
     const session = await runtime.load(options.modelUrl ?? '/micro/goal-verifier-v1-int8.onnx');
@@ -90,13 +115,28 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
   return async (request) => {
     const started = performance.now();
     const threshold = options.threshold ?? 0.5;
+    const strict = options.requireProgramCoverage === true;
+    if (worldId !== request.state.worldId) {
+      ledger.clear();
+      worldId = request.state.worldId;
+    }
     const owners = new Set(request.ownerIds);
-    const rows: Array<{ characterId: Id; taskId: Id; basis: string; goal: string; fact: string }> = [];
+    type Row = {
+      characterId: Id; taskId: Id; basis: string; goal: string; fact: string;
+      hits: string[]; labels: string[];
+    };
+    const rows: Row[] = [];
     for (const [ownerId, current] of Object.entries(request.state.characters)) {
       if (!owners.has(ownerId)) continue;
       const ownerName = request.state.initial.characters[ownerId]?.name ?? ownerId;
       for (const task of Object.values(current.tasks)) {
-        if (task.status !== 'pending') continue;
+        if (task.status !== 'pending') {
+          ledger.delete(task.id);
+          continue;
+        }
+        const decomposed: TaskConditions = decomposeTask(task.goal, request.state, ownerName);
+        const labels = strict ? taskConditionLabels(decomposed) : [];
+        if (strict && !labels.length) continue;
         const names = goalEntityNames(request.state, task.goal);
         for (const fact of request.facts) {
           // A fact belongs to its own member; another member's fact may support
@@ -105,10 +145,14 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
             const factOwnerName = request.state.initial.characters[ownerId]?.name ?? '';
             if (!factOwnerName || !fact.text.includes(factOwnerName)) continue;
           }
-          const entityHit = names.some((name) => fact.text.includes(name));
-          if (!entityHit && !sharesGoalWording(fact.text, task.goal)) continue;
-          if (options.requireProgramCoverage && !programCovered(request.state, ownerName, task.goal, fact.text)) continue;
-          rows.push({ characterId: ownerId, taskId: task.id, basis: fact.id, goal: task.goal, fact: fact.text });
+          const hits = strict ? conditionHits(decomposed, fact.text) : [];
+          if (strict) {
+            if (!hits.length) continue;
+          } else {
+            const entityHit = names.some((name) => fact.text.includes(name));
+            if (!entityHit && !sharesGoalWording(fact.text, task.goal)) continue;
+          }
+          rows.push({ characterId: ownerId, taskId: task.id, basis: fact.id, goal: task.goal, fact: fact.text, hits, labels });
         }
       }
     }
@@ -126,14 +170,53 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
       options.onStats?.({ pairs: rows.length, inferred: 0, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'abstain', reason: 'model_unavailable' });
       return null;
     }
-    const scored = rows.map((row, index) => ({ characterId: row.characterId, taskId: row.taskId, basis: row.basis, score: scores![index] }));
-    const best = new Map<string, { characterId: Id; taskId: Id; basis: string; score: number }>();
-    for (const row of scored) {
-      const key = `${row.characterId}:${row.taskId}`;
-      const previous = best.get(key);
-      if (!previous || row.score > previous.score) best.set(key, row);
+    const scored = rows.map((row, index) => ({
+      characterId: row.characterId, taskId: row.taskId, basis: row.basis, score: scores![index],
+    }));
+    let achieved: GoalAchievement[] = [];
+    if (strict) {
+      for (const [index, row] of rows.entries()) {
+        const score = scores[index];
+        if (score < threshold || !outcomeCompleted(row.fact)) continue;
+        let entry = ledger.get(row.taskId);
+        if (!entry || entry.ownerId !== row.characterId) {
+          entry = { ownerId: row.characterId, goal: row.goal, labels: row.labels, covered: new Map() };
+          ledger.set(row.taskId, entry);
+        }
+        for (const label of row.hits) {
+          const previous = entry.covered.get(label);
+          if (!previous || score > previous.score) {
+            entry.covered.set(label, { condition: label, factId: row.basis, factText: row.fact, score });
+          }
+        }
+      }
+      for (const [taskId, entry] of ledger) {
+        const task = request.state.characters[entry.ownerId]?.tasks[taskId];
+        if (!task || task.status !== 'pending') {
+          ledger.delete(taskId);
+          continue;
+        }
+        if (!entry.labels.length || !entry.labels.every((label) => entry.covered.has(label))) continue;
+        const covered = entry.labels.map((label) => entry.covered.get(label)!);
+        const facts = new Set(covered.map((row) => row.factId));
+        achieved.push({
+          characterId: entry.ownerId,
+          taskId,
+          basis: facts.size === 1 ? covered[0].factId : 'cross_turn',
+          score: Math.min(...covered.map((row) => row.score)),
+          covered,
+        });
+        ledger.delete(taskId);
+      }
+    } else {
+      const best = new Map<string, GoalAchievement>();
+      for (const row of scored) {
+        const key = `${row.characterId}:${row.taskId}`;
+        const previous = best.get(key);
+        if (!previous || row.score > previous.score) best.set(key, row);
+      }
+      achieved = [...best.values()].filter((row) => row.score >= threshold);
     }
-    const achieved = [...best.values()].filter((row) => row.score >= threshold);
     options.onStats?.({ pairs: rows.length, inferred: rows.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
     return { achieved, scored, source: 'micro' };
   };

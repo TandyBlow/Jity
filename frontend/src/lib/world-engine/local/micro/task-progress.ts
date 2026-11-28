@@ -150,10 +150,28 @@ export function outcomeGate(factText: string): 'partial' | 'no' | null {
   return null;
 }
 
-/** How many of the decomposed goal conditions the fact names. A `yes` from the
- * pair model is downgraded to partial unless every named condition is covered. */
-export function conditionCoverage(conditions: TaskConditions, factText: string): { matched: number; total: number; missing: string[] } {
-  const checks: Array<[string, boolean]> = [
+/** All condition labels for a decomposed goal, in the same order as hits. */
+export function taskConditionLabels(conditions: TaskConditions): string[] {
+  return [
+    conditions.time ? `时间=${conditions.time}` : '',
+    conditions.location ? `地点=${conditions.location}` : '',
+    conditions.item ? `物品=${conditions.item}` : '',
+    conditions.target ? `对象=${conditions.target}` : '',
+    conditions.decision ? `决策=${conditions.decision}` : '',
+    conditions.confirmation ? `确认=${conditions.confirmation}` : '',
+    conditions.action ? `动作=${conditions.action}` : '',
+  ].filter(Boolean);
+}
+
+/** Which decomposed goal conditions this fact names, as condition labels. The
+ * task stage accumulates these across facts/turns; one fact need not cover the
+ * whole goal. */
+export function conditionHits(conditions: TaskConditions, factText: string): string[] {
+  return conditionChecks(conditions, factText).filter(([, hit]) => hit).map(([label]) => label);
+}
+
+function conditionChecks(conditions: TaskConditions, factText: string): Array<[string, boolean]> {
+  return [
     ...(conditions.time ? [[`时间=${conditions.time}`, factText.includes(conditions.time)] as [string, boolean]] : []),
     ...(conditions.location ? [[`地点=${conditions.location}`, factText.includes(conditions.location)] as [string, boolean]] : []),
     ...(conditions.item ? [[`物品=${conditions.item}`, factText.includes(conditions.item)] as [string, boolean]] : []),
@@ -162,6 +180,12 @@ export function conditionCoverage(conditions: TaskConditions, factText: string):
     ...(conditions.confirmation ? [[`确认=${conditions.confirmation}`, CONFIRM.some((word) => factText.includes(word))] as [string, boolean]] : []),
     ...(conditions.action ? [[`动作=${conditions.action}`, ACTION.some((word) => factText.includes(word))] as [string, boolean]] : []),
   ];
+}
+
+/** How many of the decomposed goal conditions the fact names. A `yes` from the
+ * pair model is downgraded to partial unless every named condition is covered. */
+export function conditionCoverage(conditions: TaskConditions, factText: string): { matched: number; total: number; missing: string[] } {
+  const checks = conditionChecks(conditions, factText);
   const missing = checks.filter(([, hit]) => !hit).map(([label]) => label);
   return { matched: checks.length - missing.length, total: checks.length, missing };
 }

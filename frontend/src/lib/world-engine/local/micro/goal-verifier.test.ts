@@ -67,12 +67,35 @@ describe('goal-level task stage', () => {
       state: state(), ownerIds: ['hero'],
       facts: [{ id: 'f1', memberId: 'hero', text: '路明非拿起手电（达到目的）。' }],
     });
-    expect(partial?.scored).toEqual([]);
+    expect(partial?.achieved).toEqual([]);
+    expect(partial?.scored).toHaveLength(1);
     const complete = await port({
       state: state(), ownerIds: ['hero'],
       facts: [{ id: 'f2', memberId: 'hero', text: '路明非打开手电，确认电量（达到目的）。' }],
     });
     expect(complete?.achieved.map((row) => row.taskId)).toEqual(['task_hero_key']);
+  });
+
+  it('accumulates condition evidence across facts and turns', async () => {
+    const port = createMicroGoalTasks({
+      requireProgramCoverage: true,
+      scoring: (rows) => rows.map(() => 0.9),
+    });
+    const first = await port({
+      state: state(), ownerIds: ['hero'],
+      facts: [{ id: 'f1', memberId: 'hero', text: '路明非找到手电（达到目的）。' }],
+    });
+    expect(first?.achieved).toEqual([]);
+    const second = await port({
+      state: state(), ownerIds: ['hero'],
+      facts: [{ id: 'f2', memberId: 'hero', text: '路明非打开它并确认电量（达到目的）。' }],
+    });
+    expect(second?.achieved).toEqual([
+      expect.objectContaining({ taskId: 'task_hero_key', basis: 'cross_turn', covered: expect.any(Array) }),
+    ]);
+    expect(second?.achieved[0]?.covered?.map((row) => row.condition)).toEqual(
+      expect.arrayContaining(['物品=手电', '动作=打开', '确认=确认']),
+    );
   });
 
   it('does not credit another member fact to a task unless it names the owner', async () => {
