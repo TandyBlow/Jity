@@ -79,3 +79,4 @@ Artifacts     evidence files, manifests, commits
 | E55 | Rule composer baseline: fidelity by construction, length 0.45x, drops 36% of clauses | done (bundle fixed) |
 | E56 | Rule organization: 29 merges (1.8%), event clustering is the missing step | done (bundle fixed) |
 | E57 | Event clustering: discourse inheritance recovers 26% at 86% precision; 693 merges; log feel is in the facts | done |
+| E58 | Per-point grounded eval: 1.7B covers 57% of facts and 0% of NPC outcome labels; rules 67%/100% | done |

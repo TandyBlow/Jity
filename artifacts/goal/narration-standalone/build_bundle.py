@@ -43,7 +43,7 @@ def split_settlement(rest):
 
 
 def main():
-    rows = []
+    rows, pairs = [], []
     for path in sorted(glob.glob(str(ROOT / 'results/product/evidence/*.json'))):
         try:
             doc = json.loads(Path(path).read_text(encoding='utf-8-sig'))
@@ -77,12 +77,42 @@ def main():
                     'systemProse': turn.get('text') or '',
                     'humanRef': None,
                 })
+            # 逐 point 的精确输入/输出对：只有最后一个 point 的输出被记录
+            narr = product.get('narration') or {}
+            if narr.get('text') and narr.get('prompt'):
+                facts = split_prompt(narr['prompt'])
+                if facts:
+                    marker = facts.find(SETTLE_MARK)
+                    if marker >= 0:
+                        head = facts[:marker]
+                        results, world = split_settlement(facts[marker + len(SETTLE_MARK):])
+                        facts_text = (head + world).strip()
+                    else:
+                        results, facts_text = '', facts
+                    player = next((c.strip() for c in re.split(r'[。；]', facts_text) if '玩家这回合' in c), '')
+                    pairs.append({
+                        'id': f"{Path(path).stem}:{turn.get('id')}:{narr.get('pointId')}",
+                        'evidence': Path(path).name,
+                        'turnId': turn.get('id'),
+                        'pointId': narr.get('pointId'),
+                        'playerLine': player,
+                        'resultLines': [line.strip(' 。（') for line in re.split(r'[；]', results) if line.strip(' 。（')],
+                        'settlementText': results.strip(),
+                        'factsText': facts_text,
+                        'systemProse': narr.get('text') or '',
+                        'pointProse': narr.get('text') or '',
+                        'humanRef': None,
+                    })
     with (OUT_DIR / 'inputs.jsonl').open('w', encoding='utf-8') as fh:
         for row in rows:
             fh.write(json.dumps(row, ensure_ascii=False) + '\n')
+    with (OUT_DIR / 'pairs.jsonl').open('w', encoding='utf-8') as fh:
+        for row in pairs:
+            fh.write(json.dumps(row, ensure_ascii=False) + '\n')
     print(json.dumps({'points': len(rows),
                       'withResultLines': sum(1 for r in rows if r['resultLines']),
-                      'withProse': sum(1 for r in rows if r['systemProse'])}, ensure_ascii=False))
+                      'withProse': sum(1 for r in rows if r['systemProse']),
+                      'exactPairs': len(pairs)}, ensure_ascii=False))
 
 
 if __name__ == '__main__':
