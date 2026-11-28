@@ -1203,3 +1203,21 @@
 **D-136 复核（2026-11-28，`evidence-semantic-env-11-2026-11-27T1848-1519.json`）.** env-11 重跑 12 回合、11 条新行标注：修复把 `sm-e-success-10`（长桌补全）从 conflict 变为 **present**（+1 可训练正例）。残余：`sm-e-partial-3`/`sm-e-partial-6` 仍 insufficient——RESULT 分类器把"提到一半卡住/拉到一半卡住"判成非 partial（blocked/failed），环境短语因此不发；`sm-e-success-8`/`sm-e-success-9` 仍 conflict（检修盖/长椅的"补全"转移未被差分记录）。下一步是结果分类器对部分成功的识别与补全转移的补丁，而不是继续放宽短语规则。数据集 280 行、validator + 训练门通过（info 57/107、env 55/165）。
 
 **D-136 残余定位（同日）.** `sm-e-success-8` 的 `itemIds` 已解析到 `hatch_cover`、事实为 partial，但 `environmentHint` 的 locality 检查把它丢弃：物品在 `hatch` 容器（服务巷检修口），玩家在 `lane`（西侧服务巷），`roomOf` 判成不同房间。这是世界模型缺少子地点/相邻关系造成的，修法应在世界模型或 locality 判据层设计（例如地点包含关系），不是继续放宽短语或关键词。同一原因解释了 `sm-e-partial-3` 的部分 insufficient（该回合事实同样为 partial 且物品跨房间）。
+
+## D-139 点状态压缩方案（设计，待实现）（2026-11-28）
+
+- 状态：`proposed`。
+- 依据：E40 测得 12 回合快照 747KB→2,949KB（+200KB/回合），主因
+  `transport.pointStates` 每点存一份全量世界状态（约 65KB/点，32 点 ≈ 2.1MB）；
+  `transport.state` 本身稳定 65KB。
+- 方案：`pointStates` 只对 `rootPointId` 与 `headPointId` 保留全量 `state`，
+  其余点为 `{version, stateDigest}`；`get_state` 对非保留点按 `replayWorld`
+  从最近的保留点重建（或从 root 重放），结果与存储的 `stateDigest` 校验一致
+  才返回。
+- 前置验证（实现前必须过）：1）`replayWorld` 逐点重建与现有 `state` 全量
+  逐点相等（用 env-11 的 12 回合证据作夹具）；2）`state-invariants` 只用
+  root 的全量状态；3）存档版本号递增 + 旧存档迁移（按需回填 head 全量）；
+  4）`store.ts` 的 head 校验不变（head 始终有全量状态与 digest）。
+- 预期收益：快照/常驻内存从 ~65KB/点 降到 digest 量级（~0.5KB/点）+ head 一份
+  全量；对应 goal 的"峰值内存 -30%"仍取决于 GGUF/KV 侧，需在阶段二实验里
+  与上下文/KV 优化合并评估。
