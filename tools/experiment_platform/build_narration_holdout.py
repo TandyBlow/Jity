@@ -79,8 +79,10 @@ def player_line(facts_text: str) -> str:
 
 
 def last_commits(paths: list[str]) -> dict[str, str]:
+    if not paths:
+        return {}
     proc = subprocess.run(
-        ['git', '-C', str(ROOT), '-c', 'core.quotepath=false', 'log', '--format=@@%H', '--name-only', '--', 'artifacts/goal/narration'],
+        ['git', '-C', str(ROOT), '-c', 'core.quotepath=false', 'log', '--format=@@%H', '--name-only', '--', *paths],
         capture_output=True, text=True, encoding='utf-8', errors='replace')
     mapping, commit = {}, None
     for line in (proc.stdout or '').splitlines():
@@ -102,11 +104,11 @@ def load_hashes(path: Path, extract) -> set[str]:
     return out
 
 
-def build() -> tuple[list[dict], dict]:
+def build(files: list[str]) -> tuple[list[dict], dict]:
     corpus_hashes = load_hashes(CORPUS, lambda r: split_prompt(r.get('prompt', '')))
     bundle_hashes = load_hashes(BUNDLE, lambda r: r.get('factsText'))
-    commits = last_commits(sorted(glob.glob(str(RUN_GLOB))))
-    files = sorted(glob.glob(str(RUN_GLOB)))
+    rels = [Path(p).relative_to(ROOT).as_posix() for p in files]
+    commits = last_commits(rels)
     rows, seen = [], set()
     stats = Counter()
     models, per_file = Counter(), Counter()
@@ -186,8 +188,15 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--out', default=str(OUT))
     parser.add_argument('--summary', default=None)
+    parser.add_argument('--runs', default=str(RUN_GLOB),
+                        help='glob or comma-separated run/evidence files')
     args = parser.parse_args(argv)
-    rows, summary = build()
+    patterns = [p.strip() for p in args.runs.split(',') if p.strip()]
+    files = sorted({path for pattern in patterns for path in glob.glob(pattern)})
+    if not files:
+        print('no run files matched', file=sys.stderr)
+        return 2
+    rows, summary = build(files)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text('\n'.join(json.dumps(r, ensure_ascii=False) for r in rows) + '\n', encoding='utf-8')

@@ -29,6 +29,9 @@ PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.resource_monitor --pid 
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.verify_run --evidence results/product/evidence/x.json --require-engine narration,semantic
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.perf_report
 
+# 7. blind comparison for human review
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.anonymize --input outputs.jsonl --blind blind.jsonl --key key.json --sheet review.md
+
 # tests
 PYTHONUTF8=1 python -X utf8 -m pytest tools/experiment_platform/tests -q
 ```

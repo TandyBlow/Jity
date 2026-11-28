@@ -255,6 +255,22 @@ def test_perf_report_summarize():
     assert report['nullClocks']['narrationStartedAtMs'] == 1
 
 
+def test_anonymize_is_deterministic(tmp_path):
+    from tools.experiment_platform.anonymize import blind
+
+    rows = [{'id': '1', 'arm': 'a', 'text': 'x'}, {'id': '1', 'arm': 'b', 'text': 'y'},
+            {'id': '2', 'arm': 'a', 'text': 'z'}, {'id': '2', 'arm': 'b', 'text': 'w'}]
+    first, key = blind(rows, seed=7)
+    second, _ = blind(rows, seed=7)
+    assert first == second
+    assert set(key['1']) == {'A', 'B'}
+    for row in first:
+        assert set(row['variants']) == {'A', 'B'}
+        for label, arm in key[row['id']].items():
+            assert row['variants'][label] == next(r['text'] for r in rows
+                                                  if r['id'] == row['id'] and r['arm'] == arm)
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate
