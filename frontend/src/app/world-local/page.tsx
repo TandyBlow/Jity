@@ -82,6 +82,9 @@ const NARRATION_MODELS = {
     sha256: 'ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a',
   },
 } as const;
+// Semantic context default: E42 measured at most 6,797 tokens across 64k calls;
+// 20-input, 8-scenario and offline gates all pass at 8192 (D-142).
+const DEFAULT_SEMANTIC_CTX = 8_192;
 type NarrationModelKey = keyof typeof NARRATION_MODELS;
 const DEFAULT_NARRATION_MODEL: NarrationModelKey = 'qwen3-1.7b-narr-lora';
 type Phase = 'loading' | 'ready' | 'thinking' | 'streaming' | 'error';
@@ -963,13 +966,13 @@ export default function WorldLocalPage() {
         const gpu = await probeGpu();
         (window as unknown as { __worldGpu?: unknown }).__worldGpu = gpu;
         console.info('[world-local] gpu probe', JSON.stringify(gpu));
-        // 12288 covers the settlement's measured prompt (7877 chars) plus the
-        // repair feedback; 8192 left a retry on the edge of the context.
+        // 8192 covers the measured prompt (max 6,797 tokens, E42) plus the
+        // repair feedback; the gate arms ran at 8192 (D-142).
         // D-022 runtime prototype: one WebLLM 4B engine serves both roles.
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
         const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
-        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? 12_288, 'semantic', SEMANTIC_MODEL_BYTES, arm.kv ?? 'q8_0', (prompt) => {
+        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? DEFAULT_SEMANTIC_CTX, 'semantic', SEMANTIC_MODEL_BYTES, arm.kv ?? 'q8_0', (prompt) => {
           const rec = turnRecordRef.current;
           if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
         }, arm.nbatch);
@@ -986,7 +989,7 @@ export default function WorldLocalPage() {
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
           offscreenPolicy: arm.offscreenPolicy ?? 'judge',
-          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? 12_288, kv: arm.kv ?? 'q8_0', nBatch: arm.nbatch ?? null,
+          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? DEFAULT_SEMANTIC_CTX, kv: arm.kv ?? 'q8_0', nBatch: arm.nbatch ?? null,
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
           narrationFewShot: arm.fewShot ?? null,

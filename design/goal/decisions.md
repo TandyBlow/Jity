@@ -1245,16 +1245,24 @@
   行训练集；若指标不动，则数据量的解释被削弱，优先回到结构与任务划分。
 - 叙事微模型化仍是研究阶段，不接入产品默认。
 
-## D-142 语义上下文 8192 的集成门槛（进行中）（2026-11-28）
+## D-142 语义上下文默认改为 8192（已采纳）（2026-11-28）
 
-- 状态：`pending`——20 输入与刷新恢复已过，八场景与离线待跑。
+- 状态：`done`——20 输入、刷新恢复、八场景、离线全过，默认已改为 8192。
 - 候选：`semanticCtx=8192&narrationModel=semantic`（单引擎），无头 Edge、GPU 适配器可用。
 - 20 输入（`results/product/evidence/09-turns20-pi.json`）：**COMPLETED，20/20，0 failures**；
   刷新恢复 20→20 一致（pageSaysRestored=true，29074ms）；controls 正常。
 - 计时：回合 66.7–199.9s，首段可读普遍 >60s；`g8-t2-move-shed` 记 `accepted_over_60s`。
   60s 首段目标在本环境未达成（与默认 ctx 无关，属性能缺口）。
-- 判定规则：八场景与离线通过后，才把 `page.tsx` 默认 12_288 改为 8192 并重跑一回合冒烟；
-  未过则保留 12288 并报告原因。
+- 八场景（`results/product/evidence/10-scenarios-pi-2026-11-28T1041-fbe4.json`）：**COMPLETED，8/8，0 failures**；
+  回合 61.8–170.2s，`firstReadableMs` 全为 null（首段可读靠 7s 的首个草稿，非流式正文）。
+- 离线（`results/product/evidence/10-offline-pi.json`）：**COMPLETED，2/2，0 failures**，
+  浏览器上下文 `setOffline(true)` 后照常结算与叙事（97.2s / 101.3s，正文 955/992 字）。
+- 改法：`page.tsx` 新增 `DEFAULT_SEMANTIC_CTX = 8_192`，引擎与 `__worldArm` 记录共用，
+  消掉两处重复字面量；原先"8192 会让修复重试卡在上下文边缘"的注释按 E42 的 64k 次
+  调用统计（最大 6,797 tokens）与本次四道门槛改写。
+- 冒烟（`results/product/evidence/11-smoke-default-ctx8192.json`）：默认配置（无 URL 覆盖）
+  一回合 **COMPLETED、0 problems**，51.3s，载入 19.8s，`__worldArm.semanticCtx=8192`。
+- 保留：60s 首段可读仍未达成，属性能缺口，与本改动无关。
 
 ## D-143 结构预测的数据形式：句式编号 + 事实原文片段（2026-11-28）
 
@@ -1268,4 +1276,4 @@
 - 由此确定下一实验：训练 ~1M 结构预测模型（事实 → 句式编号 + 片段指针），
   报告"规划错误"与"语言错误"分开计。语料缺口仍是主语完整性：事实抽取要给
   每条动作补主语，否则帧只能丢名字。
-- 句式库存 41 条不是终态；扩容成本约每 20 条新句 1 条，模型必须允许库存增长。
+- 句式库存 50 条不是终态；扩容成本约每 20 条新句 1 条，模型必须允许库存增长。

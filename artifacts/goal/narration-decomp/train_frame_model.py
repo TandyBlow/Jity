@@ -78,10 +78,10 @@ def encode(rows, vocab, max_len=256):
     return xs, mask
 
 
-def train(train_rows, vocab, epochs, seed, d, layers, ff):
+def train(train_rows, vocab, vocab_size, epochs, seed, d, layers, ff):
     torch.manual_seed(seed)
     random.seed(seed)
-    net = Net(vocab, len(PATTERN_NAMES), d=d, layers=layers, ff=ff)
+    net = Net(vocab_size, len(PATTERN_NAMES), d=d, layers=layers, ff=ff)
     opt = torch.optim.AdamW(net.parameters(), lr=3e-3, weight_decay=0.01)
     xs, mask = encode(train_rows, vocab)
     pat = torch.tensor([PATTERN_NAMES.index(r['pattern']) for r in train_rows])
@@ -173,8 +173,8 @@ def main():
     train_rows = [r for k in keys if k not in test_keys for r in groups[k]]
     test_rows = [r for k in keys if k in test_keys for r in groups[k]]
 
-    vocab, _ = build_vocab(train_rows)
-    net = train(train_rows, vocab, args.epochs, args.seed, args.d, args.layers, args.ff)
+    vocab, vocab_size = build_vocab(train_rows)
+    net = train(train_rows, vocab, vocab_size, args.epochs, args.seed, args.d, args.layers, args.ff)
     params = sum(p.numel() for p in net.parameters())
     preds = predict(net, test_rows, vocab)
 
