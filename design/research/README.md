@@ -75,6 +75,7 @@ Artifacts     evidence files, manifests, commits
 | E51 | Frame v2: 160 annotations, slots are verbatim fact spans, frozen inventory | done (160/160 render, held-out 27/30) |
 | E52 | Structure model: 1.24M end-to-end pattern+span | negative (test .036 vs .107 majority; oracle 0.706) |
 | E53 | Semantic LLM call audit with per-task attribution | done (344 calls/20 turns; handoff) |
-| E54 | Role parse of settled facts: 44% subject-less, 12.5% recoverable | done |
-| E55 | Rule composer baseline: fidelity by construction, length 0.43x, still a log | done |
-| E56 | Rule organization: 0 merges possible; event clustering is the missing step | done |
+| E54 | Role parse of settled facts: 36% subject-less, 4.5% recoverable from settlement | done (bundle fixed) |
+| E55 | Rule composer baseline: fidelity by construction, length 0.45x, drops 36% of clauses | done (bundle fixed) |
+| E56 | Rule organization: 29 merges (1.8%), event clustering is the missing step | done (bundle fixed) |
+| E57 | Event clustering: discourse inheritance recovers 26% at 86% precision; 693 merges; log feel is in the facts | done |

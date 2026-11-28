@@ -1,29 +1,29 @@
 {
  "totals": {
   "points": 161,
-  "resultLines": 359,
-  "clauses": 2622,
-  "missingSubject": 1164,
+  "resultLines": 357,
+  "clauses": 1955,
+  "missingSubject": 707,
   "withActorRecord": 114,
-  "negated": 772,
-  "contrast": 15,
-  "cause": 118,
+  "negated": 658,
+  "contrast": 14,
+  "cause": 1,
   "dialogue": 0
  },
  "subjectKinds": {
-  "missing": 1164,
+  "missing": 707,
   "object_or_place": 888,
-  "person": 570
+  "person": 360
  },
  "outcomes": {
   "没有成功": 55,
   "达到目的": 136,
   "只完成一部分": 86,
-  "none": 82
+  "none": 80
  },
- "missingRecoverable": 146,
- "missingRecoverableRate": 0.125,
- "missingRate": 0.444,
+ "missingRecoverable": 32,
+ "missingRecoverableRate": 0.045,
+ "missingRate": 0.362,
  "rows": [
   {
    "id": "09-turns20-ctx8192-gpu:s01-act-move:0",
@@ -40,8 +40,8 @@
     "芬格尔",
     "顾岚"
    ],
-   "missing": 10,
-   "recoverable": 1
+   "missing": 4,
+   "recoverable": 0
   },
   {
    "id": "09-turns20-ctx8192-gpu:s01-act-move:2",
@@ -58,7 +58,7 @@
   {
    "id": "09-turns20-ctx8192-gpu:s02-act-observe:0",
    "actors": [],
-   "missing": 6,
+   "missing": 5,
    "recoverable": 0
   },
   {
@@ -70,8 +70,8 @@
     "芬格尔",
     "顾岚"
    ],
-   "missing": 10,
-   "recoverable": 1
+   "missing": 4,
+   "recoverable": 0
   },
   {
    "id": "09-turns20-ctx8192-gpu:s02-act-observe:2",
@@ -100,8 +100,8 @@
     "芬格尔",
     "顾岚"
    ],
-   "missing": 10,
-   "recoverable": 1
+   "missing": 4,
+   "recoverable": 0
   },
   {
    "id": "09-turns20-ctx8192-gpu:s03-act-talk:2",
@@ -136,8 +136,8 @@
     "芬格尔",
     "顾岚"
    ],
-   "missing": 8,
-   "recoverable": 1
+   "missing": 4,
+   "recoverable": 0
   },
   {
    "id": "09-turns20-pi:s01-act-move:2",
@@ -156,8 +156,8 @@
    "actors": [
     "诺诺"
    ],
-   "missing": 6,
-   "recoverable": 1
+   "missing": 5,
+   "recoverable": 0
   },
   {
    "id": "09-turns20-pi:s02-act-observe:1",
@@ -168,8 +168,8 @@
     "芬格尔",
     "顾岚"
    ],
-   "missing": 8,
-   "recoverable": 1
+   "missing": 4,
+   "recoverable": 0
   },
   {
    "id": "09-turns20-pi:s02-act-observe:2",

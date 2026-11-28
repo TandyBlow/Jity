@@ -1,0 +1,218 @@
+[
+ {
+  "i": 0,
+  "topicKind": "actor",
+  "topic": "唐骁",
+  "clause": "半蹲在倒放长椅后，空弹匣扔在脚边，护目镜完好",
+  "count": 13,
+  "label": "ok"
+ },
+ {
+  "i": 1,
+  "topicKind": "actor",
+  "topic": "林亦舟",
+  "clause": "背靠第三根廊柱坐着，演习枪已经放到右手碰不到的地面",
+  "count": 28,
+  "label": "ok"
+ },
+ {
+  "i": 2,
+  "topicKind": "actor",
+  "topic": "林亦舟",
+  "clause": "说话正常，没法独自站稳",
+  "count": 28,
+  "label": "ok"
+ },
+ {
+  "i": 3,
+  "topicKind": "actor",
+  "topic": "秦越",
+  "clause": "右膝护具扣好，手里的记号笔没有笔帽，器材笼钥匙扣在腰环上",
+  "count": 38,
+  "label": "ok"
+ },
+ {
+  "i": 4,
+  "topicKind": "actor",
+  "topic": "秦越",
+  "clause": "通用短枪弹匣乙去了路明非的演习背心",
+  "count": 3,
+  "label": "bad"
+ },
+ {
+  "i": 5,
+  "topicKind": "actor",
+  "topic": "芬格尔",
+  "clause": "护膝一边扣紧、一边还敞着",
+  "count": 38,
+  "label": "ok"
+ },
+ {
+  "i": 6,
+  "topicKind": "actor",
+  "topic": "芬格尔",
+  "clause": "旧相机挂在脖子上，左臂没有阵营布带",
+  "count": 38,
+  "label": "ok"
+ },
+ {
+  "i": 7,
+  "topicKind": "actor",
+  "topic": "诺诺",
+  "clause": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面",
+  "count": 64,
+  "label": "ok"
+ },
+ {
+  "i": 8,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "下层楼梯入口被翻倒的长桌挡住一半",
+  "count": 10,
+  "label": "bad"
+ },
+ {
+  "i": 9,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "检修口边的器材筐有绝缘手电",
+  "count": 8,
+  "label": "bad"
+ },
+ {
+  "i": 10,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "盖下短梯能到地下检修通道，携枪下行需腾出一只手",
+  "count": 8,
+  "label": "bad"
+ },
+ {
+  "i": 11,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "第三根廊柱脚下有一条折断的蓝布带",
+  "count": 28,
+  "label": "bad"
+ },
+ {
+  "i": 12,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "红方从东侧集结点接近，蓝布带挂在西回廊口",
+  "count": 13,
+  "label": "bad"
+ },
+ {
+  "i": 13,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "胸袋能放一只弹匣，肩上没有阵营识别带",
+  "count": 92,
+  "label": "ok"
+ },
+ {
+  "i": 14,
+  "topicKind": "actor",
+  "topic": "路明非",
+  "clause": "西门向外推开，地下检修门则从里面插着门闩",
+  "count": 10,
+  "label": "bad"
+ },
+ {
+  "i": 15,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "一条腿折断，无法承受再站一个人",
+  "count": 13,
+  "label": "ok"
+ },
+ {
+  "i": 16,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "与喷泉之间隔着两步无遮挡石地",
+  "count": 13,
+  "label": "ok"
+ },
+ {
+  "i": 17,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "器材笼钥匙能开",
+  "count": 38,
+  "label": "ok"
+ },
+ {
+  "i": 18,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "房间里没有别人",
+  "count": 8,
+  "label": "ok"
+ },
+ {
+  "i": 19,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "挪桌需要先腾开桌腿压住的位置",
+  "count": 5,
+  "label": "ok"
+ },
+ {
+  "i": 20,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "挪桌需要先腾开桌腿压住的位置，已",
+  "count": 5,
+  "label": "ok"
+ },
+ {
+  "i": 21,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "灯头绝缘圈完整，附腕绳",
+  "count": 8,
+  "label": "ok"
+ },
+ {
+  "i": 22,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "盖沿不宜放枪和松散弹匣",
+  "count": 4,
+  "label": "ok"
+ },
+ {
+  "i": 23,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "盖沿不宜放枪和松散弹匣，已被提开",
+  "count": 4,
+  "label": "ok"
+ },
+ {
+  "i": 24,
+  "topicKind": "place",
+  "topic": "屋里",
+  "clause": "黄色封套上写明不得与实弹混用",
+  "count": 38,
+  "label": "ok"
+ },
+ {
+  "i": 25,
+  "topicKind": "place",
+  "topic": "钟楼",
+  "clause": "露天横穿最短，但要同时暴露给两边的窗口",
+  "count": 13,
+  "label": "ok"
+ },
+ {
+  "i": 26,
+  "topicKind": "place",
+  "topic": "门",
+  "clause": "房间里没有别人",
+  "count": 10,
+  "label": "ok"
+ }
+]

@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[3]
 OUT_DIR = Path(__file__).resolve().parent
 FACT_MARK = '事实：'
 BODY_MARK = '\n正文：'
+SETTLE_MARK = '这一回合的结算结果：'
+TIME_HEAD = '时间到了'
 
 
 def split_prompt(prompt):
@@ -29,17 +31,15 @@ def split_prompt(prompt):
     return facts.strip()
 
 
-def section(facts, start, ends):
-    i = facts.find(start)
-    if i < 0:
-        return ''
-    i += len(start)
-    stop = len(facts)
-    for e in ends:
-        k = facts.find(e, i)
-        if 0 <= k < stop:
-            stop = k
-    return facts[i:stop].strip()
+def split_settlement(rest):
+    """结算块在下一个世界事实块（以“时间到了”开头）之前结束。"""
+    k = rest.find(TIME_HEAD)
+    if k < 0:
+        return rest, ''
+    cut = rest.rfind('。', 0, k)
+    if cut < 0:
+        return rest, ''
+    return rest[:cut + 1].rstrip('（'), rest[cut + 1:]
 
 
 def main():
@@ -57,18 +57,23 @@ def main():
                 facts = split_prompt(prompt)
                 if not facts:
                     continue
-                marker = facts.find('这一回合的结算结果：')
-                head = facts[:marker] if marker >= 0 else facts
-                player = head.split('。')[0].strip()
-                results = facts[marker + len('这一回合的结算结果：'):] if marker >= 0 else ''
+                marker = facts.find(SETTLE_MARK)
+                if marker >= 0:
+                    head = facts[:marker]
+                    results, world = split_settlement(facts[marker + len(SETTLE_MARK):])
+                    facts_text = (head + world).strip()
+                else:
+                    results, facts_text = '', facts
+                player = next((c.strip() for c in re.split(r'[。；]', facts_text) if '玩家这回合' in c), '')
                 rows.append({
                     'id': f"{Path(path).stem}:{turn.get('id')}:{idx}",
                     'evidence': Path(path).name,
                     'turnId': turn.get('id'),
                     'pointId': item.get('pointId'),
                     'playerLine': player,
-                    'resultLines': [line.strip(' 。') for line in re.split(r'[；]', results) if line.strip(' 。')],
-                    'factsText': facts,
+                    'resultLines': [line.strip(' 。（') for line in re.split(r'[；]', results) if line.strip(' 。（')],
+                    'settlementText': results.strip(),
+                    'factsText': facts_text,
                     'systemProse': turn.get('text') or '',
                     'humanRef': None,
                 })
