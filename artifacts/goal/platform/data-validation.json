@@ -1,6 +1,6 @@
 {
  "schema": "jity-data-validation/1",
- "headCommit": "8c0317421878661e205f359800f51d004c1412af",
+ "headCommit": "da83277ab98f19b0e66584f6879112a7b9cdd6e8",
  "checks": {
   "malformed": {
    "level": "fail",

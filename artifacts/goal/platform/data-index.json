@@ -1,7 +1,7 @@
 {
  "schema": "jity-data-index/1",
- "generatedAt": "2026-11-28T16:18:52.118753+00:00",
- "headCommit": "8c0317421878661e205f359800f51d004c1412af",
+ "generatedAt": "2026-11-28T16:23:17.405143+00:00",
+ "headCommit": "da83277ab98f19b0e66584f6879112a7b9cdd6e8",
  "roots": [
   "artifacts/goal",
   "experiments",
@@ -14,7 +14,7 @@
  },
  "summary": {
   "fileCount": 5161,
-  "totalBytes": 6876626557,
+  "totalBytes": 6892834589,
   "tracked": 3533,
   "dirty": 10,
   "hashed": 5135,
@@ -74,7 +74,7 @@
    },
    "platform": {
     "files": 416,
-    "bytes": 614068534
+    "bytes": 614073527
    },
    "narration": {
     "files": 199,
@@ -86,7 +86,7 @@
    },
    "narration-rules": {
     "files": 29,
-    "bytes": 172468806
+    "bytes": 188671845
    },
    "acceptance": {
     "files": 26,
@@ -38963,15 +38963,15 @@
    "family": "narration-rules",
    "role": "data",
    "ext": ".json",
-   "bytes": 16693560,
-   "mtime": "2026-11-28T16:17:55.030873+00:00",
+   "bytes": 32896599,
+   "mtime": "2026-11-28T16:23:02.411777+00:00",
    "tracked": false,
    "gitBlob": null,
    "dirty": false,
    "untracked": true,
    "ignored": false,
    "lastCommit": null,
-   "sha256": "79041104727b0b2512357097dcf67b143d7f8714c934dc737fa34f9b9a93f131",
+   "sha256": "159aab2d2af4000d20a466c6e62301c45befe1e8251a5f6815949a4be3d4a5de",
    "format": {}
   },
   {
@@ -45967,15 +45967,15 @@
    "family": "platform",
    "role": "data",
    "ext": ".json",
-   "bytes": 3265668,
-   "mtime": "2026-11-28T16:14:19.706939+00:00",
+   "bytes": 3265992,
+   "mtime": "2026-11-28T16:18:52.302665+00:00",
    "tracked": true,
-   "gitBlob": "bc8b0525ca27ca5920d452c57dd2650855cf13bc",
+   "gitBlob": "e8fc8ed13be1fd216b2993c23be885adb5ac6485",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "20c1893d7294c320f9d9818058187819e16bc03d",
-   "sha256": "33fd8eae730316f3c968be7f6664a396b71f067f13a58c3d4a7dfaca2f0ccbf7",
+   "lastCommit": "8728d7b4ff815b331fb28c0baac1c98374c58c94",
+   "sha256": "f6a0518086556d5bf22aff5135d8e840055b2b0d789ecc22ba244515f0894fac",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -45988,7 +45988,7 @@
      "files"
     ],
     "listLengths": {
-     "files": 5160,
+     "files": 5161,
      "roots": 4
     }
    }
@@ -45999,14 +45999,14 @@
    "role": "data",
    "ext": ".json",
    "bytes": 127580,
-   "mtime": "2026-11-28T16:14:20.391765+00:00",
+   "mtime": "2026-11-28T16:18:53.457936+00:00",
    "tracked": true,
-   "gitBlob": "3c0477a0e664d454409627d067cd79c5c087f167",
+   "gitBlob": "44643be309266d4b988abf09931160bf5275aed4",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "20c1893d7294c320f9d9818058187819e16bc03d",
-   "sha256": "97e20c9853a7513bfe7394cc6f61916acba537f573c3f31e69a88fee346dd1e5",
+   "lastCommit": "8728d7b4ff815b331fb28c0baac1c98374c58c94",
+   "sha256": "fdf4b2980afac0298a48b8df5ddb881a8240ee653d86971ac458297890376c58",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -52868,7 +52868,7 @@
    "role": "data",
    "ext": ".json",
    "bytes": 3886,
-   "mtime": "2026-11-28T16:14:20.579373+00:00",
+   "mtime": "2026-11-28T16:18:53.777674+00:00",
    "tracked": true,
    "gitBlob": "6d7e47323de0db0f0d0feb445f9e201fb75a37af",
    "dirty": false,
@@ -53281,7 +53281,7 @@
    "role": "data",
    "ext": ".jsonl",
    "bytes": 4816172,
-   "mtime": "2026-11-28T16:13:37.622174+00:00",
+   "mtime": "2026-11-28T16:19:39.616233+00:00",
    "tracked": true,
    "gitBlob": "4bd0811c03e3f5ec6cb382848e6df7855e7b5329",
    "dirty": false,
@@ -53329,7 +53329,7 @@
    "role": "manifest",
    "ext": ".json",
    "bytes": 234,
-   "mtime": "2026-11-28T16:13:37.654657+00:00",
+   "mtime": "2026-11-28T16:19:39.679401+00:00",
    "tracked": true,
    "gitBlob": "2e3b3f4555be7847f1c6b16a98b243a4605b7056",
    "dirty": false,
@@ -53353,15 +53353,15 @@
    "family": "platform",
    "role": "result",
    "ext": ".json",
-   "bytes": 2102,
-   "mtime": "2026-11-28T16:13:37.655928+00:00",
+   "bytes": 6771,
+   "mtime": "2026-11-28T16:19:39.681404+00:00",
    "tracked": true,
-   "gitBlob": "0c2de1659115594ac01aacc75ff4fe4ac02d22eb",
+   "gitBlob": "6844909efee0ad1265f346624523840e575d9143",
    "dirty": false,
    "untracked": false,
    "ignored": false,
-   "lastCommit": "541d153290a45a839f562a47dc42285e2f85c3c5",
-   "sha256": "6fcd4e34fff538fce3945628422df51861cc2707c5607aa0e6f26e604caecd46",
+   "lastCommit": "2e133fa024b44d39dac131f634ae88a0a707c690",
+   "sha256": "0adfc32429e3912015a5a46c9651b152ce9975bed9bd8fe28aae892a15751b5a",
    "format": {
     "topType": "dict",
     "topKeys": [
@@ -53381,10 +53381,12 @@
      "runId",
      "arm",
      "labelSource",
-     "turnTable"
+     "turnTable",
+     "turnStateDiffs"
     ],
     "listLengths": {
-     "turnTable": 8
+     "turnTable": 8,
+     "turnStateDiffs": 8
     },
     "runId": "2026-11-28T1449-bc37"
    }
