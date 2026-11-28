@@ -1,0 +1,104 @@
+{
+ "turns": 12,
+ "snapshotKbFirst": 747.4,
+ "snapshotKbLast": 2948.6,
+ "meanGrowthKbPerTurn": 200.1,
+ "rows": [
+  {
+   "turn": "sm-e-partial-3",
+   "snapshotKB": 747.4,
+   "stateKB": 65.3,
+   "points": 4,
+   "narrations": 5,
+   "commands": 1
+  },
+  {
+   "turn": "sm-e-success-8",
+   "snapshotKB": 1300.3,
+   "stateKB": 65.3,
+   "points": 8,
+   "narrations": 9,
+   "commands": 2
+  },
+  {
+   "turn": "sm-e-move-3",
+   "snapshotKB": 1459.3,
+   "stateKB": 65.3,
+   "points": 10,
+   "narrations": 11,
+   "commands": 3
+  },
+  {
+   "turn": "sm-e-fail-3",
+   "snapshotKB": 1642.8,
+   "stateKB": 65.3,
+   "points": 12,
+   "narrations": 13,
+   "commands": 4
+  },
+  {
+   "turn": "sm-e-transfer-3",
+   "snapshotKB": 1804.2,
+   "stateKB": 65.3,
+   "points": 14,
+   "narrations": 15,
+   "commands": 5
+  },
+  {
+   "turn": "sm-e-partial-4",
+   "snapshotKB": 2044.8,
+   "stateKB": 65.4,
+   "points": 18,
+   "narrations": 19,
+   "commands": 6
+  },
+  {
+   "turn": "sm-e-success-9",
+   "snapshotKB": 2269.0,
+   "stateKB": 65.4,
+   "points": 22,
+   "narrations": 23,
+   "commands": 7
+  },
+  {
+   "turn": "sm-e-partial-5",
+   "snapshotKB": 2399.9,
+   "stateKB": 65.5,
+   "points": 24,
+   "narrations": 25,
+   "commands": 8
+  },
+  {
+   "turn": "sm-e-success-10",
+   "snapshotKB": 2582.7,
+   "stateKB": 65.7,
+   "points": 26,
+   "narrations": 27,
+   "commands": 9
+  },
+  {
+   "turn": "sm-e-partial-6",
+   "snapshotKB": 2749.0,
+   "stateKB": 65.7,
+   "points": 28,
+   "narrations": 29,
+   "commands": 10
+  },
+  {
+   "turn": "sm-e-success-11",
+   "snapshotKB": 2813.8,
+   "stateKB": 65.7,
+   "points": 29,
+   "narrations": 30,
+   "commands": 11
+  },
+  {
+   "turn": "sm-e-fail-4",
+   "snapshotKB": 2948.6,
+   "stateKB": 65.7,
+   "points": 31,
+   "narrations": 32,
+   "commands": 12
+  }
+ ]
+}

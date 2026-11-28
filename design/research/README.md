@@ -61,3 +61,4 @@ Artifacts     evidence files, manifests, commits
 | E37 | Replacement layer: phrase rewrite pairs + tiny seq2seq | negative (exact 1.2%, charF1 0.212; needs joint decoding) |
 | E38 | Joint edit decoder v1 + phase-3 synthesis | negative (mode collapse; data volume is the bottleneck) |
 | E39 | Corpus ceiling: all human-written targets sum to 362 passages | done (expansion needs new human writing) |
+| E40 | Snapshot growth: 200 KB/turn, dominated by per-point full states | done (pointStates 1.77 MB over 12 turns) |
