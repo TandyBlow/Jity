@@ -1,0 +1,16 @@
+{
+ "train290": {
+  "charF1": 0.709,
+  "wordRatio": 0.575,
+  "coverage": 0.829,
+  "invented": 4.8
+ },
+ "train339": {
+  "charF1": 0.671,
+  "wordRatio": 0.528,
+  "coverage": 0.796,
+  "invented": 5.5
+ },
+ "rows": 58,
+ "recipe": "5 epochs, lr 1e-4, greedy max_new 256"
+}
