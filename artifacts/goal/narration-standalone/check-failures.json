@@ -1,0 +1,37 @@
+{
+ "candidate-e60": {
+  "attributed": 97,
+  "openings": 54,
+  "sentences": 699,
+  "chars": 16608,
+  "failPartial": 141,
+  "failPartialHit": 141,
+  "success": 136,
+  "successHit": 133,
+  "openingWithOutcome": 13,
+  "points": 161,
+  "misattrRate": 0.0,
+  "failPartialRate": 1.0,
+  "successRate": 0.978,
+  "openingOutcomeRate": 0.241
+ },
+ "current-1.7b": {
+  "attributed": 435,
+  "sameHeadPairs": 62,
+  "openings": 44,
+  "sentences": 3068,
+  "chars": 98037,
+  "failPartial": 141,
+  "success": 136,
+  "failPartialHit": 2,
+  "openingWithOutcome": 6,
+  "misattributed": 8,
+  "examples": 0,
+  "successHit": 12,
+  "points": 161,
+  "misattrRate": 0.018,
+  "failPartialRate": 0.014,
+  "successRate": 0.088,
+  "openingOutcomeRate": 0.136
+ }
+}

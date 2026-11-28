@@ -52,6 +52,28 @@ def opening_of(row, facts):
     return f'{name}{body}'
 
 
+NAME_HEAD = re.compile(r'^(路明非|诺诺|芬格尔|秦越|阿豹|林亦舟|楚子航|凯撒|顾岚|唐骁|夏弥|绘梨衣)')
+
+
+def polish(text):
+    """相邻句同主语时第二句改用代词，避免'路明非……。路明非……'。"""
+    paras, last = [], None
+    for para in text.split('\n\n'):
+        sents = [x.strip().rstrip('。') for x in re.split(r'。', para) if x.strip()]
+        fixed = []
+        for sent in sents:
+            m = NAME_HEAD.match(sent)
+            if m and last == m.group(1) and ce.GENDER.get(m.group(1)):
+                sent = ce.GENDER[m.group(1)] + sent[len(m.group(1)):]
+                m = None
+            fixed.append(sent)
+            if m:
+                last = m.group(1)
+        if fixed:
+            paras.append('。'.join(fixed) + '。')
+    return '\n\n'.join(paras)
+
+
 def main():
     rows = [json.loads(l) for l in (HERE / 'inputs.jsonl').read_text(encoding='utf8').splitlines() if l.strip()]
     by = defaultdict(list)
@@ -70,6 +92,7 @@ def main():
         fresh = [c for c in facts if c not in prev_of[id(r)]]
         kept = fresh or [c for c in facts if c.startswith(ce.player_name(r) or '') and '现在在' in c][:1]
         text, stats, _ = ce.compose(r, facts=kept, time_last=True, opening=opening_of(r, facts))
+        text = polish(text)
         total += len(text)
         out_rows.append({'id': r['id'], 'chars': len(text), 'fresh': len(fresh), 'text': text})
     elapsed = time.perf_counter() - started

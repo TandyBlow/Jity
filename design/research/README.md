@@ -82,3 +82,4 @@ Artifacts     evidence files, manifests, commits
 | E58 | Per-point grounded eval: 1.7B covers 57% of facts and 0% of NPC outcome labels; rules 67%/100% | done |
 | E59 | Delta narration: 82% of fact clauses repeat; delta arm covers 100%/100% in 57% of current chars | done |
 | E60 | Zero-parameter candidate: action opening + delta + all results; 103 chars/point, 100%/100%, 0.069 ms | done |
+| E61 | Failure taxonomy: candidate has 0 misattribution and 100% outcome labels; current arm omits 99% | done |
