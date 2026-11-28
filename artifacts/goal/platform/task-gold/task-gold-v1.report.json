@@ -1,8 +1,8 @@
 {
  "schema": "jity-task-gold-report/1",
- "generatedAt": "2026-11-28T14:40:01.605276+00:00",
+ "generatedAt": "2026-11-28T15:42:36.348881+00:00",
  "benchRows": 120,
- "verdictCounts": {
+ "verdictCountsBench": {
   "skip": 6,
   "partial": 6,
   "no": 105,
@@ -12,27 +12,164 @@
  "uniqueTaskGoalFact": 78,
  "withinTaskDuplicates": 36,
  "emptyGoalRows": 6,
- "tasksInBench": 17,
- "tasksInSpec": 17,
- "missingGoalTasks": [
-  "task_164",
-  "task_42"
- ],
+ "reviewMethod": "three blind lenses on 78 unique cases; original bench verdict hidden",
+ "blindAgreement": {
+  "cases": 78,
+  "perLens": {
+   "clause": {
+    "agree": 69,
+    "rate": 0.885
+   },
+   "outcome": {
+    "agree": 71,
+    "rate": 0.91
+   },
+   "task": {
+    "agree": 7,
+    "rate": 0.09
+   }
+  },
+  "majority": {
+   "agree": 67,
+   "rate": 0.859
+  },
+  "disagreements": [
+   {
+    "id": "tg-v1:67a272548d99",
+    "bench": "partial",
+    "blind": "yes",
+    "labels": {
+     "clause": "partial",
+     "outcome": "yes",
+     "task": "yes"
+    }
+   },
+   {
+    "id": "tg-v1:37d15dfd695b",
+    "bench": "no",
+    "blind": "partial",
+    "labels": {
+     "clause": "no",
+     "outcome": "partial",
+     "task": "partial"
+    }
+   },
+   {
+    "id": "tg-v1:92c8df8d11f9",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "insufficient",
+     "task": "partial"
+    }
+   },
+   {
+    "id": "tg-v1:e1532a5238a0",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "insufficient",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:c41b665fb0a2",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "no",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:7b9d4586015c",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "no",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:ebfdf50a5901",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "no",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:4c841abc3b55",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "no",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:7651fc5e055e",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "no",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:b19337879779",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "insufficient",
+     "task": "insufficient"
+    }
+   },
+   {
+    "id": "tg-v1:7a3f6f80f0db",
+    "bench": "no",
+    "blind": "insufficient",
+    "labels": {
+     "clause": "insufficient",
+     "outcome": "insufficient",
+     "task": "insufficient"
+    }
+   }
+  ]
+ },
+ "verdictCountsBlind": {
+  "no": 60,
+  "yes": 4,
+  "partial": 5,
+  "insufficient": 9
+ },
+ "benchCountsUnique": {
+  "no": 70,
+  "partial": 5,
+  "yes": 3
+ },
+ "insufficientCount": 9,
  "crossTab": {
-  "achieved|no": 100,
-  "achieved|partial": 4,
-  "achieved|yes": 3,
-  "pending|no": 5,
-  "pending|partial": 2
+  "achieved|insufficient": 8,
+  "achieved|no": 57,
+  "achieved|partial": 2,
+  "achieved|yes": 4,
+  "pending|insufficient": 1,
+  "pending|no": 3,
+  "pending|partial": 3
  },
- "committedAchieved": 107,
- "committedAchievedNotYes": 104,
- "committedAchievedNotYesRate": 0.972,
- "labelAgreement": {
-  "judged": 114,
-  "agree": 114,
-  "disagree": 0
- },
+ "committedAchieved": 71,
+ "committedAchievedNotYes": 67,
+ "committedAchievedNotYesRate": 0.944,
  "selectionBias": "every bench row is an llm=yes case; this measures false commits, not balanced accuracy",
  "singleFactLimitation": "single (goal, fact) pairs cannot express 14/19 multi-clause, negation or precondition goals",
  "reportN": 108,

@@ -1,0 +1,39 @@
+{
+ "schema": "jity-blind-agreement/1",
+ "cases": 78,
+ "lenses": [
+  "clause",
+  "outcome",
+  "task"
+ ],
+ "perLensAgreement": {
+  "clause": 0.885,
+  "outcome": 0.91,
+  "task": 0.09
+ },
+ "majorityAgreement": 0.859,
+ "majorityDistribution": {
+  "no": 60,
+  "yes": 4,
+  "partial": 5,
+  "insufficient": 9
+ },
+ "benchDistribution": {
+  "no": 70,
+  "partial": 5,
+  "yes": 3
+ },
+ "disagreements": [
+  "tg-v1:67a272548d99",
+  "tg-v1:37d15dfd695b",
+  "tg-v1:92c8df8d11f9",
+  "tg-v1:e1532a5238a0",
+  "tg-v1:c41b665fb0a2",
+  "tg-v1:7b9d4586015c",
+  "tg-v1:ebfdf50a5901",
+  "tg-v1:4c841abc3b55",
+  "tg-v1:7651fc5e055e",
+  "tg-v1:b19337879779",
+  "tg-v1:7a3f6f80f0db"
+ ]
+}

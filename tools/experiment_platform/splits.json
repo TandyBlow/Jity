@@ -93,7 +93,15 @@
    "key": "id",
    "usage": "gold-dev",
    "independent": false,
-   "note": "Platform second read of semantic bench-v1 (114/114 label agreement); same rows, benchmark validity defects in P05."
+   "note": "Three blind lenses on 78 unique cases; majority agreement 67/78 (0.859); insufficient kept separate from no. Same bench rows, benchmark quality defects in P05."
+  },
+  {
+   "name": "task-multifact-v1",
+   "path": "artifacts/goal/platform/task-gold/task-multifact-v1.jsonl",
+   "key": "id",
+   "usage": "dev",
+   "independent": false,
+   "note": "584 multi-fact cross-turn cases from the rules 8-scenario evidence; labels pending blind review; scenario set is regression."
   }
  ],
  "pairs": [

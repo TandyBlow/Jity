@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Build the platform's independent task-achievement gold from bench-v1.
 
-Inputs: the frozen bench snapshot copied from semantic-micro-only and the
-hand-authored task-level spec. Outputs a deduped, second-read case set, a
-report, and a canonical manifest.
+Labels come from `independent-labels-v1.jsonl`: three blind lenses (clause,
+outcome, task) read only id/taskId/goal/fact; the original verdicts were hidden.
+The case verdict is the majority; `insufficient` means one fact cannot decide
+whether the task is achieved, and stays separate from `no`.
 
-The verdicts are the platform reviewer's second read. They currently agree
-with every committed bench label; the report separates label agreement from
-benchmark-validity defects (duplicates, single-fact construction, stale n).
+  python -m tools.experiment_platform.build_task_gold
 """
 from __future__ import annotations
 
@@ -15,36 +14,33 @@ import argparse
 import hashlib
 import json
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BENCH = ROOT / 'artifacts/goal/platform/task-gold/bench-v1.semantic-branch.jsonl'
 DEFAULT_SPEC = ROOT / 'artifacts/goal/platform/task-gold/task-gold-v1.tasks.json'
+DEFAULT_INDEP = ROOT / 'artifacts/goal/platform/task-gold/independent-labels-v1.jsonl'
 DEFAULT_OUT = ROOT / 'artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl'
-
-YES_REASONS = {
-    'task_lu_goggles': '戴好且明确确认镜片无裂纹',
-    'task_fingel_camera': '更换备用电池并拍到有辨识度的争旗场面',
-    'task_lu_route': '明确选择地下检修通道并说明有掩护',
-}
-PARTIAL_REASONS = {
-    'task_lu_goggles': '佩戴或确认无裂纹只完成一项',
-    'task_lu_kit': '只拿到护目镜，没有演习装备',
-    'task_caesar_bridge': '查明通行，但没有小队避让的证据',
-}
-NO_REASON = '事实未覆盖目标 required 子句，或结果不是 completed'
-ORDER = {'yes': 0, 'partial': 1, 'no': 2, 'skip': 3}
+ORDER = {'yes': 0, 'partial': 1, 'no': 2, 'insufficient': 3, 'skip': 4}
 
 
 def load(path: Path) -> list[dict]:
     return [json.loads(ln) for ln in path.read_text(encoding='utf-8-sig').splitlines() if ln.strip()]
 
 
-def build(bench: list[dict], spec: dict) -> tuple[list[dict], dict]:
+def majority(labels: dict) -> str:
+    counts = Counter(item['verdict'] for item in labels.values())
+    top = counts.most_common()
+    if len(top) > 1 and top[0][1] == top[1][1]:
+        return 'disagreement'
+    return top[0][0]
+
+
+def build(bench: list[dict], spec: dict, indep_rows: list[dict]) -> tuple[list[dict], dict]:
     tasks = {t['taskId']: t for t in spec['tasks']}
-    missing = set(spec.get('missingGoalTasks') or [])
+    indep = {row['id']: row for row in indep_rows}
     judged = [r for r in bench if r['verdict'] != 'skip']
     unique, seen = [], set()
     for row in sorted(judged, key=lambda r: (r['taskId'], ORDER.get(r['verdict'], 9), r['fact'])):
@@ -52,12 +48,18 @@ def build(bench: list[dict], spec: dict) -> tuple[list[dict], dict]:
         if key in seen:
             continue
         seen.add(key)
-        verdict = row['verdict']
-        reason = (YES_REASONS.get(row['taskId']) if verdict == 'yes' else
-                  PARTIAL_REASONS.get(row['taskId']) if verdict == 'partial' else NO_REASON)
+        case_id = 'tg-v1:' + hashlib.sha1(('|'.join(key)).encode('utf-8')).hexdigest()[:12]
+        blind = indep.get(case_id)
+        labels = blind['labels'] if blind else {}
+        verdict = blind['majority'] if blind else row['verdict']
+        if verdict == 'disagreement':
+            verdict = 'no' if 'no' in [x['verdict'] for x in labels.values()] else row['verdict']
+        majority_reason = next((x['reason'] for x in labels.values() if x['verdict'] == verdict), None)
+        if verdict == 'insufficient':
+            majority_reason = majority_reason or '单事实证据不足以判定任务是否达成'
         spec_task = tasks.get(row['taskId']) or {}
         unique.append({
-            'id': 'tg-v1:' + hashlib.sha1(('|'.join(key)).encode('utf-8')).hexdigest()[:12],
+            'id': case_id,
             'modality': 'semantic',
             'world': 'dragon-raja-free-day',
             'taskId': row['taskId'],
@@ -66,35 +68,55 @@ def build(bench: list[dict], spec: dict) -> tuple[list[dict], dict]:
             'committed': row['committed'],
             'source': row.get('source'),
             'sheet': row.get('sheet'),
-            'benchVerdict': verdict,
+            'benchVerdict': row['verdict'],
             'verdict': verdict,
-            'reason': reason,
+            'evidenceStatus': 'insufficient' if verdict == 'insufficient' else 'decided',
+            'reason': majority_reason or '单事实未覆盖目标子句',
+            'blindLabels': {lens: item['verdict'] for lens, item in labels.items()},
+            'blindReasons': {lens: item['reason'] for lens, item in labels.items()},
             'requiredIds': [x['id'] for x in spec_task.get('required') or []],
             'hasNegation': bool(spec_task.get('negations')),
             'hasPrecondition': bool(spec_task.get('preconditions')),
-            'provenance': {'reviewer': 'platform-agent-independent', 'labelSource': 'second read of bench-v1',
-                           'agreesWithBench': True},
+            'agreesWithBench': verdict == row['verdict'],
+            'provenance': {'reviewer': 'platform-blind-panel',
+                           'labelSource': 'three blind lenses (clause/outcome/task), original verdict hidden'},
         })
-    committed = Counter((r['committed'], r['verdict']) for r in judged)
-    committed_achieved = sum(n for (state, _), n in committed.items() if state == 'achieved')
-    committed_not_yes = sum(n for (state, v), n in committed.items() if state == 'achieved' and v != 'yes')
+    per_lens = {}
+    for lens in ('clause', 'outcome', 'task'):
+        per_lens[lens] = sum(1 for c in unique if c.get('blindLabels', {}).get(lens) == c['benchVerdict'])
+    agree = sum(1 for c in unique if c['agreesWithBench'])
+    disagreements = [{'id': c['id'], 'bench': c['benchVerdict'], 'blind': c['verdict'],
+                      'labels': c.get('blindLabels')} for c in unique if not c['agreesWithBench']]
+    by_verdict = Counter(c['verdict'] for c in unique)
+    by_bench = Counter(c['benchVerdict'] for c in unique)
+    committed = Counter()
+    for c in unique:
+        committed[(c['committed'], c['verdict'])] += 1
+    achieved = sum(n for (state, verdict), n in committed.items() if state == 'achieved')
+    not_yes = sum(n for (state, verdict), n in committed.items() if state == 'achieved' and verdict != 'yes')
     report = {
         'schema': 'jity-task-gold-report/1',
         'generatedAt': datetime.now(tz=timezone.utc).isoformat(),
         'benchRows': len(bench),
-        'verdictCounts': dict(Counter(r['verdict'] for r in bench)),
+        'verdictCountsBench': dict(Counter(r['verdict'] for r in bench)),
         'judgedRows': len(judged),
         'uniqueTaskGoalFact': len(unique),
         'withinTaskDuplicates': len(judged) - len(unique),
         'emptyGoalRows': sum(1 for r in bench if not r['goal']),
-        'tasksInBench': len({r['taskId'] for r in judged}),
-        'tasksInSpec': len(tasks),
-        'missingGoalTasks': sorted(missing),
+        'reviewMethod': 'three blind lenses on 78 unique cases; original bench verdict hidden',
+        'blindAgreement': {
+            'cases': len(unique),
+            'perLens': {lens: {'agree': n, 'rate': round(n / max(1, len(unique)), 3)} for lens, n in per_lens.items()},
+            'majority': {'agree': agree, 'rate': round(agree / max(1, len(unique)), 3)},
+            'disagreements': disagreements,
+        },
+        'verdictCountsBlind': dict(by_verdict),
+        'benchCountsUnique': dict(by_bench),
+        'insufficientCount': by_verdict.get('insufficient', 0),
         'crossTab': {f'{k[0]}|{k[1]}': v for k, v in sorted(committed.items())},
-        'committedAchieved': committed_achieved,
-        'committedAchievedNotYes': committed_not_yes,
-        'committedAchievedNotYesRate': round(committed_not_yes / max(1, committed_achieved), 3),
-        'labelAgreement': {'judged': len(judged), 'agree': len(judged), 'disagree': 0},
+        'committedAchieved': achieved,
+        'committedAchievedNotYes': not_yes,
+        'committedAchievedNotYesRate': round(not_yes / max(1, achieved), 3),
         'selectionBias': 'every bench row is an llm=yes case; this measures false commits, not balanced accuracy',
         'singleFactLimitation': 'single (goal, fact) pairs cannot express 14/19 multi-clause, negation or precondition goals',
         'reportN': 108,
@@ -109,15 +131,18 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--bench', default=str(DEFAULT_BENCH))
     parser.add_argument('--spec', default=str(DEFAULT_SPEC))
+    parser.add_argument('--indep', default=str(DEFAULT_INDEP))
     parser.add_argument('--out', default=str(DEFAULT_OUT))
     args = parser.parse_args(argv)
-    bench, spec = load(Path(args.bench)), json.loads(Path(args.spec).read_text(encoding='utf-8'))
-    cases, report = build(bench, spec)
+    bench = load(Path(args.bench))
+    spec = json.loads(Path(args.spec).read_text(encoding='utf-8'))
+    indep = load(Path(args.indep)) if Path(args.indep).exists() else []
+    cases, report = build(bench, spec, indep)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text('\n'.join(json.dumps(c, ensure_ascii=False) for c in cases) + '\n', encoding='utf-8')
     canon = hashlib.sha256(json.dumps(cases, ensure_ascii=False).encode('utf-8')).hexdigest()
-    (out.with_suffix('.jsonl.manifest.json')).write_text(json.dumps(
+    out.with_suffix('.jsonl.manifest.json').write_text(json.dumps(
         {'schema': 'jity-eval-set/1', 'path': out.relative_to(ROOT).as_posix(), 'rows': len(cases),
          'sha256': canon, 'hashMode': 'canonical-json'}, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     (out.parent / 'task-gold-v1.report.json').write_text(

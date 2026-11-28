@@ -1,4 +1,4 @@
-# P05 任务达成金标独立核查：标签是对的，基准撑不起 14.8% 的语义结论
+# P05 任务达成金标独立核查：盲评一致 86%，不是 114/114；基准撑不起 14.8%
 
 **Question.** 语义分支说“原有任务达成标签可能不正确”；它的 `bench-v1` 严格标签是否可信？
 如果可信，E57 的 14.8% 能不能当作“模型语义正确率”？新的“正确答案”应该长什么样？
@@ -16,13 +16,18 @@
 **Data.** `bench-v1` 120 行：`no 105 / partial 6 / yes 3 / skip 6`。可判 114 条只对应
 **78 个唯一 (task, goal, fact)**；同任务内重复 **36 条（31.6%）**。覆盖 17 个有目标的
 任务；`task_42`、`task_164` 的 6 条样本目标为空。全部 120 条都是旧 LLM 判 yes 的样本。
+盲评只输入 id/taskId/goal/fact，隐藏原 verdict 与 committed；三路结果：多数一致
+**67/78（85.9%）**，clause 69/78（88.5%）、outcome 71/78（91.0%）、task 7/78（9.0%）。
 
 **Findings.**
 
-1. **标签本身经得起第二遍读评：114/114 一致。** 我确认 yes 3 条（护目镜戴好且确认无裂纹、
-   芬格尔换电池并拍到场面、路明非选定地下检修通道并说明掩护）、partial 6 条（护目镜只完成
-   佩戴或确认、只拿到护目镜没有装备、只查明小桥通行没有避让证据）、no 105 条。
-   所以“旧标签错”不是标注错误，而是**判定标准与样本构造**的问题。
+1. **盲评一致率 67/78（85.9%），不是 114/114。** 我此前写下的 114/114 来自构建脚本
+   直接复制 `row['verdict']`，没有独立标注文件支撑；现已改为三路盲评并保存每条的
+   判定理由（`independent-labels-v1.jsonl`、`blind-agreement-v1.json`）。分歧 11 条：
+   9 条是多数判 `insufficient`、bench 判 `no`（单事实不足以判定，不等于已证明未达成）；
+   1 条 `caesar_bridge` 多数判 yes、bench partial；1 条 `chu_flag` 多数 partial、bench no。
+   task 镜头只有 7/78 一致，说明“只看一条事实做任务级判断”本身不可靠；不应把它的多数
+   当作独立金标，必须用多事实/跨回合证据。
 
 2. **14.8% 不是语义正确率，是负例上的误提交率。** 114 条全部是旧 LLM 判 yes 的样本，
    其中 107 条已被旧系统提交为 achieved；这 107 条里严格只有 3 条 yes，
@@ -54,14 +59,19 @@
 - `task-gold-v1.tasks.json`：17 个有目标任务的任务级规格——required 子句 id、前置条件、
   否定约束、partial 规则、旧系统的 forbidden shortcuts（走进房间、读地图、提到负责人、
   准备动作等）。`task_42/task_164` 标为缺目标。
-- `task-gold-v1.cases.jsonl`：78 条去重后的第二遍读评样本（`verdict` 与 bench 一致，
-  附 reason / requiredIds / 是否有否定与前置条件），已用规范化哈希冻结。
+- `task-gold-v1.cases.jsonl`：78 条去重后的**盲评多数标签**（附三路 labels/reasons、
+  benchVerdict、requiredIds、否定/前置条件），已用规范化哈希冻结；`insufficient` 与
+  `no` 分开。
+- `independent-labels-v1.jsonl` / `blind-agreement-v1.json`：三路盲评原始标签、理由、
+  置信度与一致率计算；不再由构建脚本写死一致数。
+- `task-multifact-v1.jsonl`：从规则臂八场景证据抽出的 **584 条多事实/跨回合**任务案例
+  （73 个任务、平均 23.4 条事实、8 个回合累积），dev/regression，标签待盲评。
 - `task-gold-v1.bundles.jsonl`：11 条**多事实**开发夹具（5 yes / 2 partial / 3 no /
   1 not_triggered），按任务规格手工构造，覆盖单事实基准测不到的组合；它们是夹具，
   不是真实运行结果，正式评价仍需真实回合采集。
 - `task-gold-v1.report.json`：本页全部计数与差异。
 - `old-commit-predictions.jsonl` / `old-commit-eval.json`：把旧系统 committed 状态当预测
-  的对照分数（78 条去重样本，yes precision 0.042）。
+  的对照分数（78 条盲评金标，yes precision 0.056）。
 - `tools/experiment_platform/task_gold_eval.py`：对任意 `{id, verdict}` 预测打分
   （exact accuracy、yes 提交的 P/R、误提交列表、按任务汇总）；`not_triggered` 已进
   任务规格的判定表。
@@ -84,9 +94,9 @@
 1. 语义 Agent 从冻结的 114 条重跑 E57 报告，消除 108/114 差异；解释 6 条空目标样本。
 2. 条件任务加 `not_triggered` 状态（平台规格已加；语义 Agent 的训练负例需同步排除未触发样本）。
 3. 以 `task-gold-v1.tasks.json` 的 required 子句重写候选生成与裁决；bench 单事实只作
-   负例，不作为“达成”正例来源。
-4. 平台下一步从真实回合抽多事实证据，按任务规格生成独立 test 集；在此之前 bundles 只
-   作开发夹具。
+   负例或 `insufficient`，不作为“达成”正例来源。
+4. 平台已从真实八场景回合抽出 `task-multifact-v1`（584 条），下一步用盲评面板标注并
+   留出 test 分片；在此之前它和多事实 bundles 只作开发夹具。
 5. 用户裁决：严格标准是否替换旧 14/14 口径；在裁决前产品默认不变，旧口径只作行为对照。
 
 **Artifacts.** `tools/experiment_platform/{build_task_gold,task_gold_eval}.py`；

@@ -2,6 +2,6 @@
  "schema": "jity-eval-set/1",
  "path": "artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl",
  "rows": 78,
- "sha256": "3ed31be91bbe36d2ce11d5ab547b9e1848039d3ca8682315c5f7702302a8680a",
+ "sha256": "3a70ab91d5f2c61b23fef064ca7a48e33f74d728a8ea3bb1ce9f5fbaefbdce43",
  "hashMode": "canonical-json"
 }

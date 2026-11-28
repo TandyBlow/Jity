@@ -71,6 +71,12 @@
    "independent": false,
    "uniqueKeys": 78,
    "path": "artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl"
+  },
+  "task-multifact-v1": {
+   "usage": "dev",
+   "independent": false,
+   "uniqueKeys": 584,
+   "path": "artifacts/goal/platform/task-gold/task-multifact-v1.jsonl"
   }
  },
  "pairs": [
