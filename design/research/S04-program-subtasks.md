@@ -38,3 +38,15 @@
 - 不以减少新增换成功率。
 
 **Artifacts.** `micro/subtasks.ts`、`subtasks.test.ts`、`stageSubtasks` 接入；臂 `?subtasks=program`。S04。
+
+## 4. 页面运行（goal + program 双臂，冻结八场景）
+
+臂：`?micro=1&taskStage=goal&subtasks=program`。前 6 回合观察：
+
+- 每回合 subtasks 阶段全部 `source=program`，LLM 调用 0；
+- 程序模板没有新增任何子任务（任务总数保持 73）；
+- 混合臂在同一夹具新增 `task_22`（确认跨溪小桥是否仍能通行），程序臂缺失，记为**被跳过的合法新增** 1 条。
+
+原因初判：模板只从事实的结构化标记生成候选，而这次小桥信息来自「凯撒确认了跨溪小桥的通行情况」这类事实；需要补一条“父目标含 `查明X是否…` 且事实点名 X → 确认X是否…”的模板，才能恢复。
+
+最终状态与对比见跑完后补记。
