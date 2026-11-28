@@ -29,3 +29,7 @@ charF1 升了，但覆盖降、编造升、多样性为零，说明模型更像�
 
 **Artifacts.** `joint-summary-v14.json`（HPC `~/narr_joint14/`）、
 `joint-run-v14.log`、`joint-hold-v13.json`、`joint-skip-v14.json`。E43。
+
+**流畅度（2026-11-28）.** beam 输出的平均 token NLL 4.77（困惑度 118.1），
+低于人工正文的 5.24（188.6）——因为 58 条全是同一句训练集原句。背诵会
+在流畅度上"赢"，所以该指标只能与覆盖、编造、多样性同报。
