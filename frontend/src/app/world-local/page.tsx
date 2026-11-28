@@ -1105,10 +1105,10 @@ export default function WorldLocalPage() {
             armInfo.microTaskVerifier = Boolean(microTaskVerifier);
             armInfo.taskVerifier = taskVerifierMicro ? 'micro' : 'llm';
             armInfo.taskProposer = taskProposerMicro ? 'micro' : 'llm';
-            armInfo.taskStage = taskStageGoal ? 'goal' : 'llm';
-            armInfo.subtasks = subtasksProgram ? 'program' : 'llm';
-            armInfo.action = actionTemplateOnly ? 'template' : 'llm';
-            armInfo.targets = targetsRuleOnly ? 'rule' : 'llm';
+            armInfo.taskStage = taskStageGoal || microOnly ? 'goal' : 'llm';
+            armInfo.subtasks = subtasksProgram || microOnly ? 'program' : 'llm';
+            armInfo.action = actionTemplateOnly || microOnly ? 'template' : 'llm';
+            armInfo.targets = targetsRuleOnly || microOnly ? 'rule' : 'llm';
             armInfo.microOnly = microOnly;
             armInfo.semanticEngine = microOnly ? 'absent' : 'present';
             armInfo.semanticArm = semanticArm;
