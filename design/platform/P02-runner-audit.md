@@ -35,9 +35,11 @@
 7. **推理租约的 TTL 对活着的 holder 不生效。** `resource_lease.py:94-96`：只要记录的
    `holderPid` 还活着就返回"不 stale"，不检查年龄，也没有心跳；进程挂死时租约永不释放。
    需要心跳字段或最大持有时间，同时保留"不杀用户浏览器"的约束。
-8. **调度器与租约是两套互不联动的门。** `expctl.ps1` 只看空闲物理内存/提交上限，
-   完全不 acquire `resource_lease.py`；另一个 lane 持有租约时，lab 仍可能放行浏览器任务。
-   目标要求"避免多个重型实验无协调地同时运行"，这需要统一的准入门。
+8. **调度器不查租约；验收驱动自己查。** `expctl.ps1` 只看空闲物理内存/提交上限，
+   不 acquire `resource_lease.py`；但 `accept-world-local.mjs` 通过 `lease.mjs` 在启动时
+   acquire，所以两条验收任务之间有互斥。2026-11-28 21:55 我们的 holdout 重试被 lane
+   `09-ui` 的 smoke 拒绝（holderPid 17920），证明这道门有效。缺口在非驱动类 lab 任务
+   （纯探测、训练脚本）仍可能与验收并行；统一入口应让所有重型任务走同一个租约。
 9. **只治理内存，不治理 GPU/CPU。** 队列记录 `budgetMB`/`peakTreeMB`，没有 GPU 显存、
    利用率或 CPU 亲和性；WebGPU 实验的显存冲突不会被发现。
 10. **计时口径的三个缺口。**
