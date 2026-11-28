@@ -60,6 +60,8 @@
   1 not_triggered），按任务规格手工构造，覆盖单事实基准测不到的组合；它们是夹具，
   不是真实运行结果，正式评价仍需真实回合采集。
 - `task-gold-v1.report.json`：本页全部计数与差异。
+- `old-commit-predictions.jsonl` / `old-commit-eval.json`：把旧系统 committed 状态当预测
+  的对照分数（78 条去重样本，yes precision 0.042）。
 - `tools/experiment_platform/task_gold_eval.py`：对任意 `{id, verdict}` 预测打分
   （exact accuracy、yes 提交的 P/R、误提交列表、按任务汇总）；`not_triggered` 已进
   任务规格的判定表。
