@@ -11,7 +11,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const root = resolve(here, '../../../../..');
+const root = resolve(here, '../../..');
 const path = resolve(root, 'results/product/integration.json');
 const asJson = process.argv.includes('--json');
 

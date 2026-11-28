@@ -1,44 +1,174 @@
 {
-  "kind": "goal-product-integration",
-  "generatedAt": "2026-11-20T16:10:00.000000+00:00",
-  "role": "Single-tree goal mode: the product is this repository's /world-local page; the acceptance driver only reads it.",
-  "product": {
-    "page": "/world-local",
-    "pageFile": "frontend/src/app/world-local/page.tsx",
-    "worktree": ".",
-    "branch": "agent",
-    "commit": "801f5524",
-    "url": "http://127.0.0.1:3177/world-local",
-    "port": 3177,
-    "start": {
-      "frontendDev": {
-        "cwd": "frontend",
-        "command": "npm run dev -- --port 3177",
-        "url": "http://127.0.0.1:3177/world-local"
-      }
-    },
-    "notes": [
-      "The page works with every /api/** request refused: saves stay in IndexedDB (--block-api).",
-      "COOP/COEP are served by next.config for /world-local; the driver records crossOriginIsolated.",
-      "Models are fetched by frontend/scripts/fetch-models.mjs and served from frontend/public/models/."
-    ]
+ "kind": "goal-product-integration",
+ "generatedAt": "2026-11-28T06:38:58+00:00",
+ "role": "Single-tree goal mode: the product is this repository /world-local page.",
+ "product": {
+  "page": "/world-local",
+  "pageFile": "frontend/src/app/world-local/page.tsx",
+  "worktree": ".",
+  "branch": "agent",
+  "head": "387ef5551bc1cfe45e14bbd17b0c92b82b1f4f6d",
+  "url": "http://127.0.0.1:3177/world-local",
+  "port": 3177,
+  "crossOriginIsolated": true
+ },
+ "startup": {
+  "cwd": "frontend",
+  "command": "node node_modules/next/dist/bin/next start -p 3177",
+  "port": 3177
+ },
+ "models": [
+  {
+   "role": "semantic",
+   "file": "Qwen3-0.6B-Q4_K_M.gguf",
+   "path": "frontend/public/models/Qwen3-0.6B-Q4_K_M.gguf",
+   "bytes": 396705472,
+   "sha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a"
   },
-  "models": {
-    "semantic": {
-      "file": "Qwen3-0.6B-Q4_K_M.gguf",
-      "sourceSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
-      "bytes": 396705472,
-      "license": "Apache-2.0"
-    },
-    "narration": {
-      "file": "Qwen3-1.7B-Q4_K_M.gguf",
-      "sourceSha256": "b139949c5bd74937ad8ed8c8cf3d9ffb1e99c866c823204dc42c0d91fa181897",
-      "bytes": 1107409472,
-      "license": "Apache-2.0"
-    }
+  {
+   "role": "narration",
+   "file": "qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+   "path": "frontend/public/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf",
+   "bytes": 1107408768,
+   "sha256": "82e513db5f76c8008fd90c3a67ffa4fe7f88de0d01b8969b78aaae704acf525a"
   },
-  "stateAuthority": {
-    "applyMergeCommitReplay": "frontend/src/lib/world-engine/local/{state,transport,schedule,controller,session}.ts",
-    "modelPorts": "frontend/src/lib/world-engine/local/game-model.ts + page.tsx"
+  {
+   "role": "micro",
+   "file": "act-skip-head-int8.onnx",
+   "path": "frontend\\public\\micro\\act-skip-head-int8.onnx",
+   "bytes": 10549929,
+   "sha256": "151c3f0168f9e602ed89e8c9393447417583cbbd4d1daf9bb77216b1edf3310d"
+  },
+  {
+   "role": "micro",
+   "file": "appearance-head-int8.onnx",
+   "path": "frontend\\public\\micro\\appearance-head-int8.onnx",
+   "bytes": 10549929,
+   "sha256": "542e3a6599673dd91e3351713b75dc025624e2ac6f8c1514309b8b7c0d353443"
+  },
+  {
+   "role": "micro",
+   "file": "behavior-head-int8.onnx",
+   "path": "frontend\\public\\micro\\behavior-head-int8.onnx",
+   "bytes": 10551229,
+   "sha256": "bd3263794bb94e4ed5ff854676f2e5b7e784d40610801df58c57102377897f98"
+  },
+  {
+   "role": "micro",
+   "file": "continuation-heads-int8.onnx",
+   "path": "frontend\\public\\micro\\continuation-heads-int8.onnx",
+   "bytes": 10554864,
+   "sha256": "d0fd9058d7af0e74088982f639abc5fe81bde9c674cb96c1e7f554f3534f25ea"
+  },
+  {
+   "role": "micro",
+   "file": "existence-env-int8.onnx",
+   "path": "frontend\\public\\micro\\existence-env-int8.onnx",
+   "bytes": 10619252,
+   "sha256": "ef4d16f120b693f8dc29e01db78b44c968220b1d0978c3b685e611ccf6b6ce1c"
+  },
+  {
+   "role": "micro",
+   "file": "existence-info-int8.onnx",
+   "path": "frontend\\public\\micro\\existence-info-int8.onnx",
+   "bytes": 10619252,
+   "sha256": "d571657f84cdaabb4ce5e5e24593fd7ae747f71bf5f622cea4dfc49d34a83b42"
+  },
+  {
+   "role": "micro",
+   "file": "extraction-head-int8.onnx",
+   "path": "frontend\\public\\micro\\extraction-head-int8.onnx",
+   "bytes": 10619238,
+   "sha256": "1c14686ac584caa9a0d28b88c29553afdc12f216b2297bac3862542ade9e7f98"
+  },
+  {
+   "role": "micro",
+   "file": "judge-heads-int8.onnx",
+   "path": "frontend\\public\\micro\\judge-heads-int8.onnx",
+   "bytes": 10553112,
+   "sha256": "13983e7311c81e10b452da9c25b8ba183baf57c4e7f05e54f4642d775f967d23"
+  },
+  {
+   "role": "micro",
+   "file": "movement-head-int8.onnx",
+   "path": "frontend\\public\\micro\\movement-head-int8.onnx",
+   "bytes": 10549906,
+   "sha256": "9de4beab3803401fbe07f234b636390fc8c6d8ecf03bfa9475ede6946631bf15"
+  },
+  {
+   "role": "micro",
+   "file": "pair-scorer-int8.onnx",
+   "path": "frontend\\public\\micro\\pair-scorer-int8.onnx",
+   "bytes": 10550018,
+   "sha256": "c9d1b0c55d215709943c9cac45aaab3202d0231fc1cdc20a5a4406869f3d966d"
+  },
+  {
+   "role": "micro",
+   "file": "probe-decoder-int8.onnx",
+   "path": "frontend\\public\\micro\\probe-decoder-int8.onnx",
+   "bytes": 2985517,
+   "sha256": "2b7eafb3f7367db60ff35e0875e6b1c410a1ee9bc1b9a39c41a71769fe4a51d4"
+  },
+  {
+   "role": "micro",
+   "file": "probe-encoder-int8.onnx",
+   "path": "frontend\\public\\micro\\probe-encoder-int8.onnx",
+   "bytes": 2149696,
+   "sha256": "ef7dbcd3be7423ff06824798db099c9b9e463901569014c8fb74d2d15e318d41"
+  },
+  {
+   "role": "micro",
+   "file": "task-condition-int8.onnx",
+   "path": "frontend\\public\\micro\\task-condition-int8.onnx",
+   "bytes": 10550492,
+   "sha256": "b5636366e7831d568435dc8a7934584a00bc8fdccfd75040596c8b99746831fc"
+  },
+  {
+   "role": "micro",
+   "file": "task-heads-int8.onnx",
+   "path": "frontend\\public\\micro\\task-heads-int8.onnx",
+   "bytes": 10552059,
+   "sha256": "9f53263834b6a3eccb91d1702c118e08d3bb4edcfbf651b6d2c56f1414ce8e7f"
+  },
+  {
+   "role": "micro",
+   "file": "task-match-int8.onnx",
+   "path": "frontend\\public\\micro\\task-match-int8.onnx",
+   "bytes": 10551953,
+   "sha256": "a3c115163e9239e66c90839d10554bb4bacda582e7cfd24cd58cd2c171cccd06"
+  },
+  {
+   "role": "micro",
+   "file": "v3-candidate-int8.onnx",
+   "path": "frontend\\public\\micro\\v3-candidate-int8.onnx",
+   "bytes": 52076,
+   "sha256": "6b290024765f2ceaa8f0207f90597f3eb57a12e1aefa7be76c5ed1f9c2e56335"
+  },
+  {
+   "role": "micro",
+   "file": "v3-decoder-int8.onnx",
+   "path": "frontend\\public\\micro\\v3-decoder-int8.onnx",
+   "bytes": 4788034,
+   "sha256": "352ea203cc4ab0c00cd105255e38d99b0a3d3bd4da16e5b706be082be3db2297"
+  },
+  {
+   "role": "micro",
+   "file": "v3-decoder-kv-int8.onnx",
+   "path": "frontend\\public\\micro\\v3-decoder-kv-int8.onnx",
+   "bytes": 4575024,
+   "sha256": "2d1eabfdba51ed6f24aec4786025b3136011c19ff081debfe61b460e83f908fa"
+  },
+  {
+   "role": "micro",
+   "file": "v3-encoder-int8.onnx",
+   "path": "frontend\\public\\micro\\v3-encoder-int8.onnx",
+   "bytes": 10494732,
+   "sha256": "47a758f8fb986431d0727e62aa67f943bad94b5ba0f3028e73dad32abb8157f9"
   }
+ ],
+ "persistence": {
+  "store": "IndexedDB",
+  "dbName": "jity-local-progress",
+  "localStorageKeys": []
+ }
 }

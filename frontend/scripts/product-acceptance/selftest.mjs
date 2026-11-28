@@ -23,7 +23,7 @@ import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const root = resolve(here, '../../../../..');
+const root = resolve(here, '../../..');
 
 const PAGE = `<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>fixture</title></head>
 <body><main id="root"></main>

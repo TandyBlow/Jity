@@ -25,7 +25,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const root = resolve(here, '../../../../..');
+const root = resolve(here, '../../..');
 const queuePath = resolve(root, 'results/product/browser-queue.json');
 const requestsDir = resolve(root, 'results/product/browser-requests');
 const PRIORITY = { p0: 0, p1: 1, p2: 2, p3: 3 };
