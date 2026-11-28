@@ -65,6 +65,19 @@ function WriteJson($path, $value) {
     ("[" + ($parts -join ",") + "]") | Out-File -Encoding utf8 $path
   } else { ($value | ConvertTo-Json -Depth 8) | Out-File -Encoding utf8 $path }
 }
+# A submit can land while run is rewriting the ledger. Merge by id under a
+# named mutex so neither side loses records.
+$queueMutex = [System.Threading.Mutex]::new($false, 'JityLabQueue')
+function WriteQueue($path, $jobs) {
+  if (-not $queueMutex.WaitOne(10000)) { throw "queue mutex timeout" }
+  try {
+    $current = @(ReadJson $path @())
+    $byId = [ordered]@{}
+    foreach ($j in $current) { if ($j -and $j.id) { $byId[[string]$j.id] = $j } }
+    foreach ($j in $jobs) { if ($j -and $j.id) { $byId[[string]$j.id] = $j } }
+    WriteJson $path @($byId.Values | Sort-Object submittedAt)
+  } finally { $queueMutex.ReleaseMutex() }
+}
 function Mem() {
   $os = Get-CimInstance Win32_OperatingSystem
   $perf = Get-CimInstance Win32_PerfRawData_PerfOS_Memory
@@ -89,16 +102,19 @@ function TreeMB($rootPid) {
 
 if ($Action -eq 'submit') {
   if (-not $Name -or -not $Command) { throw "submit needs -Name and -Command" }
-  $jobs = @(ReadJson $Queue @())
   $id = "job-" + (Get-Date -Format 'yyyyMMdd-HHmmss') + "-" + (Get-Random -Minimum 100 -Maximum 999)
-  $jobs += [pscustomobject]@{
+  $job = [pscustomobject]@{
     id = $id; name = $Name; command = $Command; cwd = $(if ($Cwd) { $Cwd } else { "." })
     budgetMB = $BudgetMB; timeoutSec = $TimeoutSec; killMatch = $KillMatch; status = 'queued';
     attempts = 0; maxAttempts = 5
     submittedAt = (Get-Date).ToString('o'); startedAt = $null; endedAt = $null
     pid = $null; peakTreeMB = $null; log = "artifacts/goal/lab/$id.log"
   }
-  WriteJson $Queue $jobs
+  if (-not $queueMutex.WaitOne(10000)) { throw "queue mutex timeout" }
+  try {
+    $jobs = @(ReadJson $Queue @()) + $job
+    WriteJson $Queue $jobs
+  } finally { $queueMutex.ReleaseMutex() }
   "queued $id $Name"
   exit 0
 }
@@ -115,6 +131,11 @@ if ($Action -eq 'stop') {
     & taskkill /PID $a.pid /T /F | Out-Null
     $a.status = 'stopped'
     WriteJson $Active $a
+    $jobs = @(ReadJson $Queue @())
+    foreach ($j in $jobs) {
+      if ($j.id -eq $a.id) { $j.status = 'stopped'; $j.endedAt = (Get-Date).ToString('o') }
+    }
+    WriteQueue $Queue $jobs
     "stopped " + $a.pid
   } else { "no active job" }
   exit 0
@@ -122,8 +143,27 @@ if ($Action -eq 'stop') {
 
 # run (single instance)
 $lock = Join-Path (Split-Path -Parent $Queue) 'run.lock'
-try { $lockHandle = [System.IO.File]::Open($lock, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None) }
-catch { "another run holds $lock"; exit 3 }
+function OpenRunLock {
+  try {
+    $h = [System.IO.File]::Open($lock, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes([string]$PID)
+    $h.Write($bytes, 0, $bytes.Length); $h.Flush()
+    return $h
+  } catch { return $null }
+}
+$lockHandle = OpenRunLock
+if (-not $lockHandle) {
+  # A crashed run leaves the lock file behind; reclaim it only when its pid is gone.
+  $stale = $false
+  try {
+    $text = (Get-Content -Raw $lock).Trim()
+    if ($text -match '^\d+$') {
+      $stale = -not [bool](Get-Process -Id ([int]$text) -ErrorAction SilentlyContinue)
+    } else { $stale = $true }
+  } catch { $stale = $true }
+  if ($stale) { Remove-Item $lock -Force -ErrorAction SilentlyContinue; $lockHandle = OpenRunLock }
+  if (-not $lockHandle) { "another run holds $lock"; exit 3 }
+}
 try {
 while ($true) {
   $jobs = @(ReadJson $Queue @())
@@ -141,12 +181,13 @@ while ($true) {
   }
   if (-not $job -or $job.status -ne 'queued') { continue }
 
+  $attemptNo = [int]($job.attempts) + 1
+  $job.log = ($job.log -replace '(\.attempt\d+)?\.log$', ".attempt$attemptNo.log")
   $logPath = FullPath $job.log
   $workDir = FullPath $job.cwd
   $job.status = 'running'; $job.startedAt = (Get-Date).ToString('o')
-  $job | Add-Member -NotePropertyName attempts -NotePropertyValue ([int]($job.attempts + 1)) -Force
-  $idx = [array]::IndexOf($jobs, ($jobs | Where-Object { $_.id -eq $job.id } | Select-Object -First 1))
-  WriteJson $Queue $jobs
+  $job | Add-Member -NotePropertyName attempts -NotePropertyValue $attemptNo -Force
+  WriteQueue $Queue $jobs
 
   $psi = New-Object System.Diagnostics.ProcessStartInfo
   $psi.FileName = "cmd.exe"
@@ -171,7 +212,7 @@ while ($true) {
     [JobObj]::CloseHandle($jobHandle) | Out-Null
     $jobs = @(ReadJson $Queue @())
     foreach ($j in $jobs) { if ($j.id -eq $job.id) { $j.status = 'job-setup-failed'; $j.endedAt = (Get-Date).ToString('o') } }
-    WriteJson $Queue $jobs
+    WriteQueue $Queue $jobs
     Remove-Item $Active -ErrorAction SilentlyContinue
     continue
   }
@@ -231,7 +272,7 @@ while ($true) {
       $j | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
     }
   }
-  WriteJson $Queue $jobs
+  WriteQueue $Queue $jobs
   Remove-Item $Active -ErrorAction SilentlyContinue
   "finished {0} status={1} peakTreeMB={2}" -f $job.name, $reason, $peak
 }
