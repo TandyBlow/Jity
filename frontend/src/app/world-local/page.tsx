@@ -23,6 +23,7 @@ import { createMicroReaction } from '@/lib/world-engine/local/micro/reaction';
 import { createMicroTaskVerifier } from '@/lib/world-engine/local/micro/task-progress';
 import { createMicroTaskProposer, type TaskLedgerSnapshot } from '@/lib/world-engine/local/micro/task-proposer';
 import { createMicroGoalTasks } from '@/lib/world-engine/local/micro/goal-verifier';
+import { createProgramSubtasks } from '@/lib/world-engine/local/micro/subtasks';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
 import { SessionLeaseHeldError } from '@/lib/world-engine/local/persistence/types';
@@ -631,6 +632,9 @@ export default function WorldLocalPage() {
   // Goal-level tasks stage (E57): candidate pairs + a 10M goal/fact verifier.
   const [taskStageGoal] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('taskStage') === 'goal');
+  // Program subtask proposer (S04): structured fact markers, no LLM.
+  const [subtasksProgram] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('subtasks') === 'program');
   // Evaluation arms (D-123): rules = program ports only, no classifier and no
   // semantic LLM; classifier = model ports, no program fast-path and no LLM.
   const [semanticArm] = useState<'rules' | 'classifier' | null>(() => {
@@ -1076,6 +1080,7 @@ export default function WorldLocalPage() {
         const microGoalTasks = useModelPorts && taskStageGoal
           ? createMicroGoalTasks({ requireProgramCoverage: true, onStats: (record) => recordMicro('goal-tasks', record) })
           : undefined;
+        const microSubtasks = useModelPorts && subtasksProgram ? createProgramSubtasks : undefined;
         {
           const armInfo = (window as unknown as { __worldArm?: Record<string, unknown> }).__worldArm;
           if (armInfo) {
@@ -1084,6 +1089,7 @@ export default function WorldLocalPage() {
             armInfo.taskVerifier = taskVerifierMicro ? 'micro' : 'llm';
             armInfo.taskProposer = taskProposerMicro ? 'micro' : 'llm';
             armInfo.taskStage = taskStageGoal ? 'goal' : 'llm';
+            armInfo.subtasks = subtasksProgram ? 'program' : 'llm';
             armInfo.semanticArm = semanticArm;
           }
         }
@@ -1131,6 +1137,7 @@ export default function WorldLocalPage() {
           ...(microTaskVerifier ? { microTaskVerifier } : {}),
           ...(microTaskProposer ? { microTaskProposer } : {}),
           ...(microGoalTasks ? { microGoalTasks } : {}),
+          ...(microSubtasks ? { microSubtasks } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
           narrationEngine: narration,
           // The static world names the player's character; the first point of

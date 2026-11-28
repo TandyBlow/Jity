@@ -1484,6 +1484,37 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       calls: [],
     };
   }
+  if (ctx.options.microSubtasks) {
+    try {
+      const proposal = await ctx.options.microSubtasks({
+        state: ctx.state,
+        facts: resultFacts(ctx.results),
+        ownerIds: projection.affectedTaskOwners,
+      });
+      if (proposal) {
+        const subtaskRejections: { parentTaskId: string; goal: string; reason: string }[] = [];
+        const changes = readSubtaskProposals(
+          { subtasks: proposal.subtasks.map((row) => ({ parentTaskId: row.parentTaskId, goal: row.goal })) },
+          ctx.state, ctx.allocator, ctx.options.maxNewTasks ?? 8,
+          { facts, rejections: subtaskRejections },
+        );
+        return {
+          changes,
+          detail: {
+            parentTaskIds: rows.map(({ task }) => task.id).sort(),
+            characterIds: characters,
+            addedTaskIds: Object.values(changes).flatMap((delta) => (delta.subtasksAdded ?? []).map((task) => task.id)).sort(),
+            rejectedSubtasks: subtaskRejections,
+            source: 'program',
+          },
+          fallback: false,
+          calls: [],
+        };
+      }
+    } catch {
+      // A program proposer failure is an abstain; the LLM subtasks stage runs below.
+    }
+  }
   const prompt = buildSubtasksPrompt(ctx, projection.affectedTaskOwners, projection);
   try {
     const answer = await callJson(ctx.engine, prompt, {

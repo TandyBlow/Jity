@@ -108,6 +108,8 @@ export interface GameModelOptions {
   microTaskProposer?: import('./semantics/settlement/types').MicroTaskProposerFn;
   /** Experimental: goal-level task stage (candidate pairs + verifier). */
   microGoalTasks?: import('./semantics/settlement/types').MicroGoalTasksFn;
+  /** Experimental: program/template subtask proposer. */
+  microSubtasks?: import('./semantics/settlement/types').MicroSubtasksFn;
   /** Internal narration candidate selection. `auto` only offers candidates
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
@@ -241,6 +243,7 @@ export class LocalGameModel implements WorldModelPort {
       microTaskVerifier: this.options.microTaskVerifier,
       microTaskProposer: this.options.microTaskProposer,
       microGoalTasks: this.options.microGoalTasks,
+      microSubtasks: this.options.microSubtasks,
       programScene: this.options.programScene,
       localPosition: this.options.localPosition,
       onTask: (task, key, detail) => this.options.onTask?.(task, key, detail),

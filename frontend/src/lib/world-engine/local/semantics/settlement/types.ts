@@ -69,6 +69,8 @@ export interface SettlementOptions {
   /** Experimental: goal-level task stage (candidate pairs + goal/fact verifier)
    * that can replace the tasks LLM call when enabled. */
   microGoalTasks?: MicroGoalTasksFn;
+  /** Experimental: program/template subtask proposer replacing the subtasks LLM. */
+  microSubtasks?: MicroSubtasksFn;
   /** Experimental structured scene arm: apply `去向=` facts directly and skip
    * the merged position prompt when nothing looks uncertain. */
   programScene?: boolean;
@@ -268,6 +270,24 @@ export interface MicroGoalTasksResult {
 export type MicroGoalTasksFn = (
   request: MicroGoalTasksRequest,
 ) => Promise<MicroGoalTasksResult | null> | MicroGoalTasksResult | null;
+
+export interface MicroSubtaskCandidate {
+  characterId: Id;
+  parentTaskId: Id;
+  goal: string;
+  basis: string;
+}
+
+export interface MicroSubtaskProposal {
+  subtasks: MicroSubtaskCandidate[];
+  source: 'program' | 'micro';
+}
+
+/** Program/template subtask proposer. Returning null is a port failure; an
+ * empty list is a legitimate "no new goal this point". */
+export type MicroSubtasksFn = (
+  request: { state: WorldState; facts: Array<{ id: string; memberId: Id; text: string }>; ownerIds: Id[] },
+) => Promise<MicroSubtaskProposal | null> | MicroSubtaskProposal | null;
 
 export interface ModelCallEvidence {
   prompt: string;
