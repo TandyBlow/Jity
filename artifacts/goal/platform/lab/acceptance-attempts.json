@@ -34,6 +34,17 @@
    "turnsRecorded": 0,
    "failure": "lease held by narration rules-b (PID 40028, 3/8 at last check)",
    "outcome": "deferred; no bypass"
+  },
+  {
+   "at": "2026-11-28T23:17:10+08:00",
+   "base": "http://127.0.0.1:3180",
+   "arm": "single-model ctx4096",
+   "turns": 4,
+   "build": "bY6eXkvUIAgXgwWvxEv-M @ 99e07273",
+   "status": "not-run",
+   "turnsRecorded": 0,
+   "failure": "background waiter was stopped by Claude Code because the system was critically low on memory while idle",
+   "outcome": "no acceptance run; not restarted per harness instruction"
   }
  ],
  "candidateAudit": {
