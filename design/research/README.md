@@ -71,3 +71,4 @@ Artifacts     evidence files, manifests, commits
 | S1 | Synthesis 2026-11-28: what is publishable, what is still open | done |
 | E48 | Memory levers measured: browser 731MB, Next 270MB, KV q4 −227MB, n_batch no-op, URL/OPFS no-op | done |
 | E49 | Pointer v3: beam search +0.05, bigram prior hurts every metric | done (λ=0: .600/.496/.495, zero invention) |
+| E50 | Sentence frames from fact clauses: generic patterns express 10/10, charF1 .899 vs human | done |
