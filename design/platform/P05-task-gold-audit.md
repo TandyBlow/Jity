@@ -79,11 +79,13 @@ clause/outcome 判“这条事实是否支持目标”，task 判“任务是否
   1 not_triggered），按任务规格手工构造，覆盖单事实基准测不到的组合；它们是夹具，
   不是真实运行结果，正式评价仍需真实回合采集。
 - `task-gold-v1.report.json`：本页全部计数与差异。
-- `old-commit-predictions.jsonl` / `old-commit-eval.json`：把旧系统 committed 状态当预测
-  的对照分数（78 条盲评支持轴金标，yes precision 0.042）。
+- `old-commit-predictions.jsonl` / `old-commit-eval.json` / `old-commit-completion-eval.json`：
+  把旧系统 committed 状态当预测，两条轴分开打分。支持轴（`verdict`）yes precision **0.042**
+  （3/71）；完成轴（`--field completionVerdict`）yes precision **0.056**（4/71），67 条
+  false commit（65 insufficient + 2 partial）。两轴不能合并成同一个准确率。
 - `tools/experiment_platform/task_gold_eval.py`：对任意 `{id, verdict}` 预测打分
-  （exact accuracy、yes 提交的 P/R、误提交列表、按任务汇总）；`not_triggered` 已进
-  任务规格的判定表。
+  （exact accuracy、yes 提交的 P/R、误提交列表、按任务汇总）；`--field completionVerdict`
+  可切换完成轴；`not_triggered` 已进任务规格的判定表。
 
 **Numbering（按用户提议，避免合并后引用混乱）.**
 
@@ -111,5 +113,5 @@ clause/outcome 判“这条事实是否支持目标”，task 判“任务是否
 **Artifacts.** `tools/experiment_platform/{build_task_gold,task_gold_eval,build_task_multifact}.py`；
 `artifacts/goal/platform/task-gold/{bench-v1.semantic-branch.jsonl,task-gold-v1.tasks.json,
 task-gold-v1.cases.jsonl,task-gold-v1.cases.jsonl.manifest.json,task-gold-v1.bundles.jsonl,
-task-gold-v1.report.json,task-multifact-v1.jsonl,task-multifact-v1.summary.json,
-task-multifact-v1.jsonl.manifest.json}`。P05。
+task-gold-v1.report.json,old-commit-eval.json,old-commit-completion-eval.json,
+task-multifact-v1.jsonl,task-multifact-v1.summary.json,task-multifact-v1.jsonl.manifest.json}`。P05。

@@ -305,6 +305,10 @@ def test_task_gold_eval_commit_and_not_triggered():
     assert report['yesPrecision'] == 0.5 and report['yesRecall'] == 1.0
     assert report['falseCommits'] == ['b']
     assert report['missing'] == []
+    axis = [{'id': 'a', 'taskId': 't', 'verdict': 'yes', 'completionVerdict': 'insufficient'}]
+    report = score(axis, {'a': 'yes'}, field='completionVerdict')
+    assert report['labelField'] == 'completionVerdict' and report['yesPrecision'] == 0.0
+    assert report['falseCommits'] == ['a'] and report['missingLabels'] == []
 
 
 def test_soak_report_summarizes_heap_and_turns():

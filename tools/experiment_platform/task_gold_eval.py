@@ -19,16 +19,20 @@ from pathlib import Path
 LABELS = ('yes', 'partial', 'no', 'not_triggered')
 
 
-def score(cases: list[dict], predictions: dict[str, str]) -> dict:
-    rows, missing = [], []
+def score(cases: list[dict], predictions: dict[str, str], field: str = 'verdict') -> dict:
+    rows, missing, missing_labels = [], [], []
     for case in cases:
         pred = predictions.get(case['id'])
+        expected = case.get(field)
         if pred is None:
             missing.append(case['id'])
             continue
-        rows.append({'id': case['id'], 'taskId': case.get('taskId'), 'expected': case['verdict'],
-                     'predicted': pred, 'exact': pred == case['verdict'],
-                     'commitExpected': case['verdict'] == 'yes', 'commitPredicted': pred == 'yes'})
+        if expected is None:
+            missing_labels.append(case['id'])
+            continue
+        rows.append({'id': case['id'], 'taskId': case.get('taskId'), 'expected': expected,
+                     'predicted': pred, 'exact': pred == expected,
+                     'commitExpected': expected == 'yes', 'commitPredicted': pred == 'yes'})
     total = max(1, len(rows))
     confusion = Counter((r['expected'], r['predicted']) for r in rows)
     per_task = defaultdict(lambda: {'n': 0, 'exact': 0, 'commit': 0})
@@ -42,7 +46,7 @@ def score(cases: list[dict], predictions: dict[str, str]) -> dict:
     fn = sum(1 for r in rows if r['commitExpected'] and not r['commitPredicted'])
     tn = sum(1 for r in rows if not r['commitExpected'] and not r['commitPredicted'])
     return {
-        'cases': len(rows), 'missing': missing,
+        'cases': len(rows), 'missing': missing, 'missingLabels': missing_labels, 'labelField': field,
         'accuracy': round(sum(int(r['exact']) for r in rows) / total, 3),
         'commitAccuracy': round((tp + tn) / total, 3),
         'yesPrecision': round(tp / max(1, tp + fp), 3),
@@ -60,6 +64,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--cases', required=True)
     parser.add_argument('--predictions', required=True)
+    parser.add_argument('--field', default='verdict',
+                        help='case label field, e.g. verdict (support) or completionVerdict')
     parser.add_argument('--out', default=None)
     args = parser.parse_args(argv)
     cases = [json.loads(ln) for ln in Path(args.cases).read_text(encoding='utf-8-sig').splitlines() if ln.strip()]
@@ -68,7 +74,7 @@ def main(argv: list[str] | None = None) -> int:
         if line.strip():
             row = json.loads(line)
             predictions[row['id']] = row['verdict']
-    report = score(cases, predictions)
+    report = score(cases, predictions, args.field)
     text = json.dumps(report, ensure_ascii=False, indent=1)
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
