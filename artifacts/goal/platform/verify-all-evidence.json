@@ -1,0 +1,516 @@
+{
+ "schema": "jity-run-verify/1",
+ "reports": [
+  {
+   "runId": "2026-11-26T0240-a295",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-acceptance.json"
+  },
+  {
+   "runId": "2026-11-28T0648-4b99",
+   "status": "PREFLIGHT",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-preflight-ctx8192.json"
+  },
+  {
+   "runId": "2026-11-28T0834-a126",
+   "status": "FAILED",
+   "turns": 0,
+   "models": {
+    "requests": null,
+    "ok": null,
+    "failed": null
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-turns20-ctx8192-gpu-run2.json"
+  },
+  {
+   "runId": "2026-11-28T0835-b0f3",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-turns20-ctx8192-gpu-run3.json"
+  },
+  {
+   "runId": "2026-11-28T0655-c4e6",
+   "status": "IN_PROGRESS",
+   "turns": 3,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 3,
+     "generations": 97,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 3,
+     "generations": 97,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 48,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-turns20-ctx8192-gpu.json"
+  },
+  {
+   "runId": "2026-11-28T0649-a24f",
+   "status": "IN_PROGRESS",
+   "turns": 1,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 2,
+     "generations": 13,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 2,
+     "generations": 13,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 12,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-turns20-ctx8192.json"
+  },
+  {
+   "runId": "2026-11-28T0948-d3c2",
+   "status": "COMPLETED",
+   "turns": 20,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 20,
+     "generations": 3212,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 20,
+     "generations": 3212,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 305,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/09-turns20-pi.json"
+  },
+  {
+   "runId": "2026-11-28T1058-04b7",
+   "status": "COMPLETED",
+   "turns": 2,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 2,
+     "generations": 46,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 2,
+     "generations": 46,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 30,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/10-offline-pi.json"
+  },
+  {
+   "runId": "2026-11-28T1041-fbe4",
+   "status": "COMPLETED",
+   "turns": 8,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 8,
+     "generations": 637,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 8,
+     "generations": 637,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 131,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/10-scenarios-pi-2026-11-28T1041-fbe4.json"
+  },
+  {
+   "runId": "2026-11-28T1024-76d3",
+   "status": "FAILED",
+   "turns": 8,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 8,
+     "generations": 619,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 8,
+     "generations": 619,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 128,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/10-scenarios-pi.json"
+  },
+  {
+   "runId": "2026-11-28T1106-04b4",
+   "status": "COMPLETED",
+   "turns": 1,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 1,
+     "generations": 11,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 1,
+     "generations": 5,
+     "contextSize": [
+      2048
+     ]
+    }
+   },
+   "llmSemanticPrompts": 11,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/11-smoke-default-ctx8192.json"
+  },
+  {
+   "runId": "2026-11-28T1132-d575",
+   "status": "FAILED",
+   "turns": 2,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 2,
+     "generations": 21,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 2,
+     "generations": 6,
+     "contextSize": [
+      2048
+     ]
+    }
+   },
+   "llmSemanticPrompts": 18,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-q4kv-2turns.json"
+  },
+  {
+   "runId": "2026-11-28T1146-f666",
+   "status": "COMPLETED",
+   "turns": 1,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 1,
+     "generations": 16,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 1,
+     "generations": 5,
+     "contextSize": [
+      2048
+     ]
+    }
+   },
+   "llmSemanticPrompts": 16,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-q4kv-s03.json"
+  },
+  {
+   "runId": "2026-11-28T1143-e655",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-q8kv-control-2turns.json"
+  },
+  {
+   "runId": "2026-11-28T1150-af14",
+   "status": "COMPLETED",
+   "turns": 1,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 1,
+     "generations": 13,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 1,
+     "generations": 5,
+     "contextSize": [
+      2048
+     ]
+    }
+   },
+   "llmSemanticPrompts": 13,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-q8kv-s03-clean.json"
+  },
+  {
+   "runId": "2026-11-28T1145-737f",
+   "status": "FAILED",
+   "turns": 1,
+   "models": {
+    "requests": 0,
+    "ok": 0,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-q8kv-s03.json"
+  },
+  {
+   "runId": "2026-11-28T1152-d801",
+   "status": "FAILED",
+   "turns": 8,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 8,
+     "generations": 822,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 8,
+     "generations": 822,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 176,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-scenarios-q4kv.json"
+  },
+  {
+   "runId": "2026-11-28T1354-a3f6",
+   "status": "FAILED",
+   "turns": 0,
+   "models": {
+    "requests": null,
+    "ok": null,
+    "failed": null
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1-20261128-2026-11-28T1354-a3f6.json"
+  },
+  {
+   "runId": "2026-11-28T1353-82c2",
+   "status": "FAILED",
+   "turns": 1,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1-20261128.json"
+  },
+  {
+   "runId": "2026-11-28T1359-7d82",
+   "status": "FAILED",
+   "turns": 0,
+   "models": {
+    "requests": null,
+    "ok": null,
+    "failed": null
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1c-20261128-2026-11-28T1359-7d82.json"
+  },
+  {
+   "runId": "2026-11-28T1400-bdb8",
+   "status": "FAILED",
+   "turns": 0,
+   "models": {
+    "requests": null,
+    "ok": null,
+    "failed": null
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1c-20261128-2026-11-28T1400-bdb8.json"
+  },
+  {
+   "runId": "2026-11-28T1358-576d",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1c-20261128.json"
+  },
+  {
+   "runId": "2026-11-28T1358-576d",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1c-20261128.json.attempt3.json"
+  }
+ ],
+ "failed": 0
+}

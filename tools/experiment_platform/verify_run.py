@@ -84,7 +84,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     reports = []
     for path in paths:
-        doc = json.loads(Path(path).read_text(encoding='utf-8-sig'))
+        try:
+            doc = json.loads(Path(path).read_text(encoding='utf-8-sig'))
+        except (OSError, json.JSONDecodeError) as exc:
+            reports.append({'file': str(path).replace('\\', '/'), 'pass': False,
+                            'failures': [f'unreadable: {exc}']})
+            continue
         report = check(doc, allowed, engines, args.max_llm_semantic, args.require_micro)
         report['file'] = str(path).replace('\\', '/')
         reports.append(report)

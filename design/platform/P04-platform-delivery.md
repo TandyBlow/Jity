@@ -51,10 +51,13 @@
 
 2. **运行核验（真实证据）.** `verify_run.py` 在
    `12-q8kv-s03-clean.json` 上通过：权重请求 2/2、引擎 semantic ctx8192 生成 13 次、
-   narration ctx2048 生成 5 次、语义 LLM 提示 13 条、micro 开启。在
-   `09-turns20-pi.json` 上 20 回合共 **305 条语义 LLM 提示**，narration 模型是
-   `semantic`（单模型臂）；把它当 1.7B 默认来验收会被工具直接拒绝——这正是"防隐藏
-   回退"要的行为。
+   narration ctx2048 生成 5 次、语义 LLM 提示 13 条、micro 开启。批量扫
+   `results/product/evidence/*.json`（`verify-all-evidence.json`）：18 份有效证据的
+   权重请求失败均为 0；有回合的 14 份全部加载 semantic + narration 两个引擎；语义 LLM
+   提示量 11–305 条/证据（20 回合的 `09-turns20-pi` 为 **305 条**，约 15/回合）。
+   在 `09-turns20-pi.json` 上按 1.7B 默认模型验收会被工具直接拒绝（该 run 的
+   narration 是 `semantic` 单模型臂）——这正是"防隐藏回退"要的行为。我们失败的
+   holdout 尝试则是 0 引擎、0 提示，工具如实区分"没跑到推理"与"跑错模型"。
 
 3. **性能归一化（旧计时记录）.** 冷启动 18.9/19.3/24.7 s；12 个计分点首段最差
    43.5 s、单点正文最差 13.8 s，但 7/12 回合中途停止（`FAIL_OR_INCOMPLETE`）。
