@@ -68,7 +68,7 @@ describe('goal-level task stage', () => {
       facts: [{ id: 'f1', memberId: 'hero', text: '路明非拿起手电（达到目的）。' }],
     });
     expect(partial?.achieved).toEqual([]);
-    expect(partial?.scored).toHaveLength(1);
+    expect(partial?.scored).toEqual([]);
     const complete = await port({
       state: state(), ownerIds: ['hero'],
       facts: [{ id: 'f2', memberId: 'hero', text: '路明非打开手电，确认电量（达到目的）。' }],

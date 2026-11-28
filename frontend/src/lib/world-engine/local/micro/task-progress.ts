@@ -163,6 +163,22 @@ export function taskConditionLabels(conditions: TaskConditions): string[] {
   ].filter(Boolean);
 }
 
+/** Strict per-condition hits for the task ledger (S06): the condition's own
+ * action/confirmation word must appear, not just any verb from the lexicon.
+ * One fact need not cover the whole goal; the ledger accumulates. */
+export function strictConditionHits(conditions: TaskConditions, factText: string): string[] {
+  const checks: Array<[string, boolean]> = [
+    ...(conditions.time ? [[`时间=${conditions.time}`, factText.includes(conditions.time)] as [string, boolean]] : []),
+    ...(conditions.location ? [[`地点=${conditions.location}`, factText.includes(conditions.location)] as [string, boolean]] : []),
+    ...(conditions.item ? [[`物品=${conditions.item}`, factText.includes(conditions.item) || factText.includes(conditions.item.replace(/^.+?的/u, ''))] as [string, boolean]] : []),
+    ...(conditions.target ? [[`对象=${conditions.target}`, factText.includes(conditions.target)] as [string, boolean]] : []),
+    ...(conditions.decision ? [[`决策=${conditions.decision}`, /决定|选择|选定|选了|就走|走这/u.test(factText)] as [string, boolean]] : []),
+    ...(conditions.confirmation ? [[`确认=${conditions.confirmation}`, factText.includes(conditions.confirmation)] as [string, boolean]] : []),
+    ...(conditions.action ? [[`动作=${conditions.action}`, factText.includes(conditions.action)] as [string, boolean]] : []),
+  ];
+  return checks.filter(([, hit]) => hit).map(([label]) => label);
+}
+
 /** Which decomposed goal conditions this fact names, as condition labels. The
  * task stage accumulates these across facts/turns; one fact need not cover the
  * whole goal. */
