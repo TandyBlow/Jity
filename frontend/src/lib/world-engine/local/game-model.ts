@@ -613,7 +613,8 @@ export class LocalGameModel implements WorldModelPort {
 
     // Zero-parameter arm: the brief is the whole input, no engine is touched.
     if (this.options.narrationCandidate === 'rules') {
-      const { brief, sentences } = instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact');
+      const input = instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact');
+      const { brief, sentences } = input;
       const index = this.rulesBriefs.findIndex((entry) => entry.pointId === pointId);
       // Regenerating a point uses the same predecessor; a new point uses the last one.
       const previous = index > 0
@@ -630,7 +631,8 @@ export class LocalGameModel implements WorldModelPort {
         if (this.rulesBriefs.length > 400) this.rulesBriefs.shift();
       }
       const ms = performance.now() - started;
-      this.options.onTask?.('narration', key, { ms, fallback: false, raw: text, promptChars: brief.length, source: 'rule' });
+      this.options.onNarrationDebug?.({ pointId, raw: text, text, rawAttempts: [], prompt: input.prompt });
+      this.options.onTask?.('narration', key, { ms, fallback: false, raw: text, promptChars: input.prompt.length, source: 'rule' });
       this.options.onNarrationComplete?.({
         pointId, raw: text,
         completion: { raw: text, finishReason: 'stop', firstTokenMs: null, wallMs: ms },

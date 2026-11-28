@@ -53,6 +53,8 @@ const selfTest = has('--harness-selftest');
 const keepStorage = has('--keep-storage') || has('--resume');
 const fresh = has('--fresh') || !has('--resume');
 const settleDelayMs = Number(flag('--settle-delay-ms', '120'));
+// 零参数叙事臂显示的是程序正文：它不是模型段，验收按程序臂单独记账。
+const allowProgram = has('--allow-program');
 
 if (!existsSync(turnsFile)) {
   console.error(`[fail] turns file missing: ${turnsFile}`);
@@ -1085,7 +1087,7 @@ try {
       entry.acceptedFirstReadableMs = entry.product?.acceptedMs ?? null;
       entry.modelId = entry.product?.modelId ?? null;
       if (entry.note) entry.problems.push('program_fallback_labelled');
-      if (entry.textSource === 'program') entry.problems.push('program_text_not_model');
+      if (entry.textSource === 'program' && !allowProgram) entry.problems.push('program_text_not_model');
       const prose = entry.text ?? '';
       if (/^(…+|。|，|、|\s)$/.test(prose.trim())) entry.problems.push('placeholder_only_text');
       if (/(结算|回退|fallback|本拍|本组|模型未|无法确认|未产生)/.test(prose)) entry.problems.push('internal_note_in_prose');
@@ -1124,13 +1126,13 @@ try {
       }
       const stageText = entry.stages.map((stage) => stage.label).join('|');
       entry.stageSequence = stageText;
-      if (!/正在写正文/.test(stageText)) entry.problems.push('no_streaming_stage_observed');
+      if (!/正在写正文/.test(stageText) && !allowProgram) entry.problems.push('no_streaming_stage_observed');
       if ((entry.product?.acceptedMs ?? null) === null) entry.problems.push('no_readable_text_observed');
       if (entry.timings.doneMs > 300000) entry.problems.push('over_300s');
       const product = entry.product;
       if (!product) entry.problems.push('no_product_turn_evidence');
       else {
-        if (product.source !== 'model') entry.problems.push(`source_${product.source ?? 'unknown'}`);
+        if (product.source !== 'model' && !(allowProgram && product.source === 'program')) entry.problems.push(`source_${product.source ?? 'unknown'}`);
         if (product.cancelled) entry.problems.push('cancelled');
         if (product.acceptedMs == null) entry.problems.push('no_accepted_model_text');
         if (product.acceptedMs != null && product.acceptedMs > 60000) entry.problems.push('accepted_over_60s');
@@ -1370,7 +1372,9 @@ try {
   // model segment fails the acceptance intent.
   const blockingPrefixes = ['turn_timeout', 'no_accepted_model_text', 'source_program', 'source_draft',
     'empty_text', 'no_readable_prose', 'settlement_failed_recoverable', 'submit_refused', 'page_error'];
-  const turnFailures = evidence.turns.filter((turn) => (turn.problems ?? []).some((problem) => blockingPrefixes.some((key) => problem.startsWith(key))));
+  const turnFailures = evidence.turns.filter((turn) => (turn.problems ?? []).some((problem) => blockingPrefixes.some((key) => problem.startsWith(key))
+    && !(allowProgram && (problem === 'source_program' || problem === 'program_text_not_model'))));
+  evidence.programNarrationAccepted = allowProgram;
   evidence.turnFailures = turnFailures.map((turn) => ({ id: turn.id, problems: turn.problems }));
   evidence.status = selfTest ? 'SELFTEST' : (evidence.failures.length || turnFailures.length ? 'FAILED' : (preflightOnly ? 'PREFLIGHT' : 'COMPLETED'));
   evidence.finishedAt = new Date().toISOString();

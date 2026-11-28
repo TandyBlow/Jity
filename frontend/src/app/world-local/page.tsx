@@ -1633,7 +1633,9 @@ export default function WorldLocalPage() {
       index: ((window as unknown as { __worldTurns?: WorldTurnRecord[] }).__worldTurns?.length ?? 0) + 1,
       input: text, acceptedMs: null, draftMs: null, programMs: null, mixedMs: null, cancelled: false, source: null,
       modelId: narrationRef.current?.info.modelId ?? semanticRef.current?.info.modelId ?? null,
-      narrationModel: narrationArm.current.model ?? DEFAULT_NARRATION_MODEL,
+      narrationModel: narrationArm.current.candidate === 'rules'
+        ? 'rules'
+        : narrationArm.current.model ?? DEFAULT_NARRATION_MODEL,
       promptShape: narrationArm.current.shape ?? (narrationArm.current.mode === 'scene' ? 'prose-facts' : null),
       engines,
       clocks: {

@@ -95,7 +95,7 @@ export function rulesNarration(input: RulesNarrationInput): string {
   const body: string[] = [];
   if (opening) body.push(opening);
   body.push(...results, ...kept);
-  const merged = mergeSameHead(body, input.names);
+  const merged = mergeSameHead(body.map((part) => part.replace(/。$/u, '')), input.names);
   const paragraphs: string[] = [];
   if (merged.length) paragraphs.push(`${merged.join('。')}。`);
   if (time) {
