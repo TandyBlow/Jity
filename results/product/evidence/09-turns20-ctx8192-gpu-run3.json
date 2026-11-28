@@ -1,0 +1,190 @@
+{
+  "runId": "2026-11-28T0835-b0f3",
+  "outFile": "D:\\others\\Jity\\results\\product\\evidence\\09-turns20-ctx8192-gpu-run3.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "b382d83bc9ef3e2c4a183fee3ccd839c5a5bfc067b48981db435d27c5ace130f",
+    "edgeVersion": "158.0.4370.45",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "profile": null,
+    "cdp": null,
+    "cpuThrottle": null,
+    "blockApi": false,
+    "gpuLite": false
+  },
+  "status": "IN_PROGRESS",
+  "startedAt": "2026-11-28T08:35:56.461Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "scripts/product-acceptance/turns-20.json",
+  "integration": {
+    "head": "387ef5551bc1cfe45e14bbd17b0c92b82b1f4f6d",
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": {
+      "cwd": "frontend",
+      "command": "node node_modules/next/dist/bin/next start -p 3177",
+      "port": 3177
+    },
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "f42de90a977b3f9f2a985fcc178a370e2588c2fe",
+    "pageSha256": "3d45fa15f3a3f23a2b9712d416d16575f53862de6dbdf8b82e09b43a78a94698",
+    "turnEvidenceAvailable": true,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "54c20a1ca9264d640e45dc4979ec35295844ddf18f3f0cf124a6e4749754b3a1",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "bgra8unorm-storage",
+        "texture-formats-tier1",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "texture-formats-tier2",
+        "shader-f16"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"core-features-and-limits\"]}",
+      "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: nvidia | architecture: lovelace | device_id: 0 | name:  | device_desc: ",
+      "[info] [world-local task] narration point_root_world_dragon_raja_free_day 9846ms fallback=false "
+    ]
+  },
+  "modelRequests": [
+    {
+      "url": "http://127.0.0.1:3177/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "status": 200,
+      "length": "396705472",
+      "type": "fetch",
+      "at": "2026-11-28T08:35:58.165Z"
+    }
+  ],
+  "readyMs": 11308,
+  "readyText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n2009-10-17 15:20 · 西侧服务巷\n本地世界已就绪。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n16:36:09\n进度同步\n仅本机保存\n立即同步",
+  "turns": [],
+  "failures": [],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-28T08:35:56.555942+00:00",
+    "supervisorPid": null,
+    "holderPid": 38008,
+    "token": "631a5dba1b398fa851630b531ad7eb14"
+  },
+  "freshReset": {
+    "localStorageKeys": 0,
+    "databases": [],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-28T08:36:09.868Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 11,
+    "markerChunks": [
+      {
+        "chunk": "/_next/static/chunks/app/world-local/page-011d83aa1f843e90.js",
+        "markers": [
+          "__worldRestore",
+          "__worldSnapshot",
+          "__worldArm",
+          "__worldLive",
+          "__worldGenerations",
+          "affected_projection"
+        ]
+      }
+    ],
+    "globalsReady": true,
+    "globalsWaitMs": 3
+  },
+  "jsHeapAtReady": {
+    "usedJSHeapSize": 77143517,
+    "totalJSHeapSize": 86784177,
+    "jsHeapSizeLimit": 4395630592,
+    "label": "JS heap, not GPU VRAM"
+  },
+  "arm": {
+    "candidate": "auto",
+    "mode": null,
+    "shape": null,
+    "offscreenPolicy": "judge",
+    "narrationModel": "semantic",
+    "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "semanticCtx": 8192,
+    "kv": "q8_0",
+    "nBatch": null,
+    "narrationBytes": 396705472,
+    "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "narrationTemperature": null,
+    "narrationFewShot": null,
+    "narrationProjection": null,
+    "schedHandback": null,
+    "settlementUnknownRule": null,
+    "compactSettlement": null,
+    "settlementUnknownExample": null,
+    "strictKnownEntities": true,
+    "runtime": "wllama",
+    "webllmModel": null,
+    "webllmLocal": false,
+    "webllmCache": "indexeddb",
+    "micro": true,
+    "microContinuation": "heads",
+    "microReaction": true,
+    "microTaskVerifier": false,
+    "taskVerifier": "llm",
+    "taskProposer": "micro",
+    "semanticArm": null
+  },
+  "restored": false,
+  "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+  },
+  "note": "killed by the scheduler reserve floor (2048MB) during turn 1; tree peak 3331MB, start free 5047MB — the laptop has no headroom for the browser gate alongside normal work"
+}
