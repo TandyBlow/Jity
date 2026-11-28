@@ -1182,6 +1182,7 @@ try {
     // the suite. Only a dead page stops the run.
     if (entry.problems.includes('page_error')) break;
   }
+  }
 
   // Two mechanical checks over the whole run, so every later run carries its own
   // proof instead of relying on a one-off script:
@@ -1246,7 +1247,6 @@ try {
         }
       }
     }
-  }
   }
   evidence.priorProseLeaks = leaks;
 
