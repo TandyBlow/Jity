@@ -1,0 +1,10 @@
+{
+ "samples": 348,
+ "train": 290,
+ "test": 58,
+ "params": 1747054,
+ "charF1Mean": 0.28,
+ "wordRatioMean": 0.232,
+ "coverageMean": 0.424,
+ "inventionWordsMean": 13.1
+}

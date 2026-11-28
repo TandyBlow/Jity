@@ -59,3 +59,4 @@ Artifacts     evidence files, manifests, commits
 | E35 | Edit decoder v1: char keep/delete tagger | done (charF1 0.465, zero invention, but char-scrambled output) |
 | E36 | Edit decoder v2: word-level span pointers | done (charF1 0.459, wordRatio 0.312, zero invention, incoherent) |
 | E37 | Replacement layer: phrase rewrite pairs + tiny seq2seq | negative (exact 1.2%, charF1 0.212; needs joint decoding) |
+| E38 | Joint edit decoder v1 + phase-3 synthesis | negative (mode collapse; data volume is the bottleneck) |

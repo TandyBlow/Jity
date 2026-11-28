@@ -1,0 +1,21 @@
+D:\software\Anaconda\Lib\site-packages\jieba\_compat.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Building prefix dict from the default dictionary ...
+Loading model from cache C:\Users\26494\AppData\Local\Temp\jieba.cache
+Loading model cost 0.509 seconds.
+Prefix dict has been built successfully.
+params 1747054
+{"epoch": 0, "loss": 3.858}
+{"epoch": 10, "loss": 0.479}
+{"epoch": 20, "loss": 0.409}
+{"epoch": 30, "loss": 0.363}
+{"samples": 348, "train": 290, "test": 58, "params": 1747054, "charF1Mean": 0.28, "wordRatioMean": 0.232, "coverageMean": 0.424, "inventionWordsMean": 13.1}
+GEN: 路明非低头看了看护目镜，又摸了摸胸袋。诺诺在胸袋里的反应慢了半拍。
+REF: 路明非贴着服务巷的墙根往前走，脚步压得很轻。诺诺的红色识别带在墙根那边微微发烫，人也轻巧地靠近了巷口。路明非继续往前，从服务巷进了器材棚，推拉门在身后留着回服务巷的缝。芬格尔和秦越都在棚里。
+---
+GEN: 路明非低头看了看护目镜，又摸了摸胸袋。诺诺在胸袋里的反应慢了半拍。
+REF: 他停在器材棚门口，看着进出的人，把各自身上的识别带颜色记下来。芬格尔也在门口观察，目光在他身上停了一下，随即转回自己胸前的相机。路明非仍站在原地。
+---
+GEN: 路明非低头看了看护目镜，又摸了摸胸袋。诺诺在胸袋里的反应慢了半拍。
+REF: 路明非停在器材棚门口看人，把各人的识别带颜色记下来。芬格尔也在门口观察，目光在他身上停了一下，很快转回自己的相机。路明非没有挪动。
+---
