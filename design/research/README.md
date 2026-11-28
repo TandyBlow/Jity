@@ -73,3 +73,4 @@ Artifacts     evidence files, manifests, commits
 | E49 | Pointer v3: beam search +0.05, bigram prior hurts every metric | done (λ=0: .600/.496/.495, zero invention) |
 | E50 | Sentence frames from fact clauses: generic patterns express 10/10, charF1 .899 vs human | done |
 | E51 | Frame v2: 160 annotations, slots are verbatim fact spans, frozen inventory | done (160/160 render, held-out 27/30) |
+| E52 | Structure model: 1.24M end-to-end pattern+span | negative (test .036 vs .107 majority; oracle 0.706) |

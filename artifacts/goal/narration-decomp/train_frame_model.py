@@ -17,6 +17,8 @@ import torch.nn.functional as F
 
 from render_frames_v2 import PATTERNS, render
 
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 HERE = Path(__file__).resolve().parent
 MAX_ROLES = max(len(v[1]) for v in PATTERNS.values())
 PATTERN_NAMES = sorted(PATTERNS)
@@ -55,7 +57,7 @@ class Net(nn.Module):
     def __init__(self, vocab, n_patterns, d=128, layers=4, ff=256):
         super().__init__()
         self.emb = nn.Embedding(vocab, d, padding_idx=0)
-        self.pos = nn.Parameter(torch.zeros(1, 256, d))
+        self.pos = nn.Parameter(torch.zeros(1, 512, d))
         layer = nn.TransformerEncoderLayer(d, 4, ff, batch_first=True, dropout=0.1)
         self.enc = nn.TransformerEncoder(layer, layers)
         self.pattern = nn.Linear(d, n_patterns)
@@ -68,7 +70,7 @@ class Net(nn.Module):
         return self.pattern(pooled), self.start(h).permute(0, 2, 1), self.end(h).permute(0, 2, 1)
 
 
-def encode(rows, vocab, max_len=256):
+def encode(rows, vocab, max_len=384):
     xs = torch.zeros(len(rows), max_len, dtype=torch.long)
     mask = torch.zeros(len(rows), max_len, dtype=torch.bool)
     for i, r in enumerate(rows):
@@ -81,14 +83,14 @@ def encode(rows, vocab, max_len=256):
 def train(train_rows, vocab, vocab_size, epochs, seed, d, layers, ff):
     torch.manual_seed(seed)
     random.seed(seed)
-    net = Net(vocab_size, len(PATTERN_NAMES), d=d, layers=layers, ff=ff)
+    net = Net(vocab_size, len(PATTERN_NAMES), d=d, layers=layers, ff=ff).to(DEVICE)
     opt = torch.optim.AdamW(net.parameters(), lr=3e-3, weight_decay=0.01)
-    xs, mask = encode(train_rows, vocab)
-    pat = torch.tensor([PATTERN_NAMES.index(r['pattern']) for r in train_rows])
+    xs, mask = (x.to(DEVICE) for x in encode(train_rows, vocab))
+    pat = torch.tensor([PATTERN_NAMES.index(r['pattern']) for r in train_rows]).to(DEVICE)
     roles = PATTERNS
-    start_t = torch.zeros(len(train_rows), MAX_ROLES, dtype=torch.long)
-    end_t = torch.zeros(len(train_rows), MAX_ROLES, dtype=torch.long)
-    role_mask = torch.zeros(len(train_rows), MAX_ROLES, dtype=torch.bool)
+    start_t = torch.zeros(len(train_rows), MAX_ROLES, dtype=torch.long).to(DEVICE)
+    end_t = torch.zeros(len(train_rows), MAX_ROLES, dtype=torch.long).to(DEVICE)
+    role_mask = torch.zeros(len(train_rows), MAX_ROLES, dtype=torch.bool).to(DEVICE)
     for i, r in enumerate(train_rows):
         for j, (s, e) in enumerate(r['spans']):
             start_t[i, j] = s
@@ -117,14 +119,15 @@ def train(train_rows, vocab, vocab_size, epochs, seed, d, layers, ff):
     return net
 
 
-def predict(net, rows, vocab, max_len=256):
+def predict(net, rows, vocab, max_len=384, oracle_pattern=False):
     net.eval()
-    xs, mask = encode(rows, vocab, max_len)
+    xs, mask = (x.to(DEVICE) for x in encode(rows, vocab, max_len))
     with torch.no_grad():
         p, s, e = net(xs, mask)
+    p, s, e = p.cpu(), s.cpu(), e.cpu()
     out = []
     for i, r in enumerate(rows):
-        pattern = PATTERN_NAMES[int(p[i].argmax())]
+        pattern = r['pattern'] if oracle_pattern else PATTERN_NAMES[int(p[i].argmax())]
         roles = PATTERNS[pattern][1]
         slots, ok = {}, True
         for j, role in enumerate(roles):
@@ -159,6 +162,7 @@ def main():
     ap.add_argument('--holdout', type=float, default=0.2)
     ap.add_argument('--out', default=str(HERE / 'frame-model-summary.json'))
     ap.add_argument('--tag', default='')
+    ap.add_argument('--oracle-pattern', action='store_true')
     args = ap.parse_args()
 
     rows = load_rows(args.data)
@@ -176,8 +180,11 @@ def main():
     vocab, vocab_size = build_vocab(train_rows)
     net = train(train_rows, vocab, vocab_size, args.epochs, args.seed, args.d, args.layers, args.ff)
     params = sum(p.numel() for p in net.parameters())
-    preds = predict(net, test_rows, vocab)
+    preds = predict(net, test_rows, vocab, oracle_pattern=args.oracle_pattern)
 
+    preds_train = predict(net, train_rows, vocab, oracle_pattern=args.oracle_pattern)
+    train_acc = sum(1 for r, p in zip(train_rows, preds_train) if p['pattern'] == r['pattern']) / len(train_rows)
+    train_f1 = sum(char_f1(p['render'], r['ref']) for r, p in zip(train_rows, preds_train) if r['ref']) / max(1, len(train_rows))
     exact = sum(1 for r, p in zip(test_rows, preds) if p['pattern'] == r['pattern'])
     pat_acc = exact / len(test_rows)
     f1s = [char_f1(p['render'], r['ref']) for r, p in zip(test_rows, preds) if r['ref']]
@@ -187,8 +194,9 @@ def main():
                 for r, p in zip(test_rows, preds)]
     majority = Counter(r['pattern'] for r in train_rows).most_common(1)[0][0]
     base_acc = sum(1 for r in test_rows if r['pattern'] == majority) / len(test_rows)
-    summary = {'tag': args.tag, 'rows': len(rows), 'majorityPattern': majority, 'majorityAcc': round(base_acc, 3), 'train': len(train_rows), 'test': len(test_rows),
+    summary = {'tag': args.tag, 'device': str(DEVICE), 'oraclePattern': args.oracle_pattern, 'rows': len(rows), 'majorityPattern': majority, 'majorityAcc': round(base_acc, 3), 'train': len(train_rows), 'test': len(test_rows),
                'groups': len(keys), 'params': params, 'seed': args.seed,
+               'patternAccTrain': round(train_acc, 3), 'charF1Train': round(train_f1, 3),
                'patternAcc': round(pat_acc, 3),
                'renderValid': round(valid / len(preds), 3),
                'charF1VsRef': round(sum(f1s) / max(1, len(f1s)), 3),
