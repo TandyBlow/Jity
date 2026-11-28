@@ -83,6 +83,10 @@
    结论：新输入留出集与结果标签评价要等机器空闲窗口；平台的 lease/memory 门按预期
    阻止了并发重跑。
 
+6. **匿名对照样本.** 从 87 对留出集取前 20 例，三臂（记录正文 / E55 / E57）共 60 份
+   输出，按 case 打乱为 A/B/C；`review.md` 可直接打分，`key.json` 单独保存解盲。
+   这是工具与流程证据，不是质量结论；`current` 仍是历史记录正文，不能当默认模型。
+
 **Conditions.** 语义探针尚未对任何工作流打分（没有 predictions）；叙事留出集的结果
 标签缺口要靠新跑带结果标注的回合补，而新跑目前被并发验收的租约/内存挡住；历史 LoRA
 输出模式与当前默认不同，不能横向比较；性能数字来自旧 `timing-baseline.json` 与一次
@@ -110,5 +114,5 @@
 
 **Artifacts.** `tools/experiment_platform/`（13 个模块 + 14 个测试 + `splits.json`）、
 `artifacts/goal/platform/eval/`（87 条叙事留出集、29 条语义探针、4 条新输入、失败运行
-与重试脚本）、`artifacts/goal/platform/{verify-12-q8kv.json,verify-turns20-pi.json,
-perf-report.json}`。P04。
+与重试脚本、20 例盲评样本）、`artifacts/goal/platform/{verify-12-q8kv.json,
+verify-turns20-pi.json,verify-all-evidence.json,perf-report.json}`。P04。

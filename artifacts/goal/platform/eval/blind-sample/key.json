@@ -1,0 +1,102 @@
+{
+ "nar-holdout:run100-17b-lora-v5-5turn:s02-act-observe:point_round_3_2": {
+  "A": "rules-e55",
+  "B": "current",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run100-17b-lora-v5-5turn:s03-act-talk:point_round_23_2": {
+  "A": "rules-e55",
+  "B": "current",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run100-17b-lora-v5-5turn:s04-act-wait:point_round_43_2": {
+  "A": "current",
+  "B": "cluster-e57",
+  "C": "rules-e55"
+ },
+ "nar-holdout:run100-17b-lora-v5-5turn:s05-act-inventory:point_round_63_2": {
+  "A": "current",
+  "B": "cluster-e57",
+  "C": "rules-e55"
+ },
+ "nar-holdout:run101-17b-lora-v7-5turn:s02-act-observe:point_round_3_2": {
+  "A": "current",
+  "B": "rules-e55",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run101-17b-lora-v7-5turn:s03-act-talk:point_round_23_2": {
+  "A": "current",
+  "B": "rules-e55",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run101-17b-lora-v7-5turn:s05-act-inventory:point_round_63_2": {
+  "A": "current",
+  "B": "cluster-e57",
+  "C": "rules-e55"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t1-look-lane:point_round_3_2": {
+  "A": "cluster-e57",
+  "B": "current",
+  "C": "rules-e55"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t10-hold-and-time:point_round_193_2": {
+  "A": "rules-e55",
+  "B": "cluster-e57",
+  "C": "current"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t2-move-shed:point_round_23_2": {
+  "A": "cluster-e57",
+  "B": "rules-e55",
+  "C": "current"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t3-talk-lin:point_round_43_2": {
+  "A": "rules-e55",
+  "B": "current",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t4-joint-move:point_round_61_2": {
+  "A": "current",
+  "B": "rules-e55",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t5-wait-listen:point_round_81_2": {
+  "A": "current",
+  "B": "rules-e55",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t7-move-foyer:point_round_133_2": {
+  "A": "rules-e55",
+  "B": "cluster-e57",
+  "C": "current"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t8-climb-landing:point_round_153_2": {
+  "A": "rules-e55",
+  "B": "current",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run102-17b-lora-v7-10turn:t9-ask-nono:point_round_173_2": {
+  "A": "current",
+  "B": "rules-e55",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run104-mobile-compact2:s06-legal-failure:point_round_23_2": {
+  "A": "rules-e55",
+  "B": "cluster-e57",
+  "C": "current"
+ },
+ "nar-holdout:run105-17b-lora-v8-5turn:s04-act-wait:point_round_43_2": {
+  "A": "current",
+  "B": "rules-e55",
+  "C": "cluster-e57"
+ },
+ "nar-holdout:run105-17b-lora-v8-5turn:s05-act-inventory:point_round_62_2": {
+  "A": "cluster-e57",
+  "B": "rules-e55",
+  "C": "current"
+ },
+ "nar-holdout:run106-17b-lora-v8-10turn:t10-hold-and-time:point_round_193_2": {
+  "A": "rules-e55",
+  "B": "cluster-e57",
+  "C": "current"
+ }
+}
