@@ -1,0 +1,8 @@
+{
+ "pairs": 867,
+ "train": 694,
+ "test": 173,
+ "params": 303330,
+ "exactMatch": 0.012,
+ "charF1Mean": 0.212
+}
