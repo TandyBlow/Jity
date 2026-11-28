@@ -1,0 +1,55 @@
+{
+ "schema": "jity-mobile-proxy-summary/1",
+ "items": [
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-mobile-proxy-1.json",
+   "status": "COMPLETED",
+   "turns": 2,
+   "turnsDetail": [
+    {
+     "id": "llm2-success-1",
+     "waitMs": 276742,
+     "acceptedMs": 33132,
+     "doneMs": 276852
+    },
+    {
+     "id": "llm2-success-2",
+     "waitMs": 278116,
+     "acceptedMs": 27705,
+     "doneMs": 278441
+    }
+   ],
+   "cpuThrottle": 4,
+   "gpuLite": true,
+   "narrationModel": "qwen3-1.7b-narr-lora",
+   "failures": [],
+   "sha256": "53e792be2bbdfaca45089868ca1d202172cdeccc1d9940940dc7e37e85d29cf7",
+   "bytes": 6189308
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-mobile-proxy-2.json",
+   "status": "COMPLETED",
+   "turns": 2,
+   "turnsDetail": [
+    {
+     "id": "llm2-success-1",
+     "waitMs": 218589,
+     "acceptedMs": 25466,
+     "doneMs": 218662
+    },
+    {
+     "id": "llm2-success-2",
+     "waitMs": 252785,
+     "acceptedMs": 22114,
+     "doneMs": 253083
+    }
+   ],
+   "cpuThrottle": 4,
+   "gpuLite": true,
+   "narrationModel": "qwen3-1.7b-narr-lora",
+   "failures": [],
+   "sha256": "c1e03c35b7b72e4976ec81c39f6ba141abe595e73a0c1f95430ae7c1248089b4",
+   "bytes": 6331970
+  }
+ ]
+}

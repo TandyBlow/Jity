@@ -1,0 +1,47 @@
+{
+ "schema": "jity-mobile-refresh-summary/1",
+ "items": [
+  {
+   "file": "artifacts/goal/acceptance/smoke-mobile-defaults-20261127.json",
+   "status": "FAILED",
+   "turns": 4,
+   "arm": {
+    "narrationModel": "qwen3-1.7b-narr-lora",
+    "file": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf"
+   },
+   "failures": [
+    {
+     "scope": "reload",
+     "message": "state changed across refresh/restore",
+     "historyBefore": "4",
+     "historyAfter": "0",
+     "tasksStable": false,
+     "overallRestored": false
+    }
+   ],
+   "sha256": "d26b637e19c9efe484633538e816a42630485ef1d853fe4958e02ee242e6ee2d",
+   "bytes": 14188969
+  },
+  {
+   "file": "artifacts/goal/acceptance/smoke-mobile-defaults-rerun-20261127.json",
+   "status": "FAILED",
+   "turns": 4,
+   "arm": {
+    "narrationModel": "qwen3-1.7b-narr-lora",
+    "file": "/models/qwen3-1.7b-narr-lora-Q4_K_M.gguf"
+   },
+   "failures": [
+    {
+     "scope": "reload",
+     "message": "state changed across refresh/restore",
+     "historyBefore": "4",
+     "historyAfter": "0",
+     "tasksStable": false,
+     "overallRestored": false
+    }
+   ],
+   "sha256": "a69273c23aedf0069075f2a2f4d0ce0c3a18dd484b9302d27a291c16f6aec1d4",
+   "bytes": 14123124
+  }
+ ]
+}

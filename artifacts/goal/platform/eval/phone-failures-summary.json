@@ -1,0 +1,93 @@
+{
+ "schema": "jity-phone-failures/1",
+ "items": [
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-1-2026-11-27T1102-f8c2.json",
+   "status": "FAILED",
+   "turns": 2,
+   "failures": [
+    "page reported a load error",
+    "the page requested no model file: it cannot have loaded a local model",
+    "TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"page_submit__Eo8dg page_submitReady__ccmOu\">行动</button>",
+    "TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"page_submit__Eo8dg page_submitReady__ccmOu\">行动</button>",
+    "no visible cancel/stop control while a turn was running"
+   ],
+   "ua": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
+   "sha256": "87af07e6c5779f04a843460f1cb04f2ba14eab56931fc71da63c367aa831afc7",
+   "bytes": 13722
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-1.json",
+   "status": "FAILED",
+   "turns": 0,
+   "failures": [
+    "TypeError: browser.browser is not a function"
+   ],
+   "ua": null,
+   "sha256": "8753e67fd127764723d2d81f409d85fe19871b174a16ba2c9afdf80de636e63e",
+   "bytes": 2225
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-2.json",
+   "status": "FAILED",
+   "turns": 1,
+   "failures": [
+    "page reported a load error",
+    "the page requested no model file: it cannot have loaded a local model",
+    "no visible cancel/stop control while a turn was running"
+   ],
+   "ua": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
+   "sha256": "89c9f0e766f7c83bd64f4cb11490178f21c49c3ad5c973102c3ac53dcd3b1111",
+   "bytes": 11923
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-3.json",
+   "status": "FAILED",
+   "turns": 0,
+   "failures": [
+    "page did not become ready in 900000 ms",
+    "Error: page.evaluate: Target page, context or browser has been closed"
+   ],
+   "ua": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
+   "sha256": "1d3cfc4ffdb19d95b3135ed4d46e9b748639274dad26afbb02b0ea71adb66885",
+   "bytes": 6517
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-4.json",
+   "status": "FAILED",
+   "turns": 2,
+   "failures": [
+    "IndexedDB still has databases after delete",
+    "pageerror: No supported storage backend found",
+    "page reported a load error",
+    "the page requested no model file: it cannot have loaded a local model",
+    "TimeoutError: page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"行动\")')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"page_submit__Eo8dg page_submitReady__ccmOu\">行动</button>",
+    "pageerror: No supported storage backend found",
+    "entries were not restored after refresh: 2 -> 1",
+    "state changed across refresh/restore",
+    "no visible cancel/stop control while a turn was running"
+   ],
+   "ua": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36",
+   "sha256": "8194c7d6362d4d409712bb0ccb897fef7bb78960ea630b315aa8b2b291a200f1",
+   "bytes": 479791
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-5.json",
+   "status": null,
+   "turns": 0,
+   "failures": [],
+   "ua": null,
+   "sha256": "4eb98a5492a3b65e50f11544d386fa941505f46a375c16240b760fe8cb167726",
+   "bytes": 2427
+  },
+  {
+   "file": "artifacts/goal/micro-workflow\\evidence-phone-6.json",
+   "status": null,
+   "turns": 0,
+   "failures": [],
+   "ua": null,
+   "sha256": "19853ef8fe9c4475be33bbc9c650d5c8433c3491ab193d8f4cd514a75a003631",
+   "bytes": 1574
+  }
+ ]
+}
