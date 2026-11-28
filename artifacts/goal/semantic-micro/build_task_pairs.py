@@ -30,9 +30,10 @@ WORLD = "data/worlds/dragon-raja-free-day.world.json"
 
 def load_world(path=WORLD):
     data = json.load(open(path, encoding="utf-8"))
+    initial = data.get("initial") or data
     names = []
     for group in ("characters", "items", "locations"):
-        for entity in (data.get(group) or {}).values():
+        for entity in (initial.get(group) or {}).values():
             name = entity.get("name") or ""
             if len(name) >= 2:
                 names.append(name)
@@ -40,7 +41,7 @@ def load_world(path=WORLD):
             if len(core) >= 2 and core != name:
                 names.append(core)
     goals = {}
-    for character in (data.get("characters") or {}).values():
+    for character in (initial.get("characters") or {}).values():
         for task in (character.get("tasks") or {}).values():
             goals[task.get("id")] = task.get("goal") or ""
     return names, goals

@@ -25,8 +25,9 @@ WORLD = "data/worlds/dragon-raja-free-day.world.json"
 
 def load_goals():
     data = json.load(open(WORLD, encoding="utf-8"))
+    initial = data.get("initial") or data
     return {task.get("id"): task.get("goal") or ""
-            for character in (data.get("characters") or {}).values()
+            for character in (initial.get("characters") or {}).values()
             for task in (character.get("tasks") or {}).values()}
 
 

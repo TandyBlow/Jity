@@ -39,9 +39,10 @@ ACTION = ["前往", "走向", "走进", "进入", "赶到", "回到", "退到", 
 
 def load_world():
     data = json.load(open(WORLD, encoding="utf-8"))
+    initial = data.get("initial") or data
     names = {"characters": [], "items": [], "locations": []}
     for group in names:
-        for entity in (data.get(group) or {}).values():
+        for entity in (initial.get(group) or {}).values():
             name = entity.get("name") or ""
             if name:
                 names[group].append(name)
