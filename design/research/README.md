@@ -72,3 +72,4 @@ Artifacts     evidence files, manifests, commits
 | E48 | Memory levers measured: browser 731MB, Next 270MB, KV q4 −227MB, n_batch no-op, URL/OPFS no-op | done |
 | E49 | Pointer v3: beam search +0.05, bigram prior hurts every metric | done (λ=0: .600/.496/.495, zero invention) |
 | E50 | Sentence frames from fact clauses: generic patterns express 10/10, charF1 .899 vs human | done |
+| E51 | Frame v2: 160 annotations, slots are verbatim fact spans, frozen inventory | done (160/160 render, held-out 27/30) |

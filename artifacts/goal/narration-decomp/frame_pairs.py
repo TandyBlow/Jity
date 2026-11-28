@@ -37,6 +37,7 @@ def main():
                 continue
             best = max(clauses, key=lambda c: overlap(c, sentence)) if clauses else ''
             out.append({'id': str(row['id']), 'sentence': sentence, 'clause': best,
+                        'clauses': clauses, 'facts': '；'.join(clauses),
                         'overlap': overlap(best, sentence)})
     (HERE / 'frame-pairs.jsonl').write_text(''.join(json.dumps(x, ensure_ascii=False) + '\n' for x in out), encoding='utf8')
     print(json.dumps({'pairs': len(out), 'rows': len(rows)}, ensure_ascii=False))

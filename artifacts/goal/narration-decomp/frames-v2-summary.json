@@ -1,0 +1,21 @@
+{
+ "frames": 160,
+ "rendered": 160,
+ "provenance": {
+  "hand": 100,
+  "real": 60
+ },
+ "patterns": 39,
+ "tags": {
+  "multi": 39,
+  "cause": 22,
+  "neg": 35,
+  "contrast": 25,
+  "dialogue": 25,
+  "cross": 20,
+  "real": 60
+ },
+ "refBigramCoveredMean": 0.835,
+ "refBigramCoveredMeanReal": 0.807,
+ "charsMean": 23.2
+}

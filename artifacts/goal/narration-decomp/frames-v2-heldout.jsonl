@@ -1,0 +1,30 @@
+{"id": "H01", "corpusId": "7", "status": "expressible", "pattern": "S+V1，V2", "slots": {"S": "箱子", "V1": "很沉", "V2": "只挪动了一点"}, "note": "结果补语由 V2 承载"}
+{"id": "H02", "corpusId": "12", "status": "expressible", "pattern": "S+沿+O+V，M", "slots": {"S": "路明非", "O": "服务巷的墙根", "V": "往器材棚方向走", "M": "脚步放轻"}, "note": "帧多带了方式从句，事实一致"}
+{"id": "H03", "corpusId": "22", "status": "expressible", "pattern": "S+向+O+V1，想+V2", "slots": {"S": "路明非", "O": "挡路的人", "V1": "挥拳", "V2": "把他逼退"}, "note": "丢掉“突然抬手”"}
+{"id": "H04", "corpusId": "26", "status": "expressible", "pattern": "S+V1", "slots": {"S": "路明非", "V": "想赶在下一波枪声前进去"}, "note": "纯意图用通用句式承载"}
+{"id": "H05", "corpusId": "43", "status": "expressible", "pattern": "S+把+O+V1，低声说：Q", "slots": {"S": "诺诺", "O": "故障短讯机", "V1": "贴近耳畔", "Q": "路明非，你……是否愿意继续留在这里？"}, "note": "说话人取自另一条事实"}
+{"id": "H06", "corpusId": "58", "status": "expressible", "pattern": "S+把+O+V1，低声说：Q", "slots": {"S": "诺诺", "O": "故障短讯机", "V1": "贴近胸口", "Q": "路明非，西回廊的路线图在那边，你得先确认钟楼的路线"}, "note": ""}
+{"id": "H07", "corpusId": "60", "status": "partial", "pattern": "S+V1；X+V2", "slots": {"S": "她", "V1": "抬起头", "X": "红色识别带", "V2": "在栏杆边微微发烫"}, "note": "事实里没有“诺诺”，人名丢失"}
+{"id": "H08", "corpusId": "62", "status": "partial", "pattern": "A+从+B+经+C+到+D", "slots": {"A": "楼内", "B": "门厅", "C": "下层楼梯、二层平台", "D": "顶层旗台"}, "note": "第二个分句（信号旗）需另一帧"}
+{"id": "H09", "corpusId": "63", "status": "expressible", "pattern": "S+V1，V2，V3", "slots": {"S": "路明非", "V1": "站着不动", "V2": "等这一轮结束", "V3": "看看还有没有人行动"}, "note": "地点“钟楼”在另一条事实里，未表达"}
+{"id": "H10", "corpusId": "65", "status": "expressible", "pattern": "S+V1", "slots": {"S": "路明非", "V": "低头检查护目镜、识别带和胸袋里的弹匣"}, "note": ""}
+{"id": "H11", "corpusId": "69", "status": "expressible", "pattern": "S+把+O+V1，V2", "slots": {"S": "诺诺", "O": "短讯机", "V1": "贴近耳畔", "V2": "低声询问路明非是否愿意继续留在这里"}, "note": "间接引语，无需改引号"}
+{"id": "H12", "corpusId": "74", "status": "expressible", "pattern": "S+V1", "slots": {"S": "路明非", "V": "低头检查护目镜、识别带和胸袋里的弹匣"}, "note": ""}
+{"id": "H13", "corpusId": "75", "status": "expressible", "pattern": "S+V1", "slots": {"S": "红色识别带", "V": "在胸前微微发烫"}, "note": "事实缺主语，人名丢失"}
+{"id": "H14", "corpusId": "77", "status": "expressible", "pattern": "S+V1", "slots": {"S": "路明非", "V": "问器材棚门口的人，今天演习的红蓝两方各在哪些区域活动"}, "note": ""}
+{"id": "H15", "corpusId": "82", "status": "expressible", "pattern": "S+V1，低声说：Q", "slots": {"S": "芬格尔", "V1": "站在器材棚门口，神情凝重地望向紧闭的门", "Q": "那扇门通往钟楼地下门，我正好在检修通道，但若被牵连，我不会让它成为我所要的线索"}, "note": "说话人来自另一条事实"}
+{"id": "H16", "corpusId": "3b", "status": "gap", "pattern": null, "slots": null, "note": "第一人称引语被改写成第三人称，复制式槽位做不到"}
+{"id": "H17", "corpusId": "7a", "status": "expressible", "pattern": "S+V1，V2", "slots": {"S": "箱子", "V1": "很沉", "V2": "只挪动了一点"}, "note": ""}
+{"id": "H18", "corpusId": "17a", "status": "expressible", "pattern": "S+V1，V2", "slots": {"S": "路明非", "V1": "低头检查护目镜、识别带和胸袋里的弹匣", "V2": "确认都在"}, "note": ""}
+{"id": "H19", "corpusId": "22b", "status": "expressible", "pattern": "S+V1", "slots": {"S": "第三根廊柱脚下", "V": "有一条折断的蓝布带"}, "note": "无系表句式，用存在句替代"}
+{"id": "H20", "corpusId": "41a", "status": "expressible", "pattern": "S+V1", "slots": {"S": "路明非", "V": "低头检查护目镜、识别带和胸袋里的弹匣"}, "note": ""}
+{"id": "H21", "corpusId": "41b", "status": "expressible", "pattern": "S+把+O+V1，低声说：Q", "slots": {"S": "诺诺", "O": "短讯机", "V1": "贴近耳畔", "Q": "路明非，你……是否愿意继续留在这里？"}, "note": ""}
+{"id": "H22", "corpusId": "42b", "status": "expressible", "pattern": "S+V1，低声说：Q", "slots": {"S": "诺诺", "V1": "将故障短讯机贴近耳畔", "Q": "路明非，你……是否愿意继续留在这里？"}, "note": "“贴近短讯机”改成了“将短讯机贴近”"}
+{"id": "H23", "corpusId": "58b", "status": "expressible", "pattern": "S+V1，低声说：Q", "slots": {"S": "诺诺", "V1": "将故障短讯机贴近胸口", "Q": "路明非，西回廊的路线图在那边，你得先确认钟楼的路线"}, "note": ""}
+{"id": "H24", "corpusId": "82b", "status": "expressible", "pattern": "S+V1，低声说：Q", "slots": {"S": "芬格尔", "V1": "站在器材棚门口，神情凝重地望向紧闭的门", "Q": "那扇门通往钟楼地下门，我正好在检修通道，但若被牵连，我不会让它成为我所要的线索"}, "note": ""}
+{"id": "H25", "corpusId": "TlaneC#1", "status": "expressible", "pattern": "S+V1", "slots": {"S": "路明非", "V": "问起红蓝两方今天各在哪些区域活动"}, "note": ""}
+{"id": "H26", "corpusId": "TlaneD#1", "status": "expressible", "pattern": "S+V1；X+V2", "slots": {"S": "红色识别带", "V1": "微微发烫", "X": "她", "V2": "迅速将短讯机贴近耳边"}, "note": "人名丢失，事实里没有“诺诺”"}
+{"id": "H27", "corpusId": "TshedD#1", "status": "expressible", "pattern": "S+在+L+V1，V2", "slots": {"S": "路明非", "L": "墙边", "V1": "等一会儿", "V2": "听远处的枪声间隔"}, "note": ""}
+{"id": "H28", "corpusId": "TshedD#1", "status": "expressible", "pattern": "S+把+O+V1，V2", "slots": {"S": "芬格尔", "O": "短讯机", "V1": "贴近耳边", "V2": "红色识别带微微发烫"}, "note": "人名取自“芬格尔也在器材棚”，动作倒装"}
+{"id": "H29", "corpusId": "TarcadeD#1", "status": "expressible", "pattern": "S+把+O+V1，V2", "slots": {"S": "林亦舟", "O": "短讯机", "V1": "贴近耳边", "V2": "蓝色识别带微微发烫"}, "note": "人名取自“林亦舟也在西回廊”"}
+{"id": "H30", "corpusId": "TshedL#1", "status": "expressible", "pattern": "S+V1，又+V2", "slots": {"S": "秦越", "V1": "把器材笼钥匙从腰环上解下来，掂了掂", "V2": "扣回去"}, "note": "说话人“秦越”取自另一条事实，事实本身无主语"}
