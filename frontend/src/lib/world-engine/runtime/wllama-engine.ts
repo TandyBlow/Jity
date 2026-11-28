@@ -49,6 +49,8 @@ export interface WllamaEngineOptions {
   cacheTypeK?: 'f32' | 'f16' | 'q8_0' | 'q5_1' | 'q5_0' | 'q4_1' | 'q4_0';
   cacheTypeV?: 'f32' | 'f16' | 'q8_0' | 'q5_1' | 'q5_0' | 'q4_1' | 'q4_0';
   numThreads?: number;
+  /** Prefill batch size; llama.cpp's default is 2048 and its graph buffer scales with it. */
+  nBatch?: number;
   /** 0 keeps CPU-only; default offloads every layer to WebGPU when the
    * browser exposes it. */
   nGpuLayers?: number;
@@ -393,6 +395,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
         ...(this.options.cacheTypeK ? { cache_type_k: this.options.cacheTypeK } : {}),
         ...(this.options.cacheTypeV ? { cache_type_v: this.options.cacheTypeV } : {}),
         ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
+        ...(this.options.nBatch ? { n_batch: this.options.nBatch } : {}),
         signal: controller.signal,
       };
       if (directBlob) {

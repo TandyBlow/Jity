@@ -301,6 +301,7 @@ async function loadEngine(
   onEngine?: (engine: WllamaInferenceEngine) => void,
   kv?: 'f16' | 'q8_0' | 'q4_0',
   onPrompt?: (prompt: string) => void,
+  nBatch?: number,
 ): Promise<WllamaInferenceEngine> {
   const modelUrl = new URL(url, window.location.href).href;
   // A cold load is 32-46 s, so it is bounded and cancellable; a stuck compile
@@ -345,7 +346,7 @@ async function loadEngine(
   const forceCpu = cpuParam === '1' || (cpuParam !== '0' && isPhoneBrowser());
   // Do not retain the fetched GGUF Blob: two resident engines otherwise hold
   // ~1.4 GiB of Blob quota. A hard-stop reload refetches instead (rare).
-  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: forceCpu ? 0 : 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
+  const engine = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: forceCpu ? 0 : 99999, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}), ...(nBatch ? { nBatch } : {}) });
   onEngine?.(engine);
   try { await engine.ensureLoaded(); return engine; } catch (gpuError) {
     if (forceCpu) throw gpuError;
@@ -355,7 +356,7 @@ async function loadEngine(
     if ((gpuError as { name?: string } | null)?.name === 'AbortError') throw gpuError;
     console.warn('[world-local] WebGPU load failed, retrying CPU', gpuError);
     await engine.dispose().catch(() => undefined);
-    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}) });
+    const cpu = new WllamaInferenceEngine({ modelUrl, contextSize, ...cache, nGpuLayers: 0, abortGraceMs: 2500, loadTimeoutMs: 600_000, retainModelBlob: false, onEvidence, ...(expectedBytes ? { expectedBytes } : {}), ...(onPrompt ? { onPrompt } : {}), ...(nBatch ? { nBatch } : {}) });
     onEngine?.(cpu);
     await cpu.ensureLoaded();
     return cpu;
@@ -449,7 +450,7 @@ async function probeGpu(): Promise<Record<string, unknown>> {
   return out;
 }
 
-function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, kv?: 'f16' | 'q8_0' | 'q4_0', onPrompt?: (prompt: string) => void): ProductEnginePort {
+function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, kv?: 'f16' | 'q8_0' | 'q4_0', onPrompt?: (prompt: string) => void, nBatch?: number): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
@@ -465,7 +466,7 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
       loading = loadEngine(url, contextSize, expectedBytes, label, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
-      }, kv, onPrompt).then((engine) => {
+      }, kv, onPrompt, nBatch).then((engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); throw new DOMException('engine closed', 'AbortError'); }
         current = engine;
         loadingEngine = null;
@@ -681,7 +682,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs'; semanticCtx?: number; kv?: 'f16' | 'q8_0' | 'q4_0' } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs'; semanticCtx?: number; kv?: 'f16' | 'q8_0' | 'q4_0'; nbatch?: number } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -696,6 +697,8 @@ export default function WorldLocalPage() {
     const semanticCtx = Number.isInteger(ctxParam) && ctxParam >= 2048 && ctxParam <= 32768 ? ctxParam : undefined;
     const kvParam = q.get('kv');
     const kv = kvParam === 'f16' || kvParam === 'q4_0' ? kvParam : undefined;
+    const nbParam = Number(q.get('nbatch'));
+    const nbatch = Number.isInteger(nbParam) && nbParam >= 64 && nbParam <= 2048 ? nbParam : undefined;
     const fewShot = q.get('narrationFewShot') === '1' ? true : undefined;
     const projection = q.get('narrationProjection') === 'compact' ? 'compact' as const : undefined;
     const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
@@ -732,6 +735,7 @@ export default function WorldLocalPage() {
       ...(webllmCache ? { webllmCache } : {}),
       ...(semanticCtx ? { semanticCtx } : {}),
       ...(kv ? { kv } : {}),
+      ...(nbatch ? { nbatch } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -968,7 +972,7 @@ export default function WorldLocalPage() {
         const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? 12_288, 'semantic', SEMANTIC_MODEL_BYTES, arm.kv ?? 'q8_0', (prompt) => {
           const rec = turnRecordRef.current;
           if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
-        });
+        }, arm.nbatch);
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
         // weights, at the cost of serialising narration against settlement.
@@ -982,7 +986,7 @@ export default function WorldLocalPage() {
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
           offscreenPolicy: arm.offscreenPolicy ?? 'judge',
-          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? 12_288, kv: arm.kv ?? 'q8_0',
+          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? 12_288, kv: arm.kv ?? 'q8_0', nBatch: arm.nbatch ?? null,
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
           narrationFewShot: arm.fewShot ?? null,
