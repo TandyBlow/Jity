@@ -93,7 +93,8 @@ if ($Action -eq 'submit') {
   $id = "job-" + (Get-Date -Format 'yyyyMMdd-HHmmss') + "-" + (Get-Random -Minimum 100 -Maximum 999)
   $jobs += [pscustomobject]@{
     id = $id; name = $Name; command = $Command; cwd = $(if ($Cwd) { $Cwd } else { "." })
-    budgetMB = $BudgetMB; timeoutSec = $TimeoutSec; killMatch = $KillMatch; status = 'queued'
+    budgetMB = $BudgetMB; timeoutSec = $TimeoutSec; killMatch = $KillMatch; status = 'queued';
+    attempts = 0; maxAttempts = 5
     submittedAt = (Get-Date).ToString('o'); startedAt = $null; endedAt = $null
     pid = $null; peakTreeMB = $null; log = "artifacts/goal/lab/$id.log"
   }
@@ -143,6 +144,7 @@ while ($true) {
   $logPath = FullPath $job.log
   $workDir = FullPath $job.cwd
   $job.status = 'running'; $job.startedAt = (Get-Date).ToString('o')
+  $job | Add-Member -NotePropertyName attempts -NotePropertyValue ([int]($job.attempts + 1)) -Force
   $idx = [array]::IndexOf($jobs, ($jobs | Where-Object { $_.id -eq $job.id } | Select-Object -First 1))
   WriteJson $Queue $jobs
 
@@ -221,7 +223,9 @@ while ($true) {
   foreach ($j in $jobs) {
     if ($j.id -eq $job.id) {
       $exitCode = if ($proc.HasExited) { $proc.ExitCode } else { $null }
-      $j.status = $(if ($reason -eq 'exited') { $(if ($exitCode -eq 0) { 'done' } else { ('failed:' + $exitCode) }) } else { $reason })
+      $maxAttempts = if ($null -ne $j.maxAttempts) { [int]$j.maxAttempts } else { 5 }
+      $retry = ($reason -eq 'reserve-floor' -or $reason -eq 'timeout') -and ([int]$j.attempts -lt $maxAttempts)
+      $j.status = $(if ($reason -eq 'exited') { $(if ($exitCode -eq 0) { 'done' } else { ('failed:' + $exitCode) }) } elseif ($retry) { 'queued' } else { $reason })
       $j.endedAt = (Get-Date).ToString('o'); $j.peakTreeMB = $peak
       if (-not $j.pid) { $j | Add-Member -NotePropertyName pid -NotePropertyValue $proc.Id -Force }
       $j | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force

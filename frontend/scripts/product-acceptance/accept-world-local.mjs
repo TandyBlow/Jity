@@ -177,6 +177,19 @@ const launchArgs = [
   ...(gpuLite ? [] : ['--force_high_performance_gpu']),
   '--ignore-gpu-blocklist',
 ];
+// --resume with an existing evidence file continues after the last recorded
+// turn; the browser profile keeps the IndexedDB save, so the game state and the
+// fixture index stay aligned across a kill (for example a memory-floor kill).
+if (process.argv.includes('--resume') && existsSync(evidenceFile)) {
+  try {
+    const previous = JSON.parse(readFileSync(evidenceFile, 'utf8'));
+    if (Array.isArray(previous.turns)) {
+      evidence.turns = previous.turns;
+      evidence.failures = Array.isArray(previous.failures) ? previous.failures : [];
+      evidence.resumedFrom = previous.runId ?? null;
+    }
+  } catch { /* a broken previous file starts a fresh turn list */ }
+}
 const profile = flag('--profile', '');
 // Real-device runs: drive Android Chrome over `adb forward` + CDP instead of
 // launching a local browser. The phone reaches the server via `adb reverse`.
@@ -568,7 +581,7 @@ try {
     save();
     console.log(`[preflight] ready=${evidence.readyMs}ms isolated=${evidence.environment.crossOriginIsolated} adapter=${JSON.stringify(evidence.environment.adapter)} models=${evidence.modelRequests.filter((r) => /gguf/.test(r.url)).length} -> ${out}`);
   } else
-  for (let index = 0; index < turns.length; index += 1) {
+  for (let index = evidence.turns.length; index < turns.length; index += 1) {
     const turn = typeof turns[index] === 'string' ? { id: `t${index + 1}`, input: turns[index] } : turns[index];
     const beforeCount = await entryCount();
     const beforeState = await snapshot();
