@@ -2218,13 +2218,18 @@ function updateLast(list: TurnEntry[], update: (entry: TurnEntry) => TurnEntry):
 }
 
 /** 规则正文的每个 point 都写完整场景；同一回合内同一句只保留一次。 */
+const STATE_SENTENCE = /现在在|屋里有|也在|贴着|挡住|挂在|完好|没有阵营|放着|隔着/u;
+
 function dedupeProgramPoints<T extends { text: string; source?: string }>(points: T[]): T[] {
   const seen: string[] = [];
   return points.map((part) => {
     if (part.source !== 'program') return part;
     const text = part.text.split(/(?<=[。！？])/u).filter((sentence) => {
-      const key = sentence.replace(/[\s。！？]/gu, '');
-      // 整句已出现，或只是上一段长句的一部分（开场句把位置并进去了）都去掉。
+      // 只去重状态描述；同一事件真发生两次时，结果句必须保留。
+      if (!STATE_SENTENCE.test(sentence)) return true;
+      // 位置句可能被并进开场句，比较时去掉主语名。
+      const key = sentence.replace(/[\s。！？]/gu, '').replace(/^.{0,4}(?=现在在)/u, '');
+      // 整句已出现，或只是上一段长句的一部分都去掉。
       if (!key || seen.some((kept) => kept.includes(key))) return false;
       seen.push(key);
       return true;
