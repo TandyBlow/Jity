@@ -145,7 +145,7 @@ out-of-route 证据；叙事新跑只完成 1/4 回合，独立结果标签验�
 `verify_run.py --max-llm-semantic 0` 作为"语义无 LLM"阶段的准入门；盲评用
 `anonymize.py` 出 A/B/C 表。
 
-**Artifacts.** `tools/experiment_platform/`（14 个模块 + 14 个测试 + `splits.json`）、
+**Artifacts.** `tools/experiment_platform/`（16 个模块 + 15 个测试 + `splits.json`）、
 `artifacts/goal/platform/eval/`（162 条叙事留出集、29 条语义探针 + 头预测/分数、2 个新输入 point
 新输入、失败运行与重试脚本、20 例盲评样本）、`artifacts/goal/platform/{verify-12-q8kv.json,
 verify-turns20-pi.json,verify-all-evidence.json,verify-holdout-v1d.json,perf-report.json}`。P04。

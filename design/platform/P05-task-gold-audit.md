@@ -87,7 +87,7 @@
    作开发夹具。
 5. 用户裁决：严格标准是否替换旧 14/14 口径；在裁决前产品默认不变，旧口径只作行为对照。
 
-**Artifacts.** `tools/experiment_platform/build_task_gold.py`；
+**Artifacts.** `tools/experiment_platform/{build_task_gold,task_gold_eval}.py`；
 `artifacts/goal/platform/task-gold/{bench-v1.semantic-branch.jsonl,task-gold-v1.tasks.json,
 task-gold-v1.cases.jsonl,task-gold-v1.cases.jsonl.manifest.json,
 task-gold-v1.bundles.jsonl,task-gold-v1.report.json}`。P05。
