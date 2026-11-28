@@ -41,9 +41,12 @@
 
 这些提交不是同一个构建；矩阵的每一项只对该行提交/配置/设备成立，不能合并成“当前版本通过”。
 
-**计时口径修正（2026-11-28）.** `summarize-timing.mjs` 只查首段 60 s 与单点 300 s，
+**计时口径修正（2026-11-28/29）.** `summarize-timing.mjs` 只查首段 60 s 与单点 300 s，
 不查控制权交还。新增 `timing_gates.py` 后三门槛独立计算：首段 20/20、单点 20/20、
-控制权交还 **0/20**（66.7–200.0 s，最差 199,954 ms），整体不通过。二十条的
+控制权交还 **0/20**（66.7–200.0 s，最差 199,954 ms），整体不通过。工具同时检查预期
+回合数与未完成回合：`--expect-turns 20` 下 `observedTurns=20`、`missingTurnNumbers=[]`、
+`incompleteTurns=[]`、`turnCountPass=true`，所以失败点是控制权交还，不是样本缺失或半截
+运行。二十条的
 `firstReadableAtMs` 与 `narrationStartedAtMs` 全部相等：按页面代码，前者记首次非空文本、
 后者记首次叙事进度回调，二者相同不等于玩家已看到可读正文；需要把“首个进度回调 /
 首段非空 / 首个完整可读句 / 控制权交还”拆成四个时钟，不能用一个相等值当首段证明。
@@ -78,7 +81,7 @@
 移动刷新仍是空缺。要把状态改成“通过”，至少需要：修控制权交还、修移动默认档刷新、真机
 跑通 2 回合并留证据、自建冻结构建修掉首回合挂起后跑完 4+2+10。
 
-**Artifacts.** `artifacts/goal/platform/eval/{turns20-pi-timing.json,
+**Artifacts.** `artifacts/goal/platform/eval/{turns20-pi-timing.json,turns20-gates-v2.json,
 scenarios11-micro-report.json,rules8-scenario-report.json,mobile-proxy-summary.json,
 mobile-defaults-refresh-summary.json,phone-failures-summary.json}`；
 `artifacts/goal/platform/verify-rules8*.json`；原始大文件见各摘要里的 sha256/bytes 与

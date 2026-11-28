@@ -338,23 +338,53 @@ def test_timing_gates_check_control_return():
     assert report['overallPass'] is False
 
 
+def test_timing_gates_expected_turns_and_incomplete():
+    from tools.experiment_platform.timing_gates import evaluate
+
+    complete = {'firstReadableAtMs': 1000, 'narrationStartedAtMs': 1000,
+                'pointTextFinishedMinusCommitMs': 2000, 'driverDoneMs': 5000}
+    timing = {'points': [
+        {'id': 'a', 'turn': 1, 'clocks': complete},
+        {'id': 'b', 'turn': 2, 'clocks': {'firstReadableAtMs': 1000, 'narrationStartedAtMs': 1000,
+                                          'pointTextFinishedMinusCommitMs': 2000, 'driverDoneMs': None}},
+        {'id': 'c', 'turn': 3, 'clocks': complete, 'excluded': True},
+    ]}
+    report = evaluate(timing, expected_turns=3)
+    assert report['observedTurns'] == 2 and report['missingTurnNumbers'] == [3]
+    assert report['incompleteTurns'] == ['b'] and report['turnCountPass'] is False
+    assert report['overallPass'] is False
+    full = {'points': [{'id': 'a', 'turn': 1, 'clocks': complete},
+                       {'id': 'b', 'turn': 2, 'clocks': complete}]}
+    assert evaluate(full, expected_turns=2)['overallPass'] is True
+
+
 def test_narration_org_selection_order_and_heads():
-    from tools.experiment_platform.narration_org_eval import evaluate
+    from tools.experiment_platform.narration_org_eval import calibrate, evaluate
 
     case = {'id': 'x', 'input': {'factsText': '路明非拿起护目镜。诺诺没有成功开门。',
-                                 'resultLines': ['诺诺：开门（没有成功）']},
-            'expected': {'mustSelect': ['路明非拿起护目镜', '诺诺没有成功开门'],
+                                 'resultLines': ['诺诺：开门（没有成功）', '路明非：拿起护目镜（达到目的）']},
+            'expected': {'mustSelect': ['开门', '拿起护目镜'],
+                         'mustEvents': [{'actor': '诺诺', 'action': '开门', 'outcome': '没有成功'},
+                                        {'actor': '路明非', 'action': '拿起护目镜', 'outcome': '达到目的'}],
+                         'optional': ['诺诺没有成功开门', '路明非拿起护目镜'],
+                         'avoidRepeat': ['路明非拿起护目镜'],
                          'outcomes': [{'actor': '诺诺', 'outcome': '没有成功'}],
-                         'order': [['路明非拿起护目镜', '诺诺没有成功开门']]}}
-    good = evaluate(case, '路明非拿起护目镜。诺诺开门，却没有成功。')
+                         'order': [['开门', '拿起护目镜']],
+                         'negatives': [{'type': 'wrongAttribution', 'text': '路明非开门。'},
+                                       {'type': 'negationLost', 'text': '诺诺有成功开门。'},
+                                       {'type': 'wrongOrder', 'text': '路明非拿起护目镜。诺诺开门。'}]}}
+    good = evaluate(case, '诺诺开门，却没有成功。路明非拿起护目镜。')
     assert good['selectionRate'] == 1.0 and good['outcomeHit'] == 1
     assert good['orderViolations'] == 0 and good['sameHeadPairs'] == 0
-    bad = evaluate(case, '诺诺开门，却没有成功。路明非拿起护目镜。')
+    assert good['attributionMismatches'] == 0 and good['negationLost'] == 0
+    assert good['avoidRepeatHit'] == 1
+    bad = evaluate(case, '路明非拿起护目镜。诺诺开门，却没有成功。')
     assert bad['orderViolations'] == 1
     repeated = evaluate(case, '路明非拿起护目镜。路明非走进庭院。')
     assert repeated['sameHeadPairs'] == 1
     invented = evaluate(case, '苏茜拿起护目镜。诺诺开门，却没有成功。')
     assert invented['inventedNames'] >= 1
+    assert all(item['detected'] for item in calibrate(case))
 
 
 def test_clean_tree_passes(tmp_path):
