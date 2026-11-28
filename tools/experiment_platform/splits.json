@@ -54,6 +54,30 @@
    "usage": "dev-regression",
    "independent": false,
    "note": "The 161 points used to design E55-E60 rules; not an independent evaluation set."
+  },
+  {
+   "name": "narration-holdout-v1",
+   "path": "artifacts/goal/platform/eval/narration-holdout-v1.jsonl",
+   "key": "id",
+   "usage": "test",
+   "independent": true,
+   "note": "87 pairs from artifacts/goal/narration runs; fact-block hash absent from the 225 corpus and 97 bundle hashes. Built by build_narration_holdout.py."
+  },
+  {
+   "name": "semantic-probes-dev",
+   "path": "artifacts/goal/platform/eval/semantic-probes-v1.dev.jsonl",
+   "key": "id",
+   "usage": "dev",
+   "independent": true,
+   "note": "Authored from world initialAppearance; entities whose names appear in the semantic train text are excluded."
+  },
+  {
+   "name": "semantic-probes-test",
+   "path": "artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl",
+   "key": "id",
+   "usage": "test",
+   "independent": true,
+   "note": "Same construction as dev; keep it for formal scoring only."
   }
  ],
  "pairs": [

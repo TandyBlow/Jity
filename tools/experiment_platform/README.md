@@ -17,6 +17,18 @@ PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.eval_set validate --pat
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.eval_set freeze --path path/to/set.jsonl
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.eval_set check --path path/to/set.jsonl --manifest path/to/set.jsonl.manifest.json
 
+# 5. build / score the independent sets
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_narration_holdout
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.narration_metrics --set artifacts/goal/platform/eval/narration-holdout-v1.jsonl --group-model
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_semantic_probes
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.semantic_score --set artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl --predictions preds.jsonl
+
+# 6. run, measure, verify
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.run_experiment --name smoke --command "python -c \"print(1)\""
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.resource_monitor --pid 1234 --duration 60
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.verify_run --evidence results/product/evidence/x.json --require-engine narration,semantic
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.perf_report
+
 # tests
 PYTHONUTF8=1 python -X utf8 -m pytest tools/experiment_platform/tests -q
 ```

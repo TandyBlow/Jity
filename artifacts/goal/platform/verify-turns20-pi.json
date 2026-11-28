@@ -1,0 +1,57 @@
+{
+ "schema": "jity-run-verify/1",
+ "reports": [
+  {
+   "runId": "2026-11-28T0948-d3c2",
+   "status": "COMPLETED",
+   "turns": 20,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 20,
+     "generations": 3212,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 20,
+     "generations": 3212,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 305,
+   "failures": [
+    "turn 0 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 1 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 2 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 3 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 4 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 5 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 6 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 7 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 8 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 9 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 10 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 11 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 12 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 13 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 14 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 15 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 16 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 17 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 18 narration model 'semantic' not in ['qwen3-1.7b']",
+    "turn 19 narration model 'semantic' not in ['qwen3-1.7b']"
+   ],
+   "pass": false,
+   "file": "results/product/evidence/09-turns20-pi.json"
+  }
+ ],
+ "failed": 1
+}

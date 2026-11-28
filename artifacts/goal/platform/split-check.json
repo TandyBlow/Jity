@@ -41,6 +41,24 @@
    "independent": false,
    "uniqueKeys": 161,
    "path": "artifacts/goal/narration-standalone/inputs.jsonl"
+  },
+  "narration-holdout-v1": {
+   "usage": "test",
+   "independent": true,
+   "uniqueKeys": 87,
+   "path": "artifacts/goal/platform/eval/narration-holdout-v1.jsonl"
+  },
+  "semantic-probes-dev": {
+   "usage": "dev",
+   "independent": true,
+   "uniqueKeys": 16,
+   "path": "artifacts/goal/platform/eval/semantic-probes-v1.dev.jsonl"
+  },
+  "semantic-probes-test": {
+   "usage": "test",
+   "independent": true,
+   "uniqueKeys": 13,
+   "path": "artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl"
   }
  },
  "pairs": [

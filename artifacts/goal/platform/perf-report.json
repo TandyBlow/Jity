@@ -1,0 +1,82 @@
+{
+ "schema": "jity-perf-report/1",
+ "sources": [
+  "D:/others/Jity/artifacts/goal/timing-runs/cold-1.json",
+  "D:/others/Jity/artifacts/goal/timing-runs/cold-2.json",
+  "D:/others/Jity/artifacts/goal/timing-runs/cold-3.json",
+  "D:/others/Jity/artifacts/goal/timing-runs/points-10-final4.json",
+  "D:/others/Jity/artifacts/goal/timing-runs/points-extra-2.json",
+  "D:/others/Jity/artifacts/goal/timing-runs/points-extra-4.json"
+ ],
+ "points": 15,
+ "gates": {
+  "evaluatedPoints": 12,
+  "firstReadable": {
+   "evaluated": 12,
+   "failed": 0,
+   "worstMs": 43526
+  },
+  "pointText": {
+   "evaluated": 12,
+   "failed": 0,
+   "worstMs": 13772
+  },
+  "turnCompletion": {
+   "evaluated": 12,
+   "failed": 7,
+   "ids": [
+    "t1-look-lane",
+    "t3-talk-lin",
+    "t5-wait-listen",
+    "t9-ask-nono",
+    "t12-talk-doctor",
+    "e1-stand-listen",
+    "e3-check-time"
+   ]
+  },
+  "autoChainPoints": 0,
+  "status": "FAIL_OR_INCOMPLETE"
+ },
+ "coldStart": {
+  "samples": 3,
+  "minMs": 18883,
+  "medianMs": 19341,
+  "maxMs": 24696
+ },
+ "topStagesByTotalMs": [
+  {
+   "task": "updates",
+   "totalMs": 921117,
+   "calls": 69
+  },
+  {
+   "task": "results",
+   "totalMs": 397218,
+   "calls": 70
+  }
+ ],
+ "nullClocks": {
+  "pointCommittedAtMs": 3,
+  "narrationStartedAtMs": 3,
+  "firstReadableAtMs": 3,
+  "pointTextFinishedAtMs": 3
+ },
+ "memory": [
+  {
+   "file": "ab2-process-memory.csv",
+   "samples": 558,
+   "peakEdgeMB": 4849.0,
+   "endEdgeMB": 3390.0,
+   "driftMB": 395.0,
+   "minFreeMB": 3027.0,
+   "peakProcesses": 30
+  }
+ ],
+ "notMeasured": [
+  "controlReturnedAt (explicit clock)",
+  "page/process RSS at peak",
+  "GPU memory/utilisation",
+  "long-term drift beyond a 2-turn window",
+  "per-model cold-start breakdown"
+ ]
+}

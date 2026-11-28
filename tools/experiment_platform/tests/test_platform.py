@@ -172,6 +172,89 @@ def test_absolute_path_scan(tmp_path):
     assert len(findings) == 1 and findings[0]["count"] == 1
 
 
+def test_run_experiment_manifest_and_resume(tmp_path):
+    from tools.experiment_platform.run_experiment import main
+
+    out = tmp_path / "run1"
+    args = ["--name", "smoke", "--command", "python -c \"print('ok')\"",
+            "--out-dir", str(out), "--inputs", "package.json"]
+    assert main(args) == 0
+    result = json.loads((out / "result.json").read_text(encoding="utf-8"))
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    assert result["status"] == "done" and result["attempt"] == 1
+    assert manifest["inputs"][0]["sha256"]
+    assert "ok" in (out / "attempt1.out.log").read_text(encoding="utf-8")
+    assert main(args + ["--resume"]) == 0
+    assert json.loads((out / "result.json").read_text(encoding="utf-8"))["attempt"] == 1
+
+    fail_out = tmp_path / "run2"
+    fail_args = ["--name", "fail", "--command", "python -c \"raise SystemExit(3)\"",
+                 "--out-dir", str(fail_out)]
+    assert main(fail_args) == 1
+    assert main(fail_args + ["--resume"]) == 1
+    assert (fail_out / "result.attempt1.json").exists()
+    assert json.loads((fail_out / "result.json").read_text(encoding="utf-8"))["attempt"] == 2
+
+
+def test_semantic_score_and_verify_run(tmp_path):
+    from tools.experiment_platform.semantic_score import score
+    from tools.experiment_platform.verify_run import check
+
+    cases = [
+        {'id': 'a', 'family': 'item_inspect', 'split': 'test',
+         'expected': {'facts': ['信息=规则牌:牌面写明禁射'], 'anyOf': ['牌面写明禁射'], 'status': {'info': 'present'}}},
+        {'id': 'b', 'family': 'unknown_entity', 'split': 'test',
+         'expected': {'facts': ['信息=储物柜:未登记'], 'anyOf': [], 'status': {'info': 'absent'}}},
+    ]
+    preds = {'a': {'facts': ['信息=规则牌:牌面写明禁射']}, 'b': {'facts': []}}
+    report = score(cases, preds)
+    assert report['statusAccuracy'] == 1.0 and report['contentAccuracy'] == 1.0
+    assert score(cases, {'a': preds['a']})['missing'] == ['b']
+
+    doc = {'runId': 'r', 'status': 'COMPLETED', 'models': {'requests': 2, 'ok': 2, 'failed': []},
+           'turns': [{'product': {'narrationModel': 'qwen3-1.7b', 'microEnabled': True,
+                                  'semanticPrompts': [], 'engines': [
+                                      {'label': 'narration', 'loadCount': 1, 'generations': 3},
+                                      {'label': 'semantic', 'loadCount': 1, 'generations': 2}]}}]}
+    ok = check(doc, {'narration': ['qwen3-1.7b']}, ['narration', 'semantic'], 0, True)
+    assert ok['pass'] is True and ok['llmSemanticPrompts'] == 0
+    bad = check({**doc, 'models': {'failed': ['x']}}, None, ['narration'], 0, False)
+    assert bad['pass'] is False
+
+
+def test_resource_monitor_samples_child(tmp_path):
+    import subprocess
+    import sys
+    import time
+    from tools.experiment_platform.resource_monitor import main
+
+    proc = subprocess.Popen([sys.executable, '-c',
+                             'import time; x=bytearray(20*1024*1024); time.sleep(4)'])
+    try:
+        time.sleep(0.3)
+        out = tmp_path / 'monitor.csv'
+        code = main(['--pid', str(proc.pid), '--duration', '1.2', '--interval', '0.2', '--out', str(out)])
+        assert code == 0
+        summary = json.loads(out.with_suffix('.summary.json').read_text(encoding='utf-8'))
+        assert summary['samples'] >= 3 and summary['peakRssMB'] > 0
+    finally:
+        proc.terminate()
+
+
+def test_perf_report_summarize():
+    from tools.experiment_platform.perf_report import summarize
+
+    timing = {'sources': [{'file': 'x'}], 'coldStarts': [{'readyMs': 20}, {'readyMs': 30}],
+              'points': [{'clocks': {'pointCommittedAtMs': 1, 'narrationStartedAtMs': None,
+                                     'firstReadableAtMs': 2, 'pointTextFinishedAtMs': 3},
+                          'stages': [{'task': 'updates', 'ms': 10}]}],
+              'gates': {'status': 'PASS'}}
+    report = summarize(timing, [])
+    assert report['coldStart']['medianMs'] == 25
+    assert report['topStagesByTotalMs'][0]['task'] == 'updates'
+    assert report['nullClocks']['narrationStartedAtMs'] == 1
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

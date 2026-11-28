@@ -1,0 +1,7 @@
+{
+ "schema": "jity-eval-set/1",
+ "path": "artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl",
+ "rows": 13,
+ "sha256": "af097d9db23ac6d34e0df4b536dac9f9e44ab7070b8687d44b5cd4ba2f8f1935",
+ "hashMode": "canonical-json"
+}

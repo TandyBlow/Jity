@@ -1,0 +1,36 @@
+{
+ "schema": "jity-run-verify/1",
+ "reports": [
+  {
+   "runId": "2026-11-28T1150-af14",
+   "status": "COMPLETED",
+   "turns": 1,
+   "models": {
+    "requests": 2,
+    "ok": 2,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 1,
+     "generations": 13,
+     "contextSize": [
+      8192
+     ]
+    },
+    "narration": {
+     "loads": 1,
+     "generations": 5,
+     "contextSize": [
+      2048
+     ]
+    }
+   },
+   "llmSemanticPrompts": 13,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/12-q8kv-s03-clean.json"
+  }
+ ],
+ "failed": 0
+}

@@ -1,0 +1,20 @@
+{
+ "schema": "jity-narration-holdout/1",
+ "stats": {
+  "pairs": 257,
+  "duplicate": 116,
+  "inCorpus": 6,
+  "inBundle": 48
+ },
+ "selected": 87,
+ "uniqueSources": 34,
+ "models": {
+  "qwen3-1.7b-narr-lora": 78,
+  "semantic": 3,
+  "qwen3-1.7b": 6
+ },
+ "excluded": {
+  "corpusFactHashes": 225,
+  "bundleFactHashes": 97
+ }
+}
