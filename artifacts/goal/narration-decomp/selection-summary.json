@@ -1,0 +1,10 @@
+{
+ "clauses": 5001,
+ "positives": 2937,
+ "cvF1Mean": 0.906,
+ "cvF1Sd": 0.008,
+ "modelSelectionRate": 0.636,
+ "baselineSelectionRate": 0.587,
+ "typePriorF1": 0.764,
+ "reconstructionCharF1Mean": 0.265
+}

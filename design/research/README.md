@@ -53,3 +53,4 @@ Artifacts     evidence files, manifests, commits
 | E29 | Memory baseline: single-engine arm on desktop | done (page 0.72 GB attribution; Edge RSS peak 4.65 GB; JS heap 58 MB) |
 | E30 | Planning dataset v0: fact-clause selection and order | done (58.8% clauses expressed) |
 | E31 | Program reconstruction baseline | done (program plan 0.21 / oracle plan 0.29 char F1) |
+| E32 | Clause selection model (0.1M logistic) | done (grouped CV F1 0.906; reconstruction 0.265) |
