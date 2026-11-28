@@ -137,3 +137,6 @@ out-of-route 证据；叙事新跑只完成 1/4 回合，独立结果标签验�
 `artifacts/goal/platform/eval/`（87 条叙事留出集、29 条语义探针 + 头预测/分数、1 条
 新输入、失败运行与重试脚本、20 例盲评样本）、`artifacts/goal/platform/{verify-12-q8kv.json,
 verify-turns20-pi.json,verify-all-evidence.json,verify-holdout-v1d.json,perf-report.json}`。P04。
+
+**Note.** 四个只读审计 Agent 没有交付报告（已停止）；P01/P02 的数据与工具结论均由平台
+工具扫描加人工复核直接得出，证据都在上列 artifact 里。
