@@ -1218,6 +1218,7 @@
   逐点相等（用 env-11 的 12 回合证据作夹具）；2）`state-invariants` 只用
   root 的全量状态；3）存档版本号递增 + 旧存档迁移（按需回填 head 全量）；
   4）`store.ts` 的 head 校验不变（head 始终有全量状态与 digest）。
+- 前置验证进展：**回放等价性已通过**（`frontend/scripts/verify-point-replay.ts` 对 env-11 快照跑 `verifySessionSnapshot`：31 个点的回放摘要全部与存储一致，ok=true、0 错误）——逐点全量 `state` 对校验并非必需，只剩 `get_state` 读取面需要按需回放。
 - 预期收益：快照/常驻内存从 ~65KB/点 降到 digest 量级（~0.5KB/点）+ head 一份
   全量；对应 goal 的"峰值内存 -30%"仍取决于 GGUF/KV 侧，需在阶段二实验里
   与上下文/KV 优化合并评估。
