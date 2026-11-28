@@ -29,3 +29,7 @@ GC，单次约 25 s）与 `artifacts/goal/memory-baseline/sample-process-memory.
 
 **Artifacts.** `lean-browser-memory.jsonl`、`lean-process-memory.csv`、
 `frontend/scripts/memory-baseline.mjs`、`sample-process-memory.ps1`。E29。
+
+**补记（E42 复核，2026-11-28）.** 5,928MB 是 `Get-Process msedge` 全部进程
+WorkingSet 求和，含用户其他 Edge 窗口与共享页重复计数，不能当作本页占用；
+页面归属的 1,918MB 也未必包含 mmap 的权重页。KV 账与真实 token 分布见 E42。
