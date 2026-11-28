@@ -61,7 +61,7 @@
    "key": "id",
    "usage": "test",
    "independent": true,
-   "note": "87 pairs from artifacts/goal/narration runs; fact-block hash absent from the 225 corpus and 97 bundle hashes. Built by build_narration_holdout.py."
+   "note": "162 pairs (87 turn-level + 75 point-level) from 53 runs; fact-block hash absent from the 225 corpus and 97 bundle hashes. Built by build_narration_holdout.py."
   },
   {
    "name": "semantic-probes-dev",
@@ -85,17 +85,41 @@
    "key": "id",
    "usage": "test",
    "independent": true,
-   "note": "One turn from the 2026-11-28 new-input run (1/4 completed); fact block absent from corpus/bundle, outcome labels present. Smoke only."
+   "note": "Two points from one completed turn of the 2026-11-28 new-input run (1/4 turns); fact block absent from corpus/bundle, one outcome label. Smoke only."
   }
  ],
  "pairs": [
-  {"left": "semantic-train", "right": "semantic-test", "expect": "disjoint"},
-  {"left": "semantic-train", "right": "scenario-ids", "expect": "disjoint"},
-  {"left": "narration-bundle161", "right": "narration-corpus", "expect": "disjoint"},
-  {"left": "narration-bundle161", "right": "narration-holdout58", "expect": "disjoint"},
-  {"left": "narration-holdout58", "right": "planning-v14", "expect": "subset",
-   "note": "holdout is carved from the planning pool by design"},
-  {"left": "narration-holdout58", "right": "narration-corpus", "expect": "report",
-   "note": "50 of the 58 holdout ids reappear in the corpus as alternate/version targets; corpus is a reference pool, not the E46 training set. Training on the corpus must exclude holdout prompts."}
+  {
+   "left": "semantic-train",
+   "right": "semantic-test",
+   "expect": "disjoint"
+  },
+  {
+   "left": "semantic-train",
+   "right": "scenario-ids",
+   "expect": "disjoint"
+  },
+  {
+   "left": "narration-bundle161",
+   "right": "narration-corpus",
+   "expect": "disjoint"
+  },
+  {
+   "left": "narration-bundle161",
+   "right": "narration-holdout58",
+   "expect": "disjoint"
+  },
+  {
+   "left": "narration-holdout58",
+   "right": "planning-v14",
+   "expect": "subset",
+   "note": "holdout is carved from the planning pool by design"
+  },
+  {
+   "left": "narration-holdout58",
+   "right": "narration-corpus",
+   "expect": "report",
+   "note": "50 of the 58 holdout ids reappear in the corpus as alternate/version targets; corpus is a reference pool, not the E46 training set. Training on the corpus must exclude holdout prompts."
+  }
  ]
 }

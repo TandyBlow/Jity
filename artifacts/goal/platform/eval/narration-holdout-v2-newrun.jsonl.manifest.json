@@ -1,7 +1,7 @@
 {
  "schema": "jity-eval-set/1",
  "path": "artifacts/goal/platform/eval/narration-holdout-v2-newrun.jsonl",
- "rows": 1,
- "sha256": "4717ebe6eb5b19b5edcc6e0a923ff2daf033d660a2b393fc6b1c5373b6dc1ab9",
+ "rows": 2,
+ "sha256": "664ed9acb2e76b4ec94f326a7dab9c2a12966bfcbe1b26a46f580b20d8b8f8f9",
  "hashMode": "canonical-json"
 }

@@ -45,7 +45,7 @@
   "narration-holdout-v1": {
    "usage": "test",
    "independent": true,
-   "uniqueKeys": 87,
+   "uniqueKeys": 162,
    "path": "artifacts/goal/platform/eval/narration-holdout-v1.jsonl"
   },
   "semantic-probes-dev": {
@@ -63,7 +63,7 @@
   "narration-holdout-v2-newrun": {
    "usage": "test",
    "independent": true,
-   "uniqueKeys": 1,
+   "uniqueKeys": 2,
    "path": "artifacts/goal/platform/eval/narration-holdout-v2-newrun.jsonl"
   }
  },

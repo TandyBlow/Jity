@@ -121,58 +121,66 @@ def build(files: list[str]) -> tuple[list[dict], dict]:
             continue
         for turn in doc.get('turns') or []:
             product = turn.get('product') or {}
-            narration = product.get('narration') or {}
-            prompt, text = narration.get('prompt'), narration.get('text')
-            if not prompt or not text:
-                continue
-            stats['pairs'] += 1
-            facts = split_prompt(prompt)
-            if not facts:
-                stats['noFacts'] += 1
-                continue
-            key = digest(facts)
-            if key in corpus_hashes:
-                stats['inCorpus'] += 1
-                continue
-            if key in bundle_hashes:
-                stats['inBundle'] += 1
-                continue
-            if key in seen:
-                stats['duplicate'] += 1
-                continue
-            facts_text, settlement = parse_facts_block(facts)
-            lines = result_lines(settlement)
             model = product.get('narrationModel') or product.get('modelId') or 'unknown'
-            outcomes = [r for r in (parse_result(x) for x in lines) if r and r['outcome']]
-            expected_facts = [c for c in clauses(facts_text)
-                              if len(c) > 4 and '做的事' not in c and '玩家这回合' not in c]
-            if not expected_facts:
-                stats['noExpectedFacts'] += 1
-                continue
-            names_in_input = facts_text + settlement + ' '.join(lines)
-            point = narration.get('pointId') or turn.get('id') or '?'
-            identity = f"nar-holdout:{Path(path).stem}:{turn.get('id')}:{point}"
-            seen.add(key)
-            models[model] += 1
-            per_file[rel] += 1
-            rows.append({
-                'id': identity,
-                'modality': 'narration',
-                'world': 'dragon-raja-free-day',
-                'split': 'test',
-                'input': {'factsText': facts_text, 'settlementText': settlement,
-                          'resultLines': lines, 'playerLine': player_line(facts_text),
-                          'prompt': prompt},
-                'expected': {'facts': expected_facts,
-                             'outcomes': [{'actor': o['actor'], 'action': o['action'],
-                                           'outcome': o['outcome']} for o in outcomes]},
-                'forbidden': {'namesNotInInput': [n for n in NAMES if n not in names_in_input]},
-                'provenance': {'labelSource': 'settlement-record', 'humanVerified': False,
-                               'notes': 'fact block absent from narration corpus and the 161-point dev bundle'},
-                'source': {'evidence': rel, 'turnId': turn.get('id'), 'pointId': point,
-                           'model': model, 'commit': commits.get(rel)},
-                'recorded': {'systemProse': text, 'model': model},
-            })
+
+            def consider(prompt, text, point_id, kind):
+                if not prompt or not text:
+                    return
+                stats[f'{kind}Pairs'] += 1
+                facts = split_prompt(prompt)
+                if not facts:
+                    stats['noFacts'] += 1
+                    return
+                key = digest(facts)
+                if key in corpus_hashes:
+                    stats['inCorpus'] += 1
+                    return
+                if key in bundle_hashes:
+                    stats['inBundle'] += 1
+                    return
+                if key in seen:
+                    stats['duplicate'] += 1
+                    return
+                facts_text, settlement = parse_facts_block(facts)
+                lines = result_lines(settlement)
+                outcomes = [r for r in (parse_result(x) for x in lines) if r and r['outcome']]
+                expected_facts = [c for c in clauses(facts_text)
+                                  if len(c) > 4 and '做的事' not in c and '玩家这回合' not in c]
+                if not expected_facts:
+                    stats['noExpectedFacts'] += 1
+                    return
+                names_in_input = facts_text + settlement + ' '.join(lines)
+                point = point_id or turn.get('id') or '?'
+                identity = f"nar-holdout:{Path(path).stem}:{turn.get('id')}:{point}:{kind}"
+                seen.add(key)
+                models[model] += 1
+                per_file[rel] += 1
+                rows.append({
+                    'id': identity,
+                    'modality': 'narration',
+                    'world': 'dragon-raja-free-day',
+                    'split': 'test',
+                    'input': {'factsText': facts_text, 'settlementText': settlement,
+                              'resultLines': lines, 'playerLine': player_line(facts_text),
+                              'prompt': prompt},
+                    'expected': {'facts': expected_facts,
+                                 'outcomes': [{'actor': o['actor'], 'action': o['action'],
+                                               'outcome': o['outcome']} for o in outcomes]},
+                    'forbidden': {'namesNotInInput': [n for n in NAMES if n not in names_in_input]},
+                    'provenance': {'labelSource': 'settlement-record', 'humanVerified': False,
+                                   'notes': 'fact block absent from narration corpus and the 161-point dev bundle'},
+                    'source': {'evidence': rel, 'turnId': turn.get('id'), 'pointId': point,
+                               'kind': kind, 'model': model, 'commit': commits.get(rel)},
+                    'recorded': {'systemProse': text, 'model': model},
+                })
+
+            narration = product.get('narration') or {}
+            consider(narration.get('prompt'), narration.get('text'),
+                     narration.get('pointId') or turn.get('id'), 'narration')
+            for item in product.get('pointPrompts') or []:
+                if isinstance(item, dict):
+                    consider(item.get('prompt'), item.get('text'),
+                             item.get('pointId') or turn.get('id'), 'point')
     summary = {
         'schema': 'jity-narration-holdout/1',
         'stats': dict(stats),

@@ -1,16 +1,17 @@
 {
  "schema": "jity-narration-holdout/1",
  "stats": {
-  "pairs": 257,
-  "duplicate": 116,
-  "inCorpus": 6,
-  "inBundle": 48
+  "narrationPairs": 257,
+  "duplicate": 241,
+  "inCorpus": 11,
+  "pointPairs": 256,
+  "inBundle": 99
  },
- "selected": 87,
- "uniqueSources": 34,
+ "selected": 162,
+ "uniqueSources": 53,
  "models": {
-  "qwen3-1.7b-narr-lora": 78,
-  "semantic": 3,
+  "qwen3-1.7b-narr-lora": 143,
+  "semantic": 13,
   "qwen3-1.7b": 6
  },
  "excluded": {

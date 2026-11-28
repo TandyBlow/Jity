@@ -177,6 +177,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--arms', default='current,rules-e55,cluster-e57')
     parser.add_argument('--group-model', action='store_true',
                         help='also report current-arm metrics per recorded model')
+    parser.add_argument('--group-kind', action='store_true',
+                        help='also report current-arm metrics per source kind (narration/point)')
     parser.add_argument('--out', default=None)
     args = parser.parse_args(argv)
     cases = load_cases(Path(args.set))
@@ -190,6 +192,13 @@ def main(argv: list[str] | None = None) -> int:
             groups[(case.get('recorded') or {}).get('model', 'unknown')].append(case)
         for model, group in sorted(groups.items()):
             report[f'current@{model}'] = summarize(
+                [evaluate(bundle_row(c), arm_text('current', c)) for c in group])
+    if args.group_kind:
+        kinds = defaultdict(list)
+        for case in cases:
+            kinds[(case.get('source') or {}).get('kind', 'unknown')].append(case)
+        for kind, group in sorted(kinds.items()):
+            report[f'current-kind@{kind}'] = summarize(
                 [evaluate(bundle_row(c), arm_text('current', c)) for c in group])
     report['cases'] = len(cases)
     report['set'] = args.set.replace('\\', '/')

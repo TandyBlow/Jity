@@ -1,0 +1,616 @@
+{
+  "kind": "jity-goal-timing-baseline",
+  "generatedAt": "2026-11-28T14:27:48.295Z",
+  "thresholds": {
+    "firstReadableMs": 60000,
+    "pointTextMs": 300000
+  },
+  "sources": [
+    {
+      "file": "D:/others/Jity/results/product/evidence/holdout-v1d-20261128.json",
+      "runId": "2026-11-28T1424-1c30",
+      "status": "FAILED",
+      "intent": "10-turn",
+      "turnsFile": "../artifacts/goal/platform/eval/turns-holdout-v1.json"
+    }
+  ],
+  "coldStarts": [],
+  "points": [
+    {
+      "run": "2026-11-28T1424-1c30",
+      "turn": 1,
+      "id": "hold-v1-01",
+      "input": "我走到右墙的赛区路线图前，读清楚撤离路线和白线标识。",
+      "purpose": "独立留出：读取赛区路线图，检验 info 通道与新输入",
+      "clocks": {
+        "pointCommittedAtMs": 10392,
+        "narrationStartedAtMs": 15690,
+        "firstReadableAtMs": 15690,
+        "firstReadableSource": "model",
+        "pointTextFinishedAtMs": 78160,
+        "firstAcceptedAtMs": 40155,
+        "pointTextFinishedMinusCommitMs": 67768,
+        "completionSource": "pointNarration.max",
+        "pointNarration": {
+          "point_round_3_1": {
+            "startedAtMs": 15690,
+            "firstTextAtMs": 15690,
+            "completedAtMs": 40155
+          },
+          "point_round_3_2": {
+            "startedAtMs": 74470,
+            "firstTextAtMs": 74470,
+            "completedAtMs": 78160
+          }
+        },
+        "driverDoneMs": 78379,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1494.6400001049042,
+      "longestStreamGapMs": 13271.349999904633,
+      "generation": {
+        "wallMs": 5169.280000209808,
+        "finishReason": "stop",
+        "streamChunks": 126
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 49,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5#position",
+          "stage": "position",
+          "ms": 7588,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_6",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_7",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_8",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_9",
+          "stage": null,
+          "ms": 14,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_9#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_9#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_10",
+          "stage": null,
+          "ms": 17,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_11",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_11#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_11#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_12",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_13",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_13#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_13#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_14",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_14#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_14#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_15",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_15#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_15#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_16",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_16#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_16#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_17",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_17#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_17#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_18",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_18#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_18#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#tasks",
+          "stage": "tasks",
+          "ms": 9914,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#subtasks",
+          "stage": "subtasks",
+          "ms": 6589,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_3",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 67,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 197,
+          "label": "结算中：判断牵连 · 已等待 0s · 语义 0 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 325,
+          "label": "结算中：结算 · 已等待 0s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 1017,
+          "label": "结算中：结算 · 已等待 1s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 2047,
+          "label": "结算中：结算 · 已等待 2s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 3021,
+          "label": "结算中：结算 · 已等待 3s · 语义 2 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 4025,
+          "label": "结算中：结算 · 已等待 4s · 语义 2 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 5034,
+          "label": "结算中：结算 · 已等待 5s · 语义 2 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 6059,
+          "label": "结算中：结算 · 已等待 6s · 语义 2 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 6953,
+          "label": "结算中：结算 · 已等待 7s · 语义 2 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 7995,
+          "label": "结算中：结算 · 已等待 8s · 语义 2 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 9020,
+          "label": "结算中：结算 · 已等待 9s · 语义 3 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 10016,
+          "label": "结算中：结算 · 已等待 10s · 语义 3 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 10405,
+          "label": "结算中：状态更新 · 已等待 10s · 语义 3 次 · 微模型 3 行取消本轮"
+        },
+        {
+          "atMs": 10974,
+          "label": "结算中：状态更新 · 已等待 11s · 语义 5 次 · 微模型 5 行取消本轮"
+        },
+        {
+          "atMs": 11993,
+          "label": "结算中：状态更新 · 已等待 12s · 语义 5 次 · 微模型 5 行取消本轮"
+        },
+        {
+          "atMs": 12990,
+          "label": "结算中：状态更新 · 已等待 13s · 语义 5 次 · 微模型 5 行取消本轮"
+        },
+        {
+          "atMs": 13996,
+          "label": "结算中：状态更新 · 已等待 14s · 语义 5 次 · 微模型 5 行取消本轮"
+        },
+        {
+          "atMs": 15016,
+          "label": "结算中：状态更新 · 已等待 15s · 语义 5 次 · 微模型 5 行取消本轮"
+        },
+        {
+          "atMs": 15774,
+          "label": "正在写正文… · 已等待 16s取消本轮"
+        },
+        {
+          "atMs": 16683,
+          "label": "正在写正文… · 已等待 17s取消本轮"
+        },
+        {
+          "atMs": 17736,
+          "label": "正在写正文… · 已等待 18s取消本轮"
+        },
+        {
+          "atMs": 18997,
+          "label": "正在写正文… · 已等待 19s取消本轮"
+        },
+        {
+          "atMs": 20008,
+          "label": "正在写正文… · 已等待 20s取消本轮"
+        },
+        {
+          "atMs": 21049,
+          "label": "正在写正文… · 已等待 21s取消本轮"
+        },
+        {
+          "atMs": 22055,
+          "label": "正在写正文… · 已等待 22s取消本轮"
+        },
+        {
+          "atMs": 23053,
+          "label": "正在写正文… · 已等待 23s取消本轮"
+        },
+        {
+          "atMs": 23621,
+          "label": "正在写正文… · 已等待 24s取消本轮"
+        },
+        {
+          "atMs": 24555,
+          "label": "正在写正文… · 已等待 25s取消本轮"
+        },
+        {
+          "atMs": 26063,
+          "label": "正在写正文… · 已等待 26s取消本轮"
+        },
+        {
+          "atMs": 26961,
+          "label": "正在写正文… · 已等待 27s取消本轮"
+        },
+        {
+          "atMs": 27993,
+          "label": "正在写正文… · 已等待 28s取消本轮"
+        },
+        {
+          "atMs": 29007,
+          "label": "正在写正文… · 已等待 29s取消本轮"
+        },
+        {
+          "atMs": 29997,
+          "label": "正在写正文… · 已等待 30s取消本轮"
+        },
+        {
+          "atMs": 31046,
+          "label": "正在写正文… · 已等待 31s取消本轮"
+        },
+        {
+          "atMs": 32054,
+          "label": "正在写正文… · 已等待 32s取消本轮"
+        },
+        {
+          "atMs": 33055,
+          "label": "正在写正文… · 已等待 33s取消本轮"
+        },
+        {
+          "atMs": 33954,
+          "label": "正在写正文… · 已等待 34s取消本轮"
+        },
+        {
+          "atMs": 34990,
+          "label": "正在写正文… · 已等待 35s取消本轮"
+        },
+        {
+          "atMs": 36010,
+          "label": "正在写正文… · 已等待 36s取消本轮"
+        },
+        {
+          "atMs": 37006,
+          "label": "正在写正文… · 已等待 37s取消本轮"
+        },
+        {
+          "atMs": 38002,
+          "label": "正在写正文… · 已等待 38s取消本轮"
+        },
+        {
+          "atMs": 38637,
+          "label": "正在写正文… · 已等待 39s取消本轮"
+        },
+        {
+          "atMs": 39583,
+          "label": "正在写正文… · 已等待 40s取消本轮"
+        },
+        {
+          "atMs": 74623,
+          "label": "正在写正文… · 已等待 75s取消本轮"
+        },
+        {
+          "atMs": 75750,
+          "label": "正在写正文… · 已等待 76s取消本轮"
+        },
+        {
+          "atMs": 76597,
+          "label": "正在写正文… · 已等待 77s取消本轮"
+        },
+        {
+          "atMs": 77636,
+          "label": "正在写正文… · 已等待 78s取消本轮"
+        },
+        {
+          "atMs": 78361,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 32,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "semantic",
+      "source": "model",
+      "continuationDecision": "handback",
+      "submissionCalls": 47,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    }
+  ],
+  "gates": {
+    "evaluatedPoints": 1,
+    "firstReadable": {
+      "evaluated": 1,
+      "failed": 0,
+      "worstMs": 15690
+    },
+    "pointText": {
+      "evaluated": 1,
+      "failed": 0,
+      "worstMs": 67768
+    },
+    "turnCompletion": {
+      "evaluated": 1,
+      "failed": 0,
+      "ids": []
+    },
+    "autoChainPoints": 0,
+    "status": "FAIL_OR_INCOMPLETE"
+  }
+}

@@ -1,12 +1,14 @@
 {
  "schema": "jity-narration-holdout/1",
  "stats": {
-  "pairs": 1
+  "narrationPairs": 1,
+  "pointPairs": 2,
+  "duplicate": 1
  },
- "selected": 1,
+ "selected": 2,
  "uniqueSources": 1,
  "models": {
-  "semantic": 1
+  "semantic": 2
  },
  "excluded": {
   "corpusFactHashes": 225,
