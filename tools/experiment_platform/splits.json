@@ -102,6 +102,22 @@
    "usage": "dev",
    "independent": false,
    "note": "584 multi-fact cross-turn cases from the rules 8-scenario evidence; labels pending blind review; scenario set is regression."
+  },
+  {
+   "name": "narration-org-dev",
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.dev.jsonl",
+   "key": "id",
+   "usage": "dev",
+   "independent": false,
+   "note": "Derived from the 162-point independent holdout; selection/order spec for development."
+  },
+  {
+   "name": "narration-org-test",
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl",
+   "key": "id",
+   "usage": "test",
+   "independent": true,
+   "note": "Derived from the independent holdout; keep for formal scoring only."
   }
  ],
  "pairs": [

@@ -39,10 +39,14 @@ PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.soak_report --evidence 
 # 9. three timing gates (first readable / point text / control returned)
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.timing_gates --timing artifacts/goal/platform/eval/turns20-pi-timing.json --out artifacts/goal/platform/eval/turns20-gates.json
 
-# 10. multi-fact task dev set
+# 10. narration selection/organization set and scoring
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_narration_org_set
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.narration_org_eval --set artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl --predictions arm-outputs.jsonl
+
+# 11. multi-fact task dev set
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_task_multifact
 
-# 11. task-achievement gold (P05)
+# 12. task-achievement gold (P05)
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_task_gold
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.task_gold_eval --cases artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl --predictions preds.jsonl
 

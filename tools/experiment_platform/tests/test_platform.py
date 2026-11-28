@@ -338,6 +338,25 @@ def test_timing_gates_check_control_return():
     assert report['overallPass'] is False
 
 
+def test_narration_org_selection_order_and_heads():
+    from tools.experiment_platform.narration_org_eval import evaluate
+
+    case = {'id': 'x', 'input': {'factsText': '路明非拿起护目镜。诺诺没有成功开门。',
+                                 'resultLines': ['诺诺：开门（没有成功）']},
+            'expected': {'mustSelect': ['路明非拿起护目镜', '诺诺没有成功开门'],
+                         'outcomes': [{'actor': '诺诺', 'outcome': '没有成功'}],
+                         'order': [['路明非拿起护目镜', '诺诺没有成功开门']]}}
+    good = evaluate(case, '路明非拿起护目镜。诺诺开门，却没有成功。')
+    assert good['selectionRate'] == 1.0 and good['outcomeHit'] == 1
+    assert good['orderViolations'] == 0 and good['sameHeadPairs'] == 0
+    bad = evaluate(case, '诺诺开门，却没有成功。路明非拿起护目镜。')
+    assert bad['orderViolations'] == 1
+    repeated = evaluate(case, '路明非拿起护目镜。路明非走进庭院。')
+    assert repeated['sameHeadPairs'] == 1
+    invented = evaluate(case, '苏茜拿起护目镜。诺诺开门，却没有成功。')
+    assert invented['inventedNames'] >= 1
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

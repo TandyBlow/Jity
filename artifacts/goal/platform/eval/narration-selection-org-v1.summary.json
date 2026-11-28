@@ -1,0 +1,25 @@
+{
+ "schema": "jity-narration-org/1",
+ "source": "D:\\others\\Jity\\artifacts\\goal\\platform\\eval\\narration-holdout-v1.jsonl",
+ "cases": 162,
+ "dev": 40,
+ "test": 122,
+ "avgMustSelect": 10.4,
+ "avgOutcomes": 0.01,
+ "manifests": {
+  "dev": {
+   "schema": "jity-eval-set/1",
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.dev.jsonl",
+   "rows": 40,
+   "sha256": "597e77ce76c2ad59c5acd8e79efb08d1c3ccd4da1e4a6f9a69905e05dc37da82",
+   "hashMode": "canonical-json"
+  },
+  "test": {
+   "schema": "jity-eval-set/1",
+   "path": "artifacts/goal/platform/eval/narration-selection-org-v1.test.jsonl",
+   "rows": 122,
+   "sha256": "fb7101be4cb5db97a75bc338432d1b43978bd82bae19ef377bbc7067a1e967ae",
+   "hashMode": "canonical-json"
+  }
+ }
+}
