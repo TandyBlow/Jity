@@ -1,6 +1,6 @@
 {
  "schema": "jity-data-validation/1",
- "headCommit": "f03c6d532a5f5b0390d57aacee36d8e323d4aaee",
+ "headCommit": "7a9f7e86163f3e871c5e14e4ba8f60bac32ccc53",
  "checks": {
   "malformed": {
    "level": "fail",
@@ -108,6 +108,16 @@
      ]
     },
     {
+     "sha256": "37960b03ae752b85dc89bb4b9157357142120a74ad87cab5243948a2db2e74c8",
+     "bytes": 21112,
+     "count": 3,
+     "paths": [
+      "artifacts/goal/lab/holdout-profile/Default/arbitration_service_config.json",
+      "artifacts/goal/lab/holdout-profile3/Default/arbitration_service_config.json",
+      "artifacts/goal/lab/holdout-profile4/Default/arbitration_service_config.json"
+     ]
+    },
+    {
      "sha256": "11beff0c82942269544c1146b138d21bc732dd30f833644eb254385a2bc8a048",
      "bytes": 19731,
      "count": 2,
@@ -151,6 +161,16 @@
      "paths": [
       "experiments/world-components/narration-dataset-v1/archive/104/row-0002-scene.jsonl",
       "experiments/world-components/narration-dataset-v1/row-0002-scene.jsonl"
+     ]
+    },
+    {
+     "sha256": "02a99abc13e9825d8a4a8b195c77e8cc062054d5e1a0ab8e5349b4dda4a56ecd",
+     "bytes": 7416,
+     "count": 3,
+     "paths": [
+      "results/product/evidence/holdout-v1c-20261128.json",
+      "results/product/evidence/holdout-v1c-20261128.json.attempt3.json",
+      "results/product/evidence/holdout-v1c-20261128.json.attempt4.json"
      ]
     },
     {
@@ -2004,9 +2024,19 @@
       "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-generation_config.json",
       "experiments/narration-model-search/sources/hf/gemma3-1b-it-qat/base-tokenizer_config.json"
      ]
+    },
+    {
+     "sha256": "06398f1f11c73e23cc922fcc1fe2922a03ce60754a692c226cf9d1b1daed2739",
+     "bytes": 24,
+     "count": 3,
+     "paths": [
+      "artifacts/goal/lab/holdout-profile/Default/Blueprints/blueprint_presence_index.json",
+      "artifacts/goal/lab/holdout-profile3/Default/Blueprints/blueprint_presence_index.json",
+      "artifacts/goal/lab/holdout-profile4/Default/Blueprints/blueprint_presence_index.json"
+     ]
     }
    ],
-   "count": 215,
+   "count": 218,
    "status": "warn"
   },
   "large_tracked": {
@@ -3745,7 +3775,7 @@
   },
   "duplicate_content": {
    "status": "warn",
-   "count": 215
+   "count": 218
   },
   "large_tracked": {
    "status": "warn",

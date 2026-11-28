@@ -12,6 +12,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-acceptance.json"
@@ -27,6 +29,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-preflight-ctx8192.json"
@@ -42,6 +46,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-turns20-ctx8192-gpu-run2.json"
@@ -57,6 +63,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-turns20-ctx8192-gpu-run3.json"
@@ -87,6 +95,8 @@
     }
    },
    "llmSemanticPrompts": 48,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-turns20-ctx8192-gpu.json"
@@ -117,6 +127,8 @@
     }
    },
    "llmSemanticPrompts": 12,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-turns20-ctx8192.json"
@@ -147,6 +159,8 @@
     }
    },
    "llmSemanticPrompts": 305,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/09-turns20-pi.json"
@@ -177,6 +191,8 @@
     }
    },
    "llmSemanticPrompts": 30,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/10-offline-pi.json"
@@ -207,6 +223,8 @@
     }
    },
    "llmSemanticPrompts": 131,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/10-scenarios-pi-2026-11-28T1041-fbe4.json"
@@ -237,6 +255,8 @@
     }
    },
    "llmSemanticPrompts": 128,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/10-scenarios-pi.json"
@@ -267,6 +287,8 @@
     }
    },
    "llmSemanticPrompts": 11,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/11-smoke-default-ctx8192.json"
@@ -297,6 +319,8 @@
     }
    },
    "llmSemanticPrompts": 18,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/12-q4kv-2turns.json"
@@ -327,6 +351,8 @@
     }
    },
    "llmSemanticPrompts": 16,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/12-q4kv-s03.json"
@@ -342,6 +368,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/12-q8kv-control-2turns.json"
@@ -372,6 +400,8 @@
     }
    },
    "llmSemanticPrompts": 13,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/12-q8kv-s03-clean.json"
@@ -387,6 +417,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/12-q8kv-s03.json"
@@ -417,6 +449,8 @@
     }
    },
    "llmSemanticPrompts": 176,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/12-scenarios-q4kv.json"
@@ -432,6 +466,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1-20261128-2026-11-28T1354-a3f6.json"
@@ -447,6 +483,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1-20261128.json"
@@ -462,9 +500,28 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1c-20261128-2026-11-28T1359-7d82.json"
+  },
+  {
+   "runId": "2026-11-28T1400-a7d1",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1c-20261128-2026-11-28T1400-a7d1.json"
   },
   {
    "runId": "2026-11-28T1400-bdb8",
@@ -477,6 +534,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1c-20261128-2026-11-28T1400-bdb8.json"
@@ -492,6 +551,8 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1c-20261128.json"
@@ -507,9 +568,60 @@
    },
    "engines": {},
    "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1c-20261128.json.attempt3.json"
+  },
+  {
+   "runId": "2026-11-28T1358-576d",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1c-20261128.json.attempt4.json"
+  },
+  {
+   "runId": "2026-11-28T1406-7ea7",
+   "status": "IN_PROGRESS",
+   "turns": 1,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 1,
+     "generations": 18,
+     "contextSize": [
+      4096
+     ]
+    },
+    "narration": {
+     "loads": 1,
+     "generations": 18,
+     "contextSize": [
+      4096
+     ]
+    }
+   },
+   "llmSemanticPrompts": 17,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/holdout-v1d-20261128.json"
   }
  ],
  "failed": 0
