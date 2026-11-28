@@ -79,10 +79,45 @@
     "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面"
    }
   ],
-  "selection": [],
-  "sentences": [],
+  "selection": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   8,
+   9,
+   13
+  ],
+  "sentences": [
+   [
+    0,
+    1,
+    2
+   ],
+   [
+    3,
+    4
+   ],
+   [
+    5
+   ],
+   [
+    8,
+    9
+   ],
+   [
+    13
+   ]
+  ],
   "subjects": {},
-  "connectives": []
+  "connectives": [
+   "none",
+   "none",
+   "none",
+   "none"
+  ]
  },
  {
   "id": "09-turns20-pi:s04-act-wait:point_round_65_2",
@@ -164,10 +199,43 @@
     "text": "右袖的红痕是扶过弹着石墙时蹭上的，身上没有本场命中标记，手里的短枪枪口压向地面"
    }
   ],
-  "selection": [],
-  "sentences": [],
+  "selection": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "sentences": [
+   [
+    0,
+    1
+   ],
+   [
+    2,
+    3,
+    4
+   ],
+   [
+    5
+   ],
+   [
+    6
+   ],
+   [
+    7
+   ]
+  ],
   "subjects": {},
-  "connectives": []
+  "connectives": [
+   "none",
+   "none",
+   "none",
+   "none"
+  ]
  },
  {
   "id": "09-turns20-pi:s05-act-inventory:point_round_85_2",

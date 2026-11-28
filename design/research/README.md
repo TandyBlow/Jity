@@ -90,3 +90,4 @@ Artifacts     evidence files, manifests, commits
 | N10 | Sentence-boundary probe, content-grouped: 0.801 vs 0.588; 267 pairs = 63 contexts; 13.08 -> 10.55 sentences | done (21% ceiling gap) |
 | N11 | Acceptance: 8/8 scenarios clean, 17/20 inputs clean, restore 8->8, only the 0.6B requested | interrupted by memory guard at 17/20 |
 | N12 | Boundary model in the renderer: 13.08 -> 10.12 sentences/point, zero fragments lost (OOF 10.55) | done (offline prototype) |
+| N13 | Annotation schema pilot: selection+groups render deterministically; join punctuation and selection policy are the gaps | done (2 points) |
