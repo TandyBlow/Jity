@@ -64,13 +64,14 @@ function coreName(name: string): string {
   return core.length >= 2 ? core : name;
 }
 
-/** Registered items whose name overlaps the mention; an ambiguous top score
- * returns nothing instead of guessing. */
-export function matchItems(text: string, names: Array<{ id: Id; name: string }>, owner?: string): Id[] {
+/** Registered items whose name overlaps the mention, ranked. Callers that can
+ * try several candidates (task condition extraction) must not be limited to the
+ * single best match. */
+export function rankItems(text: string, names: Array<{ id: Id; name: string }>): Array<{ id: Id; name: string; score: number }> {
   // 口语里的「倒放的长椅」和登记名「倒放长椅」只差一个「的」；去掉后再比最长重叠。
   const strip = (value: string) => value.replace(/的/gu, '');
   const target = strip(text);
-  const scored = names
+  return names
     .map((item) => {
       const plainName = strip(item.name);
       const overlap = Math.max(longestOverlap(strip(coreName(item.name)), target), longestOverlap(plainName, target));
@@ -81,6 +82,12 @@ export function matchItems(text: string, names: Array<{ id: Id; name: string }>,
     })
     .filter((row) => row.score >= 2)
     .sort((left, right) => right.score - left.score);
+}
+
+/** Registered items whose name overlaps the mention; an ambiguous top score
+ * returns nothing instead of guessing. */
+export function matchItems(text: string, names: Array<{ id: Id; name: string }>, owner?: string): Id[] {
+  const scored = rankItems(text, names);
   if (!scored.length) return [];
   if (scored.length > 1 && scored[1].score === scored[0].score) {
     // A tie is resolved only by ownership: 路明非的护目镜 beats 备用护目镜.

@@ -9,15 +9,16 @@
 import type { Id, WorldState } from '../../types';
 import type { MicroTaskVerdict, MicroTaskVerifierFn } from '../semantics/settlement/types';
 import { matchLocation } from '../semantics/settlement/fact-destinations';
-import { matchItems } from '../semantics/actions/structure';
+import { rankItems } from '../semantics/actions/structure';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
 export const CONFIRM = ['确认', '报告', '说明', '告知', '问清', '核实', '看见', '检查', '证明', '登记', '回答', '听清', '核对'];
 const TIME = /\d{1,2}:\d{2}|停赛前|结束前|午夜|天亮|天黑|明天|次日|黄昏|清晨|小时后|分钟后|入夜/u;
 const ACTION = ['前往', '走向', '走进', '进入', '赶到', '回到', '退到', '离开', '登上', '走到',
-  '守住', '护住', '挡住', '拦住', '守', '递给', '交给', '戴上', '戴好', '拿起', '开笼', '放出',
-  '发布', '扣好', '恢复', '更换', '换上', '打开', '使用', '到达'];
+  '守住', '护住', '挡住', '拦住', '守', '递给', '交给', '戴上', '戴好', '拿起', '拿到', '取得',
+  '获取', '开笼', '放出', '发布', '扣好', '恢复', '更换', '换上', '打开', '使用', '到达',
+  '安排', '询问', '查明', '保留', '让出', '拖到', '推到', '拍', '搬', '移', '摆', '叠', '挂'];
 
 export interface TaskConditions {
   goal: string;
@@ -75,9 +76,12 @@ export function taskConditions(goal: string, state: WorldState, ownerName: strin
 
 export function decomposeTask(goal: string, state: WorldState, ownerName: string): TaskConditions {
   const items = Object.entries(state.initial.items).map(([id, item]) => ({ id, name: item.name ?? id }));
-  // The generic matcher accepts a 2-char overlap; a task condition needs the
-  // item itself (or its core name) in the goal, not a shared faction word.
-  const itemId = matchItems(goal, items, ownerName).find((id) => {
+  // A precondition ("在进入交火区前…") names an action that must NOT count as the
+  // goal's own action; strip those clauses before matching verbs.
+  const actionText = goal.replace(/在[^，。；]*?[前后]/gu, '');
+  // The matcher's single best item can be an unregistered mention such as
+  // «备用护目镜»; try every ranked candidate against the goal's own wording.
+  const itemId = rankItems(goal, items).map((row) => row.id).find((id) => {
     const name = state.initial.items[id]?.name ?? id;
     const core = name.replace(/^.+?的/u, '');
     return goal.includes(core) && (core.length >= 3 || goal.includes(name));
@@ -89,7 +93,18 @@ export function decomposeTask(goal: string, state: WorldState, ownerName: string
   const location = decision ? null : matchLocation(state, goal)?.name ?? null;
   const time = TIME.exec(goal)?.[0] ?? null;
   const confirmation = CONFIRM.find((word) => goal.includes(word)) ?? null;
-  const action = ACTION.find((word) => goal.includes(word)) ?? null;
+  // The first verb in the sentence is the goal's own action; later verbs are
+  // usually objects or purpose clauses (安排旗台的持守与撤退信号).
+  let action: string | null = null;
+  let actionAt = Number.POSITIVE_INFINITY;
+  for (const word of ACTION) {
+    const at = actionText.indexOf(word);
+    if (at < 0) continue;
+    if (at < actionAt || (at === actionAt && action !== null && word.length > action.length)) {
+      action = word;
+      actionAt = at;
+    }
+  }
   const conditions = [
     time ? `时间=${time}` : '',
     location ? `地点=${location}` : '',
