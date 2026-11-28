@@ -592,13 +592,13 @@
    "file": "results/product/evidence/holdout-v1c-20261128.json.attempt4.json"
   },
   {
-   "runId": "2026-11-28T1406-7ea7",
-   "status": "IN_PROGRESS",
+   "runId": "2026-11-28T1424-1c30",
+   "status": "FAILED",
    "turns": 1,
    "models": {
-    "requests": 1,
-    "ok": 1,
-    "failed": []
+    "requests": null,
+    "ok": null,
+    "failed": null
    },
    "engines": {
     "semantic": {
@@ -622,6 +622,40 @@
    "failures": [],
    "pass": true,
    "file": "results/product/evidence/holdout-v1d-20261128.json"
+  },
+  {
+   "runId": "2026-11-28T1440-1aa6",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": null,
+    "ok": null,
+    "failed": null
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/platform-holdout-4-20261128-224003.json"
+  },
+  {
+   "runId": "2026-11-28T1458-1a42",
+   "status": "IN_PROGRESS",
+   "turns": 0,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {},
+   "llmSemanticPrompts": 0,
+   "programNarrationAccepted": false,
+   "programTurns": 0,
+   "failures": [],
+   "pass": true,
+   "file": "results/product/evidence/platform-holdout-4-20261128-225817.json"
   }
  ],
  "failed": 0
