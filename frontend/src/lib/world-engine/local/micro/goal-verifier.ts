@@ -2,6 +2,7 @@
  * (E57). Scores whether a settled fact completes the task goal. */
 import type { Id, WorldState } from '../../types';
 import { sharesGoalWording } from '../semantics/settlement/updates';
+import { conditionCoverage, decomposeTask } from './task-progress';
 import { getMicroTokenizer } from './shared';
 import { createMicroRuntime } from './runtime';
 
@@ -10,6 +11,9 @@ export interface GoalVerifierOptions {
   modelUrl?: string;
   /** p(yes) needed to treat a fact as completing the goal. */
   threshold?: number;
+  /** Strict mode (S01): the decomposed goal conditions must all be covered and
+   * the fact outcome completed before the model is asked. */
+  requireProgramCoverage?: boolean;
   /** Test/embedded scorer; the default runs the int8 ONNX graph. */
   scoring?: (rows: Array<{ goal: string; fact: string }>) => Promise<number[] | null> | number[] | null;
   onStats?: (record: {
@@ -49,6 +53,18 @@ function goalEntityNames(state: WorldState, goal: string): string[] {
   return names;
 }
 
+/** A strict reading of the result marker: only «达到目的» counts as completed;
+ * partial, blocked, failed and no-change never complete a task (S01). */
+function outcomeCompleted(text: string): boolean {
+  return text.includes('达到目的') && !/只完成一部分|没有成功|被阻止|没有变化/u.test(text);
+}
+
+function programCovered(state: WorldState, ownerName: string, goal: string, fact: string): boolean {
+  const conditions = decomposeTask(goal, state, ownerName);
+  const coverage = conditionCoverage(conditions, fact);
+  return coverage.total > 0 && coverage.matched === coverage.total && outcomeCompleted(fact);
+}
+
 export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVerifierPort {
   const runtime = createMicroRuntime({ threads: 1 });
   async function scoreDefault(rows: Array<{ goal: string; fact: string }>): Promise<number[] | null> {
@@ -78,6 +94,7 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
     const rows: Array<{ characterId: Id; taskId: Id; basis: string; goal: string; fact: string }> = [];
     for (const [ownerId, current] of Object.entries(request.state.characters)) {
       if (!owners.has(ownerId)) continue;
+      const ownerName = request.state.initial.characters[ownerId]?.name ?? ownerId;
       for (const task of Object.values(current.tasks)) {
         if (task.status !== 'pending') continue;
         const names = goalEntityNames(request.state, task.goal);
@@ -85,11 +102,12 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
           // A fact belongs to its own member; another member's fact may support
           // this task only when it names the task owner (the old reader's rule).
           if (fact.memberId !== ownerId) {
-            const ownerName = request.state.initial.characters[ownerId]?.name ?? '';
-            if (!ownerName || !fact.text.includes(ownerName)) continue;
+            const factOwnerName = request.state.initial.characters[ownerId]?.name ?? '';
+            if (!factOwnerName || !fact.text.includes(factOwnerName)) continue;
           }
           const entityHit = names.some((name) => fact.text.includes(name));
           if (!entityHit && !sharesGoalWording(fact.text, task.goal)) continue;
+          if (options.requireProgramCoverage && !programCovered(request.state, ownerName, task.goal, fact.text)) continue;
           rows.push({ characterId: ownerId, taskId: task.id, basis: fact.id, goal: task.goal, fact: fact.text });
         }
       }

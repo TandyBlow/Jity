@@ -58,6 +58,23 @@ describe('goal-level task stage', () => {
     expect(out?.achieved.map((row) => row.taskId)).toEqual(['task_hero_key']);
   });
 
+  it('strict mode requires every decomposed goal condition in the fact', async () => {
+    const port = createMicroGoalTasks({
+      requireProgramCoverage: true,
+      scoring: (rows) => rows.map(() => 0.9),
+    });
+    const partial = await port({
+      state: state(), ownerIds: ['hero'],
+      facts: [{ id: 'f1', memberId: 'hero', text: '路明非拿起手电（达到目的）。' }],
+    });
+    expect(partial?.scored).toEqual([]);
+    const complete = await port({
+      state: state(), ownerIds: ['hero'],
+      facts: [{ id: 'f2', memberId: 'hero', text: '路明非打开手电，确认电量（达到目的）。' }],
+    });
+    expect(complete?.achieved.map((row) => row.taskId)).toEqual(['task_hero_key']);
+  });
+
   it('does not credit another member fact to a task unless it names the owner', async () => {
     const port = createMicroGoalTasks({ scoring: (rows) => rows.map(() => 0.9) });
     const notNamed = await port({

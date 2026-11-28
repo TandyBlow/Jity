@@ -1074,7 +1074,7 @@ export default function WorldLocalPage() {
           ? createMicroTaskProposer({ onStats: (record) => recordMicro('task-proposer', record) })
           : undefined;
         const microGoalTasks = useModelPorts && taskStageGoal
-          ? createMicroGoalTasks({ onStats: (record) => recordMicro('goal-tasks', record) })
+          ? createMicroGoalTasks({ requireProgramCoverage: true, onStats: (record) => recordMicro('goal-tasks', record) })
           : undefined;
         {
           const armInfo = (window as unknown as { __worldArm?: Record<string, unknown> }).__worldArm;
