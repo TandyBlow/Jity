@@ -23,7 +23,20 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-NAMES = ['路明非', '诺诺', '芬格尔', '秦越', '阿豹', '林亦舟', '楚子航', '凯撒', '顾岚', '唐骁', '夏弥', '绘梨衣']
+FROZEN_NAMES = ['路明非', '诺诺', '芬格尔', '秦越', '阿豹', '林亦舟', '楚子航', '凯撒', '顾岚', '唐骁', '夏弥', '绘梨衣']
+WORLD = Path(__file__).resolve().parents[2] / 'data/worlds/dragon-raja-free-day.world.json'
+
+
+def _world_names() -> list[str]:
+    try:
+        world = json.loads(WORLD.read_text(encoding='utf-8-sig'))
+        names = [c['name'] for c in world['initial']['characters'].values() if c.get('name')]
+        return names or FROZEN_NAMES
+    except (OSError, KeyError, json.JSONDecodeError):
+        return FROZEN_NAMES
+
+
+NAMES = _world_names()
 OUTCOMES = ['达到目的', '没有成功', '只完成一部分', '无法完成', '部分成功', '失败']
 NEG = re.compile(r'没有|没|未|不|无法|没能')
 FAIL_CUE = re.compile(r'没有成功|没能|失败|未成功|无法|不成功|落空')

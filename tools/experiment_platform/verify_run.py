@@ -22,7 +22,8 @@ from pathlib import Path
 
 def check(doc: dict, allowed_models: dict[str, list[str]] | None = None,
           require_engines: list[str] | None = None, max_llm_semantic: int | None = None,
-          require_micro: bool = False, forbid_program: bool = False) -> dict:
+          require_micro: bool = False, forbid_program: bool = False,
+          expect_turns: int | None = None) -> dict:
     failures = []
     models = doc.get('models') or {}
     if models.get('failed'):
@@ -58,8 +59,14 @@ def check(doc: dict, allowed_models: dict[str, list[str]] | None = None,
         failures.append(f'LLM semantic prompts {llm_semantic} > cap {max_llm_semantic}')
     if forbid_program and (doc.get('programNarrationAccepted') or program_turns):
         failures.append(f'program narration accepted or present in {program_turns} turns')
+    turns = len(doc.get('turns') or [])
+    if expect_turns is not None:
+        if turns < expect_turns:
+            failures.append(f'incomplete run: {turns}/{expect_turns} turns recorded')
+        if doc.get('status') in ('IN_PROGRESS', 'PREFLIGHT', 'FAILED'):
+            failures.append(f"run status {doc.get('status')} is not a completed acceptance")
     return {
-        'runId': doc.get('runId'), 'status': doc.get('status'), 'turns': len(doc.get('turns') or []),
+        'runId': doc.get('runId'), 'status': doc.get('status'), 'turns': turns,
         'models': {'requests': models.get('requests'), 'ok': models.get('ok'), 'failed': models.get('failed')},
         'engines': {k: {'loads': v['loads'], 'generations': v['generations'],
                         'contextSize': sorted(v['contextSize'])} for k, v in engines.items()},
@@ -80,6 +87,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--require-micro', action='store_true')
     parser.add_argument('--forbid-program', action='store_true',
                         help='fail if the run accepted program narration (rules arm)')
+    parser.add_argument('--expect-turns', type=int, default=None,
+                        help='fail unless at least this many turns completed')
     parser.add_argument('--out', default=None)
     args = parser.parse_args(argv)
     allowed: dict[str, list[str]] = {}
@@ -100,7 +109,7 @@ def main(argv: list[str] | None = None) -> int:
                             'failures': [f'unreadable: {exc}']})
             continue
         report = check(doc, allowed, engines, args.max_llm_semantic, args.require_micro,
-                       args.forbid_program)
+                       args.forbid_program, args.expect_turns)
         report['file'] = str(path).replace('\\', '/')
         reports.append(report)
     payload = {'schema': 'jity-run-verify/1', 'reports': reports,

@@ -225,6 +225,8 @@ def test_semantic_score_and_verify_run(tmp_path):
                                       'microEnabled': True, 'semanticPrompts': [],
                                       'engines': [{'label': 'narration', 'loadCount': 0, 'generations': 0}]}}]}
     assert check(program, None, None, None, False, True)['pass'] is False
+    assert check(doc, None, None, None, False, False, 2)['pass'] is False
+    assert check(doc, None, None, None, False, False, 1)['pass'] is True
 
 
 def test_resource_monitor_samples_child(tmp_path):

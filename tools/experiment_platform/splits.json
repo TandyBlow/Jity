@@ -78,6 +78,14 @@
    "usage": "test",
    "independent": true,
    "note": "Same construction as dev; keep it for formal scoring only."
+  },
+  {
+   "name": "narration-holdout-v2-newrun",
+   "path": "artifacts/goal/platform/eval/narration-holdout-v2-newrun.jsonl",
+   "key": "id",
+   "usage": "test",
+   "independent": true,
+   "note": "One turn from the 2026-11-28 new-input run (1/4 completed); fact block absent from corpus/bundle, outcome labels present. Smoke only."
   }
  ],
  "pairs": [

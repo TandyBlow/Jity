@@ -192,12 +192,12 @@ def main(argv: list[str] | None = None) -> int:
                         help='glob or comma-separated run/evidence files')
     args = parser.parse_args(argv)
     patterns = [p.strip() for p in args.runs.split(',') if p.strip()]
-    files = sorted({path for pattern in patterns for path in glob.glob(pattern)})
+    files = sorted({Path(path).resolve() for pattern in patterns for path in glob.glob(pattern)})
     if not files:
         print('no run files matched', file=sys.stderr)
         return 2
     rows, summary = build(files)
-    out = Path(args.out)
+    out = Path(args.out).resolve()
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text('\n'.join(json.dumps(r, ensure_ascii=False) for r in rows) + '\n', encoding='utf-8')
     canon = hashlib.sha256(json.dumps(rows, ensure_ascii=False).encode('utf-8')).hexdigest()

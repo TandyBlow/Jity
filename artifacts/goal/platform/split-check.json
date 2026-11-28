@@ -59,6 +59,12 @@
    "independent": true,
    "uniqueKeys": 13,
    "path": "artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl"
+  },
+  "narration-holdout-v2-newrun": {
+   "usage": "test",
+   "independent": true,
+   "uniqueKeys": 1,
+   "path": "artifacts/goal/platform/eval/narration-holdout-v2-newrun.jsonl"
   }
  },
  "pairs": [

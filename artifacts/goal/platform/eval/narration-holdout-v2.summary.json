@@ -1,0 +1,15 @@
+{
+ "schema": "jity-narration-holdout/1",
+ "stats": {
+  "pairs": 1
+ },
+ "selected": 1,
+ "uniqueSources": 1,
+ "models": {
+  "semantic": 1
+ },
+ "excluded": {
+  "corpusFactHashes": 225,
+  "bundleFactHashes": 97
+ }
+}
