@@ -15,8 +15,9 @@
 - 每回合等 46.3–67.7s，全部花在 0.6B 结算上；规则叙事本身 0.07 ms/point。
 - 每回合正文 554–593 字：场景只出现一次（位置、右墙、护目镜、诺诺各 1 次）、
   12 条 NPC 结算结果全部带结果短语、4 条时间行。
-- 回合正文去重放在页面：只对**状态句**（现在在／屋里有／也在／贴着…）去重；同一事件
-  真发生两次时，结果句保留。
+- 状态句去重放在规则臂内、**组句之前**：按片段身份（句子原文）去重，结算结果句不参与；
+  玩家自己的 point 视为一回合的开始，重置去重集合。页面只按顺序拼接，不再用关键词
+  判断句子性质（评审意见 2026-11-28：关键词会把“两次贴墙”当成重复状态）。
 - 修复/决定：
   1. 验收驱动新增 `--allow-program`：程序正文不是模型段，证据记录该标志，
      不能伪装成模型通过。
@@ -42,4 +43,4 @@
 `task=narration, source=rule`、`models.requests=1`；完整 6.6MB 原始文件同目录
 `smoke-rules-3i.json` 未入库）；
 代码 `frontend/src/lib/world-engine/local/rules-narration.ts`、`game-model.ts`
-（`narrationCandidate=rules` 分支）、`page.tsx`（`dedupeProgramPoints`）。N09。
+（`narrationCandidate=rules` 分支）。N09。

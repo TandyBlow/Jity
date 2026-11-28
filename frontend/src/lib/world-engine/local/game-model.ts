@@ -202,6 +202,9 @@ export class LocalGameModel implements WorldModelPort {
   private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
   private readonly seenFactTexts = new Set<string>();
   private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
+  /** Rules arm: state sentences already written this turn, and who wrote them. */
+  private turnFacts = new Set<string>();
+  private readonly turnPointFacts = new Map<Id, string[]>();
 
   /** Planned actors per point; the action line follows this, not the delta. */
   private readonly plannedActors = new Map<Id, Id[]>();
@@ -613,11 +616,21 @@ export class LocalGameModel implements WorldModelPort {
     // Zero-parameter arm: the brief is the whole input, no engine is touched.
     if (this.options.narrationCandidate === 'rules') {
       const input = instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact');
+      // 玩家自己的 point 是一回合的第一个：重新开始本回合的状态句去重。
+      if (playerInput) {
+        this.turnFacts = new Set<string>();
+        this.turnPointFacts.clear();
+      }
+      // 同一 point 重试时先收回它上次占用的句子，重试才写得出场景。
+      const owned = this.turnPointFacts.get(pointId);
+      if (owned) for (const fact of owned) this.turnFacts.delete(fact);
+      const beforeFacts = new Set(this.turnFacts);
       const text = rulesNarration({
-        sentences: input.sentences, resultsText,
+        sentences: input.sentences, resultsText, skipFacts: this.turnFacts,
         names: Object.values(after.initial.characters).map((entry) => String(entry.name ?? '')),
         protagonist: after.initial.characters[view]?.name ?? view,
       });
+      this.turnPointFacts.set(pointId, [...this.turnFacts].filter((fact) => !beforeFacts.has(fact)));
       const ms = performance.now() - started;
       this.options.onNarrationDebug?.({ pointId, raw: text, text, rawAttempts: [], prompt: input.prompt });
       this.options.onTask?.('narration', key, { ms, fallback: false, raw: text, promptChars: input.prompt.length, source: 'rule' });

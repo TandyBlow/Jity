@@ -26,10 +26,22 @@ describe('rules narration candidate', () => {
     expect(text).toContain('现在在走廊');
   });
 
-  it('keeps the full scene in every point so the page can dedupe', () => {
-    const { text } = narrate();
-    // Each point is self-contained; the page joins program points once.
-    expect(text).toContain('现在在走廊');
-    expect(text).toContain('屋里有');
+  it('writes state sentences once per turn but keeps repeated results', () => {
+    const state = buildInitialState(structuredClone(SHORT_STATE.initial) as unknown as InitialState);
+    const resultsText = '周宁：把枪放在桌上。（没有成功）';
+    const { sentences } = instructNarrationInput(null, {}, state, 'person_c', '我把枪放在桌上', resultsText);
+    const skip = new Set<string>();
+    const input = {
+      sentences, resultsText, skipFacts: skip,
+      names: ['周宁', '林川'], protagonist: '周宁',
+    };
+    const first = rulesNarration(input);
+    const second = rulesNarration(input);
+    expect(first).toContain('现在在走廊');
+    expect(first).toContain('却没有成功');
+    // The scene is not repeated; the same event line still is.
+    expect(second).not.toContain('现在在走廊');
+    expect(second).not.toContain('屋里有');
+    expect(second).toContain('却没有成功');
   });
 });

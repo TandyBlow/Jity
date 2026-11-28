@@ -16,7 +16,8 @@ export interface RulesNarrationInput {
   /** instructNarrationInput 的 sentences：含行动行、时间行、世界事实与结算段。 */
   sentences: string[];
   resultsText: string;
-
+  /** 本回合已经写过的状态句；只增不减，结果句不参与。 */
+  skipFacts?: Set<string>;
   names: string[];
   protagonist: string;
 }
@@ -83,8 +84,12 @@ function mergeSameHead(parts: string[], names: string[]): string[] {
 }
 
 export function rulesNarration(input: RulesNarrationInput): string {
-  // 每个 point 都写完整场景；跨 point 的重复句由页面在拼接时去掉。
-  const facts = input.sentences.filter((part) => !part.startsWith('玩家这回合') && !TIME.test(part) && !part.startsWith(SETTLE));
+  // 状态句按片段身份去重；结算结果每一条都写（事件可以真的重复）。
+  const skip = input.skipFacts ?? new Set<string>();
+  const facts = input.sentences
+    .filter((part) => !part.startsWith('玩家这回合') && !TIME.test(part) && !part.startsWith(SETTLE))
+    .filter((part) => !skip.has(part));
+  for (const part of facts) skip.add(part);
   const results = input.resultsText.split(/[；]/u).map(resultLine).filter((line): line is string => Boolean(line));
   const time = input.sentences.find((part) => TIME.test(part)) ?? '';
   const declared = openingOf(input.sentences);

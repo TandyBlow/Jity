@@ -1327,12 +1327,11 @@ export default function WorldLocalPage() {
               const segments = progress.segments?.map((segment) => ({ id: segment.id, kind: segment.kind, source: segment.source, text: segment.text }));
               if (index < 0) points.push({ pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) });
               else points[index] = { ...points[index], pointId: progress.pointId, text, source, ...(segments ? { segments } : {}) };
-              const display = dedupeProgramPoints(inPointOrder(points));
+              const ordered = inPointOrder(points);
               // Evidence: the turn record carries the same per-point prose the
               // article renders, so a driver can compare them verbatim.
-              if (record) record.points = display.map((part) => ({ ...part }));
-              const joined = joinPointTexts(display);
-              return { ...entry, points: display, text: joined, acceptedMs: atMs, ms: atMs };
+              if (record) record.points = ordered.map((part) => ({ ...part }));
+              return { ...entry, points: ordered, text: joinPointTexts(ordered), acceptedMs: atMs, ms: atMs };
             }));
             setPhase('ready');
           },
@@ -2217,26 +2216,6 @@ function updateLast(list: TurnEntry[], update: (entry: TurnEntry) => TurnEntry):
 }
 
 /** 规则正文的每个 point 都写完整场景；同一回合内同一句只保留一次。 */
-const STATE_SENTENCE = /现在在|屋里有|也在|贴着|挡住|挂在|完好|没有阵营|放着|隔着/u;
-
-function dedupeProgramPoints<T extends { text: string; source?: string }>(points: T[]): T[] {
-  const seen: string[] = [];
-  return points.map((part) => {
-    if (part.source !== 'program') return part;
-    const text = part.text.split(/(?<=[。！？])/u).filter((sentence) => {
-      // 只去重状态描述；同一事件真发生两次时，结果句必须保留。
-      if (!STATE_SENTENCE.test(sentence)) return true;
-      // 位置句可能被并进开场句，比较时去掉主语名。
-      const key = sentence.replace(/[\s。！？]/gu, '').replace(/^.{0,4}(?=现在在)/u, '');
-      // 整句已出现，或只是上一段长句的一部分都去掉。
-      if (!key || seen.some((kept) => kept.includes(key))) return false;
-      seen.push(key);
-      return true;
-    }).join('');
-    return { ...part, text };
-  });
-}
-
 function joinPointTexts(points: Array<{ text: string }>): string {
   return points.map((part) => part.text).filter((text) => text.trim()).join(String.fromCharCode(10, 10));
 }
