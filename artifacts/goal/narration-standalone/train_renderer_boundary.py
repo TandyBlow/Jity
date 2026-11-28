@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-"""N10 probe: can a small model learn where the reference starts a new
-sentence, from fragment pairs? Grouped by evidence file; baselines included."""
+"""N10 (corrected): fragment pairs are highly duplicated across files, so the
+evaluation groups by pair content, not by evidence file. Reports the label
+conflict ceiling and performance on unseen pair contents."""
+import hashlib
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +14,7 @@ from sklearn.metrics import accuracy_score, f1_score
 
 HERE = Path(__file__).resolve().parent
 HASH_DIM = 1 << 12
+FOLDS = 5
 NAMES = ['路明非', '诺诺', '芬格尔', '秦越', '林亦舟', '楚子航', '凯撒', '顾岚', '唐骁', '夏弥', '绘梨衣',
          '曼施坦因', '苏茜', '沈澄', '周映', '富山雅史', '阿豹', '对方']
 
@@ -31,11 +34,21 @@ def features(pair):
         out.append('aname')
     if b.startswith('屋') or b.startswith('右') or b.startswith('左') or b.startswith('巷'):
         out.append('bplace')
-    if pair['kindB'] == 'result':
-        out.append('bresult')
-    if pair['kindA'] == 'result':
-        out.append('aresult')
+    out += ['gp:' + g for g in grams(pair.get('prev', ''))[:20]]
+    out += ['gn:' + g for g in grams(pair.get('next', ''))[:20]]
+    if not pair.get('prev'):
+        out.append('bos')
+    if not pair.get('next'):
+        out.append('eos')
     return out
+
+
+def key_of(pair):
+    return f"{pair['kindA']}|{pair['textA']}|{pair['kindB']}|{pair['textB']}|{pair.get('prev', '')}|{pair.get('next', '')}"
+
+
+def fold_of(key):
+    return int(hashlib.md5(key.encode('utf8')).hexdigest(), 16) % FOLDS
 
 
 def main():
@@ -43,85 +56,81 @@ def main():
     rows = []
     for point in data:
         for pair in point['pairs']:
-            rows.append({**pair, 'evidence': point['evidence']})
-    groups = sorted({row['evidence'] for row in rows})
-    print('pairs', len(rows), 'groups', len(groups), 'boundaryRate',
-          round(sum(r['boundary'] for r in rows) / len(rows), 3))
+            rows.append({**pair, 'evidence': point['evidence'], 'point': point['id'], 'key': key_of(pair)})
+    groups = defaultdict(list)
+    for r in rows:
+        groups[r['key']].append(r)
+    print('occurrences', len(rows), 'uniquePairs', len(groups))
+
+    conflicts = {k: v for k, v in groups.items() if len({x['boundary'] for x in v}) > 1}
+    print('unique with conflicting labels', len(conflicts))
+    for k, v in list(conflicts.items())[:3]:
+        print('  conflict', k[:70], Counter(x['boundary'] for x in v))
+
+    # 只看见片段对内容时，最好情况是每个不同输入取多数标签。
+    ceiling_hits = sum(max(Counter(x['boundary'] for x in v).values()) for v in groups.values())
+    base_hits = sum(sum(x['boundary'] for x in v) for v in groups.values())
+    print('label ceiling on occurrences', round(ceiling_hits / len(rows), 3))
+    print('always-boundary on occurrences', round(base_hits / len(rows), 3))
 
     hasher = FeatureHasher(n_features=HASH_DIM, input_type='string', alternate_sign=False)
     X = hasher.transform([features(r) for r in rows])
     y = np.array([r['boundary'] for r in rows])
-    group = np.array([r['evidence'] for r in rows])
+    folds = np.array([fold_of(r['key']) for r in rows])
 
     preds = np.zeros(len(rows), dtype=int)
-    for g in groups:
-        test = group == g
+    for f in range(FOLDS):
+        test = folds == f
         train = ~test
-        if train.sum() < 20 or test.sum() == 0:
-            preds[test] = 1
-            continue
         model = LogisticRegression(max_iter=2000, C=0.5, class_weight='balanced')
         model.fit(X[train], y[train])
         preds[test] = model.predict(X[test])
+    unseen_acc = accuracy_score(y, preds)
+    unseen_f1 = f1_score(y, preds, zero_division=0)
+    first_idx = {k: rows.index(v[0]) for k, v in groups.items()}
+    up_true = np.array([groups[k][0]['boundary'] for k in groups])
+    up_pred = np.array([preds[first_idx[k]] for k in groups])
+    print('unseen-content model acc', round(unseen_acc, 3), 'f1', round(unseen_f1, 3))
+    print('per-unique-pair acc', round(accuracy_score(up_true, up_pred), 3),
+          'n', len(groups), 'joinPred', int((preds == 0).sum()))
 
-    majority = np.ones(len(rows), dtype=int)  # 规则现状：每条片段都另起一句
-    print('always-boundary acc', round(accuracy_score(y, majority), 3),
-          'f1', round(f1_score(y, majority, zero_division=0), 3))
-    print('model acc', round(accuracy_score(y, preds), 3),
-          'f1', round(f1_score(y, preds, zero_division=0), 3),
-          'joinPred', int((preds == 0).sum()), 'joinTrue', int((y == 0).sum()))
-    print('confusion', Counter(zip(y.tolist(), preds.tolist())))
-    # 每个 point 的句数对比：参考句数 vs 模型边界重建
-    per_point = []
-    for point in data:
-        if not point['pairs']:
-            continue
-        idx = [i for i, r in enumerate(rows) if r['evidence'] == point['evidence'] and r['textA'] == point['pairs'][0]['textA']]
-        boundaries = sum(preds[i] for i in idx) if idx else 0
-        per_point.append((point['sentences'], boundaries + 1))
-    if per_point:
-        ref = np.mean([p[0] for p in per_point])
-        got = np.mean([p[1] for p in per_point])
-        print('sentences per point: ref', round(ref, 2), 'model', round(got, 2))
-    # 在全部相邻片段上推理（不要求对得上参考），看每 point 句数
-    model = LogisticRegression(max_iter=2000, C=0.5, class_weight='balanced')
-    model.fit(X, y)
+    # 句数：每个 point 的每一对都用“没见过该内容”的折模型预测。
     import renderer_dataset as rd
     pts = [json.loads(l) for l in open(HERE / 'pairs.jsonl', encoding='utf8').readlines() if l.strip()]
-    full_sentences = []
+    models = {}
+    for f in range(FOLDS):
+        m = LogisticRegression(max_iter=2000, C=0.5, class_weight='balanced')
+        m.fit(X[folds != f], y[folds != f])
+        models[f] = m
+    rule_sent, model_sent = [], []
     for row in pts:
         frags = rd.fragments(row)
         if len(frags) < 2:
             continue
-        pairs = [{'textA': a[1], 'kindA': a[0], 'textB': b[1], 'kindB': b[0]} for a, b in zip(frags, frags[1:])]
-        pred = model.predict(hasher.transform([features(p) for p in pairs]))
-        full_sentences.append(int(pred.sum()) + 1)
-    print('full fragments -> sentences per point: rule', round(sum(len(rd.fragments(r)) for r in pts) / len(pts), 2),
-          'model', round(sum(full_sentences) / len(full_sentences), 2))
-    samples = []
-    for row in pts[:2]:
-        frags = rd.fragments(row)
-        pairs = [{'textA': a[1], 'kindA': a[0], 'textB': b[1], 'kindB': b[0]} for a, b in zip(frags, frags[1:])]
-        pred = model.predict(hasher.transform([features(p) for p in pairs])) if pairs else []
-        text = frags[0][1] if frags else ''
-        for p, (kind, frag) in zip(pred, frags[1:]):
-            text += ('。' if p else '，') + frag
-        samples.append({'id': row['id'], 'text': text + '。'})
-        print('---', row['id'])
-        print(text[:260])
+        rule_sent.append(len(frags))
+        total = 1
+        for a, b in zip(frags, frags[1:]):
+            pair = {'textA': a[1], 'kindA': a[0], 'textB': b[1], 'kindB': b[0]}
+            f = fold_of(key_of(pair))
+            total += int(models[f].predict(hasher.transform([features(pair)]))[0])
+        model_sent.append(total)
+    print('sentences per point: rule', round(sum(rule_sent) / len(rule_sent), 2),
+          'model OOF', round(sum(model_sent) / len(model_sent), 2))
+
     out = {
-        'pairs': len(rows), 'groups': len(groups),
-        'fullSentencesRule': round(sum(len(rd.fragments(r)) for r in pts) / len(pts), 2),
-        'fullSentencesModel': round(sum(full_sentences) / len(full_sentences), 2),
-        'alwaysBoundary': {'acc': round(accuracy_score(y, majority), 3),
-                           'f1': round(f1_score(y, majority, zero_division=0), 3)},
-        'model': {'acc': round(accuracy_score(y, preds), 3),
-                  'f1': round(f1_score(y, preds, zero_division=0), 3),
-                  'joinPred': int((preds == 0).sum()), 'joinTrue': int((y == 0).sum())},
-        'confusion': {f'{a}->{b}': v for (a, b), v in Counter(zip(y.tolist(), preds.tolist())).items()},
-        'samples': samples,
+        'occurrences': len(rows),
+        'uniquePairs': len(groups),
+        'conflictingUnique': len(conflicts),
+        'ceilingOccurrences': round(ceiling_hits / len(rows), 3),
+        'alwaysBoundaryOccurrences': round(base_hits / len(rows), 3),
+        'unseenContentAcc': round(unseen_acc, 3),
+        'unseenContentF1': round(unseen_f1, 3),
+        'uniquePairAcc': round(accuracy_score(up_true, up_pred), 3),
+        'sentencesRule': round(sum(rule_sent) / len(rule_sent), 2),
+        'sentencesModelOOF': round(sum(model_sent) / len(model_sent), 2),
     }
     (HERE / 'renderer-boundary-summary.json').write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding='utf8')
+    print(json.dumps(out, ensure_ascii=False))
 
 
 if __name__ == '__main__':

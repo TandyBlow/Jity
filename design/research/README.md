@@ -87,4 +87,4 @@ Artifacts     evidence files, manifests, commits
 | N07 | Zero-parameter candidate: action opening + delta + all results; 103 chars/point, 100%/100%, 0.069 ms | done |
 | N08 | Failure taxonomy: candidate has 0 misattribution and 100% outcome labels; current arm omits 99% | done |
 | N09 | Page integration: rules arm runs 3/3 turns, loads only the 0.6B, 554-593 chars/turn | done (3-turn smoke) |
-| N10 | Sentence-boundary probe: grouped-CV acc 0.869 vs 0.588, 13.08 -> 8.96 sentences/point | done (labels cover 52%) |
+| N10 | Sentence-boundary probe, content-grouped: 0.801 vs 0.588; 267 pairs = 63 contexts; 13.08 -> 10.55 sentences | done (21% ceiling gap) |

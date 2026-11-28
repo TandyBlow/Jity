@@ -72,11 +72,14 @@ def main():
             if score < THRESHOLD:
                 stats['unaligned'] += 1
         pairs = []
-        for a, b in zip(aligned, aligned[1:]):
+        for i, (a, b) in enumerate(zip(aligned, aligned[1:])):
             if a['sentence'] is None or b['sentence'] is None:
                 continue
+            prev = aligned[i - 1]['text'] if i > 0 else ''
+            nxt = aligned[i + 2]['text'] if i + 2 < len(aligned) else ''
             pairs.append({'textA': a['text'], 'kindA': a['kind'],
                           'textB': b['text'], 'kindB': b['kind'],
+                          'prev': prev, 'next': nxt,
                           'boundary': int(a['sentence'] != b['sentence'])})
             stats['pairs'] += 1
             stats['boundary'] += int(a['sentence'] != b['sentence'])
