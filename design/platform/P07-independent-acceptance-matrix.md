@@ -46,7 +46,7 @@
 控制权交还 **0/20**（66.7–200.0 s，最差 199,954 ms），整体不通过。工具同时检查预期
 回合数与未完成回合：`--expect-turns 20` 下 `observedTurns=20`、`missingTurnNumbers=[]`、
 `incompleteTurns=[]`、`turnCountPass=true`，所以失败点是控制权交还，不是样本缺失或半截
-运行。二十条的
+运行；FAIL 时工具退出码为 1。二十条的
 `firstReadableAtMs` 与 `narrationStartedAtMs` 全部相等：按页面代码，前者记首次非空文本、
 后者记首次叙事进度回调，二者相同不等于玩家已看到可读正文；需要把“首个进度回调 /
 首段非空 / 首个完整可读句 / 控制权交还”拆成四个时钟，不能用一个相等值当首段证明。

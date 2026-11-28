@@ -86,7 +86,7 @@ def main(argv: list[str] | None = None) -> int:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out).write_text(text + '\n', encoding='utf-8')
     print(json.dumps({k: v for k, v in report.items() if k != 'rows'}, ensure_ascii=False, indent=1))
-    return 0
+    return 0 if report['overallPass'] else 1
 
 
 if __name__ == '__main__':
