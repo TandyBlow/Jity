@@ -1,0 +1,15 @@
+{
+ "samples": 348,
+ "train": 263,
+ "test": 85,
+ "params": 839644,
+ "holdoutCharF1Mean": 0.332,
+ "floors": {
+  "program": 0.208,
+  "selection": 0.265,
+  "oracle": 0.29
+ },
+ "charF1Min": 0.017,
+ "charF1Median": 0.304,
+ "charF1Max": 0.55
+}

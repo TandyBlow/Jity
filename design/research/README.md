@@ -54,3 +54,4 @@ Artifacts     evidence files, manifests, commits
 | E30 | Planning dataset v0: fact-clause selection and order | done (58.8% clauses expressed) |
 | E31 | Program reconstruction baseline | done (program plan 0.21 / oracle plan 0.29 char F1) |
 | E32 | Clause selection model (0.1M logistic) | done (grouped CV F1 0.906; reconstruction 0.265) |
+| E33 | plan-to-prose v0 (0.84M char transformer) | negative (charF1 0.332 but degenerate/garbled samples) |

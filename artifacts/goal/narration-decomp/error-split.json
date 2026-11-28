@@ -1,0 +1,14 @@
+{
+ "points": {
+  "A_program_plan": 0.208,
+  "B_model_selection_concat": 0.265,
+  "C_oracle_concat": 0.29,
+  "D_oracle_plan_generator": 0.332
+ },
+ "split": {
+  "planningGain": 0.057,
+  "realizationGain": 0.042,
+  "remainingToHuman": 0.668
+ },
+ "note": "charF1 against the hand-written target; A/B/C on 348 passages, D on its 85-passage grouped holdout"
+}
