@@ -1,0 +1,181 @@
+{
+ "totals": {
+  "points": 161,
+  "resultLines": 359,
+  "clauses": 2622,
+  "missingSubject": 1164,
+  "withActorRecord": 114,
+  "negated": 772,
+  "contrast": 15,
+  "cause": 118,
+  "dialogue": 0
+ },
+ "subjectKinds": {
+  "missing": 1164,
+  "object_or_place": 888,
+  "person": 570
+ },
+ "outcomes": {
+  "没有成功": 55,
+  "达到目的": 136,
+  "只完成一部分": 86,
+  "none": 82
+ },
+ "missingRecoverable": 146,
+ "missingRecoverableRate": 0.125,
+ "missingRate": 0.444,
+ "rows": [
+  {
+   "id": "09-turns20-ctx8192-gpu:s01-act-move:0",
+   "actors": [],
+   "missing": 5,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s01-act-move:1",
+   "actors": [
+    "凯撒",
+    "林亦舟",
+    "楚子航",
+    "芬格尔",
+    "顾岚"
+   ],
+   "missing": 10,
+   "recoverable": 1
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s01-act-move:2",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s01-act-move:3",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s02-act-observe:0",
+   "actors": [],
+   "missing": 6,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s02-act-observe:1",
+   "actors": [
+    "凯撒",
+    "林亦舟",
+    "楚子航",
+    "芬格尔",
+    "顾岚"
+   ],
+   "missing": 10,
+   "recoverable": 1
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s02-act-observe:2",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s02-act-observe:3",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s03-act-talk:0",
+   "actors": [],
+   "missing": 5,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s03-act-talk:1",
+   "actors": [
+    "凯撒",
+    "林亦舟",
+    "楚子航",
+    "芬格尔",
+    "顾岚"
+   ],
+   "missing": 10,
+   "recoverable": 1
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s03-act-talk:2",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192-gpu:s03-act-talk:3",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-ctx8192:s01-act-move:0",
+   "actors": [],
+   "missing": 5,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-pi:s01-act-move:0",
+   "actors": [],
+   "missing": 5,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-pi:s01-act-move:1",
+   "actors": [
+    "凯撒",
+    "林亦舟",
+    "楚子航",
+    "芬格尔",
+    "顾岚"
+   ],
+   "missing": 8,
+   "recoverable": 1
+  },
+  {
+   "id": "09-turns20-pi:s01-act-move:2",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-pi:s01-act-move:3",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  },
+  {
+   "id": "09-turns20-pi:s02-act-observe:0",
+   "actors": [
+    "诺诺"
+   ],
+   "missing": 6,
+   "recoverable": 1
+  },
+  {
+   "id": "09-turns20-pi:s02-act-observe:1",
+   "actors": [
+    "凯撒",
+    "林亦舟",
+    "楚子航",
+    "芬格尔",
+    "顾岚"
+   ],
+   "missing": 8,
+   "recoverable": 1
+  },
+  {
+   "id": "09-turns20-pi:s02-act-observe:2",
+   "actors": [],
+   "missing": 4,
+   "recoverable": 0
+  }
+ ]
+}
