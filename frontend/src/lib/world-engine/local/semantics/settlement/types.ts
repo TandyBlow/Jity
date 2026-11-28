@@ -66,6 +66,9 @@ export interface SettlementOptions {
   /** Experimental micro workflow: condition-level task proposer. It keeps a
    * session ledger and proposes only tasks whose conditions are all supported. */
   microTaskProposer?: MicroTaskProposerFn;
+  /** Experimental: goal-level task stage (candidate pairs + goal/fact verifier)
+   * that can replace the tasks LLM call when enabled. */
+  microGoalTasks?: MicroGoalTasksFn;
   /** Experimental structured scene arm: apply `去向=` facts directly and skip
    * the merged position prompt when nothing looks uncertain. */
   programScene?: boolean;
@@ -243,6 +246,28 @@ export interface MicroTaskProposal {
 export type MicroTaskProposerFn = (
   request: MicroTaskProposerRequest,
 ) => Promise<MicroTaskProposal | null> | MicroTaskProposal | null;
+
+export interface MicroGoalTasksRequest {
+  state: WorldState;
+  facts: Array<{ id: string; memberId: Id; text: string }>;
+  /** Owners whose tasks the stage may decide; the projection already narrowed
+   * the roster, so the port never scans tasks outside the affected set. */
+  ownerIds: Id[];
+}
+
+export interface MicroGoalTasksResult {
+  achieved: Array<{ characterId: Id; taskId: Id; basis: string; score: number }>;
+  /** Every scored pair, kept as evidence (never committed to state). */
+  scored: Array<{ characterId: Id; taskId: Id; basis: string; score: number }>;
+  source: 'micro';
+}
+
+/** Goal-level task stage: candidate pairs + a goal/fact verifier, replacing the
+ * tasks LLM call. Returning null is a port failure; an empty achieved list is a
+ * legitimate "no task changed". */
+export type MicroGoalTasksFn = (
+  request: MicroGoalTasksRequest,
+) => Promise<MicroGoalTasksResult | null> | MicroGoalTasksResult | null;
 
 export interface ModelCallEvidence {
   prompt: string;

@@ -1057,6 +1057,44 @@ describe('common-group results', () => {
     expect(detail.stageDetail?.taskScope?.defaultedUnchanged ?? []).toContain('b');
   });
 
+  it('commits a goal-level task decision without any engine call', async () => {
+    const engine = new ScriptedEngine([]);
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: {
+        microGoalTasks: ({ facts }) => ({
+          achieved: [{ characterId: 'a', taskId: 'a1', basis: facts[0]?.id ?? 'f1', score: 0.9 }],
+          scored: [{ characterId: 'a', taskId: 'a1', basis: facts[0]?.id ?? 'f1', score: 0.9 }],
+          source: 'micro',
+        }),
+      },
+    }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲把工具拿到手，放进自己的口袋。' }, workingState: world(),
+    } as unknown as Json);
+    const detail = outcome.evidence.detail as {
+      stageDetail?: { newlyAchievedTaskIds?: string[]; source?: string; taskScope?: { supports?: { taskId: string }[] } };
+    };
+    expect(engine.prompts).toHaveLength(0);
+    expect(detail.stageDetail?.newlyAchievedTaskIds).toEqual(['a1']);
+    expect(detail.stageDetail?.source).toBe('micro_goal_tasks');
+    expect(detail.stageDetail?.taskScope?.supports?.map((row) => row.taskId)).toEqual(['a1']);
+  });
+
+  it('returns an explicit no-change goal decision without falling back to the LLM', async () => {
+    const engine = new ScriptedEngine([]);
+    const outcome = await createSettlementHandlers({
+      engine,
+      options: { microGoalTasks: () => ({ achieved: [], scored: [], source: 'micro' }) },
+    }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲站在原地。' }, workingState: world(),
+    } as unknown as Json);
+    const detail = outcome.evidence.detail as { stageDetail?: { newlyAchievedTaskIds?: string[] } };
+    expect(engine.prompts).toHaveLength(0);
+    expect(detail.stageDetail?.newlyAchievedTaskIds ?? []).toEqual([]);
+  });
+
   it('refuses an achievement credited to another member fact unless it names them', async () => {
     // Real 0.6B probe 2026-11-11: with the 'achieved' contract the model marked
     // caesar's bridge task achieved on lu's goggles fact, and the verifier said
