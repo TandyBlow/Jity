@@ -321,6 +321,23 @@ def test_soak_report_summarizes_heap_and_turns():
     assert report['waitMaxMs'] == 2000 and report['turns'] == 2
 
 
+def test_timing_gates_check_control_return():
+    from tools.experiment_platform.timing_gates import evaluate
+
+    timing = {'points': [
+        {'id': 'a', 'clocks': {'firstReadableAtMs': 1000, 'narrationStartedAtMs': 1000,
+                               'pointTextFinishedMinusCommitMs': 2000, 'driverDoneMs': 5000}},
+        {'id': 'b', 'clocks': {'firstReadableAtMs': 70000, 'narrationStartedAtMs': 5000,
+                               'pointTextFinishedMinusCommitMs': 400000, 'driverDoneMs': 80000}},
+    ]}
+    report = evaluate(timing)
+    assert report['firstReadable']['pass'] == 1
+    assert report['pointText']['pass'] == 1
+    assert report['controlReturned']['pass'] == 1
+    assert report['firstEqualsNarrationStart'] == 1
+    assert report['overallPass'] is False
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

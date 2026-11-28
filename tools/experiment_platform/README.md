@@ -36,7 +36,10 @@ PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.anonymize --input outpu
 # 8. soak summary
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.soak_report --evidence results/product/evidence/platform-soak-10.json --memory artifacts/goal/platform/lab/soak-memory.csv --out artifacts/goal/platform/eval/soak-report.json
 
-# 9. task-achievement gold (P05)
+# 9. three timing gates (first readable / point text / control returned)
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.timing_gates --timing artifacts/goal/platform/eval/turns20-pi-timing.json --out artifacts/goal/platform/eval/turns20-gates.json
+
+# 10. task-achievement gold (P05)
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_task_gold
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.task_gold_eval --cases artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl --predictions preds.jsonl
 
