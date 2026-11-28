@@ -37,6 +37,9 @@
 **Caveats.** 只跑了 3 个回合、一个世界；结算仍用 0.6B（本阶段允许）；`--allow-program`
 是驱动的实验开关，不等于产品验收通过；移动端与离线尚未跑。
 
-**Artifacts.** `artifacts/goal/narration-rules/{smoke-rules-3i.json,turns-3.json}`；
+**Artifacts.** `artifacts/goal/narration-rules/{n09-evidence-slim.json,turns-3.json}`
+（精简证据：每回合正文、`narrationModel=rules`、`source=program`、每回合 4/4/2 次
+`task=narration, source=rule`、`models.requests=1`；完整 6.6MB 原始文件同目录
+`smoke-rules-3i.json` 未入库）；
 代码 `frontend/src/lib/world-engine/local/rules-narration.ts`、`game-model.ts`
 （`narrationCandidate=rules` 分支）、`page.tsx`（`dedupeProgramPoints`）。N09。
