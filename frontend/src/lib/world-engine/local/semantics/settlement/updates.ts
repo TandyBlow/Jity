@@ -1175,6 +1175,51 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     };
   }
   let proposerEvidence: unknown = null;
+  if (ctx.options.microGoalTasks) {
+    try {
+      const proposal = await ctx.options.microGoalTasks({
+        state: ctx.state,
+        facts: resultFacts(ctx.results),
+        ownerIds: projection.affectedTaskOwners,
+      });
+      if (proposal) {
+        const allowed = proposal.achieved.filter((row) =>
+          affectedRows.some(({ task, ownerId }) => task.id === row.taskId && ownerId === row.characterId));
+        const changes: Record<Id, Partial<EntityDelta>> = {};
+        for (const row of allowed) {
+          changes[row.characterId] = {
+            tasksAchieved: [...(changes[row.characterId]?.tasksAchieved ?? []), row.taskId],
+          };
+        }
+        const newlyAchieved = [...achievedFromChanges(changes)].sort();
+        const achievedByCharacter = Object.entries(changes)
+          .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
+          .filter((row) => row.taskIds.length > 0);
+        return {
+          changes,
+          detail: {
+            taskCoverageIds: characters,
+            taskScope: {
+              ...taskScope,
+              assertedUnchanged: affectedRows.length - newlyAchieved.length,
+              achievedByCharacter,
+              emptyCharacters: taskScope.affectedCharacters - achievedByCharacter.length,
+              rejectedTaskIds: [],
+              supports: allowed,
+              goalTasks: proposal,
+            },
+            decidedTaskIds: decidedIds,
+            newlyAchievedTaskIds: newlyAchieved,
+            source: 'micro_goal_tasks',
+          },
+          fallback: false,
+          calls: [],
+        };
+      }
+    } catch {
+      // A goal-stage failure is an abstain; the proposer and LLM stages run below.
+    }
+  }
   if (ctx.options.microTaskProposer) {
     try {
       const proposal = await ctx.options.microTaskProposer({ state: ctx.state, facts: resultFacts(ctx.results) });
@@ -1226,51 +1271,6 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
       }
     } catch {
       // A proposer failure is an abstain; the LLM tasks stage runs below.
-    }
-  }
-  if (ctx.options.microGoalTasks) {
-    try {
-      const proposal = await ctx.options.microGoalTasks({
-        state: ctx.state,
-        facts: resultFacts(ctx.results),
-        ownerIds: projection.affectedTaskOwners,
-      });
-      if (proposal) {
-        const allowed = proposal.achieved.filter((row) =>
-          affectedRows.some(({ task, ownerId }) => task.id === row.taskId && ownerId === row.characterId));
-        const changes: Record<Id, Partial<EntityDelta>> = {};
-        for (const row of allowed) {
-          changes[row.characterId] = {
-            tasksAchieved: [...(changes[row.characterId]?.tasksAchieved ?? []), row.taskId],
-          };
-        }
-        const newlyAchieved = [...achievedFromChanges(changes)].sort();
-        const achievedByCharacter = Object.entries(changes)
-          .map(([characterId, delta]) => ({ characterId, taskIds: (delta.tasksAchieved ?? []).slice().sort() }))
-          .filter((row) => row.taskIds.length > 0);
-        return {
-          changes,
-          detail: {
-            taskCoverageIds: characters,
-            taskScope: {
-              ...taskScope,
-              assertedUnchanged: affectedRows.length - newlyAchieved.length,
-              achievedByCharacter,
-              emptyCharacters: taskScope.affectedCharacters - achievedByCharacter.length,
-              rejectedTaskIds: [],
-              supports: allowed,
-              goalTasks: proposal,
-            },
-            decidedTaskIds: decidedIds,
-            newlyAchievedTaskIds: newlyAchieved,
-            source: 'micro_goal_tasks',
-          },
-          fallback: false,
-          calls: [],
-        };
-      }
-    } catch {
-      // A goal-stage failure is an abstain; the LLM tasks stage runs below.
     }
   }
   // 事实与所有待办目标的措辞零重叠 = 不可能“明确达成”；新增目标由 subtasks 阶段独立判断。
