@@ -1,0 +1,270 @@
+{
+ "schema": "jity-task-gold/1",
+ "source": "semantic-micro-only bench-v1 goals + world task text",
+ "reviewer": "platform-agent-independent-second-read",
+ "reviewedAt": "2026-11-28",
+ "tasks": [
+  {
+   "taskId": "task_103",
+   "goal": "路明非整理背心的胸袋。",
+   "kind": "action",
+   "required": [
+    {"id": "pocket", "text": "背心胸袋被整理或放入/取出物品的整理动作完成"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "只提到背心或胸袋、没有整理动作",
+   "forbiddenShortcuts": ["戴上护目镜", "使用物品", "走进房间"],
+   "notes": "整理对象是胸袋，不是护目镜本身。"
+  },
+  {
+   "taskId": "task_149",
+   "goal": "路明非问对方空床还有几张",
+   "kind": "conjunction",
+   "required": [
+    {"id": "ask", "text": "向对方询问空床数量"},
+    {"id": "answer", "text": "得到对方关于空床数量的回答"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "问了但没有得到回答",
+   "forbiddenShortcuts": ["拿到水杯", "查看空床", "走到处置室"],
+   "notes": "询问与回答是两个子句，只有动作不算达成。"
+  },
+  {
+   "taskId": "task_156",
+   "goal": "路明非抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口。",
+   "kind": "conjunction",
+   "required": [
+    {"id": "lift", "text": "抬起压住桌腿的桌角"},
+    {"id": "drag", "text": "把门厅翻倒的长桌拖到侧墙"},
+    {"id": "clear", "text": "楼梯口被让出"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "完成抬/拖的一部分但没有让出楼梯口",
+   "forbiddenShortcuts": ["走上楼梯", "走进门厅", "查看长桌"],
+   "notes": "三个动作按顺序构成一个目标。"
+  },
+  {
+   "taskId": "task_65",
+   "goal": "路明非把笼门上的挂锁取下来，挂到墙钩上。",
+   "kind": "conjunction",
+   "required": [
+    {"id": "remove", "text": "挂锁从笼门上取下"},
+    {"id": "hang", "text": "挂锁挂到墙钩上"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "只取下或只挂上其中一步",
+   "forbiddenShortcuts": ["踢开弹匣", "拖开长椅"],
+   "notes": "环境变化必须同时包含取下与挂上。"
+  },
+  {
+   "taskId": "task_92",
+   "goal": "路明非把胸前护目镜从胸前取下来并塞进背心的胸袋",
+   "kind": "conjunction",
+   "required": [
+    {"id": "remove", "text": "护目镜从胸前取下"},
+    {"id": "pocket", "text": "护目镜放进背心胸袋"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "只取下或只放入其中一步",
+   "forbiddenShortcuts": ["戴上护目镜", "走上钟楼", "查看护目镜"],
+   "notes": "与 task_lu_goggles 不同：目标是收纳，不是佩戴。"
+  },
+  {
+   "taskId": "task_caesar_bridge",
+   "goal": "查明跨溪小桥是否仍能通行，不让小队在松动护栏处挤作一团",
+   "kind": "conjunction",
+   "required": [
+    {"id": "check", "text": "查明跨溪小桥是否仍能通行"}
+   ],
+   "preconditions": [],
+   "negations": [
+    {"id": "no_crowd", "text": "小队没有在松动护栏处挤作一团"}
+   ],
+   "partialRule": "查明通行但没有任何关于小队避让的证据",
+   "forbiddenShortcuts": ["只看地图不确认通行", "提到小桥但没有结论"],
+   "notes": "第一子句完成、第二子句无证据时只能 partial。"
+  },
+  {
+   "taskId": "task_chu_flag",
+   "goal": "在红方进入顶层前安排旗台的持守与撤退信号",
+   "kind": "conjunction",
+   "required": [
+    {"id": "hold", "text": "安排旗台持守"},
+    {"id": "signal", "text": "安排撤退信号"}
+   ],
+   "preconditions": [
+    {"id": "before_red", "text": "红方尚未进入顶层时完成安排"}
+   ],
+   "negations": [],
+   "partialRule": "只安排持守或只安排信号",
+   "forbiddenShortcuts": ["守住顶层", "进入顶层", "查看旗台"],
+   "notes": "‘守住顶层’是执行持守，不是安排持守与信号。"
+  },
+  {
+   "taskId": "task_doctor_triage",
+   "goal": "询问并核实伤者能否负重，避免把真实伤势误作演习淘汰",
+   "kind": "conjunction",
+   "required": [
+    {"id": "ask", "text": "询问伤者能否负重"},
+    {"id": "verify", "text": "核实回答或伤情"}
+   ],
+   "preconditions": [],
+   "negations": [
+    {"id": "real_injury", "text": "没有把真实伤势当作演习淘汰"}
+   ],
+   "partialRule": "询问了但没有核实",
+   "forbiddenShortcuts": ["检查手套", "查看空床", "提到伤者"],
+   "notes": "询问与核实缺一不可；真实伤势不能被记成演习淘汰。"
+  },
+  {
+   "taskId": "task_fingel_camera",
+   "goal": "换上相机备用电池，拍到有辨识度的争旗场面",
+   "kind": "conjunction",
+   "required": [
+    {"id": "battery", "text": "相机换上备用电池"},
+    {"id": "shot", "text": "拍到有辨识度的争旗场面"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "只准备/检查电池，没有真正更换或拍摄",
+   "forbiddenShortcuts": ["准备拍摄", "检查器材箱", "拿到拍摄机会"],
+   "notes": "‘准备’与‘获得机会’都不是更换电池或拍摄。"
+  },
+  {
+   "taskId": "task_fingel_help",
+   "goal": "若路明非求助，给出可验证的器材或路线帮助，而不是空口保证安全",
+   "kind": "conditional_negation",
+   "required": [
+    {"id": "help", "text": "给出器材或路线的具体帮助"}
+   ],
+   "preconditions": [
+    {"id": "asked", "text": "路明非已经求助（否则任务未触发）"}
+   ],
+   "negations": [
+    {"id": "not_empty", "text": "不是空口保证安全"}
+   ],
+   "partialRule": "有具体帮助但缺少可验证性，或只保证安全",
+   "forbiddenShortcuts": ["提到路明非", "路明非自己读地图", "空口保证安全"],
+   "notes": "主语必须是给出帮助的人；路明非自己的行动不满足。"
+  },
+  {
+   "taskId": "task_lu_goggles",
+   "goal": "把胸前护目镜戴好并确认镜片没有裂纹",
+   "kind": "conjunction",
+   "required": [
+    {"id": "wear", "text": "护目镜戴好（戴在眼前，不是挂在胸前）"},
+    {"id": "lens", "text": "明确确认镜片没有裂纹"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "戴好但未明确确认无裂纹，或检查了但未确认",
+   "forbiddenShortcuts": ["拿起护目镜", "挂在胸前", "查看护目镜"],
+   "notes": "‘检查了镜片’不等于‘确认镜片无裂纹’。"
+  },
+  {
+   "taskId": "task_lu_kit",
+   "goal": "在进入交火区前拿到可用的护目镜与演习装备",
+   "kind": "conjunction",
+   "required": [
+    {"id": "goggles", "text": "拿到可用的护目镜"},
+    {"id": "gear", "text": "拿到演习装备"}
+   ],
+   "preconditions": [
+    {"id": "before_fire", "text": "进入交火区之前完成"}
+   ],
+   "negations": [],
+   "partialRule": "只拿到其中一类（护目镜或装备）",
+   "forbiddenShortcuts": ["走进器材棚", "翻看领用簿", "把装备摆到台面", "进入交火区"],
+   "notes": "‘拿到’是持有；走进房间、读账本、把备用装备摆到台面都不算。"
+  },
+  {
+   "taskId": "task_lu_route",
+   "goal": "在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线",
+   "kind": "choice",
+   "required": [
+    {"id": "choose", "text": "明确选择庭院正路、西回廊或地下检修通道之一"},
+    {"id": "cover", "text": "选择理由是有掩护"}
+   ],
+   "preconditions": [],
+   "negations": [],
+   "partialRule": "获得路线信息但没有作出选择",
+   "forbiddenShortcuts": ["读路线图", "读地图", "查看到入口位置"],
+   "notes": "读地图只提供信息；必须出现明确的路线选择与掩护理由。"
+  },
+  {
+   "taskId": "task_nono_squad",
+   "goal": "让红方的旗台行动有可执行的掩护，而不把路明非当诱饵",
+   "kind": "negation",
+   "required": [
+    {"id": "cover", "text": "为红方旗台行动提供可执行的掩护"}
+   ],
+   "preconditions": [],
+   "negations": [
+    {"id": "not_bait", "text": "路明非没有被当作诱饵"}
+   ],
+   "partialRule": "有掩护意图但没有可执行证据，或无法排除诱饵",
+   "forbiddenShortcuts": ["提到路明非", "递给诺诺护目镜", "读地图", "走进房间"],
+   "notes": "这是红方行动方案层面的目标；主角的无关行动不构成掩护。"
+  },
+  {
+   "taskId": "task_tang_ammo",
+   "goal": "在再次探身前更换空弹匣，不把空枪当成掩护火力",
+   "kind": "conjunction_negation",
+   "required": [
+    {"id": "reload", "text": "更换空弹匣"}
+   ],
+   "preconditions": [
+    {"id": "before_peek", "text": "再次探身之前完成更换"}
+   ],
+   "negations": [
+    {"id": "not_empty_cover", "text": "没有把空枪当掩护火力"}
+   ],
+   "partialRule": "有换弹匣意图或准备，但没有完成更换",
+   "forbiddenShortcuts": ["拦下对手", "提到弹匣", "空枪探身"],
+   "notes": "拦下对手不是换弹匣；空枪不能被写成交火掩护。"
+  },
+  {
+   "taskId": "task_tang_fallback",
+   "goal": "被两处射界夹住时保留退到南端花槽的机会",
+   "kind": "conditional",
+   "required": [
+    {"id": "retreat", "text": "保留通往南端花槽的退路"}
+   ],
+   "preconditions": [
+    {"id": "trapped", "text": "处于两处射界夹住的状态"}
+   ],
+   "negations": [],
+   "partialRule": "有退意但退路没有被保留的具体事实",
+   "forbiddenShortcuts": ["拦下对手", "提到花槽", "站在开阔地"],
+   "notes": "条件未触发时不判达成；拦下对手不是保留退路。"
+  },
+  {
+   "taskId": "task_tang_report",
+   "goal": "向凯撒报告自己能确认的窗口位置，不能把猜测报成已压制",
+   "kind": "conjunction_negation",
+   "required": [
+    {"id": "report", "text": "向凯撒报告窗口位置"},
+    {"id": "confirmed", "text": "报告内容限于自己能确认的位置"}
+   ],
+   "preconditions": [],
+   "negations": [
+    {"id": "no_guess", "text": "没有把猜测报成已压制"}
+   ],
+   "partialRule": "有报告但无法区分确认与猜测",
+   "forbiddenShortcuts": ["凯撒自己查看地图", "提到凯撒", "查看短讯机"],
+   "notes": "报告者必须是唐骁；凯撒自己的侦察动作不满足。"
+  }
+ ],
+ "missingGoalTasks": ["task_42", "task_164"],
+ "standard": {
+  "yes": "全部 required 子句由已提交且 completed 的事实覆盖，且 preconditions 成立、negations 满足。",
+  "partial": "required 子句非空真子集完成，或条件/否定约束无法确认。",
+  "no": "其余情况；意图、attempt、partial、blocked、叙事正文一律不算达成。",
+  "unverified": "事实与目标关系为 insufficient/conflict 时判 no，不参与训练正例。"
+ }
+}

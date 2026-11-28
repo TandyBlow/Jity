@@ -1,0 +1,11 @@
+{"id":"tgb:lu_goggles:yes","taskId":"task_lu_goggles","evidence":["路明非把护目镜戴好。（达到目的）","路明非确认镜片没有裂纹。"],"verdict":"yes","why":"wear + explicit lens confirmation","split":"dev"}
+{"id":"tgb:lu_goggles:partial","taskId":"task_lu_goggles","evidence":["路明非拿起护目镜。（达到目的）","路明非把护目镜戴好。（达到目的）"],"verdict":"partial","why":"worn but lens not confirmed","split":"dev"}
+{"id":"tgb:lu_kit:yes","taskId":"task_lu_kit","evidence":["路明非拿到护目镜。（达到目的）","路明非拿到演习背心。（达到目的）"],"verdict":"yes","why":"goggles + gear obtained before the fire zone","split":"dev"}
+{"id":"tgb:lu_kit:no","taskId":"task_lu_kit","evidence":["路明非走进器材棚。（达到目的）","路明非翻看器材领用簿。（达到目的）"],"verdict":"no","why":"entering and reading are old shortcuts; nothing obtained","split":"dev"}
+{"id":"tgb:chu_flag:yes","taskId":"task_chu_flag","evidence":["楚子航安排旗台持守。（达到目的）","楚子航安排撤退信号。（达到目的）"],"verdict":"yes","why":"both arranged before red enters the top floor","split":"dev"}
+{"id":"tgb:chu_flag:no","taskId":"task_chu_flag","evidence":["楚子航守住顶层。（达到目的）"],"verdict":"no","why":"holding is not arranging hold + signal","split":"dev"}
+{"id":"tgb:fingel_camera:yes","taskId":"task_fingel_camera","evidence":["芬格尔在相机上更换备用电池。（达到目的）","芬格尔拍到有辨识度的争旗场面。（达到目的）"],"verdict":"yes","why":"battery replaced and shot taken","split":"dev"}
+{"id":"tgb:fingel_camera:partial","taskId":"task_fingel_camera","evidence":["芬格尔检查器材箱是否需要更换电池。（达到目的）","芬格尔准备拍摄争旗场面。（达到目的）"],"verdict":"partial","why":"preparation only; no replacement, no shot","split":"dev"}
+{"id":"tgb:tang_report:yes","taskId":"task_tang_report","evidence":["唐骁向凯撒报告窗口位置，只报自己确认的。（达到目的）"],"verdict":"yes","why":"report to Caesar limited to confirmed positions","split":"dev"}
+{"id":"tgb:tang_report:no","taskId":"task_tang_report","evidence":["凯撒在红方地图桌查看地图并确认小桥通行情况。（达到目的）"],"verdict":"no","why":"Caesar's own recon is not Tang's report","split":"dev"}
+{"id":"tgb:fingel_help:not_triggered","taskId":"task_fingel_help","evidence":["路明非读赛区路线图。（达到目的）"],"verdict":"not_triggered","why":"no request from Lu, so the conditional goal is not activated","split":"dev"}

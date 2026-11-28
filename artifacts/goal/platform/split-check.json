@@ -65,6 +65,12 @@
    "independent": true,
    "uniqueKeys": 2,
    "path": "artifacts/goal/platform/eval/narration-holdout-v2-newrun.jsonl"
+  },
+  "task-gold-v1": {
+   "usage": "gold-dev",
+   "independent": false,
+   "uniqueKeys": 78,
+   "path": "artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl"
   }
  },
  "pairs": [

@@ -86,6 +86,14 @@
    "usage": "test",
    "independent": true,
    "note": "Two points from one completed turn of the 2026-11-28 new-input run (1/4 turns); fact block absent from corpus/bundle, one outcome label. Smoke only."
+  },
+  {
+   "name": "task-gold-v1",
+   "path": "artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl",
+   "key": "id",
+   "usage": "gold-dev",
+   "independent": false,
+   "note": "Platform second read of semantic bench-v1 (114/114 label agreement); same rows, benchmark validity defects in P05."
   }
  ],
  "pairs": [

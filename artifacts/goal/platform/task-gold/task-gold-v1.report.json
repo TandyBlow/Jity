@@ -1,0 +1,47 @@
+{
+ "schema": "jity-task-gold-report/1",
+ "generatedAt": "2026-11-28T14:35:48.458480+00:00",
+ "benchRows": 120,
+ "verdictCounts": {
+  "skip": 6,
+  "partial": 6,
+  "no": 105,
+  "yes": 3
+ },
+ "judgedRows": 114,
+ "uniqueTaskGoalFact": 78,
+ "withinTaskDuplicates": 36,
+ "emptyGoalRows": 6,
+ "tasksInBench": 17,
+ "tasksInSpec": 17,
+ "missingGoalTasks": [
+  "task_164",
+  "task_42"
+ ],
+ "crossTab": {
+  "achieved|no": 100,
+  "achieved|partial": 4,
+  "achieved|yes": 3,
+  "pending|no": 5,
+  "pending|partial": 2
+ },
+ "committedAchieved": 107,
+ "committedAchievedNotYes": 104,
+ "committedAchievedNotYesRate": 0.972,
+ "labelAgreement": {
+  "judged": 114,
+  "agree": 114,
+  "disagree": 0
+ },
+ "selectionBias": "every bench row is an llm=yes case; this measures false commits, not balanced accuracy",
+ "singleFactLimitation": "single (goal, fact) pairs cannot express 14/19 multi-clause, negation or precondition goals",
+ "reportN": 108,
+ "reportNReproducibleFromCommittedBench": false,
+ "reportNNote": "the committed bench has 114 judgeable rows; goal-verifier-v1 report claims n=108 at the same commit",
+ "standard": {
+  "yes": "全部 required 子句由已提交且 completed 的事实覆盖，且 preconditions 成立、negations 满足。",
+  "partial": "required 子句非空真子集完成，或条件/否定约束无法确认。",
+  "no": "其余情况；意图、attempt、partial、blocked、叙事正文一律不算达成。",
+  "unverified": "事实与目标关系为 insufficient/conflict 时判 no，不参与训练正例。"
+ }
+}
