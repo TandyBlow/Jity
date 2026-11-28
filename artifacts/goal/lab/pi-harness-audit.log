@@ -1,0 +1,23 @@
+Warning: Extension package "C:\Users\26494\.pi\agent\npm\node_modules\pi-smart-fetch\package.json": Host-provided extension packages must be declared in peerDependencies with a "*" range, not dependencies: @sinclair/typebox. Installed copies can bypass the extension loader and create duplicate runtime modules.
+审计完成，只新建了一个文件，未改动任何代码。
+
+`artifacts/goal/lab/harness-memory-audit.md`（309 行）
+
+核心发现（按实测的 3 回合证据外推 20 回合）：
+
+| 结构 | 每回合 | 是否封顶 |
+|---|---:|---|
+| `turns[].snapshotAfterTurn`（整份 `__worldSnapshot()`） | 912KB（第 3 回合），+12.6KB/回合 | 否 |
+| `product.microStatsAll`（会话累计数组被复制进每回合） | +4.6KB/回合 | 否（O(N²)） |
+| `generations`（`slice(-200)`） | 9KB → 触顶 106KB | 是 |
+| `console` + 无上限的 `ggmlConsole` | 9KB | 部分 |
+| `before/after.transportPoints`（全量点表存两份） | +2.2KB/回合 | 否（O(N²)） |
+
+- 20 回合：内存 `evidence` ≈ 26MB 紧凑 JSON；写出的证据文件 ≈ 53MB；`save()` 累计写盘 ≈ 530MB（每次全量 pretty 序列化）。
+- 额外发现：每份快照里 297KB（33%）是字节相同的重复——54KB 世界定义出现 4 次，head 状态与当前状态重复。
+- 补丁给到行号：P1 快照外置 sidecar 只留 digest（1024 行）、P1b 去重、P2 增量、P3 环形缓冲、P4 只留新增 generations、P5 点表差集、P6 紧凑写盘（150 行）、P7 拆回合文件（唯一改变增长曲线）、P8 删重复 submissions（1369 行）、P9 `refreshRestore` 大对象。
+- 每个补丁都列了受影响消费者：`verify-point-replay.ts:8`、`verify-09-evidence.test.ts:124-140`、`summarize-timing.mjs:25-37`、`summarize-semantics.mjs:55-59`、`selftest.mjs:127-134`、`check-run.mjs:29`。
+
+未验证项也写在文末：没有实跑堆采样，字节是序列化字节；20 回合是外推；幂等缓存 200 条上限是从序号 413 推断的，未读产品常量。
+
+DONE — D:/others/Jity/artifacts/goal/lab/harness-memory-audit.md

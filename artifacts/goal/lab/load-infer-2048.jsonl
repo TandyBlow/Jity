@@ -1,0 +1,4 @@
+{"at":430,"stage":null,"timings":null,"error":null,"isolated":true,"jsHeap":2201600,"detail":null}
+{"at":3105,"stage":"fetch-start","timings":{"page":93,"fetch-start":93},"error":null,"isolated":true,"jsHeap":2784339,"detail":130518532}
+{"at":64119,"stage":"init-start","timings":{"page":93,"fetch-start":93,"fetched":1876,"init-start":1901},"error":null,"isolated":true,"jsHeap":3626445,"detail":2923011}
+{"at":75186,"stage":"done","timings":{"page":93,"fetch-start":93,"fetched":1876,"init-start":1901,"inited":3937,"infer-start":3937,"inferred":4251,"done":4251},"error":null,"isolated":true,"jsHeap":3140986,"detail":2919473}

@@ -6,7 +6,7 @@ param(
   [int]$BudgetMB = 4096,
   [int]$TimeoutSec = 1800,
   [int]$ReserveMB = 6144,
-  [int]$HardFloorMB = 3072,
+  [int]$ExpectMB = 2048,
   [string]$KillMatch = "",
   [string]$Queue = "artifacts/goal/lab/queue.json",
   [string]$Active = "artifacts/goal/lab/active.json"
@@ -37,8 +37,11 @@ public class JobObj {
   }
   [StructLayout(LayoutKind.Sequential)] public struct BASIC {
     public long PerProcessUserTimeLimit, PerJobUserTimeLimit;
-    public uint LimitFlags, MinimumWorkingSetSize, MaximumWorkingSetSize, ActiveProcessLimit;
-    public UIntPtr Affinity; public uint PriorityClass, SchedulingClass;
+    public uint LimitFlags;
+    public ulong MinimumWorkingSetSize, MaximumWorkingSetSize;
+    public uint ActiveProcessLimit;
+    public ulong Affinity;
+    public uint PriorityClass, SchedulingClass;
   }
   [StructLayout(LayoutKind.Sequential)] public struct EXTENDED {
     public BASIC Basic; public IO_COUNTERS Io;
@@ -116,7 +119,11 @@ if ($Action -eq 'stop') {
   exit 0
 }
 
-# run
+# run (single instance)
+$lock = Join-Path (Split-Path -Parent $Queue) 'run.lock'
+try { $lockHandle = [System.IO.File]::Open($lock, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None) }
+catch { "another run holds $lock"; exit 3 }
+try {
 while ($true) {
   $jobs = @(ReadJson $Queue @())
   $job = $jobs | Where-Object { $_.status -eq 'queued' } | Select-Object -First 1
@@ -124,7 +131,7 @@ while ($true) {
 
   while ($true) {
     $m = Mem
-    if ($m.freeMB -ge $ReserveMB -and ($m.limitMB - $m.commitMB) -ge 4096) { break }
+    if ($m.freeMB -ge ($ReserveMB + $ExpectMB) -and ($m.limitMB - $m.commitMB) -ge 4096) { break }
     "deferred {0}: freeMB={1} commitMB={2}/{3}" -f $job.name, $m.freeMB, $m.commitMB, $m.limitMB
     Start-Sleep -Seconds 15
     $jobs = @(ReadJson $Queue @())
@@ -154,8 +161,18 @@ while ($true) {
   $bytes = [uint64]($job.budgetMB * 1MB)
   $info.ProcessMemoryLimit = $bytes
   $info.JobMemoryLimit = $bytes
-  [JobObj]::SetInformationJobObject($jobHandle, 9, [ref]$info, [uint32][System.Runtime.InteropServices.Marshal]::SizeOf($info)) | Out-Null
-  [JobObj]::AssignProcessToJobObject($jobHandle, $proc.Handle) | Out-Null
+  $okSet = [JobObj]::SetInformationJobObject($jobHandle, 9, [ref]$info, [uint32][System.Runtime.InteropServices.Marshal]::SizeOf([type][JobObj+EXTENDED]))
+  $okAssign = [JobObj]::AssignProcessToJobObject($jobHandle, $proc.Handle)
+  if (-not $okSet -or -not $okAssign) {
+    "job-setup-failed set=$okSet assign=$okAssign"
+    [JobObj]::TerminateJobObject($jobHandle, 1) | Out-Null
+    [JobObj]::CloseHandle($jobHandle) | Out-Null
+    $jobs = @(ReadJson $Queue @())
+    foreach ($j in $jobs) { if ($j.id -eq $job.id) { $j.status = 'job-setup-failed'; $j.endedAt = (Get-Date).ToString('o') } }
+    WriteJson $Queue $jobs
+    Remove-Item $Active -ErrorAction SilentlyContinue
+    continue
+  }
 
   [pscustomobject]@{ id = $job.id; name = $job.name; pid = $proc.Id; status = 'running'; startedAt = $job.startedAt } | Out-File -Encoding utf8 $Active
 
@@ -177,7 +194,7 @@ while ($true) {
       if ($row -and $id -ne $proc.Id) { $seen[[int]$id] = $row.CreationDate }
     }
     $m = Mem
-    if ($m.freeMB -lt $HardFloorMB) { $reason = 'hard-floor'; break }
+    if ($m.freeMB -lt $ReserveMB) { $reason = 'reserve-floor'; break }
     if (((Get-Date) - $start).TotalSeconds -gt $job.timeoutSec) { $reason = 'timeout'; break }
     Start-Sleep -Seconds 1
   }
@@ -203,12 +220,18 @@ while ($true) {
   $jobs = @(ReadJson $Queue @())
   foreach ($j in $jobs) {
     if ($j.id -eq $job.id) {
-      $j.status = $(if ($reason -eq 'exited') { 'done' } else { $reason })
+      $exitCode = if ($proc.HasExited) { $proc.ExitCode } else { $null }
+      $j.status = $(if ($reason -eq 'exited') { $(if ($exitCode -eq 0) { 'done' } else { ('failed:' + $exitCode) }) } else { $reason })
       $j.endedAt = (Get-Date).ToString('o'); $j.peakTreeMB = $peak
       if (-not $j.pid) { $j | Add-Member -NotePropertyName pid -NotePropertyValue $proc.Id -Force }
+      $j | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
     }
   }
   WriteJson $Queue $jobs
   Remove-Item $Active -ErrorAction SilentlyContinue
   "finished {0} status={1} peakTreeMB={2}" -f $job.name, $reason, $peak
+}
+} finally {
+  if ($lockHandle) { $lockHandle.Close() }
+  Remove-Item $lock -ErrorAction SilentlyContinue
 }

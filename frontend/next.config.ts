@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
       // timeout. 09 checks crossOriginIsolated===true before a real run.
       { source: "/world-local", headers: isolation },
       { source: "/world-local/:path*", headers: isolation },
+      { source: "/lab-load", headers: isolation },
+      { source: "/lab-load/:path*", headers: isolation },
     ];
   },
 };

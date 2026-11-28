@@ -235,3 +235,28 @@ powershell -File frontend/scripts/lab/expctl.ps1 -Action stop
   离开机器或占用较低的窗口出现。**不要**为了跑实验要求用户关闭日常应用。
 - 因此 20 输入门槛与 8 场景应安排在低占用窗口，或改在第二台机器/服务器上
   跑；调度器会按 `ReserveMB` 自动推迟，不要绕过。
+
+---
+
+## 八、分阶段加载：3GB 到底花在哪（2026-11-28 实测）
+
+方法：`/lab-load` 探针页 + `load-probe.mjs`，每个阶段在新浏览器配置里单独跑一单，
+用调度器的 **进程树峰值**（`peakTreeMB`，含 Next 服务器约 150–250MB）记账。
+`measureUserAgentSpecificMemory` 在这里不可用：它不统计 wllama worker 的 wasm 与
+GGUF Blob（init 阶段只报 2.9MB，而进程树是 2.2GB），只能当参考。
+
+| 阶段 | 树峰值 | 相比上一阶段 |
+|---|---|---|
+| 空白页面（无模型） | 1000MB | — |
+| + 下载 GGUF 到 Blob（397MB） | 1418MB | +418MB |
+| + wllama 初始化（ctx 2048，q8 KV） | 2231MB | +813MB |
+| + 首次推理（8 token） | 2250MB | +19MB |
+
+解读：
+- 光是一个无头 Edge + Next 服务器就要约 1GB；这是浏览器实验的固定成本。
+- GGUF 的 397MB 在 Blob 里实打实多出约 0.4GB；wllama 初始化再花约 0.8GB
+  （权重进 wasm + KV 125MB + 计算缓冲）。
+- 首次推理几乎不涨（+19MB），所以"加载那 9 秒" = 浏览器基线 + Blob + 初始化。
+- 把 ctx 从 2048 提到 8192/12288，KV 各多 375/625MB，正好对上产品页的 3.1GB。
+- 想压峰值，优先顺序是：浏览器基线（1GB）> wllama 初始化缓冲（0.8GB）
+  > KV（0.1–0.75GB）> Blob（0.4GB）。
