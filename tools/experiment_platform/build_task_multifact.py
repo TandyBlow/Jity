@@ -110,7 +110,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--out', default=str(OUT))
     args = parser.parse_args(argv)
     doc = json.loads(Path(args.evidence).read_text(encoding='utf-8-sig'))
-    rel = Path(args.evidence).resolve().relative_to(ROOT).as_posix()
+    evidence_path = Path(args.evidence).resolve()
+    try:
+        rel = evidence_path.relative_to(ROOT).as_posix()
+    except ValueError:
+        rel = str(evidence_path)
     specs = json.loads(Path(args.specs).read_text(encoding='utf-8-sig')).get('tasks') or []
     spec_by_id = {t['taskId']: t for t in specs}
     world = json.loads(WORLD.read_text(encoding='utf-8-sig'))
@@ -199,8 +203,12 @@ def main(argv: list[str] | None = None) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text('\n'.join(json.dumps(c, ensure_ascii=False) for c in cases) + '\n', encoding='utf-8')
     canon = hashlib.sha256(json.dumps(cases, ensure_ascii=False).encode('utf-8')).hexdigest()
+    try:
+        out_rel = out.relative_to(ROOT).as_posix()
+    except ValueError:
+        out_rel = str(out)
     out.with_suffix('.jsonl.manifest.json').write_text(json.dumps(
-        {'schema': 'jity-eval-set/1', 'path': out.relative_to(ROOT).as_posix(), 'rows': len(cases),
+        {'schema': 'jity-eval-set/1', 'path': out_rel, 'rows': len(cases),
          'sha256': canon, 'hashMode': 'canonical-json'}, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     summary = {
         'schema': 'jity-task-multifact/2', 'turns': len(doc.get('turns') or []),

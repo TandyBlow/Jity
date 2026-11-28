@@ -402,3 +402,33 @@ def test_clean_tree_passes(tmp_path):
     assert report["summary"]["malformed"]["status"] == "pass"
     assert report["summary"]["duplicate_content"]["status"] == "pass"
     assert report["failed"] is False
+
+
+def test_build_task_multifact_keeps_event_identity(tmp_path):
+    import json as _json
+    from tools.experiment_platform.build_task_multifact import main
+
+    evidence = {'runId': 't-run', 'arm': 'rules', 'turns': [{
+        'id': 't1',
+        'snapshotAfterTurn': {
+            'transport': {'state': {'time': {'dateTime': '2009-10-17T15:23:00'},
+                                    'characters': {'lu': {'id': 'lu', 'position': {}, 'tasks': {
+                                        'task_lu_kit': {'id': 'task_lu_kit', 'ownerId': 'lu',
+                                                        'goal': '拿到装备', 'status': 'achieved'}}}},
+                                    'items': {}, 'locations': {}}},
+            'taskLedger': {'seenFacts': ['lu:路明非走进器材棚。（达到目的）；去向=lu:shed'],
+                           'entries': [{'taskId': 'task_lu_kit', 'ownerId': 'lu',
+                                        'status': {'c1': 'satisfied'}, 'active': {'c1': True},
+                                        'evidence': {'c1': {'text': '路明非走进器材棚。（达到目的）；去向=lu:shed'}}}]},
+        }}]}
+    src = tmp_path / 'evidence.json'
+    src.write_text(_json.dumps(evidence, ensure_ascii=False), encoding='utf-8')
+    out = tmp_path / 'cases.jsonl'
+    assert main(['--evidence', str(src), '--out', str(out)]) == 0
+    row = _json.loads(out.read_text(encoding='utf-8').splitlines()[0])
+    assert row['axis'] == 'completion' and row['oldStatus'] == 'achieved'
+    assert row['eventCount'] == 1 and row['events'][0]['actorKey'] == 'lu'
+    assert row['events'][0]['tags'] == {'去向': 'lu:shed'}
+    assert row['supportLinks'][0]['eventId'] == 'ev:1:0'
+    assert row['spec'] and row['spec']['forbiddenShortcuts']
+    assert row['stateChanges']['baseline'] is True
