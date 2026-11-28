@@ -1057,6 +1057,28 @@ describe('common-group results', () => {
     expect(detail.stageDetail?.taskScope?.defaultedUnchanged ?? []).toContain('b');
   });
 
+  it('micro-only results returns a conservative no-change answer without an engine call', async () => {
+    const engine = new ScriptedEngine([]);
+    const outcome = await createSettlementHandlers({ engine, options: { microOnly: true } }).results('group_micro_only', {
+      groupId: 'group_micro_only',
+      members: [{ memberId: 'a', actionText: '甲把工具拿到手。', rollRefs: [{ targetId: 'a', rollId: 'r1', result: 10, eligible: true, admitted: true }] }],
+      workingState: world(),
+    } as unknown as Json);
+    expect(engine.prompts).toHaveLength(0);
+    expect(outcome.value?.a).toContain('没有变化');
+  });
+
+  it('micro-only updates does not call the engine for tasks/personality/sanity', async () => {
+    const engine = new ScriptedEngine([]);
+    const outcome = await createSettlementHandlers({ engine, options: { microOnly: true } }).updates('group_1#tasks', {
+      groupId: 'group_1', mode: 'group', stage: 'tasks', priorStages: [], appliedDelta: {},
+      results: { a: '甲把工具拿到手（达到目的）。' }, workingState: world(),
+    } as unknown as Json);
+    expect(engine.prompts).toHaveLength(0);
+    const detail = outcome.evidence.detail as { stageDetail?: { skipped?: string } };
+    expect(detail.stageDetail?.skipped).toBe('micro_only_no_change');
+  });
+
   it('commits a goal-level task decision without any engine call', async () => {
     const engine = new ScriptedEngine([]);
     const outcome = await createSettlementHandlers({

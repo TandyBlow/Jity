@@ -642,11 +642,12 @@ export default function WorldLocalPage() {
     && new URLSearchParams(window.location.search).get('targets') === 'rule');
   // Evaluation arms (D-123): rules = program ports only, no classifier and no
   // semantic LLM; classifier = model ports, no program fast-path and no LLM.
-  const [semanticArm] = useState<'rules' | 'classifier' | null>(() => {
+  const [semanticArm] = useState<'rules' | 'classifier' | 'micro-only' | null>(() => {
     if (typeof window === 'undefined') return null;
     const value = new URLSearchParams(window.location.search).get('semanticArm');
-    return value === 'rules' || value === 'classifier' ? value : null;
+    return value === 'rules' || value === 'classifier' || value === 'micro-only' ? value : null;
   });
+  const microOnly = semanticArm === 'micro-only';
   // Shadow-only existence heads: scores are recorded, never applied.
   const [existenceShadow] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('existenceShadow') === '1');
@@ -968,7 +969,9 @@ export default function WorldLocalPage() {
         const world = await loadStaticWorld(await assetResponse.text(), STATIC_WORLD_REGISTRATION);
         const arm = narrationArm.current;
         // 手机默认单引擎 0.6B 兼顾两角色（内存与稳定性）
-        const narrationKey: NarrationModelKey = arm.model ?? (isPhoneBrowser() ? 'semantic' : DEFAULT_NARRATION_MODEL);
+        const narrationKey: NarrationModelKey = microOnly
+          ? DEFAULT_NARRATION_MODEL
+          : arm.model ?? (isPhoneBrowser() ? 'semantic' : DEFAULT_NARRATION_MODEL);
         const narrationSpec = NARRATION_MODELS[narrationKey];
         // The engines are constructed first but NOT loaded yet: the local save
         // must restore and paint before a ~100 s cold load, otherwise a reload
@@ -985,10 +988,19 @@ export default function WorldLocalPage() {
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
         const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
-        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? DEFAULT_SEMANTIC_CTX, 'semantic', SEMANTIC_MODEL_BYTES, arm.kv ?? 'q8_0', (prompt) => {
-          const rec = turnRecordRef.current;
-          if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
-        }, arm.nbatch);
+        const semantic = microOnly
+          ? {
+            info: { backend: 'blocked', modelId: null },
+            async load() { /* no semantic engine in micro-only */ },
+            async complete(): Promise<string> { throw new Error('semantic_llm_blocked'); },
+            async dispose() { /* nothing to dispose */ },
+            cancelActive() { return 0; },
+            runtime() { return null; },
+          }
+          : webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? DEFAULT_SEMANTIC_CTX, 'semantic', SEMANTIC_MODEL_BYTES, arm.kv ?? 'q8_0', (prompt) => {
+            const rec = turnRecordRef.current;
+            if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
+          }, arm.nbatch);
         semanticRef.current = semantic;
         // The 0.6B narration arm shares the semantic engine: one set of
         // weights, at the cost of serialising narration against settlement.
@@ -1021,7 +1033,7 @@ export default function WorldLocalPage() {
         // Experimental micro workflow: rules + int8 scorer for targets, behind
         // ?micro=1. The LLM path stays the default; stats land on window for
         // the acceptance driver.
-        const microEnabled = microParam;
+        const microEnabled = microParam || microOnly;
         (window as unknown as { __microEnabled?: boolean }).__microEnabled = microEnabled;
         /** One micro call goes to both the session-wide array (driver
          * compatibility) and the current turn record (per-player-operation
@@ -1079,13 +1091,13 @@ export default function WorldLocalPage() {
         const microTaskVerifier = useModelPorts && taskVerifierMicro
           ? createMicroTaskVerifier({ onStats: (record) => recordMicro('task-verifier', record) })
           : undefined;
-        const microTaskProposer = taskProposerMicro && semanticArm !== 'rules'
+        const microTaskProposer = taskProposerMicro && semanticArm !== 'rules' && !microOnly
           ? createMicroTaskProposer({ onStats: (record) => recordMicro('task-proposer', record) })
           : undefined;
-        const microGoalTasks = useModelPorts && taskStageGoal
+        const microGoalTasks = (useModelPorts && taskStageGoal) || microOnly
           ? createMicroGoalTasks({ requireProgramCoverage: true, onStats: (record) => recordMicro('goal-tasks', record) })
           : undefined;
-        const microSubtasks = useModelPorts && subtasksProgram ? createProgramSubtasks : undefined;
+        const microSubtasks = useModelPorts && (subtasksProgram || microOnly) ? createProgramSubtasks : undefined;
         {
           const armInfo = (window as unknown as { __worldArm?: Record<string, unknown> }).__worldArm;
           if (armInfo) {
@@ -1097,6 +1109,8 @@ export default function WorldLocalPage() {
             armInfo.subtasks = subtasksProgram ? 'program' : 'llm';
             armInfo.action = actionTemplateOnly ? 'template' : 'llm';
             armInfo.targets = targetsRuleOnly ? 'rule' : 'llm';
+            armInfo.microOnly = microOnly;
+            armInfo.semanticEngine = microOnly ? 'absent' : 'present';
             armInfo.semanticArm = semanticArm;
           }
         }
@@ -1135,8 +1149,9 @@ export default function WorldLocalPage() {
           : engine);
         const model = new LocalGameModel(recordEngine(blockSemantic(semantic)), {
           ...(microTargets ? { microTargets } : {}),
-          ...(actionTemplateOnly ? { templateOnly: true } : {}),
-          ...(targetsRuleOnly ? { targetsNoLlm: true } : {}),
+          ...(actionTemplateOnly || microOnly ? { templateOnly: true } : {}),
+          ...(targetsRuleOnly || microOnly ? { targetsNoLlm: true } : {}),
+          ...(microOnly ? { microOnly: true } : {}),
           ...(microResults ? { microResults } : {}),
           ...(microUpdates ? { microUpdates } : {}),
           ...(microBehavior ? { behavior: microBehavior } : {}),

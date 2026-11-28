@@ -152,6 +152,8 @@ export interface ActionHandlerOptions {
   /** Evaluation arm (S05): targets never fall back to the LLM. A rule/scorer
    * abstention becomes an empty target list with a recorded reason. */
   targetsNoLlm?: boolean;
+  /** Micro-only arm (S06): reaction abstention uses a neutral template. */
+  microOnly?: boolean;
   /** Three candidate judges (task/personality/scene); null falls back. */
   judge?: (pairs: Array<{ context: string; text: string }>) => Promise<Array<{ task: number; personality: number; scene: number }> | null> | Array<{ task: number; personality: number; scene: number }> | null;
   /** When the protagonist is the admitted reaction target, the player's own

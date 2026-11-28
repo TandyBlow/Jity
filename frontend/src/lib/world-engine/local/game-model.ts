@@ -87,6 +87,9 @@ export interface GameModelOptions {
   /** Evaluation arm (S05): action/targets never fall back to the LLM. */
   templateOnly?: boolean;
   targetsNoLlm?: boolean;
+  /** Micro-only arm (S06): no semantic LLM; stages use recorded conservative
+   * results when their program/micro path abstains. */
+  microOnly?: boolean;
   /** Experimental micro workflow: a rules+scorer targets port. When it returns
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
@@ -240,6 +243,7 @@ export class LocalGameModel implements WorldModelPort {
     // continuation judgement. A policy stop is a visible stop; there is no
     // product-side "one action per round" switch and no fabricated handback.
     this.settlement = createSettlementModelPort(semanticEngine, {
+      microOnly: this.options.microOnly,
       microResults: this.options.microResults,
       microUpdates: this.options.microUpdates,
       microContinuation: this.options.microContinuation,
@@ -284,6 +288,7 @@ export class LocalGameModel implements WorldModelPort {
       microTargets: this.options.microTargets,
       templateOnly: this.options.templateOnly,
       targetsNoLlm: this.options.targetsNoLlm,
+      microOnly: this.options.microOnly,
       structuredActions: this.options.structuredActions,
       templateFallback: this.options.templateFallback,
       behavior: this.options.behavior,

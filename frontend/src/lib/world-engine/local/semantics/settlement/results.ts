@@ -225,6 +225,32 @@ export async function runResults(
       });
     }
   }
+  if (options.microOnly) {
+    const judgments: Judgment[] = members.map((member) => ({
+      memberId: member.memberId, label: 'no_change', reason: '没有变化', effects: [],
+    }));
+    const facts: Fact[] = members.map((member) => {
+      const name = workingState.initial.characters[member.memberId]?.name ?? member.memberId;
+      return {
+        text: `${name}没有做出能改变局面的行动。（没有变化）`,
+        memberIds: [member.memberId], actorId: member.memberId, outcome: 'unaffected',
+        actorSource: 'derived', outcomeSource: 'derived',
+      };
+    });
+    const parsedAnswer: ResultsAnswer = { judgments, facts };
+    const value = normalizeResults(parsedAnswer, members);
+    const ms = Math.round(performance.now() - started);
+    const evidence = makeEvidence(key, [], false, undefined, {
+      groupId,
+      memberIds: members.map((member) => member.memberId),
+      factCount: facts.length,
+      labels: judgments.map((judgment) => `${judgment.memberId}:${judgment.label}`),
+      source: 'program',
+      conservative: 'micro_only_no_change',
+    });
+    options.onTask?.('results', key, { ms, fallback: false, raw: '', promptChars: 0, source: 'program' });
+    return { value, raw: '', ms, fallback: false, evidence };
+  }
   let calls: ModelCallEvidence[] = [];
   // The last attempt drops a fact that has no visible result instead of failing
   // the point: old runs (95dc, 415c, d101, a178) answered only

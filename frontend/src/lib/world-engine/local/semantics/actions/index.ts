@@ -523,6 +523,11 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       }
     }
 
+    if (options.microOnly) {
+      const text = `${scene.actorName}没有立刻作出反应。`;
+      issues.push({ code: 'micro_reaction', severity: 'info', message: 'micro-only 中性反应模板' });
+      return evidence('reaction', key, asJson(text), 'program', started, issues, [], '');
+    }
     const generated = await generate<string>({
       task: 'reaction', key, prompt: reactionPrompt(scene, source, call.sourceActionText), maxTokens: tokens('reaction'),
       decode: (raw) => decodeTaskOutput('reaction', raw) as string,

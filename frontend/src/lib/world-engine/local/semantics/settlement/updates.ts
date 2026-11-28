@@ -911,6 +911,14 @@ async function stagePosition(ctx: StageContext): Promise<StageOutcome> {
       microNote = `micro_error:${errorText(error)}`;
     }
   }
+  if (ctx.options.microOnly) {
+    return {
+      changes: {},
+      detail: { scannedEntityIds: scanned, positionScope: scope, skipped: 'micro_only_no_change' },
+      fallback: false,
+      calls: [],
+    };
+  }
   const prompt = appearanceIds.length
     ? buildScenePrompt(ctx.state, ctx.results, scanned, appearanceIds)
     : buildPositionPrompt(ctx.state, ctx.results, scanned);
@@ -1088,6 +1096,14 @@ async function stageAppearance(ctx: StageContext): Promise<StageOutcome> {
   // A move can drag a new entity into view (a character walked into the room the
   // merged prompt did not list), so the leftover ids get their own small
   // question; the answer covers only those ids.
+  if (ctx.options.microOnly) {
+    return {
+      changes: {},
+      detail: { scannedEntityIds: scanned, skipped: 'micro_only_no_change' },
+      fallback: false,
+      calls: [],
+    };
+  }
   const prompt = buildDescriptionPrompt(ctx.state, ctx.results, 'appearance', leftover);
   const lenientDrops: { entityId: string; op: string; droppedText: string }[] = [];
   try {
@@ -1219,6 +1235,19 @@ async function stageTasks(ctx: StageContext): Promise<StageOutcome> {
     } catch {
       // A goal-stage failure is an abstain; the proposer and LLM stages run below.
     }
+  }
+  if (ctx.options.microOnly) {
+    return {
+      changes: {},
+      detail: {
+        taskCoverageIds: characters,
+        taskScope: { ...taskScope, assertedUnchanged: affectedRows.length, achievedByCharacter: [], emptyCharacters: taskScope.affectedCharacters, rejectedTaskIds: [], supports: [] },
+        decidedTaskIds: decidedIds,
+        skipped: 'micro_only_no_change',
+      },
+      fallback: false,
+      calls: [],
+    };
   }
   if (ctx.options.microTaskProposer) {
     try {
@@ -1515,6 +1544,14 @@ async function stageSubtasks(ctx: StageContext): Promise<StageOutcome> {
       // A program proposer failure is an abstain; the LLM subtasks stage runs below.
     }
   }
+  if (ctx.options.microOnly) {
+    return {
+      changes: {},
+      detail: { parentTaskIds: rows.map(({ task }) => task.id).sort(), characterIds: characters, skipped: 'micro_only_no_change' },
+      fallback: false,
+      calls: [],
+    };
+  }
   const prompt = buildSubtasksPrompt(ctx, projection.affectedTaskOwners, projection);
   try {
     const answer = await callJson(ctx.engine, prompt, {
@@ -1572,6 +1609,14 @@ async function stagePersonality(ctx: StageContext): Promise<StageOutcome> {
   const uniqueOwners = [...new Set(triggerIds.map((taskId) => index.get(taskId)?.ownerId).filter((id): id is Id => Boolean(id)))];
   if (uniqueOwners.length === 1) factOwners.set('人物id', uniqueOwners[0]);
   const personalityLenient: { entityId: string; op: string; droppedText: string }[] = [];
+  if (ctx.options.microOnly) {
+    return {
+      changes: {},
+      detail: { scannedCharacterIds: scanned, triggeredByTaskIds: triggerIds.sort(), skipped: 'micro_only_no_change' },
+      fallback: false,
+      calls: [],
+    };
+  }
   const prompt = buildPersonalityPrompt(ctx, triggerIds, ctx.recoveredAchieved.size > 0, scanned);
   try {
     const answer = await callJson(ctx.engine, prompt, {
@@ -1619,6 +1664,11 @@ async function stageSanity(ctx: StageContext): Promise<StageOutcome> {
   const owners = [...ctx.personalityOwners].filter((id) => Boolean(ctx.state.characters[id])).sort();
   if (!owners.length) {
     return { changes: {}, detail: { owners: [], skipped: 'no_personality_change' }, fallback: false, calls: [] };
+  }
+  if (ctx.options.microOnly) {
+    const changes: Record<Id, Partial<EntityDelta>> = {};
+    for (const owner of owners) changes[owner] = { sanitySet: ctx.state.characters[owner].sanity };
+    return { changes, detail: { owners, fallback: 'micro_only_current_sanity' }, fallback: false, calls: [] };
   }
   const prompt = buildSanityPrompt(ctx, owners);
   try {

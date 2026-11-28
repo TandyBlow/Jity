@@ -26,6 +26,9 @@ export interface ContinuationPolicyOptions {
 }
 
 export interface SettlementOptions {
+  /** Strict micro-only arm (S06): no semantic LLM may be called; stages that
+   * would fall back to the model return a recorded conservative result. */
+  microOnly?: boolean;
   continuation?: ContinuationPolicyOptions;
   maxTokens?: Partial<Record<SettlementTask, number>>;
   temperature?: number;

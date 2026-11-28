@@ -251,12 +251,14 @@ export class ContinuationRunner {
   private readonly nextRoundId?: () => Id;
   private readonly onTaskCallback?: SettlementOptions['onTask'];
   private readonly microContinuation?: SettlementOptions['microContinuation'];
+  private readonly microOnly: boolean;
 
   constructor(private readonly engine: InferenceEngine, options: SettlementOptions = {}) {
     this.policy = new ContinuationPolicy(options.continuation);
     this.nextRoundId = options.nextRoundId;
     this.onTaskCallback = options.onTask;
     this.microContinuation = options.microContinuation;
+    this.microOnly = options.microOnly === true;
   }
 
   reset(): void {
@@ -270,6 +272,9 @@ export class ContinuationRunner {
     if (this.microContinuation) {
       const micro = await this.tryMicro(key, parsed, started);
       if (micro) return micro;
+      if (this.microOnly) {
+        return this.handback(key, [], started, { reason: 'micro_only_handback' }, 'micro');
+      }
     }
     const { workingState, roundChanges, roundId } = parsed;
     const proposalPrompt = buildCandidatePrompt(parsed, this.policy.maxCandidates);
