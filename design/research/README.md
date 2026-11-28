@@ -67,3 +67,4 @@ Artifacts     evidence files, manifests, commits
 | E44 | Context-aware rewrite choice: retrieval and a 10-feature ranker | done (rank 0.116 vs freq 0.104 exact) |
 | E45 | Zero-invention pointer editor (copy + learned order) | done (charF1 .431, zero invention, 13 test) |
 | E46 | 1.7B LoRA data curve, same 58-prompt holdout | negative (290 rows .709 vs 339 rows .671) |
+| E47 | Semantic ctx A/B, headless single turn | done (12288 2342.7MB vs 8192 2064.3MB, delta 278MB) |
