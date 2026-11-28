@@ -95,3 +95,4 @@ Artifacts     evidence files, manifests, commits
 | N15 | Naturalness gap: aspect, connectives, entity-attribute rewriting and ellipsis, not grouping | done (analysis) |
 | N16 | Natural reference + grounding checks: 6 points, 46 clauses, 0 problems; per-result clause binding | done (6 scenes) |
 | N17 | Edit operations: all 25 single-source clauses edited, median 16.7% chars | done |
+| N18 | Fact projection: 47.4% of fact sentences split into entity + attributes (mean 2.14) | done |
