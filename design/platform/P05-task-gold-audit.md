@@ -72,7 +72,8 @@ clause/outcome 判“这条事实是否支持目标”，task 判“任务是否
   抽出的 **584 条多事实/跨回合**任务案例（73 个任务、14 个 owner、平均 21.4 条事件、最多
   27 条、平均跨 4.5 个回合）。每条事件保留回合、时间、人物、结果标签、去向/环境/信息等
   状态标签和来源；每个案例附任务当前 ledger 条件与证据、当回合状态 diff、任务状态历史；
-  12 个任务带已有 required/preconditions/negations 规格。`axis: completion`，完成/支持
+  summary 另有 run 级 `turnTable`（turnIndex→turnId/time）与 `turnStateDiffs`，事件用
+  turnIndex 关联；12 个任务带已有 required/preconditions/negations 规格。`axis: completion`，完成/支持
   标签留空待盲评，旧 status 只作基线——41 个 achieved 案例里就有 `task_lu_kit` 走进器材棚
   即被判 achieved 的旧错误。
 - `task-gold-v1.bundles.jsonl`：11 条**多事实**开发夹具（5 yes / 2 partial / 3 no /

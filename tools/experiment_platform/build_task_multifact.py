@@ -116,6 +116,7 @@ def main(argv: list[str] | None = None) -> int:
     world = json.loads(WORLD.read_text(encoding='utf-8-sig'))
     names = {cid: c.get('name') or cid for cid, c in (world['initial']['characters'] or {}).items()}
     turn_table = []
+    turn_diffs = []
     prev_seen: set[str] = set()
     prev_state = prev_ledger = None
     accumulated: list[dict] = []
@@ -145,6 +146,7 @@ def main(argv: list[str] | None = None) -> int:
                 'turnIndex': turn_index,
             })
         diff = state_diff(prev_state, state)
+        turn_diffs.append({'turnIndex': turn_index, 'diff': diff})
         delta = ledger_delta(prev_ledger or {}, current_index)
         signature = tuple(e['id'] for e in accumulated)
         tasks = [(cid, char, tid, task) for cid, char in (state.get('characters') or {}).items()
@@ -215,7 +217,7 @@ def main(argv: list[str] | None = None) -> int:
         'usage': 'dev/regression; scenario evidence drove fixes, not independent',
         'runId': doc.get('runId'), 'arm': doc.get('arm'),
         'labelSource': 'raw taskLedger.seenFacts + state snapshot diff',
-        'turnTable': turn_table,
+        'turnTable': turn_table, 'turnStateDiffs': turn_diffs,
     }
     out.with_suffix('.summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     print(json.dumps(summary, ensure_ascii=False, indent=1))

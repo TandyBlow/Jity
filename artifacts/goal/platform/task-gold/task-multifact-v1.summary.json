@@ -87,5 +87,251 @@
    "turnId": "sc08-env-foyer-table",
    "time": "2009-10-17T15:36:00"
   }
+ ],
+ "turnStateDiffs": [
+  {
+   "turnIndex": 1,
+   "diff": {
+    "baseline": true
+   }
+  },
+  {
+   "turnIndex": 2,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:23:00",
+      "instantOrdinal": 0
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:26:00",
+      "instantOrdinal": 0
+     }
+    },
+    "tasks": [],
+    "positions": [
+     {
+      "id": "lu",
+      "from": {
+       "containerId": "lane",
+       "slotId": "slot_wall",
+       "relativeTo": null
+      },
+      "to": {
+       "containerId": "yard",
+       "slotId": "slot_south_cover",
+       "relativeTo": null
+      }
+     }
+    ],
+    "sanity": [],
+    "items": [],
+    "locations": []
+   }
+  },
+  {
+   "turnIndex": 3,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:26:00",
+      "instantOrdinal": 0
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:29:00",
+      "instantOrdinal": 0
+     }
+    },
+    "tasks": [
+     {
+      "ownerId": "lu",
+      "taskId": "task_lu_kit",
+      "from": "pending",
+      "to": "achieved"
+     }
+    ],
+    "positions": [
+     {
+      "id": "lu",
+      "from": {
+       "containerId": "yard",
+       "slotId": "slot_south_cover",
+       "relativeTo": null
+      },
+      "to": {
+       "containerId": "shed",
+       "slotId": "slot_cage",
+       "relativeTo": null
+      }
+     }
+    ],
+    "sanity": [],
+    "items": [],
+    "locations": []
+   }
+  },
+  {
+   "turnIndex": 4,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:29:00",
+      "instantOrdinal": 0
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:32:00",
+      "instantOrdinal": 0
+     }
+    },
+    "tasks": [],
+    "positions": [],
+    "sanity": [],
+    "items": [
+     {
+      "id": "spare_mag2",
+      "from": {
+       "containerId": "ammo_box",
+       "slotId": "slot_right",
+       "relativeTo": null
+      },
+      "to": {
+       "containerId": "jacket_lu",
+       "slotId": "slot_chest",
+       "relativeTo": null
+      }
+     }
+    ],
+    "locations": []
+   }
+  },
+  {
+   "turnIndex": 5,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:32:00",
+      "instantOrdinal": 0
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:33:00",
+      "instantOrdinal": 1
+     }
+    },
+    "tasks": [],
+    "positions": [
+     {
+      "id": "lu",
+      "from": {
+       "containerId": "shed",
+       "slotId": "slot_cage",
+       "relativeTo": null
+      },
+      "to": {
+       "containerId": "hatch",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    ],
+    "sanity": [],
+    "items": [],
+    "locations": []
+   }
+  },
+  {
+   "turnIndex": 6,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:33:00",
+      "instantOrdinal": 1
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:34:00",
+      "instantOrdinal": 1
+     }
+    },
+    "tasks": [
+     {
+      "ownerId": "lu",
+      "taskId": "task_lu_route",
+      "from": "pending",
+      "to": "achieved"
+     }
+    ],
+    "positions": [],
+    "sanity": [],
+    "items": [],
+    "locations": []
+   }
+  },
+  {
+   "turnIndex": 7,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:34:00",
+      "instantOrdinal": 1
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:35:00",
+      "instantOrdinal": 1
+     }
+    },
+    "tasks": [],
+    "positions": [
+     {
+      "id": "lu",
+      "from": {
+       "containerId": "hatch",
+       "slotId": null,
+       "relativeTo": null
+      },
+      "to": {
+       "containerId": "foyer",
+       "slotId": null,
+       "relativeTo": null
+      }
+     }
+    ],
+    "sanity": [],
+    "items": [],
+    "locations": []
+   }
+  },
+  {
+   "turnIndex": 8,
+   "diff": {
+    "time": {
+     "from": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:35:00",
+      "instantOrdinal": 1
+     },
+     "to": {
+      "calendar": "gregorian",
+      "dateTime": "2009-10-17T15:36:00",
+      "instantOrdinal": 1
+     }
+    },
+    "tasks": [],
+    "positions": [],
+    "sanity": [],
+    "items": [],
+    "locations": []
+   }
+  }
  ]
 }

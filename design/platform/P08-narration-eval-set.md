@@ -57,7 +57,8 @@ python -m tools.experiment_platform.narration_org_eval \
 
 **Caveats.** 选择/顺序金标由结算记录与事实块构造，不是人工逐句标注；事件动作在不同 run 间
 有模板重复，run 分组只能消除同 run 泄漏，不能消除同世界重复；`avoidRepeat` 依赖源 run 的
-更早正文，源文件缺失时为空；结果标签在独立留出集只有 1 条，结果率只作方向；31 条无结算
+更早正文，源文件缺失时为空；且冻结的 `input.prompt` 不含更早正文，模型看不到这些内容，
+该指标测的是跨 point 重复倾向，不是模型在输入内可避免的约束；结果标签在独立留出集只有 1 条，结果率只作方向；31 条无结算
 事件样本只能测组织/编造，不能测选择；test 分片不要在调参时反复使用。
 
 **Artifacts.** `artifacts/goal/platform/eval/narration-selection-org-v1.{dev,test}.jsonl`、
