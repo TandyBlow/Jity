@@ -77,3 +77,4 @@ Artifacts     evidence files, manifests, commits
 | E53 | Semantic LLM call audit with per-task attribution | done (344 calls/20 turns; handoff) |
 | E54 | Role parse of settled facts: 44% subject-less, 12.5% recoverable | done |
 | E55 | Rule composer baseline: fidelity by construction, length 0.43x, still a log | done |
+| E56 | Rule organization: 0 merges possible; event clustering is the missing step | done |
