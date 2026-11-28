@@ -33,6 +33,22 @@ function softmax(values: number[]): number[] {
   return exps.map((value) => value / sum);
 }
 
+/** Names the goal is about. A fact that mentions one of them is a candidate
+ * even when the sentence-level wording overlap is low ("检查了护目镜" vs
+ * "把护目镜戴好并确认镜片"). */
+function goalEntityNames(state: WorldState, goal: string): string[] {
+  const names: string[] = [];
+  for (const group of [state.initial.characters, state.initial.items, state.initial.locations]) {
+    for (const entity of Object.values(group ?? {})) {
+      const name = (entity as { name?: string }).name ?? '';
+      const core = name.split('的').pop() ?? '';
+      if (name && goal.includes(name)) names.push(name);
+      if (core && core.length >= 2 && core !== name && goal.includes(core)) names.push(core);
+    }
+  }
+  return names;
+}
+
 export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVerifierPort {
   const runtime = createMicroRuntime({ threads: 1 });
   async function scoreDefault(rows: Array<{ goal: string; fact: string }>): Promise<number[] | null> {
@@ -64,6 +80,7 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
       if (!owners.has(ownerId)) continue;
       for (const task of Object.values(current.tasks)) {
         if (task.status !== 'pending') continue;
+        const names = goalEntityNames(request.state, task.goal);
         for (const fact of request.facts) {
           // A fact belongs to its own member; another member's fact may support
           // this task only when it names the task owner (the old reader's rule).
@@ -71,7 +88,8 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
             const ownerName = request.state.initial.characters[ownerId]?.name ?? '';
             if (!ownerName || !fact.text.includes(ownerName)) continue;
           }
-          if (!sharesGoalWording(fact.text, task.goal)) continue;
+          const entityHit = names.some((name) => fact.text.includes(name));
+          if (!entityHit && !sharesGoalWording(fact.text, task.goal)) continue;
           rows.push({ characterId: ownerId, taskId: task.id, basis: fact.id, goal: task.goal, fact: fact.text });
         }
       }

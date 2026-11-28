@@ -35,7 +35,7 @@ describe('goal-level task stage', () => {
     });
     const out = await port({ state: state(), ownerIds: ['hero'], facts });
     expect(out?.achieved).toEqual([expect.objectContaining({ characterId: 'hero', taskId: 'task_hero_key', basis: 'f2' })]);
-    expect(out?.scored).toHaveLength(1);
+    expect(out?.scored).toHaveLength(2);
   });
 
   it('returns no achievement, not null, when candidates exist but score low', async () => {
@@ -47,6 +47,15 @@ describe('goal-level task stage', () => {
   it('abstains when the scorer fails', async () => {
     const port = createMicroGoalTasks({ scoring: () => null });
     expect(await port({ state: state(), ownerIds: ['hero'], facts })).toBeNull();
+  });
+
+  it('candidates on a goal entity even when sentence overlap is low', async () => {
+    const port = createMicroGoalTasks({ scoring: (rows) => rows.map(() => 0.9) });
+    const out = await port({
+      state: state(), ownerIds: ['hero'],
+      facts: [{ id: 'f1', memberId: 'hero', text: '路明非检查了手电。' }],
+    });
+    expect(out?.achieved.map((row) => row.taskId)).toEqual(['task_hero_key']);
   });
 
   it('does not credit another member fact to a task unless it names the owner', async () => {
