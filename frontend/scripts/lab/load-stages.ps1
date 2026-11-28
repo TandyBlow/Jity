@@ -37,9 +37,10 @@ if ($up) {
     $parts = $spec.Split(":")
     $stage = $parts[0]
     $ctx = if ($parts.Length -gt 1) { [int]$parts[1] } else { 2048 }
-    $file = "$outDir/load-$stage-$ctx.jsonl"
-    & node frontend/scripts/lab/load-probe.mjs $stage $ctx $file ($Seconds * 1000)
-    "stage=$stage ctx=$ctx exit=$LASTEXITCODE" | Out-File -Append -Encoding utf8 "$outDir/load-stages.log"
+    $nb = if ($parts.Length -gt 2) { [int]$parts[2] } else { 0 }
+    $file = "$outDir/load-$stage-$ctx-$nb.jsonl"
+    & node frontend/scripts/lab/load-probe.mjs $stage $ctx $file ($Seconds * 1000) $nb
+    "stage=$stage ctx=$ctx nb=$nb exit=$LASTEXITCODE" | Out-File -Append -Encoding utf8 "$outDir/load-stages.log"
   }
 }
 

@@ -8,6 +8,7 @@ const stage = process.argv[2] ?? 'page';
 const ctx = Number(process.argv[3] ?? 2048);
 const out = process.argv[4] ?? `lab-load-${stage}.jsonl`;
 const durationMs = Number(process.argv[5] ?? 90000);
+const nb = Number(process.argv[6] ?? 0);
 writeFileSync(out, '');
 const log = (row) => appendFileSync(out, JSON.stringify(row) + '\n');
 const started = Date.now();
@@ -15,7 +16,7 @@ const started = Date.now();
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
 const page = await (await browser.newContext({ viewport: { width: 1000, height: 700 } })).newPage();
 let lastStage = null;
-const url = `http://127.0.0.1:3177/lab-load?stage=${stage}&ctx=${ctx}&cpu=1`;
+const url = `http://127.0.0.1:3177/lab-load?stage=${stage}&ctx=${ctx}&cpu=1${nb ? `&nb=${nb}` : ''}`;
 await page.goto(url, { waitUntil: 'domcontentloaded' }).catch((error) => log({ at: 0, event: 'goto-failed', error: String(error) }));
 
 while (Date.now() - started < durationMs) {

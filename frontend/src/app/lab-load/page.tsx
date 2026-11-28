@@ -16,6 +16,7 @@ export default function LabLoadPage() {
     const stage = q.get('stage') ?? 'page';
     const ctx = Math.min(32768, Math.max(512, Number(q.get('ctx') ?? 2048)));
     const gpuLayers = q.get('cpu') === '0' ? 99999 : 0;
+    const nBatch = Number(q.get('nb') ?? 0) || undefined;
     const mark = (name: string) => {
       window.__labStage = name;
       (window.__labTimings ??= {})[name] = Math.round(performance.now());
@@ -33,7 +34,7 @@ export default function LabLoadPage() {
         const wllama = await createWllama();
         mark('init-start');
         await wllama.loadModel([new File([blob], 'model.gguf', { type: 'application/octet-stream' })], {
-          n_ctx: ctx, n_gpu_layers: gpuLayers, cache_type_k: 'q8_0', cache_type_v: 'q8_0',
+          n_ctx: ctx, n_gpu_layers: gpuLayers, cache_type_k: 'q8_0', cache_type_v: 'q8_0', ...(nBatch ? { n_batch: nBatch } : {}),
         });
         mark('inited');
         if (stage === 'init') { await wllama.exit(); mark('done'); return; }

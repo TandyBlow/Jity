@@ -15,3 +15,12 @@ done server=46220
 server up=True
 stage=infer ctx=2048 exit=0
 done server=16428
+server up=True
+stage=init ctx=2048 nb=256 exit=0
+done server=51572
+server up=True
+stage=init ctx=8192 nb=0 exit=0
+done server=34944
+server up=True
+stage=init ctx=8192 nb=256 exit=0
+done server=23692
