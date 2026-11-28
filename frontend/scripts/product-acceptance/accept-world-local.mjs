@@ -580,8 +580,25 @@ try {
     evidence.finishedAt = new Date().toISOString();
     save();
     console.log(`[preflight] ready=${evidence.readyMs}ms isolated=${evidence.environment.crossOriginIsolated} adapter=${JSON.stringify(evidence.environment.adapter)} models=${evidence.modelRequests.filter((r) => /gguf/.test(r.url)).length} -> ${out}`);
-  } else
-  for (let index = evidence.turns.length; index < turns.length; index += 1) {
+  } else {
+  // A killed run may leave the browser save ahead of (or behind) the evidence.
+  // Resuming then would either duplicate a committed action or replay one; both
+  // break the state/evidence alignment, so refuse unless the history counts match.
+  let startIndex = evidence.turns.length;
+  if (process.argv.includes('--resume') && startIndex > 0) {
+    const last = evidence.turns[startIndex - 1];
+    const recorded = Number(last?.after?.historyCount ?? NaN);
+    const now = Number((await snapshot()).historyCount ?? NaN);
+    if (Number.isFinite(recorded) && Number.isFinite(now) && recorded !== now) {
+      evidence.resumeDesync = { recorded, now, lastTurn: last?.id ?? null };
+      evidence.status = 'FAILED';
+      evidence.finishedAt = new Date().toISOString();
+      save();
+      console.error(`[resume] refused: save history ${now} != evidence history ${recorded}`);
+      process.exit(4);
+    }
+  }
+  for (let index = startIndex; index < turns.length; index += 1) {
     const turn = typeof turns[index] === 'string' ? { id: `t${index + 1}`, input: turns[index] } : turns[index];
     const beforeCount = await entryCount();
     const beforeState = await snapshot();
@@ -1229,6 +1246,7 @@ try {
         }
       }
     }
+  }
   }
   evidence.priorProseLeaks = leaks;
 
