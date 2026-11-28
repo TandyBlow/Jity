@@ -1,0 +1,16 @@
+{"id": "sem-probe:compound:bandage:blue_band_chu", "info": {"status": "absent", "score": 0.0002, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:bandage", "info": {"status": "absent", "score": 0.0003, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:blue_band_chu", "info": {"status": "absent", "score": 0.0003, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:blue_radio", "info": {"status": "absent", "score": 0.0001, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:lin_radio", "info": {"status": "absent", "score": 0.0001, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:radio_nono", "info": {"status": "absent", "score": 0.0001, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:rifle_caesar", "info": {"status": "absent", "score": 0.0005, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:person:caesar", "info": {"status": "absent", "score": 0.0005, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:person:chu", "info": {"status": "absent", "score": 0.0022, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:person:doctor", "info": {"status": "absent", "score": 0.0006, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:person:lu", "info": {"status": "absent", "score": 0.0005, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:place:aid", "info": {"status": "absent", "score": 0.0049, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:place:balcony", "info": {"status": "absent", "score": 0.0079, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:place:bell_room", "info": {"status": "absent", "score": 0.0703, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:place:blue_rally", "info": {"status": "absent", "score": 0.1047, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:place:campus", "info": {"status": "absent", "score": 0.0033, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}

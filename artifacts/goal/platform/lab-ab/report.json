@@ -1,0 +1,26 @@
+﻿{
+    "lock":  [
+                 {
+                     "tag":  "old",
+                     "exit":  3,
+                     "ms":  591
+                 },
+                 {
+                     "tag":  "new",
+                     "exit":  0,
+                     "ms":  484
+                 }
+             ],
+    "submit":  [
+                   {
+                       "tag":  "old",
+                       "expected":  30,
+                       "queued":  1
+                   },
+                   {
+                       "tag":  "new",
+                       "expected":  30,
+                       "queued":  30
+                   }
+               ]
+}

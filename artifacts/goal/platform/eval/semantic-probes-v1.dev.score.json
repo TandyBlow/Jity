@@ -1,0 +1,203 @@
+{
+ "cases": 16,
+ "fields": 21,
+ "missing": [],
+ "statusAccuracy": 0.476,
+ "contentAccuracy": 0.476,
+ "contentEvaluated": 21,
+ "byFamily": {
+  "compound": {
+   "n": 1,
+   "statusOk": 0,
+   "contentOk": 0,
+   "contentN": 1,
+   "statusAccuracy": 0.0,
+   "contentAccuracy": 0.0
+  },
+  "item_inspect": {
+   "n": 6,
+   "statusOk": 0,
+   "contentOk": 0,
+   "contentN": 6,
+   "statusAccuracy": 0.0,
+   "contentAccuracy": 0.0
+  },
+  "person_observe": {
+   "n": 4,
+   "statusOk": 0,
+   "contentOk": 0,
+   "contentN": 4,
+   "statusAccuracy": 0.0,
+   "contentAccuracy": 0.0
+  },
+  "place_enter": {
+   "n": 10,
+   "statusOk": 10,
+   "contentOk": 10,
+   "contentN": 10,
+   "statusAccuracy": 1.0,
+   "contentAccuracy": 1.0
+  }
+ },
+ "bySplit": {
+  "dev": {
+   "cases": 16
+  }
+ },
+ "failures": [
+  {
+   "id": "sem-probe:compound:bandage:blue_band_chu",
+   "family": "compound",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:bandage",
+   "family": "item_inspect",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:blue_band_chu",
+   "family": "item_inspect",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:blue_radio",
+   "family": "item_inspect",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:lin_radio",
+   "family": "item_inspect",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:radio_nono",
+   "family": "item_inspect",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:rifle_caesar",
+   "family": "item_inspect",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:person:caesar",
+   "family": "person_observe",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:person:chu",
+   "family": "person_observe",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:person:doctor",
+   "family": "person_observe",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:person:lu",
+   "family": "person_observe",
+   "split": "dev",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  }
+ ]
+}

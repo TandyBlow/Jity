@@ -21,7 +21,8 @@ PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.eval_set check --path p
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_narration_holdout
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.narration_metrics --set artifacts/goal/platform/eval/narration-holdout-v1.jsonl --group-model
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_semantic_probes
-PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.semantic_score --set artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl --predictions preds.jsonl
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.head_predict --set artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl --out artifacts/goal/platform/eval/semantic-probes-v1.test.pred.jsonl
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.semantic_score --set artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl --predictions artifacts/goal/platform/eval/semantic-probes-v1.test.pred.jsonl --status-only
 
 # 6. run, measure, verify
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.run_experiment --name smoke --command "python -c \"print(1)\""

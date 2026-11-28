@@ -80,18 +80,23 @@ def build() -> tuple[dict, dict]:
         cases.append(make_case(identity, 'item_inspect', action,
                                [f'信息={name}:{any_of[0]}'], any_of,
                                {'infoAboutOtherEntities': True},
-                               {'entityId': item['id'], 'entityName': name}, split_of(identity),
-                               {'info': 'present'}))
+                               {'entityId': item['id'], 'entityName': name,
+                                'entityAppearance': item['appearance'],
+                                'settledLine': f'路明非看懂了{name}上的说明和外观。'},
+                               split_of(identity), {'info': 'present'}))
     for place in places:
         name = place['name']
         identity = f'sem-probe:place:{place["id"]}'
         action = f'我走进{name}，留意这里的环境。'
         any_of = clauses(place['appearance'])
+        # Real labels: a bare move does not change the environment (sm-e-move-1: env absent).
         cases.append(make_case(identity, 'place_enter', action,
-                               [f'环境={name}:{any_of[0]}'], any_of,
+                               [f'信息={name}:无新增', f'环境={name}:无变化'], [],
                                {'envAboutOtherPlaces': True},
-                               {'entityId': place['id'], 'entityName': name}, split_of(identity),
-                               {'env': 'present'}))
+                               {'entityId': place['id'], 'entityName': name,
+                                'entityAppearance': place['appearance'],
+                                'settledLine': f'路明非走进{name}。'},
+                               split_of(identity), {'info': 'absent', 'env': 'absent'}))
     for person in people:
         name = person['name']
         identity = f'sem-probe:person:{person["id"]}'
@@ -100,8 +105,10 @@ def build() -> tuple[dict, dict]:
         cases.append(make_case(identity, 'person_observe', action,
                                [f'信息={name}:{any_of[0]}'], any_of,
                                {'infoAboutOtherEntities': True},
-                               {'entityId': person['id'], 'entityName': name}, split_of(identity),
-                               {'info': 'present'}))
+                               {'entityId': person['id'], 'entityName': name,
+                                'entityAppearance': person['appearance'],
+                                'settledLine': f'路明非看清了{name}的衣着和身上的状态。'},
+                               split_of(identity), {'info': 'present'}))
     if len(items) >= 2:
         a, b = items[0], items[1]
         cases.append(make_case(
@@ -110,7 +117,9 @@ def build() -> tuple[dict, dict]:
             f'我不碰{a["name"]}，只查看{b["name"]}的外观。',
             [f'信息={b["name"]}:{clauses(b["appearance"])[0]}'], clauses(b['appearance']),
             {'infoAbout': [a['name']]},
-            {'entityId': b['id'], 'entityName': b['name'], 'negatedEntity': a['id']},
+            {'entityId': b['id'], 'entityName': b['name'], 'negatedEntity': a['id'],
+             'entityAppearance': b['appearance'],
+             'settledLine': f'路明非没有碰{a["name"]}，只看清了{b["name"]}的外观。'},
             split_of(f'sem-probe:negation:{a["id"]}:{b["id"]}'), {'info': 'present'}))
         cases.append(make_case(
             f'sem-probe:compound:{a["id"]}:{b["id"]}',
@@ -118,13 +127,16 @@ def build() -> tuple[dict, dict]:
             f'我拿起{a["name"]}，同时看清{b["name"]}的说明。',
             [f'信息={b["name"]}:{clauses(b["appearance"])[0]}'], clauses(b['appearance']),
             {'infoAbout': [a['name']]},
-            {'entityId': b['id'], 'entityName': b['name'], 'carriedEntity': a['id']},
+            {'entityId': b['id'], 'entityName': b['name'], 'carriedEntity': a['id'],
+             'entityAppearance': b['appearance'],
+             'settledLine': f'路明非拿起{a["name"]}，同时看清了{b["name"]}的说明。'},
             split_of(f'sem-probe:compound:{a["id"]}:{b["id"]}'), {'info': 'present'}))
     cases.append(make_case(
         'sem-probe:unknown:storage-locker', 'unknown_entity',
         '我查看墙边那只不存在的储物柜，想读上面的标签。',
         ['信息=储物柜:未登记'], [], {'anyInfoPresent': True},
-        {'entityName': '储物柜'}, 'test', {'info': 'absent'}))
+        {'entityName': '储物柜', 'settledLine': '路明非想查看储物柜，但没有找到。'},
+        'test', {'info': 'absent'}))
     dev = sorted((c for c in cases if c['split'] == 'dev'), key=lambda c: c['id'])
     test = sorted((c for c in cases if c['split'] == 'test'), key=lambda c: c['id'])
     summary = {

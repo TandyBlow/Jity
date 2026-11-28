@@ -81,14 +81,14 @@
    "schema": "jity-eval-set/1",
    "path": "artifacts/goal/platform/eval/semantic-probes-v1.dev.jsonl",
    "rows": 16,
-   "sha256": "299fd19dc4c6e2fc18c63b1417c7ac520f4b8942b7acdf0fca6fdcebd7e5d022",
+   "sha256": "e6de8cfb8832694e8e51c0ffd2ad117b92e717acd06c870f203371ff8c6649a5",
    "hashMode": "canonical-json"
   },
   "test": {
    "schema": "jity-eval-set/1",
    "path": "artifacts/goal/platform/eval/semantic-probes-v1.test.jsonl",
    "rows": 13,
-   "sha256": "af097d9db23ac6d34e0df4b536dac9f9e44ab7070b8687d44b5cd4ba2f8f1935",
+   "sha256": "e8d94fc0e1f07ceca9ba15c9e79d9e1edac4345f994e0d5e4756c0bcd86e66ed",
    "hashMode": "canonical-json"
   }
  }

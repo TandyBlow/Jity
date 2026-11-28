@@ -1,0 +1,183 @@
+{
+ "cases": 13,
+ "fields": 16,
+ "missing": [],
+ "statusAccuracy": 0.5,
+ "contentAccuracy": 0.467,
+ "contentEvaluated": 15,
+ "byFamily": {
+  "item_inspect": {
+   "n": 6,
+   "statusOk": 0,
+   "contentOk": 0,
+   "contentN": 6,
+   "statusAccuracy": 0.0,
+   "contentAccuracy": 0.0
+  },
+  "negation": {
+   "n": 1,
+   "statusOk": 1,
+   "contentOk": 0,
+   "contentN": 0,
+   "statusAccuracy": 1.0,
+   "contentAccuracy": 0.0
+  },
+  "person_observe": {
+   "n": 2,
+   "statusOk": 0,
+   "contentOk": 0,
+   "contentN": 2,
+   "statusAccuracy": 0.0,
+   "contentAccuracy": 0.0
+  },
+  "place_enter": {
+   "n": 6,
+   "statusOk": 6,
+   "contentOk": 6,
+   "contentN": 6,
+   "statusAccuracy": 1.0,
+   "contentAccuracy": 1.0
+  },
+  "unknown_entity": {
+   "n": 1,
+   "statusOk": 1,
+   "contentOk": 1,
+   "contentN": 1,
+   "statusAccuracy": 1.0,
+   "contentAccuracy": 1.0
+  }
+ },
+ "bySplit": {
+  "test": {
+   "cases": 13
+  }
+ },
+ "failures": [
+  {
+   "id": "sem-probe:item:jacket_lu",
+   "family": "item_inspect",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:radio_battery2",
+   "family": "item_inspect",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:radio_su",
+   "family": "item_inspect",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:red_band_caesar",
+   "family": "item_inspect",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:rifle_chu",
+   "family": "item_inspect",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:item:rifle_su",
+   "family": "item_inspect",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:negation:bandage:blue_band_chu",
+   "family": "negation",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "present",
+     "content": "",
+     "statusOk": true,
+     "contentOk": null
+    }
+   }
+  },
+  {
+   "id": "sem-probe:person:fingel",
+   "family": "person_observe",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  },
+  {
+   "id": "sem-probe:person:lin",
+   "family": "person_observe",
+   "split": "test",
+   "fields": {
+    "info": {
+     "expected": "present",
+     "predicted": "absent",
+     "content": "",
+     "statusOk": false,
+     "contentOk": false
+    }
+   }
+  }
+ ]
+}

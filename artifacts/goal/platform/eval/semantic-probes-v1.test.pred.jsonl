@@ -1,0 +1,13 @@
+{"id": "sem-probe:item:jacket_lu", "info": {"status": "absent", "score": 0.0001, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:radio_battery2", "info": {"status": "absent", "score": 0.0004, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:radio_su", "info": {"status": "absent", "score": 0.0002, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:red_band_caesar", "info": {"status": "absent", "score": 0.0002, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:rifle_chu", "info": {"status": "absent", "score": 0.0003, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:item:rifle_su", "info": {"status": "absent", "score": 0.0004, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:negation:bandage:blue_band_chu", "info": {"status": "present", "score": 0.9942, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:person:fingel", "info": {"status": "absent", "score": 0.0009, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:person:lin", "info": {"status": "absent", "score": 0.0008, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}
+{"id": "sem-probe:place:annex", "info": {"status": "absent", "score": 0.1983, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:place:bridge", "info": {"status": "absent", "score": 0.2498, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:place:cage", "info": {"status": "absent", "score": 0.0837, "content": ""}, "env": {"status": "absent", "score": 0.0001, "content": ""}}
+{"id": "sem-probe:unknown:storage-locker", "info": {"status": "absent", "score": 0.2941, "content": ""}, "env": {"status": "absent", "score": 0.0, "content": ""}}

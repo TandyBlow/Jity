@@ -96,10 +96,22 @@
    **0/2**；E55 覆盖 0.875、**2/2**；E57 覆盖 1.0、**2/2**；编造 0。样本=1，只作链路
    与方向证据，不作排名。驱动提前退出的原因未定，按工具缺陷记录。
 
-**Conditions.** 语义探针尚未对任何工作流打分（没有 predictions）；叙事新跑只完成
-1/4 回合，独立结果标签验证只有 1 点（方向一致，不能作排名）；历史 LoRA 输出模式与当前
-默认不同，不能横向比较；性能数字来自旧 `timing-baseline.json` 与失败/部分的新跑，不是
-今天完整构建的验收。
+8. **语义独立探针：shipped 存在性头在未见实体上 0/8。** 先用真实标注校验探针金标：
+   71 条含"走进"的训练回合里 env=present 只出现在伴随环境变化的动作中，单独走进
+   (`sm-e-move-1`) 是 info absent/env absent——原探针的"进入地点→env present"已改成
+   双 absent。随后用页面实际加载的 `existence-{info,env}-int8.onnx`（MiniRBT 分词、
+   256 截断）在 13 条 test 探针上离线打分（`head_predict.py` + `--status-only`）：
+   - 总体状态准确率 **0.50**（16 字段）；item_inspect **0/6**、person_observe **0/2**
+     全部把 info-present 判成 absent（present 概率 ~1e-4）；place_enter 6/6、
+     negation 1/1、unknown 1/1 正确。
+   - 这是 out-of-route 探针，文本比真实回合短，不能等同于线上准确率；但它说明
+     在 seen 路由上 9/10 的存在性头没有迁移到未登记实体/新动词短语。产品默认还有
+     程序规则通道；本结果只否定"头可单独泛化"。
+
+**Conditions.** 语义探针的文本是合成的短事实块，比真实回合短，头打分只作
+out-of-route 证据；叙事新跑只完成 1/4 回合，独立结果标签验证只有 1 点（方向一致，
+不能作排名）；历史 LoRA 输出模式与当前默认不同，不能横向比较；性能数字来自旧
+`timing-baseline.json` 与失败/部分的新跑，不是今天完整构建的验收。
 
 **Status（实现 / 实验 / 局部验证 / 产品验收）.**
 
@@ -108,7 +120,7 @@
 | 数据索引 + 完整性校验 | 是 | 3,744 文件 / 4.7 GB | 发现 4 处坏 JSON、998 MB 跟踪大文件、64/161 行证据未跟踪 | 不适用 |
 | 分割登记与重叠检查 | 是 | 6 对关系 | 50/58 holdout 出现在语料（已标回归） | 不适用 |
 | 叙事独立留出集 87 对 | 是 | 三臂评分 | 事实级独立验证通过；结果标签缺口 1/87 | 未做 |
-| 语义独立探针 29 条 | 是 | 冻结 + 契约校验 | 待语义工作流预测；未评分 | 未做 |
+| 语义独立探针 29 条 | 是 | 冻结 + 契约校验 + shipped 头打分 | status 0.50；info-present 0/8；place/unknown 正确 | 未做 |
 | 统一运行入口 | 是 | 成功/失败/恢复冒烟 | 失败证据保留、完成不重跑 | 未做 |
 | 资源监控 | 是 | 子进程 RSS/漂移 | 峰值与漂移可复现 | 未做 |
 | 运行核验 | 是 | 18 份证据 | 权重失败 0；LLM 提示 11–305/证据 | 未做 |
@@ -116,12 +128,12 @@
 | 调度器可靠性修复 | 是 | 临时队列冒烟 | 合并写、锁回收、stop 落账、attempt 日志 | 未做 |
 | 新输入真机留出集 | 是 | 4 条输入 | 3 次尝试失败；第 4 次 1/4 回合，冻结 1 点并评分 | 未做 |
 
-**Next.** 等租约与内存同时空闲，用 `turns-holdout-v1.json` 跑完 4 回合，产出带结果
-标签的新留出集；用 `semantic_score.py` 接语义 Agent 的预测；把 `perf_report.py` 的
-未测项补进驱动；把 `verify_run.py --max-llm-semantic 0` 作为"语义无 LLM"阶段的准入
-门；盲评用 `anonymize.py` 出 A/B/C 表。
+**Next.** 用语义 Agent 的程序/混合臂在同一探针上预测并按内容子句打分；等驱动修复后
+补完 4 回合新留出集；把 `perf_report.py` 的未测项补进驱动；把
+`verify_run.py --max-llm-semantic 0` 作为"语义无 LLM"阶段的准入门；盲评用
+`anonymize.py` 出 A/B/C 表。
 
-**Artifacts.** `tools/experiment_platform/`（13 个模块 + 14 个测试 + `splits.json`）、
-`artifacts/goal/platform/eval/`（87 条叙事留出集、29 条语义探针、4 条新输入、失败运行
-与重试脚本、20 例盲评样本）、`artifacts/goal/platform/{verify-12-q8kv.json,
-verify-turns20-pi.json,verify-all-evidence.json,perf-report.json}`。P04。
+**Artifacts.** `tools/experiment_platform/`（14 个模块 + 14 个测试 + `splits.json`）、
+`artifacts/goal/platform/eval/`（87 条叙事留出集、29 条语义探针 + 头预测/分数、1 条
+新输入、失败运行与重试脚本、20 例盲评样本）、`artifacts/goal/platform/{verify-12-q8kv.json,
+verify-turns20-pi.json,verify-all-evidence.json,verify-holdout-v1d.json,perf-report.json}`。P04。
