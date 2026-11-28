@@ -69,3 +69,4 @@ Artifacts     evidence files, manifests, commits
 | E46 | 1.7B LoRA data curve, same 58-prompt holdout | negative (290 rows .709 vs 339 rows .671) |
 | E47 | Semantic ctx A/B, headless single turn | done (12288 2342.7MB vs 8192 2064.3MB, delta 278MB) |
 | S1 | Synthesis 2026-11-28: what is publishable, what is still open | done |
+| E48 | Memory levers measured: browser 731MB, Next 270MB, KV q4 −227MB, n_batch no-op, URL/OPFS no-op | done |
