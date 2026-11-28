@@ -68,8 +68,13 @@ clause/outcome 判“这条事实是否支持目标”，task 判“任务是否
   requiredIds、否定/前置条件；`insufficient` 与 `no` 分开，不做三路多数投票。
 - `independent-labels-v1.jsonl` / `blind-agreement-v1.json`：三路盲评原始标签、理由、
   置信度与一致率计算；不再由构建脚本写死一致数。
-- `task-multifact-v1.jsonl`：从规则臂八场景证据抽出的 **584 条多事实/跨回合**任务案例
-  （73 个任务、平均 23.4 条事实、8 个回合累积），dev/regression，标签待盲评。
+- `task-multifact-v1.jsonl`：从规则臂八场景的**原始 `taskLedger.seenFacts` 与状态快照**
+  抽出的 **584 条多事实/跨回合**任务案例（73 个任务、14 个 owner、平均 21.4 条事件、最多
+  27 条、平均跨 4.5 个回合）。每条事件保留回合、时间、人物、结果标签、去向/环境/信息等
+  状态标签和来源；每个案例附任务当前 ledger 条件与证据、当回合状态 diff、任务状态历史；
+  12 个任务带已有 required/preconditions/negations 规格。`axis: completion`，完成/支持
+  标签留空待盲评，旧 status 只作基线——41 个 achieved 案例里就有 `task_lu_kit` 走进器材棚
+  即被判 achieved 的旧错误。
 - `task-gold-v1.bundles.jsonl`：11 条**多事实**开发夹具（5 yes / 2 partial / 3 no /
   1 not_triggered），按任务规格手工构造，覆盖单事实基准测不到的组合；它们是夹具，
   不是真实运行结果，正式评价仍需真实回合采集。
@@ -99,11 +104,12 @@ clause/outcome 判“这条事实是否支持目标”，task 判“任务是否
 2. 条件任务加 `not_triggered` 状态（平台规格已加；语义 Agent 的训练负例需同步排除未触发样本）。
 3. 以 `task-gold-v1.tasks.json` 的 required 子句重写候选生成与裁决；bench 单事实只作
    负例或 `insufficient`，不作为“达成”正例来源。
-4. 平台已从真实八场景回合抽出 `task-multifact-v1`（584 条），下一步用盲评面板标注并
-   留出 test 分片；在此之前它和多事实 bundles 只作开发夹具。
+4. 平台已从真实八场景回合抽出 `task-multifact-v1`（584 条，事件/状态/证据结构化），
+   下一步用盲评面板标注完成轴并留出 test 分片；在此之前它和多事实 bundles 只作开发夹具。
 5. 用户裁决：严格标准是否替换旧 14/14 口径；在裁决前产品默认不变，旧口径只作行为对照。
 
-**Artifacts.** `tools/experiment_platform/{build_task_gold,task_gold_eval}.py`；
+**Artifacts.** `tools/experiment_platform/{build_task_gold,task_gold_eval,build_task_multifact}.py`；
 `artifacts/goal/platform/task-gold/{bench-v1.semantic-branch.jsonl,task-gold-v1.tasks.json,
-task-gold-v1.cases.jsonl,task-gold-v1.cases.jsonl.manifest.json,
-task-gold-v1.bundles.jsonl,task-gold-v1.report.json}`。P05。
+task-gold-v1.cases.jsonl,task-gold-v1.cases.jsonl.manifest.json,task-gold-v1.bundles.jsonl,
+task-gold-v1.report.json,task-multifact-v1.jsonl,task-multifact-v1.summary.json,
+task-multifact-v1.jsonl.manifest.json}`。P05。
