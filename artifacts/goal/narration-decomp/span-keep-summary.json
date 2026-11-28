@@ -1,0 +1,17 @@
+{
+ "samples": 348,
+ "train": 279,
+ "test": 69,
+ "params": 446497,
+ "charF1Mean": 0.465,
+ "charF1Min": 0.282,
+ "charF1Max": 0.771,
+ "coverageMean": 1.0,
+ "inventionCharsMean": 0.0,
+ "floors": {
+  "program": 0.208,
+  "selection": 0.265,
+  "oracle": 0.29,
+  "freeGen": 0.332
+ }
+}
