@@ -79,6 +79,13 @@
    **64/161 行（40%）**；`pairs.jsonl` 也有 **20/51 对**来自这些文件。克隆仓库后无法重建
    这两个 bundle，E58/E60 的上游证据只在当前机器上。检查已自动化（`evidence_ref`）。
 
+8. **研究脚本不可移植。** 168 个 `.py` 写死 `D:/others/Jity`（`validate_real_semantic.py:21`
+   只是其中一个），148 个引用 `.local/`；叙事训练源 `sft-v13.jsonl` 只存在于
+   `.local/narr-train/`（该目录 47 GB，gitignored），`assemble_corpus.py`、
+   `frame_pairs.py`、`selection_model.py` 等都直接读它。换机器或新 clone 后这些脚本
+   全部失效。已加 `absolute_path` 检查；修复需要各脚本改用仓库相对路径，并把可再生的
+   小型文本源（如 sft-v13.jsonl）纳入跟踪或由 manifest 指明的重建命令生成。
+
 **Conditions.** 索引只覆盖三个数据根；`.local/`、`lab/pi-gate-profile` 等本地/浏览器目录
 不在内。哈希上限 64 MB，因此 >64 MB 文件只记大小、无 digest。重复检测按整文件 sha256，
 不做行级近似重复；key drift 只查 train/test/dev/labels/cache/input/fixture 角色。

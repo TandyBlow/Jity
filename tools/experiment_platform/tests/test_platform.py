@@ -161,6 +161,17 @@ def test_eval_set_validate_freeze_check(tmp_path):
     assert main(["check", "--path", str(path), "--manifest", str(manifest)]) == 1
 
 
+def test_absolute_path_scan(tmp_path):
+    from tools.experiment_platform.data_index import build_index
+    from tools.experiment_platform.validate_data import validate
+
+    repo = tmp_path
+    _write(repo / "artifacts/goal/fam/bad_script.py", "from pathlib import Path\nROOT = Path('D:/others/Jity')\n")
+    index = build_index(repo, ["artifacts/goal"], with_last_commit=False)
+    findings = validate(index, repo)["checks"]["absolute_path"]["findings"]
+    assert len(findings) == 1 and findings[0]["count"] == 1
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

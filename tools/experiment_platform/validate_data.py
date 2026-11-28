@@ -236,6 +236,25 @@ def check_semantic_manifests(files: list[dict], repo: Path) -> list[dict]:
     return out
 
 
+ABS_PATH = re.compile(r"['\"]([A-Za-z]:[\\/][^'\"\n]{0,120})['\"]")
+
+
+def check_absolute_paths(files: list[dict], repo: Path) -> list[dict]:
+    """Experiment scripts must run from any checkout, not one absolute drive."""
+    out = []
+    for e in files:
+        if e["ext"] != ".py" or not e["path"].startswith(("artifacts/goal/", "experiments/", "tools/")):
+            continue
+        try:
+            text = (repo / e["path"]).read_text(encoding="utf-8", errors="replace")[:1_000_000]
+        except OSError:
+            continue
+        hits = ABS_PATH.findall(text)
+        if hits:
+            out.append({"path": e["path"], "count": len(hits), "examples": hits[:3]})
+    return out
+
+
 def check_referenced_evidence(files: list[dict], repo: Path) -> list[dict]:
     """Rows that point at an evidence file must point at one present and tracked."""
     tracked = {e["path"]: e["tracked"] for e in files}
@@ -285,6 +304,7 @@ def validate(index: dict, repo: Path, large_mb: float = 5.0) -> dict:
         "sidecar_hash": {"level": "fail", "findings": check_sidecar_hashes(files, repo)},
         "semantic_manifest": {"level": "fail", "findings": check_semantic_manifests(files, repo)},
         "evidence_ref": {"level": "warn", "findings": check_referenced_evidence(files, repo)},
+        "absolute_path": {"level": "warn", "findings": check_absolute_paths(files, repo)},
     }
     for check in checks.values():
         check["count"] = len(check["findings"])

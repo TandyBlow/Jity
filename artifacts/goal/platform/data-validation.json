@@ -2520,6 +2520,1214 @@
    ],
    "count": 10,
    "status": "warn"
+  },
+  "absolute_path": {
+   "level": "warn",
+   "findings": [
+    {
+     "path": "artifacts/goal/memory-baseline/semantic_tokens.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/memory-baseline/snapshot_growth.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-chain/build_chain.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity",
+      "D:/others/Jity/artifacts/goal/micro-chain/turns.json"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-eval/analyze_combos.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-eval/analyze_hybrid.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-eval/make_06b_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-eval/merge_rows.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-eval/run_eval.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-eval/score_06b.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-facts/eval_facts.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-generalize/baseline_compare.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-generalize/build_pairs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-generalize/make_test_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-generalize/quantize_pairs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/micro-generalize"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-generalize/train_pairs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-joint/eval_joint.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-joint/make_samples.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-joint/quantize_joint.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/micro-joint"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-joint/train_joint.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-nlu/build_datasets.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-nlu/train_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-nlu/train_minirbt.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-quant/eval_onnx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-quant/make_samples.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-quant/quantize.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-quant/train_split.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-reasoning/gen_scenarios.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-reasoning/micro_arms.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-reasoning/rules_arm.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-redesign/make_labels_v1.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-redesign"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-redesign/make_labels_v2.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-redesign"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-redesign/make_labels_v3.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-redesign"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-redesign/make_labels_v4.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-redesign"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-redesign/make_labels_v5.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-redesign"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/ab_compare.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/analyze_actions.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow/action-retry-report.json"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/analyze_updates.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/build_appearance_inputs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/build_movement_inputs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/build_records.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/build_short_inputs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/build_training.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/check_head_parity.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/compare_arms.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/diff_states.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/eval_joint_ablation.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/eval_judges.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/eval_task_condition_rows.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_existence_onnx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_extraction_onnx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_item_matcher.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_pilot_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_relation_onnx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_seq2seq_steps.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_support_onnx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_v3_candidate_onnx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/export_v3_encoding.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_behavior_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_continuation_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_continuation_eval_sheet.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_human_eval_sheet.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_judge_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_matcher_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_pilot_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_task_condition_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_task_match_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/make_tokenizer_fixture.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/measure_chain.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/measure_continuation_replay.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/measure_independent_models.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/measure_offline.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/measure_position_rule.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/measure_results_replay.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/micro_generative_pilot.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/micro_generative_v2.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/real_semantic_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/run_continuation_llm_offline.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/run_task_match_llm_offline.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_continuation_eval.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_decide_shadow.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_fixed_arms.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_pointer_abstain.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_pointer_calibration.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_relation_outcome.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/score_relation_probes.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/summarize_ab.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/summarize_continuation_ab.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/goal/micro-workflow"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/template_probe.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_behavior_head.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_continuation_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_existence_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_extraction_head.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_item_matcher.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_joint_existence.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_judge_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_movement_head.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_pilot_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_relation_condition.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_relation_outcome.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_support_head.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_task_condition.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_task_condition_goal.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_task_heads.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/train_task_match.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/micro-workflow/validate_real_semantic.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/assemble_corpus.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/build_planning_data.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/build_planning_data2.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/build_replace_pairs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/narr-train/sft-v13.jsonl"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/build_replace_pairs_ctx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/narr-train/sft-v13.jsonl"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/decompose.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/decompose2.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/diversity.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/edit_profile.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/narr-train/sft-v13.jsonl"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/frame_pairs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/narr-train/sft-v14.jsonl"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/joint_decoder.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/plan_to_prose.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/pointer_editor.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/pointer_editor2.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/pointer_editor3.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/reconstruct_baseline.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/selection_model.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/narr-train/sft-v13.jsonl"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/span_keep.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "artifacts/goal/narration-decomp/span_keep_words.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/scripts/build_episodes.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/product/evidence"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/scripts/build_rows.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json",
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/criterion.txt"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/scripts/check_dataset.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json",
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/criterion.txt"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/short_pairs/analyze_shortx.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/short_pairs/build_pairs.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/worktrees/04-settlement/"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/short_pairs/check_pairs.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot",
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/short_pairs/freeze.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/tests/test_schema.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/tests/test_short_pairs.py",
+     "count": 4,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json",
+      "D:/others/Jity/.local/parallel-local-game/results/action-short-pairs-20261111/13/proposed-resolution.json",
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/tests/test_transforms.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/action-dataset-20261111/labels-v1.json"
+     ]
+    },
+    {
+     "path": "experiments/action-dataset-v1/tools/loader.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/worktrees/04-settlement/experiments/action-next-step/serialize.py"
+     ]
+    },
+    {
+     "path": "experiments/action-next-step/pairwise_cpu_measure.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot"
+     ]
+    },
+    {
+     "path": "experiments/action-next-step/tests/test_pairwise.py",
+     "count": 3,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/worktrees/13-action-dataset/",
+      "D:/others/Jity/.local/parallel-local-game/results/",
+      "D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot"
+     ]
+    },
+    {
+     "path": "experiments/narration-model-search/src/inventory_local.py",
+     "count": 5,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/worktrees/06-recovery/frontend/public/models",
+      "D:/others/Jity/.local/models",
+      "D:/others/Jity/.local/models-narration"
+     ]
+    },
+    {
+     "path": "experiments/narration-model-search/src/make_requests.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/product/hpc-requests",
+      "D:/others/Jity/.local/parallel-local-game/results/quality/dev-package-v1"
+     ]
+    },
+    {
+     "path": "experiments/narration-model-search/src/make_semantic_request.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/product/hpc-requests",
+      "D:/others/Jity/.local/world-narration-worktree/frontend/public/models/Qwen3-0.6B-Q4_K_M.gguf"
+     ]
+    },
+    {
+     "path": "experiments/narration-model-search/src/propose_case_fix.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/quality/dev-package-v1",
+      "D:/others/Jity/.local/parallel-local-game/results/11-model-search/requests/01-case-fix-proposal.json"
+     ]
+    },
+    {
+     "path": "experiments/narration-model-search/src/selftest.py",
+     "count": 3,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/results/quality/dev-package-v1",
+      "D:/others/Jity/.local/world-narration-worktree/frontend/public/models/Qwen3-1.7B-Q4_K_M.gguf",
+      "D:/others/Jity/.local/world-narration-worktree/frontend/public/models/Qwen3-1.7B-Q4_K_M.gguf"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/corpus-short/check_corpus.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/corpus-short/long/build_long.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1",
+      "D:/others/Jity/.local/world-components-worktree"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/corpus-short/short/build_short.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1",
+      "D:/others/Jity/.local/world-components-worktree"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/dev-package-v1/build_package.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game",
+      "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1/rows-xy.jsonl"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/final-batch-v1/build_final.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/world-components-worktree/experiments/world-components/narration-dataset-v1/rows-xy.jsonl"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/review/build_anchors.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game"
+     ]
+    },
+    {
+     "path": "experiments/narration-quality/review/overlap12.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/parallel-local-game/worktrees/10-training/",
+      "D:/others/Jity/.local/parallel-local-game/results/quality/overlap12-01.json"
+     ]
+    },
+    {
+     "path": "experiments/narration-runtime-v2/hpc/batch_screen.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/llama-cpp/llama-cli.exe"
+     ]
+    },
+    {
+     "path": "experiments/narration-runtime-v2/hpc/export_candidate.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/qwen-train/convert_hf_to_gguf.py",
+      "D:/others/Jity/.local/llama-cpp/llama-quantize.exe"
+     ]
+    },
+    {
+     "path": "experiments/narration-runtime-v2/hpc/finalize_run.py",
+     "count": 4,
+     "examples": [
+      "D:/others/Jity/.local/models-narration",
+      "D:/others/Jity/.local/qwen-train/convert_hf_to_gguf.py",
+      "D:/others/Jity/.local/llama-cpp/llama-quantize.exe"
+     ]
+    },
+    {
+     "path": "experiments/narration-runtime-v2/src/eval_draft.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/llama-cpp/llama-server.exe"
+     ]
+    },
+    {
+     "path": "experiments/world-components/adapt_facts.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/agent-worktree/backend"
+     ]
+    },
+    {
+     "path": "experiments/world-components/build_calibration_set.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/models"
+     ]
+    },
+    {
+     "path": "experiments/world-components/build_three_arm_pools.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/models"
+     ]
+    },
+    {
+     "path": "experiments/world-components/make_record_fixture.py",
+     "count": 2,
+     "examples": [
+      "D:/others/Jity/.local/agent-worktree/backend",
+      "D:/others/Jity/.local/world.db"
+     ]
+    },
+    {
+     "path": "experiments/world-components/n4_narrative_eval/materials.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/parallel/c-browser-t5/artifacts/world-components"
+     ]
+    },
+    {
+     "path": "experiments/world-components/narration-dataset-v1/hpc/_hpc_narr.py",
+     "count": 1,
+     "examples": [
+      "D:/others/yuginu/run_hpc_now.py"
+     ]
+    },
+    {
+     "path": "experiments/world-components/narration-dataset-v1/yuyan/ce_probe.py",
+     "count": 3,
+     "examples": [
+      "D:/others/Jity/.local/yuyan/checkpoint_best.pt",
+      "D:/others/Jity/.local/yuyan/dict.txt",
+      "D:/others/Jity/.local/yuyan/lora_6ep.pt"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/group_wording/probe_identity.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/models"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/organize_plan/check_adoption.py",
+     "count": 1,
+     "examples": [
+      "D:/.../ckpt/model.safetensors"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/organize_plan/model_smoke.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/.local/world-components-worktree/experiments/"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/organize_plan/test_regressions.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/holdout-a-v1"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/organize_plan/validate_holdout.py",
+     "count": 1,
+     "examples": [
+      "D:/others/Jity/artifacts/world-provenance/pairs"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/scene_expression/measure_inputs.py",
+     "count": 1,
+     "examples": [
+      "D:\\others\\Jity\\.local\\models"
+     ]
+    },
+    {
+     "path": "experiments/world-components/parallel/scene_expression/step1_token_probe.py",
+     "count": 1,
+     "examples": [
+      "D:\\others\\Jity\\.local\\models"
+     ]
+    },
+    {
+     "path": "experiments/world-components/test_component_runtime.py",
+     "count": 1,
+     "examples": [
+      "C:/example"
+     ]
+    }
+   ],
+   "count": 168,
+   "status": "warn"
   }
  },
  "summary": {
@@ -2558,6 +3766,10 @@
   "evidence_ref": {
    "status": "warn",
    "count": 10
+  },
+  "absolute_path": {
+   "status": "warn",
+   "count": 168
   }
  },
  "failed": false
