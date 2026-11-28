@@ -15,7 +15,7 @@
   "cross": 20,
   "real": 60
  },
- "refBigramCoveredMean": 0.835,
- "refBigramCoveredMeanReal": 0.807,
+ "refBigramCoveredMean": 0.836,
+ "refBigramCoveredMeanReal": 0.811,
  "charsMean": 23.2
 }
