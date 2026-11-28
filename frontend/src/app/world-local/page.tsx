@@ -299,7 +299,7 @@ async function loadEngine(
   /** Hand the constructed engine out before the load starts, so the stop
    * button can reach a cold load that has no `current` engine yet. */
   onEngine?: (engine: WllamaInferenceEngine) => void,
-  cacheTypes = false,
+  kv?: 'f16' | 'q8_0' | 'q4_0',
   onPrompt?: (prompt: string) => void,
 ): Promise<WllamaInferenceEngine> {
   const modelUrl = new URL(url, window.location.href).href;
@@ -339,7 +339,7 @@ async function loadEngine(
       at: Date.now(),
     });
   };
-  const cache = cacheTypes ? { cacheTypeK: 'q8_0' as const, cacheTypeV: 'q8_0' as const } : {};
+  const cache = kv ? { cacheTypeK: kv, cacheTypeV: kv } : {};
   // 手机默认 CPU（Mali WebGPU 输出不可靠）；?cpu=0/1 可覆盖
   const cpuParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('cpu') : null;
   const forceCpu = cpuParam === '1' || (cpuParam !== '0' && isPhoneBrowser());
@@ -449,7 +449,7 @@ async function probeGpu(): Promise<Record<string, unknown>> {
   return out;
 }
 
-function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, cacheTypes = false, onPrompt?: (prompt: string) => void): ProductEnginePort {
+function resilientEngine(url: string, contextSize: number, label: string, expectedBytes?: number, kv?: 'f16' | 'q8_0' | 'q4_0', onPrompt?: (prompt: string) => void): ProductEnginePort {
   let current: WllamaInferenceEngine | null = null;
   /** The engine a cold load is currently using. It is not `current` until the
    * load succeeds, but the stop button must still be able to cancel it. */
@@ -465,7 +465,7 @@ function resilientEngine(url: string, contextSize: number, label: string, expect
       loading = loadEngine(url, contextSize, expectedBytes, label, (engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); return; }
         loadingEngine = engine;
-      }, cacheTypes, onPrompt).then((engine) => {
+      }, kv, onPrompt).then((engine) => {
         if (closed) { void engine.dispose().catch(() => undefined); throw new DOMException('engine closed', 'AbortError'); }
         current = engine;
         loadingEngine = null;
@@ -681,7 +681,7 @@ export default function WorldLocalPage() {
   /** Internal evaluation arm selected by URL query (never rendered, never a
    * player setting): `?narrationCandidate=trained&narrationMode=scene&narrationShape=prose-facts`.
    * 09 uses it to run the same settled input through different prompt shapes. */
-  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs'; semanticCtx?: number } => {
+  const narrationArm = useRef(((): { candidate?: string; mode?: 'beats' | 'scene'; shape?: 'serialized' | 'prose-facts'; model?: NarrationModelKey; offscreenPolicy?: 'skip' | 'judge'; temperature?: number; fewShot?: boolean; schedHandback?: boolean; settlementUnknownRule?: boolean; strictKnownEntities?: boolean; projection?: 'compact'; compactSettlement?: boolean; settlementUnknownExample?: boolean; runtime?: 'webllm'; webllmModel?: string; webllmLocal?: boolean; webllmCache?: 'cache' | 'indexeddb' | 'opfs'; semanticCtx?: number; kv?: 'f16' | 'q8_0' | 'q4_0' } => {
     if (typeof window === 'undefined') return {};
     const q = new URLSearchParams(window.location.search);
     const candidate = q.get('narrationCandidate');
@@ -694,6 +694,8 @@ export default function WorldLocalPage() {
     const temperature = Number.isFinite(tempParam) && tempParam > 0 && tempParam <= 1.5 ? tempParam : undefined;
     const ctxParam = Number(q.get('semanticCtx'));
     const semanticCtx = Number.isInteger(ctxParam) && ctxParam >= 2048 && ctxParam <= 32768 ? ctxParam : undefined;
+    const kvParam = q.get('kv');
+    const kv = kvParam === 'f16' || kvParam === 'q4_0' ? kvParam : undefined;
     const fewShot = q.get('narrationFewShot') === '1' ? true : undefined;
     const projection = q.get('narrationProjection') === 'compact' ? 'compact' as const : undefined;
     const schedHandback = q.get('schedHandback') === 'player' ? true : undefined;
@@ -729,6 +731,7 @@ export default function WorldLocalPage() {
       ...(webllmLocal ? { webllmLocal } : {}),
       ...(webllmCache ? { webllmCache } : {}),
       ...(semanticCtx ? { semanticCtx } : {}),
+      ...(kv ? { kv } : {}),
     };
   })());
   /** Submit wall-clock origin for this turn; the narration callbacks run outside
@@ -962,7 +965,7 @@ export default function WorldLocalPage() {
         const webllmModel = arm.webllmModel ?? WEBLLM_MODEL;
         const webllmBase = arm.webllmLocal ? new URL(`/models/webllm/${webllmModel}/`, window.location.href).href : undefined;
         const webllm = arm.runtime === 'webllm' ? resilientWebLlm(webllmModel, 'webllm', webllmBase, arm.webllmCache) : null;
-        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? 12_288, 'semantic', SEMANTIC_MODEL_BYTES, true, (prompt) => {
+        const semantic = webllm ?? resilientEngine(SEMANTIC_MODEL, arm.semanticCtx ?? 12_288, 'semantic', SEMANTIC_MODEL_BYTES, arm.kv ?? 'q8_0', (prompt) => {
           const rec = turnRecordRef.current;
           if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
         });
@@ -979,7 +982,7 @@ export default function WorldLocalPage() {
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
           offscreenPolicy: arm.offscreenPolicy ?? 'judge',
-          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? 12_288,
+          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? 12_288, kv: arm.kv ?? 'q8_0',
           narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
           narrationFewShot: arm.fewShot ?? null,
