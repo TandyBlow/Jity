@@ -26,3 +26,7 @@
 - NPC 行动为模板闭集；targets 有弃权空目标；position/appearance/personality/sanity 保守无变化（本次未逐条读评合法变化）；
 - 任务最终裁决仍是行为克隆模型（S01 control）；严格金标模型未训练；
 - 叙事仍用 1.7B（S06 范围）。
+
+## 离线（2 回合）
+
+证据 `smoke-micro-only-offline-20261129.json`（`--offline`）：**2/2 COMPLETED、0 failures**，等待 21.1/24.4 s；模型请求仍只有 1.7B；语义调用程序/微模型。
