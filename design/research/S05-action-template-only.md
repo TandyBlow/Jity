@@ -26,4 +26,4 @@
 - 模板闭集可能让 NPC 行为单调；必须先量化，再决定是否扩模板或用专用排序头。
 - targets 空目标会减少被迫反应与共同结算；需要单独统计连锁影响。
 
-**Artifacts.** 计划：`actions/index.ts` 的 template-only 分支、页面臂、冻结八场景证据。S05。
+**Artifacts.** 已实现：`actions/index.ts` 的 `templateOnly`/`targetsNoLlm` 分支、页面臂 `?action=template&targets=rule`、单测（52 项 actions 测试通过）。冻结八场景运行中；证据将放 `results/product/evidence/smoke-micro-actionfamily-frozen8-*.json`。S05。
