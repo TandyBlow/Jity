@@ -89,3 +89,4 @@ Artifacts     evidence files, manifests, commits
 | N09 | Page integration: rules arm runs 3/3 turns, loads only the 0.6B, 554-593 chars/turn | done (3-turn smoke) |
 | N10 | Sentence-boundary probe, content-grouped: 0.801 vs 0.588; 267 pairs = 63 contexts; 13.08 -> 10.55 sentences | done (21% ceiling gap) |
 | N11 | Acceptance: 8/8 scenarios clean, 17/20 inputs clean, restore 8->8, only the 0.6B requested | interrupted by memory guard at 17/20 |
+| N12 | Boundary model in the renderer: 13.08 -> 10.12 sentences/point, zero fragments lost (OOF 10.55) | done (offline prototype) |
