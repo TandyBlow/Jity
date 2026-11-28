@@ -19,6 +19,7 @@
 | `resource_monitor.py` | 进程树 RSS/CPU 采样、峰值与漂移 | `*.csv` / `*.summary.json` |
 | `verify_run.py` | 权重请求、引擎、模型 id、语义 LLM 调用数、micro 开关 | `verify-*.json` |
 | `perf_report.py` | 计时/内存归一化，列出未测项 | `perf-report.json` |
+| `anonymize.py` | 按 case 打乱 A/B/C、隐藏模型名，输出盲评表与解盲 key | `blind.jsonl` / `key.json` |
 
 **Data（独立集与构造证据）.**
 
@@ -66,15 +67,30 @@
    直接跳过，对失败任务先归档 `result.attemptN.json` 再重跑，日志按 attempt 保留。
    `resource_monitor.py` 在子进程上采到 RSS 峰值与漂移（测试通过）。
 
+5. **新输入真机留出集（2026-11-28 21:52–22:00）：平台按设计失败并保留证据。**
+   4 条新输入已冻结为 `eval/turns-holdout-v1.json`（新产品页、非训练输入）。三次尝试：
+   - 21:52 单模型 + ctx8192：内存地板触发（free 163 MB，peak 2,014 MB），进程被杀，
+     `results/product/evidence/holdout-v1-20261128.json` 为 `FAILED`、1 回合、0 正文。
+   - 21:55 单模型 + ctx4096：被 lane `09-ui` 的验收租约拒绝，日志
+     `artifacts/goal/lab/job-20261128-215545-534.attempt1.log`；证明 `lease.mjs` 的互斥
+     有效，也说明机器当前 ~5 GB 空闲不足以与另一条验收并行。
+   - 21:58 第三轮在别的验收间隙启动，拿到 `IN_PROGRESS`/0 回合的部分证据后再次被租约
+     占住；`retry-holdout.ps1` 已按"等租约 + 等内存"重试，但 10 分钟窗口内没有完整
+     回合，保留失败产物，不伪造结果。
+   结论：新输入留出集与结果标签评价要等机器空闲窗口；平台的 lease/memory 门按预期
+   阻止了并发重跑。
+
 **Conditions.** 语义探针尚未对任何工作流打分（没有 predictions）；叙事留出集的结果
-标签缺口要靠新跑带结果标注的回合补；历史 LoRA 输出模式与当前默认不同，不能横向比较；
-性能数字来自旧 `timing-baseline.json`，不是今天的构建。
+标签缺口要靠新跑带结果标注的回合补，而新跑目前被并发验收的租约/内存挡住；历史 LoRA
+输出模式与当前默认不同，不能横向比较；性能数字来自旧 `timing-baseline.json` 与一次
+失败的新跑，不是今天完整构建的验收。
 
-**Next.** 用 `?narrationCandidate=rules` 与新 micro 配置跑一轮带结果标签的新回合，
-同时产出正式 harness 证据；用 `semantic_score.py` 接语义 Agent 的预测；把
-`perf_report.py` 的未测项补进驱动；把 `verify_run.py --max-llm-semantic 0` 作为
-"语义无 LLM"阶段的准入门。
+**Next.** 等租约与内存同时空闲，用 `turns-holdout-v1.json` 跑完 4 回合，产出带结果
+标签的新留出集；用 `semantic_score.py` 接语义 Agent 的预测；把 `perf_report.py` 的
+未测项补进驱动；把 `verify_run.py --max-llm-semantic 0` 作为"语义无 LLM"阶段的准入
+门；盲评用 `anonymize.py` 出 A/B/C 表。
 
-**Artifacts.** `tools/experiment_platform/`（12 个模块 + 12 个测试）、
-`artifacts/goal/platform/eval/`、`artifacts/goal/platform/{verify-12-q8kv.json,
-verify-turns20-pi.json,perf-report.json}`。P04。
+**Artifacts.** `tools/experiment_platform/`（13 个模块 + 13 个测试 + `splits.json`）、
+`artifacts/goal/platform/eval/`（87 条叙事留出集、29 条语义探针、4 条新输入、失败运行
+与重试脚本）、`artifacts/goal/platform/{verify-12-q8kv.json,verify-turns20-pi.json,
+perf-report.json}`。P04。

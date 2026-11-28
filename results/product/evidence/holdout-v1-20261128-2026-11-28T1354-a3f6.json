@@ -1,0 +1,140 @@
+{
+  "runId": "2026-11-28T1354-a3f6",
+  "outFile": "D:\\others\\Jity\\results\\product\\evidence\\holdout-v1-20261128-2026-11-28T1354-a3f6.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "17bdaf529ac21a129cc4a87e4fdace780031475459c398bd9c306c6e6071d537",
+    "edgeVersion": "158.0.4370.45",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "profile": "../artifacts/goal/lab/holdout-profile",
+    "cdp": null,
+    "cpuThrottle": null,
+    "blockApi": false,
+    "gpuLite": false
+  },
+  "status": "FAILED",
+  "startedAt": "2026-11-28T13:54:15.849Z",
+  "base": "http://127.0.0.1:3177",
+  "turnsFile": "../artifacts/goal/platform/eval/turns-holdout-v1.json",
+  "integration": {
+    "head": "387ef5551bc1cfe45e14bbd17b0c92b82b1f4f6d",
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": {
+      "cwd": "frontend",
+      "command": "node node_modules/next/dist/bin/next start -p 3177",
+      "port": 3177
+    },
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "42c395c0398a31f1700e8c7c9addcb0a52fbfd24",
+    "pageSha256": "9aed8176f1693ab9375348d3884b92c0b19d912463b0c89ca6fbb8dc78b25837",
+    "turnEvidenceAvailable": true,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "af35ef963b801fa9ebbbf4325d4f826a9e11af8a20698cd66e655e59f6ffea91",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "texture-formats-tier1",
+        "bgra8unorm-storage",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "chromium-experimental-sampling-resource-table",
+        "core-features-and-limits",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "timestamp-query",
+        "shader-f16"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"texture-formats-tier1\",\"bgra8unorm-storage\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"chromium-experimental-sampling-resource-table\"]}"
+    ]
+  },
+  "modelRequests": [],
+  "readyMs": null,
+  "readyText": null,
+  "turns": [],
+  "failures": [
+    {
+      "at": "2026-11-28T13:54:18.624Z",
+      "scope": "page",
+      "message": "the served build is not current: markers none; need the product globals __worldRestore plus __worldSnapshot/__worldArm",
+      "detail": null
+    },
+    {
+      "at": "2026-11-28T13:54:18.626Z",
+      "scope": "driver",
+      "message": "Error: wrong_product_page",
+      "detail": null
+    }
+  ],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "takeover": "holder pid 28456 is not alive",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3177",
+    "acquiredAt": "2026-11-28T13:54:16.175554+00:00",
+    "supervisorPid": null,
+    "holderPid": 29116,
+    "token": "44ede6c9ec3f4965510644e653cc9e16"
+  },
+  "freshReset": {
+    "localStorageKeys": 1,
+    "databases": [
+      "jity-local-progress"
+    ],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-28T13:54:18.627Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 11,
+    "markerChunks": [],
+    "globalsReady": true,
+    "globalsWaitMs": 6
+  },
+  "finishedAt": "2026-11-28T13:54:18.627Z"
+}

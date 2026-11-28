@@ -1,0 +1,7 @@
+[turn 1] hold-v1-01 chars=0 wait=?ms draft=-ms accepted=-ms problems=driver_error:Error: page.evaluate: Target crashed 
+[driver-error] page.evaluate: Target crashed 
+    at entryCount (D:\others\Jity\frontend\scripts\product-acceptance\accept-world-local.mjs:530:33)
+    at D:\others\Jity\frontend\scripts\product-acceptance\accept-world-local.mjs:605:31 {
+  log: [],
+  name: 'Error'
+}
