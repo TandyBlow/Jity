@@ -91,9 +91,11 @@
    `semanticCtx=4096` 跑 `turns-holdout-v1.json`，第一回合 278 字、`source=model`、
    wait 78.4 s；随后 3177 的产品服务在回合间被停，驱动在 1/4 回合时退出（日志无
    `[done]`，evidence 停在 `IN_PROGRESS`）。22:24 用 `--resume` 重试直接
-   `ERR_CONNECTION_REFUSED`，evidence 转 `FAILED` 并保留失败。根因是外部服务生命周期，
-   不是模型或驱动逻辑错误；但驱动在服务消失时可能静默留下 `IN_PROGRESS`，这次由
-   `verify_run --expect-turns 4` 的完整性门兜住。该回合冻结为
+   `ERR_CONNECTION_REFUSED`，evidence 转 `FAILED` 并保留失败。22:25 起独立 3179
+   服务再试，driver 在启动前被 lane `09-ui` 的推理租约拒绝（holderPid 33924），无
+   evidence；我们按 PID 停掉自己的服务，没有动别人的进程。根因是外部服务生命周期与
+   并发验收，不是模型或驱动逻辑错误；但驱动在服务消失时可能静默留下 `IN_PROGRESS`，
+   这次由 `verify_run --expect-turns 4` 的完整性门兜住。该回合冻结为
    `narration-holdout-v2-newrun.jsonl`（事实块不在语料/bundle，2 条结果标签）。三臂：
    current 覆盖 0.875、结果标签 **0/2**；E55 覆盖 0.875、**2/2**；E57 覆盖 1.0、
    **2/2**；编造 0。样本=1，只作链路与方向证据，不作排名。

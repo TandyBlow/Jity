@@ -1,0 +1,29 @@
+﻿node : [warn] --base http://127.0.0.1:3179 does not match integration.json http://127.0.0.1:3177/world-local
+At D:\others\Jity\artifacts\goal\platform\lab\run-holdout-3179.ps1:20 char:3
++   node scripts/product-acceptance/accept-world-local.mjs --base http: ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([warn] --base h...177/world-local:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+file:///D:/others/Jity/frontend/scripts/product-acceptance/lease.mjs:29
+    const error = new Error(`inference lease unavailable: ${holder}`);
+                  ^
+
+Error: inference lease unavailable: {"lane":"09-ui","purpose":"09 acceptance smoke http://127.0.0.1:3177","acquiredAt":
+"2026-11-28T14:25:10.695836+00:00","supervisorPid":null,"holderPid":33924,"token":"6f1e5844cc8dfdebc0e40e2ed2f2f2fe"}
+    at acquireLease (file:///D:/others/Jity/frontend/scripts/product-acceptance/lease.mjs:29:19)
+    at file:///D:/others/Jity/frontend/scripts/product-acceptance/accept-world-local.mjs:172:15
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+  holder: {
+    lane: '09-ui',
+    purpose: '09 acceptance smoke http://127.0.0.1:3177',
+    acquiredAt: '2026-11-28T14:25:10.695836+00:00',
+    supervisorPid: null,
+    holderPid: 33924,
+    token: '6f1e5844cc8dfdebc0e40e2ed2f2f2fe'
+  }
+}
+
+Node.js v22.20.0
