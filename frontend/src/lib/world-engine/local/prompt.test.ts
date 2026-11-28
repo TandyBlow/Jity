@@ -27,4 +27,17 @@ describe('instruct narration input', () => {
     expect(prompt).toContain('主角只拿自己持有的物品');
     expect(prompt).toContain('只有结算结果里实际发生的动作才算发生');
   });
+
+  it('keeps looking toward another place but drops standing there', () => {
+    const state = buildInitialState(structuredClone(SHORT_STATE.initial) as unknown as InitialState);
+    const { brief } = instructNarrationInput(
+      null, {}, state, 'person_c',
+      '我在门厅的长椅旁等一会儿，再抬头打量走廊方向。',
+    );
+    // 走廊 is where the point actually is; 门厅 is only the player's claim.
+    expect(brief).not.toMatch(/玩家这回合让[^。]*门厅/u);
+    expect(brief).toContain('玩家这回合让周宁做的事：再抬头打量走廊方向。');
+    // No dangling comma from the dropped clause.
+    expect(brief).not.toMatch(/[，,]。。/u);
+  });
 });

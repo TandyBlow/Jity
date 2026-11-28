@@ -207,8 +207,12 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
     .filter((place) => place && declared.includes(place) && place !== settledPlace
       && (!movedTo || locationName(after, movedTo.containerId) !== place));
   const namesElsewhere = (text: string) => elsewhere.some((place) => text.includes(place));
+  // 看一眼另一个地点不是“人在那里”：观察句保留，位置声明与移动仍丢掉。
+  const observe = /(方向|朝|望|看向|打量|看|听|问)/u;
+  const claim = /(在|走进|走到|进入|来到|去了|退回|离开)/u;
+  const claimsElsewhere = (clause: string) => namesElsewhere(clause) && (claim.test(clause) || !observe.test(clause));
   const declaredSafe = declared.split(/(?<=[，,；;。！？!?])/u)
-    .filter((clause) => !namesElsewhere(clause)).join('').trim();
+    .filter((clause) => !claimsElsewhere(clause)).join('').trim().replace(/[，,、；;。\s]+$/u, '');
   if (declaredSafe) sentences.push(`玩家这回合让${name}做的事：${declaredSafe}。`);
   // Judgment clauses («…的骰点资格为false», «…未被掀开袖口，未获得任何效果») are
   // settlement mechanics, not scene facts; feeding them to the writer made it
