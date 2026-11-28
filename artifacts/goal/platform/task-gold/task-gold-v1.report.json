@@ -1,6 +1,6 @@
 {
  "schema": "jity-task-gold-report/1",
- "generatedAt": "2026-11-28T15:42:36.348881+00:00",
+ "generatedAt": "2026-11-28T15:55:54.383396+00:00",
  "benchRows": 120,
  "verdictCountsBench": {
   "skip": 6,
@@ -29,31 +29,19 @@
     "rate": 0.09
    }
   },
-  "majority": {
-   "agree": 67,
-   "rate": 0.859
+  "support": {
+   "agree": 69,
+   "rate": 0.885
+  },
+  "supportDisagreementCases": 8,
+  "completionNotComparedToBench": true,
+  "taskLensNotComparable": "task lens answers actual completion; bench and support lenses answer evidence support",
+  "completionDistribution": {
+   "insufficient": 68,
+   "yes": 4,
+   "partial": 6
   },
   "disagreements": [
-   {
-    "id": "tg-v1:67a272548d99",
-    "bench": "partial",
-    "blind": "yes",
-    "labels": {
-     "clause": "partial",
-     "outcome": "yes",
-     "task": "yes"
-    }
-   },
-   {
-    "id": "tg-v1:37d15dfd695b",
-    "bench": "no",
-    "blind": "partial",
-    "labels": {
-     "clause": "no",
-     "outcome": "partial",
-     "task": "partial"
-    }
-   },
    {
     "id": "tg-v1:92c8df8d11f9",
     "bench": "no",
@@ -147,10 +135,15 @@
   ]
  },
  "verdictCountsBlind": {
-  "no": 60,
-  "yes": 4,
+  "no": 61,
   "partial": 5,
+  "yes": 3,
   "insufficient": 9
+ },
+ "completionCounts": {
+  "insufficient": 68,
+  "yes": 4,
+  "partial": 6
  },
  "benchCountsUnique": {
   "no": 70,
@@ -161,15 +154,15 @@
  "crossTab": {
   "achieved|insufficient": 8,
   "achieved|no": 57,
-  "achieved|partial": 2,
-  "achieved|yes": 4,
+  "achieved|partial": 3,
+  "achieved|yes": 3,
   "pending|insufficient": 1,
-  "pending|no": 3,
-  "pending|partial": 3
+  "pending|no": 4,
+  "pending|partial": 2
  },
  "committedAchieved": 71,
- "committedAchievedNotYes": 67,
- "committedAchievedNotYesRate": 0.944,
+ "committedAchievedNotYes": 68,
+ "committedAchievedNotYesRate": 0.958,
  "selectionBias": "every bench row is an llm=yes case; this measures false commits, not balanced accuracy",
  "singleFactLimitation": "single (goal, fact) pairs cannot express 14/19 multi-clause, negation or precondition goals",
  "reportN": 108,

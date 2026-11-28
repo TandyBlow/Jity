@@ -2,17 +2,17 @@
  "cases": 78,
  "missing": [],
  "accuracy": 0.09,
- "commitAccuracy": 0.141,
- "yesPrecision": 0.056,
+ "commitAccuracy": 0.128,
+ "yesPrecision": 0.042,
  "yesRecall": 1.0,
  "confusion": {
   "insufficient|no": 1,
   "insufficient|yes": 8,
-  "no|no": 3,
+  "no|no": 4,
   "no|yes": 57,
-  "partial|no": 3,
-  "partial|yes": 2,
-  "yes|yes": 4
+  "partial|no": 2,
+  "partial|yes": 3,
+  "yes|yes": 3
  },
  "falseCommits": [
   "tg-v1:e011f67ff69c",
@@ -20,6 +20,7 @@
   "tg-v1:05f82e692d16",
   "tg-v1:6eff69ff9278",
   "tg-v1:a078e7583811",
+  "tg-v1:67a272548d99",
   "tg-v1:a23158d627df",
   "tg-v1:d9f24d272d88",
   "tg-v1:46d392c4071c",
@@ -122,16 +123,16 @@
   },
   "task_caesar_bridge": {
    "n": 1,
-   "exact": 1,
-   "commit": 1,
-   "accuracy": 1.0,
-   "commitAccuracy": 1.0
+   "exact": 0,
+   "commit": 0,
+   "accuracy": 0.0,
+   "commitAccuracy": 0.0
   },
   "task_chu_flag": {
    "n": 1,
-   "exact": 0,
+   "exact": 1,
    "commit": 1,
-   "accuracy": 0.0,
+   "accuracy": 1.0,
    "commitAccuracy": 1.0
   },
   "task_doctor_triage": {

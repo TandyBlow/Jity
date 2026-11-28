@@ -1,4 +1,4 @@
-# P05 任务达成金标独立核查：盲评一致 86%，不是 114/114；基准撑不起 14.8%
+# P05 任务达成金标独立核查：支持轴 88.5%，完成轴单事实不可判；不是 114/114
 
 **Question.** 语义分支说“原有任务达成标签可能不正确”；它的 `bench-v1` 严格标签是否可信？
 如果可信，E57 的 14.8% 能不能当作“模型语义正确率”？新的“正确答案”应该长什么样？
@@ -16,18 +16,22 @@
 **Data.** `bench-v1` 120 行：`no 105 / partial 6 / yes 3 / skip 6`。可判 114 条只对应
 **78 个唯一 (task, goal, fact)**；同任务内重复 **36 条（31.6%）**。覆盖 17 个有目标的
 任务；`task_42`、`task_164` 的 6 条样本目标为空。全部 120 条都是旧 LLM 判 yes 的样本。
-盲评只输入 id/taskId/goal/fact，隐藏原 verdict 与 committed；三路结果：多数一致
-**67/78（85.9%）**，clause 69/78（88.5%）、outcome 71/78（91.0%）、task 7/78（9.0%）。
+盲评只输入 id/taskId/goal/fact，隐藏原 verdict 与 committed。三路不是同一个问题：
+clause/outcome 判“这条事实是否支持目标”，task 判“任务是否实际完成”。支持轴（clause
+并列优先）与 bench 一致 **69/78（88.5%）**；完成轴 68/78 判 `insufficient`、6 partial、
+4 yes，不能拿它跟 bench 的 88.5% 比，也不做三路多数投票。
 
 **Findings.**
 
-1. **盲评一致率 67/78（85.9%），不是 114/114。** 我此前写下的 114/114 来自构建脚本
-   直接复制 `row['verdict']`，没有独立标注文件支撑；现已改为三路盲评并保存每条的
-   判定理由（`independent-labels-v1.jsonl`、`blind-agreement-v1.json`）。分歧 11 条：
-   9 条是多数判 `insufficient`、bench 判 `no`（单事实不足以判定，不等于已证明未达成）；
-   1 条 `caesar_bridge` 多数判 yes、bench partial；1 条 `chu_flag` 多数 partial、bench no。
-   task 镜头只有 7/78 一致，说明“只看一条事实做任务级判断”本身不可靠；不应把它的多数
-   当作独立金标，必须用多事实/跨回合证据。
+1. **支持轴一致 69/78（88.5%），不是 114/114；完成轴单事实不可判。** 我此前写下的
+   114/114 来自构建脚本直接复制 `row['verdict']`，没有独立标注文件支撑；现已保存
+   逐条盲评理由（`independent-labels-v1.jsonl`、`blind-agreement-v1.json`）。
+   支持轴分歧 9 条：全部是盲评判 `insufficient`、bench 判 `no`——这条事实不能支持任务，
+   但也不能证明任务没完成。完成轴 68/78 是 `insufficient`、6 partial、4 yes；它回答的是
+   “任务实际上有没有完成”，不能和 bench 的支持判定混算。`caesar_bridge`（partial vs
+   yes）和 `chu_flag`（no vs partial）是 clause/outcome 两镜头的支持分歧，按 clause 取
+   partial/no。结论：单事实基准只能评价**支持程度**，要评价完成状态必须用多事实/跨回合
+   证据。
 
 2. **14.8% 不是语义正确率，是负例上的误提交率。** 114 条全部是旧 LLM 判 yes 的样本，
    其中 107 条已被旧系统提交为 achieved；这 107 条里严格只有 3 条 yes，
@@ -59,9 +63,9 @@
 - `task-gold-v1.tasks.json`：17 个有目标任务的任务级规格——required 子句 id、前置条件、
   否定约束、partial 规则、旧系统的 forbidden shortcuts（走进房间、读地图、提到负责人、
   准备动作等）。`task_42/task_164` 标为缺目标。
-- `task-gold-v1.cases.jsonl`：78 条去重后的**盲评多数标签**（附三路 labels/reasons、
-  benchVerdict、requiredIds、否定/前置条件），已用规范化哈希冻结；`insufficient` 与
-  `no` 分开。
+- `task-gold-v1.cases.jsonl`：78 条去重后的**支持轴标签**（`verdict`/`supportVerdict`）
+  与独立的 `completionVerdict`（task 镜头），附三路 labels/reasons、benchVerdict、
+  requiredIds、否定/前置条件；`insufficient` 与 `no` 分开，不做三路多数投票。
 - `independent-labels-v1.jsonl` / `blind-agreement-v1.json`：三路盲评原始标签、理由、
   置信度与一致率计算；不再由构建脚本写死一致数。
 - `task-multifact-v1.jsonl`：从规则臂八场景证据抽出的 **584 条多事实/跨回合**任务案例
@@ -71,7 +75,7 @@
   不是真实运行结果，正式评价仍需真实回合采集。
 - `task-gold-v1.report.json`：本页全部计数与差异。
 - `old-commit-predictions.jsonl` / `old-commit-eval.json`：把旧系统 committed 状态当预测
-  的对照分数（78 条盲评金标，yes precision 0.056）。
+  的对照分数（78 条盲评支持轴金标，yes precision 0.042）。
 - `tools/experiment_platform/task_gold_eval.py`：对任意 `{id, verdict}` 预测打分
   （exact accuracy、yes 提交的 P/R、误提交列表、按任务汇总）；`not_triggered` 已进
   任务规格的判定表。

@@ -51,10 +51,16 @@ def build(bench: list[dict], spec: dict, indep_rows: list[dict]) -> tuple[list[d
         case_id = 'tg-v1:' + hashlib.sha1(('|'.join(key)).encode('utf-8')).hexdigest()[:12]
         blind = indep.get(case_id)
         labels = blind['labels'] if blind else {}
-        verdict = blind['majority'] if blind else row['verdict']
-        if verdict == 'disagreement':
-            verdict = 'no' if 'no' in [x['verdict'] for x in labels.values()] else row['verdict']
-        majority_reason = next((x['reason'] for x in labels.values() if x['verdict'] == verdict), None)
+        clause = labels.get('clause', {})
+        outcome = labels.get('outcome', {})
+        task = labels.get('task', {})
+        # Support axis: does this fact support every goal clause? Clause lens wins ties.
+        verdict = clause.get('verdict') or outcome.get('verdict') or row['verdict']
+        support_disagreement = bool(clause and outcome and clause.get('verdict') != outcome.get('verdict'))
+        # Completion axis: task lens answers whether the task actually happened; single facts
+        # usually cannot decide it, so it is reported separately and never voted into support.
+        completion = task.get('verdict') or 'insufficient'
+        majority_reason = clause.get('reason') or outcome.get('reason')
         if verdict == 'insufficient':
             majority_reason = majority_reason or '单事实证据不足以判定任务是否达成'
         spec_task = tasks.get(row['taskId']) or {}
@@ -70,8 +76,12 @@ def build(bench: list[dict], spec: dict, indep_rows: list[dict]) -> tuple[list[d
             'sheet': row.get('sheet'),
             'benchVerdict': row['verdict'],
             'verdict': verdict,
+            'supportVerdict': verdict,
+            'completionVerdict': completion,
+            'supportDisagreement': support_disagreement,
             'evidenceStatus': 'insufficient' if verdict == 'insufficient' else 'decided',
             'reason': majority_reason or '单事实未覆盖目标子句',
+            'completionReason': task.get('reason') or '单事实无法判定任务是否实际完成',
             'blindLabels': {lens: item['verdict'] for lens, item in labels.items()},
             'blindReasons': {lens: item['reason'] for lens, item in labels.items()},
             'requiredIds': [x['id'] for x in spec_task.get('required') or []],
@@ -84,7 +94,8 @@ def build(bench: list[dict], spec: dict, indep_rows: list[dict]) -> tuple[list[d
     per_lens = {}
     for lens in ('clause', 'outcome', 'task'):
         per_lens[lens] = sum(1 for c in unique if c.get('blindLabels', {}).get(lens) == c['benchVerdict'])
-    agree = sum(1 for c in unique if c['agreesWithBench'])
+    agree = sum(1 for c in unique if c['verdict'] == c['benchVerdict'])
+    completion = Counter(c['completionVerdict'] for c in unique)
     disagreements = [{'id': c['id'], 'bench': c['benchVerdict'], 'blind': c['verdict'],
                       'labels': c.get('blindLabels')} for c in unique if not c['agreesWithBench']]
     by_verdict = Counter(c['verdict'] for c in unique)
@@ -107,10 +118,15 @@ def build(bench: list[dict], spec: dict, indep_rows: list[dict]) -> tuple[list[d
         'blindAgreement': {
             'cases': len(unique),
             'perLens': {lens: {'agree': n, 'rate': round(n / max(1, len(unique)), 3)} for lens, n in per_lens.items()},
-            'majority': {'agree': agree, 'rate': round(agree / max(1, len(unique)), 3)},
+            'support': {'agree': agree, 'rate': round(agree / max(1, len(unique)), 3)},
+            'supportDisagreementCases': sum(1 for c in unique if c.get('supportDisagreement')),
+            'completionNotComparedToBench': True,
+            'taskLensNotComparable': 'task lens answers actual completion; bench and support lenses answer evidence support',
+            'completionDistribution': dict(completion),
             'disagreements': disagreements,
         },
         'verdictCountsBlind': dict(by_verdict),
+        'completionCounts': dict(completion),
         'benchCountsUnique': dict(by_bench),
         'insufficientCount': by_verdict.get('insufficient', 0),
         'crossTab': {f'{k[0]}|{k[1]}': v for k, v in sorted(committed.items())},
