@@ -55,6 +55,20 @@ def check_ref(ref, rows):
     for clause in ref['clauses']:
         for i in clause['sources']:
             clauses_of.setdefault(i, []).append(clause)
+            # 事实片段的每个属性都要能在这个子句里找到（或明确省略）。
+            if frag[i]['kind'] != 'fact':
+                continue
+            parts = [p.strip() for p in re.split(r'[，；]', frag[i]['text']) if p.strip()]
+            if not parts:
+                continue
+            first = re.sub(r'^[^，]{0,6}里有', '', parts[0])
+            first = re.sub(r'也在[^，]*$', '', first).strip() or parts[0]
+            attrs = [first] + parts[1:]
+            for part in attrs:
+                if len(part) < 3:
+                    continue
+                if ev.coverage(part, ev.bigrams(clause['text'])) < 0.35:
+                    problems.append(f'attr_missing:{i}:{part[:14]}')
     for i, f in frag.items():
         if f['kind'] != 'result':
             continue

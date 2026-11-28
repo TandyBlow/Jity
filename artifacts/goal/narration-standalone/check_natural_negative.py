@@ -21,6 +21,11 @@ def main():
     dropped_cue = copy.deepcopy(base)
     dropped_cue['clauses'][0] = {'text': '凯撒留在红方集结点等待。', 'sources': [0]}
     cases.append(('dropped_cue', dropped_cue, 'result_not_in_its_clause:0'))
+    lost_attr = copy.deepcopy(base)
+    for clause in lost_attr['clauses']:
+        if '护目镜' in clause['text']:
+            clause['text'] = clause['text'].replace('，而不是戴在眼前', '')
+    cases.append(('lost_attribute', lost_attr, 'attr_missing:8'))
     ok = True
     for name, ref, expected in cases:
         problems = cn.check_ref(ref, rows)['problems']
