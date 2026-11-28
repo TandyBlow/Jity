@@ -977,20 +977,24 @@ export default function WorldLocalPage() {
           if (rec) (rec.semanticPrompts ??= []).push({ at: Date.now(), prompt });
         }, arm.nbatch);
         semanticRef.current = semantic;
+        const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
+        // The rules arm never calls a narration engine, so it does not load one.
         // The 0.6B narration arm shares the semantic engine: one set of
         // weights, at the cost of serialising narration against settlement.
-        const narration = webllm ?? (narrationKey === 'semantic'
+        const narration = candidate === 'rules' ? null : webllm ?? (narrationKey === 'semantic'
           ? semantic
           : resilientEngine(narrationSpec.url, narrationSpec.contextSize, 'narration', narrationSpec.bytes));
         narrationRef.current = narration;
-        const candidate = arm.candidate ?? (window as unknown as { __jityNarrationCandidate?: string }).__jityNarrationCandidate ?? 'auto';
         // Arm identity is evidence: 09 records it next to every turn, including
         // the exact narration file and its hash so no run can silently swap weights.
         (window as unknown as { __worldArm?: unknown }).__worldArm = {
           candidate, mode: arm.mode ?? null, shape: arm.shape ?? null,
           offscreenPolicy: arm.offscreenPolicy ?? 'judge',
-          narrationModel: narrationKey, narrationFile: narrationSpec.url, semanticCtx: arm.semanticCtx ?? DEFAULT_SEMANTIC_CTX, kv: arm.kv ?? 'q8_0', nBatch: arm.nbatch ?? null,
-          narrationBytes: narrationSpec.bytes, narrationSha256: narrationSpec.sha256,
+          narrationModel: candidate === 'rules' ? 'rules' : narrationKey,
+          narrationFile: candidate === 'rules' ? null : narrationSpec.url,
+          semanticCtx: arm.semanticCtx ?? DEFAULT_SEMANTIC_CTX, kv: arm.kv ?? 'q8_0', nBatch: arm.nbatch ?? null,
+          narrationBytes: candidate === 'rules' ? 0 : narrationSpec.bytes,
+          narrationSha256: candidate === 'rules' ? null : narrationSpec.sha256,
           narrationTemperature: arm.temperature ?? null,
           narrationFewShot: arm.fewShot ?? null,
           narrationProjection: arm.projection ?? null,
@@ -1123,14 +1127,14 @@ export default function WorldLocalPage() {
           ...(microTaskVerifier ? { microTaskVerifier } : {}),
           ...(microTaskProposer ? { microTaskProposer } : {}),
           ...(microEnabled ? { structuredActions: true, programScene: true, localPosition: true } : {}),
-          narrationEngine: narration,
+          narrationEngine: narration ?? undefined,
           // The static world names the player's character; the first point of
           // a player round holds only that character so its settlement can
           // commit and be narrated before the rest of the roster is judged.
           protagonistId: world.state.protagonistId,
           ...(arm.offscreenPolicy ? { offscreenPolicy: arm.offscreenPolicy } : {}),
           narrationMode: 'instruct',
-          narrationCandidate: (candidate ?? 'builtin') as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin',
+          narrationCandidate: (candidate ?? 'builtin') as 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin' | 'rules',
           ...(arm.mode ? { trainedMode: arm.mode } : {}),
           ...(arm.shape ? { trainedPromptShape: arm.shape } : {}),
           // The fact-structure candidate writes one verified beat per model
@@ -1501,12 +1505,14 @@ export default function WorldLocalPage() {
         // other cost 17.8 s + 46.2 s in the 5810 run. Start the narration load
         // together with the semantic one so the page is ready after the slower
         // of the two, not their sum. No turn can start before both are done.
-        setMessage(`正在加载本地模型（Qwen3-0.6B + ${narrationKey}）…`);
-        const narrationLoading = narration.load();
+        setMessage(narration
+          ? `正在加载本地模型（Qwen3-0.6B + ${narrationKey}）…`
+          : '正在加载本地模型（Qwen3-0.6B）…');
+        const narrationLoading = narration ? narration.load() : Promise.resolve();
         await semantic.load();
         if (!alive) { await semantic.dispose(); await narrationLoading.catch(() => undefined); return; }
         await narrationLoading;
-        if (!alive) { await narration.dispose(); return; }
+        if (!alive) { await narration?.dispose(); return; }
         // 微型模型的会话要在断网前建好，否则离线回合会退回 LLM
         if (microParam) {
           const models = [

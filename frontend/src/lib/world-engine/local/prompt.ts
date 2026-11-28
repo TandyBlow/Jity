@@ -190,7 +190,7 @@ function legacyDelta(time: TimeAdvance | null, delta: Record<Id, EntityDelta>, b
 /** Instruct-model narration brief. A small instruct model copies long rule
  * lists and bullet dumps back out, so the brief is one short paragraph of
  * facts and two sentences of task. Nothing here invents state. */
-export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene', compact = false): { prompt: string; brief: string } {
+export function instructNarrationInput(before: WorldState | null, delta: { timeAdvance?: TimeAdvance | null; entityDeltas?: Record<Id, EntityDelta> }, after: WorldState, view: Id, actionText = '', resultsText = '', draft = '', mode: 'scene' | 'repair' = 'scene', compact = false): { prompt: string; brief: string; sentences: string[] } {
   const name = after.initial.characters[view]?.name ?? view;
   const room = roomOf(after, view);
   const sentences: string[] = [];
@@ -277,7 +277,7 @@ export function instructNarrationInput(before: WorldState | null, delta: { timeA
       brief,
       '正文：',
     ].join(String.fromCharCode(10));
-  return { prompt, brief };
+  return { prompt, brief, sentences };
 }
 
 function timeUnitName(unit: TimeAdvance['duration']['unit']): string {

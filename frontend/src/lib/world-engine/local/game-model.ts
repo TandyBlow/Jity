@@ -19,6 +19,7 @@ import { createNarrationRunner, type NarrationRunner } from './narration-candida
 import { requireSettlementValue } from './semantics/settlement';
 import { createSettlementModelPort, type PortSubmission, type SettlementModelPort, type SettlementPortSummary } from './turn-execution';
 import { describeCharacter, describeDelta, describeItem, describeLocation, instructNarrationInput, legacyNarrationInput, locationName, roomName, roomOf, sameRoomItems, taskText, visibleCharacters, activeText } from './prompt';
+import { rulesNarration } from './rules-narration';
 
 /** One worked example for the instruct brief (evaluation arm). Names and
  * props belong to another scene; the instructions forbid copying them. */
@@ -110,7 +111,7 @@ export interface GameModelOptions {
    * whose real-model evidence is positive, so the shipped default changes
    * nothing until one is accepted; the named routes exist for evaluation and
    * are never a player-visible setting. */
-  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin';
+  narrationCandidate?: 'auto' | 'trained' | 'instruct' | 'constrained' | 'builtin' | 'rules';
   /** Constrained route only: `program` never calls the model, `model` writes
    * one verified beat per call. Internal. */
 
@@ -201,6 +202,8 @@ export class LocalGameModel implements WorldModelPort {
   private readonly pointFacts = new Map<Id, SettledFactRecord[]>();
   private readonly seenFactTexts = new Set<string>();
   private readonly narrationSnapshots = new Map<Id, PointNarrationSnapshot>();
+  /** Rules arm: the fact sentences each point was narrated from, for the next delta. */
+  private readonly rulesBriefs: Array<{ pointId: Id; sentences: string[] }> = [];
   /** Planned actors per point; the action line follows this, not the delta. */
   private readonly plannedActors = new Map<Id, Id[]>();
   private recentEvents: string[] = [];
@@ -254,6 +257,7 @@ export class LocalGameModel implements WorldModelPort {
       unknownEntityExample: options.settlementUnknownExample ?? false,
     });
     this.narrationRunner = (options.narrationCandidate ?? 'auto') === 'builtin'
+      || options.narrationCandidate === 'rules'
       ? null
       : createNarrationRunner({
         engine: narrationPort,
@@ -606,6 +610,34 @@ export class LocalGameModel implements WorldModelPort {
     const playerInput = inPoint ? (snapshot?.playerInput ?? this.lastPlayerInput) : '';
     const resultsText = snapshot?.resultsText ?? '';
     const settledFacts = snapshot?.facts ?? [];
+
+    // Zero-parameter arm: the brief is the whole input, no engine is touched.
+    if (this.options.narrationCandidate === 'rules') {
+      const { brief, sentences } = instructNarrationInput(before, delta, after, view, playerInput, resultsText, '', 'scene', this.options.narrationProjection === 'compact');
+      const index = this.rulesBriefs.findIndex((entry) => entry.pointId === pointId);
+      // Regenerating a point uses the same predecessor; a new point uses the last one.
+      const previous = index > 0
+        ? this.rulesBriefs[index - 1].sentences
+        : index < 0 ? this.rulesBriefs[this.rulesBriefs.length - 1]?.sentences ?? [] : [];
+      const text = rulesNarration({
+        sentences, resultsText, previousSentences: previous,
+        names: Object.values(after.initial.characters).map((entry) => String(entry.name ?? '')),
+        protagonist: after.initial.characters[view]?.name ?? view,
+      });
+      if (index >= 0) this.rulesBriefs[index].sentences = sentences;
+      else {
+        this.rulesBriefs.push({ pointId, sentences });
+        if (this.rulesBriefs.length > 400) this.rulesBriefs.shift();
+      }
+      const ms = performance.now() - started;
+      this.options.onTask?.('narration', key, { ms, fallback: false, raw: text, promptChars: brief.length, source: 'rule' });
+      this.options.onNarrationComplete?.({
+        pointId, raw: text,
+        completion: { raw: text, finishReason: 'stop', firstTokenMs: null, wallMs: ms },
+        fallback: false, source: 'program', segments: [],
+      });
+      return { value: text as unknown as Json, raw: text, ms, fallback: false };
+    }
 
     // Candidate path: one settled point in, the candidate's own beat text out.
     // Nothing here inspects, refuses, rewrites or replaces that text.
