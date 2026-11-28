@@ -1,5 +1,7 @@
 # E57 目标级任务裁决器 v1：行为克隆可行，语义修正未完成
 
+> 2026-11-28（S01）：本模型正式定位为 **behavior-clone control**，不升级为默认；严格任务标准见 S01。
+
 **Question.** 一个 1e7 参数的微型模型能否接管任务达成判断？它在冻结场景与严格人类读评上分别什么表现？
 
 **Method.** 用 E55 的真实回合配对数据（train 192 / val 54 / test 81，冻结八场景与二十输入不进训练）微调 MiniRBT-H256 + 2 类头；输入 `目标 ␟ 事实`，标签为提交状态（yes=任务达成/支持被接受，no=仍待办）。早停按 val F1，导出 ONNX 动态 int8。脚本 `artifacts/goal/semantic-micro/train_goal_verifier.py`。
