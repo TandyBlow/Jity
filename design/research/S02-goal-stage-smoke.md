@@ -36,3 +36,18 @@ goal 阶段的候选与分数（`taskScope.goalTasks.scored`）：
 3. 八场景夹具在 goal 臂跑一遍，报告严格达成、旧标准一致率与被跳过变化。
 
 **Artifacts.** 本文件；两份冒烟证据；`inspect_smoke.py`。S02。
+
+## 追加：明确达成输入（同日）
+
+输入「我把胸前的护目镜戴好，确认镜片没有裂纹，再穿好演习背心，拿上自己的演习枪。」，证据 `smoke-goal-achieve-20261128.json`：
+
+- 结果事实 f1 只有「路明非把胸前的护目镜戴好，确认镜片没有裂纹（达到目的）」，没有背心/枪。
+- goal 阶段候选与分数：`lu/task_lu_kit` 0.705、`lu/task_lu_goggles` 0.533、`lin/task_lin_safe` 0.546，三者都提交达成。
+- 按 S01：`task_lu_goggles` 正确；`task_lu_kit` 错误（目标还要求演习装备）；`task_lin_safe` 错误（用了路明非的事实，事实没有点名林亦舟）。
+
+两个结论：
+
+1. **跨人物缺陷是结构性的，已修**：`micro/goal-verifier.ts` 现在只允许其他人物的事实支持某任务当事实点名该任务负责人（与旧 reader 一致），并有单测。
+2. **行为克隆模型会接受只满足目标一部分的事实**：`task_lu_kit` 0.705 高于 `task_lu_goggles` 0.533，正是 S01 警告的旧错误。该模型保持 control 定位，不用于严格标准；严格裁决需要严格金标训练或程序条件门。
+
+**Artifacts.** `smoke-goal-achieve-20261128.json`；跨人物修复与测试。S02 追加。

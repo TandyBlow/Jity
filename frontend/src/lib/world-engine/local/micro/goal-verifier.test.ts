@@ -49,6 +49,20 @@ describe('goal-level task stage', () => {
     expect(await port({ state: state(), ownerIds: ['hero'], facts })).toBeNull();
   });
 
+  it('does not credit another member fact to a task unless it names the owner', async () => {
+    const port = createMicroGoalTasks({ scoring: (rows) => rows.map(() => 0.9) });
+    const notNamed = await port({
+      state: state(), ownerIds: ['ally'],
+      facts: [{ id: 'f1', memberId: 'hero', text: '路明非守住大厅木门，别让红方进来。' }],
+    });
+    expect(notNamed?.scored).toEqual([]);
+    const named = await port({
+      state: state(), ownerIds: ['ally'],
+      facts: [{ id: 'f1', memberId: 'hero', text: '路明非把阿宁推到门后，阿宁守住大厅木门。' }],
+    });
+    expect(named?.achieved.map((row) => row.taskId)).toEqual(['task_ally_watch']);
+  });
+
   it('skips owners outside the affected set and facts with no goal wording', async () => {
     const port = createMicroGoalTasks({ scoring: (rows) => rows.map(() => 0.9) });
     const out = await port({

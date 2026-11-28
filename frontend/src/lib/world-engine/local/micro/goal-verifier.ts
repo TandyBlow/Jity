@@ -65,6 +65,12 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
       for (const task of Object.values(current.tasks)) {
         if (task.status !== 'pending') continue;
         for (const fact of request.facts) {
+          // A fact belongs to its own member; another member's fact may support
+          // this task only when it names the task owner (the old reader's rule).
+          if (fact.memberId !== ownerId) {
+            const ownerName = request.state.initial.characters[ownerId]?.name ?? '';
+            if (!ownerName || !fact.text.includes(ownerName)) continue;
+          }
           if (!sharesGoalWording(fact.text, task.goal)) continue;
           rows.push({ characterId: ownerId, taskId: task.id, basis: fact.id, goal: task.goal, fact: fact.text });
         }
