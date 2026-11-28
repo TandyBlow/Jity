@@ -75,11 +75,14 @@ Artifacts     evidence files, manifests, commits
 | E51 | Frame v2: 160 annotations, slots are verbatim fact spans, frozen inventory | done (160/160 render, held-out 27/30) |
 | E52 | Structure model: 1.24M end-to-end pattern+span | negative (test .036 vs .107 majority; oracle 0.706) |
 | E53 | Semantic LLM call audit with per-task attribution | done (344 calls/20 turns; handoff) |
-| E54 | Role parse of settled facts: 36% subject-less, 4.5% recoverable from settlement | done (bundle fixed) |
-| E55 | Rule composer baseline: fidelity by construction, length 0.45x, drops 36% of clauses | done (bundle fixed) |
-| E56 | Rule organization: 29 merges (1.8%), event clustering is the missing step | done (bundle fixed) |
-| E57 | Event clustering: discourse inheritance recovers 26% at 86% precision; 693 merges; log feel is in the facts | done |
-| E58 | Per-point grounded eval: 1.7B covers 57% of facts and 0% of NPC outcome labels; rules 67%/100% | done |
-| E59 | Delta narration: 82% of fact clauses repeat; delta arm covers 100%/100% in 57% of current chars | done |
-| E60 | Zero-parameter candidate: action opening + delta + all results; 103 chars/point, 100%/100%, 0.069 ms | done |
-| E61 | Failure taxonomy: candidate has 0 misattribution and 100% outcome labels; current arm omits 99% | done |
+
+> 编号前缀（2026-11-28）：叙事实验用 `N`，语义实验用 `S`，实验平台用 `P`。
+> 本页 N01–N08 即 2026-11-28 之前的 E54–E61（与语义分支的 E54–E57 冲突后重编）。
+| N01 | Role parse of settled facts: 36% subject-less, 4.5% recoverable from settlement | done (bundle fixed) |
+| N02 | Rule composer baseline: fidelity by construction, length 0.45x, drops 36% of clauses | done (bundle fixed) |
+| N03 | Rule organization: 29 merges (1.8%), event clustering is the missing step | done (bundle fixed) |
+| N04 | Event clustering: discourse inheritance recovers 26% at 86% precision; 693 merges; log feel is in the facts | done |
+| N05 | Per-point grounded eval: 1.7B covers 57% of facts and 0% of NPC outcome labels; rules 67%/100% | done |
+| N06 | Delta narration: 82% of fact clauses repeat; delta arm covers 100%/100% in 57% of current chars | done |
+| N07 | Zero-parameter candidate: action opening + delta + all results; 103 chars/point, 100%/100%, 0.069 ms | done |
+| N08 | Failure taxonomy: candidate has 0 misattribution and 100% outcome labels; current arm omits 99% | done |

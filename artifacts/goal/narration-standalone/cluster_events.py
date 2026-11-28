@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""E57: cluster settled facts by discourse topic (actor / place / time), then
+"""N04: cluster settled facts by discourse topic (actor / place / time), then
 emit one sentence per topic. Measures whether clustering unlocks the merges,
-pronouns and connectives that surface rules could not reach (E56: 29/1601)."""
+pronouns and connectives that surface rules could not reach (N03: 29/1601)."""
 import json
 import re
 from collections import Counter, OrderedDict

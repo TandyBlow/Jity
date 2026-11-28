@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E54: parse settled facts into semantic-role fragments and measure how many
+"""N01: parse settled facts into semantic-role fragments and measure how many
 subject-less facts can be grounded from the settlement's actor record."""
 import json
 import re

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E56: organize the rule baseline into paragraphs — merge repeated subjects,
+"""N03: organize the rule baseline into paragraphs — merge repeated subjects,
 add pronouns and connectives, keep every fact. Still zero invention."""
 import json
 import re

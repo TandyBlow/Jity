@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E55 rule composer: emit one sentence per settled fact / event, keep polarity
+"""N02 rule composer: emit one sentence per settled fact / event, keep polarity
 and outcome, never add content. This is the program baseline the micro models
 must beat on naturalness, not on fidelity."""
 import json

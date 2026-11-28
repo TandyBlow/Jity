@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E58: fact-grounded evaluation of narration arms. No char F1: per-fact
+"""N05: fact-grounded evaluation of narration arms. No char F1: per-fact
 coverage, unsupported entities, negation loss, outcome-label coverage,
 repetition and sentence shape. Runs on the 161 real inputs."""
 import json

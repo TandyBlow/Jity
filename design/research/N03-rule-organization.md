@@ -1,4 +1,4 @@
-# E56 规则组织：句子干净了，但"按角色聚簇"才是缺的那一步
+# N03 规则组织：句子干净了，但"按角色聚簇"才是缺的那一步
 
 **Question.** 在规则基线之上加同主语合并、代词、连接词与分段，能否从事件日志走向叙事？
 
@@ -8,7 +8,7 @@
 
 **Results.**
 - 1,601 句、39,950 字，每 point 平均 248 字（事实块 398 字）；句子语法成立、主语正确、
-  无新增实体。51 组精确对照上现役 1.7B 每 point 177 字，规则正文比现役长 40%（E58）。
+  无新增实体。51 组精确对照上现役 1.7B 每 point 177 字，规则正文比现役长 40%（N05）。
 - **合并 29 次（句子的 1.8%）、新增连接词 0 次**：结算记录与事实块里同一角色的动作几乎
   从不连续出现，规则没有可合并的相邻对象。
 
@@ -17,7 +17,7 @@
 因果链），再在簇内做合并与指代——这正好是目标里"信息组织"那一层，且可以用人工正确的
 中间结果先验证。
 
-**Caveats.** **修正（E57）：** 初版 bundle 切错结算段与世界事实段，78 个 point 的世界事实
+**Caveats.** **修正（N04）：** 初版 bundle 切错结算段与世界事实段，78 个 point 的世界事实
 被吞，统计为 660 句、合并 0 次；本页数字为修正后重跑的结果。结论不变：合并率 1.8%。
 
-**Artifacts.** `artifacts/goal/narration-standalone/{compose_organized.py,compose-organized-summary.json}`。E56。
+**Artifacts.** `artifacts/goal/narration-standalone/{compose_organized.py,compose-organized-summary.json}`。N03。

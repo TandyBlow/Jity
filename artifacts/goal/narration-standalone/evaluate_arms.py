@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E60: cumulative (per evidence run) and per-point comparison of the four
+"""N07: cumulative (per evidence run) and per-point comparison of the four
 narration arms. Cumulative is the player-facing view: a fact only has to be
 said once across the run."""
 import json

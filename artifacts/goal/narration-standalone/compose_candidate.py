@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E60: zero-parameter narration candidate. Opens with the player's declared
+"""N07: zero-parameter narration candidate. Opens with the player's declared
 action, narrates only fresh facts plus every settlement result, puts the clock
 last. No model, no weights."""
 import json

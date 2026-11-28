@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E61: failure taxonomy for a narration arm. Attribution (does a fact about X
+"""N08: failure taxonomy for a narration arm. Attribution (does a fact about X
 land in a sentence whose subject is Y?), repeated sentence heads, unmatched
 openings, outcome phrasing, and sentence shape."""
 import json

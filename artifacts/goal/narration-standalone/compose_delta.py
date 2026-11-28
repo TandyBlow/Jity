@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""E59: narration of the delta only. 82% of a point's fact clauses already sat
+"""N06: narration of the delta only. 82% of a point's fact clauses already sat
 in the previous point's block; re-describing them is the repetition source.
 Keep every settlement result, drop facts the previous point already carried."""
 import json
