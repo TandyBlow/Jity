@@ -153,10 +153,10 @@ def sentences_of(chunks, prefix=None, pronoun=None):
     return out, used
 
 
-def compose(row):
+def compose(row, facts=None, time_last=False, opening=None):
     results = [r for r in (parse_result(x) for x in row['resultLines']) if r]
     player = player_name(row)
-    clusters, order, first_at, stats = cluster(row)
+    clusters, order, first_at, stats = cluster(row if facts is None else dict(row, factsText='。'.join(facts)))
     for r in results:
         ck = ('actor', r['actor'])
         if ck not in clusters:
@@ -187,11 +187,22 @@ def compose(row):
             sents, _ = sentences_of(chunks)
         merges += max(0, len(chunks) - len(sents))
         blocks[sort_key(ck)[0]].append((sents, clusters[ck][0] if clusters[ck] else ''))
+    groups = (1, 2) if time_last else (0, 1, 2)
     paras = []
-    for g in (0, 1, 2):
+    for g in groups:
         sents = [s for block in blocks[g] for s in block[0]]
         if sents:
             paras.append(''.join(s if s.endswith('。') else s + '。' for s in sents))
+    if time_last:
+        time_sents = [s for block in blocks[0] for s in block[0]]
+        if time_sents:
+            clock = ''.join(s if s.endswith('。') else s + '。' for s in time_sents)
+            if paras:
+                paras[-1] += clock
+            else:
+                paras.append(clock)
+    if opening:
+        paras.insert(0, opening if opening.endswith('。') else opening + '。')
     text = '\n\n'.join(paras)
     stats['sentences'] = sum(len(b[0]) for g in blocks.values() for b in g)
     stats['merges'] = merges

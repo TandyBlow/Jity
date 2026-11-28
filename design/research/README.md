@@ -80,4 +80,5 @@ Artifacts     evidence files, manifests, commits
 | E56 | Rule organization: 29 merges (1.8%), event clustering is the missing step | done (bundle fixed) |
 | E57 | Event clustering: discourse inheritance recovers 26% at 86% precision; 693 merges; log feel is in the facts | done |
 | E58 | Per-point grounded eval: 1.7B covers 57% of facts and 0% of NPC outcome labels; rules 67%/100% | done |
-| E59 | Delta narration: 82% of fact clauses repeat; delta arm covers 100%/100% in 16% of current chars | done |
+| E59 | Delta narration: 82% of fact clauses repeat; delta arm covers 100%/100% in 57% of current chars | done |
+| E60 | Zero-parameter candidate: action opening + delta + all results; 103 chars/point, 100%/100%, 0.069 ms | done |

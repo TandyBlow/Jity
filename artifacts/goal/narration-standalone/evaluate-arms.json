@@ -1,0 +1,38 @@
+{
+ "current-1.7b": {
+  "cumulativeFactCover": 0.689,
+  "cumulativeFacts": "292/424",
+  "cumulativeOutcome": 0.043,
+  "cumulativeOutcomes": "6/141",
+  "cumulativeChars": 28367,
+  "charsPerPoint": 176.2,
+  "sentencesPerPoint": 5.3
+ },
+ "rules-e57": {
+  "cumulativeFactCover": 1.0,
+  "cumulativeFacts": "424/424",
+  "cumulativeOutcome": 1.0,
+  "cumulativeOutcomes": "141/141",
+  "cumulativeChars": 53102,
+  "charsPerPoint": 329.8,
+  "sentencesPerPoint": 9.8
+ },
+ "delta-e59": {
+  "cumulativeFactCover": 1.0,
+  "cumulativeFacts": "424/424",
+  "cumulativeOutcome": 1.0,
+  "cumulativeOutcomes": "141/141",
+  "cumulativeChars": 16287,
+  "charsPerPoint": 101.2,
+  "sentencesPerPoint": 4.2
+ },
+ "candidate-e60": {
+  "cumulativeFactCover": 1.0,
+  "cumulativeFacts": "424/424",
+  "cumulativeOutcome": 1.0,
+  "cumulativeOutcomes": "141/141",
+  "cumulativeChars": 16634,
+  "charsPerPoint": 103.3,
+  "sentencesPerPoint": 4.3
+ }
+}
