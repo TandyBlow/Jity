@@ -38,6 +38,9 @@ export interface LocalGameSnapshot {
   checkpoint?: LocalSchedulerCheckpoint;
   /** pointId → narration provenance. Never changes the committed text. */
   narrationSources?: Record<string, NarrationSourceNote>;
+  /** pointId → player action + settlement text, so a regenerated point keeps
+   * its facts after a reload. */
+  narrationInputs?: Record<string, { playerInput: string; resultsText: string }>;
   /** Command index → committed player point id (null when that command never
    * committed). Optional for older saves; history falls back to counting. */
   commandPointIds?: (string | null)[];
@@ -85,6 +88,7 @@ export interface LocalGameOptions {
   onEvent?: (event: LocalSessionEvent) => void;
   /** Page-owned provenance for committed narration text (label only). */
   narrationSourceOf?: () => Record<string, NarrationSourceNote> | undefined;
+  narrationInputsOf?: () => Record<string, { playerInput: string; resultsText: string }> | undefined;
   /** Opaque task-condition ledger saved with every snapshot. */
   taskLedgerOf?: () => TaskLedgerSnapshot | undefined;
   /** Restore the ledger from a loaded snapshot (null on a new world). */
@@ -169,6 +173,7 @@ export class LocalGameSession {
 
   /** Provenance loaded from the saved snapshot; merged with the live source ref. */
   private restoredSources: Record<string, NarrationSourceNote> = {};
+  private restoredNarrationInputs: Record<string, { playerInput: string; resultsText: string }> = {};
 
   private constructor(transport: LocalWorldTransport, model: WorldModelPort, initial: InitialTemplate | null,
     commands: string[], options: ResolvedOptions, state?: ResumeServedState, memory?: ControllerMemory) {
@@ -234,6 +239,7 @@ export class LocalGameSession {
   static async restore(snapshot: LocalGameSnapshot, model: WorldModelPort, options: LocalGameOptions = {},
     progress?: { revision?: number; metadata?: ProgressMetadata | null }): Promise<LocalGameSession> {
     const restoredSources = snapshot?.narrationSources ? { ...snapshot.narrationSources } : {};
+    const restoredInputs = snapshot?.narrationInputs ? { ...snapshot.narrationInputs } : {};
     const record = snapshot?.transport;
     if (!record || typeof record.worldId !== 'string' || !record.state || !record.pointStates || !record.control) {
       throw new Error('local_restore_invalid_snapshot');
@@ -292,6 +298,7 @@ export class LocalGameSession {
       // Provenance saved with the previous page must survive a reload: the
       // in-memory source ref is empty on a fresh page.
       session.restoredSources = restoredSources;
+      session.restoredNarrationInputs = restoredInputs;
       options.onRestoreTaskLedger?.(snapshot.taskLedger ?? null);
       const savedIds = snapshot.commandPointIds;
       if (Array.isArray(savedIds) && savedIds.length === session.commands.length) {
@@ -352,6 +359,8 @@ export class LocalGameSession {
     // not store.
     const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
+    const inputs = { ...this.restoredNarrationInputs, ...(this.options.narrationInputsOf?.() ?? {}) };
+    if (Object.keys(inputs).length) snapshot.narrationInputs = inputs;
     const ledger = this.options.taskLedgerOf?.();
     if (ledger) snapshot.taskLedger = ledger;
     if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];
@@ -524,6 +533,8 @@ export class LocalGameSession {
     if (checkpoint) snapshot.checkpoint = checkpoint;
     const sources = { ...this.restoredSources, ...(this.options.narrationSourceOf?.() ?? {}) };
     if (Object.keys(sources).length) snapshot.narrationSources = sources;
+    const inputs = { ...this.restoredNarrationInputs, ...(this.options.narrationInputsOf?.() ?? {}) };
+    if (Object.keys(inputs).length) snapshot.narrationInputs = inputs;
     const ledger = this.options.taskLedgerOf?.();
     if (ledger) snapshot.taskLedger = ledger;
     if (this.commandPointIds.length === this.commands.length) snapshot.commandPointIds = [...this.commandPointIds];

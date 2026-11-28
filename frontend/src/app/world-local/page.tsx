@@ -578,9 +578,12 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(taskLedgerOf ? { taskLedgerOf } : {}), ...(onRestoreTaskLedger ? { onRestoreTaskLedger } : {}), ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, narrationInputsOf: () => model.narrationInputs(), onCommit, ...(taskLedgerOf ? { taskLedgerOf } : {}), ...(onRestoreTaskLedger ? { onRestoreTaskLedger } : {}), ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
       );
       if (opened.created) await opened.session.start();
+      // A restored save does not carry the in-memory narration snapshots; seed
+      // them so a regenerated point keeps its action and settlement text.
+      model.seedNarrationInputs(opened.session.snapshot.narrationInputs ?? {});
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
       return opened.session;
     } catch (error) {

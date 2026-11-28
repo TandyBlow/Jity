@@ -327,6 +327,20 @@ export class LocalGameModel implements WorldModelPort {
       playerInput: this.lastPlayerInput,
     });
   }
+  /** Restore the narration material a reload would otherwise lose. */
+  seedNarrationInputs(entries: Record<Id, { playerInput: string; resultsText: string }>): void {
+    for (const [pointId, entry] of Object.entries(entries)) {
+      this.narrationSnapshots.set(pointId, { resultsText: entry.resultsText, facts: [], playerInput: entry.playerInput });
+    }
+  }
+
+  /** pointId → the action and settlement a regeneration needs. */
+  narrationInputs(): Record<Id, { playerInput: string; resultsText: string }> {
+    return Object.fromEntries([...this.narrationSnapshots].map(([pointId, snapshot]) => [pointId, {
+      playerInput: snapshot.playerInput, resultsText: snapshot.resultsText,
+    }]));
+  }
+
   endSubmission(): PortSubmission | null { return this.settlement.endSubmission(); }
   settlementSummary(): SettlementPortSummary { return this.settlement.summary(); }
   resetSettlement(): void { this.settlement.reset(); }
