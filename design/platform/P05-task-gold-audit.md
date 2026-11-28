@@ -60,6 +60,9 @@
   1 not_triggered），按任务规格手工构造，覆盖单事实基准测不到的组合；它们是夹具，
   不是真实运行结果，正式评价仍需真实回合采集。
 - `task-gold-v1.report.json`：本页全部计数与差异。
+- `tools/experiment_platform/task_gold_eval.py`：对任意 `{id, verdict}` 预测打分
+  （exact accuracy、yes 提交的 P/R、误提交列表、按任务汇总）；`not_triggered` 已进
+  任务规格的判定表。
 
 **Numbering（按用户提议，避免合并后引用混乱）.**
 
@@ -77,7 +80,7 @@
 **Next（需要用户或语义 Agent 动作）.**
 
 1. 语义 Agent 从冻结的 114 条重跑 E57 报告，消除 108/114 差异；解释 6 条空目标样本。
-2. 条件任务加 `not_triggered` 状态，金标与训练负例分开。
+2. 条件任务加 `not_triggered` 状态（平台规格已加；语义 Agent 的训练负例需同步排除未触发样本）。
 3. 以 `task-gold-v1.tasks.json` 的 required 子句重写候选生成与裁决；bench 单事实只作
    负例，不作为“达成”正例来源。
 4. 平台下一步从真实回合抽多事实证据，按任务规格生成独立 test 集；在此之前 bundles 只

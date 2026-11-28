@@ -292,6 +292,21 @@ def test_narration_metrics_sensitivity():
     assert bad_metrics['outHit'] == 0
 
 
+def test_task_gold_eval_commit_and_not_triggered():
+    from tools.experiment_platform.task_gold_eval import score
+
+    cases = [{'id': 'a', 'taskId': 't', 'verdict': 'yes'},
+             {'id': 'b', 'taskId': 't', 'verdict': 'no'},
+             {'id': 'c', 'taskId': 't', 'verdict': 'partial'},
+             {'id': 'd', 'taskId': 't', 'verdict': 'not_triggered'}]
+    preds = {'a': 'yes', 'b': 'yes', 'c': 'partial', 'd': 'not_triggered'}
+    report = score(cases, preds)
+    assert report['accuracy'] == 0.75
+    assert report['yesPrecision'] == 0.5 and report['yesRecall'] == 1.0
+    assert report['falseCommits'] == ['b']
+    assert report['missing'] == []
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate

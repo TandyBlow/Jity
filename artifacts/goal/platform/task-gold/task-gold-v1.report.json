@@ -1,6 +1,6 @@
 {
  "schema": "jity-task-gold-report/1",
- "generatedAt": "2026-11-28T14:35:48.458480+00:00",
+ "generatedAt": "2026-11-28T14:40:01.605276+00:00",
  "benchRows": 120,
  "verdictCounts": {
   "skip": 6,
@@ -42,6 +42,7 @@
   "yes": "全部 required 子句由已提交且 completed 的事实覆盖，且 preconditions 成立、negations 满足。",
   "partial": "required 子句非空真子集完成，或条件/否定约束无法确认。",
   "no": "其余情况；意图、attempt、partial、blocked、叙事正文一律不算达成。",
+  "not_triggered": "条件句的触发条件未出现（如未求助、未被两处射界夹住）；不判达成，也不作为 no 负例。",
   "unverified": "事实与目标关系为 insufficient/conflict 时判 no，不参与训练正例。"
  }
 }

@@ -33,6 +33,10 @@ PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.perf_report
 # 7. blind comparison for human review
 PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.anonymize --input outputs.jsonl --blind blind.jsonl --key key.json --sheet review.md
 
+# 8. task-achievement gold (P05)
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.build_task_gold
+PYTHONUTF8=1 python -X utf8 -m tools.experiment_platform.task_gold_eval --cases artifacts/goal/platform/task-gold/task-gold-v1.cases.jsonl --predictions preds.jsonl
+
 # tests
 PYTHONUTF8=1 python -X utf8 -m pytest tools/experiment_platform/tests -q
 ```
