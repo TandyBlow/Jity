@@ -635,6 +635,11 @@ export default function WorldLocalPage() {
   // Program subtask proposer (S04): structured fact markers, no LLM.
   const [subtasksProgram] = useState(() => typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('subtasks') === 'program');
+  // Action-family template-only arms (S05): never call the semantic LLM.
+  const [actionTemplateOnly] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('action') === 'template');
+  const [targetsRuleOnly] = useState(() => typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('targets') === 'rule');
   // Evaluation arms (D-123): rules = program ports only, no classifier and no
   // semantic LLM; classifier = model ports, no program fast-path and no LLM.
   const [semanticArm] = useState<'rules' | 'classifier' | null>(() => {
@@ -1090,6 +1095,8 @@ export default function WorldLocalPage() {
             armInfo.taskProposer = taskProposerMicro ? 'micro' : 'llm';
             armInfo.taskStage = taskStageGoal ? 'goal' : 'llm';
             armInfo.subtasks = subtasksProgram ? 'program' : 'llm';
+            armInfo.action = actionTemplateOnly ? 'template' : 'llm';
+            armInfo.targets = targetsRuleOnly ? 'rule' : 'llm';
             armInfo.semanticArm = semanticArm;
           }
         }
@@ -1128,6 +1135,8 @@ export default function WorldLocalPage() {
           : engine);
         const model = new LocalGameModel(recordEngine(blockSemantic(semantic)), {
           ...(microTargets ? { microTargets } : {}),
+          ...(actionTemplateOnly ? { templateOnly: true } : {}),
+          ...(targetsRuleOnly ? { targetsNoLlm: true } : {}),
           ...(microResults ? { microResults } : {}),
           ...(microUpdates ? { microUpdates } : {}),
           ...(microBehavior ? { behavior: microBehavior } : {}),

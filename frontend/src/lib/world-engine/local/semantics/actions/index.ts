@@ -373,6 +373,14 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       }
       return null;
     })());
+    if (options.templateOnly) {
+      if (templateFallback) {
+        issues.push({ code: 'template_action', severity: 'info', message: `${scene.actorName}由已校验模板行动（template-only 臂）` });
+        return evidence('action', key, asJson(templateFallback), 'micro', started, issues, [], '');
+      }
+      issues.push({ code: 'action_abstained', severity: 'info', message: '模板臂没有可用行动，按不行动' });
+      return evidence('action', key, { kind: 'skip' }, 'fallback', started, issues, [], '');
+    }
     const generated = await generate<{ kind: 'act'; text?: string; structured?: ActionStructure } | { kind: 'skip' }>({
       task: 'action', key, prompt: actionPrompt(scene), maxTokens: tokens('action'),
       repairPrompt: (attemptIssues) => (attemptIssues.some((issue) => issue.code === 'action_is_task_goal')
@@ -455,6 +463,10 @@ export function createActionHandlers(deps: ActionHandlerDeps): ActionHandlers {
       }
     }
 
+    if (options.targetsNoLlm) {
+      issues.push({ code: 'targets_capped', severity: 'info', message: '规则臂弃权，按无目标继续（不调用 LLM）' });
+      return evidence('targets', key, { targets: [] }, 'fallback', started, issues, [], '');
+    }
     const generated = await generate<TargetsValue>({
       task: 'targets', key, prompt: targetsPrompt(scene, call.actionText, checkOptions.maxTargets),
       maxTokens: tokens('targets'), schema: TARGETS_SCHEMA,

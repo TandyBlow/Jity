@@ -84,6 +84,9 @@ export interface GameModelOptions {
   /** Experimental NPC behavior head: category → template action; null → LLM. */
   behavior?: import('./semantics/actions').ActionHandlerOptions['behavior'];
   judge?: import('./semantics/actions').ActionHandlerOptions['judge'];
+  /** Evaluation arm (S05): action/targets never fall back to the LLM. */
+  templateOnly?: boolean;
+  targetsNoLlm?: boolean;
   /** Experimental micro workflow: a rules+scorer targets port. When it returns
    * null or a rejected proposal, the existing LLM path runs and the reason is
    * recorded on the task evidence. Default off (undefined = LLM only). */
@@ -279,6 +282,8 @@ export class LocalGameModel implements WorldModelPort {
       });
     this.actionHandlers = createActionHandlers({ engine: semanticEngine, options: {
       microTargets: this.options.microTargets,
+      templateOnly: this.options.templateOnly,
+      targetsNoLlm: this.options.targetsNoLlm,
       structuredActions: this.options.structuredActions,
       templateFallback: this.options.templateFallback,
       behavior: this.options.behavior,

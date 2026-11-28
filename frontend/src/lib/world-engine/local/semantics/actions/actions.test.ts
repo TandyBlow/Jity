@@ -748,3 +748,24 @@ describe('three-judge behavior arm', () => {
     expect(result.source).toBe('model');
   });
 });
+
+describe('template-only arms (S05)', () => {
+  it('never calls the LLM for an action', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const handlers = createActionHandlers({ engine, options: { templateOnly: true } });
+    const result = await handlers.action('rival', actInput(state, 'rival', '老周守住书房里的字条。'));
+    expect(engine.prompts).toEqual([]);
+    expect(['micro', 'fallback']).toContain(result.source);
+    if (result.source === 'fallback') expect(codes(result)).toContain('action_abstained');
+  });
+
+  it('never calls the LLM for targets', async () => {
+    const state = buildTestWorld();
+    const engine = new ScriptedEngine([]);
+    const handlers = createActionHandlers({ engine, options: { targetsNoLlm: true } });
+    const result = await handlers.targets('t1', targetsInput(state, 'hero', '阿宁把木箱推到门边。'));
+    expect(engine.prompts).toEqual([]);
+    expect(result.value).toEqual({ targets: [] });
+  });
+});

@@ -57,6 +57,7 @@ export type ActionIssueCode =
   | 'micro_failed'
   | 'template_action'
   | 'template_failed'
+  | 'action_abstained'
   | 'micro_reaction'
   | 'micro_reaction_rejected'
   // reaction value
@@ -145,6 +146,12 @@ export interface ActionHandlerOptions {
    * instead of spending the repair calls. Default on; false keeps the repair
    * path for prompt experiments. */
   templateFallback?: boolean;
+  /** Evaluation arm (S05): never call the LLM for an action. Use a checked
+   * template candidate when one exists, otherwise skip with a recorded reason. */
+  templateOnly?: boolean;
+  /** Evaluation arm (S05): targets never fall back to the LLM. A rule/scorer
+   * abstention becomes an empty target list with a recorded reason. */
+  targetsNoLlm?: boolean;
   /** Three candidate judges (task/personality/scene); null falls back. */
   judge?: (pairs: Array<{ context: string; text: string }>) => Promise<Array<{ task: number; personality: number; scene: number }> | null> | Array<{ task: number; personality: number; scene: number }> | null;
   /** When the protagonist is the admitted reaction target, the player's own
