@@ -1,0 +1,23 @@
+Warning: Extension package "C:\Users\26494\.pi\agent\npm\node_modules\pi-smart-fetch\package.json": Host-provided extension packages must be declared in peerDependencies with a "*" range, not dependencies: @sinclair/typebox. Installed copies can bypass the extension loader and create duplicate runtime modules.
+新建文件：`artifacts/goal/memory-baseline/diag_report.py`（仅此一个文件被改动）。
+
+**它做什么**
+
+1. 读 `artifacts/goal/lab/diag-monitor.csv`（采样脚本每秒记一行：每个进程的私有内存、系统剩余内存/提交量/页面文件、以及每 5 秒一次的 GPU 计数）。文件不存在、只有表头、或某行字段为空时，都按"没记录"处理，不会报错。
+2. 读 `artifacts/goal/lab/diag-browser.jsonl`（浏览器每分钟记一次页面的 JS 堆、WASM 估算和事件）。坏行跳过并计数。
+3. 向 stdout 打一个 JSON。缺文件的原因写进 `notes`，对应数值为 null。
+
+**几个判断口径**
+
+- "私有内存最高的采样点"：按秒把同一时刻所有进程的 privateMB 加起来，取总和最大的那一刻；列出该时刻前 5 名进程（pid/ppid/名字/私有/工作集）。
+- GPU 行每 5 秒才写一次，峰值那一秒常常没有 GPU 行。此时取"该秒之前最近一次"GPU 采样，并在 `gpuExactSample` 标 false、`gpuSampleT` 记录实际用的是哪一秒，同时写一条 note 说明。
+- "按阶段归属的页面内存"：每个 phase 给出采样数、WASM 峰值、JS 堆峰值、最后一次 WASM 值（单位 MB）。
+- 事件：`turnSubmitted` / `submitFailed` 两个布尔值，外加去重后的 `events` 列表；峰值 `peakWasmEstimateBytes` + MB 两种单位都给。
+
+**测试结果**
+
+- 直接跑（两个输入文件当前都不存在）：退出码 0，输出合法 JSON，两个文件都标记 `present: false`，`notes` 里写明了缺哪个路径。
+- 另在系统临时目录造了三组样例跑通（未写入仓库）：正常 3 个采样点 + GPU 行 → 峰值 t=10、前三名进程、各进程 GPU 显存数值都对；只有表头 + 空浏览器文件 → 正常返回空结构；峰值秒没有 GPU 行 → 回退到 t=0 并标注；`submit-failed` 事件 → `submitFailed: true`。临时样例已删除。
+
+DONE
+`D:/others/Jity/artifacts/goal/memory-baseline/diag_report.py`

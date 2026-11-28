@@ -1,0 +1,11 @@
+所在位置 D:\others\Jity\frontend\scripts\lab\diag-oneturn.ps1:49 字符: 104
++ ... =$($monitor.Id)" | Out-File -Append -Encoding utf8 "$outDir/diag.log"
++                                                                         ~
+字符串缺少终止符: "。
+所在位置 D:\others\Jity\frontend\scripts\lab\diag-oneturn.ps1:42 字符: 13
++ if ($ready) {
++             ~
+语句块或类型定义中缺少右“}”。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 

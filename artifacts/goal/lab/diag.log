@@ -1,0 +1,8 @@
+﻿server ready=False after 120 s
+swept server=17352 monitor=1348
+server ready=False after 120 s
+swept server=55320 monitor=38212
+server ready=True after 0 s
+browser exit=0
+swept server=19488 monitor=33812
+server ready=True after 0 s

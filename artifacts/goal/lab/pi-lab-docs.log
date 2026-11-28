@@ -1,0 +1,12 @@
+Warning: Extension package "C:\Users\26494\.pi\agent\npm\node_modules\pi-smart-fetch\package.json": Host-provided extension packages must be declared in peerDependencies with a "*" range, not dependencies: @sinclair/typebox. Installed copies can bypass the extension loader and create duplicate runtime modules.
+已创建 `frontend/scripts/lab/README.md`（209 行），只新增这一个文件，没有改其他文件、没有起服务/浏览器/推理、没用 git 和网络。
+
+文档内容基于三个脚本的实际代码，不是猜的：
+
+- **expctl.ps1**：记录了 `submit` 只写 `queue.json` 不启动进程、`run` 单线程顺序消费、`status` 打表加 `active.json`、`stop` 只认 `active.json` 的 pid 做 `taskkill /T /F`；Job Object 的提交上限同时设在单进程和整 job 两层、带 kill-on-close；两道内存门槛的区别（开始前 `ReserveMB`=6144 MB 自由物理内存 **加上** 写死的 4096 MB 提交余量，运行中 `HardFloorMB`=3072 MB）；收尸的两段（`KillMatch` 命令行子串补刀、`swept` 按 pid+创建时间核对）。
+- **monitor.ps1**：14 个 CSV 列逐个解释；`kind=proc`/`kind=gpu`；GPU 计数器路径 `\GPU Process Memory(*)\Dedicated Usage`、`Shared Usage` 和 `pid_<数字>` 取值；每 10 秒刷新一次命令行缓存；每行立即追加所以被强杀不丢数据。
+- **diag-oneturn.ps1**：monitor → `next start -p 3177` → 轮询 `/world-local` 最多 120 秒 → 读 `diag-turn.txt` 跑 `memory-baseline.mjs` 一轮 → `taskkill` 收尾；并说明 `UseShellExecute=false` 是"全在一个 job 里"成立的原因。
+
+另外用了一条真实跑完的 `queue.json` 记录（2026-11-28 15:43 那单，`peakTreeMB=237`、状态 `done`）做成五步完整例子，先讲过程再给参数表。
+
+DONE — D:/others/Jity/frontend/scripts/lab/README.md

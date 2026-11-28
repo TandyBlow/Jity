@@ -1,0 +1,13 @@
+{"at":4804,"phase":"loading","jsHeap":3323472,"jsHeapTotal":4834780,"isolated":true,"visibility":"visible","wasmEstimate":147602939}
+{"at":6813,"phase":"loading","jsHeap":14145674,"jsHeapTotal":30498130,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":8821,"phase":"loading","jsHeap":14358679,"jsHeapTotal":30519271,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":10829,"phase":"streaming","jsHeap":14565811,"jsHeapTotal":30523803,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":12837,"phase":"streaming","jsHeap":14867437,"jsHeapTotal":30541693,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":14850,"phase":"streaming","jsHeap":15195329,"jsHeapTotal":30559401,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":16861,"phase":"streaming","jsHeap":15482861,"jsHeapTotal":30575949,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":18882,"phase":"streaming","jsHeap":15757102,"jsHeapTotal":30593042,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":20896,"phase":"streaming","jsHeap":16049377,"jsHeapTotal":30610297,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":22905,"phase":"streaming","jsHeap":16324359,"jsHeapTotal":30626135,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":25084,"event":"turn-submitted"}
+{"at":25084,"phase":"ready","jsHeap":14676743,"jsHeapTotal":22173327,"isolated":true,"visibility":"visible","wasmEstimate":null}
+{"at":27096,"phase":"ready","jsHeap":83154426,"jsHeapTotal":97081602,"isolated":true,"visibility":"visible","wasmEstimate":null}

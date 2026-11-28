@@ -1,0 +1,238 @@
+{
+ "generatedAt": "2026-11-28T16:03:32+08:00",
+ "inputs": {
+  "processFile": true,
+  "browserFile": true
+ },
+ "process": {
+  "path": "D:\\others\\Jity\\artifacts\\goal\\lab\\diag-monitor.csv",
+  "present": true,
+  "columns": [
+   "t",
+   "kind",
+   "pid",
+   "ppid",
+   "name",
+   "privateMB",
+   "wsMB",
+   "freeMB",
+   "commitMB",
+   "limitMB",
+   "pagefileMB",
+   "gpuDedicatedMB",
+   "gpuSharedMB",
+   "cmd"
+  ],
+  "rows": 382,
+  "samples": 11,
+  "system": {
+   "rowsWithMemory": 382,
+   "minFreeMB": 2842.0,
+   "maxCommitMB": 27746.0,
+   "maxPagefileMB": 2703.0,
+   "maxCommitLimitMB": 60640.0
+  },
+  "maxProcessPrivateMB": 2253.0,
+  "peakPrivateSample": {
+   "t": 29.0,
+   "processes": 32,
+   "totalPrivateMB": 7737.0,
+   "maxProcessPrivateMB": 2253.0,
+   "topProcesses": [
+    {
+     "pid": "17440",
+     "ppid": "24568",
+     "name": "python",
+     "privateMB": 2253.0,
+     "wsMB": 1.0
+    },
+    {
+     "pid": "37080",
+     "ppid": "52548",
+     "name": "msedge",
+     "privateMB": 1341.0,
+     "wsMB": 1493.0
+    },
+    {
+     "pid": "4000",
+     "ppid": "52548",
+     "name": "msedge",
+     "privateMB": 1163.0,
+     "wsMB": 1266.0
+    },
+    {
+     "pid": "18064",
+     "ppid": "55804",
+     "name": "msedge",
+     "privateMB": 606.0,
+     "wsMB": 467.0
+    },
+    {
+     "pid": "52548",
+     "ppid": "42472",
+     "name": "msedge",
+     "privateMB": 515.0,
+     "wsMB": 606.0
+    }
+   ],
+   "gpuSampleT": 0.0,
+   "gpuExactSample": false,
+   "gpuByPid": [
+    {
+     "pid": "4",
+     "gpuDedicatedMB": 4.0,
+     "gpuSharedMB": 0.0
+    },
+    {
+     "pid": "288",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 16.0
+    },
+    {
+     "pid": "1768",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 20.0
+    },
+    {
+     "pid": "6120",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 16.0
+    },
+    {
+     "pid": "6452",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 16.0
+    },
+    {
+     "pid": "7432",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 31.0
+    },
+    {
+     "pid": "11456",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 16.0
+    },
+    {
+     "pid": "11696",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 484.0
+    },
+    {
+     "pid": "14268",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 3.0
+    },
+    {
+     "pid": "15296",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 16.0
+    },
+    {
+     "pid": "17012",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 48.0
+    },
+    {
+     "pid": "17268",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 19.0
+    },
+    {
+     "pid": "17440",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 60.0
+    },
+    {
+     "pid": "23716",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 4.0
+    },
+    {
+     "pid": "29744",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 5.0
+    },
+    {
+     "pid": "37080",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 49.0
+    },
+    {
+     "pid": "40984",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 42.0
+    },
+    {
+     "pid": "43964",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 63.0
+    },
+    {
+     "pid": "46544",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 42.0
+    },
+    {
+     "pid": "51812",
+     "gpuDedicatedMB": 0.0,
+     "gpuSharedMB": 1.0
+    }
+   ]
+  }
+ },
+ "browser": {
+  "path": "D:\\others\\Jity\\artifacts\\goal\\lab\\diag-browser.jsonl",
+  "present": true,
+  "rows": 13,
+  "phases": [
+   "loading",
+   "streaming",
+   "unknown",
+   "ready"
+  ],
+  "pageByPhase": {
+   "loading": {
+    "samples": 3,
+    "wasmSamples": 1,
+    "peakWasmMB": 147.6,
+    "peakJsHeapMB": 14.4,
+    "lastWasmMB": 147.6
+   },
+   "streaming": {
+    "samples": 7,
+    "wasmSamples": 0,
+    "peakWasmMB": null,
+    "peakJsHeapMB": 16.3,
+    "lastWasmMB": null
+   },
+   "unknown": {
+    "samples": 1,
+    "wasmSamples": 0,
+    "peakWasmMB": null,
+    "peakJsHeapMB": null,
+    "lastWasmMB": null
+   },
+   "ready": {
+    "samples": 2,
+    "wasmSamples": 0,
+    "peakWasmMB": null,
+    "peakJsHeapMB": 83.2,
+    "lastWasmMB": null
+   }
+  },
+  "peakWasmEstimateBytes": 147602939,
+  "peakWasmEstimateMB": 147.6,
+  "peakJsHeapMB": 83.2,
+  "turnSubmitted": true,
+  "submitFailed": false,
+  "events": [
+   "turn-submitted"
+  ],
+  "lastPhase": "ready",
+  "lastAtMs": 27096.0
+ },
+ "notes": [
+  "GPU rows for t=29 absent; used nearest GPU sample t=0"
+ ]
+}
