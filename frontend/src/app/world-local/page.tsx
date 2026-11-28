@@ -22,7 +22,7 @@ import { createMicroContinuation } from '@/lib/world-engine/local/micro/continua
 import { createMicroReaction } from '@/lib/world-engine/local/micro/reaction';
 import { createMicroTaskVerifier } from '@/lib/world-engine/local/micro/task-progress';
 import { createMicroTaskProposer, type TaskLedgerSnapshot } from '@/lib/world-engine/local/micro/task-proposer';
-import { createMicroGoalTasks } from '@/lib/world-engine/local/micro/goal-verifier';
+import { createMicroGoalTasks, type GoalTaskLedgerSnapshot } from '@/lib/world-engine/local/micro/goal-verifier';
 import { createProgramSubtasks } from '@/lib/world-engine/local/micro/subtasks';
 import { LocalGameSession, type LocalGameSnapshot } from '@/lib/world-engine/local/session';
 import { openLocalProgressStore, migrateLegacySnapshot, type LocalProgressStore } from '@/lib/world-engine/local/persistence';
@@ -563,6 +563,8 @@ async function openWithLease(
   onCommit: (event: { phase: 'attempt' | 'committed'; request: unknown; response?: unknown; error?: unknown }) => void,
   taskLedgerOf?: () => TaskLedgerSnapshot | undefined,
   onRestoreTaskLedger?: (ledger: TaskLedgerSnapshot | null) => void,
+  goalTaskLedgerOf?: () => GoalTaskLedgerSnapshot | undefined,
+  onRestoreGoalTaskLedger?: (ledger: GoalTaskLedgerSnapshot | null) => void,
   forceHandback = false,
   attempts = 20,
   roll?: () => number,
@@ -580,7 +582,7 @@ async function openWithLease(
     try {
       const opened = await LocalGameSession.open(
         store, { worldId: world.worldId, initial: world.template }, model,
-        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(taskLedgerOf ? { taskLedgerOf } : {}), ...(onRestoreTaskLedger ? { onRestoreTaskLedger } : {}), ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
+        { ...(takeoverId ? { sessionId: takeoverId } : {}), narrationSourceOf, onCommit, ...(taskLedgerOf ? { taskLedgerOf } : {}), ...(onRestoreTaskLedger ? { onRestoreTaskLedger } : {}), ...(goalTaskLedgerOf ? { goalTaskLedgerOf } : {}), ...(onRestoreGoalTaskLedger ? { onRestoreGoalTaskLedger } : {}), ...(forceHandback ? { forceHandback } : {}), ...(roll ? { roll } : {}) },
       );
       if (opened.created) await opened.session.start();
       if (takeoverId) { try { sessionStorage.removeItem(LEASE_TAKEOVER_KEY); } catch { /* ignore */ } }
@@ -1428,6 +1430,8 @@ export default function WorldLocalPage() {
           session = await openWithLease(store, world, model, () => alive, () => narrationSourcesRef.current, recordCommitEvent,
             microTaskProposer ? () => microTaskProposer.exportLedger() ?? undefined : undefined,
             microTaskProposer ? (ledger) => microTaskProposer.importLedger(ledger) : undefined,
+            microGoalTasks ? () => microGoalTasks.exportLedger() ?? undefined : undefined,
+            microGoalTasks ? (ledger) => microGoalTasks.importLedger(ledger) : undefined,
             arm.schedHandback ?? false, 20, seededRoll);
           (window as unknown as { __worldLease?: unknown }).__worldLease = { blocked: false, at: Date.now() };
           // A save can carry an advance left open by a failed turn. The next

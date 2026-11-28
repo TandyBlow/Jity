@@ -98,6 +98,21 @@ describe('goal-level task stage', () => {
     );
   });
 
+  it('restores accumulated evidence from a persisted ledger', async () => {
+    const options = { requireProgramCoverage: true, scoring: () => [0.9] };
+    const first = createMicroGoalTasks(options);
+    await first({ state: state(), ownerIds: ['hero'], facts: [{ id: 'f1', memberId: 'hero', text: '路明非找到手电（达到目的）。' }] });
+    const snapshot = first.exportLedger();
+    expect(snapshot?.entries[0]?.covered.map((row) => row.condition)).toContain('物品=手电');
+    const second = createMicroGoalTasks(options);
+    second.importLedger(snapshot);
+    const out = await second({
+      state: state(), ownerIds: ['hero'],
+      facts: [{ id: 'f2', memberId: 'hero', text: '路明非打开它并确认电量（达到目的）。' }],
+    });
+    expect(out?.achieved.map((row) => row.taskId)).toEqual(['task_hero_key']);
+  });
+
   it('does not credit another member fact to a task unless it names the owner', async () => {
     const port = createMicroGoalTasks({ scoring: (rows) => rows.map(() => 0.9) });
     const notNamed = await port({

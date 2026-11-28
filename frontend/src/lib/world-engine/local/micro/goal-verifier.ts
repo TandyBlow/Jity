@@ -45,12 +45,27 @@ export interface GoalAchievement {
   covered?: GoalConditionEvidence[];
 }
 
+export interface GoalTaskLedgerSnapshot {
+  version: 1;
+  worldId: string;
+  entries: Array<{
+    taskId: Id;
+    ownerId: Id;
+    goal: string;
+    labels: string[];
+    covered: Array<{ condition: string; factId: string; factText: string }>;
+  }>;
+}
+
 export interface GoalVerifierPort {
   (request: { state: WorldState; ownerIds: Id[]; facts: Array<{ id: string; memberId: Id; text: string }> }): Promise<{
     achieved: GoalAchievement[];
     scored: Array<{ characterId: Id; taskId: Id; basis: string; score: number }>;
     source: 'micro';
   } | null>;
+  exportLedger(): GoalTaskLedgerSnapshot | null;
+  importLedger(snapshot: unknown): void;
+  resetLedger(): void;
 }
 
 function softmax(values: number[]): number[] {
@@ -124,7 +139,7 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
     }
   }
 
-  return async (request) => {
+  const port = (async (request) => {
     const started = performance.now();
     const threshold = options.threshold ?? 0.5;
     const strict = options.requireProgramCoverage === true;
@@ -242,5 +257,41 @@ export function createMicroGoalTasks(options: GoalVerifierOptions = {}): GoalVer
     const achieved = [...best.values()].filter((row) => row.score >= threshold);
     options.onStats?.({ pairs: rows.length, inferred: rows.length, ms: Math.round(performance.now() - started), loadMs: Math.round(runtime.stats().loadMs), source: 'micro' });
     return { achieved, scored, source: 'micro' };
+  }) as GoalVerifierPort;
+  port.exportLedger = () => {
+    if (!worldId) return null;
+    return {
+      version: 1,
+      worldId,
+      entries: [...ledger].map(([taskId, entry]) => ({
+        taskId,
+        ownerId: entry.ownerId,
+        goal: entry.goal,
+        labels: entry.labels,
+        covered: [...entry.covered].map(([condition, fact]) => ({ condition, ...fact })),
+      })),
+    };
   };
+  port.importLedger = (snapshot) => {
+    port.resetLedger();
+    if (!snapshot || typeof snapshot !== 'object') return;
+    const value = snapshot as Partial<GoalTaskLedgerSnapshot>;
+    if (value.version !== 1 || typeof value.worldId !== 'string' || !Array.isArray(value.entries)) return;
+    worldId = value.worldId;
+    for (const raw of value.entries) {
+      if (!raw || typeof raw.taskId !== 'string' || typeof raw.ownerId !== 'string' || !Array.isArray(raw.labels)) continue;
+      const covered = new Map<string, { factId: string; factText: string }>();
+      for (const row of raw.covered ?? []) {
+        if (row && typeof row.condition === 'string' && typeof row.factId === 'string' && typeof row.factText === 'string') {
+          covered.set(row.condition, { factId: row.factId, factText: row.factText });
+        }
+      }
+      ledger.set(raw.taskId, { ownerId: raw.ownerId, goal: raw.goal ?? '', labels: raw.labels, covered });
+    }
+  };
+  port.resetLedger = () => {
+    ledger.clear();
+    worldId = null;
+  };
+  return port;
 }

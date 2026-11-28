@@ -8,6 +8,7 @@ import type { InitialTemplate, Json } from '../types';
 import { SHORT_STATE } from '../runtime/b3-short-samples';
 import { LocalGameSession, type LocalSessionEvent } from './session';
 import type { TaskLedgerSnapshot } from './micro/task-proposer';
+import type { GoalTaskLedgerSnapshot } from './micro/goal-verifier';
 import {
   createLocalProgressStore, LEGACY_SNAPSHOT_KEY, MemoryProgressBackend, migrateLegacySnapshot, ProgressConflictError,
   SessionLeaseHeldError, type LegacyStorageLike, type LocalProgressStore,
@@ -281,6 +282,25 @@ describe('LocalGameSession durability', () => {
     expect(Object.keys(legacySession.snapshot.transport.rolls)).toEqual(rollKeys);
     expect(legacySession.snapshot.transport.rolls[rollKeys[0]].rollId).toBe(rollBefore.rollId);
     expect(legacySession.snapshot.transport.version).toBe(1);
+  });
+
+  it('carries the strict goal-task ledger through save and restore', async () => {
+    const goalLedger: GoalTaskLedgerSnapshot = {
+      version: 1, worldId: 'w',
+      entries: [{ taskId: 't1', ownerId: 'hero', goal: '找到手电', labels: ['物品=手电'], covered: [{ condition: '物品=手电', factId: 'f1', factText: '路明非找到手电。' }] }],
+    };
+    const seen: Array<GoalTaskLedgerSnapshot | null> = [];
+    const session = await LocalGameSession.create(template(), scriptedModel([]), {
+      leaseHeartbeat: false, roll: () => 13, goalTaskLedgerOf: () => goalLedger,
+      onRestoreGoalTaskLedger: (value) => seen.push(value),
+    });
+    await session.start();
+    expect(session.snapshot.goalTaskLedger).toEqual(goalLedger);
+    expect(seen).toEqual([null]);
+    await LocalGameSession.restore(session.snapshot, scriptedModel([]), {
+      leaseHeartbeat: false, onRestoreGoalTaskLedger: (value) => seen.push(value),
+    });
+    expect(seen.at(-1)).toEqual(goalLedger);
   });
 
   it('carries the task ledger through save and restore', async () => {
