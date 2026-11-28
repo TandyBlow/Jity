@@ -8,6 +8,7 @@ from collections import Counter
 from pathlib import Path
 
 import evaluate_narration as ev
+import renderer_dataset as rd
 from role_parse import NAMES, parse_result
 
 HERE = Path(__file__).resolve().parent
@@ -16,11 +17,11 @@ NUM = re.compile(r'\d{2,}(?:[:：]\d{2})?')
 
 
 def main():
-    pilot = {p['id']: p for p in json.load(open(HERE / 'annotation-pilot.json', encoding='utf8'))}
+    rows = {r['id']: r for r in (json.loads(l) for l in open(HERE / 'pairs.jsonl', encoding='utf8'))}
     refs = json.load(open(HERE / 'natural-reference.json', encoding='utf8'))
     for ref in refs:
-        point = pilot[ref['id']]
-        frag = {f['i']: f for f in point['fragments']}
+        point = rows[ref['id']]
+        frag = {i: {'i': i, 'kind': k, 'text': t} for i, (k, t) in enumerate(rd.fragments(point))}
         text_by_i = {i: f['text'] for i, f in frag.items()}
         problems = []
         used = set()
