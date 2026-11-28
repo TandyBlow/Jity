@@ -1,0 +1,189 @@
+{
+  "runId": "2026-11-28T1458-1a42",
+  "outFile": "D:\\others\\Jity\\results\\product\\evidence\\platform-holdout-4-20261128-225817.json",
+  "kind": "09-product-acceptance",
+  "intent": "10-turn",
+  "harness": {
+    "driver": "scripts/product-acceptance/accept-world-local.mjs",
+    "selfTest": false,
+    "driverSha256": "17bdaf529ac21a129cc4a87e4fdace780031475459c398bd9c306c6e6071d537",
+    "edgeVersion": "158.0.4370.45",
+    "launchArgs": [
+      "--enable-unsafe-webgpu",
+      "--force_high_performance_gpu",
+      "--ignore-gpu-blocklist"
+    ],
+    "coopCoepShim": false,
+    "saveServiceBlocked": false,
+    "offline": false,
+    "candidateInjection": false,
+    "storageReset": true,
+    "note": "--header-shim adds COOP/COEP to the document response; --block-api refuses every /api/** request to test save-service independence",
+    "profile": "D:\\others\\Jity\\artifacts\\goal\\platform\\lab\\profile-holdout-4",
+    "cdp": null,
+    "cpuThrottle": null,
+    "blockApi": false,
+    "gpuLite": false
+  },
+  "status": "IN_PROGRESS",
+  "startedAt": "2026-11-28T14:58:18.398Z",
+  "base": "http://127.0.0.1:3180",
+  "turnsFile": "D:\\others\\Jity\\artifacts\\goal\\platform\\eval\\turns-holdout-v1.json",
+  "integration": {
+    "head": "387ef5551bc1cfe45e14bbd17b0c92b82b1f4f6d",
+    "branch": "agent",
+    "url": "http://127.0.0.1:3177/world-local",
+    "model": null,
+    "startup": {
+      "cwd": "frontend",
+      "command": "node node_modules/next/dist/bin/next start -p 3177",
+      "port": 3177
+    },
+    "sha256": null
+  },
+  "productState": {
+    "gitHead": "07d2796dfe25e62f6b8201e1baad03fb0494828e",
+    "pageSha256": "464ddd30365690bb83e09d7294de5666061bd6c69891789ac18db4e5622b2258",
+    "turnEvidenceAvailable": true,
+    "worktree": "D:\\others\\Jity",
+    "pageSha256Raw": "79eaaf693aba36cf660c76f8bb9cd12a65b2f7f950daa3ddfea50886481f854b",
+    "expectedPageSha256": null
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+    "crossOriginIsolated": true,
+    "adapter": {
+      "available": true,
+      "vendor": "nvidia",
+      "architecture": "lovelace",
+      "device": "",
+      "description": "",
+      "isFallback": null,
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "bgra8unorm-storage",
+        "texture-formats-tier1",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "core-features-and-limits",
+        "chromium-experimental-sampling-resource-table",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance",
+        "float32-blendable",
+        "atomic-vec2u-min-max",
+        "subgroup-size-control",
+        "texture-compression-unaligned",
+        "depth-clip-control",
+        "texture-compression-bc-sliced-3d",
+        "texture-formats-tier2",
+        "timestamp-query"
+      ]
+    },
+    "ggmlConsole": [
+      "[info] [world-local] gpu probe {\"hasGpu\":true,\"jspi\":true,\"adapter\":{\"vendor\":\"nvidia\",\"architecture\":\"lovelace\",\"device\":\"\",\"description\":\"\"},\"device\":true,\"features\":[\"depth32float-stencil8\",\"rg11b10ufloat-renderable\",\"bgra8unorm-storage\",\"texture-formats-tier1\",\"chromium-experimental-multi-draw-indirect\",\"texture-compression-bc\",\"dual-source-blending\",\"core-features-and-limits\"]}",
+      "[log] ggml_webgpu: adapter_info: vendor_id: 0 | vendor: nvidia | architecture: lovelace | device_id: 0 | name:  | device_desc: ",
+      "[info] [world-local task] narration point_root_world_dragon_raja_free_day 15309ms fallback=false "
+    ]
+  },
+  "modelRequests": [
+    {
+      "url": "http://127.0.0.1:3180/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "status": 200,
+      "length": "396705472",
+      "type": "fetch",
+      "at": "2026-11-28T14:58:20.272Z"
+    }
+  ],
+  "readyMs": 17095,
+  "readyText": "龙族 · 自由一日\n全部在浏览器本地运行 · 服务器只负责存档\n重新生成当前正文\n暂停\n重新开始\n2009-10-17 15:20 · 西侧服务巷\n本地世界已就绪。\n等待输入…\nCtrl/⌘ + Enter 提交 · 模型只读取已结算状态\n行动\n路明非\n精神值：43\n地点：西侧服务巷\n在附近\n诺诺\n当前任务\n在自由一日结束前作出自己的参赛选择，并完成一次能由在场人确认的有效行动后安全离场\n向诺诺问清当前红蓝两方局势和自己是否可以保持中立\n在进入交火区前拿到可用的护目镜与演习装备\n把胸前护目镜戴好并确认镜片没有裂纹\n在庭院正路、西回廊和地下检修通道之间选择一条有掩护的路线\n历史时间点\n0 个\n\n只列出已经提交的时间点。正文缺失或失败时，可以请求重新生成。\n\n本局还没有已提交的时间点。\n\n本地存档\n每次完整结算后写入浏览器 IndexedDB；刷新页面会恢复。中途刷新会回到上一次完整结算。\n已行动：0 次\n本地进度\n已保存\n保存位置\n这台设备的浏览器\n最近保存\n22:58:37\n进度同步\n仅本机保存\n立即同步",
+  "turns": [],
+  "failures": [],
+  "finishes": [],
+  "lease": {
+    "status": "acquired",
+    "lane": "09-ui",
+    "purpose": "09 acceptance 10-turn http://127.0.0.1:3180",
+    "acquiredAt": "2026-11-28T14:58:18.489064+00:00",
+    "supervisorPid": null,
+    "holderPid": 35196,
+    "token": "1a63031bec4fe61326717f85a575d328"
+  },
+  "freshReset": {
+    "localStorageKeys": 0,
+    "databases": [],
+    "caches": [],
+    "errors": [],
+    "after": {
+      "localStorageKeys": 0,
+      "databases": []
+    }
+  },
+  "updatedAt": "2026-11-28T14:58:37.882Z",
+  "pageHttp": 200,
+  "textareaVisible": true,
+  "productIdentity": {
+    "chunks": 11,
+    "markerChunks": [
+      {
+        "chunk": "/_next/static/chunks/app/world-local/page-c321b8f18ee30b08.js",
+        "markers": [
+          "__worldRestore",
+          "__worldSnapshot",
+          "__worldArm",
+          "__worldLive",
+          "__worldGenerations",
+          "affected_projection"
+        ]
+      }
+    ],
+    "globalsReady": true,
+    "globalsWaitMs": 3
+  },
+  "jsHeapAtReady": {
+    "usedJSHeapSize": 34806560,
+    "totalJSHeapSize": 44576956,
+    "jsHeapSizeLimit": 4395630592,
+    "label": "JS heap, not GPU VRAM"
+  },
+  "arm": {
+    "candidate": "auto",
+    "mode": null,
+    "shape": null,
+    "offscreenPolicy": "judge",
+    "narrationModel": "semantic",
+    "narrationFile": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "semanticCtx": 4096,
+    "kv": "q8_0",
+    "nBatch": null,
+    "narrationBytes": 396705472,
+    "narrationSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "narrationTemperature": null,
+    "narrationFewShot": null,
+    "narrationProjection": null,
+    "schedHandback": null,
+    "settlementUnknownRule": null,
+    "compactSettlement": null,
+    "settlementUnknownExample": null,
+    "strictKnownEntities": true,
+    "runtime": "wllama",
+    "webllmModel": null,
+    "webllmLocal": false,
+    "webllmCache": "indexeddb",
+    "micro": true,
+    "microContinuation": "heads",
+    "microReaction": true,
+    "microTaskVerifier": false,
+    "taskVerifier": "llm",
+    "taskProposer": "micro",
+    "semanticArm": null
+  },
+  "restored": false,
+  "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+  }
+}

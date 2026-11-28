@@ -1,0 +1,35 @@
+{
+ "evidence": "scenarios8-rules.json",
+ "status": "COMPLETED",
+ "turns": 8,
+ "runSuccess": true,
+ "stateAssertions": "48/48",
+ "stateAssertionRate": 1.0,
+ "taskAssertions": "14/14",
+ "taskAccuracy": 1.0,
+ "achievementChecks": "3/3",
+ "achievementRate": 1.0,
+ "missedAchievements": 0,
+ "falseAchievements": 0,
+ "uniqueExpectedTasks": [
+  "task_lu_route"
+ ],
+ "uniqueAchievedTasks": [
+  "task_lu_route"
+ ],
+ "uniqueMissedTasks": [],
+ "uniqueFalseTasks": [],
+ "uniqueAchievementRate": 1.0,
+ "proseIssueTurns": 0,
+ "proseIssues": 0,
+ "meanWaitS": 57.1,
+ "maxWaitS": 83.9
+}
+turn 1 sc01-dialogue-nono-neutrality: state 7/7 task 4/4 achieved 0/0 false=0 missed=0 wait=49.9s problems=-
+turn 2 sc02-conflict-yard-cover: state 7/7 task 3/3 achieved 0/0 false=0 missed=0 wait=63.7s problems=-
+turn 3 sc03-move-shed: state 5/5 task 1/1 achieved 0/0 false=0 missed=0 wait=83.9s problems=-
+turn 4 sc04-item-magazine: state 6/6 task 0/0 achieved 0/0 false=0 missed=0 wait=66.0s problems=-
+turn 5 sc05-move-hatch: state 5/5 task 0/0 achieved 0/0 false=0 missed=0 wait=48.1s problems=-
+turn 6 sc06-env-hatch-route: state 7/7 task 3/3 achieved 1/1 false=0 missed=0 wait=55.3s problems=-
+turn 7 sc07-move-foyer: state 5/5 task 1/1 achieved 1/1 false=0 missed=0 wait=44.3s problems=-
+turn 8 sc08-env-foyer-table: state 6/6 task 2/2 achieved 1/1 false=0 missed=0 wait=45.6s problems=-

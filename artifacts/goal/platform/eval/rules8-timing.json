@@ -1,0 +1,3780 @@
+{
+  "kind": "jity-goal-timing-baseline",
+  "generatedAt": "2026-11-28T15:06:08.821Z",
+  "thresholds": {
+    "firstReadableMs": 60000,
+    "pointTextMs": 300000
+  },
+  "sources": [
+    {
+      "file": "D:/others/Jity/artifacts/goal/narration-rules/scenarios8-rules.json",
+      "runId": "2026-11-28T1449-bc37",
+      "status": "COMPLETED",
+      "intent": "10-turn",
+      "turnsFile": "../artifacts/goal/micro-workflow/scenarios-independent.json"
+    }
+  ],
+  "coldStarts": [],
+  "points": [
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 1,
+      "id": "sc01-dialogue-nono-neutrality",
+      "input": "我向诺诺问清：现在红蓝两方各控制到哪里，我能不能不加入任何一方。",
+      "purpose": "对话：在服务巷同一可见场景内向诺诺问清局势与中立可能；本回合不移动、不碰物品。",
+      "clocks": {
+        "pointCommittedAtMs": 336,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 397,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 397,
+        "firstAcceptedAtMs": 397,
+        "pointTextFinishedMinusCommitMs": 61,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 49876,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 8766.94000005722,
+      "longestStreamGapMs": 162.19000005722046,
+      "generation": {
+        "wallMs": 10037.269999980927,
+        "finishReason": "stop",
+        "streamChunks": 38
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_5",
+          "stage": null,
+          "ms": 23,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_5#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_6",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_6#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_7",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_7#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_8",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_8#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_9",
+          "stage": null,
+          "ms": 18,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_9#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_9#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_10",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_10#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_11",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_11#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_11#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_12",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_13",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_13#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_13#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_14",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_14#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_14#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_15",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_15#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_15#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_16",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_16#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_16#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_17",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_17#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_17#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_18",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_18#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_18#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#tasks",
+          "stage": "tasks",
+          "ms": 15207,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#subtasks",
+          "stage": "subtasks",
+          "ms": 10037,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_3_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_3",
+          "stage": null,
+          "ms": 208,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_12",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j22ho_1_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j22ho_1_1#subtasks",
+          "stage": "subtasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j22ho_1_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j22ho_1_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j22ho_1",
+          "stage": null,
+          "ms": 162,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_12",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_12#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j236v_2_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j236v_2_1#subtasks",
+          "stage": "subtasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j236v_2_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j236v_2_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j236v_2",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 75,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 211,
+          "label": "结算中：判断牵连 · 已等待 0s · 语义 0 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 348,
+          "label": "结算中：状态更新 · 已等待 0s · 语义 0 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 49855,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 41,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "policy_stop",
+      "submissionCalls": 63,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 2,
+      "id": "sc02-conflict-yard-cover",
+      "input": "我贴着服务巷的低墙绕到庭院西口，低身走进庭院，躲到南端石花槽后，朝倒放长椅后的唐骁举起空着的双手，喊林亦舟是真扭伤，医护白线内停火。",
+      "purpose": "冲突：从服务巷进入庭院南端掩体，在唐骁同一可见场景内表明真实伤情并要求停火。",
+      "clocks": {
+        "pointCommittedAtMs": 7345,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 7432,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 7432,
+        "firstAcceptedAtMs": 7432,
+        "pointTextFinishedMinusCommitMs": 87,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 63674,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 2659.8450000286102,
+      "longestStreamGapMs": 201.25999999046326,
+      "generation": {
+        "wallMs": 3449.1050000190735,
+        "finishReason": "stop",
+        "streamChunks": 29
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_26",
+          "stage": null,
+          "ms": 1,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_26#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_26#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_27",
+          "stage": null,
+          "ms": 17,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_27#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_27#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_28",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_28#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_28#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_29",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_29#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_29#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_30",
+          "stage": null,
+          "ms": 67,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_30#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_30#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_31",
+          "stage": null,
+          "ms": 14,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_31#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_31#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_32",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_32#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_32#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_33",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_33#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_33#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_34",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_34#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_34#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_35",
+          "stage": null,
+          "ms": 15,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_35#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_35#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_36",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_36#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_36#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_37",
+          "stage": null,
+          "ms": 14,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_37#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_37#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_38",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_38#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_38#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_39",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_39#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_39#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_24_2#tasks",
+          "stage": "tasks",
+          "ms": 13574,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_24_2#subtasks",
+          "stage": "subtasks",
+          "ms": 11024,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_24_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_24_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_24",
+          "stage": null,
+          "ms": 246,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_37",
+          "stage": null,
+          "ms": 46,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_37#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_37#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j38sg_3_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j38sg_3_1#subtasks",
+          "stage": "subtasks",
+          "ms": 4167,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j38sg_3_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j38sg_3_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j38sg_3",
+          "stage": null,
+          "ms": 265,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_37",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_37#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_37#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j3d6w_4_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j3d6w_4_1#subtasks",
+          "stage": "subtasks",
+          "ms": 3449,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j3d6w_4_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j3d6w_4_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j3d6w_4",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 102,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 235,
+          "label": "结算中：角色行动 · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 629,
+          "label": "结算中：角色行动 · 已等待 1s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 1637,
+          "label": "结算中：角色行动 · 已等待 2s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 2647,
+          "label": "结算中：角色行动 · 已等待 3s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 3651,
+          "label": "结算中：角色行动 · 已等待 4s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 4646,
+          "label": "结算中：角色行动 · 已等待 5s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 5680,
+          "label": "结算中：角色行动 · 已等待 6s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 5812,
+          "label": "结算中：判断牵连 · 已等待 6s · 语义 2 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 6711,
+          "label": "结算中：判断牵连 · 已等待 7s · 语义 2 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 7352,
+          "label": "结算中：状态更新 · 已等待 7s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 63607,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 52,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "policy_stop",
+      "submissionCalls": 63,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 3,
+      "id": "sc03-move-shed",
+      "input": "我沿庭院西侧退回服务巷，走进器材棚，到器材笼外找值班员秦越。",
+      "purpose": "移动：从庭院经服务巷回到器材棚，落到器材笼外槽位。",
+      "clocks": {
+        "pointCommittedAtMs": 4413,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 4553,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 4553,
+        "firstAcceptedAtMs": 4553,
+        "pointTextFinishedMinusCommitMs": 140,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 83898,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 3600.5700001716614,
+      "longestStreamGapMs": 201.25999999046326,
+      "generation": {
+        "wallMs": 4480.049999952316,
+        "finishReason": "stop",
+        "streamChunks": 27
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_47",
+          "stage": null,
+          "ms": 1,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_47#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_47#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_48",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_48#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_48#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_49",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_49#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_49#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_50",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_50#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_50#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_51",
+          "stage": null,
+          "ms": 53,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_52",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_52#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_52#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_53",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_53#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_53#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_54",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_54#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_54#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_55",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_55#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_55#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_56",
+          "stage": null,
+          "ms": 17,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_56#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_56#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_57",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_57#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_57#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_58",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_58#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_58#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_59",
+          "stage": null,
+          "ms": 19,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_59#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_59#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_60",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_60#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_60#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_45_2#tasks",
+          "stage": "tasks",
+          "ms": 2158,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_45_2#subtasks",
+          "stage": "subtasks",
+          "ms": 12121,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_45_2#personality",
+          "stage": "personality",
+          "ms": 7684,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_45_2#sanity",
+          "stage": "sanity",
+          "ms": 7485,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_45",
+          "stage": null,
+          "ms": 644,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_55",
+          "stage": null,
+          "ms": 18,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_55#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_55#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_51",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j4wd2_5_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j4wd2_5_1#subtasks",
+          "stage": "subtasks",
+          "ms": 3055,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j4wd2_5_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j4wd2_5_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j4wd2_5",
+          "stage": null,
+          "ms": 237,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_51",
+          "stage": null,
+          "ms": 17,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_51#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_55",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_55#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_55#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j537a_6_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j537a_6_1#subtasks",
+          "stage": "subtasks",
+          "ms": 4480,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j537a_6_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j537a_6_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j537a_6",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 204,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 367,
+          "label": "结算中：角色行动 · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 1401,
+          "label": "结算中：角色行动 · 已等待 1s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 2412,
+          "label": "结算中：角色行动 · 已等待 2s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 3437,
+          "label": "结算中：角色行动 · 已等待 3s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 4116,
+          "label": "结算中：判断牵连 · 已等待 4s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 4384,
+          "label": "结算中：状态更新 · 已等待 4s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 83820,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 51,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "policy_stop",
+      "submissionCalls": 69,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 4,
+      "id": "sc04-item-magazine",
+      "input": "我把通用短枪弹匣乙从开盖的弹药箱里取出来，塞进演习背心的胸袋。",
+      "purpose": "物品交互：把弹匣从 ammo_box/slot_right 移入 jacket_lu/slot_chest，验证物品的嵌套容器链，且不碰护目镜。",
+      "clocks": {
+        "pointCommittedAtMs": 817,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 939,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 939,
+        "firstAcceptedAtMs": 939,
+        "pointTextFinishedMinusCommitMs": 122,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 65998,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 1746.6399998664856,
+      "longestStreamGapMs": 201.25999999046326,
+      "generation": {
+        "wallMs": 2655.3499999046326,
+        "finishReason": "stop",
+        "streamChunks": 27
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_68",
+          "stage": null,
+          "ms": 2,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_68#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_68#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_69",
+          "stage": null,
+          "ms": 15,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_69#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_69#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_70",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_70#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_70#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_71",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_71#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_71#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_72",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_72#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_72#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_73",
+          "stage": null,
+          "ms": 21,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_73#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_73#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_74",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_74#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_74#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_75",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_75#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_75#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_76",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_76#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_76#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_77",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_77#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_77#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_78",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_78#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_78#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_79",
+          "stage": null,
+          "ms": 19,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_79#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_79#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_80",
+          "stage": null,
+          "ms": 23,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_80#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_80#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_81",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_81#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_81#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_66_2#tasks",
+          "stage": "tasks",
+          "ms": 12404,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_66_2#subtasks",
+          "stage": "subtasks",
+          "ms": 10036,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_66_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_66_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_66",
+          "stage": null,
+          "ms": 325,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_72",
+          "stage": null,
+          "ms": 17,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_72#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_72#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_76",
+          "stage": null,
+          "ms": 15,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_76#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_76#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6bxw_7_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6bxw_7_1#subtasks",
+          "stage": "subtasks",
+          "ms": 2513,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6bxw_7_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6bxw_7_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j6bxw_7",
+          "stage": null,
+          "ms": 337,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_72",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_72#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_72#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_76",
+          "stage": null,
+          "ms": 17,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_76#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_76#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6ivg_8_1#tasks",
+          "stage": "tasks",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6ivg_8_1#subtasks",
+          "stage": "subtasks",
+          "ms": 2655,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6ivg_8_1#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_auto_mx0j6ivg_8_1#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_auto_mx0j6ivg_8",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 273,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 567,
+          "label": "结算中：判断牵连 · 已等待 1s · 语义 0 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 702,
+          "label": "结算中：状态更新 · 已等待 1s · 语义 0 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 65897,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 57,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "policy_stop",
+      "submissionCalls": 69,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 5,
+      "id": "sc05-move-hatch",
+      "input": "我退出器材棚，沿服务巷走到服务巷检修口，停在拉环旁边。",
+      "purpose": "移动：从器材棚回到服务巷检修口，验证跨父级地点移动且随身弹匣不脱手。",
+      "clocks": {
+        "pointCommittedAtMs": 2992,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 3145,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 3145,
+        "firstAcceptedAtMs": 3145,
+        "pointTextFinishedMinusCommitMs": 153,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 48092,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 7223.239999771118,
+      "longestStreamGapMs": 284.04499983787537,
+      "generation": {
+        "wallMs": 8300.664999961853,
+        "finishReason": "stop",
+        "streamChunks": 28
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_87",
+          "stage": null,
+          "ms": 1,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_87#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_87#appearance",
+          "stage": "appearance",
+          "ms": 2004,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_88",
+          "stage": null,
+          "ms": 24,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_88#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_88#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_89",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_89#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_89#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_90",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_90#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_90#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_91",
+          "stage": null,
+          "ms": 21,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_91#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_91#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_92",
+          "stage": null,
+          "ms": 33,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_92#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_92#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_93",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_93#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_93#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_94",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_94#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_94#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_95",
+          "stage": null,
+          "ms": 14,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_95#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_95#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_96",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_96#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_96#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_97",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_97#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_97#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_98",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_98#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_98#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_99",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_99#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_99#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_100",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_100#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_100#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_85_2#tasks",
+          "stage": "tasks",
+          "ms": 15125,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_85_2#subtasks",
+          "stage": "subtasks",
+          "ms": 8301,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_85_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_85_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_85",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 301,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 577,
+          "label": "结算中：角色行动 · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 720,
+          "label": "结算中：判断牵连 · 已等待 1s · 语义 0 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 850,
+          "label": "结算中：状态更新 · 已等待 1s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 2019,
+          "label": "结算中：状态更新 · 已等待 2s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 3090,
+          "label": "结算中：状态更新 · 已等待 3s · 语义 1 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 48005,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 47,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "handback",
+      "submissionCalls": 47,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 6,
+      "id": "sc06-env-hatch-route",
+      "input": "我抓住检修盖的拉环把盖子提开，看见下面的短梯和通往钟楼的地下检修通道，决定就走这条有掩护的路线。",
+      "purpose": "环境变化：翻开服务巷检修盖并暴露通往钟楼的地下检修通道；同时让 task_lu_route 的地点条件成立。",
+      "clocks": {
+        "pointCommittedAtMs": 13348,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 13493,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 13493,
+        "firstAcceptedAtMs": 13493,
+        "pointTextFinishedMinusCommitMs": 145,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 55341,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 5853.265000104904,
+      "longestStreamGapMs": 284.04499983787537,
+      "generation": {
+        "wallMs": 7484.1900000572205,
+        "finishReason": "stop",
+        "streamChunks": 54
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_107",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_107#position",
+          "stage": "position",
+          "ms": 6201,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_107#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_108",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_108#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_108#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_109",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_109#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_109#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_110",
+          "stage": null,
+          "ms": 15,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_110#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_110#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_111",
+          "stage": null,
+          "ms": 24,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_111#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_111#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_112",
+          "stage": null,
+          "ms": 24,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_112#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_112#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_113",
+          "stage": null,
+          "ms": 19,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_113#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_113#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_114",
+          "stage": null,
+          "ms": 19,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_114#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_114#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_115",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_115#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_115#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_116",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_116#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_116#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_117",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_117#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_117#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_118",
+          "stage": null,
+          "ms": 18,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_118#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_118#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_119",
+          "stage": null,
+          "ms": 14,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_119#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_119#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_120",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_120#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_120#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_105_2#tasks",
+          "stage": "tasks",
+          "ms": 2892,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_105_2#subtasks",
+          "stage": "subtasks",
+          "ms": 9577,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_105_2#personality",
+          "stage": "personality",
+          "ms": 7484,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_105_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_105",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 164,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 327,
+          "label": "结算中：角色行动 · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 460,
+          "label": "结算中：判断牵连 · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 593,
+          "label": "结算中：结算 · 已等待 0s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 1479,
+          "label": "结算中：结算 · 已等待 1s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 2506,
+          "label": "结算中：结算 · 已等待 2s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 3532,
+          "label": "结算中：结算 · 已等待 3s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 4444,
+          "label": "结算中：结算 · 已等待 4s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 5502,
+          "label": "结算中：结算 · 已等待 5s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 6438,
+          "label": "结算中：结算 · 已等待 6s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 7438,
+          "label": "结算中：结算 · 已等待 7s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 8471,
+          "label": "结算中：结算 · 已等待 8s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 9493,
+          "label": "结算中：结算 · 已等待 9s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 10524,
+          "label": "结算中：结算 · 已等待 10s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 11429,
+          "label": "结算中：结算 · 已等待 11s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 12453,
+          "label": "结算中：结算 · 已等待 12s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 13252,
+          "label": "结算中：状态更新 · 已等待 13s · 语义 2 次 · 微模型 2 行取消本轮"
+        },
+        {
+          "atMs": 55294,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 81,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "handback",
+      "submissionCalls": 47,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 7,
+      "id": "sc07-move-foyer",
+      "input": "我离开检修口，沿服务巷绕到西侧，从西门进入门厅。",
+      "purpose": "移动：从检修口经服务巷进入钟楼门厅，验证后缀地名定位、最后目的地与随身物品保持。",
+      "clocks": {
+        "pointCommittedAtMs": 2832,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 2990,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 2990,
+        "firstAcceptedAtMs": 2990,
+        "pointTextFinishedMinusCommitMs": 158,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 44298,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 7697.035000085831,
+      "longestStreamGapMs": 284.04499983787537,
+      "generation": {
+        "wallMs": 9303.06500005722,
+        "finishReason": "stop",
+        "streamChunks": 28
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_128",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_128#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_128#appearance",
+          "stage": "appearance",
+          "ms": 2203,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_129",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_129#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_129#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_130",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_130#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_130#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_131",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_131#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_131#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_132",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_132#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_132#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_133",
+          "stage": null,
+          "ms": 18,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_133#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_133#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_134",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_134#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_134#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_135",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_135#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_135#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_136",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_136#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_136#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_137",
+          "stage": null,
+          "ms": 8,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_137#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_137#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_138",
+          "stage": null,
+          "ms": 16,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_138#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_138#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_139",
+          "stage": null,
+          "ms": 12,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_139#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_139#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_140",
+          "stage": null,
+          "ms": 29,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_140#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_140#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_141",
+          "stage": null,
+          "ms": 22,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_141#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_141#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_126_2#tasks",
+          "stage": "tasks",
+          "ms": 12029,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_126_2#subtasks",
+          "stage": "subtasks",
+          "ms": 9303,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_126_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_126_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_126",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 165,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 312,
+          "label": "结算中：角色行动 · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 457,
+          "label": "结算中：状态更新 · 已等待 0s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 589,
+          "label": "结算中：状态更新 · 已等待 1s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 1622,
+          "label": "结算中：状态更新 · 已等待 2s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 2707,
+          "label": "结算中：状态更新 · 已等待 3s · 语义 1 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 44257,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 65,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "handback",
+      "submissionCalls": 47,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    },
+    {
+      "run": "2026-11-28T1449-bc37",
+      "turn": 8,
+      "id": "sc08-env-foyer-table",
+      "input": "我抬起压住桌腿的桌角，把门厅翻倒的长桌拖到侧墙，让出楼梯口。",
+      "purpose": "环境变化：移开门厅翻倒长桌，恢复楼梯口通行；本回合结束时仍在 15:45 停赛前。",
+      "clocks": {
+        "pointCommittedAtMs": 953,
+        "narrationStartedAtMs": null,
+        "firstReadableAtMs": 1103,
+        "firstReadableSource": "program",
+        "pointTextFinishedAtMs": 1103,
+        "firstAcceptedAtMs": 1103,
+        "pointTextFinishedMinusCommitMs": 150,
+        "completionSource": "acceptedMs",
+        "pointNarration": null,
+        "driverDoneMs": 45552,
+        "commitMissing": false
+      },
+      "firstTokenAtMs": 9678.019999980927,
+      "longestStreamGapMs": 284.04499983787537,
+      "generation": {
+        "wallMs": 11402.420000076294,
+        "finishReason": "stop",
+        "streamChunks": 28
+      },
+      "stages": [
+        {
+          "task": "results",
+          "key": "group_148",
+          "stage": null,
+          "ms": 1,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_148#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_148#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_149",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_149#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_149#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_150",
+          "stage": null,
+          "ms": 11,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_150#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_150#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_151",
+          "stage": null,
+          "ms": 15,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_151#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_151#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_152",
+          "stage": null,
+          "ms": 32,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_152#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_152#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_153",
+          "stage": null,
+          "ms": 20,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_153#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_153#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_154",
+          "stage": null,
+          "ms": 18,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_154#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_154#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_155",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_155#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_155#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_156",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_156#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_156#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_157",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_157#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_157#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_158",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_158#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_158#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_159",
+          "stage": null,
+          "ms": 10,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_159#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_159#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_160",
+          "stage": null,
+          "ms": 13,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_160#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_160#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "results",
+          "key": "group_161",
+          "stage": null,
+          "ms": 9,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_161#position",
+          "stage": "position",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "group_161#appearance",
+          "stage": "appearance",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_146_2#tasks",
+          "stage": "tasks",
+          "ms": 14143,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_146_2#subtasks",
+          "stage": "subtasks",
+          "ms": 11402,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_146_2#personality",
+          "stage": "personality",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "updates",
+          "key": "point_rest:point_round_146_2#sanity",
+          "stage": "sanity",
+          "ms": 0,
+          "fallback": false
+        },
+        {
+          "task": "continuation",
+          "key": "round_146",
+          "stage": null,
+          "ms": 0,
+          "fallback": false
+        }
+      ],
+      "uiStages": [
+        {
+          "atMs": 222,
+          "label": "结算中… · 已等待 0s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 542,
+          "label": "结算中：判断牵连 · 已等待 1s · 语义 0 次 · 微模型 0 行取消本轮"
+        },
+        {
+          "atMs": 707,
+          "label": "结算中：状态更新 · 已等待 1s · 语义 0 次 · 微模型 1 行取消本轮"
+        },
+        {
+          "atMs": 45505,
+          "label": "本轮已交还，继续输入下一步行动。"
+        }
+      ],
+      "peakMemoryMB": 106,
+      "modelId": "Qwen3-0.6B-Q4_K_M.gguf",
+      "narrationModel": "rules",
+      "source": "program",
+      "continuationDecision": "handback",
+      "submissionCalls": 47,
+      "problems": [],
+      "turnIncomplete": false,
+      "excluded": null
+    }
+  ],
+  "gates": {
+    "evaluatedPoints": 8,
+    "firstReadable": {
+      "evaluated": 8,
+      "failed": 0,
+      "worstMs": 13493
+    },
+    "pointText": {
+      "evaluated": 8,
+      "failed": 0,
+      "worstMs": 158
+    },
+    "turnCompletion": {
+      "evaluated": 8,
+      "failed": 0,
+      "ids": []
+    },
+    "autoChainPoints": 0,
+    "status": "FAIL_OR_INCOMPLETE"
+  }
+}

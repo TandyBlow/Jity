@@ -1,12 +1,15 @@
 {
  "schema": "jity-build-manifest/1",
- "generatedAt": "2026-11-28T14:54:41.391619+00:00",
- "gitHead": "7627b0fa2a8ab25d64131f8805aafad44009a0d2",
- "gitDirtyFrontendSrc": [],
- "buildId": "FvDHLhw_hkknPxzF5yxDu",
+ "generatedAt": "2026-11-28T15:07:14.314112+00:00",
+ "gitHead": "99e07273",
+ "buildId": "bY6eXkvUIAgXgwWvxEv-M",
  "buildLog": "D:/others/Jity/.local/real-build.log",
  "server": "http://127.0.0.1:3180",
- "note": "next build at 22:49 from worktree HEAD ede2b110; HEAD moved to 7627b0fa at 22:54 with no frontend/src changes; served page source still matches",
- "buildHeadApprox": "ede2b110",
- "headAdvancedWithoutFrontendChanges": true
+ "previousBuild": {
+  "gitHead": "ede2b110",
+  "buildId": "FvDHLhw_hkknPxzF5yxDu",
+  "note": "first acceptance build; first turn hung"
+ },
+ "headAdvancedAfterBuild": "c13083c4 (acceptance driver only; product src unchanged)",
+ "note": "next build at 23:03 from HEAD 99e07273; product page source unchanged after build"
 }

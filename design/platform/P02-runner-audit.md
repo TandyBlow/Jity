@@ -45,7 +45,14 @@
    任务走同一个租约。
 9. **只治理内存，不治理 GPU/CPU。** 队列记录 `budgetMB`/`peakTreeMB`，没有 GPU 显存、
    利用率或 CPU 亲和性；WebGPU 实验的显存冲突不会被发现。
-10. **计时口径的三个缺口。**
+10. **验收驱动没有首回合看门狗。** 2026-11-28 22:58 的 3180 冻结构建运行：页面
+   ready（17.1 s）、权重请求 1/1 成功、crossOriginIsolated=true，随后第一回合挂起
+   45 分钟，evidence 一直 `IN_PROGRESS`、0 回合、failures 为空，同时持有推理租约。
+   驱动应在“首回合超过 300–420 s 仍 0 回合”时置 FAILED 并退出；平台侧的
+   `acceptance-sequence.py` 已加这个看门狗（420 s/0 回合即杀自己的驱动），驱动本身
+   仍需修。证据 `platform-holdout-4-20261128-225817.json`。
+
+11. **计时口径的三个缺口。**
     - `peakMemoryMB` 取 `turn.jsHeap.usedJSHeapSize`（`summarize-timing.mjs:101`），只是
       JS 堆，不是页面/进程峰值；模型权重与 wasm 堆不在内。
     - `longestStreamGapMs` 对所有 generation 取最大（`:29-33`），语义调用与叙事流式的空档

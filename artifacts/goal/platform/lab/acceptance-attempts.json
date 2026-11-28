@@ -1,0 +1,43 @@
+{
+ "schema": "jity-acceptance-attempts/1",
+ "attempts": [
+  {
+   "at": "2026-11-28T22:40:03+08:00",
+   "base": "http://127.0.0.1:3177",
+   "arm": "single-model ctx4096",
+   "turns": 4,
+   "evidence": "results/product/evidence/platform-holdout-4-20261128-224003.json",
+   "status": "IN_PROGRESS",
+   "turnsRecorded": 0,
+   "failure": "pageerror: Loading chunk 631 failed (page-07afe29e572c8dd7.js 404)",
+   "outcome": "driver hung; platform killed its own PID 56924"
+  },
+  {
+   "at": "2026-11-28T22:58:17+08:00",
+   "base": "http://127.0.0.1:3180",
+   "arm": "single-model ctx4096",
+   "turns": 4,
+   "build": "FvDHLhw_hkknPxzF5yxDu @ ede2b110",
+   "evidence": "results/product/evidence/platform-holdout-4-20261128-225817.json",
+   "status": "IN_PROGRESS",
+   "turnsRecorded": 0,
+   "failure": "page ready 17.1s, models 1/1 ok, crossOriginIsolated true, then first turn hung 45 min with no failure",
+   "outcome": "driver hung holding lease; platform killed its own PID 35196"
+  },
+  {
+   "at": "2026-11-28T23:03+08:00",
+   "base": "http://127.0.0.1:3180",
+   "arm": "single-model ctx4096",
+   "turns": 4,
+   "build": "bY6eXkvUIAgXgwWvxEv-M @ 99e07273",
+   "status": "not-run",
+   "turnsRecorded": 0,
+   "failure": "lease held by narration rules-b (PID 40028, 3/8 at last check)",
+   "outcome": "deferred; no bypass"
+  }
+ ],
+ "candidateAudit": {
+  "evidence": "artifacts/goal/narration-rules/scenarios8-rules.json",
+  "report": "artifacts/goal/platform/eval/rules8-scenario-report.json"
+ }
+}

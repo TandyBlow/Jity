@@ -1,0 +1,101 @@
+{
+ "schema": "jity-soak-report/1",
+ "status": "COMPLETED",
+ "turns": 8,
+ "turnsDetail": [
+  {
+   "id": "sc01-dialogue-nono-neutrality",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 49855,
+   "acceptedMs": 397,
+   "doneMs": 49876,
+   "textChars": 591,
+   "heapMB": 41.5,
+   "problems": []
+  },
+  {
+   "id": "sc02-conflict-yard-cover",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 63607,
+   "acceptedMs": 7432,
+   "doneMs": 63674,
+   "textChars": 711,
+   "heapMB": 51.5,
+   "problems": []
+  },
+  {
+   "id": "sc03-move-shed",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 83820,
+   "acceptedMs": 4553,
+   "doneMs": 83898,
+   "textChars": 869,
+   "heapMB": 50.7,
+   "problems": []
+  },
+  {
+   "id": "sc04-item-magazine",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 65897,
+   "acceptedMs": 939,
+   "doneMs": 65998,
+   "textChars": 876,
+   "heapMB": 57.0,
+   "problems": []
+  },
+  {
+   "id": "sc05-move-hatch",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 48005,
+   "acceptedMs": 3145,
+   "doneMs": 48092,
+   "textChars": 526,
+   "heapMB": 47.4,
+   "problems": []
+  },
+  {
+   "id": "sc06-env-hatch-route",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 55294,
+   "acceptedMs": 13493,
+   "doneMs": 55341,
+   "textChars": 513,
+   "heapMB": 81.3,
+   "problems": []
+  },
+  {
+   "id": "sc07-move-foyer",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 44257,
+   "acceptedMs": 2990,
+   "doneMs": 44298,
+   "textChars": 482,
+   "heapMB": 64.9,
+   "problems": []
+  },
+  {
+   "id": "sc08-env-foyer-table",
+   "source": "program",
+   "model": "rules",
+   "waitMs": 45505,
+   "acceptedMs": 1103,
+   "doneMs": 45552,
+   "textChars": 486,
+   "heapMB": 106.2,
+   "problems": []
+  }
+ ],
+ "heapPeakMB": 106.2,
+ "heapEndMB": 106.2,
+ "heapDriftMB": 64.7,
+ "waitMaxMs": 83820,
+ "failures": [],
+ "treeMemory": null
+}

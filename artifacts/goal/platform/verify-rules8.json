@@ -1,0 +1,31 @@
+{
+ "schema": "jity-run-verify/1",
+ "reports": [
+  {
+   "runId": "2026-11-28T1449-bc37",
+   "status": "COMPLETED",
+   "turns": 8,
+   "models": {
+    "requests": 1,
+    "ok": 1,
+    "failed": []
+   },
+   "engines": {
+    "semantic": {
+     "loads": 8,
+     "generations": 497,
+     "contextSize": [
+      8192
+     ]
+    }
+   },
+   "llmSemanticPrompts": 106,
+   "programNarrationAccepted": true,
+   "programTurns": 8,
+   "failures": [],
+   "pass": true,
+   "file": "artifacts/goal/narration-rules/scenarios8-rules.json"
+  }
+ ],
+ "failed": 0
+}

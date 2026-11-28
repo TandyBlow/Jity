@@ -9,6 +9,7 @@
 | P03 | 研究结果复核：E58/E60/E61 与 rules 产品接线 | done |
 | P04 | 平台交付与独立验证：评价集、指标、统一入口、资源与运行核验 | done |
 | P05 | 任务达成金标独立核查：标签一致、基准构造缺陷与任务级金标 | done |
+| P06 | 产品验收（候选复核）：规则叙事臂过关，模型叙事档与真机仍未验 | partial |
 
 工具在 `tools/experiment_platform/`，运行产物在 `artifacts/goal/platform/`。
 
