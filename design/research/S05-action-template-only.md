@@ -27,3 +27,21 @@
 - targets 空目标会减少被迫反应与共同结算；需要单独统计连锁影响。
 
 **Artifacts.** 已实现：`actions/index.ts` 的 `templateOnly`/`targetsNoLlm` 分支、页面臂 `?action=template&targets=rule`、单测（52 项 actions 测试通过）。冻结八场景运行中；证据将放 `results/product/evidence/smoke-micro-actionfamily-frozen8-*.json`。S05。
+
+## 结果（冻结八场景，goal + program + template + rule）
+
+证据 `smoke-micro-actionfamily-frozen8-20261128.json`：**8/8 COMPLETED、0 failures**。
+
+| 指标 | 模板/规则臂 | 混合臂 |
+|---|---|---|
+| 回合等待 | **17.2–35.0 s** | 61.8–170.2 s |
+| action LLM | **0**（115 micro + 8 program） | 76 次模型结果 |
+| targets LLM | **0**（113 program + 11 fallback 空目标） | 22 次 |
+| 角色最终位置 | 与混合臂 **0 差异** | — |
+| 任务达成 | turn1 四个、turn6 route；无 kit | 同左 + kit |
+| 最终任务集合 | 73（无 task_22） | 74 |
+| 剩余语义 LLM | 4 次 updates（position/appearance/personality/sanity） | 更多 |
+
+**结论**：行动族可以完全由程序/模板承担，八场景状态位置一致，延迟降到 17–35 秒；代价是 NPC 行动全部来自闭集模板，11 次目标识别弃权返回空目标。NPC 行为多样性与目标弃权的连锁影响尚未读评，暂不作为质量结论。
+
+下一步：S06 给剩余 4 次 updates 与结果弃权加保守答案，形成真正的 micro-only 配置；同时对模板行动做叙事读评。
