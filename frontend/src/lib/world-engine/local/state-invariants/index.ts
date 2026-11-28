@@ -538,7 +538,8 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
       if (stored.stateDigest !== digest) {
         report.errors.push(issue('point_digest_mismatch', `stored digest ${String(stored.stateDigest)} differs from replay ${digest}`, point.id));
       }
-      if (!same(stored.state, after)) {
+      // 仅 root/head 存全量 state，其余 digest-only（D-139）
+      if (stored.state !== undefined && !same(stored.state, after)) {
         report.errors.push(issue('point_state_mismatch', 'stored state differs from replayed state', point.id));
       }
     }
@@ -559,7 +560,7 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
       report.errors.push(issue('point_digest_mismatch', `head digest ${String(headState.stateDigest)} differs from replay ${report.replayDigest}`));
     }
     report.headDigest = typeof headState.stateDigest === 'string' ? headState.stateDigest : null;
-    if (!same(headState.state, replay)) {
+    if (headState.state !== undefined && !same(headState.state, replay)) {
       report.errors.push(issue('state_mismatch', 'head cached state differs from replayed state'));
     }
   }
@@ -574,10 +575,11 @@ export async function verifyWorldRecord(value: unknown): Promise<InvariantReport
   }
   // A tampered cache can carry a broken hierarchy that is absent from replay;
   // report it on the stored state too instead of only flagging the mismatch.
-  for (const stored of [headState, record.state]) {
-    if (!isRecord(stored)) continue;
-    const state = (isRecord(stored.state) ? stored.state : stored) as unknown as WorldState;
-    for (const error of validateTaskHierarchy(state)) {
+  const storedStates: unknown[] = [record.state];
+  if (isRecord(headState) && isRecord(headState.state)) storedStates.push(headState.state);
+  for (const state of storedStates) {
+    if (!isRecord(state)) continue;
+    for (const error of validateTaskHierarchy(state as unknown as WorldState)) {
       report.errors.push(issue('task_hierarchy', `stored: ${error}`));
     }
   }

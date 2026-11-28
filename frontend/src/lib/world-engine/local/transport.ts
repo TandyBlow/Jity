@@ -44,7 +44,8 @@ interface WorkRecord {
 interface RollRecord extends RollOutcome { key: string }
 interface PersistedRecord {
   worldId: Id; initial: InitialState; state: WorldState; version: number; rootPointId: Id; headPointId: Id;
-  points: Record<Id, TimelinePoint>; pointStates: Record<Id, { version: number; state: WorldState; stateDigest: Digest }>;
+  // 仅 root/head 存全量 state；其余为 digest-only（D-139）
+  points: Record<Id, TimelinePoint>; pointStates: Record<Id, { version: number; state?: WorldState; stateDigest: Digest }>;
   advance: AdvanceRecord | null; round: RoundRecord | null; work: WorkRecord | null;
   control: { phase: ControlState['phase']; paused: boolean; revision: number; gate: Gate };
   lease: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number } | null;
@@ -728,6 +729,11 @@ async function handleCommitPoint(record: PersistedRecord, request: RequestMap['c
   record.version += 1;
   record.points[point.id] = clone(point);
   record.pointStates[request.pointId] = { version: record.version, state: clone(newState), stateDigest: await stateDigest(newState) };
+  // 旧点只留 digest，控制快照增长（E40/D-139）
+  for (const [id, entry] of Object.entries(record.pointStates)) {
+    if (id === record.rootPointId || id === request.pointId) continue;
+    delete entry.state;
+  }
   record.round!.cursor = work.working.cursor;
   record.round!.actedIds = [...work.working.actedIds];
   record.round!.visitedIds = [...work.working.visitedIds];
@@ -792,16 +798,35 @@ function handleCancel(record: PersistedRecord, request: RequestMap['round_conclu
   return { roundId: request.roundId, abandonedGroupIds: abandoned };
 }
 
-function handleGetState(record: PersistedRecord, request: RequestMap['get_state']): DataMap['get_state'] {
+/** digest-only 的点按 root→目标 的顺序回放重建（D-139，前置验证见
+ * frontend/scripts/verify-point-replay.ts）。 */
+function replayedPointState(record: PersistedRecord, pointId: Id): WorldState | null {
+  const target = record.points[pointId];
+  const root = record.pointStates[record.rootPointId]?.state;
+  if (!target || !root) return null;
+  const chain = Object.values(record.points)
+    .filter((point) => point.sequence <= target.sequence)
+    .sort((left, right) => left.sequence - right.sequence);
+  let state = clone(root);
+  for (const point of chain) state = applyPoint(state, point);
+  return state;
+}
+
+async function handleGetState(record: PersistedRecord, request: RequestMap['get_state']): Promise<DataMap['get_state']> {
   const pointId = request.point ?? record.headPointId;
   const cached = record.pointStates[pointId];
   if (!cached) refuse('version_mismatch', 'unknown point');
+  const stored = cached.state ?? replayedPointState(record, pointId);
+  if (!stored) refuse('version_mismatch', 'point state unavailable');
+  if (!cached.state && await stateDigest(stored) !== cached.stateDigest) {
+    refuse('version_mismatch', 'replayed state digest mismatch');
+  }
   if (pointId === record.rootPointId) {
-    return { pointId, version: cached.version, state: clone(cached.state), stateDigest: cached.stateDigest,
+    return { pointId, version: cached.version, state: clone(stored), stateDigest: cached.stateDigest,
       previousPointId: null, timeAdvance: null, entityDeltas: {} };
   }
   const point = record.points[pointId];
-  return { pointId, version: cached.version, state: clone(cached.state), stateDigest: cached.stateDigest,
+  return { pointId, version: cached.version, state: clone(stored), stateDigest: cached.stateDigest,
     previousPointId: point.previousPointId, timeAdvance: clone(point.timeAdvance), entityDeltas: clone(point.entityDeltas) };
 }
 
@@ -1000,7 +1025,7 @@ export class LocalWorldTransport implements WorldTransport {
   }
 
   private async readState(request: RequestMap['get_state']): Promise<Success<'get_state'>> {
-    const data = handleGetState(this.record, request);
+    const data = await handleGetState(this.record, request);
     return { ...versionBlock(), world: await worldView(this.record), data } as unknown as Success<'get_state'>;
   }
 

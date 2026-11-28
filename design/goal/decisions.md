@@ -1204,9 +1204,9 @@
 
 **D-136 残余定位（同日）.** `sm-e-success-8` 的 `itemIds` 已解析到 `hatch_cover`、事实为 partial，但 `environmentHint` 的 locality 检查把它丢弃：物品在 `hatch` 容器（服务巷检修口），玩家在 `lane`（西侧服务巷），`roomOf` 判成不同房间。这是世界模型缺少子地点/相邻关系造成的，修法应在世界模型或 locality 判据层设计（例如地点包含关系），不是继续放宽短语或关键词。同一原因解释了 `sm-e-partial-3` 的部分 insufficient（该回合事实同样为 partial 且物品跨房间）。
 
-## D-139 点状态压缩方案（设计，待实现）（2026-11-28）
+## D-139 点状态压缩（已实现）（2026-11-28）
 
-- 状态：`proposed`。
+- 状态：`done`（2026-11-28 实现并验证）。
 - 依据：E40 测得 12 回合快照 747KB→2,949KB（+200KB/回合），主因
   `transport.pointStates` 每点存一份全量世界状态（约 65KB/点，32 点 ≈ 2.1MB）；
   `transport.state` 本身稳定 65KB。
@@ -1219,6 +1219,17 @@
   root 的全量状态；3）存档版本号递增 + 旧存档迁移（按需回填 head 全量）；
   4）`store.ts` 的 head 校验不变（head 始终有全量状态与 digest）。
 - 前置验证进展：**回放等价性已通过**（`frontend/scripts/verify-point-replay.ts` 对 env-11 快照跑 `verifySessionSnapshot`：31 个点的回放摘要全部与存储一致，ok=true、0 错误）——逐点全量 `state` 对校验并非必需，只剩 `get_state` 读取面需要按需回放。
-- 预期收益：快照/常驻内存从 ~65KB/点 降到 digest 量级（~0.5KB/点）+ head 一份
-  全量；对应 goal 的"峰值内存 -30%"仍取决于 GGUF/KV 侧，需在阶段二实验里
-  与上下文/KV 优化合并评估。
+- 实施结果（2026-11-28）：
+  - `transport.ts` `handleCommit` 在写入新点后对其余点 `delete entry.state`；
+    `get_state` 对无全量状态的点从 root 回放（`replayedPointState`）。
+  - `state-invariants` 改为"有全量 `state` 才比对回放结果"，digest 比对不变；
+    head 缺全量状态不再视为错误（回放可重建）。
+  - 不做存档版本递增/迁移：旧存档（逐点全量）照常校验，下次提交自动压缩。
+  - 真实证据：env-11 的 31 点快照 `verifySessionSnapshot` 删掉 30 份非 head
+    全量状态后仍 ok=true、0 错误；序列化体积 2,795,715 → 938,221 字节
+    （**−66%**，每点省 ~62KB）。剩余 938KB 中 idempotency 约 680KB（E40），
+    是下一个增长项。
+  - 测试：`local-transport.test.ts` 两连提交后断言仅 root/head 有全量状态、
+    `get_state` 回放摘要与存储一致；全套 1467 通过。
+- 说明：点状态压缩对"峰值内存 -30%"只覆盖快照侧；浏览器峰值仍以 GGUF/KV
+  为主，需与上下文/KV 实验合并评估。

@@ -97,6 +97,40 @@ describe('LocalGameSession', () => {
     expect(state2.characters.person_c.position.containerId).toBe('hall');
   });
 
+  it('keeps full states only for root and head, replays compacted points on get_state', async () => {
+    const initial = template();
+    const base = scriptedModel([]);
+    let pointSeq = 0;
+    const model: WorldModelPort = {
+      async generate(task, key, input): Promise<Json> {
+        if (task === 'pointPlan') {
+          pointSeq += 1;
+          return [{ pointId: `p_seq_${pointSeq}`, kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'minute' } }, actorIds: ['person_a', 'person_c'] }];
+        }
+        return base.generate(task, key, input);
+      },
+    };
+    const session = await LocalGameSession.create(initial, model);
+    await session.start();
+    await session.submit('我走到门厅。');
+    const second = await session.submit('我回到走廊。');
+    expect(second.kind).not.toBe('error');
+    const transport = session.snapshot.transport;
+    const root = transport.rootPointId;
+    const head = transport.headPointId;
+    const middle = Object.keys(transport.pointStates).find((id) => id !== root && id !== head);
+    expect(middle).toBeTruthy();
+    expect(transport.pointStates[middle!].state).toBeUndefined();
+    expect(transport.pointStates[head].state).toBeTruthy();
+    expect(transport.pointStates[root].state).toBeTruthy();
+    const storedDigest = transport.pointStates[middle!].stateDigest;
+    const answer = await session.transport.execute('get_state', { point: middle }, { worldId: session.worldId });
+    const data = (answer as { data: { state: unknown; stateDigest: string } }).data;
+    const { stateDigest } = await import('./state');
+    expect(data.stateDigest).toBe(storedDigest);
+    expect(await stateDigest(data.state as never)).toBe(storedDigest);
+  }, 60000);
+
   it('refuses to restore a record whose point chain is broken', async () => {
     const initial = template();
     const session = await LocalGameSession.create(initial, scriptedModel([]));
