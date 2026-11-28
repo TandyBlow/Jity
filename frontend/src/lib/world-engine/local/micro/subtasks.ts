@@ -59,6 +59,15 @@ function related(state: WorldState, candidate: string, parentGoal: string): bool
   return false;
 }
 
+/** A pending parent that already names a check ("查明X是否…") can host the
+ * matching confirmation subgoal when this point's fact names X. */
+function parentCandidates(parentGoal: string, factText: string): string[] {
+  const probe = /(?:查明|确认|核实)([^，。；]{2,12}?)((?:是否|能否)[^，。；]*)/u.exec(parentGoal);
+  if (!probe) return [];
+  const entity = probe[1].replace(/^.+?的/u, '');
+  return entity && factText.includes(entity) ? [`确认${probe[1]}${probe[2]}`] : [];
+}
+
 export const createProgramSubtasks: MicroSubtasksFn = (request) => {
   const owners = new Set(request.ownerIds);
   const pending = Object.entries(request.state.characters).flatMap(([ownerId, current]) => {
@@ -72,18 +81,19 @@ export const createProgramSubtasks: MicroSubtasksFn = (request) => {
   const seen = new Set<string>();
   const best = new Map<string, { characterId: Id; parentTaskId: Id; goal: string; basis: string }>();
   for (const fact of request.facts) {
-    for (const candidate of candidatesFor(request.state, fact.memberId, fact.text)) {
-      for (const row of pending) {
-        if (fact.memberId !== row.ownerId && !fact.text.includes(row.name)) continue;
+    for (const row of pending) {
+      if (fact.memberId !== row.ownerId && !fact.text.includes(row.name)) continue;
+      const candidates = [...candidatesFor(request.state, fact.memberId, fact.text),
+        ...parentCandidates(row.task.goal, fact.text)];
+      for (const candidate of candidates) {
         if (!related(request.state, candidate, row.task.goal)) continue;
         const key = normalize(candidate);
         if (existing.has(key) || seen.has(key)) continue;
-        const previous = best.get(row.task.id);
-        if (!previous) {
+        if (!best.has(row.task.id)) {
           best.set(row.task.id, { characterId: row.ownerId, parentTaskId: row.task.id, goal: candidate, basis: fact.id });
         }
+        seen.add(key);
       }
-      seen.add(normalize(candidate));
     }
   }
   return { subtasks: [...best.values()], source: 'program' };

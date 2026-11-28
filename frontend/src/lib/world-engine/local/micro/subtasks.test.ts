@@ -28,6 +28,17 @@ describe('program subtask proposer', () => {
     expect(out?.subtasks).toEqual([]);
   });
 
+  it('derives a confirmation subgoal from a parent check goal and a fact naming its object', async () => {
+    const world = state();
+    world.characters.hero.tasks.task_hero_key.goal = '查明跨溪小桥是否仍能通行';
+    world.initial.characters.hero.tasks.task_hero_key.goal = '查明跨溪小桥是否仍能通行';
+    const out = await createProgramSubtasks({
+      state: world, ownerIds: ['hero'],
+      facts: [{ id: 'f1', memberId: 'hero', text: '凯撒确认了跨溪小桥的通行情况（达到目的）。' }],
+    });
+    expect(out?.subtasks.map((row) => row.goal)).toEqual(['确认跨溪小桥是否仍能通行']);
+  });
+
   it('does not propose the same goal twice', async () => {
     const world = state();
     const first = await createProgramSubtasks({
