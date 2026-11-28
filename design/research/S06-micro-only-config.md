@@ -36,3 +36,31 @@
 1. **任务条件改为跨事实/跨回合台账**：程序用 `strictConditionHits` 判定每条事实覆盖了哪些条件（动作/确认必须命中条件自身的词），台账按任务累计；全部条件都有 completed 事实后，把累计证据拼成一段交给 goal 模型做一次最终判断（阈值 0.5）。不再要求单条事实覆盖全部条件，也不再用单事实分数卡每个条件。证据里保留 `condition -> factId/factText` 映射。
 2. **删除父任务派生子任务的模板**：该模板只是父目标第一步的复述，独立价值不足；程序子任务只保留从结构化事实标记生成、且与父任务不同的候选。
 3. 两回合累计（拿起护目镜 → 戴好并确认）页面验证进行中；若通过，`task_lu_goggles` 应在第二回合以 `basis=cross_turn` 达成，而 `task_lu_kit` 仍因缺少“拿到/装备”条件保持 pending。
+
+## 结果（冻结八场景，2026-11-29）
+
+证据 `results/product/evidence/smoke-micro-only-frozen8-20261129.json`：**8/8 COMPLETED、0 failures**。
+
+| 指标 | micro-only | 混合臂 |
+|---|---|---|
+| 回合等待 | **16.5–37.8 s** | 61.8–170.2 s |
+| 模型请求 | **仅 `qwen3-1.7b-narr-lora` 1 次**；0.6B **0 次** | 0.6B + 1.7B |
+| `__worldArm.semanticEngine` | **absent** | present |
+| action | micro 116 / program 8 / **model 0** | 76 次模型结果 |
+| targets | program 114 / fallback 10 / **model 0** | 22 次 |
+| results | micro 123 / program 1（保守 no-change）/ **model 0** | 3 次 |
+| updates | program 312 / **model 0** | position/appearance/personality/sanity 共 17 次 |
+| continuation | micro 16 / **model 0** | — |
+| narration | model 24（1.7B） | 24 |
+| 角色最终位置 | 与混合臂 **0 差异** | — |
+| 任务达成 | turn1 四个、turn6 route；无 kit | 同左 + kit |
+| 最终任务集合 | 73（无 task_22） | 74 |
+
+**结论**：这是第一个在冻结八场景上完全不加载、不调用语义 0.6B 的可玩版本；回合 16.5–37.8 秒，位置与混合臂一致，任务只少了严格标准下误判的 `lu_kit`。结果阶段有一次微模型弃权，按保守 no-change 提交；position/appearance/personality/sanity 全部走保守无变化，targets 有 10 次空目标弃权。
+
+**未解决/风险**
+
+- NPC 行动全部来自模板闭集，10 次目标识别弃权返回空目标；交互自由度与叙事质量尚未读评。
+- 任务台账仍是 `createMicroGoalTasks` 内存 Map：刷新会丢未完成累计，历史回退可能保留失效证据（下一工作包：持久化/回滚）。
+- 累计证据最终仍由行为克隆模型裁决（S01 控制臂），严格多事实金标模型未训练；本结果证明“可运行、零 0.6B”，不证明“任务语义正确”。
+- 叙事仍用 1.7B，符合 S06 范围。
