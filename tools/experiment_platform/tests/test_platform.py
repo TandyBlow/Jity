@@ -134,6 +134,33 @@ def test_evidence_refs_flagged(tmp_path):
     assert ("missing.json", "missing") in statuses
 
 
+def test_eval_set_validate_freeze_check(tmp_path):
+    from tools.experiment_platform.eval_set import main, validate_rows
+
+    rows = [
+        {"id": "n1", "modality": "narration", "world": "w", "split": "dev",
+         "input": {"facts": "a"}, "expected": {"facts": ["a"]},
+         "provenance": {"labelSource": "settled-record"}},
+        {"id": "n2", "modality": "narration", "world": "w", "split": "test",
+         "input": {"facts": "b"}, "expected": {"facts": ["b"]},
+         "forbidden": {"newNames": True}, "provenance": {"labelSource": "settled-record"}},
+    ]
+    assert validate_rows(rows) == []
+    bad = [dict(rows[0]), dict(rows[0])]
+    assert any("duplicate id" in f for f in validate_rows(bad))
+    assert any("expected.facts" in f for f in validate_rows([{**rows[0], "expected": {}}]))
+
+    path = tmp_path / "set.jsonl"
+    path.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    assert main(["freeze", "--path", str(path)]) == 0
+    manifest = path.with_suffix(".jsonl.manifest.json")
+    assert manifest.exists()
+    assert main(["check", "--path", str(path), "--manifest", str(manifest)]) == 0
+    path.write_text(path.read_text(encoding="utf-8") + json.dumps(rows[0], ensure_ascii=False) + "\n",
+                    encoding="utf-8")
+    assert main(["check", "--path", str(path), "--manifest", str(manifest)]) == 1
+
+
 def test_clean_tree_passes(tmp_path):
     from tools.experiment_platform.data_index import build_index
     from tools.experiment_platform.validate_data import validate
